@@ -20,6 +20,16 @@ class GenerationTab(Gtk.Box):
     logprobs_check = Gtk.Template.Child()
     top_logprobs_entry = Gtk.Template.Child()
     host_entry = Gtk.Template.Child()
+    
+    # Advanced Options
+    seed_entry = Gtk.Template.Child()
+    temperature_entry = Gtk.Template.Child()
+    top_k_entry = Gtk.Template.Child()
+    top_p_entry = Gtk.Template.Child()
+    min_p_entry = Gtk.Template.Child()
+    num_ctx_entry = Gtk.Template.Child()
+    num_predict_entry = Gtk.Template.Child()
+    stop_entry = Gtk.Template.Child()
 
     def __init__(self, tab_label=None, **kwargs):
         super().__init__(**kwargs)
@@ -29,6 +39,16 @@ class GenerationTab(Gtk.Box):
         self.entry.connect('activate', self.on_send_clicked)
         self.system_prompt_entry.connect('activate', self.on_send_clicked)
         self.top_logprobs_entry.connect('activate', self.on_send_clicked)
+        
+        # Connect advanced options to send
+        self.seed_entry.connect('activate', self.on_send_clicked)
+        self.temperature_entry.connect('activate', self.on_send_clicked)
+        self.top_k_entry.connect('activate', self.on_send_clicked)
+        self.top_p_entry.connect('activate', self.on_send_clicked)
+        self.min_p_entry.connect('activate', self.on_send_clicked)
+        self.num_ctx_entry.connect('activate', self.on_send_clicked)
+        self.num_predict_entry.connect('activate', self.on_send_clicked)
+        self.stop_entry.connect('activate', self.on_send_clicked)
         
         # Initialize host entry
         default_host = "http://localhost:11434"
@@ -386,6 +406,36 @@ class GenerationTab(Gtk.Box):
             top_logprobs_text = self.top_logprobs_entry.get_text().strip()
             if top_logprobs_text.isdigit():
                 data["top_logprobs"] = int(top_logprobs_text)
+                
+        # Get advanced options
+        options = {}
+        
+        def add_option(entry, key, type_func):
+            text = entry.get_text().strip()
+            if text:
+                try:
+                    val = type_func(text)
+                    options[key] = val
+                except ValueError:
+                    pass
+        
+        add_option(self.seed_entry, 'seed', int)
+        add_option(self.temperature_entry, 'temperature', float)
+        add_option(self.top_k_entry, 'top_k', int)
+        add_option(self.top_p_entry, 'top_p', float)
+        add_option(self.min_p_entry, 'min_p', float)
+        add_option(self.num_ctx_entry, 'num_ctx', int)
+        add_option(self.num_predict_entry, 'num_predict', int)
+        
+        # Stop sequence
+        stop_text = self.stop_entry.get_text().strip()
+        if stop_text:
+            stops = [s.strip() for s in stop_text.split(',') if s.strip()]
+            if stops:
+                options['stop'] = stops
+                
+        if options:
+            data['options'] = options
 
         GLib.idle_add(self.reset_thinking_state)
         GLib.idle_add(self.start_new_response_block, model_name)

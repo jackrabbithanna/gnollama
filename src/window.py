@@ -27,7 +27,7 @@ class GnollamaWindow(Adw.ApplicationWindow):
     __gtype_name__ = 'GnollamaWindow'
 
     entry = Gtk.Template.Child()
-    text_view = Gtk.Template.Child()
+    chat_box = Gtk.Template.Child()
     send_button = Gtk.Template.Child()
     model_dropdown = Gtk.Template.Child()
     thinking_dropdown = Gtk.Template.Child()
@@ -35,7 +35,6 @@ class GnollamaWindow(Adw.ApplicationWindow):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.settings = Gio.Settings.new('com.github.jackrabbithanna.Gnollama')
-        self.buffer = self.text_view.get_buffer()
         
         self.send_button.connect('clicked', self.on_send_clicked)
         self.entry.connect('activate', self.on_send_clicked)
@@ -48,6 +47,9 @@ class GnollamaWindow(Adw.ApplicationWindow):
         self.model_dropdown.add_controller(click_controller)
         
         self.model_dropdown.connect('notify::selected-item', self.on_model_changed)
+        
+        self.active_thinking_label = None
+        self.current_response_label = None
         
         # Initial model fetch
         self.start_model_fetch_thread()
@@ -117,7 +119,7 @@ class GnollamaWindow(Adw.ApplicationWindow):
         if not prompt:
             return
 
-        self.append_text(f"You: {prompt}\n")
+        self.add_message(f"You: {prompt}", sender="You")
         self.entry.set_text("")
         
         # Get selected model
@@ -130,9 +132,92 @@ class GnollamaWindow(Adw.ApplicationWindow):
         thread.daemon = True
         thread.start()
 
-    def append_text(self, text):
-        end_iter = self.buffer.get_end_iter()
-        self.buffer.insert(end_iter, text)
+    def add_message(self, text, sender="System"):
+        label = Gtk.Label(label=text)
+        label.set_wrap(True)
+        label.set_xalign(0)
+        label.set_selectable(True)
+        if sender == "You":
+            label.set_halign(Gtk.Align.END)
+            # Optional: Add specific styling or background for user messages
+        else:
+            label.set_halign(Gtk.Align.START)
+            
+        self.chat_box.append(label)
+
+    def start_new_response_block(self, model_name):
+        # Add header
+        header = Gtk.Label(label=f"Ollama ({model_name}):")
+        header.set_xalign(0)
+        header.set_halign(Gtk.Align.START)
+        header.add_css_class("dim-label") # Example class
+        self.chat_box.append(header)
+        
+        # Create label for response content
+        self.current_response_label = Gtk.Label()
+        self.current_response_label.set_wrap(True)
+        self.current_response_label.set_xalign(0)
+        self.current_response_label.set_selectable(True)
+        self.current_response_label.set_halign(Gtk.Align.FILL)
+        self.current_response_label.set_hexpand(True)
+        self.chat_box.append(self.current_response_label)
+
+    def append_response_chunk(self, text):
+        if self.current_response_label:
+            current_text = self.current_response_label.get_label()
+            self.current_response_label.set_label(current_text + text)
+
+    def reset_thinking_state(self):
+        self.active_thinking_label = None
+        self.current_response_label = None
+
+    def append_thinking(self, text):
+        if self.active_thinking_label is None:
+            # Create expander and inner label
+            expander = Gtk.Expander(label="See thinking")
+            expander.set_hexpand(True)
+            expander.set_halign(Gtk.Align.FILL)
+            
+            inner_label = Gtk.Label()
+            inner_label.set_wrap(True)
+            inner_label.set_xalign(0)
+            inner_label.set_selectable(True)
+            inner_label.set_hexpand(True)
+            inner_label.set_halign(Gtk.Align.FILL)
+            
+            expander.set_child(inner_label)
+            
+            # Insert before the current response label if it exists, otherwise append
+            # But simpler to just append to box. However, we want thinking BEFORE response.
+            # Since we create response label at start, we might need to insert.
+            # Actually, let's just append. If we call start_new_response_block first, 
+            # then thinking will be after.
+            # Strategy: Don't create response label until we have response or are done thinking?
+            # Or just append expander. If response label exists, we should probably insert before it?
+            # GtkBox append adds to end. 
+            # Let's adjust: send_prompt_to_ollama calls start_new_response_block.
+            # If thinking comes, we want it between header and response body?
+            # For simplicity, let's just append expander to chat_box. 
+            # If we want it strictly before response body, we'd need to manage order.
+            # But usually thinking comes first.
+            # Let's assume thinking comes before response text.
+            # If we already created response label, we might need to reorder.
+            # But for streaming, we might get thinking first.
+            # Let's just append to chat_box. If response label was created, it's already there.
+            # Wait, if we create response label at start, thinking will be after it if we just append.
+            # We should create response label ONLY when we get first response chunk?
+            # Or insert thinking before response label.
+            
+            # Let's try inserting before current_response_label if it exists
+            if self.current_response_label:
+                self.chat_box.insert_child_after(expander, self.current_response_label.get_prev_sibling())
+            else:
+                self.chat_box.append(expander)
+            
+            self.active_thinking_label = inner_label
+
+        current_text = self.active_thinking_label.get_label()
+        self.active_thinking_label.set_label(current_text + text)
 
     def send_prompt_to_ollama(self, prompt, model_name):
         host = self.settings.get_string('ollama-host')
@@ -165,7 +250,8 @@ class GnollamaWindow(Adw.ApplicationWindow):
         if thinking_val is not None:
             data["thinking"] = thinking_val
         
-        GLib.idle_add(self.append_text, f"Ollama ({model_name}): ")
+        GLib.idle_add(self.reset_thinking_state)
+        GLib.idle_add(self.start_new_response_block, model_name)
         
         try:
             req = urllib.request.Request(url, data=json.dumps(data).encode('utf-8'), headers={'Content-Type': 'application/json'})
@@ -178,17 +264,16 @@ class GnollamaWindow(Adw.ApplicationWindow):
                             # Handle thinking
                             thinking_fragment = json_obj.get('thinking', '')
                             if thinking_fragment and thinking_val is not False and thinking_val is not None:
-                                GLib.idle_add(self.append_text, thinking_fragment)
+                                GLib.idle_add(self.append_thinking, thinking_fragment)
                                 
                             # Handle response
                             response_fragment = json_obj.get('response', '')
                             if response_fragment:
-                                GLib.idle_add(self.append_text, response_fragment)
+                                GLib.idle_add(self.append_response_chunk, response_fragment)
                                 
                             if json_obj.get('done'):
                                 break
                         except ValueError:
                             pass
-                GLib.idle_add(self.append_text, "\n\n")
         except Exception as e:
-            GLib.idle_add(self.append_text, f"\nError: {str(e)}\n\n")
+            GLib.idle_add(self.add_message, f"\nError: {str(e)}\n", "System")

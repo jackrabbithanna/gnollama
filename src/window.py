@@ -17,7 +17,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from gi.repository import Adw, Gio, GLib, Gtk
+from gi.repository import Adw, Gtk, Gio, GLib, Gdk
 import threading
 import json
 import urllib.request
@@ -51,8 +51,44 @@ class GnollamaWindow(Adw.ApplicationWindow):
         self.active_thinking_label = None
         self.current_response_label = None
         
+        # Load CSS
+        self.load_css()
+        
         # Initial model fetch
         self.start_model_fetch_thread()
+
+    def load_css(self):
+        css_provider = Gtk.CssProvider()
+        css = """
+        .user-bubble {
+            background-color: @accent_bg_color;
+            color: @accent_fg_color;
+            border-radius: 15px;
+            padding: 10px;
+            margin-bottom: 5px;
+        }
+        .bot-bubble {
+            background-color: alpha(@window_fg_color, 0.05);
+            border-radius: 15px;
+            padding: 10px;
+            margin-bottom: 5px;
+        }
+        .thinking-text {
+            color: alpha(@window_fg_color, 0.6);
+            font-style: italic;
+        }
+        .dim-label {
+            opacity: 0.7;
+            font-size: smaller;
+            margin-bottom: 2px;
+        }
+        """
+        css_provider.load_from_data(css.encode('utf-8'))
+        Gtk.StyleContext.add_provider_for_display(
+            Gdk.Display.get_default(),
+            css_provider,
+            Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+        )
 
     def on_host_changed(self, settings, key):
         self.start_model_fetch_thread()
@@ -119,7 +155,7 @@ class GnollamaWindow(Adw.ApplicationWindow):
         if not prompt:
             return
 
-        self.add_message(f"You: {prompt}", sender="You")
+        self.add_message(prompt, sender="You")
         self.entry.set_text("")
         
         # Get selected model
@@ -133,25 +169,47 @@ class GnollamaWindow(Adw.ApplicationWindow):
         thread.start()
 
     def add_message(self, text, sender="System"):
+        # Container box for alignment and styling
+        container = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+        
+        # Bubble box for background
+        bubble = Gtk.Box()
+        
         label = Gtk.Label(label=text)
         label.set_wrap(True)
+        label.set_max_width_chars(50) # Limit width for better readability
         label.set_xalign(0)
         label.set_selectable(True)
+        
+        bubble.append(label)
+        container.append(bubble)
+
         if sender == "You":
-            label.set_halign(Gtk.Align.END)
-            # Optional: Add specific styling or background for user messages
+            container.set_halign(Gtk.Align.END)
+            bubble.add_css_class("user-bubble")
         else:
-            label.set_halign(Gtk.Align.START)
+            container.set_halign(Gtk.Align.START)
+            bubble.add_css_class("bot-bubble")
             
-        self.chat_box.append(label)
+        self.chat_box.append(container)
 
     def start_new_response_block(self, model_name):
         # Add header
         header = Gtk.Label(label=f"Ollama ({model_name}):")
         header.set_xalign(0)
         header.set_halign(Gtk.Align.START)
-        header.add_css_class("dim-label") # Example class
+        header.add_css_class("dim-label")
         self.chat_box.append(header)
+        
+        # Container for response bubble
+        container = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+        container.set_halign(Gtk.Align.START)
+        container.set_hexpand(True)
+        
+        # Bubble box
+        bubble = Gtk.Box()
+        bubble.add_css_class("bot-bubble")
+        bubble.set_hexpand(True) # Allow bubble to expand to fill width if needed, or just wrap
         
         # Create label for response content
         self.current_response_label = Gtk.Label()
@@ -160,7 +218,10 @@ class GnollamaWindow(Adw.ApplicationWindow):
         self.current_response_label.set_selectable(True)
         self.current_response_label.set_halign(Gtk.Align.FILL)
         self.current_response_label.set_hexpand(True)
-        self.chat_box.append(self.current_response_label)
+        
+        bubble.append(self.current_response_label)
+        container.append(bubble)
+        self.chat_box.append(container)
 
     def append_response_chunk(self, text):
         if self.current_response_label:
@@ -184,35 +245,31 @@ class GnollamaWindow(Adw.ApplicationWindow):
             inner_label.set_selectable(True)
             inner_label.set_hexpand(True)
             inner_label.set_halign(Gtk.Align.FILL)
+            inner_label.add_css_class("thinking-text")
             
             expander.set_child(inner_label)
             
-            # Insert before the current response label if it exists, otherwise append
-            # But simpler to just append to box. However, we want thinking BEFORE response.
-            # Since we create response label at start, we might need to insert.
-            # Actually, let's just append. If we call start_new_response_block first, 
-            # then thinking will be after.
-            # Strategy: Don't create response label until we have response or are done thinking?
-            # Or just append expander. If response label exists, we should probably insert before it?
-            # GtkBox append adds to end. 
-            # Let's adjust: send_prompt_to_ollama calls start_new_response_block.
-            # If thinking comes, we want it between header and response body?
-            # For simplicity, let's just append expander to chat_box. 
-            # If we want it strictly before response body, we'd need to manage order.
-            # But usually thinking comes first.
-            # Let's assume thinking comes before response text.
-            # If we already created response label, we might need to reorder.
-            # But for streaming, we might get thinking first.
-            # Let's just append to chat_box. If response label was created, it's already there.
-            # Wait, if we create response label at start, thinking will be after it if we just append.
-            # We should create response label ONLY when we get first response chunk?
-            # Or insert thinking before response label.
+            # Insert before the current response container if it exists
+            # Note: current_response_label is inside a bubble inside a container.
+            # We need to find the container of the current response label.
+            # But simpler: just append expander to chat_box. 
+            # If we want it *inside* the bubble, that's different.
+            # User said "response area and thinking area have a modern styling".
+            # Expander outside bubble seems fine, or inside?
+            # Let's put it outside for now, but styled.
             
-            # Let's try inserting before current_response_label if it exists
-            if self.current_response_label:
-                self.chat_box.insert_child_after(expander, self.current_response_label.get_prev_sibling())
+            # To insert before response, we need reference to the response container.
+            # But we don't store it.
+            # Let's just append. It will appear after the header and before the response if we are lucky with timing?
+            # No, we call start_new_response_block first. So response container is already appended.
+            # We should insert expander *before* the last child of chat_box (which is the response container).
+            
+            last_child = self.chat_box.get_last_child()
+            if last_child and self.current_response_label:
+                 # Verify last_child is indeed the response container (it should be)
+                 self.chat_box.insert_child_after(expander, last_child.get_prev_sibling())
             else:
-                self.chat_box.append(expander)
+                 self.chat_box.append(expander)
             
             self.active_thinking_label = inner_label
 

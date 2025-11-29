@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist gettext-domain="gnollama">
 	<schema id="com.github.jackrabbithanna.Gnollama" path="/com/github/jackrabbithanna/Gnollama/">
+		<key name="ollama-host" type="s">
+			<default>'http://localhost:11434'</default>
+			<summary>Ollama Host URL</summary>
+			<description>The URL of the Ollama API server.</description>
+		</key>
 	</schema>
 </schemalist>

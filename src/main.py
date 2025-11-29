@@ -63,7 +63,25 @@ class GnollamaApplication(Adw.Application):
 
     def on_preferences_action(self, widget, _):
         """Callback for the app.preferences action."""
-        print('app.preferences action activated')
+        settings = Gio.Settings.new('com.github.jackrabbithanna.Gnollama')
+        
+        pref_window = Adw.PreferencesWindow(transient_for=self.props.active_window)
+        
+        page = Adw.PreferencesPage()
+        page.set_title('Server Settings')
+        page.set_icon_name('network-server-symbolic')
+        pref_window.add(page)
+        
+        group = Adw.PreferencesGroup()
+        group.set_title('Ollama Configuration')
+        page.add(group)
+        
+        entry_row = Adw.EntryRow()
+        entry_row.set_title('Ollama Host')
+        settings.bind('ollama-host', entry_row, 'text', Gio.SettingsBindFlags.DEFAULT)
+        group.add(entry_row)
+        
+        pref_window.present()
 
     def create_action(self, name, callback, shortcuts=None):
         """Add an application action.

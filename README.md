@@ -5,8 +5,10 @@ A Gnome user interface to [Ollama](https://ollama.com)
 ## Description
 
 A GNOME user interface to Ollama. Written in Python.
+Supports multiple tabs of model responses to Ollama endpoint /api/generate
+Each tab supports entering any host. Model selection options populated from host.
+Model selection, thinking, system prompt, statistics, logprobs, and other options (e.g. temperature)
 
-Can be configured to connect to any host.
 
 <img src="gnollama-screenshot.png" alt="gnollama" align="left"/>
 
@@ -19,6 +21,14 @@ Can be configured to connect to any host.
 3. Enter `https://github.com/jackrabbithanna/gnollama.git` in the field **Repository URL**
 4. Click the **Clone Project** button
 5. Click the **Run** button to start building application
+
+## TODO
+
+Add Ollama API endpoint /api/chat tab type and support passing previous messages
+Support image uploads and pass with the API calls
+Support saving chats between sessions and a list of chats in a sidebar.
+UI Multi-lingual translations
+
 
 ## License
 

@@ -12,6 +12,7 @@ Model selection, thinking, system prompt, statistics, logprobs, and other option
 
 <img src="gnollama-screenshot.png" alt="gnollama" align="left"/>
 
+
 ## Build
 
 *gnollama* can be built and run with [GNOME Builder](https://wiki.gnome.org/Apps/Builder).
@@ -25,8 +26,11 @@ Model selection, thinking, system prompt, statistics, logprobs, and other option
 ## TODO
 
 Add Ollama API endpoint /api/chat tab type and support passing previous messages
+
 Support image uploads and pass with the API calls
+
 Support saving chats between sessions and a list of chats in a sidebar.
+
 UI Multi-lingual translations
 
 

@@ -30,6 +30,7 @@ gnollama_sources = [
   '__init__.py',
   'main.py',
   'window.py',
+  'tab.py',
 ]
 
 install_data(gnollama_sources, install_dir: moduledir)

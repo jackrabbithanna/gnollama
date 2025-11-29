@@ -8,6 +8,8 @@ A GNOME user interface to Ollama. Written in Python.
 
 Can be configured to connect to any host.
 
+<img src="gnollama-screenshot.png" alt="gnollama" align="left"/>
+
 ## Build
 
 *gnollama* can be built and run with [GNOME Builder](https://wiki.gnome.org/Apps/Builder).
@@ -22,4 +24,4 @@ Can be configured to connect to any host.
 
 *gnolamma* is released under the terms of the [GNU General Public License V3](https://www.gnu.org/licenses/gpl-3.0.html).
 
-No warranty provided.
+No warranty provided. No guarantee it does anything at all. Use at your own risk.

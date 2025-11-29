@@ -30,6 +30,7 @@ class GnollamaWindow(Adw.ApplicationWindow):
     text_view = Gtk.Template.Child()
     send_button = Gtk.Template.Child()
     model_dropdown = Gtk.Template.Child()
+    thinking_dropdown = Gtk.Template.Child()
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -46,6 +47,8 @@ class GnollamaWindow(Adw.ApplicationWindow):
         click_controller.connect("pressed", self.on_dropdown_clicked)
         self.model_dropdown.add_controller(click_controller)
         
+        self.model_dropdown.connect('notify::selected-item', self.on_model_changed)
+        
         # Initial model fetch
         self.start_model_fetch_thread()
 
@@ -54,6 +57,27 @@ class GnollamaWindow(Adw.ApplicationWindow):
 
     def on_dropdown_clicked(self, gesture, n_press, x, y):
         self.start_model_fetch_thread()
+        
+    def on_model_changed(self, *args):
+        selected_item = self.model_dropdown.get_selected_item()
+        if selected_item:
+            model_name = selected_item.get_string()
+            self.update_thinking_options(model_name)
+
+    def update_thinking_options(self, model_name):
+        if model_name.startswith("gpt-oss"):
+            options = ["None", "Low", "Medium", "High"]
+        else:
+            options = ["Thinking", "No thinking"]
+            
+        string_list = Gtk.StringList.new(options)
+        self.thinking_dropdown.set_model(string_list)
+        
+        # Set default
+        if model_name.startswith("gpt-oss"):
+             self.thinking_dropdown.set_selected(0) # None
+        else:
+             self.thinking_dropdown.set_selected(1) # No thinking (default false)
 
     def start_model_fetch_thread(self):
         thread = threading.Thread(target=self.fetch_models)
@@ -85,6 +109,8 @@ class GnollamaWindow(Adw.ApplicationWindow):
         # Select first model by default if available and nothing selected
         if models and self.model_dropdown.get_selected() == Gtk.INVALID_LIST_POSITION:
             self.model_dropdown.set_selected(0)
+            # Trigger thinking update for initial selection
+            self.update_thinking_options(models[0])
 
     def on_send_clicked(self, widget):
         prompt = self.entry.get_text()
@@ -111,11 +137,33 @@ class GnollamaWindow(Adw.ApplicationWindow):
     def send_prompt_to_ollama(self, prompt, model_name):
         host = self.settings.get_string('ollama-host')
         url = f"{host}/api/generate"
+        
+        # Get thinking parameter
+        thinking_item = self.thinking_dropdown.get_selected_item()
+        thinking_val = None # Default None
+        if thinking_item:
+            thinking_str = thinking_item.get_string()
+            if thinking_str == "Thinking":
+                thinking_val = True
+            elif thinking_str == "No thinking":
+                thinking_val = False
+            elif thinking_str == "Low":
+                thinking_val = "low"
+            elif thinking_str == "Medium":
+                thinking_val = "medium"
+            elif thinking_str == "High":
+                thinking_val = "high"
+            elif thinking_str == "None":
+                thinking_val = None
+
         data = {
             "model": model_name,
             "prompt": prompt,
             "stream": True
         }
+        
+        if thinking_val is not None:
+            data["thinking"] = thinking_val
         
         GLib.idle_add(self.append_text, f"Ollama ({model_name}): ")
         
@@ -126,9 +174,17 @@ class GnollamaWindow(Adw.ApplicationWindow):
                     if line:
                         try:
                             json_obj = json.loads(line.decode('utf-8'))
+                            
+                            # Handle thinking
+                            thinking_fragment = json_obj.get('thinking', '')
+                            if thinking_fragment and thinking_val is not False and thinking_val is not None:
+                                GLib.idle_add(self.append_text, thinking_fragment)
+                                
+                            # Handle response
                             response_fragment = json_obj.get('response', '')
                             if response_fragment:
                                 GLib.idle_add(self.append_text, response_fragment)
+                                
                             if json_obj.get('done'):
                                 break
                         except ValueError:

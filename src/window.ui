@@ -55,6 +55,12 @@
                   </object>
                 </child>
                 <child>
+                  <object class="GtkDropDown" id="thinking_dropdown">
+                    <property name="valign">center</property>
+                    <property name="tooltip-text" translatable="yes">Thinking Level</property>
+                  </object>
+                </child>
+                <child>
                   <object class="GtkEntry" id="entry">
                     <property name="hexpand">True</property>
                     <property name="placeholder-text" translatable="yes">Type a message...</property>

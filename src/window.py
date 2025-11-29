@@ -21,6 +21,8 @@ from gi.repository import Adw, Gtk, Gio, GLib, Gdk
 import threading
 import json
 import urllib.request
+import re
+import html
 
 @Gtk.Template(resource_path='/com/github/jackrabbithanna/Gnollama/window.ui')
 class GnollamaWindow(Adw.ApplicationWindow):
@@ -50,6 +52,7 @@ class GnollamaWindow(Adw.ApplicationWindow):
         
         self.active_thinking_label = None
         self.current_response_label = None
+        self.current_response_raw_text = ""
         
         # Load CSS
         self.load_css()
@@ -168,6 +171,36 @@ class GnollamaWindow(Adw.ApplicationWindow):
         thread.daemon = True
         thread.start()
 
+    def parse_markdown(self, text):
+        # Escape HTML characters first
+        text = html.escape(text)
+        
+        # Headers: ### Header -> <span size="large" weight="bold">Header</span>
+        text = re.sub(r'^###\s+(.+)$', r'<span size="large" weight="bold">\1</span>', text, flags=re.MULTILINE)
+        text = re.sub(r'^##\s+(.+)$', r'<span size="x-large" weight="bold">\1</span>', text, flags=re.MULTILINE)
+        text = re.sub(r'^#\s+(.+)$', r'<span size="xx-large" weight="bold">\1</span>', text, flags=re.MULTILINE)
+        
+        # Bold: **text** -> <b>text</b>
+        text = re.sub(r'\*\*(.+?)\*\*', r'<b>\1</b>', text)
+        
+        # Italic: *text* -> <i>text</i>
+        text = re.sub(r'\*(.+?)\*', r'<i>\1</i>', text)
+        
+        # Inline code: `text` -> <tt>text</tt>
+        text = re.sub(r'`(.+?)`', r'<tt>\1</tt>', text)
+        
+        # Math blocks: \[...\] -> <tt>...</tt> (basic fallback)
+        text = re.sub(r'\\\[(.*?)\\\]', r'<tt>\1</tt>', text, flags=re.DOTALL)
+        
+        # Inline math: \(...\) -> <tt>...</tt>
+        text = re.sub(r'\\\((.*?)\\\)', r'<tt>\1</tt>', text)
+        
+        # Newlines to <br> (optional, but GtkLabel handles newlines)
+        # However, if we use markup, we might need to be careful. 
+        # GtkLabel handles \n correctly even with markup.
+        
+        return text
+
     def add_message(self, text, sender="System"):
         # Container box for alignment and styling
         container = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
@@ -175,11 +208,15 @@ class GnollamaWindow(Adw.ApplicationWindow):
         # Bubble box for background
         bubble = Gtk.Box()
         
-        label = Gtk.Label(label=text)
+        label = Gtk.Label()
         label.set_wrap(True)
         label.set_max_width_chars(50) # Limit width for better readability
         label.set_xalign(0)
         label.set_selectable(True)
+        
+        # Parse markdown for display
+        markup = self.parse_markdown(text)
+        label.set_markup(markup)
         
         bubble.append(label)
         container.append(bubble)
@@ -194,6 +231,8 @@ class GnollamaWindow(Adw.ApplicationWindow):
         self.chat_box.append(container)
 
     def start_new_response_block(self, model_name):
+        self.current_response_raw_text = ""
+        
         # Add header
         header = Gtk.Label(label=f"Ollama ({model_name}):")
         header.set_xalign(0)
@@ -225,12 +264,14 @@ class GnollamaWindow(Adw.ApplicationWindow):
 
     def append_response_chunk(self, text):
         if self.current_response_label:
-            current_text = self.current_response_label.get_label()
-            self.current_response_label.set_label(current_text + text)
+            self.current_response_raw_text += text
+            markup = self.parse_markdown(self.current_response_raw_text)
+            self.current_response_label.set_markup(markup)
 
     def reset_thinking_state(self):
         self.active_thinking_label = None
         self.current_response_label = None
+        self.current_response_raw_text = ""
 
     def append_thinking(self, text):
         if self.active_thinking_label is None:

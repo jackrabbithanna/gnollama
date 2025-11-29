@@ -114,14 +114,25 @@ class GnollamaWindow(Adw.ApplicationWindow):
         data = {
             "model": model_name,
             "prompt": prompt,
-            "stream": False
+            "stream": True
         }
+        
+        GLib.idle_add(self.append_text, f"Ollama ({model_name}): ")
         
         try:
             req = urllib.request.Request(url, data=json.dumps(data).encode('utf-8'), headers={'Content-Type': 'application/json'})
             with urllib.request.urlopen(req) as response:
-                result = json.loads(response.read().decode('utf-8'))
-                response_text = result.get('response', '')
-                GLib.idle_add(self.append_text, f"Ollama ({model_name}): {response_text}\n\n")
+                for line in response:
+                    if line:
+                        try:
+                            json_obj = json.loads(line.decode('utf-8'))
+                            response_fragment = json_obj.get('response', '')
+                            if response_fragment:
+                                GLib.idle_add(self.append_text, response_fragment)
+                            if json_obj.get('done'):
+                                break
+                        except ValueError:
+                            pass
+                GLib.idle_add(self.append_text, "\n\n")
         except Exception as e:
-            GLib.idle_add(self.append_text, f"Error: {str(e)}\n\n")
+            GLib.idle_add(self.append_text, f"\nError: {str(e)}\n\n")

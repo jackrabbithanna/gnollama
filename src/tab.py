@@ -19,10 +19,10 @@ class GenerationTab(Gtk.Box):
     stats_check = Gtk.Template.Child()
     logprobs_check = Gtk.Template.Child()
     top_logprobs_entry = Gtk.Template.Child()
+    host_entry = Gtk.Template.Child()
 
-    def __init__(self, settings, tab_label=None, **kwargs):
+    def __init__(self, tab_label=None, **kwargs):
         super().__init__(**kwargs)
-        self.settings = settings
         self.tab_label = tab_label
         
         self.send_button.connect('clicked', self.on_send_clicked)
@@ -30,9 +30,13 @@ class GenerationTab(Gtk.Box):
         self.system_prompt_entry.connect('activate', self.on_send_clicked)
         self.top_logprobs_entry.connect('activate', self.on_send_clicked)
         
-        # We need to listen to settings changes, but settings is global.
-        # We can connect to the signal on the settings object.
-        self.settings.connect('changed::ollama-host', self.on_host_changed)
+        # Initialize host entry
+        default_host = "http://localhost:11434"
+        self.host_entry.set_text(default_host)
+        
+        # Connect host entry changed signal
+        self.host_entry.connect('changed', self.on_host_changed)
+        self.host_update_source_id = None
         
         # Refresh models on dropdown click
         click_controller = Gtk.GestureClick()
@@ -49,8 +53,16 @@ class GenerationTab(Gtk.Box):
         # Initial model fetch
         self.start_model_fetch_thread()
 
-    def on_host_changed(self, settings, key):
+    def on_host_changed(self, widget):
+        # Debounce
+        if self.host_update_source_id:
+            GLib.source_remove(self.host_update_source_id)
+        self.host_update_source_id = GLib.timeout_add(500, self.on_host_update_timeout)
+
+    def on_host_update_timeout(self):
+        self.host_update_source_id = None
         self.start_model_fetch_thread()
+        return False
 
     def on_dropdown_clicked(self, gesture, n_press, x, y):
         self.start_model_fetch_thread()
@@ -82,7 +94,11 @@ class GenerationTab(Gtk.Box):
         thread.start()
 
     def fetch_models(self):
-        host = self.settings.get_string('ollama-host')
+        # Use local entry
+        host = self.host_entry.get_text()
+        if not host:
+            return
+            
         url = f"{host}/api/tags"
         try:
             with urllib.request.urlopen(url) as response:
@@ -92,6 +108,8 @@ class GenerationTab(Gtk.Box):
                     GLib.idle_add(self.update_model_dropdown, models)
         except Exception as e:
             print(f"Failed to fetch models: {e}")
+            # Optionally clear dropdown or show error?
+            # For now, just print.
 
     def update_model_dropdown(self, models):
         # Check if models have changed to avoid unnecessary updates
@@ -326,7 +344,8 @@ class GenerationTab(Gtk.Box):
         self.chat_box.append(label)
 
     def send_prompt_to_ollama(self, prompt, model_name):
-        host = self.settings.get_string('ollama-host')
+        # host = self.settings.get_string('ollama-host')
+        host = self.host_entry.get_text()
         url = f"{host}/api/generate"
         
         # Get thinking parameter

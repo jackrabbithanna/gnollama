@@ -100,7 +100,7 @@ class GnollamaWindow(Adw.ApplicationWindow):
         close_button.set_valign(Gtk.Align.CENTER)
         tab_label_box.append(close_button)
         
-        tab = GenerationTab(self.settings, tab_title)
+        tab = GenerationTab(tab_title)
         
         # Add to notebook
         page_num = self.notebook.append_page(tab, tab_label_box)

@@ -76,10 +76,14 @@ class GnollamaApplication(Adw.Application):
         group.set_title('Ollama Configuration')
         page.add(group)
         
-        entry_row = Adw.EntryRow()
-        entry_row.set_title('Ollama Host')
-        settings.bind('ollama-host', entry_row, 'text', Gio.SettingsBindFlags.DEFAULT)
-        group.add(entry_row)
+        # Add a label saying settings are now per-tab?
+        label = Gtk.Label(label="Ollama Host configuration is now available in the Advanced Settings of each tab.")
+        label.set_wrap(True)
+        label.set_margin_top(12)
+        label.set_margin_bottom(12)
+        label.set_margin_start(12)
+        label.set_margin_end(12)
+        group.add(label)
         
         pref_window.present()
 

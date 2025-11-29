@@ -62,7 +62,7 @@
                 </child>
                 <child>
                   <object class="GtkButton" id="send_button">
-                    <property name="icon-name">mail-send</property>
+                    <property name="icon-name">system-search-symbolic</property>
                     <property name="tooltip-text" translatable="yes">Query Ollama</property>
                   </object>
                 </child>

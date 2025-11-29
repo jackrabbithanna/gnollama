@@ -41,10 +41,18 @@ class GnollamaWindow(Adw.ApplicationWindow):
         
         self.settings.connect('changed::ollama-host', self.on_host_changed)
         
+        # Refresh models on dropdown click
+        click_controller = Gtk.GestureClick()
+        click_controller.connect("pressed", self.on_dropdown_clicked)
+        self.model_dropdown.add_controller(click_controller)
+        
         # Initial model fetch
         self.start_model_fetch_thread()
 
     def on_host_changed(self, settings, key):
+        self.start_model_fetch_thread()
+
+    def on_dropdown_clicked(self, gesture, n_press, x, y):
         self.start_model_fetch_thread()
 
     def start_model_fetch_thread(self):
@@ -65,10 +73,17 @@ class GnollamaWindow(Adw.ApplicationWindow):
             print(f"Failed to fetch models: {e}")
 
     def update_model_dropdown(self, models):
+        # Check if models have changed to avoid unnecessary updates
+        current_model = self.model_dropdown.get_model()
+        if current_model:
+            current_items = [current_model.get_string(i) for i in range(current_model.get_n_items())]
+            if current_items == models:
+                return
+
         string_list = Gtk.StringList.new(models)
         self.model_dropdown.set_model(string_list)
-        # Select first model by default if available
-        if models:
+        # Select first model by default if available and nothing selected
+        if models and self.model_dropdown.get_selected() == Gtk.INVALID_LIST_POSITION:
             self.model_dropdown.set_selected(0)
 
     def on_send_clicked(self, widget):

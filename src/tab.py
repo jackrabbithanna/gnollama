@@ -315,6 +315,7 @@ class GenerationTab(Gtk.Box):
         self.active_logprobs_label = None
         self.current_response_label = None
         self.current_response_raw_text = ""
+        self.response_buffer_timeout = None
         
         # Setup WebView
         self.webview = WebKit.WebView()
@@ -465,7 +466,7 @@ class GenerationTab(Gtk.Box):
         GLib.idle_add(self.webview.evaluate_javascript, script, -1, None, None, None, self._js_callback, None)
 
     def add_message(self, text, sender="System"):
-        print(f"Adding message from {sender}: {text[:50]}...")
+        # print(f"Adding message from {sender}: {text[:50]}...")
         markup = self.parse_markdown(text)
         # Escape for JS string
         js_content = json.dumps(markup)
@@ -477,21 +478,35 @@ class GenerationTab(Gtk.Box):
 
     def start_new_response_block(self, model_name):
         self.current_response_raw_text = ""
+        if self.response_buffer_timeout:
+            GLib.source_remove(self.response_buffer_timeout)
+            self.response_buffer_timeout = None
+            
         js_model = json.dumps(model_name)
         self.run_js(f"startBotMessage({js_model})")
 
     def append_response_chunk(self, text):
-        # print(f"Received chunk: {text[:20]}...")
         self.current_response_raw_text += text
+        
+        # Throttle updates to avoid freezing UI
+        if self.response_buffer_timeout is None:
+            self.response_buffer_timeout = GLib.timeout_add(100, self.update_ui_with_response)
+
+    def update_ui_with_response(self):
+        self.response_buffer_timeout = None
         markup = self.parse_markdown(self.current_response_raw_text)
         js_content = json.dumps(markup)
         self.run_js(f"updateBotMessage({js_content})")
+        return False
 
     def reset_thinking_state(self):
         self.active_thinking_label = None
         self.active_logprobs_label = None
         self.current_response_label = None
         self.current_response_raw_text = ""
+        if self.response_buffer_timeout:
+            GLib.source_remove(self.response_buffer_timeout)
+            self.response_buffer_timeout = None
 
     def append_thinking(self, text):
         js_text = json.dumps(text)
@@ -610,10 +625,10 @@ class GenerationTab(Gtk.Box):
         GLib.idle_add(self.start_new_response_block, model_name)
         
         try:
-            print(f"Sending request to {url} with model {model_name}")
+            # print(f"Sending request to {url} with model {model_name}")
             req = urllib.request.Request(url, data=json.dumps(data).encode('utf-8'), headers={'Content-Type': 'application/json'})
             with urllib.request.urlopen(req) as response:
-                print("Response received, starting stream...")
+                # print("Response received, starting stream...")
                 for line in response:
                     if line:
                         # print(f"Raw line: {line[:50]}...")
@@ -638,7 +653,8 @@ class GenerationTab(Gtk.Box):
                                 if self.stats_check.get_active():
                                     GLib.idle_add(self.show_stats, json_obj)
                                 break
-                        except ValueError:
+                        except ValueError as e:
+                            print(f"JSON Decode Error: {e}")
                             pass
         except Exception as e:
             GLib.idle_add(self.add_message, f"\nError: {str(e)}\n", "System")

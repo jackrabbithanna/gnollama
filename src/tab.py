@@ -610,10 +610,13 @@ class GenerationTab(Gtk.Box):
         GLib.idle_add(self.start_new_response_block, model_name)
         
         try:
+            print(f"Sending request to {url} with model {model_name}")
             req = urllib.request.Request(url, data=json.dumps(data).encode('utf-8'), headers={'Content-Type': 'application/json'})
             with urllib.request.urlopen(req) as response:
+                print("Response received, starting stream...")
                 for line in response:
                     if line:
+                        # print(f"Raw line: {line[:50]}...")
                         try:
                             json_obj = json.loads(line.decode('utf-8'))
                             

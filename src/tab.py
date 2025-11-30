@@ -318,6 +318,8 @@ class GenerationTab(Gtk.Box):
         
         # Setup WebView
         self.webview = WebKit.WebView()
+        settings = self.webview.get_settings()
+        settings.set_enable_developer_extras(True)
         self.webview_container.append(self.webview)
         self.webview.load_html(self.BASE_HTML, "file:///")
         # Initial model fetch
@@ -452,11 +454,18 @@ class GenerationTab(Gtk.Box):
         
         return text
 
+    def _js_callback(self, webview, result, user_data):
+        try:
+            webview.evaluate_javascript_finish(result)
+        except Exception as e:
+            print(f"JS Execution Error: {e}")
+
     def run_js(self, script):
-        # WebKit.WebView.evaluate_javascript(script, length, world_name, source_uri, cancellable, callback, user_data)
-        GLib.idle_add(self.webview.evaluate_javascript, script, -1, None, None, None, None, None)
+        # print(f"Running JS: {script[:100]}...") # Debug print
+        GLib.idle_add(self.webview.evaluate_javascript, script, -1, None, None, None, self._js_callback, None)
 
     def add_message(self, text, sender="System"):
+        print(f"Adding message from {sender}: {text[:50]}...")
         markup = self.parse_markdown(text)
         # Escape for JS string
         js_content = json.dumps(markup)
@@ -472,6 +481,7 @@ class GenerationTab(Gtk.Box):
         self.run_js(f"startBotMessage({js_model})")
 
     def append_response_chunk(self, text):
+        # print(f"Received chunk: {text[:20]}...")
         self.current_response_raw_text += text
         markup = self.parse_markdown(self.current_response_raw_text)
         js_content = json.dumps(markup)

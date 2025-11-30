@@ -25,6 +25,8 @@ Model selection, thinking, system prompt, statistics, logprobs, and other option
 
 ## TODO
 
+Render response in GtkWebKit to support LaTeX formatting.
+
 Add Ollama API endpoint /api/chat tab type and support passing previous messages
 
 Support image uploads and pass with the API calls

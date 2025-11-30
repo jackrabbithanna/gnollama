@@ -18,6 +18,13 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import sys
+#import os
+
+# Fix for WebKit EGL errors
+#os.environ["WEBKIT_DISABLE_DMABUF_RENDERER"] = "1"
+#os.environ["WEBKIT_DISABLE_COMPOSITING_MODE"] = "1"
+#os.environ["__NV_DISABLE_EXPLICIT_SYNC"] = "1"
+#os.environ["G_MESSAGES_DEBUG"]="all"
 import gi
 
 gi.require_version('Gtk', '4.0')

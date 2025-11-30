@@ -1,4 +1,6 @@
-from gi.repository import Adw, Gtk, Gio, GLib, Gdk
+import gi
+gi.require_version('WebKit', '6.0')
+from gi.repository import Adw, Gtk, Gio, GLib, Gdk, WebKit
 import threading
 import json
 import urllib.request
@@ -11,7 +13,8 @@ class GenerationTab(Gtk.Box):
     __gtype_name__ = 'GenerationTab'
 
     entry = Gtk.Template.Child()
-    chat_box = Gtk.Template.Child()
+    webview_container = Gtk.Template.Child()
+    # chat_box = Gtk.Template.Child() # Removed
     send_button = Gtk.Template.Child()
     model_dropdown = Gtk.Template.Child()
     thinking_dropdown = Gtk.Template.Child()
@@ -30,6 +33,249 @@ class GenerationTab(Gtk.Box):
     num_ctx_entry = Gtk.Template.Child()
     num_predict_entry = Gtk.Template.Child()
     stop_entry = Gtk.Template.Child()
+
+    BASE_HTML = """
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="utf-8">
+        <style>
+            :root {
+                --bg-color: #ffffff;
+                --fg-color: #000000;
+                --user-bg: #3584e4;
+                --user-fg: #ffffff;
+                --bot-bg: #f6f5f4;
+                --bot-fg: #000000;
+                --dim-color: #888888;
+            }
+            @media (prefers-color-scheme: dark) {
+                :root {
+                    --bg-color: #242424;
+                    --fg-color: #ffffff;
+                    --user-bg: #3584e4;
+                    --user-fg: #ffffff;
+                    --bot-bg: #383838;
+                    --bot-fg: #ffffff;
+                    --dim-color: #aaaaaa;
+                }
+            }
+            body {
+                background-color: var(--bg-color);
+                color: var(--fg-color);
+                font-family: sans-serif;
+                margin: 0;
+                padding: 12px;
+            }
+            .message-container {
+                display: flex;
+                flex-direction: column;
+                margin-bottom: 12px;
+            }
+            .user-container {
+                align-items: flex-end;
+            }
+            .bot-container {
+                align-items: flex-start;
+            }
+            .bubble {
+                padding: 10px;
+                border-radius: 15px;
+                max-width: 80%;
+                word-wrap: break-word;
+            }
+            .user-bubble {
+                background-color: var(--user-bg);
+                color: var(--user-fg);
+            }
+            .bot-bubble {
+                background-color: var(--bot-bg);
+                color: var(--bot-fg);
+            }
+            .header {
+                font-size: 0.8em;
+                color: var(--dim-color);
+                margin-bottom: 4px;
+                margin-left: 4px;
+            }
+            .thinking {
+                font-style: italic;
+                color: var(--dim-color);
+                margin-top: 4px;
+                border-left: 2px solid var(--dim-color);
+                padding-left: 8px;
+                display: none; /* Hidden by default, toggleable? */
+            }
+            .thinking-header {
+                cursor: pointer;
+                font-size: 0.8em;
+                color: var(--dim-color);
+                margin-top: 4px;
+                user-select: none;
+            }
+            .logprobs {
+                font-family: monospace;
+                font-size: 0.8em;
+                background-color: rgba(0,0,0,0.05);
+                padding: 8px;
+                border-radius: 6px;
+                margin-top: 4px;
+                white-space: pre-wrap;
+                display: none;
+            }
+            .stats {
+                font-size: 0.8em;
+                color: var(--dim-color);
+                margin-top: 4px;
+            }
+            pre {
+                background-color: rgba(127, 127, 127, 0.1);
+                padding: 8px;
+                border-radius: 4px;
+                overflow-x: auto;
+            }
+            code {
+                font-family: monospace;
+            }
+        </style>
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        <script>
+            function scrollToBottom() {
+                window.scrollTo(0, document.body.scrollHeight);
+            }
+
+            function appendUserMessage(text) {
+                const container = document.createElement('div');
+                container.className = 'message-container user-container';
+                
+                const bubble = document.createElement('div');
+                bubble.className = 'bubble user-bubble';
+                bubble.innerHTML = text; // Assumes text is already HTML escaped/formatted if needed, or plain text
+                
+                container.appendChild(bubble);
+                document.body.appendChild(container);
+                scrollToBottom();
+            }
+
+            let currentBotBubble = null;
+            let currentThinkingContainer = null;
+            let currentLogprobsContainer = null;
+
+            function startBotMessage(modelName) {
+                const container = document.createElement('div');
+                container.className = 'message-container bot-container';
+                
+                const header = document.createElement('div');
+                header.className = 'header';
+                header.textContent = 'Ollama (' + modelName + '):';
+                container.appendChild(header);
+                
+                const bubble = document.createElement('div');
+                bubble.className = 'bubble bot-bubble';
+                container.appendChild(bubble);
+                currentBotBubble = bubble;
+                
+                document.body.appendChild(container);
+                scrollToBottom();
+                
+                currentThinkingContainer = null;
+                currentLogprobsContainer = null;
+            }
+
+            function updateBotMessage(htmlContent) {
+                if (currentBotBubble) {
+                    currentBotBubble.innerHTML = htmlContent;
+                    if (window.MathJax) {
+                        MathJax.typesetPromise([currentBotBubble]);
+                    }
+                    scrollToBottom();
+                }
+            }
+
+            function updateThinking(text) {
+                if (!currentBotBubble) return;
+                
+                if (!currentThinkingContainer) {
+                    const header = document.createElement('div');
+                    header.className = 'thinking-header';
+                    header.textContent = '▶ See thinking';
+                    header.onclick = function() {
+                        const content = this.nextElementSibling;
+                        if (content.style.display === 'block') {
+                            content.style.display = 'none';
+                            this.textContent = '▶ See thinking';
+                        } else {
+                            content.style.display = 'block';
+                            this.textContent = '▼ Hide thinking';
+                        }
+                    };
+                    
+                    const content = document.createElement('div');
+                    content.className = 'thinking';
+                    
+                    // Insert after bubble? Or inside? Usually thinking comes before or during.
+                    // Let's put it before the bubble for now, or inside the container but before bubble?
+                    // Actually, let's append to the container (which is flex column).
+                    const container = currentBotBubble.parentElement;
+                    // Insert before the bubble?
+                    container.insertBefore(header, currentBotBubble);
+                    container.insertBefore(content, currentBotBubble);
+                    
+                    currentThinkingContainer = content;
+                }
+                
+                // Append text (escape it?)
+                // Simple text append for now
+                currentThinkingContainer.textContent += text;
+            }
+
+            function addLogprobs(text) {
+                if (!currentBotBubble) return;
+                
+                if (!currentLogprobsContainer) {
+                    const header = document.createElement('div');
+                    header.className = 'thinking-header'; // Reuse style
+                    header.textContent = '▶ Logprobs';
+                    header.onclick = function() {
+                        const content = this.nextElementSibling;
+                        if (content.style.display === 'block') {
+                            content.style.display = 'none';
+                            this.textContent = '▶ Logprobs';
+                        } else {
+                            content.style.display = 'block';
+                            this.textContent = '▼ Logprobs';
+                        }
+                    };
+                    
+                    const content = document.createElement('div');
+                    content.className = 'logprobs';
+                    
+                    const container = currentBotBubble.parentElement;
+                    container.appendChild(header);
+                    container.appendChild(content);
+                    
+                    currentLogprobsContainer = content;
+                }
+                
+                currentLogprobsContainer.textContent += text;
+            }
+
+            function addStats(text) {
+                if (!currentBotBubble) return;
+                const container = currentBotBubble.parentElement;
+                const statsDiv = document.createElement('div');
+                statsDiv.className = 'stats';
+                statsDiv.textContent = text;
+                container.appendChild(statsDiv);
+                scrollToBottom();
+            }
+        </script>
+    </head>
+    <body>
+        <div id="chat"></div>
+    </body>
+    </html>
+    """
 
     def __init__(self, tab_label=None, **kwargs):
         super().__init__(**kwargs)
@@ -70,6 +316,10 @@ class GenerationTab(Gtk.Box):
         self.current_response_label = None
         self.current_response_raw_text = ""
         
+        # Setup WebView
+        self.webview = WebKit.WebView()
+        self.webview_container.append(self.webview)
+        self.webview.load_html(self.BASE_HTML, "file:///")
         # Initial model fetch
         self.start_model_fetch_thread()
 
@@ -174,10 +424,10 @@ class GenerationTab(Gtk.Box):
         # Escape HTML characters first
         text = html.escape(text)
         
-        # Headers: ### Header -> <span size="large" weight="bold">Header</span>
-        text = re.sub(r'^###\s+(.+)$', r'<span size="large" weight="bold">\1</span>', text, flags=re.MULTILINE)
-        text = re.sub(r'^##\s+(.+)$', r'<span size="x-large" weight="bold">\1</span>', text, flags=re.MULTILINE)
-        text = re.sub(r'^#\s+(.+)$', r'<span size="xx-large" weight="bold">\1</span>', text, flags=re.MULTILINE)
+        # Headers: ### Header -> <h3>Header</h3>
+        text = re.sub(r'^###\s+(.+)$', r'<h3>\1</h3>', text, flags=re.MULTILINE)
+        text = re.sub(r'^##\s+(.+)$', r'<h2>\1</h2>', text, flags=re.MULTILINE)
+        text = re.sub(r'^#\s+(.+)$', r'<h1>\1</h1>', text, flags=re.MULTILINE)
         
         # Bold: **text** -> <b>text</b>
         text = re.sub(r'\*\*(.+?)\*\*', r'<b>\1</b>', text)
@@ -185,83 +435,47 @@ class GenerationTab(Gtk.Box):
         # Italic: *text* -> <i>text</i>
         text = re.sub(r'\*(.+?)\*', r'<i>\1</i>', text)
         
-        # Inline code: `text` -> <tt>text</tt>
-        text = re.sub(r'`(.+?)`', r'<tt>\1</tt>', text)
+        # Inline code: `text` -> <code>text</code>
+        text = re.sub(r'`(.+?)`', r'<code>\1</code>', text)
         
-        # Math blocks: \[...\] -> <tt>...</tt> (basic fallback)
-        text = re.sub(r'\\\[(.*?)\\\]', r'<tt>\1</tt>', text, flags=re.DOTALL)
+        # Code blocks: ```lang ... ``` -> <pre><code>...</code></pre>
+        text = re.sub(r'```(\w+)?\n(.*?)```', r'<pre><code>\2</code></pre>', text, flags=re.DOTALL)
         
-        # Inline math: \(...\) -> <tt>...</tt>
-        text = re.sub(r'\\\((.*?)\\\)', r'<tt>\1</tt>', text)
+        # Math blocks: \[...\] -> $$...$$ (for MathJax)
+        text = re.sub(r'\\\[(.*?)\\\]', r'$$\1$$', text, flags=re.DOTALL)
+        
+        # Inline math: \(...\) -> \(...\) (MathJax handles this)
+        # No change needed if MathJax is configured for \( \)
+        
+        # Newlines to <br> (simple approach)
+        text = text.replace('\n', '<br>')
         
         return text
 
-    def add_message(self, text, sender="System"):
-        # Container box for alignment and styling
-        container = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
-        
-        # Bubble box for background
-        bubble = Gtk.Box()
-        
-        label = Gtk.Label()
-        label.set_wrap(True)
-        label.set_max_width_chars(50) # Limit width for better readability
-        label.set_xalign(0)
-        label.set_selectable(True)
-        
-        # Parse markdown for display
-        markup = self.parse_markdown(text)
-        label.set_markup(markup)
-        
-        bubble.append(label)
-        container.append(bubble)
+    def run_js(self, script):
+        # WebKit.WebView.evaluate_javascript(script, length, world_name, source_uri, cancellable, callback, user_data)
+        GLib.idle_add(self.webview.evaluate_javascript, script, -1, None, None, None, None, None)
 
+    def add_message(self, text, sender="System"):
+        markup = self.parse_markdown(text)
+        # Escape for JS string
+        js_content = json.dumps(markup)
         if sender == "You":
-            container.set_halign(Gtk.Align.END)
-            bubble.add_css_class("user-bubble")
+            self.run_js(f"appendUserMessage({js_content})")
         else:
-            container.set_halign(Gtk.Align.START)
-            bubble.add_css_class("bot-bubble")
-            
-        self.chat_box.append(container)
+            # System message?
+            pass
 
     def start_new_response_block(self, model_name):
         self.current_response_raw_text = ""
-        
-        # Add header
-        header = Gtk.Label(label=f"Ollama ({model_name}):")
-        header.set_xalign(0)
-        header.set_halign(Gtk.Align.START)
-        header.add_css_class("dim-label")
-        self.chat_box.append(header)
-        
-        # Container for response bubble
-        container = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
-        container.set_halign(Gtk.Align.START)
-        container.set_hexpand(True)
-        
-        # Bubble box
-        bubble = Gtk.Box()
-        bubble.add_css_class("bot-bubble")
-        bubble.set_hexpand(True) # Allow bubble to expand to fill width if needed, or just wrap
-        
-        # Create label for response content
-        self.current_response_label = Gtk.Label()
-        self.current_response_label.set_wrap(True)
-        self.current_response_label.set_xalign(0)
-        self.current_response_label.set_selectable(True)
-        self.current_response_label.set_halign(Gtk.Align.FILL)
-        self.current_response_label.set_hexpand(True)
-        
-        bubble.append(self.current_response_label)
-        container.append(bubble)
-        self.chat_box.append(container)
+        js_model = json.dumps(model_name)
+        self.run_js(f"startBotMessage({js_model})")
 
     def append_response_chunk(self, text):
-        if self.current_response_label:
-            self.current_response_raw_text += text
-            markup = self.parse_markdown(self.current_response_raw_text)
-            self.current_response_label.set_markup(markup)
+        self.current_response_raw_text += text
+        markup = self.parse_markdown(self.current_response_raw_text)
+        js_content = json.dumps(markup)
+        self.run_js(f"updateBotMessage({js_content})")
 
     def reset_thinking_state(self):
         self.active_thinking_label = None
@@ -270,63 +484,10 @@ class GenerationTab(Gtk.Box):
         self.current_response_raw_text = ""
 
     def append_thinking(self, text):
-        if self.active_thinking_label is None:
-            # Create expander and inner label
-            expander = Gtk.Expander(label="See thinking")
-            expander.set_hexpand(True)
-            expander.set_halign(Gtk.Align.FILL)
-            
-            inner_label = Gtk.Label()
-            inner_label.set_wrap(True)
-            inner_label.set_xalign(0)
-            inner_label.set_selectable(True)
-            inner_label.set_hexpand(True)
-            inner_label.set_halign(Gtk.Align.FILL)
-            inner_label.add_css_class("thinking-text")
-            
-            expander.set_child(inner_label)
-            
-            last_child = self.chat_box.get_last_child()
-            if last_child and self.current_response_label:
-                 self.chat_box.insert_child_after(expander, last_child.get_prev_sibling())
-            else:
-                 self.chat_box.append(expander)
-            
-            self.active_thinking_label = inner_label
-
-        current_text = self.active_thinking_label.get_label()
-        self.active_thinking_label.set_label(current_text + text)
+        js_text = json.dumps(text)
+        self.run_js(f"updateThinking({js_text})")
 
     def append_logprobs(self, logprobs_data):
-        if self.active_logprobs_label is None:
-            # Create expander for logprobs
-            expander = Gtk.Expander(label="Logprobs")
-            expander.set_hexpand(True)
-            expander.set_halign(Gtk.Align.FILL)
-            
-            # Use ScrolledWindow + TextView for performance with large data
-            scrolled = Gtk.ScrolledWindow()
-            scrolled.set_min_content_height(150)
-            scrolled.set_propagate_natural_height(True)
-            
-            text_view = Gtk.TextView()
-            text_view.set_wrap_mode(Gtk.WrapMode.WORD_CHAR)
-            text_view.set_editable(False)
-            text_view.set_monospace(True)
-            text_view.set_bottom_margin(6)
-            text_view.set_top_margin(6)
-            text_view.set_left_margin(6)
-            text_view.set_right_margin(6)
-            
-            scrolled.set_child(text_view)
-            expander.set_child(scrolled)
-            self.chat_box.append(expander)
-            
-            self.active_logprobs_label = text_view # Reusing variable name for TextView
-
-        buffer = self.active_logprobs_label.get_buffer()
-        end_iter = buffer.get_end_iter()
-        
         # Format logprobs data compactly
         text_chunk = ""
         if isinstance(logprobs_data, list):
@@ -340,7 +501,8 @@ class GenerationTab(Gtk.Box):
         else:
              text_chunk = json.dumps(logprobs_data) + "\n"
              
-        buffer.insert(end_iter, text_chunk)
+        js_text = json.dumps(text_chunk)
+        self.run_js(f"addLogprobs({js_text})")
 
     def show_stats(self, stats):
         # Format stats
@@ -357,11 +519,8 @@ class GenerationTab(Gtk.Box):
             f"Eval: {eval_count} tokens ({eval_duration:.2f}s)"
         )
         
-        label = Gtk.Label(label=stats_text)
-        label.set_xalign(0)
-        label.set_halign(Gtk.Align.START)
-        label.add_css_class("dim-label")
-        self.chat_box.append(label)
+        js_text = json.dumps(stats_text)
+        self.run_js(f"addStats({js_text})")
 
     def send_prompt_to_ollama(self, prompt, model_name):
         # host = self.settings.get_string('ollama-host')

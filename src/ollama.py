@@ -20,7 +20,7 @@ def fetch_models(host):
         print(f"Failed to fetch models: {e}")
         return []
 
-def generate(host, model, prompt, system=None, options=None, thinking=None, logprobs=False, top_logprobs=None):
+def generate(host, model, prompt, system=None, options=None, thinking=None, logprobs=False, top_logprobs=None, images=None):
     """
     Generator that streams responses from the Ollama Generate API.
     """
@@ -32,6 +32,10 @@ def generate(host, model, prompt, system=None, options=None, thinking=None, logp
         "stream": True
     }
     
+    
+    if images:
+        data["images"] = images
+
     _add_common_params(data, options, thinking, logprobs, top_logprobs)
 
     if system:
@@ -39,7 +43,7 @@ def generate(host, model, prompt, system=None, options=None, thinking=None, logp
 
     yield from _stream_response(url, data)
 
-def chat(host, model, messages, options=None, thinking=None, logprobs=False, top_logprobs=None):
+def chat(host, model, messages, options=None, thinking=None, logprobs=False, top_logprobs=None, images=None):
     """
     Generator that streams responses from the Ollama Chat API.
     """
@@ -51,6 +55,12 @@ def chat(host, model, messages, options=None, thinking=None, logprobs=False, top
         "stream": True
     }
     
+    
+    if images and data["messages"]:
+        last_msg = data["messages"][-1]
+        if last_msg.get("role") == "user":
+            last_msg["images"] = images
+
     _add_common_params(data, options, thinking, logprobs, top_logprobs)
 
     yield from _stream_response(url, data)

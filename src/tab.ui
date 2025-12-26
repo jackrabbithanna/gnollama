@@ -57,6 +57,39 @@
       </object>
     </child>
     <child>
+      <object class="GtkBox">
+        <property name="orientation">horizontal</property>
+        <property name="spacing">6</property>
+        <property name="margin-start">12</property>
+        <property name="margin-end">12</property>
+        <property name="margin-bottom">6</property>
+        <child>
+          <object class="GtkButton" id="attach_button">
+            <property name="icon-name">insert-image-symbolic</property>
+            <property name="tooltip-text" translatable="yes">Attach Image</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkLabel" id="image_label">
+            <property name="label" translatable="yes">No image selected</property>
+            <style>
+               <class name="dim-label"/>
+            </style>
+          </object>
+        </child>
+        <child>
+          <object class="GtkButton" id="clear_image_button">
+            <property name="icon-name">edit-clear-symbolic</property>
+            <property name="tooltip-text" translatable="yes">Clear Image</property>
+            <property name="visible">False</property>
+            <style>
+              <class name="flat"/>
+            </style>
+          </object>
+        </child>
+      </object>
+    </child>
+    <child>
       <object class="GtkExpander">
         <property name="label">Advanced Settings</property>
         <property name="margin-start">12</property>

@@ -12,6 +12,8 @@ Select "New generate response" to create a new generate tab using /api/generate.
 
 Select "New Chat" to create a new chat tab using /api/chat with previous messages so context is preserved.
 
+Both tab types support selecting multiple images to pass to the model.
+
 Each tab supports entering any host. Model selection options populated from host.
 
 Model selection, thinking, system prompt, statistics, logprobs, and other options (e.g. temperature)
@@ -41,9 +43,7 @@ You can then run `gnollama` to execute the application.
 
 ## TODO
 
-Render response in GtkWebKit to support LaTeX and otherformatting.
-
-Support image uploads and pass with the API calls
+Render response in GtkWebKit to support LaTeX and other formatting.
 
 Support saving chats between sessions and a list of chats in a sidebar.
 

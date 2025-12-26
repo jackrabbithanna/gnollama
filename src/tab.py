@@ -123,7 +123,7 @@ class GenerationTab(Gtk.Box):
         self.attach_button.connect('clicked', self.on_attach_clicked)
         self.clear_image_button.connect('clicked', self.on_clear_image_clicked)
         
-        self.selected_image_path = None
+        self.selected_image_paths = []
         
         # Initialize host entry
         default_host = self.settings.get_string("ollama-host")
@@ -166,20 +166,28 @@ class GenerationTab(Gtk.Box):
         filter_image.add_mime_type("image/webp")
         file_chooser.add_filter(filter_image)
         
+        file_chooser.set_select_multiple(True)
         file_chooser.connect("response", self.on_file_chooser_response)
         file_chooser.show()
 
     def on_file_chooser_response(self, dialog, response):
         if response == Gtk.ResponseType.ACCEPT:
-            file = dialog.get_file()
-            self.selected_image_path = file.get_path()
-            self.image_label.set_text(os.path.basename(self.selected_image_path))
+            files = dialog.get_files()
+            self.selected_image_paths = [f.get_path() for f in files]
+            
+            count = len(self.selected_image_paths)
+            if count == 1:
+                label_text = os.path.basename(self.selected_image_paths[0])
+            else:
+                label_text = f"{count} images selected"
+            
+            self.image_label.set_text(label_text)
             self.image_label.remove_css_class("dim-label")
             self.clear_image_button.set_visible(True)
         dialog.destroy()
 
     def on_clear_image_clicked(self, widget):
-        self.selected_image_path = None
+        self.selected_image_paths = []
         self.image_label.set_text("No image selected")
         self.image_label.add_css_class("dim-label")
         self.clear_image_button.set_visible(False)
@@ -270,13 +278,14 @@ class GenerationTab(Gtk.Box):
 
         # Handle image
         images = []
-        if self.selected_image_path:
+        if self.selected_image_paths:
             try:
-                with open(self.selected_image_path, "rb") as image_file:
-                    encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
-                    images.append(encoded_string)
+                for path in self.selected_image_paths:
+                    with open(path, "rb") as image_file:
+                        encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
+                        images.append(encoded_string)
             except Exception as e:
-                self.add_message(f"Error loading image: {e}", "System")
+                self.add_message(f"Error loading images: {e}", "System")
                 return
             
             # Clear image after reading

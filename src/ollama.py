@@ -32,6 +32,30 @@ def generate(host, model, prompt, system=None, options=None, thinking=None, logp
         "stream": True
     }
     
+    _add_common_params(data, options, thinking, logprobs, top_logprobs)
+
+    if system:
+        data["system"] = system
+
+    yield from _stream_response(url, data)
+
+def chat(host, model, messages, options=None, thinking=None, logprobs=False, top_logprobs=None):
+    """
+    Generator that streams responses from the Ollama Chat API.
+    """
+    url = f"{host}/api/chat"
+    
+    data = {
+        "model": model,
+        "messages": messages,
+        "stream": True
+    }
+    
+    _add_common_params(data, options, thinking, logprobs, top_logprobs)
+
+    yield from _stream_response(url, data)
+
+def _add_common_params(data, options, thinking, logprobs, top_logprobs):
     if list(filter(None, [thinking])):
         if thinking == True:
             data["thinking"] = True
@@ -39,9 +63,6 @@ def generate(host, model, prompt, system=None, options=None, thinking=None, logp
             data["thinking"] = False
         elif thinking in ["low", "medium", "high"]:
             data["thinking"] = thinking
-
-    if system:
-        data["system"] = system
 
     if logprobs:
         data["logprobs"] = True
@@ -51,6 +72,7 @@ def generate(host, model, prompt, system=None, options=None, thinking=None, logp
     if options:
         data['options'] = options
 
+def _stream_response(url, data):
     try:
         req = urllib.request.Request(url, data=json.dumps(data).encode('utf-8'), headers={'Content-Type': 'application/json'})
         with urllib.request.urlopen(req) as response:

@@ -5,6 +5,62 @@ import os
 from . import ollama
 from .utils import parse_markdown
 
+class GenerationStrategy:
+    def process(self, tab, **kwargs):
+        return ollama.generate(
+            host=kwargs['host'],
+            model=kwargs['model'],
+            prompt=kwargs['prompt'],
+            system=kwargs['system'],
+            options=kwargs['options'],
+            thinking=kwargs['thinking'],
+            logprobs=kwargs['logprobs'],
+            top_logprobs=kwargs['top_logprobs']
+        )
+    
+    def on_response_complete(self, tab, model_name):
+        pass
+
+class ChatStrategy:
+    def __init__(self):
+        self.history = []
+        self.current_response_full_text = ""
+
+    def process(self, tab, **kwargs):
+        prompt = kwargs['prompt']
+        system = kwargs['system']
+        
+        # Build messages
+        messages = []
+        if system:
+            messages.append({"role": "system", "content": system})
+            
+        messages.extend(self.history)
+        messages.append({"role": "user", "content": prompt})
+        
+        # Update our history with the user's message now
+        self.history.append({"role": "user", "content": prompt})
+        
+        # Reset current response accumulator
+        self.current_response_full_text = ""
+
+        return ollama.chat(
+            host=kwargs['host'],
+            model=kwargs['model'],
+            messages=messages,
+            options=kwargs['options'],
+            thinking=kwargs['thinking'],
+            logprobs=kwargs['logprobs'],
+            top_logprobs=kwargs['top_logprobs']
+        )
+
+    def append_response_chunk(self, text):
+        self.current_response_full_text += text
+
+    def on_response_complete(self, tab, model_name):
+        self.history.append({"role": "assistant", "content": self.current_response_full_text})
+
+
 @Gtk.Template(resource_path='/com/github/jackrabbithanna/Gnollama/tab.ui')
 class GenerationTab(Gtk.Box):
     __gtype_name__ = 'GenerationTab'
@@ -30,10 +86,15 @@ class GenerationTab(Gtk.Box):
     num_predict_entry = Gtk.Template.Child()
     stop_entry = Gtk.Template.Child()
 
-    def __init__(self, tab_label=None, **kwargs):
+    def __init__(self, tab_label=None, mode='generate', **kwargs):
         super().__init__(**kwargs)
         self.tab_label = tab_label
         self.settings = Gio.Settings.new('com.github.jackrabbithanna.Gnollama')
+        
+        if mode == 'chat':
+            self.strategy = ChatStrategy()
+        else:
+            self.strategy = GenerationStrategy()
         
         self.send_button.connect('clicked', self.on_send_clicked)
         self.entry.connect('activate', self.on_send_clicked)
@@ -159,11 +220,9 @@ class GenerationTab(Gtk.Box):
         if selected_item:
             model_name = selected_item.get_string()
 
-        thread = threading.Thread(target=self.send_prompt_to_ollama, args=(prompt, model_name))
+        thread = threading.Thread(target=self.process_request, args=(prompt, model_name))
         thread.daemon = True
         thread.start()
-
-
 
     def add_message(self, text, sender="System"):
         # Container box for alignment and styling
@@ -231,6 +290,10 @@ class GenerationTab(Gtk.Box):
             self.current_response_raw_text += text
             markup = parse_markdown(self.current_response_raw_text)
             self.current_response_label.set_markup(markup)
+            
+            # Notify strategy for accumulation if needed
+            if hasattr(self.strategy, 'append_response_chunk'):
+                self.strategy.append_response_chunk(text)
 
     def reset_thinking_state(self):
         self.active_thinking_label = None
@@ -332,7 +395,7 @@ class GenerationTab(Gtk.Box):
         label.add_css_class("dim-label")
         self.chat_box.append(label)
 
-    def send_prompt_to_ollama(self, prompt, model_name):
+    def process_request(self, prompt, model_name):
         host = self.host_entry.get_text()
         
         # Get thinking parameter
@@ -391,7 +454,8 @@ class GenerationTab(Gtk.Box):
         GLib.idle_add(self.start_new_response_block, model_name)
         
         try:
-            for json_obj in ollama.generate(
+            for json_obj in self.strategy.process(
+                self,
                 host=host,
                 model=model_name,
                 prompt=prompt,
@@ -404,16 +468,22 @@ class GenerationTab(Gtk.Box):
                 if "error" in json_obj:
                     raise Exception(json_obj["error"])
 
+                # Handle message response (for chat endpoint)
+                if 'message' in json_obj:
+                    content = json_obj['message'].get('content', '')
+                    if content:
+                         GLib.idle_add(self.append_response_chunk, content)
+                # Handle standard response (for generate endpoint)
+                elif 'response' in json_obj:
+                    content = json_obj.get('response', '')
+                    if content:
+                        GLib.idle_add(self.append_response_chunk, content)
+
                 # Handle thinking
                 thinking_fragment = json_obj.get('thinking', '')
                 if thinking_fragment and thinking_val is not False and thinking_val is not None:
                      GLib.idle_add(self.append_thinking, thinking_fragment)
-                     
-                # Handle response
-                response_fragment = json_obj.get('response', '')
-                if response_fragment:
-                    GLib.idle_add(self.append_response_chunk, response_fragment)
-                    
+                        
                 # Handle logprobs
                 if "logprobs" in json_obj and json_obj["logprobs"]:
                      GLib.idle_add(self.append_logprobs, json_obj["logprobs"])
@@ -421,6 +491,9 @@ class GenerationTab(Gtk.Box):
                 if json_obj.get('done'):
                     if self.stats_check.get_active():
                         GLib.idle_add(self.show_stats, json_obj)
+                    
+                    if hasattr(self.strategy, 'on_response_complete'):
+                         self.strategy.on_response_complete(self, model_name)
                         
         except Exception as e:
             GLib.idle_add(self.add_message, f"\nError: {str(e)}\n", "System")

@@ -57,7 +57,7 @@ class ChatStorage:
         self._save_history()
         return chat_data
 
-    def save_chat(self, chat_id, messages, model=None):
+    def save_chat(self, chat_id, messages, model=None, options=None, system=None):
         if chat_id not in self.chats:
             return
         
@@ -65,6 +65,10 @@ class ChatStorage:
         self.chats[chat_id]["updated_at"] = time.time()
         if model:
              self.chats[chat_id]["model"] = model
+        if options is not None:
+             self.chats[chat_id]["options"] = options
+        if system is not None:
+             self.chats[chat_id]["system"] = system
              
         # Auto-generate title if it's the default "New Chat" and we have messages
         if self.chats[chat_id]["title"] == "New Chat" and messages:

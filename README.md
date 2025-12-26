@@ -5,10 +5,15 @@ A Gnome user interface to [Ollama](https://ollama.com)
 ## Description
 
 A GNOME user interface to Ollama. Written in Python.
+
 Supports multiple tabs of model responses to Ollama endpoint /api/generate and /api/chat
+
 Select "New generate response" to create a new generate tab using /api/generate.
+
 Select "New Chat" to create a new chat tab using /api/chat with previous messages so context is preserved.
+
 Each tab supports entering any host. Model selection options populated from host.
+
 Model selection, thinking, system prompt, statistics, logprobs, and other options (e.g. temperature)
 
 
@@ -27,12 +32,12 @@ Model selection, thinking, system prompt, statistics, logprobs, and other option
 
 ### Meson
 
-mkdir build
-meson setup build
-meson compile -C build
-meson install -C build
+1. mkdir build
+2. meson setup build
+3. meson compile -C build
+4. meson install -C build
 
-You can then run ./gnollama to execute the application.
+You can then run `gnollama` to execute the application.
 
 ## TODO
 

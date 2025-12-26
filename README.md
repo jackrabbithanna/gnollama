@@ -12,7 +12,7 @@ Select "New Response" to create a new generate tab using /api/generate.
 
 Select "New Chat" to create a new chat tab using /api/chat with previous messages so context is preserved.
 
-Support saving chats between sessions and a list of chats in a sidebar.
+Support saving chats and their options between sessions and a list of chats in a sidebar.
 
 Both tab types support selecting multiple images to pass to the model.
 
@@ -45,7 +45,7 @@ You can then run `gnollama` to execute the application.
 
 ## TODO
 
-Render response in GtkWebKit to support LaTeX and other formatting.
+Render responses in GtkWebKit to support LaTeX, code highlighting, and other formatting.
 
 UI Multi-lingual translations
 

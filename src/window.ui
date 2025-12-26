@@ -4,8 +4,8 @@
   <requires lib="Adw" version="1.0"/>
   <template class="GnollamaWindow" parent="AdwApplicationWindow">
     <property name="title" translatable="yes">Gnollama</property>
-    <property name="default-width">800</property>
-    <property name="default-height">600</property>
+    <property name="default-width">1000</property>
+    <property name="default-height">800</property>
     <property name="content">
       <object class="AdwToolbarView">
         <child type="top">
@@ -22,7 +22,7 @@
         </child>
         <property name="content">
           <object class="GtkPaned" id="main_paned">
-            <property name="position">250</property>
+            <property name="position">350</property>
             <property name="shrink-start-child">False</property>
             <property name="shrink-end-child">False</property>
             

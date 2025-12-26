@@ -1,10 +1,9 @@
 from gi.repository import Adw, Gtk, Gio, GLib, Gdk
 import threading
 import json
-import urllib.request
-import re
-import html
 import os
+from . import ollama
+from .utils import parse_markdown
 
 @Gtk.Template(resource_path='/com/github/jackrabbithanna/Gnollama/tab.ui')
 class GenerationTab(Gtk.Box):
@@ -114,22 +113,13 @@ class GenerationTab(Gtk.Box):
         thread.start()
 
     def fetch_models(self):
-        # Use local entry
         host = self.host_entry.get_text()
         if not host:
             return
-            
-        url = f"{host}/api/tags"
-        try:
-            with urllib.request.urlopen(url) as response:
-                result = json.loads(response.read().decode('utf-8'))
-                models = [model['name'] for model in result.get('models', [])]
-                if models:
-                    GLib.idle_add(self.update_model_dropdown, models)
-        except Exception as e:
-            print(f"Failed to fetch models: {e}")
-            # Optionally clear dropdown or show error?
-            # For now, just print.
+
+        models = ollama.fetch_models(host)
+        if models:
+            GLib.idle_add(self.update_model_dropdown, models)
 
     def update_model_dropdown(self, models):
         # Check if models have changed to avoid unnecessary updates
@@ -170,31 +160,7 @@ class GenerationTab(Gtk.Box):
         thread.daemon = True
         thread.start()
 
-    def parse_markdown(self, text):
-        # Escape HTML characters first
-        text = html.escape(text)
-        
-        # Headers: ### Header -> <span size="large" weight="bold">Header</span>
-        text = re.sub(r'^###\s+(.+)$', r'<span size="large" weight="bold">\1</span>', text, flags=re.MULTILINE)
-        text = re.sub(r'^##\s+(.+)$', r'<span size="x-large" weight="bold">\1</span>', text, flags=re.MULTILINE)
-        text = re.sub(r'^#\s+(.+)$', r'<span size="xx-large" weight="bold">\1</span>', text, flags=re.MULTILINE)
-        
-        # Bold: **text** -> <b>text</b>
-        text = re.sub(r'\*\*(.+?)\*\*', r'<b>\1</b>', text)
-        
-        # Italic: *text* -> <i>text</i>
-        text = re.sub(r'\*(.+?)\*', r'<i>\1</i>', text)
-        
-        # Inline code: `text` -> <tt>text</tt>
-        text = re.sub(r'`(.+?)`', r'<tt>\1</tt>', text)
-        
-        # Math blocks: \[...\] -> <tt>...</tt> (basic fallback)
-        text = re.sub(r'\\\[(.*?)\\\]', r'<tt>\1</tt>', text, flags=re.DOTALL)
-        
-        # Inline math: \(...\) -> <tt>...</tt>
-        text = re.sub(r'\\\((.*?)\\\)', r'<tt>\1</tt>', text)
-        
-        return text
+
 
     def add_message(self, text, sender="System"):
         # Container box for alignment and styling
@@ -210,7 +176,7 @@ class GenerationTab(Gtk.Box):
         label.set_selectable(True)
         
         # Parse markdown for display
-        markup = self.parse_markdown(text)
+        markup = parse_markdown(text)
         label.set_markup(markup)
         
         bubble.append(label)
@@ -260,7 +226,7 @@ class GenerationTab(Gtk.Box):
     def append_response_chunk(self, text):
         if self.current_response_label:
             self.current_response_raw_text += text
-            markup = self.parse_markdown(self.current_response_raw_text)
+            markup = parse_markdown(self.current_response_raw_text)
             self.current_response_label.set_markup(markup)
 
     def reset_thinking_state(self):
@@ -364,13 +330,11 @@ class GenerationTab(Gtk.Box):
         self.chat_box.append(label)
 
     def send_prompt_to_ollama(self, prompt, model_name):
-        # host = self.settings.get_string('ollama-host')
         host = self.host_entry.get_text()
-        url = f"{host}/api/generate"
         
         # Get thinking parameter
         thinking_item = self.thinking_dropdown.get_selected_item()
-        thinking_val = None # Default None
+        thinking_val = None 
         if thinking_item:
             thinking_str = thinking_item.get_string()
             if thinking_str == "Thinking":
@@ -386,30 +350,17 @@ class GenerationTab(Gtk.Box):
             elif thinking_str == "None":
                 thinking_val = None
 
-        data = {
-            "model": model_name,
-            "prompt": prompt,
-            "stream": True
-        }
-        
-        if thinking_val is not None:
-            data["thinking"] = thinking_val
-            
-        # Get system prompt
         system_prompt = self.system_prompt_entry.get_text().strip()
-        if system_prompt:
-            data["system"] = system_prompt
-
-        # Get logprobs parameters
+        
+        logprobs = False
+        top_logprobs = None
         if self.logprobs_check.get_active():
-            data["logprobs"] = True
+            logprobs = True
             top_logprobs_text = self.top_logprobs_entry.get_text().strip()
             if top_logprobs_text.isdigit():
-                data["top_logprobs"] = int(top_logprobs_text)
-                
-        # Get advanced options
+                top_logprobs = int(top_logprobs_text)
+
         options = {}
-        
         def add_option(entry, key, type_func):
             text = entry.get_text().strip()
             if text:
@@ -427,46 +378,46 @@ class GenerationTab(Gtk.Box):
         add_option(self.num_ctx_entry, 'num_ctx', int)
         add_option(self.num_predict_entry, 'num_predict', int)
         
-        # Stop sequence
         stop_text = self.stop_entry.get_text().strip()
         if stop_text:
             stops = [s.strip() for s in stop_text.split(',') if s.strip()]
             if stops:
                 options['stop'] = stops
-                
-        if options:
-            data['options'] = options
 
         GLib.idle_add(self.reset_thinking_state)
         GLib.idle_add(self.start_new_response_block, model_name)
         
         try:
-            req = urllib.request.Request(url, data=json.dumps(data).encode('utf-8'), headers={'Content-Type': 'application/json'})
-            with urllib.request.urlopen(req) as response:
-                for line in response:
-                    if line:
-                        try:
-                            json_obj = json.loads(line.decode('utf-8'))
-                            
-                            # Handle thinking
-                            thinking_fragment = json_obj.get('thinking', '')
-                            if thinking_fragment and thinking_val is not False and thinking_val is not None:
-                                GLib.idle_add(self.append_thinking, thinking_fragment)
-                                
-                            # Handle response
-                            response_fragment = json_obj.get('response', '')
-                            if response_fragment:
-                                GLib.idle_add(self.append_response_chunk, response_fragment)
-                                
-                            # Handle logprobs
-                            if "logprobs" in json_obj and json_obj["logprobs"]:
-                                 GLib.idle_add(self.append_logprobs, json_obj["logprobs"])
+            for json_obj in ollama.generate(
+                host=host,
+                model=model_name,
+                prompt=prompt,
+                system=system_prompt if system_prompt else None,
+                options=options if options else None,
+                thinking=thinking_val,
+                logprobs=logprobs,
+                top_logprobs=top_logprobs
+            ):
+                if "error" in json_obj:
+                    raise Exception(json_obj["error"])
 
-                            if json_obj.get('done'):
-                                if self.stats_check.get_active():
-                                    GLib.idle_add(self.show_stats, json_obj)
-                                break
-                        except ValueError:
-                            pass
+                # Handle thinking
+                thinking_fragment = json_obj.get('thinking', '')
+                if thinking_fragment and thinking_val is not False and thinking_val is not None:
+                     GLib.idle_add(self.append_thinking, thinking_fragment)
+                     
+                # Handle response
+                response_fragment = json_obj.get('response', '')
+                if response_fragment:
+                    GLib.idle_add(self.append_response_chunk, response_fragment)
+                    
+                # Handle logprobs
+                if "logprobs" in json_obj and json_obj["logprobs"]:
+                     GLib.idle_add(self.append_logprobs, json_obj["logprobs"])
+
+                if json_obj.get('done'):
+                    if self.stats_check.get_active():
+                        GLib.idle_add(self.show_stats, json_obj)
+                        
         except Exception as e:
             GLib.idle_add(self.add_message, f"\nError: {str(e)}\n", "System")

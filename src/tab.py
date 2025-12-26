@@ -1,9 +1,10 @@
-from gi.repository import Adw, Gtk, Gio, GLib, Gdk
+from gi.repository import Adw, Gtk, Gio, GLib, Gdk, GObject
 import threading
 import json
 import base64
 import os
 from . import ollama
+from .storage import ChatStorage
 from .utils import parse_markdown
 
 class GenerationStrategy:
@@ -24,9 +25,11 @@ class GenerationStrategy:
         pass
 
 class ChatStrategy:
-    def __init__(self):
-        self.history = []
+    def __init__(self, storage, chat_id=None, initial_history=None):
+        self.history = initial_history if initial_history else []
         self.current_response_full_text = ""
+        self.chat_id = chat_id
+        self.storage = storage
 
     def process(self, tab, **kwargs):
         prompt = kwargs['prompt']
@@ -62,11 +65,28 @@ class ChatStrategy:
 
     def on_response_complete(self, tab, model_name):
         self.history.append({"role": "assistant", "content": self.current_response_full_text})
+        if self.chat_id:
+            self.storage.save_chat(self.chat_id, self.history, model=model_name)
+            
+            def update_ui():
+                # Update tab title if still generic
+                chat_data = self.storage.get_chat(self.chat_id)
+                if chat_data and tab.tab_label:
+                    new_title = chat_data.get('title', 'Chat')
+                    tab.tab_label.set_label(new_title)
+                    tab.emit("chat-updated", self.chat_id, new_title)
+                return False
+                
+            GLib.idle_add(update_ui)
 
 
 @Gtk.Template(resource_path='/com/github/jackrabbithanna/Gnollama/tab.ui')
 class GenerationTab(Gtk.Box):
     __gtype_name__ = 'GenerationTab'
+    
+    __gsignals__ = {
+        'chat-updated': (GObject.SignalFlags.RUN_FIRST, None, (str, str)),
+    }
 
     entry = Gtk.Template.Child()
     chat_box = Gtk.Template.Child()
@@ -94,13 +114,16 @@ class GenerationTab(Gtk.Box):
     num_predict_entry = Gtk.Template.Child()
     stop_entry = Gtk.Template.Child()
 
-    def __init__(self, tab_label=None, mode='generate', **kwargs):
+    def __init__(self, tab_label=None, mode='generate', chat_id=None, initial_history=None, storage=None, **kwargs):
         super().__init__(**kwargs)
         self.tab_label = tab_label
         self.settings = Gio.Settings.new('com.github.jackrabbithanna.Gnollama')
         
         if mode == 'chat':
-            self.strategy = ChatStrategy()
+            # Ensure storage is provided for chat mode
+            if not storage:
+                storage = ChatStorage()
+            self.strategy = ChatStrategy(storage, chat_id=chat_id, initial_history=initial_history)
         else:
             self.strategy = GenerationStrategy()
         
@@ -149,6 +172,10 @@ class GenerationTab(Gtk.Box):
         
         # Initial model fetch
         self.start_model_fetch_thread()
+        
+        # Load initial history logic
+        if mode == 'chat' and initial_history:
+             self.load_initial_history(initial_history)
 
     def on_attach_clicked(self, widget):
         file_chooser = Gtk.FileChooserNative.new(
@@ -465,6 +492,19 @@ class GenerationTab(Gtk.Box):
         label.set_halign(Gtk.Align.START)
         label.add_css_class("dim-label")
         self.chat_box.append(label)
+
+        label.add_css_class("dim-label")
+        self.chat_box.append(label)
+
+    def load_initial_history(self, history):
+        for msg in history:
+            role = msg.get('role')
+            content = msg.get('content')
+            if role == 'user':
+                self.add_message(content, sender="You")
+            elif role == 'assistant':
+                # Simplified rendering for history, ideally re-use response block logic but formatted
+                self.add_message(content, sender="Ollama")
 
     def process_request(self, prompt, model_name, images=None):
         host = self.host_entry.get_text()

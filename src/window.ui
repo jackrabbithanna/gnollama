@@ -21,9 +21,66 @@
           </object>
         </child>
         <property name="content">
-          <object class="GtkNotebook" id="notebook">
-            <property name="scrollable">True</property>
-            <property name="enable-popup">True</property>
+          <object class="AdwFlap" id="flap">
+            <property name="flap-position">start</property>
+            <property name="locked">True</property>
+            <property name="reveal-flap">True</property>
+            <property name="fold-threshold-policy">minimum</property>
+            <property name="fold-duration">250</property>
+            <child type="flap">
+              <object class="GtkBox">
+                <property name="orientation">vertical</property>
+                <property name="width-request">250</property>
+                <property name="hexpand">False</property>
+                
+                <child>
+                   <object class="GtkHeaderBar">
+                     <property name="show-title-buttons">False</property>
+                     <child type="start">
+                        <object class="GtkLabel">
+                           <property name="label" translatable="yes">Chats</property>
+                           <style>
+                              <class name="title"/>
+                           </style>
+                        </object>
+                     </child>
+                     <child type="title">
+                        <object class="GtkLabel"/>
+                     </child>
+                   </object>
+                </child>
+
+                <child>
+                  <object class="GtkSeparator">
+                    <property name="orientation">horizontal</property>
+                  </object>
+                </child>
+
+                <child>
+                  <object class="GtkScrolledWindow">
+                    <property name="vexpand">True</property>
+                    <property name="hscrollbar-policy">never</property>
+                    <child>
+                      <object class="GtkListBox" id="history_list">
+                        <property name="selection-mode">single</property>
+                        <style>
+                          <class name="navigation-sidebar"/>
+                        </style>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child type="separator">
+              <object class="GtkSeparator"/>
+            </child>
+            <child type="content">
+              <object class="GtkNotebook" id="notebook">
+                <property name="scrollable">True</property>
+                <property name="enable-popup">True</property>
+              </object>
+            </child>
           </object>
         </property>
       </object>

@@ -1,6 +1,7 @@
 from gi.repository import Adw, Gtk, Gio, GLib, Gdk
 import threading
 import json
+import base64
 import os
 from . import ollama
 from .utils import parse_markdown
@@ -15,7 +16,8 @@ class GenerationStrategy:
             options=kwargs['options'],
             thinking=kwargs['thinking'],
             logprobs=kwargs['logprobs'],
-            top_logprobs=kwargs['top_logprobs']
+            top_logprobs=kwargs['top_logprobs'],
+            images=kwargs['images']
         )
     
     def on_response_complete(self, tab, model_name):
@@ -51,7 +53,8 @@ class ChatStrategy:
             options=kwargs['options'],
             thinking=kwargs['thinking'],
             logprobs=kwargs['logprobs'],
-            top_logprobs=kwargs['top_logprobs']
+            top_logprobs=kwargs['top_logprobs'],
+            images=kwargs['images']
         )
 
     def append_response_chunk(self, text):
@@ -75,6 +78,11 @@ class GenerationTab(Gtk.Box):
     logprobs_check = Gtk.Template.Child()
     top_logprobs_entry = Gtk.Template.Child()
     host_entry = Gtk.Template.Child()
+    
+    # Image Attachment
+    attach_button = Gtk.Template.Child()
+    image_label = Gtk.Template.Child()
+    clear_image_button = Gtk.Template.Child()
     
     # Advanced Options
     seed_entry = Gtk.Template.Child()
@@ -111,6 +119,12 @@ class GenerationTab(Gtk.Box):
         self.num_predict_entry.connect('activate', self.on_send_clicked)
         self.stop_entry.connect('activate', self.on_send_clicked)
         
+        # Connect image attachment
+        self.attach_button.connect('clicked', self.on_attach_clicked)
+        self.clear_image_button.connect('clicked', self.on_clear_image_clicked)
+        
+        self.selected_image_path = None
+        
         # Initialize host entry
         default_host = self.settings.get_string("ollama-host")
         if not default_host:
@@ -135,6 +149,40 @@ class GenerationTab(Gtk.Box):
         
         # Initial model fetch
         self.start_model_fetch_thread()
+
+    def on_attach_clicked(self, widget):
+        file_chooser = Gtk.FileChooserNative.new(
+            "Open Image",
+            self.get_native(),
+            Gtk.FileChooserAction.OPEN,
+            "Open",
+            "Cancel"
+        )
+        
+        filter_image = Gtk.FileFilter()
+        filter_image.set_name("Images")
+        filter_image.add_mime_type("image/png")
+        filter_image.add_mime_type("image/jpeg")
+        filter_image.add_mime_type("image/webp")
+        file_chooser.add_filter(filter_image)
+        
+        file_chooser.connect("response", self.on_file_chooser_response)
+        file_chooser.show()
+
+    def on_file_chooser_response(self, dialog, response):
+        if response == Gtk.ResponseType.ACCEPT:
+            file = dialog.get_file()
+            self.selected_image_path = file.get_path()
+            self.image_label.set_text(os.path.basename(self.selected_image_path))
+            self.image_label.remove_css_class("dim-label")
+            self.clear_image_button.set_visible(True)
+        dialog.destroy()
+
+    def on_clear_image_clicked(self, widget):
+        self.selected_image_path = None
+        self.image_label.set_text("No image selected")
+        self.image_label.add_css_class("dim-label")
+        self.clear_image_button.set_visible(False)
 
     def on_host_changed(self, widget):
         # Debounce
@@ -220,7 +268,21 @@ class GenerationTab(Gtk.Box):
         if selected_item:
             model_name = selected_item.get_string()
 
-        thread = threading.Thread(target=self.process_request, args=(prompt, model_name))
+        # Handle image
+        images = []
+        if self.selected_image_path:
+            try:
+                with open(self.selected_image_path, "rb") as image_file:
+                    encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
+                    images.append(encoded_string)
+            except Exception as e:
+                self.add_message(f"Error loading image: {e}", "System")
+                return
+            
+            # Clear image after reading
+            self.on_clear_image_clicked(None)
+
+        thread = threading.Thread(target=self.process_request, args=(prompt, model_name, images))
         thread.daemon = True
         thread.start()
 
@@ -395,7 +457,7 @@ class GenerationTab(Gtk.Box):
         label.add_css_class("dim-label")
         self.chat_box.append(label)
 
-    def process_request(self, prompt, model_name):
+    def process_request(self, prompt, model_name, images=None):
         host = self.host_entry.get_text()
         
         # Get thinking parameter
@@ -463,7 +525,8 @@ class GenerationTab(Gtk.Box):
                 options=options if options else None,
                 thinking=thinking_val,
                 logprobs=logprobs,
-                top_logprobs=top_logprobs
+                top_logprobs=top_logprobs,
+                images=images
             ):
                 if "error" in json_obj:
                     raise Exception(json_obj["error"])

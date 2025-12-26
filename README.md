@@ -41,7 +41,7 @@ You can then run `gnollama` to execute the application.
 
 ## TODO
 
-Render response in GtkWebKit to support LaTeX and otherformatting.
+Render response in GtkWebKit to support LaTeX and other formatting.
 
 Support image uploads and pass with the API calls
 

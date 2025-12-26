@@ -48,7 +48,7 @@ class GnollamaWindow(Adw.ApplicationWindow):
         self.load_css()
         
         # Create initial tab
-        self.new_tab()
+        self.new_chat_tab()
         
     def load_css(self):
         css_provider = Gtk.CssProvider()
@@ -99,6 +99,10 @@ class GnollamaWindow(Adw.ApplicationWindow):
     def new_tab(self):
         # Create tab label widget
         tab_label_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
+        
+        icon = Gtk.Image.new_from_icon_name("edit-find-symbolic")
+        tab_label_box.append(icon)
+        
         tab_title = Gtk.Label(label="New Response")
         tab_label_box.append(tab_title)
         
@@ -124,6 +128,10 @@ class GnollamaWindow(Adw.ApplicationWindow):
     def new_chat_tab(self):
         # Create tab label widget
         tab_label_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
+        
+        icon = Gtk.Image.new_from_icon_name("network-server-symbolic")
+        tab_label_box.append(icon)
+        
         tab_title = Gtk.Label(label="New Chat")
         tab_label_box.append(tab_title)
         

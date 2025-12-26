@@ -36,7 +36,7 @@
         <attribute name="action">win.new_chat_tab</attribute>
       </item>
       <item>
-        <attribute name="label" translatable="yes">_New generate response</attribute>
+        <attribute name="label" translatable="yes">_New Response</attribute>
         <attribute name="action">win.new_tab</attribute>
       </item>
     </section>

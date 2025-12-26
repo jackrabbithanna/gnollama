@@ -8,7 +8,7 @@ A GNOME user interface to Ollama. Written in Python.
 
 Supports multiple tabs of model responses to Ollama endpoint /api/generate and /api/chat
 
-Select "New generate response" to create a new generate tab using /api/generate.
+Select "New Response" to create a new generate tab using /api/generate.
 
 Select "New Chat" to create a new chat tab using /api/chat with previous messages so context is preserved.
 

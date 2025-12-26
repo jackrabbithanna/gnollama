@@ -33,6 +33,7 @@ class GenerationTab(Gtk.Box):
     def __init__(self, tab_label=None, **kwargs):
         super().__init__(**kwargs)
         self.tab_label = tab_label
+        self.settings = Gio.Settings.new('com.github.jackrabbithanna.Gnollama')
         
         self.send_button.connect('clicked', self.on_send_clicked)
         self.entry.connect('activate', self.on_send_clicked)
@@ -50,7 +51,9 @@ class GenerationTab(Gtk.Box):
         self.stop_entry.connect('activate', self.on_send_clicked)
         
         # Initialize host entry
-        default_host = "http://localhost:11434"
+        default_host = self.settings.get_string("ollama-host")
+        if not default_host:
+             default_host = "http://localhost:11434"
         self.host_entry.set_text(default_host)
         
         # Connect host entry changed signal

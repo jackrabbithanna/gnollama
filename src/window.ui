@@ -4,8 +4,8 @@
   <requires lib="Adw" version="1.0"/>
   <template class="GnollamaWindow" parent="AdwApplicationWindow">
     <property name="title" translatable="yes">Gnollama</property>
-    <property name="default-width">800</property>
-    <property name="default-height">600</property>
+    <property name="default-width">1000</property>
+    <property name="default-height">800</property>
     <property name="content">
       <object class="AdwToolbarView">
         <child type="top">
@@ -21,9 +21,61 @@
           </object>
         </child>
         <property name="content">
-          <object class="GtkNotebook" id="notebook">
-            <property name="scrollable">True</property>
-            <property name="enable-popup">True</property>
+          <object class="GtkPaned" id="main_paned">
+            <property name="position">350</property>
+            <property name="shrink-start-child">False</property>
+            <property name="shrink-end-child">False</property>
+            
+            <child>
+              <object class="GtkBox">
+                <property name="orientation">vertical</property>
+                <property name="hexpand">False</property>
+                
+                <child>
+                   <object class="GtkHeaderBar">
+                     <property name="show-title-buttons">False</property>
+                     <child type="start">
+                        <object class="GtkLabel">
+                           <property name="label" translatable="yes">Chats</property>
+                           <style>
+                              <class name="title"/>
+                           </style>
+                        </object>
+                     </child>
+                     <child type="title">
+                        <object class="GtkLabel"/>
+                     </child>
+                   </object>
+                </child>
+
+                <child>
+                  <object class="GtkSeparator">
+                    <property name="orientation">horizontal</property>
+                  </object>
+                </child>
+
+                <child>
+                  <object class="GtkScrolledWindow">
+                    <property name="vexpand">True</property>
+                    <property name="hscrollbar-policy">never</property>
+                    <child>
+                      <object class="GtkListBox" id="history_list">
+                        <property name="selection-mode">single</property>
+                        <style>
+                          <class name="navigation-sidebar"/>
+                        </style>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkNotebook" id="notebook">
+                <property name="scrollable">True</property>
+                <property name="enable-popup">True</property>
+              </object>
+            </child>
           </object>
         </property>
       </object>

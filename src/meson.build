@@ -33,6 +33,7 @@ gnollama_sources = [
   'tab.py',
   'ollama.py',
   'utils.py',
+  'storage.py',
 ]
 
 install_data(gnollama_sources, install_dir: moduledir)

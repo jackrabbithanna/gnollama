@@ -1,9 +1,10 @@
-from gi.repository import Adw, Gtk, Gio, GLib, Gdk
+from gi.repository import Adw, Gtk, Gio, GLib, Gdk, GObject
 import threading
 import json
 import base64
 import os
 from . import ollama
+from .storage import ChatStorage
 from .utils import parse_markdown
 
 class GenerationStrategy:
@@ -24,13 +25,64 @@ class GenerationStrategy:
         pass
 
 class ChatStrategy:
-    def __init__(self):
-        self.history = []
+    def __init__(self, storage, chat_id=None, initial_history=None):
+        self.history = initial_history if initial_history else []
         self.current_response_full_text = ""
+        self.chat_id = chat_id
+        self.storage = storage
+        self.current_thinking_full_text = ""
 
+    def append_thinking(self, text):
+        self.current_thinking_full_text += text
+
+    def append_response_chunk(self, text):
+        self.current_response_full_text += text
+
+    def on_response_complete(self, tab, model_name):
+        msg = {
+            "role": "assistant", 
+            "content": self.current_response_full_text
+        }
+        if self.current_thinking_full_text:
+            msg["thinking_content"] = self.current_thinking_full_text
+            
+        self.history.append(msg)
+        
+        if self.chat_id:
+            # We need to capture the current state.
+            # Ideally this is passed in, but we can rely on what was passed to process() 
+            # if we stored it, OR validly assumed the tab is largely unchanged.
+            # But process() stores state on self now.
+            
+            options = getattr(self, 'current_options', None) or {}
+            system = getattr(self, 'current_system', None)
+            
+            # Save "thinking" setting if present
+            thinking_val = getattr(self, 'current_thinking_val', None)
+            if thinking_val is not None:
+                options['thinking_val'] = thinking_val
+            
+            self.storage.save_chat(self.chat_id, self.history, model=model_name, options=options, system=system)
+            
+            def update_ui():
+                # Update tab title if still generic
+                chat_data = self.storage.get_chat(self.chat_id)
+                if chat_data and tab.tab_label:
+                    new_title = chat_data.get('title', 'Chat')
+                    tab.tab_label.set_label(new_title)
+                    tab.emit("chat-updated", self.chat_id, new_title)
+                return False
+                
+            GLib.idle_add(update_ui)
+            
     def process(self, tab, **kwargs):
         prompt = kwargs['prompt']
         system = kwargs['system']
+        
+        # Store for saving later
+        self.current_options = kwargs.get('options')
+        self.current_system = system
+        self.current_thinking_val = kwargs.get('thinking')
         
         # Build messages
         messages = []
@@ -45,6 +97,7 @@ class ChatStrategy:
         
         # Reset current response accumulator
         self.current_response_full_text = ""
+        self.current_thinking_full_text = ""
 
         return ollama.chat(
             host=kwargs['host'],
@@ -57,16 +110,14 @@ class ChatStrategy:
             images=kwargs['images']
         )
 
-    def append_response_chunk(self, text):
-        self.current_response_full_text += text
-
-    def on_response_complete(self, tab, model_name):
-        self.history.append({"role": "assistant", "content": self.current_response_full_text})
-
 
 @Gtk.Template(resource_path='/com/github/jackrabbithanna/Gnollama/tab.ui')
 class GenerationTab(Gtk.Box):
     __gtype_name__ = 'GenerationTab'
+    
+    __gsignals__ = {
+        'chat-updated': (GObject.SignalFlags.RUN_FIRST, None, (str, str)),
+    }
 
     entry = Gtk.Template.Child()
     chat_box = Gtk.Template.Child()
@@ -94,13 +145,16 @@ class GenerationTab(Gtk.Box):
     num_predict_entry = Gtk.Template.Child()
     stop_entry = Gtk.Template.Child()
 
-    def __init__(self, tab_label=None, mode='generate', **kwargs):
+    def __init__(self, tab_label=None, mode='generate', chat_id=None, initial_history=None, storage=None, **kwargs):
         super().__init__(**kwargs)
         self.tab_label = tab_label
         self.settings = Gio.Settings.new('com.github.jackrabbithanna.Gnollama')
         
         if mode == 'chat':
-            self.strategy = ChatStrategy()
+            # Ensure storage is provided for chat mode
+            if not storage:
+                storage = ChatStorage()
+            self.strategy = ChatStrategy(storage, chat_id=chat_id, initial_history=initial_history)
         else:
             self.strategy = GenerationStrategy()
         
@@ -149,6 +203,18 @@ class GenerationTab(Gtk.Box):
         
         # Initial model fetch
         self.start_model_fetch_thread()
+        
+        # Load initial history logic
+        # Load initial history logic
+        if mode == 'chat':
+            if chat_id:
+                # Load settings from storage
+                chat_data = storage.get_chat(chat_id)
+                if chat_data:
+                    self.load_chat_settings(chat_data)
+            
+            if initial_history:
+                 self.load_initial_history(initial_history)
 
     def on_attach_clicked(self, widget):
         file_chooser = Gtk.FileChooserNative.new(
@@ -226,6 +292,46 @@ class GenerationTab(Gtk.Box):
              self.thinking_dropdown.set_selected(0) # None
         else:
              self.thinking_dropdown.set_selected(1) # No thinking (default false)
+             
+        # Restore pending if any
+        if hasattr(self, 'pending_thinking_val'):
+            self.apply_pending_thinking()
+             
+    def apply_pending_thinking(self):
+        if not hasattr(self, 'pending_thinking_val'):
+            return
+            
+        # Check if we are waiting for a specific model
+        if hasattr(self, 'pending_model_selection') and self.pending_model_selection:
+             current_model_name = ""
+             item = self.model_dropdown.get_selected_item()
+             if item:
+                  current_model_name = item.get_string()
+             
+             # If current model is not the one we want, and the one we want IS in the list (or we haven't checked yet), 
+             # we should wait. 
+             # Simpler: If pending_model_selection is set, ONLY apply if current matches.
+             if current_model_name != self.pending_model_selection:
+                  return
+            
+        val = self.pending_thinking_val
+        dropdown_model = self.thinking_dropdown.get_model()
+        if dropdown_model:
+             n_items = dropdown_model.get_n_items()
+             for i in range(n_items):
+                 item_str = dropdown_model.get_string(i)
+                 match = False
+                 if val is True and item_str == "Thinking": match = True
+                 elif val is False and item_str == "No thinking": match = True
+                 elif val == "low" and item_str == "Low": match = True
+                 elif val == "medium" and item_str == "Medium": match = True
+                 elif val == "high" and item_str == "High": match = True
+                 elif val is None and item_str == "None": match = True
+                 
+                 if match:
+                     self.thinking_dropdown.set_selected(i)
+                     del self.pending_thinking_val
+                     break
 
     def start_model_fetch_thread(self):
         thread = threading.Thread(target=self.fetch_models)
@@ -256,6 +362,14 @@ class GenerationTab(Gtk.Box):
             self.model_dropdown.set_selected(0)
             # Trigger thinking update for initial selection
             self.update_thinking_options(models[0])
+            
+        # Apply pending model selection if any
+        if hasattr(self, 'pending_model_selection') and self.pending_model_selection:
+            for i, m in enumerate(models):
+                if m == self.pending_model_selection:
+                    self.model_dropdown.set_selected(i)
+                    self.pending_model_selection = None
+                    break
 
     def on_send_clicked(self, widget):
         prompt = self.entry.get_text()
@@ -399,6 +513,9 @@ class GenerationTab(Gtk.Box):
 
         current_text = self.active_thinking_label.get_label()
         self.active_thinking_label.set_label(current_text + text)
+        
+        if hasattr(self.strategy, 'append_thinking'):
+            self.strategy.append_thinking(text)
 
     def append_logprobs(self, logprobs_data):
         if self.active_logprobs_label is None:
@@ -466,6 +583,44 @@ class GenerationTab(Gtk.Box):
         label.add_css_class("dim-label")
         self.chat_box.append(label)
 
+        label.add_css_class("dim-label")
+        self.chat_box.append(label)
+
+    def load_initial_history(self, history):
+        for msg in history:
+            role = msg.get('role')
+            content = msg.get('content')
+            thinking_content = msg.get('thinking_content')
+            
+            if role == 'user':
+                self.add_message(content, sender="You")
+            elif role == 'assistant':
+                # Reconstruct thinking if present
+                if thinking_content:
+                    # Manually add thinking bubble
+                    expander = Gtk.Expander(label="See thinking")
+                    expander.set_hexpand(True)
+                    expander.set_halign(Gtk.Align.FILL)
+                    
+                    inner_label = Gtk.Label()
+                    inner_label.set_wrap(True)
+                    inner_label.set_xalign(0)
+                    inner_label.set_selectable(True)
+                    inner_label.set_hexpand(True)
+                    inner_label.set_halign(Gtk.Align.FILL)
+                    inner_label.add_css_class("thinking-text")
+                    inner_label.set_label(thinking_content)
+                    
+                    expander.set_child(inner_label)
+                    
+                    # Container
+                    container = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+                    container.set_halign(Gtk.Align.START)
+                    container.append(expander)
+                    self.chat_box.append(container)
+
+                self.add_message(content, sender="Ollama")
+
     def process_request(self, prompt, model_name, images=None):
         host = self.host_entry.get_text()
         
@@ -497,6 +652,7 @@ class GenerationTab(Gtk.Box):
             if top_logprobs_text.isdigit():
                 top_logprobs = int(top_logprobs_text)
 
+    def get_options_from_ui(self):
         options = {}
         def add_option(entry, key, type_func):
             text = entry.get_text().strip()
@@ -520,10 +676,90 @@ class GenerationTab(Gtk.Box):
             stops = [s.strip() for s in stop_text.split(',') if s.strip()]
             if stops:
                 options['stop'] = stops
-
-        GLib.idle_add(self.reset_thinking_state)
-        GLib.idle_add(self.start_new_response_block, model_name)
+                
+        # Helper options
+        options['stats'] = self.stats_check.get_active()
         
+        return options
+
+    def load_chat_settings(self, chat_data):
+        # Model
+        model = chat_data.get('model')
+        model = chat_data.get('model')
+        model = chat_data.get('model')
+        if model:
+            # We can't easily select it if the dropdown isn't populated yet,
+            # but we can try setting the active item by string if available, 
+            # or just rely on the fetch thread to eventually sync.
+            # Actually, `fetch_models` updates the dropdown. We can hook into that or just set a "pending" selection.
+            # For now, let's just wait for the thread. But maybe we can bias the selection.
+            # Simplest hack: Store it and apply it when model list loads
+            self.pending_model_selection = model
+
+        # System Prompt
+        system = chat_data.get('system')
+        if system is not None:
+            self.system_prompt_entry.set_text(system)
+
+        # Options
+        options = chat_data.get('options', {})
+        if options:
+            if 'thinking_val' in options:
+                # Restore thinking selection
+                val = options['thinking_val']
+                self.pending_thinking_val = val
+                
+                # Try to apply immediately if model populated
+                self.apply_pending_thinking()
+            
+            if 'seed' in options: self.seed_entry.set_text(str(options['seed']))
+            if 'temperature' in options: self.temperature_entry.set_text(str(options['temperature']))
+            if 'top_k' in options: self.top_k_entry.set_text(str(options['top_k']))
+            if 'top_p' in options: self.top_p_entry.set_text(str(options['top_p']))
+            if 'min_p' in options: self.min_p_entry.set_text(str(options['min_p']))
+            if 'num_ctx' in options: self.num_ctx_entry.set_text(str(options['num_ctx']))
+            if 'num_predict' in options: self.num_predict_entry.set_text(str(options['num_predict']))
+            if 'stop' in options: self.stop_entry.set_text(", ".join(options['stop']))
+            
+            # Stats check
+            if 'stats' in options:
+                self.stats_check.set_active(options['stats'])
+
+    def process_request(self, prompt, model_name, images=None):
+        host = self.host_entry.get_text()
+        
+        # Get thinking parameter
+        thinking_item = self.thinking_dropdown.get_selected_item()
+        thinking_val = None 
+        if thinking_item:
+            thinking_str = thinking_item.get_string()
+            if thinking_str == "Thinking":
+                thinking_val = True
+            elif thinking_str == "No thinking":
+                thinking_val = False
+            elif thinking_str == "Low":
+                thinking_val = "low"
+            elif thinking_str == "Medium":
+                thinking_val = "medium"
+            elif thinking_str == "High":
+                thinking_val = "high"
+            elif thinking_str == "None":
+                thinking_val = None
+
+        system_prompt = self.system_prompt_entry.get_text().strip()
+        
+        logprobs = False
+        top_logprobs = None
+        if self.logprobs_check.get_active():
+            logprobs = True
+            top_logprobs_text = self.top_logprobs_entry.get_text().strip()
+            if top_logprobs_text.isdigit():
+                top_logprobs = int(top_logprobs_text)
+
+        options = self.get_options_from_ui()
+
+        GLib.idle_add(self.start_new_response_block, model_name)
+
         try:
             for json_obj in self.strategy.process(
                 self,
@@ -539,7 +775,7 @@ class GenerationTab(Gtk.Box):
             ):
                 if "error" in json_obj:
                     raise Exception(json_obj["error"])
-
+                
                 # Handle message response (for chat endpoint)
                 if 'message' in json_obj:
                     content = json_obj['message'].get('content', '')
@@ -553,7 +789,11 @@ class GenerationTab(Gtk.Box):
 
                 # Handle thinking
                 thinking_fragment = json_obj.get('thinking', '')
-                if thinking_fragment and thinking_val is not False and thinking_val is not None:
+                 # Check nested thinking in message (common in chat endpoint)
+                if not thinking_fragment and 'message' in json_obj:
+                    thinking_fragment = json_obj['message'].get('thinking', '')
+
+                if thinking_fragment:
                      GLib.idle_add(self.append_thinking, thinking_fragment)
                         
                 # Handle logprobs

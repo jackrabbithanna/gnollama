@@ -39,6 +39,10 @@ class GnollamaWindow(Adw.ApplicationWindow):
         action = Gio.SimpleAction.new("new_tab", None)
         action.connect("activate", self.on_new_tab)
         self.add_action(action)
+
+        action_chat = Gio.SimpleAction.new("new_chat_tab", None)
+        action_chat.connect("activate", self.on_new_chat_tab)
+        self.add_action(action_chat)
         
         # Load CSS
         self.load_css()
@@ -88,8 +92,36 @@ class GnollamaWindow(Adw.ApplicationWindow):
         
     def on_new_tab(self, action, param):
         self.new_tab()
+
+    def on_new_chat_tab(self, action, param):
+        self.new_chat_tab()
         
     def new_tab(self):
+        # Create tab label widget
+        tab_label_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
+        tab_title = Gtk.Label(label="New Response")
+        tab_label_box.append(tab_title)
+        
+        close_button = Gtk.Button.new_from_icon_name("window-close-symbolic")
+        close_button.add_css_class("flat")
+        close_button.set_valign(Gtk.Align.CENTER)
+        tab_label_box.append(close_button)
+        
+        tab = GenerationTab(tab_title, mode='generate')
+        
+        # Add to notebook
+        page_num = self.notebook.append_page(tab, tab_label_box)
+        self.notebook.set_current_page(page_num)
+        self.notebook.set_tab_reorderable(tab, True)
+        self.notebook.set_tab_detachable(tab, True)
+        
+        # Connect close button
+        close_button.connect("clicked", lambda btn: self.close_tab(tab))
+        
+        # Show the tab
+        tab.set_visible(True)
+
+    def new_chat_tab(self):
         # Create tab label widget
         tab_label_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
         tab_title = Gtk.Label(label="New Chat")
@@ -100,7 +132,7 @@ class GnollamaWindow(Adw.ApplicationWindow):
         close_button.set_valign(Gtk.Align.CENTER)
         tab_label_box.append(close_button)
         
-        tab = GenerationTab(tab_title)
+        tab = GenerationTab(tab_title, mode='chat')
         
         # Add to notebook
         page_num = self.notebook.append_page(tab, tab_label_box)

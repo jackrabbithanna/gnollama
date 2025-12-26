@@ -21,16 +21,14 @@
           </object>
         </child>
         <property name="content">
-          <object class="AdwFlap" id="flap">
-            <property name="flap-position">start</property>
-            <property name="locked">True</property>
-            <property name="reveal-flap">True</property>
-            <property name="fold-threshold-policy">minimum</property>
-            <property name="fold-duration">250</property>
-            <child type="flap">
+          <object class="GtkPaned" id="main_paned">
+            <property name="position">250</property>
+            <property name="shrink-start-child">False</property>
+            <property name="shrink-end-child">False</property>
+            
+            <child>
               <object class="GtkBox">
                 <property name="orientation">vertical</property>
-                <property name="width-request">250</property>
                 <property name="hexpand">False</property>
                 
                 <child>
@@ -72,10 +70,7 @@
                 </child>
               </object>
             </child>
-            <child type="separator">
-              <object class="GtkSeparator"/>
-            </child>
-            <child type="content">
+            <child>
               <object class="GtkNotebook" id="notebook">
                 <property name="scrollable">True</property>
                 <property name="enable-popup">True</property>

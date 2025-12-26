@@ -62,7 +62,6 @@ class ChatStrategy:
             if thinking_val is not None:
                 options['thinking_val'] = thinking_val
             
-            print(f"DEBUG: Saving chat {self.chat_id}. Options: {options}, System: {system}")
             self.storage.save_chat(self.chat_id, self.history, model=model_name, options=options, system=system)
             
             def update_ui():
@@ -289,7 +288,6 @@ class GenerationTab(Gtk.Box):
         self.thinking_dropdown.set_model(string_list)
         
         # Set default
-        print(f"DEBUG: update_thinking_options for {model_name}. Defaulting selection.")
         if model_name.startswith("gpt-oss"):
              self.thinking_dropdown.set_selected(0) # None
         else:
@@ -314,14 +312,12 @@ class GenerationTab(Gtk.Box):
              # we should wait. 
              # Simpler: If pending_model_selection is set, ONLY apply if current matches.
              if current_model_name != self.pending_model_selection:
-                  print(f"DEBUG: Skipping apply_pending_thinking for {current_model_name} because waiting for {self.pending_model_selection}")
                   return
             
         val = self.pending_thinking_val
         dropdown_model = self.thinking_dropdown.get_model()
         if dropdown_model:
              n_items = dropdown_model.get_n_items()
-             print(f"DEBUG: apply_pending_thinking. Val: {val}, Items: {n_items}")
              for i in range(n_items):
                  item_str = dropdown_model.get_string(i)
                  match = False
@@ -332,11 +328,8 @@ class GenerationTab(Gtk.Box):
                  elif val == "high" and item_str == "High": match = True
                  elif val is None and item_str == "None": match = True
                  
-                 print(f"DEBUG: Item {i}: '{item_str}' vs Val: {val} -> Match: {match}")
-                 
                  if match:
                      self.thinking_dropdown.set_selected(i)
-                     print(f"DEBUG: Selected index {i}")
                      del self.pending_thinking_val
                      break
 
@@ -366,14 +359,12 @@ class GenerationTab(Gtk.Box):
         self.model_dropdown.set_model(string_list)
         # Select first model by default if available and nothing selected
         if models and self.model_dropdown.get_selected() == Gtk.INVALID_LIST_POSITION:
-            print("DEBUG: Setting default model selection (0)")
             self.model_dropdown.set_selected(0)
             # Trigger thinking update for initial selection
             self.update_thinking_options(models[0])
             
         # Apply pending model selection if any
         if hasattr(self, 'pending_model_selection') and self.pending_model_selection:
-            print(f"DEBUG: Applying pending model selection: {self.pending_model_selection}")
             for i, m in enumerate(models):
                 if m == self.pending_model_selection:
                     self.model_dropdown.set_selected(i)
@@ -692,8 +683,8 @@ class GenerationTab(Gtk.Box):
         return options
 
     def load_chat_settings(self, chat_data):
-        print(f"DEBUG: Loading chat settings. Options: {chat_data.get('options')}, System: {chat_data.get('system')}")
         # Model
+        model = chat_data.get('model')
         model = chat_data.get('model')
         model = chat_data.get('model')
         if model:
@@ -766,13 +757,8 @@ class GenerationTab(Gtk.Box):
                 top_logprobs = int(top_logprobs_text)
 
         options = self.get_options_from_ui()
-        print(f"DEBUG: process_request gathered options: {options}, thinking: {thinking_val}, system: {system_prompt}")
 
         GLib.idle_add(self.start_new_response_block, model_name)
-        
-        # Reset debug flag
-        if hasattr(self, '_debug_first_chunk_printed'):
-             del self._debug_first_chunk_printed
 
         try:
             for json_obj in self.strategy.process(
@@ -790,11 +776,6 @@ class GenerationTab(Gtk.Box):
                 if "error" in json_obj:
                     raise Exception(json_obj["error"])
                 
-                # Debug first chunk to see structure
-                if not hasattr(self, '_debug_first_chunk_printed'):
-                     print(f"DEBUG: Rx Chunk: {json_obj}")
-                     self._debug_first_chunk_printed = True
-
                 # Handle message response (for chat endpoint)
                 if 'message' in json_obj:
                     content = json_obj['message'].get('content', '')
@@ -813,7 +794,6 @@ class GenerationTab(Gtk.Box):
                     thinking_fragment = json_obj['message'].get('thinking', '')
 
                 if thinking_fragment:
-                     # print(f"DEBUG: Rx thinking chunk: {thinking_fragment[:10]}...")
                      GLib.idle_add(self.append_thinking, thinking_fragment)
                         
                 # Handle logprobs

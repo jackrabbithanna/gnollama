@@ -84,7 +84,6 @@ def _add_common_params(data, options, thinking, logprobs, top_logprobs):
 
 def _stream_response(url, data):
     try:
-        print(f"DEBUG: Ollama Request Data: {json.dumps(data)}")
         req = urllib.request.Request(url, data=json.dumps(data).encode('utf-8'), headers={'Content-Type': 'application/json'})
         with urllib.request.urlopen(req) as response:
             for line in response:

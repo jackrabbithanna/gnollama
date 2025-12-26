@@ -768,9 +768,12 @@ class GenerationTab(Gtk.Box):
         options = self.get_options_from_ui()
         print(f"DEBUG: process_request gathered options: {options}, thinking: {thinking_val}, system: {system_prompt}")
 
-        GLib.idle_add(self.reset_thinking_state)
         GLib.idle_add(self.start_new_response_block, model_name)
         
+        # Reset debug flag
+        if hasattr(self, '_debug_first_chunk_printed'):
+             del self._debug_first_chunk_printed
+
         try:
             for json_obj in self.strategy.process(
                 self,
@@ -786,6 +789,11 @@ class GenerationTab(Gtk.Box):
             ):
                 if "error" in json_obj:
                     raise Exception(json_obj["error"])
+                
+                # Debug first chunk to see structure
+                if not hasattr(self, '_debug_first_chunk_printed'):
+                     print(f"DEBUG: Rx Chunk: {json_obj}")
+                     self._debug_first_chunk_printed = True
 
                 # Handle message response (for chat endpoint)
                 if 'message' in json_obj:
@@ -800,7 +808,12 @@ class GenerationTab(Gtk.Box):
 
                 # Handle thinking
                 thinking_fragment = json_obj.get('thinking', '')
-                if thinking_fragment and thinking_val is not False and thinking_val is not None:
+                 # Check nested thinking in message (common in chat endpoint)
+                if not thinking_fragment and 'message' in json_obj:
+                    thinking_fragment = json_obj['message'].get('thinking', '')
+
+                if thinking_fragment:
+                     # print(f"DEBUG: Rx thinking chunk: {thinking_fragment[:10]}...")
                      GLib.idle_add(self.append_thinking, thinking_fragment)
                         
                 # Handle logprobs

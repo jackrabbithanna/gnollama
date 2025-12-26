@@ -2,5 +2,10 @@
 <schemalist gettext-domain="gnollama">
 	<schema id="com.github.jackrabbithanna.Gnollama" path="/com/github/jackrabbithanna/Gnollama/">
 
+		<key name="ollama-host" type="s">
+			<default>'http://localhost:11434'</default>
+			<summary>Default Ollama Host</summary>
+			<description>The default URL for the Ollama API server.</description>
+		</key>
 	</schema>
 </schemalist>

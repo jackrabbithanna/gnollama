@@ -1,0 +1,288 @@
+# Portuguese translations for gnollama package.
+# Copyright (C) 2025 Jackrabbithanna
+# This file is distributed under the same license as the gnollama package.
+# Automatically generated, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: gnollama 0.1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-12-26 18:33-0700\n"
+"PO-Revision-Date: 2025-12-26 19:10-0700\n"
+"Last-Translator: \n"
+"Language-Team: none\n"
+"Language: pt\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: src/main.py:61
+msgid "translator-credits"
+msgstr "Jackrabbithanna"
+
+#: src/main.py:71
+msgid "Server Settings"
+msgstr "Configurações do Servidor"
+
+#: src/main.py:76
+msgid "Ollama Configuration"
+msgstr "Configuração do Ollama"
+
+#: src/main.py:81
+msgid "Ollama Host"
+msgstr "Host do Ollama"
+
+#: src/window.py:117
+msgid "New Response"
+msgstr "Nova Resposta"
+
+#: src/window.py:164 src/window.py:319
+msgid "New Chat"
+msgstr "Nova Conversa"
+
+#: src/window.py:174 src/window.py:206
+msgid "Rename Chat"
+msgstr "Renomear Conversa"
+
+#: src/window.py:182
+msgid "Delete Chat"
+msgstr "Eliminar Conversa"
+
+#: src/window.py:207
+msgid "Enter a new title for this chat."
+msgstr "Introduza um novo título para esta conversa."
+
+#: src/window.py:209 src/tab.py:225
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: src/window.py:210
+msgid "Save"
+msgstr "Guardar"
+
+#: src/window.py:263
+msgid "Chat"
+msgstr "Conversa"
+
+#: src/tab.py:221
+msgid "Open Image"
+msgstr "Abrir Imagem"
+
+#: src/tab.py:224
+msgid "Open"
+msgstr "Abrir"
+
+#: src/tab.py:248
+#, python-brace-format
+msgid "{count} images selected"
+msgstr "{count} imagens selecionadas"
+
+#: src/tab.py:257 src/tab.ui:74
+msgid "No image selected"
+msgstr "Nenhuma imagem selecionada"
+
+#: src/tab.py:283 src/tab.py:329
+msgid "None"
+msgstr "Nenhum"
+
+#: src/tab.py:283 src/tab.py:326
+msgid "Low"
+msgstr "Baixo"
+
+#: src/tab.py:283 src/tab.py:327
+msgid "Medium"
+msgstr "Médio"
+
+#: src/tab.py:283 src/tab.py:328
+msgid "High"
+msgstr "Alto"
+
+#: src/tab.py:285 src/tab.py:324
+msgid "Thinking"
+msgstr "A pensar"
+
+#: src/tab.py:285 src/tab.py:325
+msgid "No thinking"
+msgstr "Sem pensar"
+
+#: src/tab.py:384 src/tab.py:432 src/tab.py:596
+msgid "You"
+msgstr "Tu"
+
+#: src/tab.py:402
+#, python-brace-format
+msgid "Error loading images: {e}"
+msgstr "Erro ao carregar imagens: {e}"
+
+#: src/tab.py:492 src/tab.py:601
+msgid "See thinking"
+msgstr "Ver pensamento"
+
+#: src/tab.py:523
+msgid "Logprobs"
+msgstr "Logprobs"
+
+#: src/window.ui:6
+msgid "Gnollama"
+msgstr "Gnollama"
+
+#: src/window.ui:17
+msgid "Main Menu"
+msgstr "Menu Principal"
+
+#: src/window.ui:39
+msgid "Chats"
+msgstr "Conversas"
+
+#: src/window.ui:87
+msgid "_New Chat"
+msgstr "_Nova Conversa"
+
+#: src/window.ui:91
+msgid "_New Response"
+msgstr "_Nova Resposta"
+
+#: src/window.ui:97
+msgid "_Preferences"
+msgstr "_Preferências"
+
+#: src/window.ui:101
+msgid "_Keyboard Shortcuts"
+msgstr "_Atalhos de Teclado"
+
+#: src/window.ui:105
+msgid "_About Gnollama"
+msgstr "_Sobre o Gnollama"
+
+#: src/tab.ui:36
+msgid "Select Model"
+msgstr "Selecionar Modelo"
+
+#: src/tab.ui:42
+msgid "Thinking Level"
+msgstr "Nível de Pensamento"
+
+#: src/tab.ui:48
+msgid "Type a message..."
+msgstr "Escreva uma mensagem..."
+
+#: src/tab.ui:54
+msgid "Query Ollama"
+msgstr "Consultar Ollama"
+
+#: src/tab.ui:69
+msgid "Attach Image"
+msgstr "Anexar Imagem"
+
+#: src/tab.ui:83
+msgid "Clear Image"
+msgstr "Limpar Imagem"
+
+#: src/tab.ui:108
+msgid "Ollama Host:"
+msgstr "Host do Ollama:"
+
+#: src/tab.ui:114
+msgid "http://localhost:11434"
+msgstr "http://localhost:11434"
+
+#: src/tab.ui:121
+msgid "System Prompt (optional)"
+msgstr "Prompt de Sistema (opcional)"
+
+#: src/tab.ui:126
+msgid "Show statistics"
+msgstr "Mostrar estatísticas"
+
+#: src/tab.ui:131
+msgid "Return logprobs"
+msgstr "Retornar logprobs"
+
+#: src/tab.ui:140
+msgid "Top Logprobs:"
+msgstr "Top Logprobs:"
+
+#: src/tab.ui:145
+msgid "Integer (e.g., 5)"
+msgstr "Inteiro (ex: 5)"
+
+#: src/tab.ui:150
+msgid "Number of top logprobs to return"
+msgstr "Número de top logprobs a retornar"
+
+#: src/tab.ui:164
+msgid "Seed:"
+msgstr "Seed:"
+
+#: src/tab.ui:174 src/tab.ui:216 src/tab.ui:279 src/tab.ui:300
+msgid "Integer"
+msgstr "Inteiro"
+
+#: src/tab.ui:175
+msgid "Random number seed"
+msgstr "Seed número aleatório"
+
+#: src/tab.ui:185
+msgid "Temperature:"
+msgstr "Temperatura:"
+
+#: src/tab.ui:195 src/tab.ui:237 src/tab.ui:258
+msgid "Float"
+msgstr "Float"
+
+#: src/tab.ui:196
+msgid "Creativity (0.0 - 1.0)"
+msgstr "Criatividade (0.0 - 1.0)"
+
+#: src/tab.ui:206
+msgid "Top K:"
+msgstr "Top K:"
+
+#: src/tab.ui:217
+msgid "Limit to top K tokens"
+msgstr "Limitar ao top K tokens"
+
+#: src/tab.ui:227
+msgid "Top P:"
+msgstr "Top P:"
+
+#: src/tab.ui:238
+msgid "Limit to cumulative probability P"
+msgstr "Limitar à probabilidade cumulativa P"
+
+#: src/tab.ui:248
+msgid "Min P:"
+msgstr "Min P:"
+
+#: src/tab.ui:259
+msgid "Minimum probability"
+msgstr "Probabilidade mínima"
+
+#: src/tab.ui:269
+msgid "Context Size:"
+msgstr "Tamanho do Contexto:"
+
+#: src/tab.ui:280
+msgid "Context window size (num_ctx)"
+msgstr "Tamanho da janela de contexto (num_ctx)"
+
+#: src/tab.ui:290
+msgid "Max Tokens:"
+msgstr "Max Tokens:"
+
+#: src/tab.ui:301
+msgid "Max tokens to generate (num_predict)"
+msgstr "Máximo de tokens a gerar (num_predict)"
+
+#: src/tab.ui:311
+msgid "Stop Seq:"
+msgstr "Seq Paragem:"
+
+#: src/tab.ui:321
+msgid "String"
+msgstr "String"
+
+#: src/tab.ui:322
+msgid "Stop sequence (comma separated)"
+msgstr "Sequência de paragem (separada por vírgulas)"

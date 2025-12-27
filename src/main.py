@@ -68,17 +68,17 @@ class GnollamaApplication(Adw.Application):
         pref_window = Adw.PreferencesWindow(transient_for=self.props.active_window)
         
         page = Adw.PreferencesPage()
-        page.set_title('Server Settings')
+        page.set_title(_('Server Settings'))
         page.set_icon_name('network-server-symbolic')
         pref_window.add(page)
         
         group = Adw.PreferencesGroup()
-        group.set_title('Ollama Configuration')
+        group.set_title(_('Ollama Configuration'))
         page.add(group)
         
         # Ollama Host Entry
         row = Adw.EntryRow()
-        row.set_title("Ollama Host")
+        row.set_title(_("Ollama Host"))
         settings.bind("ollama-host", row, "text", Gio.SettingsBindFlags.DEFAULT)
         group.add(row)
         

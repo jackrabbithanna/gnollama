@@ -61,7 +61,7 @@ class GnollamaApplication(Adw.Application):
         about.set_translator_credits(_('translator-credits'))
         about.present(self.props.active_window)
 
-    def on_preferences_action(self, widget, _):
+    def on_preferences_action(self, widget, _param):
         """Callback for the app.preferences action."""
         settings = Gio.Settings.new('com.github.jackrabbithanna.Gnollama')
         

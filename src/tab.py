@@ -218,11 +218,11 @@ class GenerationTab(Gtk.Box):
 
     def on_attach_clicked(self, widget):
         file_chooser = Gtk.FileChooserNative.new(
-            "Open Image",
+            _("Open Image"),
             self.get_native(),
             Gtk.FileChooserAction.OPEN,
-            "Open",
-            "Cancel"
+            _("Open"),
+            _("Cancel")
         )
         
         filter_image = Gtk.FileFilter()
@@ -245,7 +245,7 @@ class GenerationTab(Gtk.Box):
             if count == 1:
                 label_text = os.path.basename(self.selected_image_paths[0])
             else:
-                label_text = f"{count} images selected"
+                label_text = _("{count} images selected").format(count=count)
             
             self.image_label.set_text(label_text)
             self.image_label.remove_css_class("dim-label")
@@ -254,7 +254,7 @@ class GenerationTab(Gtk.Box):
 
     def on_clear_image_clicked(self, widget):
         self.selected_image_paths = []
-        self.image_label.set_text("No image selected")
+        self.image_label.set_text(_("No image selected"))
         self.image_label.add_css_class("dim-label")
         self.clear_image_button.set_visible(False)
 
@@ -280,9 +280,9 @@ class GenerationTab(Gtk.Box):
 
     def update_thinking_options(self, model_name):
         if model_name.startswith("gpt-oss"):
-            options = ["None", "Low", "Medium", "High"]
+            options = [_("None"), _("Low"), _("Medium"), _("High")]
         else:
-            options = ["Thinking", "No thinking"]
+            options = [_("Thinking"), _("No thinking")]
             
         string_list = Gtk.StringList.new(options)
         self.thinking_dropdown.set_model(string_list)
@@ -321,12 +321,12 @@ class GenerationTab(Gtk.Box):
              for i in range(n_items):
                  item_str = dropdown_model.get_string(i)
                  match = False
-                 if val is True and item_str == "Thinking": match = True
-                 elif val is False and item_str == "No thinking": match = True
-                 elif val == "low" and item_str == "Low": match = True
-                 elif val == "medium" and item_str == "Medium": match = True
-                 elif val == "high" and item_str == "High": match = True
-                 elif val is None and item_str == "None": match = True
+                 if val is True and item_str == _("Thinking"): match = True
+                 elif val is False and item_str == _("No thinking"): match = True
+                 elif val == "low" and item_str == _("Low"): match = True
+                 elif val == "medium" and item_str == _("Medium"): match = True
+                 elif val == "high" and item_str == _("High"): match = True
+                 elif val is None and item_str == _("None"): match = True
                  
                  if match:
                      self.thinking_dropdown.set_selected(i)
@@ -381,7 +381,7 @@ class GenerationTab(Gtk.Box):
             truncated = prompt[:20] + "..." if len(prompt) > 20 else prompt
             self.tab_label.set_label(truncated)
 
-        self.add_message(prompt, sender="You")
+        self.add_message(prompt, sender=_("You"))
         self.entry.set_text("")
         
         # Get selected model
@@ -399,7 +399,7 @@ class GenerationTab(Gtk.Box):
                         encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
                         images.append(encoded_string)
             except Exception as e:
-                self.add_message(f"Error loading images: {e}", "System")
+                self.add_message(_("Error loading images: {e}").format(e=e), "System")
                 return
             
             # Clear image after reading
@@ -429,7 +429,7 @@ class GenerationTab(Gtk.Box):
         bubble.append(label)
         container.append(bubble)
 
-        if sender == "You":
+        if sender == _("You"):
             container.set_halign(Gtk.Align.END)
             bubble.add_css_class("user-bubble")
         else:
@@ -489,7 +489,7 @@ class GenerationTab(Gtk.Box):
     def append_thinking(self, text):
         if self.active_thinking_label is None:
             # Create expander and inner label
-            expander = Gtk.Expander(label="See thinking")
+            expander = Gtk.Expander(label=_("See thinking"))
             expander.set_hexpand(True)
             expander.set_halign(Gtk.Align.FILL)
             
@@ -520,7 +520,7 @@ class GenerationTab(Gtk.Box):
     def append_logprobs(self, logprobs_data):
         if self.active_logprobs_label is None:
             # Create expander for logprobs
-            expander = Gtk.Expander(label="Logprobs")
+            expander = Gtk.Expander(label=_("Logprobs"))
             expander.set_hexpand(True)
             expander.set_halign(Gtk.Align.FILL)
             
@@ -593,12 +593,12 @@ class GenerationTab(Gtk.Box):
             thinking_content = msg.get('thinking_content')
             
             if role == 'user':
-                self.add_message(content, sender="You")
+                self.add_message(content, sender=_("You"))
             elif role == 'assistant':
                 # Reconstruct thinking if present
                 if thinking_content:
                     # Manually add thinking bubble
-                    expander = Gtk.Expander(label="See thinking")
+                    expander = Gtk.Expander(label=_("See thinking"))
                     expander.set_hexpand(True)
                     expander.set_halign(Gtk.Align.FILL)
                     

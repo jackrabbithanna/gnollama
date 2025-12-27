@@ -4,5 +4,6 @@ data/com.github.jackrabbithanna.Gnollama.desktop.in
 data/com.github.jackrabbithanna.Gnollama.metainfo.xml.in
 data/com.github.jackrabbithanna.Gnollama.gschema.xml
 src/main.py
+src/tab.py
 src/window.py
 src/window.ui

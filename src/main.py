@@ -54,31 +54,31 @@ class GnollamaApplication(Adw.Application):
         about = Adw.AboutDialog(application_name='gnollama',
                                 application_icon='com.github.jackrabbithanna.Gnollama',
                                 developer_name='Jackrabbithanna',
-                                version='0.3.0',
+                                version='0.3.5',
                                 developers=['Jackrabbithanna'],
                                 copyright='© 2025 Jackrabbithanna')
         # Translators: Replace "translator-credits" with your name/username, and optionally an email or URL.
         about.set_translator_credits(_('translator-credits'))
         about.present(self.props.active_window)
 
-    def on_preferences_action(self, widget, _):
+    def on_preferences_action(self, widget, _param):
         """Callback for the app.preferences action."""
         settings = Gio.Settings.new('com.github.jackrabbithanna.Gnollama')
         
         pref_window = Adw.PreferencesWindow(transient_for=self.props.active_window)
         
         page = Adw.PreferencesPage()
-        page.set_title('Server Settings')
+        page.set_title(_('Server Settings'))
         page.set_icon_name('network-server-symbolic')
         pref_window.add(page)
         
         group = Adw.PreferencesGroup()
-        group.set_title('Ollama Configuration')
+        group.set_title(_('Ollama Configuration'))
         page.add(group)
         
         # Ollama Host Entry
         row = Adw.EntryRow()
-        row.set_title("Ollama Host")
+        row.set_title(_("Ollama Host"))
         settings.bind("ollama-host", row, "text", Gio.SettingsBindFlags.DEFAULT)
         group.add(row)
         

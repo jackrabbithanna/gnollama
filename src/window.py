@@ -114,7 +114,7 @@ class GnollamaWindow(Adw.ApplicationWindow):
         icon = Gtk.Image.new_from_icon_name("edit-find-symbolic")
         tab_label_box.append(icon)
         
-        tab_title = Gtk.Label(label="New Response")
+        tab_title = Gtk.Label(label=_("New Response"))
         tab_label_box.append(tab_title)
         
         close_button = Gtk.Button.new_from_icon_name("window-close-symbolic")
@@ -161,7 +161,7 @@ class GnollamaWindow(Adw.ApplicationWindow):
         box.set_margin_top(8)
         box.set_margin_bottom(8)
         
-        label = Gtk.Label(label=chat.get('title', 'New Chat'))
+        label = Gtk.Label(label=chat.get('title', _('New Chat')))
         label.set_halign(Gtk.Align.START)
         label.set_ellipsize(3) # PANGO_ELLIPSIZE_END
         label.set_hexpand(True)
@@ -171,7 +171,7 @@ class GnollamaWindow(Adw.ApplicationWindow):
         edit_btn = Gtk.Button.new_from_icon_name("edit-paste-symbolic")
         edit_btn.add_css_class("flat")
         edit_btn.set_valign(Gtk.Align.CENTER)
-        edit_btn.set_tooltip_text("Rename Chat")
+        edit_btn.set_tooltip_text(_("Rename Chat"))
         edit_btn.connect("clicked", self.on_edit_chat_clicked, chat['id'], row, label)
         box.append(edit_btn)
         
@@ -179,7 +179,7 @@ class GnollamaWindow(Adw.ApplicationWindow):
         del_btn = Gtk.Button.new_from_icon_name("user-trash-symbolic")
         del_btn.add_css_class("flat")
         del_btn.set_valign(Gtk.Align.CENTER)
-        del_btn.set_tooltip_text("Delete Chat")
+        del_btn.set_tooltip_text(_("Delete Chat"))
         del_btn.connect("clicked", self.on_delete_chat_clicked, chat['id'], row)
         box.append(del_btn)
         
@@ -203,11 +203,11 @@ class GnollamaWindow(Adw.ApplicationWindow):
         # Create a simple dialog for renaming
         dialog = Adw.MessageDialog(
             transient_for=self,
-            heading="Rename Chat",
-            body="Enter a new title for this chat."
+            heading=_("Rename Chat"),
+            body=_("Enter a new title for this chat.")
         )
-        dialog.add_response("cancel", "Cancel")
-        dialog.add_response("save", "Save")
+        dialog.add_response("cancel", _("Cancel"))
+        dialog.add_response("save", _("Save"))
         dialog.set_default_response("save")
         dialog.set_close_response("cancel")
         
@@ -260,7 +260,7 @@ class GnollamaWindow(Adw.ApplicationWindow):
         icon = Gtk.Image.new_from_icon_name("network-server-symbolic")
         tab_label_box.append(icon)
         
-        title = chat_data.get('title', 'Chat')
+        title = chat_data.get('title', _('Chat'))
         tab_title = Gtk.Label(label=title)
         tab_label_box.append(tab_title)
         
@@ -316,7 +316,7 @@ class GnollamaWindow(Adw.ApplicationWindow):
         icon = Gtk.Image.new_from_icon_name("network-server-symbolic")
         tab_label_box.append(icon)
         
-        tab_title = Gtk.Label(label="New Chat")
+        tab_title = Gtk.Label(label=_("New Chat"))
         tab_label_box.append(tab_title)
         
         close_button = Gtk.Button.new_from_icon_name("window-close-symbolic")

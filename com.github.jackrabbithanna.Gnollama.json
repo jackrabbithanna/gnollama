@@ -27,7 +27,7 @@
             "name": "python3-markdown",
             "buildsystem": "simple",
             "build-commands": [
-                "pip3 install --prefix=/app --no-deps ."
+                "pip3 install --verbose --exists-action=i --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} \"markdown\" --no-build-isolation"
             ],
             "sources": [
                 {

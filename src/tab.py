@@ -94,7 +94,10 @@ class ChatStrategy:
         messages.append({"role": "user", "content": prompt})
         
         # Update our history with the user's message now
-        self.history.append({"role": "user", "content": prompt})
+        msg = {"role": "user", "content": prompt}
+        if kwargs.get('images'):
+             msg['images'] = kwargs['images']
+        self.history.append(msg)
         
         # Reset current response accumulator
         self.current_response_full_text = ""
@@ -380,9 +383,6 @@ class GenerationTab(Gtk.Box):
             truncated = prompt[:20] + "..." if len(prompt) > 20 else prompt
             self.tab_label.set_label(truncated)
 
-        self.add_message(prompt, sender=_("You"))
-        self.entry.set_text("")
-        
         # Get selected model
         selected_item = self.model_dropdown.get_selected_item()
         model_name = "llama3" # Fallback
@@ -404,13 +404,16 @@ class GenerationTab(Gtk.Box):
             # Clear image after reading
             self.on_clear_image_clicked(None)
 
+        self.add_message(prompt, sender=_("You"), images=images)
+        self.entry.set_text("")
+        
         thread = threading.Thread(target=self.process_request, args=(prompt, model_name, images))
         thread.daemon = True
         thread.start()
 
-    def add_message(self, text, sender="System"):
+    def add_message(self, text, sender="System", images=None):
         if sender == _("You"):
-            bubble = UserBubble(text)
+            bubble = UserBubble(text, images=images)
             self.chat_box.append(bubble)
         else:
             # System message or error
@@ -529,7 +532,8 @@ class GenerationTab(Gtk.Box):
             thinking_content = msg.get('thinking_content')
             
             if role == 'user':
-                self.add_message(content, sender=_("You"))
+                images = msg.get('images')
+                self.add_message(content, sender=_("You"), images=images)
             elif role == 'assistant':
                 # Reconstruct with AiBubble
                 bubble = AiBubble(model_name="Assistant")

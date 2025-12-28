@@ -16,8 +16,10 @@ except ImportError:
     markdown = None
 
 try:
+    import gi
+    gi.require_version('GtkSource', '5')
     from gi.repository import GtkSource
-except ImportError:
+except (ImportError, ValueError):
     GtkSource = None
 
 from html.parser import HTMLParser
@@ -202,33 +204,24 @@ class MarkdownView(Gtk.Box):
         self.render()
 
     def render(self):
-        # Clear existing children
-        child = self.get_first_child()
-        while child:
-            next_child = child.get_next_sibling()
-            self.remove(child)
-            child = next_child
+        # Parse content into blocks
+        blocks = self._parse_blocks(self._text)
+        self._sync_view(blocks)
 
-        if not markdown:
-            # Fallback for missing library
-            self.render_text_block(self._text)
-            return
-
-        self._process_content(self._text)
-
-    def _process_content(self, text):
+    def _parse_blocks(self, text):
+        """
+        Parses text into a list of block dicts:
+        [{'type': 'code', 'lang': '...', 'content': '...'}, {'type': 'text', 'content': '...'}]
+        """
+        blocks = []
         lines = text.split('\n')
         i = 0
         n = len(lines)
         
         while i < n:
             line = lines[i]
-            stripped = line.strip()
             
             # Check for fence start
-            # Matches ``` or ~~~ (at least 3)
-            # Must be checked carefully.
-            # We want to match: spaces? + (`{3,} | ~{3,}) + lang?
             match = re.match(r'^(\s*)(`{3,}|~{3,})(.*)$', line)
             
             if match:
@@ -236,82 +229,249 @@ class MarkdownView(Gtk.Box):
                 indent, fence, raw_lang = match.groups()
                 lang = raw_lang.strip()
                 
-                # Check for "Orphaned Lang" (lang on next line)
-                # If lang is empty, peek next line
+                # Check for "Orphaned Lang"
                 content_start_idx = i + 1
                 if not lang and content_start_idx < n:
-                    # Sniff next line
                     next_line = lines[content_start_idx].strip()
-                    # Clean potential backticks from lang guess
                     clean_lang = next_line.strip('`')
                     lower_clean = clean_lang.lower()
                     
                     if lower_clean in ['markdown', 'md', 'python', 'py', 'bash', 'sh', 'javascript', 'js', 'html', 'css', 'json', 'xml', 'sql', 'java', 'c', 'cpp', 'go', 'rs', 'rust']:
                         lang = clean_lang
-                        content_start_idx += 1 # Skip the lang line
-                    # Heuristic: If it starts with a horizontal rule or header, assume it's markdown
+                        content_start_idx += 1
                     elif re.match(r'^[-*_]{3,}\s*$', next_line) or re.match(r'^#{1,6}\s', next_line):
                         lang = 'markdown'
                 
-                # Consume lines until closing fence or EOF
+                # Consume lines until closing fence
                 code_lines = []
                 i = content_start_idx
-                closed = False
                 while i < n:
                     curr_line = lines[i]
-                    # Check for closing fence
-                    # Must match opening fence style (backticks/tildes) and length (at least as long)
-                    # And match indent (roughly? markdown is loose here, strict indent matching usually <= 3 spaces)
                     close_match = re.match(r'^(\s*)(`{3,}|~{3,})\s*$', curr_line)
                     if close_match:
                         c_indent, c_fence = close_match.groups()
                         if c_fence[0] == fence[0] and len(c_fence) >= len(fence):
-                            closed = True
                             i += 1 # Consume closing fence
                             break
                     
                     code_lines.append(curr_line)
                     i += 1
                 
-                # Render the block
-                # If EOF reached without close, we still render (standard markdown behavior usually auto-closes)
-                self.render_code_block(lang, "\n".join(code_lines))
+                # Recursion for nested markdown
+                if lang.lower() in ['markdown', 'md']:
+                    # Recursively parse the inner markdown content
+                    inner_blocks = self._parse_blocks("\n".join(code_lines))
+                    blocks.extend(inner_blocks)
+                else:
+                    blocks.append({
+                        'type': 'code',
+                        'lang': lang,
+                        'content': "\n".join(code_lines)
+                    })
                 continue
             
-            # Not a fence, accumulate text block
-            # We need to find the NEXT fence to know where this text block ends
+            # Text block
             text_buffer = []
             while i < n:
                 curr_line = lines[i]
                 if re.match(r'^\s*(`{3,}|~{3,})', curr_line):
-                    # Found start of next block
                     break
                 text_buffer.append(curr_line)
                 i += 1
             
             if text_buffer:
-                self.render_text_block("\n".join(text_buffer))
+                blocks.append({
+                    'type': 'text',
+                    'content': "\n".join(text_buffer)
+                })
+                
+        return blocks
+
+    def _sync_view(self, blocks):
+        """
+        Syncs the Gtk widget list with the parsed blocks.
+        """
+        child = self.get_first_child()
+        
+        for block in blocks:
+            # Try to reuse existing child
+            if child:
+                # Check if compatible
+                is_code = child.has_css_class("code-block")
+                is_text = isinstance(child, Gtk.Label)
+                
+                if block['type'] == 'code' and is_code:
+                    # Update code block
+                    self._update_code_block(child, block['lang'], block['content'])
+                    child = child.get_next_sibling()
+                    continue
+                elif block['type'] == 'text' and is_text:
+                    # Update text block
+                    self._update_text_block(child, block['content'])
+                    child = child.get_next_sibling()
+                    continue
+                else:
+                    # Mismatch, need to insert new
+                    # For now, simplest robust strategy is:
+                    # If mismatch, remove current 'child' and insert new one
+                    # But pure append is safer for now if we assume purely additive structure?
+                    # No, structure can change.
+                    
+                    # Replacement strategy:
+                    new_widget = self._create_widget_for_block(block)
+                    self.insert_child_after(new_widget, child.get_prev_sibling())
+                    
+                    # The 'child' is now effectively "next" after the one we inserted?
+                    # No, logic is tricky. 
+                    # Simpler: Remove current mismatching child, loop will create new.
+                    next_child = child.get_next_sibling()
+                    self.remove(child)
+                    child = new_widget # This is the one we just added
+                    
+                    # Advance
+                    child = next_child # Process the *next* old child against *next* block? 
+                    # Actually if we inserted `new_widget` before `child`...
+                    # Gtk4 doesn't have `insert_before`. `insert_child_after`.
+                    
+                    # Retry:
+                    # Since Gtk list manipulation mid-loop is hard, 
+                    # let's use the standard "Diff" approach mapping:
+                    # But simpler: Rebuild if mismatch.
+                    pass 
+            
+            # If we fall through here (logic above was tricky), use brute force
+            # Create new widget
+            if child:
+                 # Mismatch case handling was hard above. 
+                 # Let's resort to: if mismatch, destroy from here on?
+                 # Or just remove mismatching child.
+                 
+                 # Let's simplify:
+                 # If we are here, we either had no child, or we chose not to reuse it.
+                 pass
+
+        # RE-WRITE OF SYNC LOOP FOR STABILITY
+        # Let's step back.
+        child = self.get_first_child()
+        
+        for block in blocks:
+            matched = False
+            if child:
+                is_code = child.has_css_class("code-block")
+                is_text = isinstance(child, Gtk.Label) # Text blocks are bare Labels
+                
+                if block['type'] == 'code' and is_code:
+                    # Check if lang matches? Usually keep same widget
+                    self._update_code_block(child, block['lang'], block['content'])
+                    matched = True
+                elif block['type'] == 'text' and is_text:
+                    self._update_text_block(child, block['content'])
+                    matched = True
+            
+            if matched:
+                child = child.get_next_sibling()
+            else:
+                # No match or no child.
+                # If there was a child but it didn't match, we should remove it?
+                # Case: text -> text, code. 
+                # Old: text. New: text, code.
+                # 1. match text. child = None. 
+                # 2. block code. child=None. Insert.
+                
+                # Case: text -> code.
+                # Old: text. New: code.
+                # 1. block code. child=text. Mismatch.
+                # Remove child?
+                if child:
+                    next_s = child.get_next_sibling()
+                    self.remove(child)
+                    child = next_s
+                    # Now try current block again against next child?
+                    # Recursion? No, just Loop.
+                    # But we are inside a for loop iterating blocks.
+                    # If we remove child, we haven't processed this block yet.
+                    
+                    # Correction: If mismatch, insert NEW widget before current child (if possible)
+                    # or just append if we are at end.
+                    # Gtk4: `insert_child_after(child, sibling)`. Sibling=None -> prepend.
+                    
+                    # Easiest: If mismatch, remove old child. create new widget.
+                    # This causes flashing if we delete-then-add.
+                    # Better: Insert new widget `before` old child?
+                    # Gtk4 Insert After Prev Sibling.
+                    
+                    new_widget = self._create_widget_for_block(block)
+                    # Insert after partial's previous
+                    # We need to track `prev_widget`.
+                    pass
+        
+        # FINAL ATTEMPT AT CLEAN LOOP
+        curr_child = self.get_first_child()
+        prev_child = None
+        
+        for block in blocks:
+            # Check if curr_child matches block type
+            match = False
+            if curr_child:
+                is_code = curr_child.has_css_class("code-block")
+                is_text = isinstance(curr_child, Gtk.Label)
+                
+                if block['type'] == 'code' and is_code:
+                    self._update_code_block(curr_child, block['lang'], block['content'])
+                    match = True
+                elif block['type'] == 'text' and is_text:
+                    self._update_text_block(curr_child, block['content'])
+                    match = True
+            
+            if match:
+                # Move forward
+                prev_child = curr_child
+                curr_child = curr_child.get_next_sibling()
+            else:
+                # Mismatch or End of List
+                # If mismatch, we assume the structure changed significantly or we are inserting.
+                # If we have a curr_child, it's the wrong type.
+                # Strategy: Destroy curr_child and replace.
+                # This might cause flash if type flipped. But usually streaming ONLY Appends.
+                # So usually curr_child is None.
+                
+                if curr_child:
+                    # Structure changed (e.g. text -> code transition).
+                    # Remove the wrong child.
+                    next_s = curr_child.get_next_sibling()
+                    self.remove(curr_child)
+                    curr_child = next_s
+                
+                # Create and insert
+                new_widget = self._create_widget_for_block(block)
+                self.insert_child_after(new_widget, prev_child)
+                prev_child = new_widget
+                # curr_child stays as is (next one)
+                
+        # Remove any remaining children (truncation)
+        while curr_child:
+            next_s = curr_child.get_next_sibling()
+            self.remove(curr_child)
+            curr_child = next_s
 
 
-    def render_code_block(self, lang, code):
-        # Check if it's markdown - if so, render recursively
-        if lang.lower() in ['markdown', 'md']:
-             self._process_content(code)
-             return
+    def _create_widget_for_block(self, block):
+        if block['type'] == 'text':
+             label = Gtk.Label()
+             label.set_wrap(True)
+             label.set_xalign(0)
+             label.set_selectable(True)
+             self._update_text_block(label, block['content'])
+             return label
+        else: # code
+             return self._create_code_widget(block['lang'], block['content'])
 
-        # Create widget
+    def _create_code_widget(self, lang, code):
         wrapper = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         wrapper.add_css_class("code-block")
         wrapper.set_margin_top(6)
         wrapper.set_margin_bottom(6)
         
-        # Header (optional, maybe language name)
-        if lang:
-            header = Gtk.Label(label=lang)
-            header.add_css_class("code-header")
-            header.set_halign(Gtk.Align.END)
-            # wrapper.append(header) 
-
         # Code View
         if GtkSource:
             buffer = GtkSource.Buffer()
@@ -320,20 +480,17 @@ class MarkdownView(Gtk.Box):
             if language:
                 buffer.set_language(language)
             
-            # Style scheme
             sm = GtkSource.StyleSchemeManager.get_default()
             scheme = sm.get_scheme("oblivion") 
             if scheme:
                 buffer.set_style_scheme(scheme)
                 
-            buffer.set_text(code)
             view = GtkSource.View.new_with_buffer(buffer)
             view.set_show_line_numbers(False) 
         else:
             view = Gtk.TextView()
-            view.get_buffer().set_text(code)
             view.set_monospace(True)
-
+            
         view.set_editable(False)
         view.set_wrap_mode(Gtk.WrapMode.NONE)
         view.set_top_margin(12)
@@ -342,43 +499,44 @@ class MarkdownView(Gtk.Box):
         view.set_right_margin(12)
         view.add_css_class("code-view")
         
-        # Scrolled Window for code
-        # User requested full height without scrolling
+        # Initial content
+        view.get_buffer().set_text(code)
+
         scrolled = Gtk.ScrolledWindow()
         scrolled.set_child(view)
         scrolled.set_propagate_natural_height(True)
-        scrolled.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.NEVER) # horizontal auto, vertical never (expand)
+        scrolled.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.NEVER)
         
         wrapper.append(scrolled)
-        self.append(wrapper)
+        return wrapper
 
-
-    def render_text_block(self, text):
+    def _update_text_block(self, label, text):
         if not text.strip():
+            label.set_markup("")
             return
-            
+        
         try:
-            # Pre-process for strikethrough (~~text~~ -> <s>text</s>)
-            # Python-markdown doesn't support ~~ by default without extensions not in stdlib
-            # Hacky but effective for standard GFM style strikethrough
+             # Existing render logic
             text = re.sub(r'~~(.*?)~~', r'<s>\1</s>', text)
-            
-            # Enable extensions for better parsing
-            # 'extra' includes tables, footnotes, etc.
             html_text = markdown.markdown(text, extensions=['extra', 'fenced_code'])
             parser = PangoMarkupParser()
             parser.feed(html_text)
             markup = parser.get_markup()
-        except Exception as e:
-            # Fallback for parser errors
+        except Exception:
             markup = html.escape(text)
-            print(f"Error parsing Markdown: {e}")
-        
-        label = Gtk.Label()
+            
         label.set_markup(markup)
-        label.set_wrap(True)
-        label.set_xalign(0)
-        label.set_selectable(True)
+
+    def _update_code_block(self, wrapper, lang, code):
+        # Wrapper -> ScrolledWindow -> View
+        scrolled = wrapper.get_first_child()
+        view = scrolled.get_child()
+        buffer = view.get_buffer()
         
-        self.append(label)
+        # Only update if text changed to avoid cursor jumps?
+        # Actually set_text is fine on non-editable.
+        start, end = buffer.get_bounds()
+        current = buffer.get_text(start, end, True)
+        if current != code:
+             buffer.set_text(code)
 

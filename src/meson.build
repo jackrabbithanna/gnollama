@@ -50,7 +50,6 @@ gnollama_sources = [
   'window.py',
   'tab.py',
   'ollama.py',
-  'utils.py',
   'storage.py',
   'markdown_view.py',
   'bubbles.py',

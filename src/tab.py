@@ -42,7 +42,8 @@ class ChatStrategy:
     def on_response_complete(self, tab, model_name):
         msg = {
             "role": "assistant", 
-            "content": self.current_response_full_text
+            "content": self.current_response_full_text,
+            "model": model_name
         }
         if self.current_thinking_full_text:
             msg["thinking_content"] = self.current_thinking_full_text
@@ -536,7 +537,8 @@ class GenerationTab(Gtk.Box):
                 self.add_message(content, sender=_("You"), images=images)
             elif role == 'assistant':
                 # Reconstruct with AiBubble
-                bubble = AiBubble(model_name="Assistant")
+                model_name = msg.get('model', 'Assistant')
+                bubble = AiBubble(model_name=model_name)
                 if thinking_content:
                     bubble.append_thinking(thinking_content)
                 bubble.append_text(content)

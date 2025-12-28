@@ -152,9 +152,14 @@ class MarkdownView(Gtk.Box):
                     next_line = lines[content_start_idx].strip()
                     # Clean potential backticks from lang guess
                     clean_lang = next_line.strip('`')
-                    if clean_lang.lower() in ['markdown', 'md', 'python', 'py', 'bash', 'sh', 'javascript', 'js', 'html', 'css', 'json', 'xml', 'sql', 'java', 'c', 'cpp', 'go', 'rs', 'rust']:
+                    lower_clean = clean_lang.lower()
+                    
+                    if lower_clean in ['markdown', 'md', 'python', 'py', 'bash', 'sh', 'javascript', 'js', 'html', 'css', 'json', 'xml', 'sql', 'java', 'c', 'cpp', 'go', 'rs', 'rust']:
                         lang = clean_lang
                         content_start_idx += 1 # Skip the lang line
+                    # Heuristic: If it starts with a horizontal rule or header, assume it's markdown
+                    elif re.match(r'^[-*_]{3,}\s*$', next_line) or re.match(r'^#{1,6}\s', next_line):
+                        lang = 'markdown'
                 
                 # Consume lines until closing fence or EOF
                 code_lines = []

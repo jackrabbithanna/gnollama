@@ -22,6 +22,12 @@ endif
 # Check for GtkSourceView (optional, for code highlighting)
 dependency('gtksourceview-5', required: false)
 
+# Check for GtkSourceView python bindings explicitly
+gtksource_check = run_command(py3, '-c', 'import gi; gi.require_version("GtkSource", "5"); from gi.repository import GtkSource', check: false)
+if gtksource_check.returncode() != 0
+  warning('GtkSourceView 5 python bindings not found. Code highlighting will be disabled.')
+endif
+
 
 conf = configuration_data()
 conf.set('PYTHON', py3.full_path())

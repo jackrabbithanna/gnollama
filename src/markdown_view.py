@@ -56,14 +56,21 @@ class PangoMarkupParser(HTMLParser):
         elif tag in ['h4', 'h5', 'h6']:
             self.output.append("\n<span size='large' weight='bold'>")
         elif tag in ['b', 'strong']:
-            if self.in_table: self.cell_content += ""; # Strip formatting in table cells for now
-            else: self.output.append("<b>")
+            tag_str = "<b>"
+            if self.in_table: self.cell_content += tag_str
+            else: self.output.append(tag_str)
         elif tag in ['i', 'em']:
-            if self.in_table: self.cell_content += ""; 
-            else: self.output.append("<i>")
+            tag_str = "<i>"
+            if self.in_table: self.cell_content += tag_str
+            else: self.output.append(tag_str)
+        elif tag in ['s', 'del', 'strike']:
+            tag_str = "<s>"
+            if self.in_table: self.cell_content += tag_str
+            else: self.output.append(tag_str)
         elif tag in ['code', 'tt']:
-            if self.in_table: self.cell_content += "";
-            else: self.output.append("<tt>")
+            tag_str = "<tt>"
+            if self.in_table: self.cell_content += tag_str
+            else: self.output.append(tag_str)
         elif tag == 'p':
             if not self.in_table and self.output and not self.output[-1].endswith("\n\n"):
                 self.output.append("\n")
@@ -74,7 +81,9 @@ class PangoMarkupParser(HTMLParser):
         elif tag == 'a':
             if self.in_table: 
                  href = dict(attrs).get('href', '')
-                 # Simplified link for ASCII table
+                 # Simplified link for ASCII table, just show text? Or keep link?
+                 # Pango allows links in labels.
+                 self.cell_content += f"<a href='{html.escape(href)}'>"
             else:
                 href = dict(attrs).get('href', '')
                 self.output.append(f"<a href='{html.escape(href)}'>")
@@ -106,15 +115,27 @@ class PangoMarkupParser(HTMLParser):
         elif tag in ['h1', 'h2', 'h3', 'h4', 'h5', 'h6']:
             self.output.append("</span>\n")
         elif tag in ['b', 'strong']:
-            if not self.in_table: self.output.append("</b>")
+            tag_str = "</b>"
+            if self.in_table: self.cell_content += tag_str
+            else: self.output.append(tag_str)
         elif tag in ['i', 'em']:
-            if not self.in_table: self.output.append("</i>")
+            tag_str = "</i>"
+            if self.in_table: self.cell_content += tag_str
+            else: self.output.append(tag_str)
+        elif tag in ['s', 'del', 'strike']:
+            tag_str = "</s>"
+            if self.in_table: self.cell_content += tag_str
+            else: self.output.append(tag_str)
         elif tag in ['code', 'tt']:
-            if not self.in_table: self.output.append("</tt>")
+            tag_str = "</tt>"
+            if self.in_table: self.cell_content += tag_str
+            else: self.output.append(tag_str)
         elif tag == 'p':
             if not self.in_table: self.output.append("\n")
         elif tag == 'a':
-            if not self.in_table: self.output.append("</a>")
+            tag_str = "</a>"
+            if self.in_table: self.cell_content += tag_str
+            else: self.output.append(tag_str)
         elif tag == 'li':
             self.output.append("\n")
         elif tag == 'blockquote':
@@ -124,7 +145,7 @@ class PangoMarkupParser(HTMLParser):
 
     def handle_data(self, data):
         if self.in_table and self.in_cell:
-            self.cell_content += data # No confusing escaping inside buffer yet, we do it at render
+            self.cell_content += html.escape(data) 
         elif not self.in_table:
             self.output.append(html.escape(data))
     
@@ -132,11 +153,17 @@ class PangoMarkupParser(HTMLParser):
         if not self.table_rows:
             return
             
+        # Helper to get visible length (ignoring pango tags)
+        def visible_len(s):
+            # Strip tags like <b>, </b>, <span ...>
+            # Simple regex for <...>
+            return len(re.sub(r'<[^>]+>', '', s))
+
         # Calc max widths
         col_widths = {}
         for row in self.table_rows:
             for i, cell in enumerate(row):
-                col_widths[i] = max(col_widths.get(i, 0), len(cell))
+                col_widths[i] = max(col_widths.get(i, 0), visible_len(cell))
         
         # Generate lines
         lines = []
@@ -144,12 +171,16 @@ class PangoMarkupParser(HTMLParser):
             line_parts = []
             for i, cell in enumerate(row):
                 width = col_widths.get(i, 0)
-                # Left align for now
-                line_parts.append(cell.ljust(width))
+                v_len = visible_len(cell)
+                # Padding needed
+                padding = width - v_len
+                # Left align: cell + spaces
+                line_parts.append(cell + " " * padding)
             lines.append(" | ".join(line_parts))
             
         table_str = "\n".join(lines)
-        self.output.append(f"<tt>{html.escape(table_str)}</tt>")
+        # Use <tt> for monospace alignment
+        self.output.append(f"<tt>{table_str}</tt>")
 
     def get_markup(self):
         return "".join(self.output).strip()
@@ -326,8 +357,14 @@ class MarkdownView(Gtk.Box):
             return
             
         try:
+            # Pre-process for strikethrough (~~text~~ -> <s>text</s>)
+            # Python-markdown doesn't support ~~ by default without extensions not in stdlib
+            # Hacky but effective for standard GFM style strikethrough
+            text = re.sub(r'~~(.*?)~~', r'<s>\1</s>', text)
+            
             # Enable extensions for better parsing
-            html_text = markdown.markdown(text, extensions=['fenced_code', 'tables'])
+            # 'extra' includes tables, footnotes, etc.
+            html_text = markdown.markdown(text, extensions=['extra', 'fenced_code'])
             parser = PangoMarkupParser()
             parser.feed(html_text)
             markup = parser.get_markup()

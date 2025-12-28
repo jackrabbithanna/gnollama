@@ -5,7 +5,8 @@ import base64
 import os
 from . import ollama
 from .storage import ChatStorage
-from .utils import parse_markdown
+from .storage import ChatStorage
+from .bubbles import UserBubble, AiBubble
 
 class GenerationStrategy:
     def process(self, tab, **kwargs):
@@ -196,10 +197,8 @@ class GenerationTab(Gtk.Box):
         
         self.model_dropdown.connect('notify::selected-item', self.on_model_changed)
         
-        self.active_thinking_label = None
         self.active_logprobs_label = None
-        self.current_response_label = None
-        self.current_response_raw_text = ""
+        self.current_ai_bubble = None
         
         # Initial model fetch
         self.start_model_fetch_thread()
@@ -410,109 +409,46 @@ class GenerationTab(Gtk.Box):
         thread.start()
 
     def add_message(self, text, sender="System"):
-        # Container box for alignment and styling
-        container = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
-        
-        # Bubble box for background
-        bubble = Gtk.Box()
-        
-        label = Gtk.Label()
-        label.set_wrap(True)
-        label.set_max_width_chars(50) # Limit width for better readability
-        label.set_xalign(0)
-        label.set_selectable(True)
-        
-        # Parse markdown for display
-        markup = parse_markdown(text)
-        label.set_markup(markup)
-        
-        bubble.append(label)
-        container.append(bubble)
-
         if sender == _("You"):
-            container.set_halign(Gtk.Align.END)
-            bubble.add_css_class("user-bubble")
+            bubble = UserBubble(text)
+            self.chat_box.append(bubble)
         else:
-            container.set_halign(Gtk.Align.START)
-            bubble.add_css_class("bot-bubble")
-            
-        self.chat_box.append(container)
+            # System message or error
+            # For now use a simple label row or AiBubble with no model
+            # Let's use a persistent Label for system messages
+            row = Gtk.ListBoxRow()
+            row.set_selectable(False)
+            row.set_activatable(False)
+            label = Gtk.Label(label=text)
+            label.set_wrap(True)
+            label.set_xalign(0)
+            label.set_margin_top(6)
+            label.set_margin_bottom(6)
+            label.set_margin_start(12)
+            label.set_margin_end(12)
+            label.add_css_class("dim-label")
+            row.set_child(label)
+            self.chat_box.append(row)
 
     def start_new_response_block(self, model_name):
-        self.current_response_raw_text = ""
-        
-        # Add header
-        header = Gtk.Label(label=f"Ollama ({model_name}):")
-        header.set_xalign(0)
-        header.set_halign(Gtk.Align.START)
-        header.add_css_class("dim-label")
-        self.chat_box.append(header)
-        
-        # Container for response bubble
-        container = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
-        container.set_halign(Gtk.Align.START)
-        container.set_hexpand(True)
-        
-        # Bubble box
-        bubble = Gtk.Box()
-        bubble.add_css_class("bot-bubble")
-        bubble.set_hexpand(True) # Allow bubble to expand to fill width if needed, or just wrap
-        
-        # Create label for response content
-        self.current_response_label = Gtk.Label()
-        self.current_response_label.set_wrap(True)
-        self.current_response_label.set_xalign(0)
-        self.current_response_label.set_selectable(True)
-        self.current_response_label.set_halign(Gtk.Align.FILL)
-        self.current_response_label.set_hexpand(True)
-        
-        bubble.append(self.current_response_label)
-        container.append(bubble)
-        self.chat_box.append(container)
+        self.current_ai_bubble = AiBubble(model_name=model_name)
+        self.chat_box.append(self.current_ai_bubble)
 
     def append_response_chunk(self, text):
-        if self.current_response_label:
-            self.current_response_raw_text += text
-            markup = parse_markdown(self.current_response_raw_text)
-            self.current_response_label.set_markup(markup)
+        if self.current_ai_bubble:
+            self.current_ai_bubble.append_text(text)
             
             # Notify strategy for accumulation if needed
             if hasattr(self.strategy, 'append_response_chunk'):
                 self.strategy.append_response_chunk(text)
 
     def reset_thinking_state(self):
-        self.active_thinking_label = None
         self.active_logprobs_label = None
-        self.current_response_label = None
-        self.current_response_raw_text = ""
+        self.current_ai_bubble = None
 
     def append_thinking(self, text):
-        if self.active_thinking_label is None:
-            # Create expander and inner label
-            expander = Gtk.Expander(label=_("See thinking"))
-            expander.set_hexpand(True)
-            expander.set_halign(Gtk.Align.FILL)
-            
-            inner_label = Gtk.Label()
-            inner_label.set_wrap(True)
-            inner_label.set_xalign(0)
-            inner_label.set_selectable(True)
-            inner_label.set_hexpand(True)
-            inner_label.set_halign(Gtk.Align.FILL)
-            inner_label.add_css_class("thinking-text")
-            
-            expander.set_child(inner_label)
-            
-            last_child = self.chat_box.get_last_child()
-            if last_child and self.current_response_label:
-                 self.chat_box.insert_child_after(expander, last_child.get_prev_sibling())
-            else:
-                 self.chat_box.append(expander)
-            
-            self.active_thinking_label = inner_label
-
-        current_text = self.active_thinking_label.get_label()
-        self.active_thinking_label.set_label(current_text + text)
+        if self.current_ai_bubble:
+            self.current_ai_bubble.append_thinking(text)
         
         if hasattr(self.strategy, 'append_thinking'):
             self.strategy.append_thinking(text)
@@ -595,62 +531,14 @@ class GenerationTab(Gtk.Box):
             if role == 'user':
                 self.add_message(content, sender=_("You"))
             elif role == 'assistant':
-                # Reconstruct thinking if present
+                # Reconstruct with AiBubble
+                bubble = AiBubble(model_name="Assistant")
                 if thinking_content:
-                    # Manually add thinking bubble
-                    expander = Gtk.Expander(label=_("See thinking"))
-                    expander.set_hexpand(True)
-                    expander.set_halign(Gtk.Align.FILL)
-                    
-                    inner_label = Gtk.Label()
-                    inner_label.set_wrap(True)
-                    inner_label.set_xalign(0)
-                    inner_label.set_selectable(True)
-                    inner_label.set_hexpand(True)
-                    inner_label.set_halign(Gtk.Align.FILL)
-                    inner_label.add_css_class("thinking-text")
-                    inner_label.set_label(thinking_content)
-                    
-                    expander.set_child(inner_label)
-                    
-                    # Container
-                    container = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
-                    container.set_halign(Gtk.Align.START)
-                    container.append(expander)
-                    self.chat_box.append(container)
+                    bubble.append_thinking(thinking_content)
+                bubble.append_text(content)
+                self.chat_box.append(bubble)
 
-                self.add_message(content, sender="Ollama")
 
-    def process_request(self, prompt, model_name, images=None):
-        host = self.host_entry.get_text()
-        
-        # Get thinking parameter
-        thinking_item = self.thinking_dropdown.get_selected_item()
-        thinking_val = None 
-        if thinking_item:
-            thinking_str = thinking_item.get_string()
-            if thinking_str == "Thinking":
-                thinking_val = True
-            elif thinking_str == "No thinking":
-                thinking_val = False
-            elif thinking_str == "Low":
-                thinking_val = "low"
-            elif thinking_str == "Medium":
-                thinking_val = "medium"
-            elif thinking_str == "High":
-                thinking_val = "high"
-            elif thinking_str == "None":
-                thinking_val = None
-
-        system_prompt = self.system_prompt_entry.get_text().strip()
-        
-        logprobs = False
-        top_logprobs = None
-        if self.logprobs_check.get_active():
-            logprobs = True
-            top_logprobs_text = self.top_logprobs_entry.get_text().strip()
-            if top_logprobs_text.isdigit():
-                top_logprobs = int(top_logprobs_text)
 
     def get_options_from_ui(self):
         options = {}
@@ -684,8 +572,6 @@ class GenerationTab(Gtk.Box):
 
     def load_chat_settings(self, chat_data):
         # Model
-        model = chat_data.get('model')
-        model = chat_data.get('model')
         model = chat_data.get('model')
         if model:
             # We can't easily select it if the dropdown isn't populated yet,

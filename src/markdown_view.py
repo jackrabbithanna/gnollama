@@ -125,43 +125,76 @@ class MarkdownView(Gtk.Box):
         self._process_content(self._text)
 
     def _process_content(self, text):
-        # Use finditer to support matching fence lengths (3 or more backticks)
-        # Regex matches: (`{3,}) -> fence
-        #                ([^\n]*) -> optional lang (anything but newline)
-        #                \n -> newline
-        #                .*? -> content
-        #                \s* -> whitespace/newlines before closing fence
-        #                \1 -> matching closing fence
-        pattern = r'(`{3,})([^\n]*)\n(.*?)\s*\1'
-        last_pos = 0
-        for match in re.finditer(pattern, text, flags=re.DOTALL):
-            start, end = match.span()
+        lines = text.split('\n')
+        i = 0
+        n = len(lines)
+        
+        while i < n:
+            line = lines[i]
+            stripped = line.strip()
             
-            # Render text before match
-            if start > last_pos:
-                self.render_text_block(text[last_pos:start])
+            # Check for fence start
+            # Matches ``` or ~~~ (at least 3)
+            # Must be checked carefully.
+            # We want to match: spaces? + (`{3,} | ~{3,}) + lang?
+            match = re.match(r'^(\s*)(`{3,}|~{3,})(.*)$', line)
             
-            # Render code block
-            # Group 2 is lang, Group 3 is content.
-            fence = match.group(1)
-            lang = match.group(2).strip()
-            code = match.group(3)
+            if match:
+                # Start of code block
+                indent, fence, raw_lang = match.groups()
+                lang = raw_lang.strip()
+                
+                # Check for "Orphaned Lang" (lang on next line)
+                # If lang is empty, peek next line
+                content_start_idx = i + 1
+                if not lang and content_start_idx < n:
+                    # Sniff next line
+                    next_line = lines[content_start_idx].strip()
+                    # Clean potential backticks from lang guess
+                    clean_lang = next_line.strip('`')
+                    if clean_lang.lower() in ['markdown', 'md', 'python', 'py', 'bash', 'sh', 'javascript', 'js', 'html', 'css', 'json', 'xml', 'sql', 'java', 'c', 'cpp', 'go', 'rs', 'rust']:
+                        lang = clean_lang
+                        content_start_idx += 1 # Skip the lang line
+                
+                # Consume lines until closing fence or EOF
+                code_lines = []
+                i = content_start_idx
+                closed = False
+                while i < n:
+                    curr_line = lines[i]
+                    # Check for closing fence
+                    # Must match opening fence style (backticks/tildes) and length (at least as long)
+                    # And match indent (roughly? markdown is loose here, strict indent matching usually <= 3 spaces)
+                    close_match = re.match(r'^(\s*)(`{3,}|~{3,})\s*$', curr_line)
+                    if close_match:
+                        c_indent, c_fence = close_match.groups()
+                        if c_fence[0] == fence[0] and len(c_fence) >= len(fence):
+                            closed = True
+                            i += 1 # Consume closing fence
+                            break
+                    
+                    code_lines.append(curr_line)
+                    i += 1
+                
+                # Render the block
+                # If EOF reached without close, we still render (standard markdown behavior usually auto-closes)
+                self.render_code_block(lang, "\n".join(code_lines))
+                continue
             
-            # Fix for "Orphaned Lang": If lang is empty, check if first line of content looks like a language
-            # This handles cases where the model puts the language on the next line
-            if not lang and code:
-                lines = code.split('\n', 1)
-                first_line = lines[0].strip()
-                if len(lines) > 1 and first_line.lower() in ['markdown', 'python', 'bash', 'sh', 'javascript', 'js', 'html', 'css', 'json']:
-                     lang = first_line
-                     code = lines[1]
+            # Not a fence, accumulate text block
+            # We need to find the NEXT fence to know where this text block ends
+            text_buffer = []
+            while i < n:
+                curr_line = lines[i]
+                if re.match(r'^\s*(`{3,}|~{3,})', curr_line):
+                    # Found start of next block
+                    break
+                text_buffer.append(curr_line)
+                i += 1
             
-            self.render_code_block(lang, code)
-            last_pos = end
-            
-        # Render remaining text
-        if last_pos < len(text):
-            self.render_text_block(text[last_pos:])
+            if text_buffer:
+                self.render_text_block("\n".join(text_buffer))
+
 
     def render_code_block(self, lang, code):
         # Check if it's markdown - if so, render recursively

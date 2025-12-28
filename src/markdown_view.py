@@ -55,6 +55,17 @@ class PangoMarkupParser(HTMLParser):
             self.output.append("\n")
         elif tag == 'hr':
             self.output.append("\n" + "─" * 20 + "\n")
+        elif tag == 'pre':
+            # Add indentation/marker for code blocks rendered via text fallback
+            self.output.append("\n  ") 
+        elif tag == 'blockquote':
+            self.output.append("\n  <i>") # Indent and italicize quote
+        elif tag == 'table':
+            self.output.append("\n")
+        elif tag == 'tr':
+            self.output.append("\n")
+        elif tag in ['td', 'th']:
+            self.output.append(" | ")
             
     def handle_endtag(self, tag):
         if tag in ['h1', 'h2', 'h3', 'h4', 'h5', 'h6']:
@@ -71,6 +82,10 @@ class PangoMarkupParser(HTMLParser):
             self.output.append("</a>")
         elif tag == 'li':
             self.output.append("\n")
+        elif tag == 'blockquote':
+            self.output.append("</i>\n")
+        elif tag == 'pre':
+            self.output.append("\n")
 
     def handle_data(self, data):
         self.output.append(html.escape(data))
@@ -86,7 +101,7 @@ class MarkdownView(Gtk.Box):
         super().__init__(orientation=Gtk.Orientation.VERTICAL, **kwargs)
         self.add_css_class("markdown-view")
         self._text = text
-        self.set_spacing(12) # Spacing between blocks (paragraphs, code blocks)
+        self.set_spacing(12) 
         
         self.render()
 
@@ -104,45 +119,56 @@ class MarkdownView(Gtk.Box):
 
         if not markdown:
             # Fallback for missing library
-            label = Gtk.Label(label=self._text)
-            label.set_wrap(True)
-            label.set_xalign(0)
-            self.append(label)
+            self.render_text_block(self._text)
             return
 
-        # We will split the markdown into blocks: Code blocks vs Text
-        # A simple approach is to use regex to find code blocks ```...``` 
-        # and render them separately, and pass the rest to standard markdown
-        # But `markdown` library is better at parsing. 
-        # Ideally, we'd write a custom renderer for `markdown` that outputs Gtk Widgets?
-        # That's complex. 
-        # Simpler: Split by code fences manually, then render chunks.
-        
-        # Regex for code blocks: ```lang\ncode\n```
-        # flags=re.DOTALL to match newlines
-        parts = re.split(r'(```(?:\w+)?\n.*?\n```)', self._text, flags=re.DOTALL)
-        
-        for part in parts:
-            if not part: 
-                continue
-            
-            if part.startswith("```") and part.endswith("```"):
-                self.render_code_block(part)
-            else:
-                self.render_text_block(part)
+        self._process_content(self._text)
 
-    def render_code_block(self, block_text):
-        # Extract lang and code
-        # Format: ```lang\ncode...```
-        lines = block_text.split('\n')
-        first_line = lines[0].strip()
-        lang = ""
-        if len(first_line) > 3:
-            lang = first_line[3:].strip()
-        
-        # Remove first and last line (fences)
-        code = "\n".join(lines[1:-1])
-        
+    def _process_content(self, text):
+        # Use finditer to support matching fence lengths (3 or more backticks)
+        # Regex matches: (`{3,}) -> fence
+        #                ([^\n]*) -> optional lang (anything but newline)
+        #                \n -> newline
+        #                .*? -> content
+        #                \s* -> whitespace/newlines before closing fence
+        #                \1 -> matching closing fence
+        pattern = r'(`{3,})([^\n]*)\n(.*?)\s*\1'
+        last_pos = 0
+        for match in re.finditer(pattern, text, flags=re.DOTALL):
+            start, end = match.span()
+            
+            # Render text before match
+            if start > last_pos:
+                self.render_text_block(text[last_pos:start])
+            
+            # Render code block
+            # Group 2 is lang, Group 3 is content.
+            fence = match.group(1)
+            lang = match.group(2).strip()
+            code = match.group(3)
+            
+            # Fix for "Orphaned Lang": If lang is empty, check if first line of content looks like a language
+            # This handles cases where the model puts the language on the next line
+            if not lang and code:
+                lines = code.split('\n', 1)
+                first_line = lines[0].strip()
+                if len(lines) > 1 and first_line.lower() in ['markdown', 'python', 'bash', 'sh', 'javascript', 'js', 'html', 'css', 'json']:
+                     lang = first_line
+                     code = lines[1]
+            
+            self.render_code_block(lang, code)
+            last_pos = end
+            
+        # Render remaining text
+        if last_pos < len(text):
+            self.render_text_block(text[last_pos:])
+
+    def render_code_block(self, lang, code):
+        # Check if it's markdown - if so, render recursively
+        if lang.lower() in ['markdown', 'md']:
+             self._process_content(code)
+             return
+
         # Create widget
         wrapper = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         wrapper.add_css_class("code-block")
@@ -154,7 +180,7 @@ class MarkdownView(Gtk.Box):
             header = Gtk.Label(label=lang)
             header.add_css_class("code-header")
             header.set_halign(Gtk.Align.END)
-            # wrapper.append(header) # Optional
+            # wrapper.append(header) 
 
         # Code View
         if GtkSource:
@@ -166,13 +192,13 @@ class MarkdownView(Gtk.Box):
             
             # Style scheme
             sm = GtkSource.StyleSchemeManager.get_default()
-            scheme = sm.get_scheme("oblivion") # Hardcoded for now, should detect theme
+            scheme = sm.get_scheme("oblivion") 
             if scheme:
                 buffer.set_style_scheme(scheme)
                 
             buffer.set_text(code)
             view = GtkSource.View.new_with_buffer(buffer)
-            view.set_show_line_numbers(False) # Clean look
+            view.set_show_line_numbers(False) 
         else:
             view = Gtk.TextView()
             view.get_buffer().set_text(code)
@@ -190,7 +216,7 @@ class MarkdownView(Gtk.Box):
         scrolled = Gtk.ScrolledWindow()
         scrolled.set_child(view)
         scrolled.set_propagate_natural_height(True)
-        scrolled.set_max_content_height(400) # Limit max height
+        scrolled.set_max_content_height(400) 
         
         wrapper.append(scrolled)
         self.append(wrapper)
@@ -201,7 +227,8 @@ class MarkdownView(Gtk.Box):
             return
             
         try:
-            html_text = markdown.markdown(text)
+            # Enable extensions for better parsing
+            html_text = markdown.markdown(text, extensions=['fenced_code', 'tables'])
             parser = PangoMarkupParser()
             parser.feed(html_text)
             markup = parser.get_markup()

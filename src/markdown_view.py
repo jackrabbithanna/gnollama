@@ -343,10 +343,11 @@ class MarkdownView(Gtk.Box):
         view.add_css_class("code-view")
         
         # Scrolled Window for code
+        # User requested full height without scrolling
         scrolled = Gtk.ScrolledWindow()
         scrolled.set_child(view)
         scrolled.set_propagate_natural_height(True)
-        scrolled.set_max_content_height(400) 
+        scrolled.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.NEVER) # horizontal auto, vertical never (expand)
         
         wrapper.append(scrolled)
         self.append(wrapper)

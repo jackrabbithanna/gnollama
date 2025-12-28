@@ -28,31 +28,59 @@ class PangoMarkupParser(HTMLParser):
         self.output = []
         self.tags = []
         
+        # Table state
+        self.in_table = False
+        self.table_rows = []
+        self.current_row = []
+        self.in_cell = False
+        self.cell_content = "" # Buffer for cell content
+        
     def handle_starttag(self, tag, attrs):
-        if tag in ['h1', 'h2']:
+        if tag == 'table':
+            self.in_table = True
+            self.table_rows = []
+            self.output.append("\n") # Spacing before table
+        elif tag == 'tr':
+            if self.in_table:
+                self.current_row = []
+        elif tag in ['td', 'th']:
+            if self.in_table:
+                self.in_cell = True
+                self.cell_content = ""
+            else:
+                self.output.append(" | ")
+        elif tag in ['h1', 'h2']:
             self.output.append("\n<span size='xx-large' weight='bold'>")
         elif tag == 'h3':
             self.output.append("\n<span size='x-large' weight='bold'>")
         elif tag in ['h4', 'h5', 'h6']:
             self.output.append("\n<span size='large' weight='bold'>")
         elif tag in ['b', 'strong']:
-            self.output.append("<b>")
+            if self.in_table: self.cell_content += ""; # Strip formatting in table cells for now
+            else: self.output.append("<b>")
         elif tag in ['i', 'em']:
-            self.output.append("<i>")
+            if self.in_table: self.cell_content += ""; 
+            else: self.output.append("<i>")
         elif tag in ['code', 'tt']:
-            self.output.append("<tt>")
+            if self.in_table: self.cell_content += "";
+            else: self.output.append("<tt>")
         elif tag == 'p':
-            if self.output and not self.output[-1].endswith("\n\n"):
+            if not self.in_table and self.output and not self.output[-1].endswith("\n\n"):
                 self.output.append("\n")
         elif tag == 'ul':
             self.output.append("\n")
         elif tag == 'li':
             self.output.append("• ")
         elif tag == 'a':
-            href = dict(attrs).get('href', '')
-            self.output.append(f"<a href='{html.escape(href)}'>")
+            if self.in_table: 
+                 href = dict(attrs).get('href', '')
+                 # Simplified link for ASCII table
+            else:
+                href = dict(attrs).get('href', '')
+                self.output.append(f"<a href='{html.escape(href)}'>")
         elif tag == 'br':
-            self.output.append("\n")
+            if self.in_table: self.cell_content += " "
+            else: self.output.append("\n")
         elif tag == 'hr':
             self.output.append("\n" + "─" * 20 + "\n")
         elif tag == 'pre':
@@ -60,26 +88,33 @@ class PangoMarkupParser(HTMLParser):
             self.output.append("\n  ") 
         elif tag == 'blockquote':
             self.output.append("\n  <i>") # Indent and italicize quote
-        elif tag == 'table':
-            self.output.append("\n")
-        elif tag == 'tr':
-            self.output.append("\n")
-        elif tag in ['td', 'th']:
-            self.output.append(" | ")
             
     def handle_endtag(self, tag):
-        if tag in ['h1', 'h2', 'h3', 'h4', 'h5', 'h6']:
+        if tag == 'table':
+            self.in_table = False
+            self.render_ascii_table()
+            self.output.append("\n")
+        elif tag == 'tr':
+            if self.in_table:
+                self.table_rows.append(self.current_row)
+            else:
+                self.output.append("\n")
+        elif tag in ['td', 'th']:
+            if self.in_table:
+                self.in_cell = False
+                self.current_row.append(self.cell_content.strip())
+        elif tag in ['h1', 'h2', 'h3', 'h4', 'h5', 'h6']:
             self.output.append("</span>\n")
         elif tag in ['b', 'strong']:
-            self.output.append("</b>")
+            if not self.in_table: self.output.append("</b>")
         elif tag in ['i', 'em']:
-            self.output.append("</i>")
+            if not self.in_table: self.output.append("</i>")
         elif tag in ['code', 'tt']:
-            self.output.append("</tt>")
+            if not self.in_table: self.output.append("</tt>")
         elif tag == 'p':
-            self.output.append("\n")
+            if not self.in_table: self.output.append("\n")
         elif tag == 'a':
-            self.output.append("</a>")
+            if not self.in_table: self.output.append("</a>")
         elif tag == 'li':
             self.output.append("\n")
         elif tag == 'blockquote':
@@ -88,8 +123,34 @@ class PangoMarkupParser(HTMLParser):
             self.output.append("\n")
 
     def handle_data(self, data):
-        self.output.append(html.escape(data))
+        if self.in_table and self.in_cell:
+            self.cell_content += data # No confusing escaping inside buffer yet, we do it at render
+        elif not self.in_table:
+            self.output.append(html.escape(data))
+    
+    def render_ascii_table(self):
+        if not self.table_rows:
+            return
+            
+        # Calc max widths
+        col_widths = {}
+        for row in self.table_rows:
+            for i, cell in enumerate(row):
+                col_widths[i] = max(col_widths.get(i, 0), len(cell))
         
+        # Generate lines
+        lines = []
+        for row in self.table_rows:
+            line_parts = []
+            for i, cell in enumerate(row):
+                width = col_widths.get(i, 0)
+                # Left align for now
+                line_parts.append(cell.ljust(width))
+            lines.append(" | ".join(line_parts))
+            
+        table_str = "\n".join(lines)
+        self.output.append(f"<tt>{html.escape(table_str)}</tt>")
+
     def get_markup(self):
         return "".join(self.output).strip()
 

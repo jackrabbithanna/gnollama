@@ -44,8 +44,8 @@
   </screenshots>
 
   <releases>
-    <release version="0.5.1" date="2025-12-28">
-      <url type="details">https://example.org/changelog.html#version_1.0.1</url>
+    <release version="0.5.3" date="2025-12-28">
+      <url type="details">https://github.com/jackrabbithanna/gnollama/releases/tag/0.5.3</url>
       <description translate="no">
       </description>
     </release>

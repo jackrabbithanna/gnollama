@@ -4,7 +4,8 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from gi.repository import Gtk, GObject, Pango, GLib
+import base64
+from gi.repository import Gtk, GObject, Pango, GLib, Gdk
 from .markdown_view import MarkdownView
 
 class ChatBubble(Gtk.ListBoxRow):
@@ -40,9 +41,39 @@ class ChatBubble(Gtk.ListBoxRow):
 class UserBubble(ChatBubble):
     __gtype_name__ = 'UserBubble'
 
-    def __init__(self, text, **kwargs):
+
+    def __init__(self, text, images=None, **kwargs):
         super().__init__(is_user=True, **kwargs)
         
+        # If we have images, show them
+        if images:
+            images_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+            images_box.set_spacing(6)
+            images_box.set_halign(Gtk.Align.END)
+            
+            for img_b64 in images:
+                try:
+                    # Decode base64
+                    start_idx = 0
+                    if "," in img_b64:
+                        start_idx = img_b64.find(",") + 1
+                    
+                    img_data = base64.b64decode(img_b64[start_idx:])
+                    bytes_data = GLib.Bytes.new(img_data)
+                    texture = Gdk.Texture.new_from_bytes(bytes_data)
+                    
+                    picture = Gtk.Picture.new_for_paintable(texture)
+                    picture.set_content_fit(Gtk.ContentFit.SCALE_DOWN)
+                    picture.set_size_request(200, 200) # Max size
+                    picture.set_can_shrink(True) # Allow shrinking
+                    
+                    # Wrap in frame or styling if needed, for now just the picture
+                    images_box.append(picture)
+                except Exception as e:
+                    print(f"Failed to load image in bubble: {e}")
+            
+            self.bubble_box.append(images_box)
+
         label = Gtk.Label(label=text)
         label.set_wrap(True)
         label.set_max_width_chars(50)

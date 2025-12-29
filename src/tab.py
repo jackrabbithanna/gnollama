@@ -42,7 +42,8 @@ class ChatStrategy:
     def on_response_complete(self, tab, model_name):
         msg = {
             "role": "assistant", 
-            "content": self.current_response_full_text
+            "content": self.current_response_full_text,
+            "model": model_name
         }
         if self.current_thinking_full_text:
             msg["thinking_content"] = self.current_thinking_full_text
@@ -62,6 +63,15 @@ class ChatStrategy:
             thinking_val = getattr(self, 'current_thinking_val', None)
             if thinking_val is not None:
                 options['thinking_val'] = thinking_val
+                
+            # Save "logprobs" setting if present
+            logprobs_val = getattr(self, 'current_logprobs', None)
+            if logprobs_val is not None:
+                options['logprobs'] = logprobs_val
+                
+            top_logprobs_val = getattr(self, 'current_top_logprobs', None)
+            if top_logprobs_val is not None:
+                options['top_logprobs'] = top_logprobs_val
             
             self.storage.save_chat(self.chat_id, self.history, model=model_name, options=options, system=system)
             
@@ -84,6 +94,8 @@ class ChatStrategy:
         self.current_options = kwargs.get('options')
         self.current_system = system
         self.current_thinking_val = kwargs.get('thinking')
+        self.current_logprobs = kwargs.get('logprobs')
+        self.current_top_logprobs = kwargs.get('top_logprobs')
         
         # Build messages
         messages = []
@@ -94,7 +106,10 @@ class ChatStrategy:
         messages.append({"role": "user", "content": prompt})
         
         # Update our history with the user's message now
-        self.history.append({"role": "user", "content": prompt})
+        msg = {"role": "user", "content": prompt}
+        if kwargs.get('images'):
+             msg['images'] = kwargs['images']
+        self.history.append(msg)
         
         # Reset current response accumulator
         self.current_response_full_text = ""
@@ -380,9 +395,6 @@ class GenerationTab(Gtk.Box):
             truncated = prompt[:20] + "..." if len(prompt) > 20 else prompt
             self.tab_label.set_label(truncated)
 
-        self.add_message(prompt, sender=_("You"))
-        self.entry.set_text("")
-        
         # Get selected model
         selected_item = self.model_dropdown.get_selected_item()
         model_name = "llama3" # Fallback
@@ -404,13 +416,16 @@ class GenerationTab(Gtk.Box):
             # Clear image after reading
             self.on_clear_image_clicked(None)
 
+        self.add_message(prompt, sender=_("You"), images=images)
+        self.entry.set_text("")
+        
         thread = threading.Thread(target=self.process_request, args=(prompt, model_name, images))
         thread.daemon = True
         thread.start()
 
-    def add_message(self, text, sender="System"):
+    def add_message(self, text, sender="System", images=None):
         if sender == _("You"):
-            bubble = UserBubble(text)
+            bubble = UserBubble(text, images=images)
             self.chat_box.append(bubble)
         else:
             # System message or error
@@ -529,10 +544,12 @@ class GenerationTab(Gtk.Box):
             thinking_content = msg.get('thinking_content')
             
             if role == 'user':
-                self.add_message(content, sender=_("You"))
+                images = msg.get('images')
+                self.add_message(content, sender=_("You"), images=images)
             elif role == 'assistant':
                 # Reconstruct with AiBubble
-                bubble = AiBubble(model_name="Assistant")
+                model_name = msg.get('model', 'Assistant')
+                bubble = AiBubble(model_name=model_name)
                 if thinking_content:
                     bubble.append_thinking(thinking_content)
                 bubble.append_text(content)
@@ -610,6 +627,12 @@ class GenerationTab(Gtk.Box):
             # Stats check
             if 'stats' in options:
                 self.stats_check.set_active(options['stats'])
+
+            # Logprobs
+            if 'logprobs' in options:
+                self.logprobs_check.set_active(options['logprobs'])
+            if 'top_logprobs' in options and options['top_logprobs'] is not None:
+                self.top_logprobs_entry.set_text(str(options['top_logprobs']))
 
     def process_request(self, prompt, model_name, images=None):
         host = self.host_entry.get_text()

@@ -63,6 +63,15 @@ class ChatStrategy:
             thinking_val = getattr(self, 'current_thinking_val', None)
             if thinking_val is not None:
                 options['thinking_val'] = thinking_val
+                
+            # Save "logprobs" setting if present
+            logprobs_val = getattr(self, 'current_logprobs', None)
+            if logprobs_val is not None:
+                options['logprobs'] = logprobs_val
+                
+            top_logprobs_val = getattr(self, 'current_top_logprobs', None)
+            if top_logprobs_val is not None:
+                options['top_logprobs'] = top_logprobs_val
             
             self.storage.save_chat(self.chat_id, self.history, model=model_name, options=options, system=system)
             
@@ -85,6 +94,8 @@ class ChatStrategy:
         self.current_options = kwargs.get('options')
         self.current_system = system
         self.current_thinking_val = kwargs.get('thinking')
+        self.current_logprobs = kwargs.get('logprobs')
+        self.current_top_logprobs = kwargs.get('top_logprobs')
         
         # Build messages
         messages = []
@@ -616,6 +627,12 @@ class GenerationTab(Gtk.Box):
             # Stats check
             if 'stats' in options:
                 self.stats_check.set_active(options['stats'])
+
+            # Logprobs
+            if 'logprobs' in options:
+                self.logprobs_check.set_active(options['logprobs'])
+            if 'top_logprobs' in options and options['top_logprobs'] is not None:
+                self.top_logprobs_entry.set_text(str(options['top_logprobs']))
 
     def process_request(self, prompt, model_name, images=None):
         host = self.host_entry.get_text()

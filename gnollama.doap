@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Project xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:foaf="http://xmlns.com/foaf/0.1/"
+         xmlns:gnome="http://api.gnome.org/doap-extensions#"
+         xmlns="http://usefulinc.com/ns/doap#">
+
+  <name>gnollama</name>
+  <shortdesc xml:lang="en">gnollama, a Gnome based Ollama UI</shortdesc>
+  <description xml:lang="en">
+A GNOME based user interface to Ollama. Supports connecting to models from any host. Both Ollama "generate response" and "chat" APIs.
+Supports choosing multiple images to send in the prompt.
+Supports rendering Markdown and code highlighting in responses.
+Saves chat history and allows management of saved chats.
+Supports all settings in the Ollama API including images, system prompt, Thinking mode, Log probabilities, Temperature, etc..
+  </description>
+
+  <homepage rdf:resource="https://github.com/jackrabbithanna/gnollama/" />
+  <support-forum rdf:resource="" />
+  <bug-database rdf:resource="https://github.com/jackrabbithanna/gnollama/issues/" />
+
+  <programming-language>Python</programming-language>
+
+  <maintainer>
+    <foaf:Person>
+      <foaf:name>Mark Hanna</foaf:name>
+      <foaf:mbox rdf:resource="mailto:mark@jackrabbithanna.com" />
+      <gnome:userid></gnome:userid>
+    </foaf:Person>
+  </maintainer>
+
+</Project>

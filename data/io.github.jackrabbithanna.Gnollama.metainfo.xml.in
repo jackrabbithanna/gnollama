@@ -7,7 +7,12 @@
   <name>Gnollama</name>
   <summary>GNOME based UI for Ollama</summary>
   <description>
-    <p>Chat with Ollama on any host</p>
+    <p>Chat with Ollama on any host.</p>
+    <p>Supports "generate" and "chat" Ollama APIs</p>
+    <p>Displays the "Thinking" stream in a fieldset in the response bubble.</p>
+    <p>Chats are saved between sessions, and chat titles can be edited, and chats deleted</p>
+    <p>Supports all API parameters including system prompt, images, temperature, etc..</p>
+    <p>Renders Markdown and code blocks have code highlighting</p>
   </description>
 
   <developer id="tld.vendor">
@@ -38,15 +43,16 @@
 
   <screenshots>
     <screenshot type="default">
-      <image>https://github.com/jackrabbithanna/gnollama/blob/main/screenshots/gnollama-screenshot.png</image>
+      <image>https://github.com/jackrabbithanna/gnollama/blob/main/screenshots/gnollama-screenshot.png?raw=true</image>
       <caption>Ollama chat with code highlighting</caption>
     </screenshot>
   </screenshots>
 
   <releases>
-    <release version="0.5.3" date="2025-12-28">
-      <url type="details">https://github.com/jackrabbithanna/gnollama/releases/tag/0.5.3</url>
+    <release version="0.5.4" date="2025-12-28">
+      <url type="details">https://github.com/jackrabbithanna/gnollama/releases/tag/0.5.4</url>
       <description translate="no">
+        <p>First production release</p>
       </description>
     </release>
   </releases>

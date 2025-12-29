@@ -25,8 +25,9 @@ Each tab supports entering any host. Model selection options populated from host
 Model selection, thinking, system prompt, statistics, logprobs, and other options (e.g. temperature)
 
 
-<img src="gnollama-screenshot.png" alt="gnollama" align="left"/>
+<img src="./screenshots/gnollama-screenshot.png" alt="gnollama" align="left"/>
 
+<img src="./screenshots/gnollama-chat-options.png" alt="gnollama" align="left"/>
 
 ## Build
 

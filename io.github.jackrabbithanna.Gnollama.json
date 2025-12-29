@@ -47,13 +47,7 @@
                     "url" : "https://github.com/jackrabbithanna/gnollama",
                     "tag" : "0.5.4"
                 }
-            ],
-            "config-opts" : [
-                "--libdir=lib"
             ]
         }
-    ],
-    "build-options" : {
-        "env" : {        }
-    }
+    ]
 }

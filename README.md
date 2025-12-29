@@ -66,6 +66,10 @@ Manage models for each host
 
 More UI Multi-lingual translations
 
+## Contribute
+
+The [GNOME Code of Conduct](https://wiki.gnome.org/Foundation/CodeOfConduct) is applicable to this project
+
 
 ## License
 

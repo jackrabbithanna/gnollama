@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist gettext-domain="gnollama">
-	<schema id="com.github.jackrabbithanna.Gnollama" path="/com/github/jackrabbithanna/Gnollama/">
+	<schema id="io.github.jackrabbithanna.Gnollama" path="/io/github/jackrabbithanna/Gnollama/">
 
 		<key name="ollama-host" type="s">
 			<default>'http://localhost:11434'</default>

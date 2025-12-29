@@ -1,8 +1,8 @@
 # List of source files containing translatable strings.
 # Please keep this file sorted alphabetically.
-data/com.github.jackrabbithanna.Gnollama.desktop.in
-data/com.github.jackrabbithanna.Gnollama.metainfo.xml.in
-data/com.github.jackrabbithanna.Gnollama.gschema.xml
+data/io.github.jackrabbithanna.Gnollama.desktop.in
+data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in
+data/io.github.jackrabbithanna.Gnollama.gschema.xml
 src/main.py
 src/tab.py
 src/window.py

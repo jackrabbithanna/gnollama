@@ -1,4 +1,4 @@
-application_id = 'com.github.jackrabbithanna.Gnollama'
+application_id = 'io.github.jackrabbithanna.Gnollama'
 
 scalable_dir = 'hicolor' / 'scalable' / 'apps'
 install_data(

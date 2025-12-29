@@ -26,7 +26,7 @@ import html
 from .tab import GenerationTab
 from .storage import ChatStorage
 
-@Gtk.Template(resource_path='/com/github/jackrabbithanna/Gnollama/window.ui')
+@Gtk.Template(resource_path='/io/github/jackrabbithanna/Gnollama/window.ui')
 class GnollamaWindow(Adw.ApplicationWindow):
     __gtype_name__ = 'GnollamaWindow'
 
@@ -35,7 +35,7 @@ class GnollamaWindow(Adw.ApplicationWindow):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.settings = Gio.Settings.new('com.github.jackrabbithanna.Gnollama')
+        self.settings = Gio.Settings.new('io.github.jackrabbithanna.Gnollama')
         self.storage = ChatStorage()
         
         self.history_list.connect("row-activated", self.on_history_row_activated)

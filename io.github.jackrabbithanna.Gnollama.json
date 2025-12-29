@@ -1,5 +1,5 @@
 {
-    "id": "com.github.jackrabbithanna.Gnollama",
+    "id": "io.github.jackrabbithanna.Gnollama",
     "runtime": "org.gnome.Platform",
     "runtime-version": "48",
     "sdk": "org.gnome.Sdk",
@@ -44,7 +44,8 @@
             "sources": [
                 {
                     "type": "git",
-                    "url": "https://github.com/jackrabbithanna/gnollama"
+                    "url": "https://github.com/jackrabbithanna/gnollama",
+                    "tag": "0.5.1"
                 }
             ],
             "config-opts": [

@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=gnollama
 Exec=gnollama
-Icon=com.github.jackrabbithanna.Gnollama
+Icon=io.github.jackrabbithanna.Gnollama
 Terminal=false
 Type=Application
 Categories=Utility;

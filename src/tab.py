@@ -127,7 +127,7 @@ class ChatStrategy:
         )
 
 
-@Gtk.Template(resource_path='/com/github/jackrabbithanna/Gnollama/tab.ui')
+@Gtk.Template(resource_path='/io/github/jackrabbithanna/Gnollama/tab.ui')
 class GenerationTab(Gtk.Box):
     __gtype_name__ = 'GenerationTab'
     
@@ -164,7 +164,7 @@ class GenerationTab(Gtk.Box):
     def __init__(self, tab_label=None, mode='generate', chat_id=None, initial_history=None, storage=None, **kwargs):
         super().__init__(**kwargs)
         self.tab_label = tab_label
-        self.settings = Gio.Settings.new('com.github.jackrabbithanna.Gnollama')
+        self.settings = Gio.Settings.new('io.github.jackrabbithanna.Gnollama')
         
         if mode == 'chat':
             # Ensure storage is provided for chat mode

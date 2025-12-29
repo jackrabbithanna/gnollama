@@ -12,6 +12,8 @@ Select "New Response" to create a new generate tab using /api/generate.
 
 Select "New Chat" to create a new chat tab using /api/chat with previous messages so context is preserved.
 
+Displays the "Thinking" stream in a fieldset in the response bubble.
+
 Support saving chats and their options between sessions and a list of chats in a sidebar.
 
 Both tab types support selecting multiple images to pass to the model.
@@ -23,8 +25,9 @@ Each tab supports entering any host. Model selection options populated from host
 Model selection, thinking, system prompt, statistics, logprobs, and other options (e.g. temperature)
 
 
-<img src="gnollama-screenshot.png" alt="gnollama" align="left"/>
+<img src="./screenshots/gnollama-screenshot.png" alt="gnollama" align="left"/>
 
+<img src="./screenshots/gnollama-chat-options.png" alt="gnollama" align="left"/>
 
 ## Build
 
@@ -38,18 +41,21 @@ Model selection, thinking, system prompt, statistics, logprobs, and other option
 
 ### Meson
 
-Requires [GTKSourceView](https://wiki.gnome.org/Projects/GtkSourceView) version 5
 Requires python3 and markdown
+Code highlighting requires [GTKSourceView](https://wiki.gnome.org/Projects/GtkSourceView) version 5
+
 To install in Ubuntu:
-1. sudo apt-get install libgtksourceview-5-0 libgtksourceview-5-common libgtksourceview-5-dev
-2. sudo apt-get install gir1.2-gtksource-5
-3. sudo apt-get install python3-markdown python3-gi
+```bash
+apt-get install libgtksourceview-5-0 libgtksourceview-5-common libgtksourceview-5-dev
+apt-get install gir1.2-gtksource-5
+apt-get install python3-markdown python3-gi
+```
 
-1. mkdir build
-2. meson setup build
-3. meson compile -C build
-4. meson install -C build
-
+```bash
+meson setup build
+meson compile -C build
+meson install -C build
+```
 You can then run `gnollama` to execute the application.
 
 ## TODO

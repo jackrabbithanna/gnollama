@@ -689,12 +689,14 @@ class GenerationTab(Gtk.Box):
             "endpoint": "chat" if isinstance(self.strategy, ChatStrategy) else "generate",
             "host": host,
             "model": model_name,
-            "system": system_prompt if system_prompt else None,
             "options": options if options else None,
             "thinking": thinking_val,
             "logprobs": logprobs,
             "top_logprobs": top_logprobs,
         }
+        
+        if not isinstance(self.strategy, ChatStrategy):
+            api_params["system"] = system_prompt if system_prompt else None
 
         if images:
              api_params["images"] = f"[{len(images)} attached]"

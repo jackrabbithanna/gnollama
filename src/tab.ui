@@ -126,6 +126,7 @@
             <child>
               <object class="GtkCheckButton" id="stats_check">
                 <property name="label" translatable="yes">Show statistics</property>
+                <property name="active">True</property>
               </object>
             </child>
             <child>

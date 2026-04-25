@@ -76,7 +76,9 @@ class ChatStrategy:
             if top_logprobs_val is not None:
                 options['top_logprobs'] = top_logprobs_val
             
-            self.storage.save_chat(self.chat_id, self.history, model=model_name, options=options, system=system)
+            host = getattr(self, 'current_host', None)
+            
+            self.storage.save_chat(self.chat_id, self.history, model=model_name, options=options, system=system, host=host)
             
             def update_ui():
                 # Update tab title if still generic
@@ -99,6 +101,7 @@ class ChatStrategy:
         self.current_thinking_val = kwargs.get('thinking')
         self.current_logprobs = kwargs.get('logprobs')
         self.current_top_logprobs = kwargs.get('top_logprobs')
+        self.current_host = kwargs.get('host')
         
         # Build messages
         messages = []
@@ -613,6 +616,11 @@ class GenerationTab(Gtk.Box):
         system = chat_data.get('system')
         if system is not None:
             self.system_prompt_entry.set_text(system)
+
+        # Host
+        host = chat_data.get('host')
+        if host:
+            self.host_entry.set_text(host)
 
         # Options
         options = chat_data.get('options', {})

@@ -48,6 +48,9 @@ class ChatStrategy:
         if self.current_thinking_full_text:
             msg["thinking_content"] = self.current_thinking_full_text
             
+        if hasattr(self, 'current_api_params'):
+            msg["api_details"] = self.current_api_params
+            
         self.history.append(msg)
         
         if self.chat_id:
@@ -445,8 +448,10 @@ class GenerationTab(Gtk.Box):
             row.set_child(label)
             self.chat_box.append(row)
 
-    def start_new_response_block(self, model_name):
+    def start_new_response_block(self, model_name, api_details=None):
         self.current_ai_bubble = AiBubble(model_name=model_name)
+        if api_details:
+            self.current_ai_bubble.set_api_details(api_details)
         self.chat_box.append(self.current_ai_bubble)
 
     def append_response_chunk(self, text):
@@ -550,6 +555,11 @@ class GenerationTab(Gtk.Box):
                 # Reconstruct with AiBubble
                 model_name = msg.get('model', 'Assistant')
                 bubble = AiBubble(model_name=model_name)
+                
+                api_details = msg.get('api_details')
+                if api_details:
+                    bubble.set_api_details(api_details)
+                    
                 if thinking_content:
                     bubble.append_thinking(thinking_content)
                 bubble.append_text(content)
@@ -667,7 +677,43 @@ class GenerationTab(Gtk.Box):
 
         options = self.get_options_from_ui()
 
-        GLib.idle_add(self.start_new_response_block, model_name)
+        api_params = {
+            "endpoint": "chat" if isinstance(self.strategy, ChatStrategy) else "generate",
+            "host": host,
+            "model": model_name,
+            "system": system_prompt if system_prompt else None,
+            "options": options if options else None,
+            "thinking": thinking_val,
+            "logprobs": logprobs,
+            "top_logprobs": top_logprobs,
+        }
+
+        if images:
+             api_params["images"] = f"[{len(images)} attached]"
+             
+        if isinstance(self.strategy, ChatStrategy):
+             messages_to_send = []
+             if system_prompt:
+                 messages_to_send.append({"role": "system", "content": system_prompt})
+             
+             # Need to map the history to hide huge base64 images
+             for h in self.strategy.history:
+                 clean_h = dict(h)
+                 if "images" in clean_h and clean_h["images"]:
+                     clean_h["images"] = f"[{len(clean_h['images'])} attached]"
+                 messages_to_send.append(clean_h)
+                 
+             msg = {"role": "user", "content": prompt}
+             if images:
+                 msg["images"] = f"[{len(images)} attached]"
+             messages_to_send.append(msg)
+             
+             api_params["messages"] = messages_to_send
+        else:
+             api_params["prompt"] = prompt
+
+        self.strategy.current_api_params = api_params
+        GLib.idle_add(self.start_new_response_block, model_name, api_params)
 
         try:
             for json_obj in self.strategy.process(

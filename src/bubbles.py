@@ -96,6 +96,14 @@ class AiBubble(ChatBubble):
             header.set_margin_bottom(4)
             self.bubble_box.append(header)
         
+        # API Call Details Expander
+        self.api_expander = Gtk.Expander(label="API Call Details")
+        self.api_expander.set_visible(False)
+        
+        self.api_markdown_view = MarkdownView()
+        self.api_expander.set_child(self.api_markdown_view)
+        self.bubble_box.append(self.api_expander)
+        
         # Thinking Expander
         self.thinking_expander = Gtk.Expander(label="Thinking...")
         self.thinking_expander.set_visible(False)
@@ -113,6 +121,13 @@ class AiBubble(ChatBubble):
         self.full_text = ""
         self.thinking_text = ""
         self._update_scheduled = False
+
+    def set_api_details(self, details_dict):
+        self.api_expander.set_visible(True)
+        import json
+        details_str = json.dumps(details_dict, indent=2)
+        md_text = f"```json\n{details_str}\n```"
+        self.api_markdown_view.update(md_text)
 
     def append_text(self, text):
         self.full_text += text

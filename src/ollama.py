@@ -33,6 +33,23 @@ def fetch_model_details(host):
         print(f"Failed to fetch model details: {e}")
         return []
 
+def show_model(host, name):
+    """
+    Fetches detailed information about a specific model.
+    """
+    url = f"{host}/api/show"
+    data = {
+        "name": name,
+        "verbose": False
+    }
+    try:
+        req = urllib.request.Request(url, data=json.dumps(data).encode('utf-8'), headers={'Content-Type': 'application/json'})
+        with urllib.request.urlopen(req) as response:
+            return json.loads(response.read().decode('utf-8'))
+    except Exception as e:
+        print(f"Failed to show model: {e}")
+        return {}
+
 def get_version(host):
     """
     Fetches the Ollama version.

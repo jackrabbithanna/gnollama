@@ -1,7 +1,8 @@
-from gi.repository import Adw, Gtk, Gio, GLib
+from gi.repository import Adw, Gtk, Gio, GLib, Gdk
 from .storage import ChatStorage
 from . import ollama
 import threading
+import html
 
 @Gtk.Template(resource_path='/io/github/jackrabbithanna/Gnollama/model_manager.ui')
 class ModelManagerDialog(Adw.Window):
@@ -20,6 +21,25 @@ class ModelManagerDialog(Adw.Window):
         
         # Connect to dropdown changes
         self.host_dropdown.connect("notify::selected", self.on_host_selected)
+        
+        self.load_css()
+
+    def load_css(self):
+        css_provider = Gtk.CssProvider()
+        css = """
+        .template-bg {
+            background-color: alpha(@window_fg_color, 0.05);
+            border-radius: 6px;
+            padding: 10px;
+            font-family: monospace;
+        }
+        """
+        css_provider.load_from_data(css.encode('utf-8'))
+        Gtk.StyleContext.add_provider_for_display(
+            Gdk.Display.get_default(),
+            css_provider,
+            Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+        )
 
     def load_hosts(self):
         self.hosts = self.storage.get_all_hosts()
@@ -105,6 +125,12 @@ class ModelManagerDialog(Adw.Window):
         self.model_rows.append(row)
 
     def on_info_clicked(self, btn, model):
+        selected_index = self.host_dropdown.get_selected()
+        if selected_index == Gtk.INVALID_LIST_POSITION:
+            return
+        host = self.hosts[selected_index]
+        hostname = host['hostname']
+
         dialog = Adw.MessageDialog(
             transient_for=self,
             heading=model.get('name', 'Model Details'),
@@ -113,35 +139,120 @@ class ModelManagerDialog(Adw.Window):
         dialog.set_default_response("close")
         dialog.set_close_response("close")
         
-        # Create details text
+        main_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
+        main_box.set_margin_start(12)
+        main_box.set_margin_end(12)
+        main_box.set_margin_top(12)
+        main_box.set_margin_bottom(12)
+        
+        # Create basic details
         details = model.get('details', {})
         
-        info_text = f"<b>Name:</b> {model.get('name', 'N/A')}\n"
-        info_text += f"<b>Model:</b> {model.get('model', 'N/A')}\n"
-        info_text += f"<b>Modified At:</b> {model.get('modified_at', 'N/A')}\n"
-        info_text += f"<b>Size:</b> {model.get('size', 'N/A')} bytes\n"
-        info_text += f"<b>Digest:</b> {model.get('digest', 'N/A')}\n\n"
+        def add_basic_section(title, content):
+            section_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
+            title_label = Gtk.Label()
+            title_label.set_markup(f"<b>{title}:</b>")
+            title_label.set_halign(Gtk.Align.START)
+            section_box.append(title_label)
+            
+            content_label = Gtk.Label(label=str(content) if content else "N/A")
+            content_label.set_halign(Gtk.Align.START)
+            content_label.set_wrap(True)
+            content_label.set_selectable(True)
+            content_label.set_xalign(0)
+            section_box.append(content_label)
+            main_box.append(section_box)
+
+        add_basic_section(_("Name"), model.get('name'))
+        add_basic_section(_("Model"), model.get('model'))
+        add_basic_section(_("Modified At"), model.get('modified_at'))
+        add_basic_section(_("Size"), f"{model.get('size', 'N/A')} bytes")
+        add_basic_section(_("Digest"), model.get('digest'))
         
-        info_text += f"<b>Format:</b> {details.get('format', 'N/A')}\n"
-        info_text += f"<b>Family:</b> {details.get('family', 'N/A')}\n"
+        add_basic_section(_("Format"), details.get('format'))
+        add_basic_section(_("Family"), details.get('family'))
         
         families = details.get('families', [])
-        if families:
-            info_text += f"<b>Families:</b> {', '.join(families)}\n"
-        else:
-            info_text += f"<b>Families:</b> N/A\n"
+        add_basic_section(_("Families"), ", ".join(families) if families else None)
             
-        info_text += f"<b>Parameter Size:</b> {details.get('parameter_size', 'N/A')}\n"
-        info_text += f"<b>Quantization Level:</b> {details.get('quantization_level', 'N/A')}"
+        add_basic_section(_("Parameter Size"), details.get('parameter_size'))
+        add_basic_section(_("Quantization Level"), details.get('quantization_level'))
         
-        label = Gtk.Label(label=info_text)
-        label.set_use_markup(True)
-        label.set_wrap(True)
-        label.set_halign(Gtk.Align.START)
-        label.set_margin_start(12)
-        label.set_margin_end(12)
-        label.set_margin_top(12)
-        label.set_margin_bottom(12)
+        main_box.append(Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL))
         
-        dialog.set_extra_child(label)
+        # Expander for "Show Details"
+        expander = Gtk.Expander(label=_("Show Details"))
+        details_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
+        details_box.set_margin_start(6)
+        details_box.set_margin_end(6)
+        details_box.set_margin_top(6)
+        details_box.set_margin_bottom(6)
+        
+        loading_label = Gtk.Label(label=_("Loading details..."))
+        details_box.append(loading_label)
+        
+        scrolled = Gtk.ScrolledWindow()
+        scrolled.set_min_content_height(300)
+        scrolled.set_min_content_width(500)
+        scrolled.set_child(details_box)
+        expander.set_child(scrolled)
+        main_box.append(expander)
+        
+        dialog.set_extra_child(main_box)
         dialog.present()
+        
+        def fetch_details_thread():
+            show_data = ollama.show_model(hostname, model['name'])
+            GLib.idle_add(self.update_details_label, details_box, show_data)
+            
+        thread = threading.Thread(target=fetch_details_thread)
+        thread.daemon = True
+        thread.start()
+
+    def update_details_label(self, box, data):
+        # Clear loading label
+        while True:
+            child = box.get_first_child()
+            if not child:
+                break
+            box.remove(child)
+            
+        if not data:
+            box.append(Gtk.Label(label=_("Failed to load details.")))
+            return
+            
+        def add_section(title, content, use_bg=False):
+            section_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
+            title_label = Gtk.Label()
+            title_label.set_markup(f"<b>{title}:</b>")
+            title_label.set_halign(Gtk.Align.START)
+            section_box.append(title_label)
+            
+            if not content:
+                content = "N/A"
+            
+            if isinstance(content, dict):
+                content_text = "\n".join([f"  {k}: {v}" for k, v in content.items()])
+            else:
+                content_text = str(content)
+                
+            content_label = Gtk.Label(label=content_text)
+            content_label.set_halign(Gtk.Align.START)
+            content_label.set_wrap(True)
+            content_label.set_selectable(True)
+            content_label.set_xalign(0)
+            
+            if use_bg:
+                content_label.add_css_class("template-bg")
+            
+            section_box.append(content_label)
+            box.append(section_box)
+
+        add_section(_("Parameters"), data.get("parameters"))
+        add_section(_("Modified At"), data.get("modified_at"))
+        add_section(_("Details"), data.get("details"))
+        add_section(_("Template"), data.get("template"), use_bg=True)
+        add_section(_("Capabilities"), data.get("capabilities"))
+        add_section(_("Model Info"), data.get("model_info"))
+        add_section(_("License"), data.get("license"))
+

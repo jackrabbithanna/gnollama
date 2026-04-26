@@ -94,8 +94,8 @@
     </section>
     <section>
       <item>
-        <attribute name="label" translatable="yes">_Preferences</attribute>
-        <attribute name="action">app.preferences</attribute>
+        <attribute name="label" translatable="yes">_Manage hosts</attribute>
+        <attribute name="action">win.manage_hosts</attribute>
       </item>
       <item>
         <attribute name="label" translatable="yes">Clear chat history</attribute>

@@ -12,7 +12,67 @@ class ChatStorage:
         if not os.path.exists(self.storage_dir):
             os.makedirs(self.storage_dir)
             
+        self.hosts_file = os.path.join(self.storage_dir, "hosts.json")
         self.chats = self._load_history()
+        self.hosts = self._load_hosts()
+
+    def _load_hosts(self):
+        if not os.path.exists(self.hosts_file):
+            default_hosts = [{
+                "id": str(uuid.uuid4()),
+                "name": "localhost",
+                "hostname": "http://localhost:11434"
+            }]
+            self._save_hosts(default_hosts)
+            return default_hosts
+        try:
+            with open(self.hosts_file, 'r') as f:
+                return json.load(f)
+        except Exception as e:
+            print(f"Error loading hosts: {e}")
+            return []
+
+    def _save_hosts(self, hosts=None):
+        if hosts is None:
+            hosts = self.hosts
+        try:
+            with open(self.hosts_file, 'w') as f:
+                json.dump(hosts, f, indent=2)
+        except Exception as e:
+            print(f"Error saving hosts: {e}")
+
+    def get_all_hosts(self):
+        return self.hosts
+
+    def get_host(self, host_id):
+        for host in self.hosts:
+            if host["id"] == host_id:
+                return host
+        return None
+
+    def add_host(self, name, hostname):
+        host_id = str(uuid.uuid4())
+        new_host = {
+            "id": host_id,
+            "name": name,
+            "hostname": hostname
+        }
+        self.hosts.append(new_host)
+        self._save_hosts()
+        return new_host
+
+    def update_host(self, host_id, name, hostname):
+        for host in self.hosts:
+            if host["id"] == host_id:
+                host["name"] = name
+                host["hostname"] = hostname
+                self._save_hosts()
+                return host
+        return None
+
+    def delete_host(self, host_id):
+        self.hosts = [h for h in self.hosts if h["id"] != host_id]
+        self._save_hosts()
 
     def _load_history(self):
         if not os.path.exists(self.history_file):

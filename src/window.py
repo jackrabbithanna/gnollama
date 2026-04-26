@@ -25,6 +25,7 @@ import re
 import html
 from .tab import GenerationTab
 from .storage import ChatStorage
+from .host_manager import HostManagerDialog
 
 @Gtk.Template(resource_path='/io/github/jackrabbithanna/Gnollama/window.ui')
 class GnollamaWindow(Adw.ApplicationWindow):
@@ -52,6 +53,10 @@ class GnollamaWindow(Adw.ApplicationWindow):
         action_clear_history = Gio.SimpleAction.new("clear_history", None)
         action_clear_history.connect("activate", self.on_clear_history)
         self.add_action(action_clear_history)
+
+        action_manage_hosts = Gio.SimpleAction.new("manage_hosts", None)
+        action_manage_hosts.connect("activate", self.on_manage_hosts)
+        self.add_action(action_manage_hosts)
         
         # Load CSS
         self.load_css()
@@ -139,6 +144,19 @@ class GnollamaWindow(Adw.ApplicationWindow):
             
         dialog.connect("response", on_response)
         dialog.present()
+
+    def on_manage_hosts(self, action, param):
+        dialog = HostManagerDialog(storage=self.storage, on_hosts_changed_cb=self.on_hosts_changed)
+        dialog.set_transient_for(self)
+        dialog.present()
+
+    def on_hosts_changed(self):
+        # Notify all generation tabs that hosts have changed
+        n_pages = self.notebook.get_n_pages()
+        for i in range(n_pages):
+            page = self.notebook.get_nth_page(i)
+            if hasattr(page, 'update_hosts'):
+                page.update_hosts()
 
     def on_new_tab(self, action, param):
         self.new_tab()

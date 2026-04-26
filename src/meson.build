@@ -53,6 +53,7 @@ gnollama_sources = [
   'storage.py',
   'markdown_view.py',
   'bubbles.py',
+  'host_manager.py',
 ]
 
 install_data(gnollama_sources, install_dir: moduledir)

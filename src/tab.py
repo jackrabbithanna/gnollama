@@ -101,7 +101,7 @@ class ChatStrategy:
         self.current_thinking_val = kwargs.get('thinking')
         self.current_logprobs = kwargs.get('logprobs')
         self.current_top_logprobs = kwargs.get('top_logprobs')
-        self.current_host = kwargs.get('host')
+        self.current_host = kwargs.get('host_id')
         
         # Build messages
         messages = []
@@ -150,7 +150,7 @@ class GenerationTab(Gtk.Box):
     stats_check = Gtk.Template.Child()
     logprobs_check = Gtk.Template.Child()
     top_logprobs_entry = Gtk.Template.Child()
-    host_entry = Gtk.Template.Child()
+    host_dropdown = Gtk.Template.Child()
     
     # Image Attachment
     attach_button = Gtk.Template.Child()
@@ -172,10 +172,11 @@ class GenerationTab(Gtk.Box):
         self.tab_label = tab_label
         self.settings = Gio.Settings.new('io.github.jackrabbithanna.Gnollama')
         
+        if not storage:
+            storage = ChatStorage()
+        self.storage = storage
+
         if mode == 'chat':
-            # Ensure storage is provided for chat mode
-            if not storage:
-                storage = ChatStorage()
             self.strategy = ChatStrategy(storage, chat_id=chat_id, initial_history=initial_history)
         else:
             self.strategy = GenerationStrategy()
@@ -201,15 +202,13 @@ class GenerationTab(Gtk.Box):
         
         self.selected_image_paths = []
         
-        # Initialize host entry
-        default_host = self.settings.get_string("ollama-host")
-        if not default_host:
-             default_host = "http://localhost:11434"
-        self.host_entry.set_text(default_host)
-        
-        # Connect host entry changed signal
-        self.host_entry.connect('changed', self.on_host_changed)
+        # Initialize host dropdown
+        self.host_list = []
+        self.pending_host_id = None
         self.host_update_source_id = None
+        self.host_dropdown.connect('notify::selected-item', self.on_host_changed)
+        
+        self.update_hosts()
         
         # Refresh models on dropdown click
         click_controller = Gtk.GestureClick()
@@ -235,6 +234,33 @@ class GenerationTab(Gtk.Box):
             
             if initial_history:
                  self.load_initial_history(initial_history)
+
+    def update_hosts(self):
+        hosts = self.storage.get_all_hosts()
+        self.host_list = hosts
+        
+        host_names = [h['name'] for h in hosts]
+        string_list = Gtk.StringList.new(host_names)
+        self.host_dropdown.set_model(string_list)
+        
+        # Try to restore pending host selection
+        if hasattr(self, 'pending_host_id') and self.pending_host_id:
+            for i, h in enumerate(hosts):
+                if h['id'] == self.pending_host_id:
+                    self.host_dropdown.set_selected(i)
+                    self.pending_host_id = None
+                    break
+        
+        if self.host_dropdown.get_selected() == Gtk.INVALID_LIST_POSITION and hosts:
+            self.host_dropdown.set_selected(0)
+            
+        self.on_host_changed(None)
+
+    def get_current_host(self):
+        selected_idx = self.host_dropdown.get_selected()
+        if selected_idx != Gtk.INVALID_LIST_POSITION and hasattr(self, 'host_list') and selected_idx < len(self.host_list):
+            return self.host_list[selected_idx]
+        return None
 
     def on_attach_clicked(self, widget):
         file_chooser = Gtk.FileChooserNative.new(
@@ -278,7 +304,7 @@ class GenerationTab(Gtk.Box):
         self.image_label.add_css_class("dim-label")
         self.clear_image_button.set_visible(False)
 
-    def on_host_changed(self, widget):
+    def on_host_changed(self, widget, *args):
         # Debounce
         if self.host_update_source_id:
             GLib.source_remove(self.host_update_source_id)
@@ -359,11 +385,11 @@ class GenerationTab(Gtk.Box):
         thread.start()
 
     def fetch_models(self):
-        host = self.host_entry.get_text()
+        host = self.get_current_host()
         if not host:
             return
 
-        models = ollama.fetch_models(host)
+        models = ollama.fetch_models(host['hostname'])
         if models:
             GLib.idle_add(self.update_model_dropdown, models)
 
@@ -618,9 +644,10 @@ class GenerationTab(Gtk.Box):
             self.system_prompt_entry.set_text(system)
 
         # Host
-        host = chat_data.get('host')
-        if host:
-            self.host_entry.set_text(host)
+        host_id = chat_data.get('host')
+        if host_id:
+            self.pending_host_id = host_id
+            self.update_hosts()
 
         # Options
         options = chat_data.get('options', {})
@@ -653,7 +680,12 @@ class GenerationTab(Gtk.Box):
                 self.top_logprobs_entry.set_text(str(options['top_logprobs']))
 
     def process_request(self, prompt, model_name, images=None):
-        host = self.host_entry.get_text()
+        host_record = self.get_current_host()
+        if not host_record:
+             GLib.idle_add(self.add_message, "Error: No host configured.", "System")
+             return
+        host_str = host_record['hostname']
+        host_id = host_record['id']
         
         # Get thinking parameter
         thinking_item = self.thinking_dropdown.get_selected_item()
@@ -687,7 +719,7 @@ class GenerationTab(Gtk.Box):
 
         api_params = {
             "endpoint": "chat" if isinstance(self.strategy, ChatStrategy) else "generate",
-            "host": host,
+            "host": host_str,
             "model": model_name,
             "options": options if options else None,
             "thinking": thinking_val,
@@ -728,7 +760,8 @@ class GenerationTab(Gtk.Box):
         try:
             for json_obj in self.strategy.process(
                 self,
-                host=host,
+                host=host_str,
+                host_id=host_id,
                 model=model_name,
                 prompt=prompt,
                 system=system_prompt if system_prompt else None,

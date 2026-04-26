@@ -48,6 +48,10 @@ class GnollamaWindow(Adw.ApplicationWindow):
         action_chat = Gio.SimpleAction.new("new_chat_tab", None)
         action_chat.connect("activate", self.on_new_chat_tab)
         self.add_action(action_chat)
+
+        action_clear_history = Gio.SimpleAction.new("clear_history", None)
+        action_clear_history.connect("activate", self.on_clear_history)
+        self.add_action(action_clear_history)
         
         # Load CSS
         self.load_css()
@@ -101,6 +105,41 @@ class GnollamaWindow(Adw.ApplicationWindow):
             Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
         )
         
+    def on_clear_history(self, action, param):
+        dialog = Adw.MessageDialog(
+            transient_for=self,
+            heading=_("Clear chat history"),
+            body=_("Are you sure you want to delete all chat history")
+        )
+        dialog.add_response("cancel", _("Cancel"))
+        dialog.add_response("delete", _("Delete history"))
+        dialog.set_response_appearance("delete", Adw.ResponseAppearance.DESTRUCTIVE)
+        dialog.set_default_response("cancel")
+        dialog.set_close_response("cancel")
+        
+        def on_response(dialog, response):
+            if response == "delete":
+                # Find all current chat tabs to close
+                pages_to_close = []
+                for i in range(self.notebook.get_n_pages()):
+                    page = self.notebook.get_nth_page(i)
+                    if isinstance(page, GenerationTab) and hasattr(page.strategy, 'chat_id') and page.strategy.chat_id:
+                        pages_to_close.append(page)
+
+                self.storage.clear_all_chats()
+                self.load_history_sidebar()
+                
+                # Open a new tab before closing the old ones to prevent notebook from being empty
+                self.new_chat_tab()
+
+                # Close all the old chat tabs
+                for page in pages_to_close:
+                    self.close_tab(page)
+            dialog.close()
+            
+        dialog.connect("response", on_response)
+        dialog.present()
+
     def on_new_tab(self, action, param):
         self.new_tab()
 

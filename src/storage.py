@@ -94,3 +94,7 @@ class ChatStorage:
         if chat_id in self.chats:
             del self.chats[chat_id]
             self._save_history()
+
+    def clear_all_chats(self):
+        self.chats = {}
+        self._save_history()

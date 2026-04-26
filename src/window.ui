@@ -36,7 +36,7 @@
                      <property name="show-title-buttons">False</property>
                      <child type="start">
                         <object class="GtkLabel">
-                           <property name="label" translatable="yes">Chats</property>
+                           <property name="label" translatable="yes">Saved Chats</property>
                            <style>
                               <class name="title"/>
                            </style>

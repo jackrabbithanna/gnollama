@@ -17,7 +17,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from gi.repository import Adw, Gtk, Gio, GLib, Gdk
+from gi.repository import Adw, Gtk, Gio, GLib, Gdk, GObject
 import threading
 import json
 import urllib.request
@@ -194,7 +194,7 @@ class GnollamaWindow(Adw.ApplicationWindow):
         # Add to notebook
         page_num = self.notebook.append_page(tab, tab_label_box)
         self.notebook.set_menu_label_text(tab, tab_title.get_label())
-        tab_title.connect("notify::label", lambda lbl, pspec, t=tab: self.notebook.set_menu_label_text(t, lbl.get_label()))
+        tab_title.connect("notify::label", lambda lbl, pspec, t=tab: self.notebook.page_num(t) != -1 and self.notebook.set_menu_label_text(t, lbl.get_label()))
         self.notebook.set_current_page(page_num)
         self.notebook.set_tab_reorderable(tab, True)
         self.notebook.set_tab_detachable(tab, True)
@@ -350,7 +350,7 @@ class GnollamaWindow(Adw.ApplicationWindow):
         # Add to notebook
         page_num = self.notebook.append_page(tab, tab_label_box)
         self.notebook.set_menu_label_text(tab, tab_title.get_label())
-        tab_title.connect("notify::label", lambda lbl, pspec, t=tab: self.notebook.set_menu_label_text(t, lbl.get_label()))
+        tab_title.connect("notify::label", lambda lbl, pspec, t=tab: self.notebook.page_num(t) != -1 and self.notebook.set_menu_label_text(t, lbl.get_label()))
         self.notebook.set_current_page(page_num)
         self.notebook.set_tab_reorderable(tab, True)
         self.notebook.set_tab_detachable(tab, True)
@@ -400,7 +400,7 @@ class GnollamaWindow(Adw.ApplicationWindow):
         # Add to notebook
         page_num = self.notebook.append_page(tab, tab_label_box)
         self.notebook.set_menu_label_text(tab, tab_title.get_label())
-        tab_title.connect("notify::label", lambda lbl, pspec, t=tab: self.notebook.set_menu_label_text(t, lbl.get_label()))
+        tab_title.connect("notify::label", lambda lbl, pspec, t=tab: self.notebook.page_num(t) != -1 and self.notebook.set_menu_label_text(t, lbl.get_label()))
         self.notebook.set_current_page(page_num)
         self.notebook.set_tab_reorderable(tab, True)
         self.notebook.set_tab_detachable(tab, True)
@@ -431,3 +431,6 @@ class GnollamaWindow(Adw.ApplicationWindow):
         page_num = self.notebook.page_num(page)
         if page_num != -1:
             self.notebook.remove_page(page_num)
+            # Workaround for GTK4 bug: force rebuild of popup menu to prevent layout assertions
+            self.notebook.set_property("enable-popup", False)
+            self.notebook.set_property("enable-popup", True)

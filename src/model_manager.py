@@ -85,7 +85,7 @@ class ModelManagerDialog(Adw.Window):
             return
             
         def thread_func() -> None:
-            models = ollama.fetch_models_info(host['hostname'])
+            models = ollama.fetch_model_details(host['hostname'])
             GLib.idle_add(self.update_models_list, models)
             
         thread = threading.Thread(target=thread_func, daemon=True)

@@ -41,7 +41,7 @@ def fetch_model_details(host: str) -> List[Dict[str, Any]]:
         print(f"Failed to fetch model details: {e}")
         return []
 
-def show_model(host: str, name: str) -> Dict[str, Any]:
+def show_model(host: str, name: str) -> Tuple[Optional[Dict[str, Any]], Optional[str]]:
     """
     Fetches detailed information about a specific model.
 
@@ -50,7 +50,7 @@ def show_model(host: str, name: str) -> Dict[str, Any]:
         name: The name of the model.
 
     Returns:
-        A dictionary with model information.
+        A tuple of (data_dict, error_string).
     """
     url = f"{host}/api/show"
     data = {
@@ -60,10 +60,10 @@ def show_model(host: str, name: str) -> Dict[str, Any]:
     try:
         req = urllib.request.Request(url, data=json.dumps(data).encode('utf-8'), headers={'Content-Type': 'application/json'})
         with urllib.request.urlopen(req) as response:
-            return json.loads(response.read().decode('utf-8'))
+            return json.loads(response.read().decode('utf-8')), None
     except Exception as e:
         print(f"Failed to show model: {e}")
-        return {}
+        return None, str(e)
 
 def get_version(host: str) -> Tuple[Optional[str], Optional[str]]:
     """

@@ -582,10 +582,18 @@ class GenerationTab(Gtk.Box):
              api_params["prompt"] = prompt
 
         self.strategy.current_api_params = api_params
+        # Reset strategy buffers for the new response
+        if hasattr(self.strategy, 'current_response_full_text'):
+            self.strategy.current_response_full_text = ""
+        if hasattr(self.strategy, 'current_thinking_full_text'):
+            self.strategy.current_thinking_full_text = ""
+            
         GLib.idle_add(self.start_new_response_block, model_name, api_params)
 
         try:
             full_response = ""
+            thinking_content = ""
+            is_thinking = False
             last_scroll_time = 0.0
             
             ai_bubble = None
@@ -596,6 +604,10 @@ class GenerationTab(Gtk.Box):
             
             while ai_bubble is None:
                 time.sleep(0.01)
+            
+            # Show API details if available
+            if hasattr(self.strategy, 'current_api_params'):
+                GLib.idle_add(ai_bubble.set_api_details, self.strategy.current_api_params)
 
             for json_obj in self.strategy.process(
                 self,
@@ -612,23 +624,72 @@ class GenerationTab(Gtk.Box):
             ):
                 chunk = json_obj
                 
-                if 'thought' in chunk:
-                    GLib.idle_add(ai_bubble.append_thinking, chunk['thought'])
-                    if hasattr(self.strategy, 'append_thinking'):
-                        self.strategy.append_thinking(chunk['thought'])
+                # 1. Handle native thinking field from Ollama
+                native_thinking = chunk.get('thinking', chunk.get('thought', ''))
+                if not native_thinking and 'message' in chunk:
+                    native_thinking = chunk['message'].get('thinking', '')
                 
+                if native_thinking:
+                    thinking_content += native_thinking
+                    GLib.idle_add(ai_bubble.append_thinking, native_thinking)
+                    if hasattr(self.strategy, 'append_thinking'):
+                        self.strategy.append_thinking(native_thinking)
+                    continue
+
+                # 2. Handle content and potential <think> tags
                 content = None
                 if 'message' in chunk:
                     content = chunk['message'].get('content')
                 elif 'response' in chunk:
                     content = chunk['response']
-                    
-                if content:
-                    full_response += content
-                    GLib.idle_add(ai_bubble.append_text, content)
-                    if hasattr(self.strategy, 'append_response_chunk'):
-                        self.strategy.append_response_chunk(content)
                 
+                if content:
+                    # Robust tag parsing (handles common thinking tags)
+                    think_tags = [
+                        ("<think>", "</think>"),
+                        ("<|channel>thought\n", "<channel|>"),
+                        ("<thought>", "</thought>")
+                    ]
+                    
+                    processed_content = content
+                    for start_tag, end_tag in think_tags:
+                        if start_tag in processed_content:
+                            parts = processed_content.split(start_tag, 1)
+                            # Text before the tag is normal content
+                            if parts[0]:
+                                GLib.idle_add(ai_bubble.append_text, parts[0])
+                                full_response += parts[0]
+                                if hasattr(self.strategy, 'append_response_chunk'):
+                                    self.strategy.append_response_chunk(parts[0])
+                            
+                            is_thinking = True
+                            processed_content = parts[1]
+                            
+                        if end_tag in processed_content and is_thinking:
+                            parts = processed_content.split(end_tag, 1)
+                            # Text before the tag is thinking content
+                            if parts[0]:
+                                GLib.idle_add(ai_bubble.append_thinking, parts[0])
+                                thinking_content += parts[0]
+                                if hasattr(self.strategy, 'append_thinking'):
+                                    self.strategy.append_thinking(parts[0])
+                            
+                            is_thinking = False
+                            processed_content = parts[1]
+                    
+                    # Distribute remaining content based on state
+                    if processed_content:
+                        if is_thinking:
+                            thinking_content += processed_content
+                            GLib.idle_add(ai_bubble.append_thinking, processed_content)
+                            if hasattr(self.strategy, 'append_thinking'):
+                                self.strategy.append_thinking(processed_content)
+                        else:
+                            full_response += processed_content
+                            GLib.idle_add(ai_bubble.append_text, processed_content)
+                            if hasattr(self.strategy, 'append_response_chunk'):
+                                self.strategy.append_response_chunk(processed_content)
+
                 if logprobs and 'logprobs' in chunk:
                     GLib.idle_add(self._add_logprobs_to_bubble, ai_bubble, chunk['logprobs'])
 

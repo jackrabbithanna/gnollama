@@ -36,7 +36,6 @@ class GnollamaApplication(Adw.Application):
                          resource_base_path='/io/github/jackrabbithanna/Gnollama')
         self.create_action('quit', lambda *_: self.quit(), ['<control>q'])
         self.create_action('about', self.on_about_action)
-        self.create_action('preferences', self.on_preferences_action)
 
     def do_activate(self):
         """Called when the application is activated.
@@ -54,35 +53,12 @@ class GnollamaApplication(Adw.Application):
         about = Adw.AboutDialog(application_name='gnollama',
                                 application_icon='io.github.jackrabbithanna.Gnollama',
                                 developer_name='Jackrabbithanna',
-                                version='0.6.0',
+                                version='0.7.0',
                                 developers=['Jackrabbithanna'],
                                 copyright='© 2026 Jackrabbithanna')
         # Translators: Replace "translator-credits" with your name/username, and optionally an email or URL.
         about.set_translator_credits(_('translator-credits'))
         about.present(self.props.active_window)
-
-    def on_preferences_action(self, widget, _param):
-        """Callback for the app.preferences action."""
-        settings = Gio.Settings.new('io.github.jackrabbithanna.Gnollama')
-        
-        pref_window = Adw.PreferencesWindow(transient_for=self.props.active_window)
-        
-        page = Adw.PreferencesPage()
-        page.set_title(_('Server Settings'))
-        page.set_icon_name('network-server-symbolic')
-        pref_window.add(page)
-        
-        group = Adw.PreferencesGroup()
-        group.set_title(_('Ollama Configuration'))
-        page.add(group)
-        
-        # Ollama Host Entry
-        row = Adw.EntryRow()
-        row.set_title(_("Ollama Host"))
-        settings.bind("ollama-host", row, "text", Gio.SettingsBindFlags.DEFAULT)
-        group.add(row)
-        
-        pref_window.present()
 
     def create_action(self, name, callback, shortcuts=None):
         """Add an application action.

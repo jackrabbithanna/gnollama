@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <requires lib="gtk" version="4.0"/>
+  <requires lib="Adw" version="1.0"/>
+  <template class="HostManagerDialog" parent="AdwWindow">
+    <property name="title" translatable="yes">Manage Hosts</property>
+    <property name="default-width">500</property>
+    <property name="default-height">400</property>
+    <property name="modal">True</property>
+    <property name="destroy-with-parent">True</property>
+    <property name="content">
+      <object class="AdwToolbarView">
+        <child type="top">
+          <object class="AdwHeaderBar">
+            <property name="title-widget">
+              <object class="AdwWindowTitle">
+                <property name="title" translatable="yes">Manage Hosts</property>
+              </object>
+            </property>
+            <child type="end">
+              <object class="GtkButton" id="add_button">
+                <property name="icon-name">list-add-symbolic</property>
+                <property name="tooltip-text" translatable="yes">Add Host</property>
+              </object>
+            </child>
+          </object>
+        </child>
+        <property name="content">
+          <object class="GtkScrolledWindow">
+            <property name="hscrollbar-policy">never</property>
+            <child>
+              <object class="AdwPreferencesPage">
+                <child>
+                  <object class="AdwPreferencesGroup" id="hosts_group">
+                    <property name="title" translatable="yes">Host Records</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </property>
+      </object>
+    </property>
+  </template>
+</interface>

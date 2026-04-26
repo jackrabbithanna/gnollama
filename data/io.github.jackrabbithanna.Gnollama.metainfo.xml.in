@@ -65,6 +65,15 @@
         <p>Fix chat API extraneous system parameter</p>
       </description>
     </release>
+    <release version="0.7.0" date="2026-04-26">
+      <url type="details">https://github.com/jackrabbithanna/gnollama/releases/tag/0.7.0</url>
+      <description translate="no">
+        <p>Add Mange Hosts dialog</p>
+        <p>Add Manage Models dialog</p>
+        <p>Pull model dialog to add models to a host</p>
+        <p>Delete models from a host</p>
+      </description>
+    </release>
   </releases>
 
 </component>

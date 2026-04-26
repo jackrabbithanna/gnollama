@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <requires lib="gtk" version="4.0"/>
+  <template class="HistoryRow" parent="GtkListBoxRow">
+    <child>
+      <object class="GtkBox">
+        <property name="orientation">horizontal</property>
+        <property name="spacing">6</property>
+        <property name="margin-start">12</property>
+        <property name="margin-end">12</property>
+        <property name="margin-top">8</property>
+        <property name="margin-bottom">8</property>
+        <child>
+          <object class="GtkLabel" id="label">
+            <property name="halign">start</property>
+            <property name="ellipsize">end</property>
+            <property name="hexpand">True</property>
+            <property name="xalign">0</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkButton" id="edit_btn">
+            <property name="icon-name">edit-paste-symbolic</property>
+            <property name="valign">center</property>
+            <property name="tooltip-text" translatable="yes">Rename Chat</property>
+            <style>
+              <class name="flat"/>
+            </style>
+          </object>
+        </child>
+        <child>
+          <object class="GtkButton" id="del_btn">
+            <property name="icon-name">user-trash-symbolic</property>
+            <property name="valign">center</property>
+            <property name="tooltip-text" translatable="yes">Delete Chat</property>
+            <style>
+              <class name="flat"/>
+            </style>
+          </object>
+        </child>
+      </object>
+    </child>
+  </template>
+</interface>

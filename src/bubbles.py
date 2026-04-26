@@ -1,59 +1,25 @@
-# bubbles.py
-#
-# Copyright 2025 Jackrabbithanna
-#
-# SPDX-License-Identifier: GPL-3.0-or-later
-
 import base64
+from typing import List, Optional, Any, Dict
 from gi.repository import Gtk, GObject, Pango, GLib, Gdk
 from .markdown_view import MarkdownView
 
-class ChatBubble(Gtk.ListBoxRow):
-    __gtype_name__ = 'ChatBubble'
-
-    def __init__(self, is_user=False, **kwargs):
-        super().__init__(**kwargs)
-        self.set_activatable(False)
-        self.set_selectable(False)
-        
-        self.container = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
-        self.container.set_margin_top(6)
-        self.container.set_margin_bottom(6)
-        self.container.set_margin_start(12)
-        self.container.set_margin_end(12)
-        
-        self.bubble_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-        # self.bubble_box.set_spacing(4)
-        
-        if is_user:
-            self.container.set_halign(Gtk.Align.END)
-            self.bubble_box.add_css_class("user-bubble")
-            self.bubble_box.set_halign(Gtk.Align.END)
-        else:
-            self.container.set_halign(Gtk.Align.START)
-            self.bubble_box.add_css_class("bot-bubble")
-            self.bubble_box.set_halign(Gtk.Align.START)
-            self.bubble_box.set_hexpand(True) # Robot messages usually need more width
-            
-        self.container.append(self.bubble_box)
-        self.set_child(self.container)
-
-class UserBubble(ChatBubble):
+@Gtk.Template(resource_path='/io/github/jackrabbithanna/Gnollama/user_bubble.ui')
+class UserBubble(Gtk.ListBoxRow):
+    """A chat bubble for user messages, supporting text and images."""
     __gtype_name__ = 'UserBubble'
 
+    images_box: Gtk.Box = Gtk.Template.Child()
+    label: Gtk.Label = Gtk.Template.Child()
 
-    def __init__(self, text, images=None, **kwargs):
-        super().__init__(is_user=True, **kwargs)
+    def __init__(self, text: str, images: Optional[List[str]] = None, **kwargs: Any) -> None:
+        super().__init__(**kwargs)
+        self.init_template()
+        self.label.set_text(text)
         
-        # If we have images, show them
         if images:
-            images_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
-            images_box.set_spacing(6)
-            images_box.set_halign(Gtk.Align.END)
-            
+            self.images_box.set_visible(True)
             for img_b64 in images:
                 try:
-                    # Decode base64
                     start_idx = 0
                     if "," in img_b64:
                         start_idx = img_b64.find(",") + 1
@@ -64,90 +30,66 @@ class UserBubble(ChatBubble):
                     
                     picture = Gtk.Picture.new_for_paintable(texture)
                     picture.set_content_fit(Gtk.ContentFit.SCALE_DOWN)
-                    picture.set_size_request(200, 200) # Max size
-                    picture.set_can_shrink(True) # Allow shrinking
+                    picture.set_size_request(200, 200)
+                    picture.set_can_shrink(True)
                     
-                    # Wrap in frame or styling if needed, for now just the picture
-                    images_box.append(picture)
+                    self.images_box.append(picture)
                 except Exception as e:
                     print(f"Failed to load image in bubble: {e}")
-            
-            self.bubble_box.append(images_box)
 
-        label = Gtk.Label(label=text)
-        label.set_wrap(True)
-        label.set_max_width_chars(50)
-        label.set_xalign(0)
-        label.set_selectable(True)
-        
-        self.bubble_box.append(label)
-
-class AiBubble(ChatBubble):
+@Gtk.Template(resource_path='/io/github/jackrabbithanna/Gnollama/ai_bubble.ui')
+class AiBubble(Gtk.ListBoxRow):
+    """A chat bubble for AI responses, supporting markdown and 'thinking' sections."""
     __gtype_name__ = 'AiBubble'
 
-    def __init__(self, model_name=None, **kwargs):
-        super().__init__(is_user=False, **kwargs)
+    bubble_box: Gtk.Box = Gtk.Template.Child()
+    header: Gtk.Label = Gtk.Template.Child()
+    api_expander: Gtk.Expander = Gtk.Template.Child()
+    thinking_expander: Gtk.Expander = Gtk.Template.Child()
+    thinking_label: Gtk.Label = Gtk.Template.Child()
+
+    def __init__(self, model_name: Optional[str] = None, **kwargs: Any) -> None:
+        super().__init__(**kwargs)
+        self.init_template()
         
-        # Header
         if model_name:
-            header = Gtk.Label(label=f"Ollama ({model_name})")
-            header.add_css_class("caption-heading") # Custom class or standard dim-label
-            header.set_halign(Gtk.Align.START)
-            header.set_margin_bottom(4)
-            self.bubble_box.append(header)
-        
-        # API Call Details Expander
-        self.api_expander = Gtk.Expander(label="API Call Details")
-        self.api_expander.set_visible(False)
+            self.header.set_visible(True)
+            self.header.set_label(f"Ollama ({model_name})")
         
         self.api_markdown_view = MarkdownView()
         self.api_expander.set_child(self.api_markdown_view)
-        self.bubble_box.append(self.api_expander)
         
-        # Thinking Expander
-        self.thinking_expander = Gtk.Expander(label="Thinking...")
-        self.thinking_expander.set_visible(False)
-        self.thinking_label = Gtk.Label()
-        self.thinking_label.set_wrap(True)
-        self.thinking_label.set_xalign(0)
-        self.thinking_label.add_css_class("thinking-text")
-        self.thinking_expander.set_child(self.thinking_label)
-        self.bubble_box.append(self.thinking_expander)
-        
-        # Markdown Content
         self.markdown_view = MarkdownView()
         self.bubble_box.append(self.markdown_view)
         
-        self.full_text = ""
-        self.thinking_text = ""
-        self._update_scheduled = False
+        self.full_text: str = ""
+        self.thinking_text: str = ""
+        self._update_scheduled: bool = False
 
-    def set_api_details(self, details_dict):
+    def set_api_details(self, details_dict: Dict[str, Any]) -> None:
+        """Displays the raw API request details in an expander."""
         self.api_expander.set_visible(True)
         import json
         details_str = json.dumps(details_dict, indent=2)
         md_text = f"```json\n{details_str}\n```"
         self.api_markdown_view.update(md_text)
 
-    def append_text(self, text):
+    def append_text(self, text: str) -> None:
+        """Appends a chunk of text to the main markdown response."""
         self.full_text += text
         
-        # Throttle updates to avoid freezing the UI with excessive re-renders
         if not self._update_scheduled:
             self._update_scheduled = True
             GLib.timeout_add(50, self._flush_update)
             
-    def _flush_update(self):
-        # Check if widget is still valid
-        if not self.get_root():
-             self._update_scheduled = False
-             return False
-
+    def _flush_update(self) -> bool:
+        """Flushes the accumulated text to the MarkdownView."""
         self.markdown_view.update(self.full_text)
         self._update_scheduled = False
         return False
         
-    def append_thinking(self, text):
+    def append_thinking(self, text: str) -> None:
+        """Appends text to the thinking section."""
         if not self.thinking_expander.get_visible():
             self.thinking_expander.set_visible(True)
         

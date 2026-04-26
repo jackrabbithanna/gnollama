@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <requires lib="gtk" version="4.0"/>
+  <requires lib="Adw" version="1.0"/>
+  <template class="UserBubble" parent="GtkListBoxRow">
+    <property name="activatable">False</property>
+    <property name="selectable">False</property>
+    <child>
+      <object class="GtkBox" id="container">
+        <property name="halign">end</property>
+        <property name="margin-start">12</property>
+        <property name="margin-end">12</property>
+        <property name="margin-top">6</property>
+        <property name="margin-bottom">6</property>
+        <child>
+          <object class="GtkBox" id="bubble_box">
+            <property name="orientation">vertical</property>
+            <property name="halign">end</property>
+            <style>
+              <class name="user-bubble"/>
+            </style>
+            <child>
+              <object class="GtkBox" id="images_box">
+                <property name="orientation">horizontal</property>
+                <property name="spacing">6</property>
+                <property name="halign">end</property>
+                <property name="visible">False</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkLabel" id="label">
+                <property name="wrap">True</property>
+                <property name="max-width-chars">50</property>
+                <property name="xalign">0</property>
+                <property name="selectable">True</property>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </template>
+</interface>

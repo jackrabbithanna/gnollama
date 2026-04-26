@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <requires lib="gtk" version="4.0"/>
+  <requires lib="Adw" version="1.0"/>
+  <template class="HostEditDialog" parent="AdwMessageDialog">
+    <property name="width-request">400</property>
+    <responses>
+      <response id="cancel" translatable="yes">Cancel</response>
+      <response id="save" translatable="yes">Save</response>
+    </responses>
+    <property name="default-response">save</property>
+    <property name="close-response">cancel</property>
+    <property name="extra-child">
+      <object class="GtkBox">
+        <property name="orientation">vertical</property>
+        <property name="spacing">12</property>
+        <property name="margin-start">12</property>
+        <property name="margin-end">12</property>
+        <property name="margin-top">12</property>
+        <property name="margin-bottom">12</property>
+        <child>
+          <object class="GtkEntry" id="name_entry">
+            <property name="placeholder-text" translatable="yes">Name (e.g. Localhost)</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkEntry" id="hostname_entry">
+            <property name="placeholder-text" translatable="yes">Hostname (e.g. http://localhost:11434)</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkCheckButton" id="default_check">
+            <property name="label" translatable="yes">Set as default host</property>
+          </object>
+        </child>
+      </object>
+    </property>
+  </template>
+</interface>

@@ -1,15 +1,17 @@
-# ollama.py
-#
-# Copyright 2025 Jackrabbithanna
-#
-# SPDX-License-Identifier: GPL-3.0-or-later
-
 import json
 import urllib.request
+import urllib.error
+from typing import List, Dict, Any, Generator, Tuple, Optional
 
-def fetch_models(host):
+def fetch_models(host: str) -> List[str]:
     """
     Fetches the list of available models from the Ollama host.
+
+    Args:
+        host: The base URL of the Ollama host.
+
+    Returns:
+        A list of model names.
     """
     url = f"{host}/api/tags"
     try:
@@ -20,9 +22,15 @@ def fetch_models(host):
         print(f"Failed to fetch models: {e}")
         return []
 
-def fetch_model_details(host):
+def fetch_model_details(host: str) -> List[Dict[str, Any]]:
     """
     Fetches the detailed list of available models from the Ollama host.
+
+    Args:
+        host: The base URL of the Ollama host.
+
+    Returns:
+        A list of dictionaries containing model details.
     """
     url = f"{host}/api/tags"
     try:
@@ -33,9 +41,16 @@ def fetch_model_details(host):
         print(f"Failed to fetch model details: {e}")
         return []
 
-def show_model(host, name):
+def show_model(host: str, name: str) -> Dict[str, Any]:
     """
     Fetches detailed information about a specific model.
+
+    Args:
+        host: The base URL of the Ollama host.
+        name: The name of the model.
+
+    Returns:
+        A dictionary with model information.
     """
     url = f"{host}/api/show"
     data = {
@@ -50,9 +65,15 @@ def show_model(host, name):
         print(f"Failed to show model: {e}")
         return {}
 
-def get_version(host):
+def get_version(host: str) -> Tuple[Optional[str], Optional[str]]:
     """
     Fetches the Ollama version.
+
+    Args:
+        host: The base URL of the Ollama host.
+
+    Returns:
+        A tuple of (version_string, error_string).
     """
     url = f"{host}/api/version"
     try:
@@ -63,9 +84,16 @@ def get_version(host):
         print(f"Failed to fetch version: {e}")
         return None, str(e)
 
-def delete_model(host, model_name):
+def delete_model(host: str, model_name: str) -> Tuple[bool, Optional[str]]:
     """
     Deletes a model from the Ollama host.
+
+    Args:
+        host: The base URL of the Ollama host.
+        model_name: The name of the model to delete.
+
+    Returns:
+        A tuple of (success_boolean, error_string).
     """
     url = f"{host}/api/delete"
     data = {
@@ -79,9 +107,17 @@ def delete_model(host, model_name):
         print(f"Failed to delete model: {e}")
         return False, str(e)
 
-def pull(host, model, insecure=False):
+def pull(host: str, model: str, insecure: bool = False) -> Generator[Dict[str, Any], None, None]:
     """
     Generator that streams responses from the Ollama Pull API.
+
+    Args:
+        host: The base URL of the Ollama host.
+        model: The name of the model to pull.
+        insecure: Whether to allow insecure connections.
+
+    Yields:
+        Progress dictionaries from the Ollama API.
     """
     url = f"{host}/api/pull"
     
@@ -93,9 +129,26 @@ def pull(host, model, insecure=False):
     
     yield from _stream_response(url, data)
 
-def generate(host, model, prompt, system=None, options=None, thinking=None, logprobs=False, top_logprobs=None, images=None):
+def generate(host: str, model: str, prompt: str, system: Optional[str] = None, 
+             options: Optional[Dict[str, Any]] = None, thinking: Any = None, 
+             logprobs: bool = False, top_logprobs: Optional[int] = None, 
+             images: Optional[List[str]] = None) -> Generator[Dict[str, Any], None, None]:
     """
     Generator that streams responses from the Ollama Generate API.
+
+    Args:
+        host: The base URL of the Ollama host.
+        model: The model name.
+        prompt: The user prompt.
+        system: Optional system prompt.
+        options: Optional generation parameters.
+        thinking: Optional thinking parameter.
+        logprobs: Whether to return logprobs.
+        top_logprobs: Number of top logprobs to return.
+        images: Optional list of base64 encoded images.
+
+    Yields:
+        Response chunks from the Ollama API.
     """
     url = f"{host}/api/generate"
     
@@ -104,7 +157,6 @@ def generate(host, model, prompt, system=None, options=None, thinking=None, logp
         "prompt": prompt,
         "stream": True
     }
-    
     
     if images:
         data["images"] = images
@@ -116,9 +168,25 @@ def generate(host, model, prompt, system=None, options=None, thinking=None, logp
 
     yield from _stream_response(url, data)
 
-def chat(host, model, messages, options=None, thinking=None, logprobs=False, top_logprobs=None, images=None):
+def chat(host: str, model: str, messages: List[Dict[str, Any]], 
+         options: Optional[Dict[str, Any]] = None, thinking: Any = None, 
+         logprobs: bool = False, top_logprobs: Optional[int] = None, 
+         images: Optional[List[str]] = None) -> Generator[Dict[str, Any], None, None]:
     """
     Generator that streams responses from the Ollama Chat API.
+
+    Args:
+        host: The base URL of the Ollama host.
+        model: The model name.
+        messages: The chat history.
+        options: Optional generation parameters.
+        thinking: Optional thinking parameter.
+        logprobs: Whether to return logprobs.
+        top_logprobs: Number of top logprobs to return.
+        images: Optional list of base64 encoded images.
+
+    Yields:
+        Response chunks from the Ollama API.
     """
     url = f"{host}/api/chat"
     
@@ -127,7 +195,6 @@ def chat(host, model, messages, options=None, thinking=None, logprobs=False, top
         "messages": messages,
         "stream": True
     }
-    
     
     if images and data["messages"]:
         last_msg = data["messages"][-1]
@@ -138,11 +205,13 @@ def chat(host, model, messages, options=None, thinking=None, logprobs=False, top
 
     yield from _stream_response(url, data)
 
-def _add_common_params(data, options, thinking, logprobs, top_logprobs):
-    if list(filter(None, [thinking])):
-        if thinking == True:
+def _add_common_params(data: Dict[str, Any], options: Optional[Dict[str, Any]], 
+                       thinking: Any, logprobs: bool, top_logprobs: Optional[int]) -> None:
+    """Helper to add common parameters to the API request data."""
+    if thinking is not None:
+        if thinking is True:
             data["thinking"] = True
-        elif thinking == False:
+        elif thinking is False:
             data["thinking"] = False
         elif thinking in ["low", "medium", "high"]:
             data["thinking"] = thinking
@@ -155,7 +224,8 @@ def _add_common_params(data, options, thinking, logprobs, top_logprobs):
     if options:
         data['options'] = options
 
-def _stream_response(url, data):
+def _stream_response(url: str, data: Dict[str, Any]) -> Generator[Dict[str, Any], None, None]:
+    """Internal helper to handle streaming JSON responses from Ollama."""
     try:
         req = urllib.request.Request(url, data=json.dumps(data).encode('utf-8'), headers={'Content-Type': 'application/json'})
         with urllib.request.urlopen(req) as response:

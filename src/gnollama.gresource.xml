@@ -5,6 +5,13 @@
     <file preprocess="xml-stripblanks">tab.ui</file>
     <file preprocess="xml-stripblanks">shortcuts-dialog.ui</file>
     <file preprocess="xml-stripblanks">host_manager.ui</file>
+    <file preprocess="xml-stripblanks">host_edit_dialog.ui</file>
     <file preprocess="xml-stripblanks">model_manager.ui</file>
+    <file preprocess="xml-stripblanks">history_row.ui</file>
+    <file preprocess="xml-stripblanks">pull_model_dialog.ui</file>
+    <file preprocess="xml-stripblanks">user_bubble.ui</file>
+    <file preprocess="xml-stripblanks">ai_bubble.ui</file>
+    <file preprocess="xml-stripblanks">model_details_view.ui</file>
+    <file>style.css</file>
   </gresource>
 </gresources>

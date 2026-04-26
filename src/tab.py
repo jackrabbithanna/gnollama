@@ -583,9 +583,6 @@ class GenerationTab(Gtk.Box):
         label.add_css_class("dim-label")
         self.chat_box.append(label)
 
-        label.add_css_class("dim-label")
-        self.chat_box.append(label)
-
     def load_initial_history(self, history):
         for msg in history:
             role = msg.get('role')

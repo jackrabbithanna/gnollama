@@ -221,7 +221,8 @@ class GenerationTab(Gtk.Box):
         # Initial model fetch
         self.start_model_fetch_thread()
         
-        # Load initial history logic
+        self.mode: str = mode
+        
         # Load initial history logic
         if mode == 'chat':
             if chat_id:

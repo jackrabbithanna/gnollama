@@ -380,6 +380,15 @@ class GnollamaWindow(Adw.ApplicationWindow):
 
     def close_tab(self, page: Gtk.Widget) -> None:
         """Closes a notebook tab and performs cleanups."""
+        # Cleanup empty chats if they weren't used
+        if isinstance(page, GenerationTab) and page.mode == 'chat' and hasattr(page.strategy, 'chat_id'):
+            chat_id = page.strategy.chat_id
+            if chat_id and hasattr(page.strategy, 'history') and not page.strategy.history:
+                self.storage.delete_chat(chat_id)
+                if chat_id in self.chat_rows:
+                    self.history_list.remove(self.chat_rows[chat_id])
+                    del self.chat_rows[chat_id]
+
         page_num = self.notebook.page_num(page)
         if page_num != -1:
             self.notebook.remove_page(page_num)

@@ -55,6 +55,16 @@
         <p>First production release</p>
       </description>
     </release>
+    <release version="0.6.0" date="2026-04-25">
+      <url type="details">https://github.com/jackrabbithanna/gnollama/releases/tag/0.6.0</url>
+      <description translate="no">
+        <p>Add API Details fieldset in response</p>
+        <p>Add Clear chat history dialog</p>
+        <p>Save model, host, system prompt and other options for each chat in the chat storage</p>
+        <p>Set "Show Statistics" checkbox to be checked by default</p>
+        <p>Fix chat API extraneous system parameter</p>
+      </description>
+    </release>
   </releases>
 
 </component>

@@ -54,9 +54,9 @@ class GnollamaApplication(Adw.Application):
         about = Adw.AboutDialog(application_name='gnollama',
                                 application_icon='io.github.jackrabbithanna.Gnollama',
                                 developer_name='Jackrabbithanna',
-                                version='0.5.6',
+                                version='0.6.0',
                                 developers=['Jackrabbithanna'],
-                                copyright='© 2025 Jackrabbithanna')
+                                copyright='© 2026 Jackrabbithanna')
         # Translators: Replace "translator-credits" with your name/username, and optionally an email or URL.
         about.set_translator_credits(_('translator-credits'))
         about.present(self.props.active_window)

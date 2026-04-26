@@ -1,5 +1,5 @@
 project('gnollama',
-          version: '0.5.6',
+          version: '0.6.0',
     meson_version: '>= 1.0.0',
   default_options: [ 'warning_level=2', 'werror=false', ],
 )

@@ -79,20 +79,20 @@ class GnollamaWindow(Adw.ApplicationWindow):
         css_provider = Gtk.CssProvider()
         css = """
         .user-bubble {
-            background-color: @accent_bg_color;
-            color: @accent_fg_color;
+            background-color: var(--accent-bg-color);
+            color: var(--accent-fg-color);
             border-radius: 15px;
             padding: 10px;
             margin-bottom: 5px;
         }
         .bot-bubble {
-            background-color: alpha(@window_fg_color, 0.05);
+            background-color: alpha(var(--window-fg-color), 0.05);
             border-radius: 15px;
             padding: 10px;
             margin-bottom: 5px;
         }
         .thinking-text {
-            color: alpha(@window_fg_color, 0.6);
+            color: alpha(var(--window-fg-color), 0.6);
             font-style: italic;
         }
         .dim-label {
@@ -101,11 +101,15 @@ class GnollamaWindow(Adw.ApplicationWindow):
             margin-bottom: 2px;
         }
         tab {
-            border: 1px solid alpha(@window_fg_color, 0.1);
+            border: 1px solid alpha(var(--window-fg-color), 0.1);
             border-bottom: none;
             border-radius: 6px 6px 0 0;
             margin: 0 2px;
             padding: 4px 8px;
+        }
+        #sidebar_box {
+            background-color: var(--sidebar-bg-color);
+            border-right: 1px solid var(--sidebar-border-color);
         }
         """
         css_provider.load_from_data(css.encode('utf-8'))

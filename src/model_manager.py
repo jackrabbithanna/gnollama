@@ -30,7 +30,7 @@ class ModelManagerDialog(Adw.Window):
         css_provider = Gtk.CssProvider()
         css = """
         .template-bg {
-            background-color: alpha(@window_fg_color, 0.05);
+            background-color: alpha(var(--window-fg-color), 0.05);
             border-radius: 6px;
             padding: 10px;
             font-family: monospace;

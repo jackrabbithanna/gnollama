@@ -16,6 +16,12 @@
             <property name="action-name">app.quit</property>
           </object>
         </child>
+        <child>
+          <object class="AdwShortcutsItem">
+            <property name="title" translatable="yes" context="shortcut window">New Chat Tab</property>
+            <property name="action-name">win.new_chat_tab</property>
+          </object>
+        </child>
       </object>
     </child>
   </object>

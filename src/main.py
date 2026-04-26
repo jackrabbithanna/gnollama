@@ -36,6 +36,7 @@ class GnollamaApplication(Adw.Application):
                          resource_base_path='/io/github/jackrabbithanna/Gnollama')
         self.create_action('quit', lambda *_: self.quit(), ['<control>q'])
         self.create_action('about', self.on_about_action)
+        self.set_accels_for_action('win.new_chat_tab', ['<control>n'])
 
     def do_activate(self):
         """Called when the application is activated.

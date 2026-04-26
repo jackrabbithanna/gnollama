@@ -26,6 +26,7 @@ import html
 from .tab import GenerationTab
 from .storage import ChatStorage
 from .host_manager import HostManagerDialog
+from .model_manager import ModelManagerDialog
 
 @Gtk.Template(resource_path='/io/github/jackrabbithanna/Gnollama/window.ui')
 class GnollamaWindow(Adw.ApplicationWindow):
@@ -57,6 +58,10 @@ class GnollamaWindow(Adw.ApplicationWindow):
         action_manage_hosts = Gio.SimpleAction.new("manage_hosts", None)
         action_manage_hosts.connect("activate", self.on_manage_hosts)
         self.add_action(action_manage_hosts)
+
+        action_manage_models = Gio.SimpleAction.new("manage_models", None)
+        action_manage_models.connect("activate", self.on_manage_models)
+        self.add_action(action_manage_models)
         
         # Load CSS
         self.load_css()
@@ -147,6 +152,11 @@ class GnollamaWindow(Adw.ApplicationWindow):
 
     def on_manage_hosts(self, action, param):
         dialog = HostManagerDialog(storage=self.storage, on_hosts_changed_cb=self.on_hosts_changed)
+        dialog.set_transient_for(self)
+        dialog.present()
+
+    def on_manage_models(self, action, param):
+        dialog = ModelManagerDialog(storage=self.storage)
         dialog.set_transient_for(self)
         dialog.present()
 

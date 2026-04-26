@@ -20,6 +20,19 @@ def fetch_models(host):
         print(f"Failed to fetch models: {e}")
         return []
 
+def fetch_model_details(host):
+    """
+    Fetches the detailed list of available models from the Ollama host.
+    """
+    url = f"{host}/api/tags"
+    try:
+        with urllib.request.urlopen(url) as response:
+            result = json.loads(response.read().decode('utf-8'))
+            return result.get('models', [])
+    except Exception as e:
+        print(f"Failed to fetch model details: {e}")
+        return []
+
 def get_version(host):
     """
     Fetches the Ollama version.

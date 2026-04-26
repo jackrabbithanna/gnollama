@@ -3,6 +3,7 @@ from gi.repository import Adw, Gtk, Gio, GLib, GObject
 from .storage import ChatStorage
 from . import ollama
 import threading
+import json
 
 @Gtk.Template(resource_path='/io/github/jackrabbithanna/Gnollama/model_details_view.ui')
 class ModelDetailsView(Adw.Window):
@@ -141,7 +142,7 @@ class ModelManagerDialog(Adw.Window):
             data, error = ollama.show_model(host['hostname'], model['name'])
             GLib.idle_add(dialog.close)
             if data:
-                GLib.idle_add(self.show_model_details, model['name'], data)
+                GLib.idle_add(self.show_model_details, model['name'], data, model)
             else:
                 GLib.idle_add(self.show_error, _("Failed to fetch details"), error)
                 
@@ -187,46 +188,111 @@ class ModelManagerDialog(Adw.Window):
         dialog.connect("response", on_response)
         dialog.present()
 
-    def show_model_details(self, model_name: str, data: Dict[str, Any]) -> None:
+    def show_model_details(self, model_name: str, show_data: Dict[str, Any], tag_data: Dict[str, Any]) -> None:
         """Displays a window with formatted model details."""
         view = ModelDetailsView(self, model_name)
         
-        def add_section(title: str, content: Optional[str]) -> None:
-            if not content:
+        def add_field(label: str, value: Any, collapsible: bool = False) -> None:
+            if value is None or value == "":
                 return
-            section_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
             
-            label = Gtk.Label(label=title)
-            label.set_halign(Gtk.Align.START)
-            label.add_css_class("heading")
-            section_box.append(label)
-            
-            details_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-            details_box.add_css_class("card")
-            
-            content_label = Gtk.Label(label=content)
-            content_label.set_halign(Gtk.Align.START)
-            content_label.set_xalign(0)
-            content_label.set_wrap(True)
-            content_label.set_selectable(True)
-            content_label.set_margin_start(12)
-            content_label.set_margin_end(12)
-            content_label.set_margin_top(12)
-            content_label.set_margin_bottom(12)
-            
-            details_box.append(content_label)
-            section_box.append(details_box)
-            view.main_box.append(section_box)
+            if isinstance(value, (dict, list)):
+                value_str = json.dumps(value, indent=2)
+            else:
+                value_str = str(value)
 
-        details = data.get("details", {})
-        details_str = "\n".join([f"{k}: {v}" for k, v in details.items()])
-        add_section(_("Details"), details_str)
+            box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
+            
+            if collapsible:
+                expander = Gtk.Expander(label=label)
+                expander.set_expanded(False)
+                
+                content_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+                content_box.add_css_class("card")
+                content_box.set_margin_top(6)
+                
+                content_label = Gtk.Label(label=value_str)
+                content_label.set_halign(Gtk.Align.START)
+                content_label.set_xalign(0)
+                content_label.set_wrap(True)
+                content_label.set_selectable(True)
+                content_label.set_margin_start(12)
+                content_label.set_margin_end(12)
+                content_label.set_margin_top(12)
+                content_label.set_margin_bottom(12)
+                
+                content_box.append(content_label)
+                expander.set_child(content_box)
+                box.append(expander)
+            else:
+                title_label = Gtk.Label(label=label)
+                title_label.set_halign(Gtk.Align.START)
+                title_label.add_css_class("heading")
+                box.append(title_label)
+                
+                content_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+                content_box.add_css_class("card")
+                
+                content_label = Gtk.Label(label=value_str)
+                content_label.set_halign(Gtk.Align.START)
+                content_label.set_xalign(0)
+                content_label.set_wrap(True)
+                content_label.set_selectable(True)
+                content_label.set_margin_start(12)
+                content_label.set_margin_end(12)
+                content_label.set_margin_top(12)
+                content_label.set_margin_bottom(12)
+                
+                content_box.append(content_label)
+                box.append(content_box)
+            
+            view.main_box.append(box)
+
+        # Priority properties from tags
+        tag_keys = ["name", "model", "remote_model", "remote_host", "modified_at", "size", "digest"]
+        for k in tag_keys:
+            if k in tag_data:
+                label = k.replace("_", " ").title()
+                val = tag_data[k]
+                if k == "size":
+                    val = f"{val / (1024*1024*1024):.2f} GB ({val} bytes)"
+                add_field(_(label), val)
         
-        add_section(_("Modelfile"), data.get("modelfile"))
-        add_section(_("Parameters"), data.get("parameters"))
-        add_section(_("Template"), data.get("template"))
-        add_section(_("License"), data.get("license"))
+        # Details from tags
+        tag_details = tag_data.get("details", {})
+        detail_keys = ["format", "family", "families", "parameter_size", "quantization_level"]
+        for k in detail_keys:
+            if k in tag_details:
+                label = f"Detail: {k.replace('_', ' ').title()}"
+                add_field(_(label), tag_details[k])
+
+        # Show properties (non-collapsible first)
+        show_keys = ["parameters", "capabilities"]
+        for k in show_keys:
+            if k in show_data:
+                label = k.replace("_", " ").title()
+                add_field(_(label), show_data[k])
+
+        # Add everything else from both sources that hasn't been added yet
+        merged = tag_data.copy()
+        merged.update(show_data)
         
+        # We'll also handle the collapsible ones later
+        collapsible_keys = ["template", "license", "modelfile", "model_info"]
+        already_added = set(tag_keys) | set(show_keys) | set(collapsible_keys) | {"details", "tensors"}
+        
+        for k, v in merged.items():
+            if k not in already_added:
+                label = k.replace("_", " ").title()
+                add_field(_(label), v)
+
+        # Collapsible properties at the bottom
+        for k in collapsible_keys:
+            if k in show_data:
+                label = k.replace("_", " ").title()
+                if k == "modelfile": label = "Modelfile"
+                add_field(_(label), show_data[k], collapsible=True)
+
         view.present()
 
 @Gtk.Template(resource_path='/io/github/jackrabbithanna/Gnollama/pull_model_dialog.ui')

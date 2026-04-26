@@ -31,7 +31,10 @@ class HostManagerDialog(Adw.Window):
     def add_host_row(self, host):
         row = Adw.ActionRow()
         row.set_title(host['name'])
-        row.set_subtitle(host['hostname'])
+        if host.get('default', False):
+            row.set_subtitle(host['hostname'] + " (Default)")
+        else:
+            row.set_subtitle(host['hostname'])
         
         # Edit button
         edit_btn = Gtk.Button.new_from_icon_name("document-open-symbolic")
@@ -78,8 +81,15 @@ class HostManagerDialog(Adw.Window):
         if host:
             hostname_entry.set_text(host['hostname'])
             
+        default_check = Gtk.CheckButton(label=_("Set as default host"))
+        if host and host.get("default", False):
+            default_check.set_active(True)
+        elif not host and not self.storage.hosts:
+            default_check.set_active(True)
+            
         box.append(name_entry)
         box.append(hostname_entry)
+        box.append(default_check)
         
         dialog.set_extra_child(box)
         
@@ -87,11 +97,12 @@ class HostManagerDialog(Adw.Window):
             if response == "save":
                 name = name_entry.get_text().strip()
                 hostname = hostname_entry.get_text().strip()
+                is_default = default_check.get_active()
                 if name and hostname:
                     if host:
-                        self.storage.update_host(host['id'], name, hostname)
+                        self.storage.update_host(host['id'], name, hostname, is_default)
                     else:
-                        self.storage.add_host(name, hostname)
+                        self.storage.add_host(name, hostname, is_default)
                     self.load_hosts()
                     if self.on_hosts_changed_cb:
                         self.on_hosts_changed_cb()

@@ -237,23 +237,38 @@ class GenerationTab(Gtk.Box):
 
     def update_hosts(self):
         hosts = self.storage.get_all_hosts()
+        
+        current_host_id = None
+        if hasattr(self, 'pending_host_id') and self.pending_host_id:
+            current_host_id = self.pending_host_id
+            self.pending_host_id = None
+        elif hasattr(self, 'host_list') and self.host_list:
+            selected_idx = self.host_dropdown.get_selected()
+            if selected_idx != Gtk.INVALID_LIST_POSITION and selected_idx < len(self.host_list):
+                current_host_id = self.host_list[selected_idx]['id']
+                
         self.host_list = hosts
         
         host_names = [h['name'] for h in hosts]
         string_list = Gtk.StringList.new(host_names)
         self.host_dropdown.set_model(string_list)
         
-        # Try to restore pending host selection
-        if hasattr(self, 'pending_host_id') and self.pending_host_id:
+        target_idx = 0
+        found = False
+        if current_host_id:
             for i, h in enumerate(hosts):
-                if h['id'] == self.pending_host_id:
-                    self.host_dropdown.set_selected(i)
-                    self.pending_host_id = None
+                if h['id'] == current_host_id:
+                    target_idx = i
+                    found = True
                     break
-        
-        if self.host_dropdown.get_selected() == Gtk.INVALID_LIST_POSITION and hosts:
-            self.host_dropdown.set_selected(0)
-            
+                    
+        if not found:
+            for i, h in enumerate(hosts):
+                if h.get('default', False):
+                    target_idx = i
+                    break
+                    
+        self.host_dropdown.set_selected(target_idx)
         self.on_host_changed(None)
 
     def get_current_host(self):

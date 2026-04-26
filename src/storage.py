@@ -21,7 +21,8 @@ class ChatStorage:
             default_hosts = [{
                 "id": str(uuid.uuid4()),
                 "name": "localhost",
-                "hostname": "http://localhost:11434"
+                "hostname": "http://localhost:11434",
+                "default": True
             }]
             self._save_hosts(default_hosts)
             return default_hosts
@@ -35,6 +36,12 @@ class ChatStorage:
     def _save_hosts(self, hosts=None):
         if hosts is None:
             hosts = self.hosts
+            
+        if hosts:
+            has_default = any(h.get("default", False) for h in hosts)
+            if not has_default:
+                hosts[0]["default"] = True
+                
         try:
             with open(self.hosts_file, 'w') as f:
                 json.dump(hosts, f, indent=2)
@@ -50,23 +57,36 @@ class ChatStorage:
                 return host
         return None
 
-    def add_host(self, name, hostname):
+    def set_default_host(self, host_id):
+        for host in self.hosts:
+            host["default"] = (host["id"] == host_id)
+        self._save_hosts()
+
+    def add_host(self, name, hostname, is_default=False):
         host_id = str(uuid.uuid4())
         new_host = {
             "id": host_id,
             "name": name,
-            "hostname": hostname
+            "hostname": hostname,
+            "default": is_default
         }
         self.hosts.append(new_host)
-        self._save_hosts()
+        if is_default:
+            self.set_default_host(host_id)
+        else:
+            self._save_hosts()
         return new_host
 
-    def update_host(self, host_id, name, hostname):
+    def update_host(self, host_id, name, hostname, is_default=False):
         for host in self.hosts:
             if host["id"] == host_id:
                 host["name"] = name
                 host["hostname"] = hostname
-                self._save_hosts()
+                if is_default:
+                    self.set_default_host(host_id)
+                else:
+                    host["default"] = False
+                    self._save_hosts()
                 return host
         return None
 

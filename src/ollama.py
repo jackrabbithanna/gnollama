@@ -63,6 +63,36 @@ def get_version(host):
         print(f"Failed to fetch version: {e}")
         return None, str(e)
 
+def delete_model(host, model_name):
+    """
+    Deletes a model from the Ollama host.
+    """
+    url = f"{host}/api/delete"
+    data = {
+        "model": model_name
+    }
+    try:
+        req = urllib.request.Request(url, data=json.dumps(data).encode('utf-8'), headers={'Content-Type': 'application/json'}, method='DELETE')
+        with urllib.request.urlopen(req) as response:
+            return True, None
+    except Exception as e:
+        print(f"Failed to delete model: {e}")
+        return False, str(e)
+
+def pull(host, model, insecure=False):
+    """
+    Generator that streams responses from the Ollama Pull API.
+    """
+    url = f"{host}/api/pull"
+    
+    data = {
+        "model": model,
+        "insecure": insecure,
+        "stream": True
+    }
+    
+    yield from _stream_response(url, data)
+
 def generate(host, model, prompt, system=None, options=None, thinking=None, logprobs=False, top_logprobs=None, images=None):
     """
     Generator that streams responses from the Ollama Generate API.

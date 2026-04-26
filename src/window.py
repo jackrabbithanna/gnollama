@@ -193,6 +193,8 @@ class GnollamaWindow(Adw.ApplicationWindow):
         
         # Add to notebook
         page_num = self.notebook.append_page(tab, tab_label_box)
+        self.notebook.set_menu_label_text(tab, tab_title.get_label())
+        tab_title.connect("notify::label", lambda lbl, pspec, t=tab: self.notebook.set_menu_label_text(t, lbl.get_label()))
         self.notebook.set_current_page(page_num)
         self.notebook.set_tab_reorderable(tab, True)
         self.notebook.set_tab_detachable(tab, True)
@@ -347,6 +349,8 @@ class GnollamaWindow(Adw.ApplicationWindow):
         
         # Add to notebook
         page_num = self.notebook.append_page(tab, tab_label_box)
+        self.notebook.set_menu_label_text(tab, tab_title.get_label())
+        tab_title.connect("notify::label", lambda lbl, pspec, t=tab: self.notebook.set_menu_label_text(t, lbl.get_label()))
         self.notebook.set_current_page(page_num)
         self.notebook.set_tab_reorderable(tab, True)
         self.notebook.set_tab_detachable(tab, True)
@@ -395,6 +399,8 @@ class GnollamaWindow(Adw.ApplicationWindow):
         
         # Add to notebook
         page_num = self.notebook.append_page(tab, tab_label_box)
+        self.notebook.set_menu_label_text(tab, tab_title.get_label())
+        tab_title.connect("notify::label", lambda lbl, pspec, t=tab: self.notebook.set_menu_label_text(t, lbl.get_label()))
         self.notebook.set_current_page(page_num)
         self.notebook.set_tab_reorderable(tab, True)
         self.notebook.set_tab_detachable(tab, True)

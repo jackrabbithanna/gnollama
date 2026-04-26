@@ -193,6 +193,14 @@ class ChatStorage:
             del self.chats[chat_id]
             self._save_history()
 
+    def cleanup_empty_chats(self) -> None:
+        """Deletes all chats that have no messages."""
+        empty_ids = [chat_id for chat_id, chat in self.chats.items() if not chat.get("messages")]
+        for chat_id in empty_ids:
+            del self.chats[chat_id]
+        if empty_ids:
+            self._save_history()
+
     def clear_all_chats(self) -> None:
         """Deletes all chat history."""
         self.chats = {}

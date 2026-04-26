@@ -62,6 +62,7 @@ class GnollamaWindow(Adw.ApplicationWindow):
         self.chat_rows: Dict[str, HistoryRow] = {}
         
         self.history_list.connect("row-activated", self.on_history_row_activated)
+        self.connect("close-request", self.on_close_request)
         
         # Setup actions
         self._setup_actions()
@@ -77,6 +78,11 @@ class GnollamaWindow(Adw.ApplicationWindow):
         
         # Create initial tab
         self.new_chat_tab()
+
+    def on_close_request(self, *args: Any) -> bool:
+        """Handles the window close request and performs cleanup."""
+        self.storage.cleanup_empty_chats()
+        return False
 
     def _setup_actions(self) -> None:
         """Initializes application actions and their shortcuts."""

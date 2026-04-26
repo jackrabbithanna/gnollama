@@ -1,5 +1,7 @@
 from gi.repository import Adw, Gtk, Gio, GLib
 from .storage import ChatStorage
+from . import ollama
+import threading
 
 @Gtk.Template(resource_path='/io/github/jackrabbithanna/Gnollama/host_manager.ui')
 class HostManagerDialog(Adw.Window):
@@ -36,11 +38,20 @@ class HostManagerDialog(Adw.Window):
         else:
             row.set_subtitle(host['hostname'])
         
+        # Info button
+        info_btn = Gtk.Button.new_from_icon_name("dialog-information-symbolic")
+        info_btn.set_valign(Gtk.Align.CENTER)
+        info_btn.add_css_class("flat")
+        info_btn.connect("clicked", self.on_info_clicked, host)
+        info_btn.set_tooltip_text(_("Test"))
+        row.add_suffix(info_btn)
+        
         # Edit button
         edit_btn = Gtk.Button.new_from_icon_name("document-open-symbolic")
         edit_btn.set_valign(Gtk.Align.CENTER)
         edit_btn.add_css_class("flat")
         edit_btn.connect("clicked", self.on_edit_clicked, host)
+        edit_btn.set_tooltip_text(_("Edit"))
         row.add_suffix(edit_btn)
         
         # Delete button
@@ -48,6 +59,7 @@ class HostManagerDialog(Adw.Window):
         del_btn.set_valign(Gtk.Align.CENTER)
         del_btn.add_css_class("flat")
         del_btn.connect("clicked", self.on_delete_clicked, host, row)
+        del_btn.set_tooltip_text(_("Delete"))
         row.add_suffix(del_btn)
         
         self.hosts_group.add(row)
@@ -55,6 +67,29 @@ class HostManagerDialog(Adw.Window):
 
     def on_add_clicked(self, btn):
         self.show_edit_dialog()
+
+    def on_info_clicked(self, btn, host):
+        dialog = Adw.MessageDialog(
+            transient_for=self,
+            heading=host['name'],
+            body=_("Fetching version...")
+        )
+        dialog.add_response("close", _("Close"))
+        dialog.set_default_response("close")
+        dialog.set_close_response("close")
+        dialog.present()
+        
+        def fetch_version_thread():
+            version, error = ollama.get_version(host['hostname'])
+            if version:
+                msg = _("Connected\nOllama Version: {0}").format(version)
+            else:
+                msg = _("Connection failed\n{0}").format(error)
+            GLib.idle_add(lambda: dialog.set_body(msg))
+            
+        thread = threading.Thread(target=fetch_version_thread)
+        thread.daemon = True
+        thread.start()
 
     def on_edit_clicked(self, btn, host):
         self.show_edit_dialog(host)

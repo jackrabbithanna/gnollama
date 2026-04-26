@@ -20,6 +20,19 @@ def fetch_models(host):
         print(f"Failed to fetch models: {e}")
         return []
 
+def get_version(host):
+    """
+    Fetches the Ollama version.
+    """
+    url = f"{host}/api/version"
+    try:
+        with urllib.request.urlopen(url, timeout=5) as response:
+            result = json.loads(response.read().decode('utf-8'))
+            return result.get('version', 'Unknown'), None
+    except Exception as e:
+        print(f"Failed to fetch version: {e}")
+        return None, str(e)
+
 def generate(host, model, prompt, system=None, options=None, thinking=None, logprobs=False, top_logprobs=None, images=None):
     """
     Generator that streams responses from the Ollama Generate API.

@@ -349,7 +349,7 @@ class GenerationTab(Gtk.Box):
     def update_thinking_options(self, model_name: str) -> None:
         """Updates the thinking dropdown options based on the model's capabilities."""
         if model_name.startswith("gpt-oss"):
-            options = [_("None"), _("Low"), _("Medium"), _("High")]
+            options = [_("None"), _("Low"), _("Medium"), _("High"), _("Max")]
         else:
             options = [_("Thinking"), _("No thinking")]
             
@@ -390,6 +390,7 @@ class GenerationTab(Gtk.Box):
                  elif val == "low" and item_str == _("Low"): match = True
                  elif val == "medium" and item_str == _("Medium"): match = True
                  elif val == "high" and item_str == _("High"): match = True
+                 elif val == "max" and item_str == _("Max"): match = True
                  elif val is None and item_str == _("None"): match = True
                  
                  if match:
@@ -532,6 +533,8 @@ class GenerationTab(Gtk.Box):
                 thinking_val = "medium"
             elif thinking_str == _("High"):
                 thinking_val = "high"
+            elif thinking_str == _("Max"):
+                thinking_val = "max"    
             elif thinking_str == _("None"):
                 thinking_val = None
 

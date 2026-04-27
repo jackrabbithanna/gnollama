@@ -213,7 +213,7 @@ def _add_common_params(data: Dict[str, Any], options: Optional[Dict[str, Any]],
             data["think"] = True
         elif thinking is False:
             data["think"] = False
-        elif thinking in ["low", "medium", "high"]:
+        elif thinking in ["low", "medium", "high", "max"]:
             data["think"] = thinking
 
     if logprobs:

@@ -210,11 +210,11 @@ def _add_common_params(data: Dict[str, Any], options: Optional[Dict[str, Any]],
     """Helper to add common parameters to the API request data."""
     if thinking is not None:
         if thinking is True:
-            data["thinking"] = True
+            data["think"] = True
         elif thinking is False:
-            data["thinking"] = False
+            data["think"] = False
         elif thinking in ["low", "medium", "high"]:
-            data["thinking"] = thinking
+            data["think"] = thinking
 
     if logprobs:
         data["logprobs"] = True

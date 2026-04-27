@@ -35,6 +35,7 @@ Responses render Markdown and implement code highlighting.
 
 Model selection, thinking, system prompt, statistics, logprobs, and other options (e.g. temperature)
 
+Supports uploading multiple images and sending with the chat message.
 
 <img src="./screenshots/gnollama-screenshot.png" alt="gnollama" align="left"/>
 

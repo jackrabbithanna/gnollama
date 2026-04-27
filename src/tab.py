@@ -153,6 +153,8 @@ class GenerationTab(Gtk.Box):
     attach_button: Gtk.Button = Gtk.Template.Child()
     image_label: Gtk.Label = Gtk.Template.Child()
     clear_image_button: Gtk.Button = Gtk.Template.Child()
+    image_preview_scrolled: Gtk.ScrolledWindow = Gtk.Template.Child()
+    image_preview_box: Gtk.Box = Gtk.Template.Child()
     
     seed_entry: Gtk.Entry = Gtk.Template.Child()
     temperature_entry: Gtk.Entry = Gtk.Template.Child()
@@ -303,25 +305,80 @@ class GenerationTab(Gtk.Box):
         """Handles the response from the image file chooser."""
         if response == Gtk.ResponseType.ACCEPT:
             files = dialog.get_files()
-            self.selected_image_paths = [f.get_path() for f in files]
+            new_paths = [f.get_path() for f in files]
             
-            count = len(self.selected_image_paths)
-            if count == 1:
-                label_text = os.path.basename(self.selected_image_paths[0])
-            else:
-                label_text = _("{count} images selected").format(count=count)
+            for path in new_paths:
+                if path and path not in self.selected_image_paths:
+                    self.selected_image_paths.append(path)
             
-            self.image_label.set_text(label_text)
-            self.image_label.remove_css_class("dim-label")
-            self.clear_image_button.set_visible(True)
+            self.refresh_image_previews()
         dialog.destroy()
+
+    def refresh_image_previews(self) -> None:
+        """Updates the thumbnail preview area based on selected images."""
+        # Clear existing previews
+        while child := self.image_preview_box.get_first_child():
+            self.image_preview_box.remove(child)
+            
+        count = len(self.selected_image_paths)
+        if count == 0:
+            self.image_preview_scrolled.set_visible(False)
+            self.image_label.set_text(_("No image selected"))
+            self.image_label.add_css_class("dim-label")
+            self.clear_image_button.set_visible(False)
+            return
+
+        self.image_preview_scrolled.set_visible(True)
+        self.clear_image_button.set_visible(True)
+        
+        if count == 1:
+            label_text = os.path.basename(self.selected_image_paths[0])
+        else:
+            label_text = _("{count} images selected").format(count=count)
+            
+        self.image_label.set_text(label_text)
+        self.image_label.remove_css_class("dim-label")
+
+        for path in self.selected_image_paths:
+            self.add_image_preview(path)
+
+    def add_image_preview(self, path: str) -> None:
+        """Adds a single image preview widget to the preview box."""
+        overlay = Gtk.Overlay()
+        
+        try:
+            # Create thumbnail
+            picture = Gtk.Picture.new_for_filename(path)
+            picture.set_content_fit(Gtk.ContentFit.SCALE_DOWN)
+            picture.set_size_request(80, 80)
+            picture.set_can_shrink(True)
+            picture.add_css_class("image-preview-thumbnail")
+            overlay.set_child(picture)
+            
+            # Close button
+            close_button = Gtk.Button()
+            close_button.set_icon_name("window-close-symbolic")
+            close_button.add_css_class("circular")
+            close_button.add_css_class("osd")
+            close_button.set_halign(Gtk.Align.END)
+            close_button.set_valign(Gtk.Align.START)
+            close_button.connect("clicked", self.on_remove_image_clicked, path)
+            overlay.add_overlay(close_button)
+            
+            self.image_preview_box.append(overlay)
+        except Exception as e:
+            print(f"Failed to create image preview for {path}: {e}")
+
+    def on_remove_image_clicked(self, button: Gtk.Button, path: str) -> None:
+        """Removes a specific image from the selection."""
+        if path in self.selected_image_paths:
+            self.selected_image_paths.remove(path)
+            self.refresh_image_previews()
 
     def on_clear_image_clicked(self, widget: Gtk.Button) -> None:
         """Clears the current image selection."""
         self.selected_image_paths = []
-        self.image_label.set_text(_("No image selected"))
-        self.image_label.add_css_class("dim-label")
-        self.clear_image_button.set_visible(False)
+        self.refresh_image_previews()
 
     def on_host_changed(self, widget: Optional[GObject.Object], *args: Any) -> None:
         """Debounced callback for host selection changes."""

@@ -73,6 +73,13 @@
         <p>Add model information dialog</p>
       </description>
     </release>
+    <release version="0.8.0" date="2026-05-03">
+      <url type="details">https://github.com/jackrabbithanna/gnollama/releases/tag/0.8.0</url>
+      <description translate="no">
+        <p>Code architecture, structure, coding standards improvements</p>
+        <p>Update Manage Models dialog to model information dialog</p>
+      </description>
+    </release>
   </releases>
 
 </component>

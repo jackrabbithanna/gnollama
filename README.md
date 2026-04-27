@@ -25,6 +25,8 @@ Select "New Chat" to create a new chat tab using /api/chat with previous message
 
 Displays the "Thinking" stream in a fieldset in the response bubble.
 
+Optionally displays the logprobs and response statistics in the response.
+
 Supports saving chats and their options between sessions and a chat history list in a sidebar.
 
 Both tab types support selecting multiple images to pass to the model.
@@ -83,11 +85,11 @@ You can then run `gnollama` to execute the application.
  
 ## Contribute
 
-The [GNOME Code of Conduct](https://wiki.gnome.org/Foundation/CodeOfConduct) is applicable to this project
+The [GNOME Code of Conduct](https://conduct.gnome.org/) is applicable to this project
 
 
 ## License
 
-*gnolamma* is released under the terms of the [GNU General Public License V3](https://www.gnu.org/licenses/gpl-3.0.html).
+*gnollama* is released under the terms of the [GNU General Public License V3](https://www.gnu.org/licenses/gpl-3.0.html).
 
 No warranty provided. No guarantee it does anything at all. Use at your own risk.

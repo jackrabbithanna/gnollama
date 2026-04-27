@@ -11,6 +11,12 @@ A Gnome user interface to [Ollama](https://ollama.com)
 
 A GNOME user interface to Ollama. Written in Python.
 
+Manage multiple hosts. Add / remove hosts and set default host. Tests host connectivity.
+
+Each chat tab supports using any configured host. Model selection options populated from host.
+
+Model management dialog. Lists all models for selected host. Allows pulling and deleting models. Shows full details about a model including size, parameters, modelfile, template, and license.
+
 Supports multiple tabs of model responses to Ollama endpoint /api/generate and /api/chat
 
 Select "New Response" to create a new generate tab using /api/generate.
@@ -19,13 +25,11 @@ Select "New Chat" to create a new chat tab using /api/chat with previous message
 
 Displays the "Thinking" stream in a fieldset in the response bubble.
 
-Support saving chats and their options between sessions and a list of chats in a sidebar.
+Supports saving chats and their options between sessions and a chat history list in a sidebar.
 
 Both tab types support selecting multiple images to pass to the model.
 
 Responses render Markdown and implement code highlighting.
-
-Each tab supports entering any host. Model selection options populated from host.
 
 Model selection, thinking, system prompt, statistics, logprobs, and other options (e.g. temperature)
 
@@ -33,6 +37,12 @@ Model selection, thinking, system prompt, statistics, logprobs, and other option
 <img src="./screenshots/gnollama-screenshot.png" alt="gnollama" align="left"/>
 
 <img src="./screenshots/gnollama-chat-options.png" alt="gnollama" align="left"/>
+
+<img src="./screenshots/gnollama-manage-models.png" alt="gnollama" align="left"/>
+
+## Motivation
+
+I wanted a GNOME application for Ollama that I could use to test and experiment with different models. I have multiple computers with Ollama and wanted a way to easily query and compare the responses from all of them using the same interface. Perhaps others would find this useful as well so here you go.
 
 ## Build
 
@@ -65,12 +75,12 @@ You can then run `gnollama` to execute the application.
 
 ## TODO
 
-Manage multiple hosts in configuration
-
-Manage models for each host
-
-More UI Multi-lingual translations
-
+*   Code architecture improvements and optimizations (see [code-analysis-improvement-plan-2.md](./code-analysis-improvement-plan-2.md))
+*   Save chat history in SQLite
+*   More UI Multi-lingual translations
+*   Consider how to add tool calls response fieldset and allow the user to set optional list of function tools the model may call during the chat
+*   Embeddings?
+ 
 ## Contribute
 
 The [GNOME Code of Conduct](https://wiki.gnome.org/Foundation/CodeOfConduct) is applicable to this project

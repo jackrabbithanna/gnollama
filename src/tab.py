@@ -628,6 +628,11 @@ class GenerationTab(Gtk.Box):
             ):
                 chunk = json_obj
                 
+                if 'error' in chunk:
+                    error_msg = chunk['error']
+                    GLib.idle_add(ai_bubble.append_text, f"\n\n### Error\n\n{error_msg}")
+                    break
+                
                 # 1. Handle native thinking field from Ollama
                 native_thinking = chunk.get('thinking', chunk.get('thought', ''))
                 if not native_thinking and 'message' in chunk:
@@ -709,7 +714,7 @@ class GenerationTab(Gtk.Box):
             GLib.idle_add(self.strategy.on_response_complete, self, model_name)
 
         except Exception as e:
-            GLib.idle_add(ai_bubble.append_text, f"\n\n**Connection Error:** {str(e)}")
+            GLib.idle_add(ai_bubble.append_text, f"\n\n### Connection Error\n\n{str(e)}")
         finally:
             GLib.idle_add(self.send_button.set_sensitive, True)
             GLib.idle_add(self._scroll_to_bottom)

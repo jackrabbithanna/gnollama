@@ -61,6 +61,11 @@ def show_model(host: str, name: str) -> Tuple[Optional[Dict[str, Any]], Optional
         req = urllib.request.Request(url, data=json.dumps(data).encode('utf-8'), headers={'Content-Type': 'application/json'})
         with urllib.request.urlopen(req) as response:
             return json.loads(response.read().decode('utf-8')), None
+    except urllib.error.HTTPError as e:
+        try:
+            return None, json.loads(e.read().decode('utf-8')).get('error', str(e))
+        except Exception:
+            return None, f"HTTP Error {e.code}: {e.reason}"
     except Exception as e:
         print(f"Failed to show model: {e}")
         return None, str(e)
@@ -80,6 +85,11 @@ def get_version(host: str) -> Tuple[Optional[str], Optional[str]]:
         with urllib.request.urlopen(url, timeout=5) as response:
             result = json.loads(response.read().decode('utf-8'))
             return result.get('version', 'Unknown'), None
+    except urllib.error.HTTPError as e:
+        try:
+            return None, json.loads(e.read().decode('utf-8')).get('error', str(e))
+        except Exception:
+            return None, f"HTTP Error {e.code}: {e.reason}"
     except Exception as e:
         print(f"Failed to fetch version: {e}")
         return None, str(e)
@@ -103,6 +113,11 @@ def delete_model(host: str, model_name: str) -> Tuple[bool, Optional[str]]:
         req = urllib.request.Request(url, data=json.dumps(data).encode('utf-8'), headers={'Content-Type': 'application/json'}, method='DELETE')
         with urllib.request.urlopen(req) as response:
             return True, None
+    except urllib.error.HTTPError as e:
+        try:
+            return False, json.loads(e.read().decode('utf-8')).get('error', str(e))
+        except Exception:
+            return False, f"HTTP Error {e.code}: {e.reason}"
     except Exception as e:
         print(f"Failed to delete model: {e}")
         return False, str(e)
@@ -235,5 +250,12 @@ def _stream_response(url: str, data: Dict[str, Any]) -> Generator[Dict[str, Any]
                         yield json.loads(line.decode('utf-8'))
                     except ValueError:
                         pass
+    except urllib.error.HTTPError as e:
+        try:
+            error_body = e.read().decode('utf-8')
+            error_msg = json.loads(error_body).get('error', str(e))
+            yield {"error": error_msg}
+        except Exception:
+            yield {"error": f"HTTP Error {e.code}: {e.reason}"}
     except Exception as e:
         yield {"error": str(e)}

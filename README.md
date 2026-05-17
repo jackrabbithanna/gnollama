@@ -29,8 +29,6 @@ Optionally displays the logprobs and response statistics in the response.
 
 Supports saving chats and their options between sessions and a chat history list in a sidebar.
 
-Both tab types support selecting multiple images to pass to the model.
-
 Responses render Markdown and implement code highlighting.
 
 Model selection, thinking, system prompt, statistics, logprobs, and other options (e.g. temperature)

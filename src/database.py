@@ -4,12 +4,18 @@ import json
 import base64
 from typing import List, Dict, Any, Optional
 
+# Sequential migrations list
+# Add future SQL scripts to this array to run sequentially.
+# E.g. MIGRATIONS = ["ALTER TABLE chats ADD COLUMN is_pinned INTEGER DEFAULT 0;"]
+MIGRATIONS: List[str] = []
+
 class DatabaseManager:
     """Manages SQLite database initialization and operations."""
     
     def __init__(self, db_path: str) -> None:
         self.db_path: str = db_path
         self._init_db()
+        self._run_migrations()
 
     def _get_conn(self) -> sqlite3.Connection:
         """Returns a database connection with foreign key support enabled."""
@@ -71,6 +77,53 @@ class DatabaseManager:
                 )
             """)
             conn.commit()
+
+    def _get_version(self, conn: sqlite3.Connection) -> int:
+        """Retrieves the current schema version from SQLite header."""
+        cursor = conn.execute("PRAGMA user_version;")
+        return cursor.fetchone()[0]
+
+    def _set_version(self, conn: sqlite3.Connection, version: int) -> None:
+        """Sets the schema version in SQLite header."""
+        conn.execute(f"PRAGMA user_version = {version};")
+
+    def _run_migrations(self) -> None:
+        """Sequential migration runner using SQLite PRAGMA user_version."""
+        target_version = len(MIGRATIONS) + 1  # Base schema is Version 1
+        
+        with self._get_conn() as conn:
+            current_version = self._get_version(conn)
+            
+            if current_version >= target_version:
+                return  # Database is up-to-date
+            
+            print(f"Database migration needed: current version {current_version}, target version {target_version}")
+            
+            # Base case: Fresh database starts at 0. We set it to 1 immediately
+            # because _init_db() has already created the baseline schema.
+            if current_version == 0:
+                self._set_version(conn, 1)
+                current_version = 1
+                
+            # Apply missing migrations sequentially
+            for ver in range(current_version, target_version):
+                migration_idx = ver - 1  # 0-indexed MIGRATIONS list
+                migration_sql = MIGRATIONS[migration_idx]
+                
+                try:
+                    print(f"Applying database migration to Version {ver + 1}...")
+                    conn.execute("BEGIN TRANSACTION;")
+                    
+                    if isinstance(migration_sql, str):
+                        conn.executescript(migration_sql)
+                    
+                    self._set_version(conn, ver + 1)
+                    conn.commit()
+                    print(f"Migration to Version {ver + 1} succeeded.")
+                except Exception as e:
+                    conn.rollback()
+                    print(f"CRITICAL: Migration to Version {ver + 1} failed: {e}")
+                    raise e
 
     # --- Hosts CRUD Operations ---
 

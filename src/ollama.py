@@ -87,6 +87,7 @@ def get_version(host: str, timeout: int = 5) -> str:
         The version string.
     """
     try:
+        url = f"{host}/api/version"
         with urllib.request.urlopen(url, timeout=timeout) as response:
             result = json.loads(response.read().decode('utf-8'))
             return result.get('version', 'Unknown')

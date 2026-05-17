@@ -52,6 +52,7 @@ gnollama_sources = [
   'session.py',
   'ollama.py',
   'storage.py',
+  'database.py',
   'markdown_view.py',
   'bubbles.py',
   'host_manager.py',

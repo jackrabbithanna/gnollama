@@ -121,7 +121,7 @@ class AiBubble(Gtk.ListBoxRow):
         """Appends logprobs data to a text view in an expander."""
         if not hasattr(self, 'active_logprobs_label') or self.active_logprobs_label is None:
             # Create expander for logprobs
-            expander = Gtk.Expander(label="Logprobs")
+            expander = Gtk.Expander(label=_("Logprobs"))
             expander.set_hexpand(True)
             expander.set_halign(Gtk.Align.FILL)
             

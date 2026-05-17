@@ -1,9 +1,24 @@
 # List of source files containing translatable strings.
 # Please keep this file sorted alphabetically.
 data/io.github.jackrabbithanna.Gnollama.desktop.in
-data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in
 data/io.github.jackrabbithanna.Gnollama.gschema.xml
+data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in
+src/ai_bubble.ui
+src/bubbles.py
+src/history_row.ui
+src/host_edit_dialog.ui
+src/host_manager.py
+src/host_manager.ui
 src/main.py
+src/model_details_view.ui
+src/model_manager.py
+src/model_manager.ui
+src/pull_model_dialog.ui
+src/shortcuts-dialog.ui
 src/tab.py
+src/widgets/chat_input.py
+src/widgets/chat_input.ui
+src/widgets/options_panel.py
+src/widgets/options_panel.ui
 src/window.py
 src/window.ui

@@ -53,7 +53,8 @@ class HostManagerDialog(Adw.Window):
         row = Adw.ActionRow()
         row.set_title(host['name'])
         if host.get('default', False):
-            row.set_subtitle(f"{host['hostname']} (Default)")
+            default_str = _("Default")
+            row.set_subtitle(f"{host['hostname']} ({default_str})")
         else:
             row.set_subtitle(host['hostname'])
         

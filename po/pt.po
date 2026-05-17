@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gnollama 0.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-26 18:33-0700\n"
+"POT-Creation-Date: 2026-05-16 22:42-0600\n"
 "PO-Revision-Date: 2025-12-26 19:10-0700\n"
 "Last-Translator: \n"
 "Language-Team: none\n"
@@ -17,123 +17,575 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: src/main.py:61
-msgid "translator-credits"
-msgstr "Jackrabbithanna"
+#: data/io.github.jackrabbithanna.Gnollama.desktop.in:2
+#, fuzzy
+msgid "gnollama"
+msgstr "Gnollama"
 
-#: src/main.py:71
-msgid "Server Settings"
-msgstr "Configurações do Servidor"
+#: data/io.github.jackrabbithanna.Gnollama.desktop.in:8
+msgid "GTK;"
+msgstr ""
 
-#: src/main.py:76
-msgid "Ollama Configuration"
-msgstr "Configuração do Ollama"
-
-#: src/main.py:81
-msgid "Ollama Host"
+#: data/io.github.jackrabbithanna.Gnollama.gschema.xml:7
+#, fuzzy
+msgid "Default Ollama Host"
 msgstr "Host do Ollama"
 
-#: src/window.py:117
-msgid "New Response"
-msgstr "Nova Resposta"
+#: data/io.github.jackrabbithanna.Gnollama.gschema.xml:8
+msgid "The default URL for the Ollama API server."
+msgstr ""
 
-#: src/window.py:164 src/window.py:319
-msgid "New Chat"
-msgstr "Nova Conversa"
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:7 src/window.ui:6
+msgid "Gnollama"
+msgstr "Gnollama"
 
-#: src/window.py:174 src/window.py:206
-msgid "Rename Chat"
-msgstr "Renomear Conversa"
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:8
+msgid "GNOME based UI for Ollama"
+msgstr ""
 
-#: src/window.py:182
-msgid "Delete Chat"
-msgstr "Eliminar Conversa"
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:10
+msgid "Chat with Ollama on any host."
+msgstr ""
 
-#: src/window.py:207
-msgid "Enter a new title for this chat."
-msgstr "Introduza um novo título para esta conversa."
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:11
+msgid "Supports \"generate\" and \"chat\" Ollama APIs"
+msgstr ""
 
-#: src/window.py:209 src/tab.py:225
-msgid "Cancel"
-msgstr "Cancelar"
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:12
+msgid "Displays the \"Thinking\" stream in a fieldset in the response bubble."
+msgstr ""
 
-#: src/window.py:210
-msgid "Save"
-msgstr "Guardar"
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:13
+msgid ""
+"Chats are saved between sessions, and chat titles can be edited, and chats "
+"deleted"
+msgstr ""
 
-#: src/window.py:263
-msgid "Chat"
-msgstr "Conversa"
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:14
+msgid ""
+"Supports all API parameters including system prompt, images, temperature, "
+"etc.."
+msgstr ""
 
-#: src/tab.py:221
-msgid "Open Image"
-msgstr "Abrir Imagem"
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:15
+msgid "Renders Markdown and code blocks have code highlighting"
+msgstr ""
 
-#: src/tab.py:224
-msgid "Open"
-msgstr "Abrir"
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:19
+msgid "jackrabbithanna"
+msgstr ""
 
-#: src/tab.py:248
-#, python-brace-format
-msgid "{count} images selected"
-msgstr "{count} imagens selecionadas"
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:47
+msgid "Ollama chat with code highlighting"
+msgstr ""
 
-#: src/tab.py:257 src/tab.ui:74
-msgid "No image selected"
-msgstr "Nenhuma imagem selecionada"
+#: src/ai_bubble.ui:35
+msgid "API Call Details"
+msgstr "Detalhes da chamada API"
 
-#: src/tab.py:283 src/tab.py:329
-msgid "None"
-msgstr "Nenhum"
+#: src/ai_bubble.ui:41
+msgid "Thinking..."
+msgstr "Pensando..."
 
-#: src/tab.py:283 src/tab.py:326
-msgid "Low"
-msgstr "Baixo"
-
-#: src/tab.py:283 src/tab.py:327
-msgid "Medium"
-msgstr "Médio"
-
-#: src/tab.py:283 src/tab.py:328
-msgid "High"
-msgstr "Alto"
-
-#: src/tab.py:285 src/tab.py:324
-msgid "Thinking"
-msgstr "A pensar"
-
-#: src/tab.py:285 src/tab.py:325
-msgid "No thinking"
-msgstr "Sem pensar"
-
-#: src/tab.py:384 src/tab.py:432 src/tab.py:596
-msgid "You"
-msgstr "Tu"
-
-#: src/tab.py:402
-#, python-brace-format
-msgid "Error loading images: {e}"
-msgstr "Erro ao carregar imagens: {e}"
-
-#: src/tab.py:492 src/tab.py:601
-msgid "See thinking"
-msgstr "Ver pensamento"
-
-#: src/tab.py:523
+#. Create expander for logprobs
+#: src/bubbles.py:124
 msgid "Logprobs"
 msgstr "Logprobs"
 
-#: src/window.ui:6
-msgid "Gnollama"
-msgstr "Gnollama"
+#: src/history_row.ui:25 src/window.py:239
+msgid "Rename Chat"
+msgstr "Renomear Conversa"
+
+#: src/history_row.ui:35
+msgid "Delete Chat"
+msgstr "Eliminar Conversa"
+
+#: src/host_edit_dialog.ui:8 src/host_manager.py:146 src/model_manager.py:179
+#: src/pull_model_dialog.ui:18 src/window.py:119 src/window.py:242
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: src/host_edit_dialog.ui:9 src/window.py:243
+msgid "Save"
+msgstr "Guardar"
+
+#: src/host_edit_dialog.ui:23
+msgid "Name (e.g. Localhost)"
+msgstr ""
+
+#: src/host_edit_dialog.ui:28
+#, fuzzy
+msgid "Hostname (e.g. http://localhost:11434)"
+msgstr "http://localhost:11434"
+
+#: src/host_edit_dialog.ui:33
+msgid "Set as default host"
+msgstr ""
+
+#: src/host_manager.py:18 src/host_manager.py:72
+msgid "Edit Host"
+msgstr "Editar host"
+
+#: src/host_manager.py:18 src/host_manager.ui:23
+msgid "Add Host"
+msgstr "Adicionar host"
+
+#: src/host_manager.py:56
+msgid "Default"
+msgstr "Padrão"
+
+#: src/host_manager.py:65
+msgid "Test Connection"
+msgstr "Testar conexão"
+
+#: src/host_manager.py:79 src/host_manager.py:143
+msgid "Delete Host"
+msgstr "Excluir host"
+
+#: src/host_manager.py:93
+msgid "Fetching version..."
+msgstr "Obtendo versão..."
+
+#: src/host_manager.py:95 src/model_manager.py:166
+msgid "Close"
+msgstr ""
+
+#: src/host_manager.py:103
+#, python-brace-format
+msgid ""
+"Connected\n"
+"Ollama Version: {0}"
+msgstr "Conectado\nVersão do Ollama: {0}"
+
+#: src/host_manager.py:105
+#, python-brace-format
+msgid ""
+"Connection failed\n"
+"{0}"
+msgstr "Falha na conexão\n{0}"
+
+#: src/host_manager.py:144 src/model_manager.py:177
+#, python-brace-format
+msgid "Are you sure you want to delete {0}?"
+msgstr "Tem certeza de que deseja excluir {0}?"
+
+#: src/host_manager.py:147 src/model_manager.py:180
+msgid "Delete"
+msgstr "Excluir"
+
+#: src/host_manager.ui:6 src/host_manager.ui:17
+msgid "Manage Hosts"
+msgstr "Gerenciar hosts"
+
+#: src/host_manager.ui:35
+msgid "Host Records"
+msgstr "Registros de host"
+
+#. Translators: Replace "translator-credits" with your name/username, and optionally an email or URL.
+#: src/main.py:42
+msgid "translator-credits"
+msgstr "Jackrabbithanna"
+
+#: src/model_details_view.ui:6 src/model_manager.py:18 src/model_manager.py:119
+msgid "Model Details"
+msgstr "Detalhes del modelo"
+
+#: src/model_manager.py:93 src/tab.py:269
+msgid "Connection Error"
+msgstr "Erro de conexão"
+
+#: src/model_manager.py:126
+msgid "Delete Model"
+msgstr "Excluir modelo"
+
+#: src/model_manager.py:155
+msgid "Failed to fetch details"
+msgstr "Falha ao obter detalhes"
+
+#: src/model_manager.py:176
+msgid "Delete Model?"
+msgstr "Excluir modelo?"
+
+#: src/model_manager.py:190
+msgid "Delete Failed"
+msgstr "Falha ao excluir"
+
+#: src/model_manager.py:337
+msgid "Starting pull..."
+msgstr "Iniciando download..."
+
+#: src/model_manager.py:360 src/tab.py:222
+msgid "Error"
+msgstr "Erro"
+
+#: src/model_manager.py:361
+msgid "Error occurred."
+msgstr "Ocorreu um erro."
+
+#: src/model_manager.py:380
+msgid "Dismiss"
+msgstr "Fechar"
+
+#: src/model_manager.py:389
+msgid "Name"
+msgstr "Nome"
+
+#: src/model_manager.py:390
+msgid "Model"
+msgstr "Modelo"
+
+#: src/model_manager.py:391
+msgid "Remote Model"
+msgstr "Modelo remoto"
+
+#: src/model_manager.py:392
+msgid "Remote Host"
+msgstr "Host remoto"
+
+#: src/model_manager.py:393
+msgid "Modified At"
+msgstr "Modificado em"
+
+#: src/model_manager.py:394
+msgid "Size"
+msgstr "Tamanho"
+
+#: src/model_manager.py:395
+msgid "Digest"
+msgstr "Resumo (Digest)"
+
+#: src/model_manager.py:396
+msgid "Detail: Format"
+msgstr "Detalhe: Formato"
+
+#: src/model_manager.py:397
+msgid "Detail: Family"
+msgstr "Detalhe: Família"
+
+#: src/model_manager.py:398
+msgid "Detail: Families"
+msgstr "Detalhe: Famílias"
+
+#: src/model_manager.py:399
+msgid "Detail: Parameter Size"
+msgstr "Detalhe: Tamanho dos parâmetros"
+
+#: src/model_manager.py:400
+msgid "Detail: Quantization Level"
+msgstr "Detalhe: Nível de quantização"
+
+#: src/model_manager.py:401
+msgid "Parameters"
+msgstr "Parâmetros"
+
+#: src/model_manager.py:402
+msgid "Capabilities"
+msgstr "Capacidades"
+
+#: src/model_manager.py:403
+msgid "Template"
+msgstr "Modelo (Template)"
+
+#: src/model_manager.py:404
+msgid "License"
+msgstr "Licença"
+
+#: src/model_manager.py:405
+msgid "Modelfile"
+msgstr "Modelfile"
+
+#: src/model_manager.py:406
+msgid "Model Info"
+msgstr "Informações do modelo"
+
+#: src/model_manager.ui:6 src/model_manager.ui:17
+msgid "Manage Models"
+msgstr "Gerenciar modelos"
+
+#: src/model_manager.ui:35
+msgid "Host:"
+msgstr "Host:"
+
+#: src/model_manager.ui:46
+msgid "Refresh models list"
+msgstr "Atualizar lista de modelos"
+
+#: src/model_manager.ui:62 src/pull_model_dialog.ui:23
+msgid "Pull model"
+msgstr "Baixar modelo"
+
+#: src/model_manager.ui:76
+msgid "Available Models"
+msgstr "Modelos disponíveis"
+
+#: src/pull_model_dialog.ui:6
+msgid "Pull Model"
+msgstr "Baixar modelo"
+
+#: src/pull_model_dialog.ui:45
+msgid "Model name"
+msgstr "Nome do modelo"
+
+#: src/pull_model_dialog.ui:51
+msgid "Name of the model to download"
+msgstr "Nome do modelo para baixar"
+
+#: src/pull_model_dialog.ui:61
+msgid "Insecure"
+msgstr "Inseguro"
+
+#: src/pull_model_dialog.ui:66
+msgid "Allow downloading over insecure connections"
+msgstr "Permitir download através de conexões inseguras"
+
+#: src/shortcuts-dialog.ui:6
+msgid "Shortcuts"
+msgstr "Atalhos"
+
+#: src/shortcuts-dialog.ui:9
+msgctxt "shortcut window"
+msgid "Show Shortcuts"
+msgstr "Mostrar atalhos"
+
+#: src/shortcuts-dialog.ui:15
+msgctxt "shortcut window"
+msgid "Quit"
+msgstr "Sair"
+
+#: src/shortcuts-dialog.ui:21
+msgctxt "shortcut window"
+msgid "New Chat Tab"
+msgstr "Nova guia de chat"
+
+#: src/tab.py:162
+msgid "Error: No host configured."
+msgstr "Erro: Nenhum host configurado."
+
+#. Setup thinking dropdown
+#: src/widgets/chat_input.py:25 src/widgets/chat_input.py:71
+#: src/widgets/chat_input.py:86
+msgid "Thinking"
+msgstr "A pensar"
+
+#: src/widgets/chat_input.py:25 src/widgets/chat_input.py:72
+#: src/widgets/chat_input.py:87
+msgid "Low"
+msgstr "Baixo"
+
+#: src/widgets/chat_input.py:25 src/widgets/chat_input.py:73
+#: src/widgets/chat_input.py:88
+msgid "Medium"
+msgstr "Médio"
+
+#: src/widgets/chat_input.py:25 src/widgets/chat_input.py:74
+#: src/widgets/chat_input.py:89
+msgid "High"
+msgstr "Alto"
+
+#: src/widgets/chat_input.py:25 src/widgets/chat_input.py:75
+#: src/widgets/chat_input.py:90
+msgid "Max"
+msgstr "Máximo"
+
+#: src/widgets/chat_input.py:25 src/widgets/chat_input.py:76
+#: src/widgets/chat_input.py:85
+msgid "None"
+msgstr "Nenhum"
+
+#: src/widgets/chat_input.py:77 src/widgets/chat_input.py:91
+msgid "No thinking"
+msgstr "Sem pensar"
+
+#: src/widgets/chat_input.py:118
+msgid "Select Images"
+msgstr "Selecionar imagens"
+
+#: src/widgets/chat_input.py:122
+msgid "Images"
+msgstr "Imagens"
+
+#: src/widgets/chat_input.py:154 src/widgets/chat_input.ui:77
+msgid "No image selected"
+msgstr "Nenhuma imagem selecionada"
+
+#: src/widgets/chat_input.py:160
+#, python-brace-format
+msgid "{0} image(s) selected"
+msgstr "{0} imagem(ns) selecionada(s)"
+
+#: src/widgets/chat_input.ui:18
+msgid "Select Model"
+msgstr "Selecionar Modelo"
+
+#: src/widgets/chat_input.ui:24
+msgid "Thinking Level"
+msgstr "Nível de Pensamento"
+
+#: src/widgets/chat_input.ui:30
+msgid "Type a message..."
+msgstr "Escreva uma mensagem..."
+
+#: src/widgets/chat_input.ui:36
+msgid "Query Ollama"
+msgstr "Consultar Ollama"
+
+#: src/widgets/chat_input.ui:72
+msgid "Attach Image"
+msgstr "Anexar Imagem"
+
+#: src/widgets/chat_input.ui:86
+msgid "Clear Image"
+msgstr "Limpar Imagem"
+
+#: src/widgets/options_panel.py:39
+msgid "No hosts configured"
+msgstr "Nenhum host configurado"
+
+#: src/widgets/options_panel.ui:6
+msgid "Advanced Settings"
+msgstr "Configurações avanzadas"
+
+#: src/widgets/options_panel.ui:20
+msgid "Ollama Host:"
+msgstr "Host do Ollama:"
+
+#: src/widgets/options_panel.ui:33
+msgid "System Prompt (optional)"
+msgstr "Prompt de Sistema (opcional)"
+
+#: src/widgets/options_panel.ui:38
+msgid "Show statistics"
+msgstr "Mostrar estatísticas"
+
+#: src/widgets/options_panel.ui:44
+msgid "Return logprobs"
+msgstr "Retornar logprobs"
+
+#: src/widgets/options_panel.ui:53
+msgid "Top Logprobs:"
+msgstr "Top Logprobs:"
+
+#: src/widgets/options_panel.ui:58
+msgid "Integer (e.g., 5)"
+msgstr "Inteiro (ex: 5)"
+
+#: src/widgets/options_panel.ui:63
+msgid "Number of top logprobs to return"
+msgstr "Número de top logprobs a retornar"
+
+#: src/widgets/options_panel.ui:77
+msgid "Seed:"
+msgstr "Seed:"
+
+#: src/widgets/options_panel.ui:87 src/widgets/options_panel.ui:129
+#: src/widgets/options_panel.ui:192 src/widgets/options_panel.ui:213
+msgid "Integer"
+msgstr "Inteiro"
+
+#: src/widgets/options_panel.ui:88
+msgid "Random number seed"
+msgstr "Seed número aleatório"
+
+#: src/widgets/options_panel.ui:98
+msgid "Temperature:"
+msgstr "Temperatura:"
+
+#: src/widgets/options_panel.ui:108 src/widgets/options_panel.ui:150
+#: src/widgets/options_panel.ui:171
+msgid "Float"
+msgstr "Float"
+
+#: src/widgets/options_panel.ui:109
+msgid "Creativity (0.0 - 1.0)"
+msgstr "Criatividade (0.0 - 1.0)"
+
+#: src/widgets/options_panel.ui:119
+msgid "Top K:"
+msgstr "Top K:"
+
+#: src/widgets/options_panel.ui:130
+msgid "Limit to top K tokens"
+msgstr "Limitar ao top K tokens"
+
+#: src/widgets/options_panel.ui:140
+msgid "Top P:"
+msgstr "Top P:"
+
+#: src/widgets/options_panel.ui:151
+msgid "Limit to cumulative probability P"
+msgstr "Limitar à probabilidade cumulativa P"
+
+#: src/widgets/options_panel.ui:161
+msgid "Min P:"
+msgstr "Min P:"
+
+#: src/widgets/options_panel.ui:172
+msgid "Minimum probability"
+msgstr "Probabilidade mínima"
+
+#: src/widgets/options_panel.ui:182
+msgid "Context Size:"
+msgstr "Tamanho do Contexto:"
+
+#: src/widgets/options_panel.ui:193
+msgid "Context window size (num_ctx)"
+msgstr "Tamanho da janela de contexto (num_ctx)"
+
+#: src/widgets/options_panel.ui:203
+msgid "Max Tokens:"
+msgstr "Max Tokens:"
+
+#: src/widgets/options_panel.ui:214
+msgid "Max tokens to generate (num_predict)"
+msgstr "Máximo de tokens a gerar (num_predict)"
+
+#: src/widgets/options_panel.ui:224
+msgid "Stop Seq:"
+msgstr "Seq Paragem:"
+
+#: src/widgets/options_panel.ui:234
+msgid "String"
+msgstr "String"
+
+#: src/widgets/options_panel.ui:235
+msgid "Stop sequence (comma separated)"
+msgstr "Sequência de paragem (separada por vírgulas)"
+
+#: src/window.py:116 src/window.ui:105
+msgid "Clear chat history"
+msgstr "Limpar histórico de chat"
+
+#: src/window.py:117
+msgid "Are you sure you want to delete all chat history?"
+msgstr "Tem certeza de que deseja excluir todo o histórico de chat?"
+
+#: src/window.py:120
+msgid "Delete history"
+msgstr "Excluir histórico"
+
+#: src/window.py:178
+msgid "New Response"
+msgstr "Nova Resposta"
+
+#: src/window.py:214 src/window.py:350
+msgid "New Chat"
+msgstr "Nova Conversa"
+
+#: src/window.py:240
+msgid "Enter a new title for this chat."
+msgstr "Introduza um novo título para esta conversa."
+
+#: src/window.py:300
+msgid "Chat"
+msgstr "Conversa"
 
 #: src/window.ui:17
 msgid "Main Menu"
 msgstr "Menu Principal"
 
 #: src/window.ui:39
-msgid "Chats"
-msgstr "Conversas"
+msgid "Saved Chats"
+msgstr "Chats salvos"
 
 #: src/window.ui:87
 msgid "_New Chat"
@@ -144,145 +596,40 @@ msgid "_New Response"
 msgstr "_Nova Resposta"
 
 #: src/window.ui:97
-msgid "_Preferences"
-msgstr "_Preferências"
+msgid "_Manage hosts"
+msgstr "Gerenciar _hosts"
 
 #: src/window.ui:101
+msgid "_Manage models"
+msgstr "Gerenciar _modelos"
+
+#: src/window.ui:109
 msgid "_Keyboard Shortcuts"
 msgstr "_Atalhos de Teclado"
 
-#: src/window.ui:105
+#: src/window.ui:113
 msgid "_About Gnollama"
 msgstr "_Sobre o Gnollama"
 
-#: src/tab.ui:36
-msgid "Select Model"
-msgstr "Selecionar Modelo"
+#~ msgid "Ollama Configuration"
+#~ msgstr "Configuração do Ollama"
 
-#: src/tab.ui:42
-msgid "Thinking Level"
-msgstr "Nível de Pensamento"
+#~ msgid "Open"
+#~ msgstr "Abrir"
 
-#: src/tab.ui:48
-msgid "Type a message..."
-msgstr "Escreva uma mensagem..."
+#~ msgid "You"
+#~ msgstr "Tu"
 
-#: src/tab.ui:54
-msgid "Query Ollama"
-msgstr "Consultar Ollama"
+#, python-brace-format
+#~ msgid "Error loading images: {e}"
+#~ msgstr "Erro ao carregar imagens: {e}"
 
-#: src/tab.ui:69
-msgid "Attach Image"
-msgstr "Anexar Imagem"
+#~ msgid "See thinking"
+#~ msgstr "Ver pensamento"
 
-#: src/tab.ui:83
-msgid "Clear Image"
-msgstr "Limpar Imagem"
+#~ msgid "Chats"
+#~ msgstr "Conversas"
 
-#: src/tab.ui:108
-msgid "Ollama Host:"
-msgstr "Host do Ollama:"
+#~ msgid "_Preferences"
+#~ msgstr "_Preferências"
 
-#: src/tab.ui:114
-msgid "http://localhost:11434"
-msgstr "http://localhost:11434"
-
-#: src/tab.ui:121
-msgid "System Prompt (optional)"
-msgstr "Prompt de Sistema (opcional)"
-
-#: src/tab.ui:126
-msgid "Show statistics"
-msgstr "Mostrar estatísticas"
-
-#: src/tab.ui:131
-msgid "Return logprobs"
-msgstr "Retornar logprobs"
-
-#: src/tab.ui:140
-msgid "Top Logprobs:"
-msgstr "Top Logprobs:"
-
-#: src/tab.ui:145
-msgid "Integer (e.g., 5)"
-msgstr "Inteiro (ex: 5)"
-
-#: src/tab.ui:150
-msgid "Number of top logprobs to return"
-msgstr "Número de top logprobs a retornar"
-
-#: src/tab.ui:164
-msgid "Seed:"
-msgstr "Seed:"
-
-#: src/tab.ui:174 src/tab.ui:216 src/tab.ui:279 src/tab.ui:300
-msgid "Integer"
-msgstr "Inteiro"
-
-#: src/tab.ui:175
-msgid "Random number seed"
-msgstr "Seed número aleatório"
-
-#: src/tab.ui:185
-msgid "Temperature:"
-msgstr "Temperatura:"
-
-#: src/tab.ui:195 src/tab.ui:237 src/tab.ui:258
-msgid "Float"
-msgstr "Float"
-
-#: src/tab.ui:196
-msgid "Creativity (0.0 - 1.0)"
-msgstr "Criatividade (0.0 - 1.0)"
-
-#: src/tab.ui:206
-msgid "Top K:"
-msgstr "Top K:"
-
-#: src/tab.ui:217
-msgid "Limit to top K tokens"
-msgstr "Limitar ao top K tokens"
-
-#: src/tab.ui:227
-msgid "Top P:"
-msgstr "Top P:"
-
-#: src/tab.ui:238
-msgid "Limit to cumulative probability P"
-msgstr "Limitar à probabilidade cumulativa P"
-
-#: src/tab.ui:248
-msgid "Min P:"
-msgstr "Min P:"
-
-#: src/tab.ui:259
-msgid "Minimum probability"
-msgstr "Probabilidade mínima"
-
-#: src/tab.ui:269
-msgid "Context Size:"
-msgstr "Tamanho do Contexto:"
-
-#: src/tab.ui:280
-msgid "Context window size (num_ctx)"
-msgstr "Tamanho da janela de contexto (num_ctx)"
-
-#: src/tab.ui:290
-msgid "Max Tokens:"
-msgstr "Max Tokens:"
-
-#: src/tab.ui:301
-msgid "Max tokens to generate (num_predict)"
-msgstr "Máximo de tokens a gerar (num_predict)"
-
-#: src/tab.ui:311
-msgid "Stop Seq:"
-msgstr "Seq Paragem:"
-
-#: src/tab.ui:321
-msgid "String"
-msgstr "String"
-
-#: src/tab.ui:322
-msgid "Stop sequence (comma separated)"
-msgstr "Sequência de paragem (separada por vírgulas)"

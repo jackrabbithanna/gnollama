@@ -383,3 +383,25 @@ class PullModelDialog(Adw.Window):
         parent = self.get_transient_for()
         if parent and hasattr(parent, 'fetch_models_for_selected_host'):
             parent.fetch_models_for_selected_host()
+
+# Translators: Dummy definitions for dynamic key extraction by xgettext
+def _dummy_extractions():
+    _("Name")
+    _("Model")
+    _("Remote Model")
+    _("Remote Host")
+    _("Modified At")
+    _("Size")
+    _("Digest")
+    _("Detail: Format")
+    _("Detail: Family")
+    _("Detail: Families")
+    _("Detail: Parameter Size")
+    _("Detail: Quantization Level")
+    _("Parameters")
+    _("Capabilities")
+    _("Template")
+    _("License")
+    _("Modelfile")
+    _("Model Info")
+

@@ -219,7 +219,8 @@ class GenerationTab(Gtk.Box):
                 images=images
             ):
                 if 'error' in chunk:
-                    GLib.idle_add(ai_bubble.append_text, f"\n\n### Error\n\n{chunk['error']}")
+                    error_header = _("Error")
+                    GLib.idle_add(ai_bubble.append_text, f"\n\n### {error_header}\n\n{chunk['error']}")
                     break
                     
                 native_thinking = chunk.get('thinking', chunk.get('thought', ''))
@@ -265,4 +266,5 @@ class GenerationTab(Gtk.Box):
                         self.strategy.on_response_complete(self, model)
                         
         except Exception as e:
-            GLib.idle_add(ai_bubble.append_text, f"\n\n### Connection Error\n\n{str(e)}")
+            conn_err = _("Connection Error")
+            GLib.idle_add(ai_bubble.append_text, f"\n\n### {conn_err}\n\n{str(e)}")

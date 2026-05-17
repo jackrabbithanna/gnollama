@@ -36,7 +36,7 @@ class OptionsPanel(Gtk.Expander):
         
         host_names = [h['name'] for h in hosts]
         if not host_names:
-            host_names = ["No hosts configured"]
+            host_names = [_("No hosts configured")]
         
         string_list = Gtk.StringList.new(host_names)
         self.host_dropdown.set_model(string_list)

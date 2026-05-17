@@ -49,6 +49,7 @@ gnollama_sources = [
   'main.py',
   'window.py',
   'tab.py',
+  'session.py',
   'ollama.py',
   'storage.py',
   'markdown_view.py',
@@ -58,3 +59,12 @@ gnollama_sources = [
 ]
 
 install_data(gnollama_sources, install_dir: moduledir)
+
+gnollama_widget_sources = [
+  'widgets/__init__.py',
+  'widgets/chat_input.py',
+  'widgets/options_panel.py',
+  'widgets/message_list.py',
+]
+
+install_data(gnollama_widget_sources, install_dir: moduledir / 'widgets')

@@ -7,7 +7,13 @@ from typing import List, Dict, Any, Optional
 # Sequential migrations list
 # Add future SQL scripts to this array to run sequentially.
 # E.g. MIGRATIONS = ["ALTER TABLE chats ADD COLUMN is_pinned INTEGER DEFAULT 0;"]
-MIGRATIONS: List[str] = []
+MIGRATIONS: List[str] = [
+    # Version 2: Add indexes for faster foreign key queries and cascades
+    """
+    CREATE INDEX IF NOT EXISTS idx_messages_chat_id ON messages(chat_id);
+    CREATE INDEX IF NOT EXISTS idx_message_images_message_id ON message_images(message_id);
+    """
+]
 
 class DatabaseManager:
     """Manages SQLite database initialization and operations."""
@@ -18,9 +24,11 @@ class DatabaseManager:
         self._run_migrations()
 
     def _get_conn(self) -> sqlite3.Connection:
-        """Returns a database connection with foreign key support enabled."""
+        """Returns a database connection with foreign key, WAL, and fast-sync enabled."""
         conn = sqlite3.connect(self.db_path)
         conn.execute("PRAGMA foreign_keys = ON;")
+        conn.execute("PRAGMA journal_mode = WAL;")
+        conn.execute("PRAGMA synchronous = NORMAL;")
         conn.row_factory = sqlite3.Row
         return conn
 
@@ -292,10 +300,11 @@ class DatabaseManager:
             conn.commit()
 
     def clear_all_chats(self) -> None:
-        """Truncates all chats from the database."""
+        """Truncates all chats from the database and vacuums to reclaim space."""
         with self._get_conn() as conn:
             conn.execute("DELETE FROM chats")
             conn.commit()
+            conn.execute("VACUUM;")
 
     # --- Message CRUD Operations ---
 

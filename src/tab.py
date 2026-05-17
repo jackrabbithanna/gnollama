@@ -245,6 +245,12 @@ class GenerationTab(Gtk.Box):
                     if hasattr(self.strategy, 'append_response_chunk'):
                         self.strategy.append_response_chunk(content)
                         
+                logprobs_data = chunk.get('logprobs')
+                if not logprobs_data and 'message' in chunk:
+                    logprobs_data = chunk['message'].get('logprobs')
+                if logprobs_data:
+                    GLib.idle_add(ai_bubble.append_logprobs, logprobs_data)
+                        
                 if chunk.get('done', False):
                     metrics = {
                         k: chunk[k] for k in [

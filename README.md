@@ -76,7 +76,6 @@ You can then run `gnollama` to execute the application.
 
 ## TODO
 
-*   Save chat history in SQLite
 *   More UI Multi-lingual translations
 *   Consider how to add tool calls response fieldset and allow the user to set optional list of function tools the model may call during the chat
 *   Embeddings?

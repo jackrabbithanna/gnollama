@@ -83,6 +83,12 @@
         <p>Improve GTK theme Dark/Light mode</p>
       </description>
     </release>
+    <release version="0.9.0" date="2026-05-16">
+      <url type="details">https://github.com/jackrabbithanna/gnollama/releases/tag/0.9.0</url>
+      <description translate="no">
+        <p>Change storage to use SQLite for hosts and chat history</p>
+      </description>
+    </release>
   </releases>
 
 </component>

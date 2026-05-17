@@ -135,18 +135,23 @@ class ModelManagerDialog(Adw.Window):
         if not host:
             return
             
-        dialog = Adw.AlertDialog(
-            heading=_("Fetching details...")
-        )
-        dialog.present(self)
+        view = ModelDetailsView(self, model['name'])
+        spinner = Gtk.Spinner()
+        spinner.start()
+        spinner.set_halign(Gtk.Align.CENTER)
+        spinner.set_margin_top(24)
+        spinner.set_margin_bottom(24)
+        spinner.set_size_request(32, 32)
+        view.main_box.append(spinner)
+        view.present()
         
         def thread_func() -> None:
             try:
                 data = ollama.show_model(host['hostname'], model['name'])
-                GLib.idle_add(dialog.close)
-                GLib.idle_add(self.show_model_details, model['name'], data, model)
+                GLib.idle_add(view.main_box.remove, spinner)
+                GLib.idle_add(self.populate_model_details, view, data, model)
             except ollama.OllamaError as e:
-                GLib.idle_add(dialog.close)
+                GLib.idle_add(view.close)
                 GLib.idle_add(self.show_error, _("Failed to fetch details"), str(e))
                 
         from .session import worker
@@ -190,9 +195,8 @@ class ModelManagerDialog(Adw.Window):
         dialog.connect("response", on_response)
         dialog.present(self)
 
-    def show_model_details(self, model_name: str, show_data: Dict[str, Any], tag_data: Dict[str, Any]) -> None:
-        """Displays a window with formatted model details."""
-        view = ModelDetailsView(self, model_name)
+    def populate_model_details(self, view: Any, show_data: Dict[str, Any], tag_data: Dict[str, Any]) -> None:
+        """Populates the model details window."""
         
         def add_field(label: str, value: Any, collapsible: bool = False) -> None:
             if value is None or value == "":
@@ -288,8 +292,6 @@ class ModelManagerDialog(Adw.Window):
                 label = k.replace("_", " ").title()
                 if k == "modelfile": label = "Modelfile"
                 add_field(_(label), show_data[k], collapsible=True)
-
-        view.present()
 
 @Gtk.Template(resource_path='/io/github/jackrabbithanna/Gnollama/pull_model_dialog.ui')
 class PullModelDialog(Adw.Window):

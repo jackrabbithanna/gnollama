@@ -132,11 +132,10 @@ class ModelManagerDialog(Adw.Window):
         if not host:
             return
             
-        dialog = Adw.MessageDialog(
-            transient_for=self,
+        dialog = Adw.AlertDialog(
             heading=_("Fetching details...")
         )
-        dialog.present()
+        dialog.present(self)
         
         def thread_func() -> None:
             data, error = ollama.show_model(host['hostname'], model['name'])
@@ -151,13 +150,12 @@ class ModelManagerDialog(Adw.Window):
 
     def show_error(self, title: str, msg: str) -> None:
         """Displays an error message dialog."""
-        dialog = Adw.MessageDialog(
-            transient_for=self,
+        dialog = Adw.AlertDialog(
             heading=title,
             body=msg
         )
         dialog.add_response("close", _("Close"))
-        dialog.present()
+        dialog.present(self)
 
     def on_model_delete_clicked(self, btn: Gtk.Button, model: Dict[str, Any]) -> None:
         """Handles delete button click to remove a model."""
@@ -165,8 +163,7 @@ class ModelManagerDialog(Adw.Window):
         if not host:
             return
             
-        dialog = Adw.MessageDialog(
-            transient_for=self,
+        dialog = Adw.AlertDialog(
             heading=_("Delete Model?"),
             body=_("Are you sure you want to delete {0}?").format(model['name'])
         )
@@ -174,7 +171,7 @@ class ModelManagerDialog(Adw.Window):
         dialog.add_response("delete", _("Delete"))
         dialog.set_response_appearance("delete", Adw.ResponseAppearance.DESTRUCTIVE)
         
-        def on_response(d: Adw.MessageDialog, response: str) -> None:
+        def on_response(d: Adw.AlertDialog, response: str) -> None:
             if response == "delete":
                 def thread_func() -> None:
                     success, error = ollama.delete_model(host['hostname'], model['name'])
@@ -186,7 +183,7 @@ class ModelManagerDialog(Adw.Window):
             d.close()
             
         dialog.connect("response", on_response)
-        dialog.present()
+        dialog.present(self)
 
     def show_model_details(self, model_name: str, show_data: Dict[str, Any], tag_data: Dict[str, Any]) -> None:
         """Displays a window with formatted model details."""
@@ -209,17 +206,14 @@ class ModelManagerDialog(Adw.Window):
                 
                 content_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
                 content_box.add_css_class("card")
-                content_box.set_margin_top(6)
+                content_box.add_css_class("margin-top-6")
                 
                 content_label = Gtk.Label(label=value_str)
                 content_label.set_halign(Gtk.Align.START)
                 content_label.set_xalign(0)
                 content_label.set_wrap(True)
                 content_label.set_selectable(True)
-                content_label.set_margin_start(12)
-                content_label.set_margin_end(12)
-                content_label.set_margin_top(12)
-                content_label.set_margin_bottom(12)
+                content_label.add_css_class("margin-12")
                 
                 content_box.append(content_label)
                 expander.set_child(content_box)
@@ -238,10 +232,7 @@ class ModelManagerDialog(Adw.Window):
                 content_label.set_xalign(0)
                 content_label.set_wrap(True)
                 content_label.set_selectable(True)
-                content_label.set_margin_start(12)
-                content_label.set_margin_end(12)
-                content_label.set_margin_top(12)
-                content_label.set_margin_bottom(12)
+                content_label.add_css_class("margin-12")
                 
                 content_box.append(content_label)
                 box.append(content_box)

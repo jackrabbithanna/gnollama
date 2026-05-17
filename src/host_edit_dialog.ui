@@ -2,7 +2,7 @@
 <interface>
   <requires lib="gtk" version="4.0"/>
   <requires lib="Adw" version="1.0"/>
-  <template class="HostEditDialog" parent="AdwMessageDialog">
+  <template class="HostEditDialog" parent="AdwAlertDialog">
     <property name="width-request">400</property>
     <responses>
       <response id="cancel" translatable="yes">Cancel</response>

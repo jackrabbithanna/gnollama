@@ -12,6 +12,9 @@
     <file preprocess="xml-stripblanks">user_bubble.ui</file>
     <file preprocess="xml-stripblanks">ai_bubble.ui</file>
     <file preprocess="xml-stripblanks">model_details_view.ui</file>
+    <file preprocess="xml-stripblanks">widgets/chat_input.ui</file>
+    <file preprocess="xml-stripblanks">widgets/options_panel.ui</file>
+    <file preprocess="xml-stripblanks">widgets/message_list.ui</file>
     <file>style.css</file>
   </gresource>
 </gresources>

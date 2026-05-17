@@ -110,8 +110,7 @@ class GnollamaWindow(Adw.ApplicationWindow):
         
     def on_clear_history(self, action: Gio.SimpleAction, param: Optional[GLib.Variant]) -> None:
         """Displays a confirmation dialog to clear all chat history."""
-        dialog = Adw.MessageDialog(
-            transient_for=self,
+        dialog = Adw.AlertDialog(
             heading=_("Clear chat history"),
             body=_("Are you sure you want to delete all chat history?")
         )
@@ -121,7 +120,7 @@ class GnollamaWindow(Adw.ApplicationWindow):
         dialog.set_default_response("cancel")
         dialog.set_close_response("cancel")
         
-        def on_response(dialog: Adw.MessageDialog, response: str) -> None:
+        def on_response(dialog: Adw.AlertDialog, response: str) -> None:
             if response == "delete":
                 pages_to_close = []
                 for i in range(self.notebook.get_n_pages()):
@@ -138,7 +137,7 @@ class GnollamaWindow(Adw.ApplicationWindow):
             dialog.close()
             
         dialog.connect("response", on_response)
-        dialog.present()
+        dialog.present(self)
 
     def on_manage_hosts(self, action: Gio.SimpleAction, param: Optional[GLib.Variant]) -> None:
         """Opens the Host Manager dialog."""
@@ -234,8 +233,7 @@ class GnollamaWindow(Adw.ApplicationWindow):
     def on_edit_chat_clicked(self, btn: Gtk.Button, chat_id: str, row: Gtk.ListBoxRow, label: Gtk.Label) -> None:
         """Opens a dialog to rename a chat."""
         # Create a simple dialog for renaming
-        dialog = Adw.MessageDialog(
-            transient_for=self,
+        dialog = Adw.AlertDialog(
             heading=_("Rename Chat"),
             body=_("Enter a new title for this chat.")
         )
@@ -250,7 +248,7 @@ class GnollamaWindow(Adw.ApplicationWindow):
         entry.set_activates_default(True)
         dialog.set_extra_child(entry)
         
-        def on_response(dialog: Adw.MessageDialog, response: str) -> None:
+        def on_response(dialog: Adw.AlertDialog, response: str) -> None:
             if response == "save":
                 new_title = entry.get_text().strip()
                 if new_title:
@@ -261,7 +259,7 @@ class GnollamaWindow(Adw.ApplicationWindow):
             dialog.close()
             
         dialog.connect("response", on_response)
-        dialog.present()
+        dialog.present(self)
 
     def update_tab_title(self, chat_id: str, new_title: str) -> None:
         """Updates the title of an open tab matching a chat ID."""

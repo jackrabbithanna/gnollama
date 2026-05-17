@@ -323,8 +323,7 @@ class MarkdownView(Gtk.Box):
         """Creates a styled code view widget, using GtkSource if available."""
         wrapper = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         wrapper.add_css_class("code-block")
-        wrapper.set_margin_top(6)
-        wrapper.set_margin_bottom(6)
+        wrapper.add_css_class("margin-v-6")
         
         if GtkSource:
             buffer = GtkSource.Buffer()

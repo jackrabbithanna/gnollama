@@ -5,7 +5,7 @@ from . import ollama
 import threading
 
 @Gtk.Template(resource_path='/io/github/jackrabbithanna/Gnollama/host_edit_dialog.ui')
-class HostEditDialog(Adw.MessageDialog):
+class HostEditDialog(Adw.AlertDialog):
     """Dialog for adding or editing an Ollama host."""
     __gtype_name__ = 'HostEditDialog'
 
@@ -87,15 +87,14 @@ class HostManagerDialog(Adw.Window):
 
     def on_info_clicked(self, btn: Gtk.Button, host: Dict[str, Any]) -> None:
         """Displays connection info and version for a host."""
-        dialog = Adw.MessageDialog(
-            transient_for=self,
+        dialog = Adw.AlertDialog(
             heading=host['name'],
             body=_("Fetching version...")
         )
         dialog.add_response("close", _("Close"))
         dialog.set_default_response("close")
         dialog.set_close_response("close")
-        dialog.present()
+        dialog.present(self)
         
         def fetch_version_thread() -> None:
             version, error = ollama.get_version(host['hostname'])
@@ -114,7 +113,7 @@ class HostManagerDialog(Adw.Window):
 
     def show_edit_dialog(self, host: Optional[Dict[str, Any]] = None) -> None:
         """Shows a dialog to add or edit a host."""
-        dialog = HostEditDialog(host=host, transient_for=self)
+        dialog = HostEditDialog(host=host)
         
         if not host and not self.storage.get_all_hosts():
             dialog.default_check.set_active(True)
@@ -135,12 +134,11 @@ class HostManagerDialog(Adw.Window):
             dialog.close()
             
         dialog.connect("response", on_response)
-        dialog.present()
+        dialog.present(self)
 
     def on_delete_clicked(self, btn: Gtk.Button, host: Dict[str, Any], row: Adw.ActionRow) -> None:
         """Shows a confirmation dialog before deleting a host."""
-        dialog = Adw.MessageDialog(
-            transient_for=self,
+        dialog = Adw.AlertDialog(
             heading=_("Delete Host"),
             body=_("Are you sure you want to delete {0}?").format(host['name'])
         )
@@ -150,7 +148,7 @@ class HostManagerDialog(Adw.Window):
         dialog.set_default_response("cancel")
         dialog.set_close_response("cancel")
         
-        def on_response(dialog: Adw.MessageDialog, response: str) -> None:
+        def on_response(dialog: Adw.AlertDialog, response: str) -> None:
             if response == "delete":
                 self.storage.delete_host(host['id'])
                 self.load_hosts()
@@ -159,4 +157,4 @@ class HostManagerDialog(Adw.Window):
             dialog.close()
             
         dialog.connect("response", on_response)
-        dialog.present()
+        dialog.present(self)

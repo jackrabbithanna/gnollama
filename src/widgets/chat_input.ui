@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <requires lib="gtk" version="4.0"/>
+  <requires lib="Adw" version="1.0"/>
+  <template class="ChatInput" parent="GtkBox">
+    <property name="orientation">vertical</property>
+    <child>
+      <object class="GtkBox">
+        <property name="orientation">horizontal</property>
+        <property name="spacing">6</property>
+        <property name="margin-start">12</property>
+        <property name="margin-end">12</property>
+        <property name="margin-top">12</property>
+        <property name="margin-bottom">12</property>
+        <child>
+          <object class="GtkDropDown" id="model_dropdown">
+            <property name="valign">center</property>
+            <property name="tooltip-text" translatable="yes">Select Model</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkDropDown" id="thinking_dropdown">
+            <property name="valign">center</property>
+            <property name="tooltip-text" translatable="yes">Thinking Level</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkEntry" id="entry">
+            <property name="hexpand">True</property>
+            <property name="placeholder-text" translatable="yes">Type a message...</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkButton" id="send_button">
+            <property name="icon-name">system-search-symbolic</property>
+            <property name="tooltip-text" translatable="yes">Query Ollama</property>
+          </object>
+        </child>
+      </object>
+    </child>
+    <child>
+      <object class="GtkScrolledWindow" id="image_preview_scrolled">
+        <property name="visible">False</property>
+        <property name="hscrollbar-policy">always</property>
+        <property name="vscrollbar-policy">never</property>
+        <property name="min-content-height">100</property>
+        <property name="margin-start">12</property>
+        <property name="margin-end">12</property>
+        <property name="margin-bottom">6</property>
+        <child>
+          <object class="GtkBox" id="image_preview_box">
+            <property name="orientation">horizontal</property>
+            <property name="spacing">10</property>
+            <property name="margin-top">6</property>
+            <property name="margin-bottom">6</property>
+            <property name="margin-start">6</property>
+            <property name="margin-end">6</property>
+          </object>
+        </child>
+      </object>
+    </child>
+    <child>
+      <object class="GtkBox">
+        <property name="orientation">horizontal</property>
+        <property name="spacing">6</property>
+        <property name="margin-start">12</property>
+        <property name="margin-end">12</property>
+        <property name="margin-bottom">6</property>
+        <child>
+          <object class="GtkButton" id="attach_button">
+            <property name="icon-name">insert-image-symbolic</property>
+            <property name="tooltip-text" translatable="yes">Attach Image</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkLabel" id="image_label">
+            <property name="label" translatable="yes">No image selected</property>
+            <style>
+               <class name="dim-label"/>
+            </style>
+          </object>
+        </child>
+        <child>
+          <object class="GtkButton" id="clear_image_button">
+            <property name="icon-name">edit-clear-symbolic</property>
+            <property name="tooltip-text" translatable="yes">Clear Image</property>
+            <property name="visible">False</property>
+            <style>
+              <class name="flat"/>
+            </style>
+          </object>
+        </child>
+      </object>
+    </child>
+  </template>
+</interface>

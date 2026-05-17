@@ -89,6 +89,12 @@
         <p>Change storage to use SQLite for hosts and chat history</p>
       </description>
     </release>
+    <release version="0.9.1" date="2026-05-16">
+      <url type="details">https://github.com/jackrabbithanna/gnollama/releases/tag/0.9.1</url>
+      <description translate="no">
+        <p>Update translations</p>
+      </description>
+    </release>
   </releases>
 
 </component>

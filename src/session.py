@@ -87,8 +87,6 @@ class ChatStrategy:
             
             host = getattr(self, 'current_host', None)
             
-            self.storage.save_chat(self.chat_id, self.history, model=model_name, options=options, system=system, host=host)
-            
             def update_ui() -> bool:
                 chat_data = self.storage.get_chat(self.chat_id)
                 if chat_data and tab.tab_label:
@@ -96,8 +94,8 @@ class ChatStrategy:
                     tab.tab_label.set_label(new_title)
                     tab.emit("chat-updated", self.chat_id, new_title)
                 return False
-                
-            GLib.idle_add(update_ui)
+
+            self.storage.save_chat(self.chat_id, self.history, model=model_name, options=options, system=system, host=host, on_done=update_ui)
             
     def process(self, tab: Any, **kwargs: Any) -> Any:
         """Executes the chat process via Ollama API."""

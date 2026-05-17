@@ -1,7 +1,7 @@
 import os
 import uuid
 import time
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any, Optional, Callable
 from gi.repository import GLib
 
 from .database import DatabaseManager
@@ -101,7 +101,8 @@ class ChatStorage:
 
     def save_chat(self, chat_id: str, messages: List[Dict[str, Any]], 
                   model: Optional[str] = None, options: Optional[Dict[str, Any]] = None, 
-                  system: Optional[str] = None, host: Optional[str] = None) -> None:
+                  system: Optional[str] = None, host: Optional[str] = None,
+                  on_done: Optional[Callable[[], None]] = None) -> None:
         """Saves messages and settings to a chat asynchronously."""
         import copy
         messages_snapshot = copy.deepcopy(messages)
@@ -135,6 +136,9 @@ class ChatStorage:
 
                 # Save new set of messages
                 self.db.save_messages(chat_id, messages_snapshot)
+
+                if on_done:
+                    GLib.idle_add(on_done)
             except Exception as e:
                 print(f"Error saving chat asynchronously in DB: {e}")
 

@@ -97,15 +97,15 @@ class HostManagerDialog(Adw.Window):
         dialog.present(self)
         
         def fetch_version_thread() -> None:
-            version, error = ollama.get_version(host['hostname'])
-            if version:
+            try:
+                version = ollama.get_version(host['hostname'])
                 msg = _("Connected\nOllama Version: {0}").format(version)
-            else:
-                msg = _("Connection failed\n{0}").format(error)
+            except ollama.OllamaError as e:
+                msg = _("Connection failed\n{0}").format(str(e))
             GLib.idle_add(dialog.set_body, msg)
             
-        thread = threading.Thread(target=fetch_version_thread, daemon=True)
-        thread.start()
+        from .session import worker
+        worker.submit(fetch_version_thread)
 
     def on_edit_clicked(self, btn: Gtk.Button, host: Dict[str, Any]) -> None:
         """Callback for the 'Edit' button."""

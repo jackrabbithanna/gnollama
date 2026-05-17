@@ -1,7 +1,21 @@
-from typing import List, Optional, Any, Dict
+from typing import List, Optional, Any, Dict, Callable
 from gi.repository import GLib
+import concurrent.futures
 from . import ollama
 from .storage import ChatStorage
+
+class NetworkWorker:
+    """Manages background network tasks cleanly."""
+    def __init__(self, max_workers: int = 4) -> None:
+        self.executor = concurrent.futures.ThreadPoolExecutor(max_workers=max_workers, thread_name_prefix="GnollamaNetworkWorker")
+
+    def submit(self, fn: Callable[..., Any], *args: Any, **kwargs: Any) -> concurrent.futures.Future:
+        return self.executor.submit(fn, *args, **kwargs)
+        
+    def shutdown(self, wait: bool = True) -> None:
+        self.executor.shutdown(wait=wait, cancel_futures=True)
+
+worker = NetworkWorker()
 
 class GenerationStrategy:
     """Strategy for single-turn text generation."""

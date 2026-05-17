@@ -47,11 +47,21 @@ class ChatStorage:
             if not has_default:
                 hosts[0]["default"] = True
                 
+        import copy
+        hosts_snapshot = copy.deepcopy(hosts)
+        
+        def save_task(data: List[Dict[str, Any]]) -> None:
+            try:
+                with open(self.hosts_file, 'w') as f:
+                    json.dump(data, f, indent=2)
+            except Exception as e:
+                print(f"Error saving hosts: {e}")
+                
         try:
-            with open(self.hosts_file, 'w') as f:
-                json.dump(hosts, f, indent=2)
-        except Exception as e:
-            print(f"Error saving hosts: {e}")
+            from .session import worker
+            worker.submit(save_task, hosts_snapshot)
+        except ImportError:
+            save_task(hosts_snapshot)
 
     def get_all_hosts(self) -> List[Dict[str, Any]]:
         """Returns all configured hosts."""
@@ -117,12 +127,22 @@ class ChatStorage:
             return {}
 
     def _save_history(self) -> None:
-        """Saves current chat history to the history file."""
+        """Saves current chat history to the history file asynchronously."""
+        import copy
+        chats_snapshot = copy.deepcopy(self.chats)
+        
+        def save_task(data: Dict[str, Dict[str, Any]]) -> None:
+            try:
+                with open(self.history_file, 'w', encoding='utf-8') as f:
+                    json.dump(data, f, indent=2, ensure_ascii=False)
+            except Exception as e:
+                print(f"Error saving history: {e}")
+                
         try:
-            with open(self.history_file, 'w', encoding='utf-8') as f:
-                json.dump(self.chats, f, indent=2, ensure_ascii=False)
-        except Exception as e:
-            print(f"Error saving history: {e}")
+            from .session import worker
+            worker.submit(save_task, chats_snapshot)
+        except ImportError:
+            save_task(chats_snapshot)
 
     def get_all_chats(self) -> List[Dict[str, Any]]:
         """Returns all chats, sorted by last update time (descending)."""

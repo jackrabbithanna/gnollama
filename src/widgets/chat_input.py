@@ -99,11 +99,14 @@ class ChatInput(Gtk.Box):
     def fetch_models(self, host: str) -> None:
         """Asynchronously fetches available models from the host."""
         def thread_func() -> None:
-            models = ollama.fetch_models(host)
-            GLib.idle_add(self.set_models, models)
+            try:
+                models = ollama.fetch_models(host)
+                GLib.idle_add(self.set_models, models)
+            except ollama.OllamaError:
+                GLib.idle_add(self.set_models, [])
             
-        thread = threading.Thread(target=thread_func, daemon=True)
-        thread.start()
+        from ..session import worker
+        worker.submit(thread_func)
 
     def on_attach_clicked(self, btn: Gtk.Button) -> None:
         """Opens a file chooser to attach one or multiple images."""

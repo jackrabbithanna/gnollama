@@ -153,8 +153,8 @@ class GenerationTab(Gtk.Box):
             'top_logprobs': top_logprobs
         }
         
-        thread = threading.Thread(target=self.process_request, args=(prompt, images, req_data), daemon=True)
-        thread.start()
+        from .session import worker
+        worker.submit(self.process_request, prompt, images, req_data)
 
     def process_request(self, prompt: str, images: Optional[List[str]], req_data: Dict[str, Any]) -> None:
         host = req_data.get('host')

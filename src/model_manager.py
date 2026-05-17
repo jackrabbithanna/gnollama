@@ -86,11 +86,14 @@ class ModelManagerDialog(Adw.Window):
             return
             
         def thread_func() -> None:
-            models = ollama.fetch_model_details(host['hostname'])
-            GLib.idle_add(self.update_models_list, models)
+            try:
+                models = ollama.fetch_model_details(host['hostname'])
+                GLib.idle_add(self.update_models_list, models)
+            except ollama.OllamaError as e:
+                GLib.idle_add(self.show_error, _("Connection Error"), str(e))
             
-        thread = threading.Thread(target=thread_func, daemon=True)
-        thread.start()
+        from .session import worker
+        worker.submit(thread_func)
 
     def update_models_list(self, models: List[Dict[str, Any]]) -> None:
         """Updates the UI with a new list of models."""
@@ -138,15 +141,16 @@ class ModelManagerDialog(Adw.Window):
         dialog.present(self)
         
         def thread_func() -> None:
-            data, error = ollama.show_model(host['hostname'], model['name'])
-            GLib.idle_add(dialog.close)
-            if data:
+            try:
+                data = ollama.show_model(host['hostname'], model['name'])
+                GLib.idle_add(dialog.close)
                 GLib.idle_add(self.show_model_details, model['name'], data, model)
-            else:
-                GLib.idle_add(self.show_error, _("Failed to fetch details"), error)
+            except ollama.OllamaError as e:
+                GLib.idle_add(dialog.close)
+                GLib.idle_add(self.show_error, _("Failed to fetch details"), str(e))
                 
-        thread = threading.Thread(target=thread_func, daemon=True)
-        thread.start()
+        from .session import worker
+        worker.submit(thread_func)
 
     def show_error(self, title: str, msg: str) -> None:
         """Displays an error message dialog."""
@@ -174,12 +178,13 @@ class ModelManagerDialog(Adw.Window):
         def on_response(d: Adw.AlertDialog, response: str) -> None:
             if response == "delete":
                 def thread_func() -> None:
-                    success, error = ollama.delete_model(host['hostname'], model['name'])
-                    if success:
+                    try:
+                        ollama.delete_model(host['hostname'], model['name'])
                         GLib.idle_add(self.fetch_models_for_selected_host)
-                    else:
-                        GLib.idle_add(self.show_error, _("Delete Failed"), error)
-                threading.Thread(target=thread_func, daemon=True).start()
+                    except ollama.OllamaError as e:
+                        GLib.idle_add(self.show_error, _("Delete Failed"), str(e))
+                from .session import worker
+                worker.submit(thread_func)
             d.close()
             
         dialog.connect("response", on_response)
@@ -303,7 +308,7 @@ class PullModelDialog(Adw.Window):
         self.set_transient_for(transient_for)
         self.hostname: str = hostname
         self.pulling: bool = False
-        self.pull_thread: Optional[threading.Thread] = None
+        self.pull_future: Optional[Any] = None
 
         self.cancel_btn.connect("clicked", self.on_cancel_clicked)
         self.pull_btn.connect("clicked", self.on_pull_clicked)
@@ -329,12 +334,8 @@ class PullModelDialog(Adw.Window):
         buffer.set_text("")
         self.status_label.set_text(_("Starting pull..."))
         
-        self.pull_thread = threading.Thread(
-            target=self.pull_task, 
-            args=(model_name, self.insecure_check.get_active()),
-            daemon=True
-        )
-        self.pull_thread.start()
+        from .session import worker
+        self.pull_future = worker.submit(self.pull_task, model_name, self.insecure_check.get_active())
 
     def pull_task(self, model_name: str, insecure: bool) -> None:
         """Thread worker to stream pull status."""

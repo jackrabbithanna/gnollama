@@ -16,6 +16,13 @@ try:
 except (ImportError, ValueError):
     GtkSource = None
 
+try:
+    import gi
+    gi.require_version('Adw', '1')
+    from gi.repository import Adw
+except (ImportError, ValueError):
+    Adw = None
+
 class PangoMarkupParser(HTMLParser):
     """
     A simple HTML parser that converts a subset of HTML into Pango markup.
@@ -153,22 +160,39 @@ class PangoMarkupParser(HTMLParser):
             """Helper to get visible length (ignoring pango tags)."""
             return len(re.sub(r'<[^>]+>', '', s))
 
+        # Handle multi-line cells: replace <br> with \n and split
+        processed_rows = []
+        for row in self.table_rows:
+            processed_row = []
+            for cell in row:
+                cell_text = re.sub(r'<br\s*/?>', '\n', cell, flags=re.IGNORECASE)
+                lines = cell_text.split('\n')
+                processed_row.append(lines)
+            processed_rows.append(processed_row)
+
         # Calc max widths
         col_widths: Dict[int, int] = {}
-        for row in self.table_rows:
-            for i, cell in enumerate(row):
-                col_widths[i] = max(col_widths.get(i, 0), visible_len(cell))
+        for row in processed_rows:
+            for i, cell_lines in enumerate(row):
+                max_line_len = max((visible_len(line) for line in cell_lines), default=0)
+                col_widths[i] = max(col_widths.get(i, 0), max_line_len)
         
         # Generate lines
         lines: List[str] = []
-        for row in self.table_rows:
-            line_parts: List[str] = []
-            for i, cell in enumerate(row):
-                width = col_widths.get(i, 0)
-                v_len = visible_len(cell)
-                padding = width - v_len
-                line_parts.append(cell + " " * padding)
-            lines.append(" | ".join(line_parts))
+        for row in processed_rows:
+            max_height = max((len(cell_lines) for cell_lines in row), default=1)
+            for h in range(max_height):
+                line_parts: List[str] = []
+                for i, cell_lines in enumerate(row):
+                    width = col_widths.get(i, 0)
+                    if h < len(cell_lines):
+                        cell_line = cell_lines[h]
+                    else:
+                        cell_line = ""
+                    v_len = visible_len(cell_line)
+                    padding = width - v_len
+                    line_parts.append(cell_line + " " * padding)
+                lines.append(" | ".join(line_parts))
             
         table_str = "\n".join(lines)
         self.output.append(f"<tt>{table_str}</tt>")
@@ -191,7 +215,42 @@ class MarkdownView(Gtk.Box):
         self.set_spacing(12)
         self.add_css_class("markdown-view")
         self._text: str = text
+        
+        self._theme_handler_id = None
+        if Adw:
+            sm = Adw.StyleManager.get_default()
+            self._theme_handler_id = sm.connect("notify::dark", self._on_theme_changed)
+            self.connect("destroy", self._on_destroy)
+            
         self.render()
+
+    def _on_destroy(self, widget: Gtk.Widget) -> None:
+        if Adw and self._theme_handler_id:
+            sm = Adw.StyleManager.get_default()
+            sm.disconnect(self._theme_handler_id)
+
+    def _on_theme_changed(self, style_manager: Any, pspec: Any) -> None:
+        is_dark = style_manager.get_dark()
+        scheme_name = "oblivion" if is_dark else "classic"
+        
+        if not GtkSource:
+            return
+            
+        sm = GtkSource.StyleSchemeManager.get_default()
+        scheme = sm.get_scheme(scheme_name)
+        if not scheme:
+            return
+            
+        curr_child = self.get_first_child()
+        while curr_child:
+            if curr_child.has_css_class("code-block"):
+                scrolled = curr_child.get_first_child()
+                if isinstance(scrolled, Gtk.ScrolledWindow):
+                    view = scrolled.get_child()
+                    if isinstance(view, GtkSource.View):
+                        buffer = view.get_buffer()
+                        buffer.set_style_scheme(scheme)
+            curr_child = curr_child.get_next_sibling()
 
     def update(self, text: str) -> None:
         """Updates the view with new markdown text."""
@@ -333,12 +392,18 @@ class MarkdownView(Gtk.Box):
                 buffer.set_language(language)
             
             sm = GtkSource.StyleSchemeManager.get_default()
-            scheme = sm.get_scheme("oblivion") 
+            scheme_name = "oblivion"
+            if Adw:
+                style_manager = Adw.StyleManager.get_default()
+                if not style_manager.get_dark():
+                    scheme_name = "classic"
+                    
+            scheme = sm.get_scheme(scheme_name) 
             if scheme:
                 buffer.set_style_scheme(scheme)
                 
             view = GtkSource.View.new_with_buffer(buffer)
-            view.set_show_line_numbers(False) 
+            view.set_show_line_numbers(False)
         else:
             view = Gtk.TextView()
             view.set_monospace(True)
@@ -363,6 +428,11 @@ class MarkdownView(Gtk.Box):
 
     def _update_text_block(self, label: Gtk.Label, text: str) -> None:
         """Updates a text block widget with rendered markdown content."""
+        if getattr(label, '_raw_md', None) == text:
+            return
+            
+        label._raw_md = text
+        
         if not text.strip():
             label.set_markup("")
             return

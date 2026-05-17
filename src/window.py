@@ -82,6 +82,8 @@ class GnollamaWindow(Adw.ApplicationWindow):
     def on_close_request(self, *args: Any) -> bool:
         """Handles the window close request and performs cleanup."""
         self.storage.cleanup_empty_chats()
+        from .session import worker
+        worker.shutdown(wait=False)
         return False
 
     def _setup_actions(self) -> None:

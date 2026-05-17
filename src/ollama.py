@@ -3,7 +3,11 @@ import urllib.request
 import urllib.error
 from typing import List, Dict, Any, Generator, Tuple, Optional
 
-def fetch_models(host: str) -> List[str]:
+class OllamaError(Exception):
+    """Exception raised for errors in the Ollama API."""
+    pass
+
+def fetch_models(host: str, timeout: int = 10) -> List[str]:
     """
     Fetches the list of available models from the Ollama host.
 
@@ -15,14 +19,15 @@ def fetch_models(host: str) -> List[str]:
     """
     url = f"{host}/api/tags"
     try:
-        with urllib.request.urlopen(url) as response:
+        with urllib.request.urlopen(url, timeout=timeout) as response:
             result = json.loads(response.read().decode('utf-8'))
             return [model['name'] for model in result.get('models', [])]
+    except urllib.error.HTTPError as e:
+        raise OllamaError(f"HTTP Error {e.code}: {e.reason}")
     except Exception as e:
-        print(f"Failed to fetch models: {e}")
-        return []
+        raise OllamaError(f"Failed to fetch models: {e}")
 
-def fetch_model_details(host: str) -> List[Dict[str, Any]]:
+def fetch_model_details(host: str, timeout: int = 10) -> List[Dict[str, Any]]:
     """
     Fetches the detailed list of available models from the Ollama host.
 
@@ -34,14 +39,15 @@ def fetch_model_details(host: str) -> List[Dict[str, Any]]:
     """
     url = f"{host}/api/tags"
     try:
-        with urllib.request.urlopen(url) as response:
+        with urllib.request.urlopen(url, timeout=timeout) as response:
             result = json.loads(response.read().decode('utf-8'))
             return result.get('models', [])
+    except urllib.error.HTTPError as e:
+        raise OllamaError(f"HTTP Error {e.code}: {e.reason}")
     except Exception as e:
-        print(f"Failed to fetch model details: {e}")
-        return []
+        raise OllamaError(f"Failed to fetch model details: {e}")
 
-def show_model(host: str, name: str) -> Tuple[Optional[Dict[str, Any]], Optional[str]]:
+def show_model(host: str, name: str, timeout: int = 10) -> Dict[str, Any]:
     """
     Fetches detailed information about a specific model.
 
@@ -50,7 +56,7 @@ def show_model(host: str, name: str) -> Tuple[Optional[Dict[str, Any]], Optional
         name: The name of the model.
 
     Returns:
-        A tuple of (data_dict, error_string).
+        A dictionary containing model details.
     """
     url = f"{host}/api/show"
     data = {
@@ -59,18 +65,18 @@ def show_model(host: str, name: str) -> Tuple[Optional[Dict[str, Any]], Optional
     }
     try:
         req = urllib.request.Request(url, data=json.dumps(data).encode('utf-8'), headers={'Content-Type': 'application/json'})
-        with urllib.request.urlopen(req) as response:
-            return json.loads(response.read().decode('utf-8')), None
+        with urllib.request.urlopen(req, timeout=timeout) as response:
+            return json.loads(response.read().decode('utf-8'))
     except urllib.error.HTTPError as e:
         try:
-            return None, json.loads(e.read().decode('utf-8')).get('error', str(e))
+            error_msg = json.loads(e.read().decode('utf-8')).get('error', str(e))
+            raise OllamaError(error_msg)
         except Exception:
-            return None, f"HTTP Error {e.code}: {e.reason}"
+            raise OllamaError(f"HTTP Error {e.code}: {e.reason}")
     except Exception as e:
-        print(f"Failed to show model: {e}")
-        return None, str(e)
+        raise OllamaError(str(e))
 
-def get_version(host: str) -> Tuple[Optional[str], Optional[str]]:
+def get_version(host: str, timeout: int = 5) -> str:
     """
     Fetches the Ollama version.
 
@@ -78,23 +84,22 @@ def get_version(host: str) -> Tuple[Optional[str], Optional[str]]:
         host: The base URL of the Ollama host.
 
     Returns:
-        A tuple of (version_string, error_string).
+        The version string.
     """
-    url = f"{host}/api/version"
     try:
-        with urllib.request.urlopen(url, timeout=5) as response:
+        with urllib.request.urlopen(url, timeout=timeout) as response:
             result = json.loads(response.read().decode('utf-8'))
-            return result.get('version', 'Unknown'), None
+            return result.get('version', 'Unknown')
     except urllib.error.HTTPError as e:
         try:
-            return None, json.loads(e.read().decode('utf-8')).get('error', str(e))
+            error_msg = json.loads(e.read().decode('utf-8')).get('error', str(e))
+            raise OllamaError(error_msg)
         except Exception:
-            return None, f"HTTP Error {e.code}: {e.reason}"
+            raise OllamaError(f"HTTP Error {e.code}: {e.reason}")
     except Exception as e:
-        print(f"Failed to fetch version: {e}")
-        return None, str(e)
+        raise OllamaError(str(e))
 
-def delete_model(host: str, model_name: str) -> Tuple[bool, Optional[str]]:
+def delete_model(host: str, model_name: str, timeout: int = 10) -> bool:
     """
     Deletes a model from the Ollama host.
 
@@ -103,7 +108,7 @@ def delete_model(host: str, model_name: str) -> Tuple[bool, Optional[str]]:
         model_name: The name of the model to delete.
 
     Returns:
-        A tuple of (success_boolean, error_string).
+        True if successful.
     """
     url = f"{host}/api/delete"
     data = {
@@ -111,16 +116,16 @@ def delete_model(host: str, model_name: str) -> Tuple[bool, Optional[str]]:
     }
     try:
         req = urllib.request.Request(url, data=json.dumps(data).encode('utf-8'), headers={'Content-Type': 'application/json'}, method='DELETE')
-        with urllib.request.urlopen(req) as response:
-            return True, None
+        with urllib.request.urlopen(req, timeout=timeout) as response:
+            return True
     except urllib.error.HTTPError as e:
         try:
-            return False, json.loads(e.read().decode('utf-8')).get('error', str(e))
+            error_msg = json.loads(e.read().decode('utf-8')).get('error', str(e))
+            raise OllamaError(error_msg)
         except Exception:
-            return False, f"HTTP Error {e.code}: {e.reason}"
+            raise OllamaError(f"HTTP Error {e.code}: {e.reason}")
     except Exception as e:
-        print(f"Failed to delete model: {e}")
-        return False, str(e)
+        raise OllamaError(str(e))
 
 def pull(host: str, model: str, insecure: bool = False) -> Generator[Dict[str, Any], None, None]:
     """

@@ -9,31 +9,28 @@ A Gnome user interface to [Ollama](https://ollama.com)
 
 ## Description
 
-A GNOME user interface to Ollama. Written in Python.
+**Gnollama** is a modern, feature-rich GNOME user interface for [Ollama](https://ollama.com) built using Python, GTK4, and Libadwaita. It provides a native, responsive Linux desktop experience for interacting with LLMs.
 
-Manage multiple hosts. Add / remove hosts and set default host. Tests host connectivity.
+Whether you are developing, experimenting, or chatting with local models, Gnollama makes it easy to run prompts across multiple local or remote hosts simultaneously.
 
-Each chat tab supports using any configured host. Model selection options populated from host.
+## Features
 
-Model management dialog. Lists all models for selected host. Allows pulling and deleting models. Shows full details about a model including size, parameters, modelfile, template, and license.
-
-Supports multiple tabs of model responses to Ollama endpoint /api/generate and /api/chat
-
-Select "New Response" to create a new generate tab using /api/generate.
-
-Select "New Chat" to create a new chat tab using /api/chat with previous messages so context is preserved.
-
-Displays the "Thinking" stream in a fieldset in the response bubble.
-
-Optionally displays the logprobs and response statistics in the response.
-
-Supports saving chats and their options between sessions and a chat history list in a sidebar.
-
-Responses render Markdown and implement code highlighting.
-
-Model selection, thinking, system prompt, statistics, logprobs, and other options (e.g. temperature)
-
-Supports uploading multiple images and sending with the chat message.
+* **Multi-Host Management**: Easily connect to different Ollama servers. Add, edit, or delete configurations, verify host status, and define a default host.
+* **Dual Tab Workflows**:
+  * **New Chat (`/api/chat`)**: Multi-turn sessions that preserve conversation context.
+  * **New Response (`/api/generate`)**: Single-turn completions ideal for prompt engineering and testing.
+* **Conversation History & Sidebar**:
+  * Automatically saves chat logs and model configurations between runs.
+  * **Pin Chats**: Pin essential conversations to the top of your history list.
+  * **Popover Options**: Use a three-vertical-dots menu on any saved chat to quickly Pin, Rename, or Delete.
+* **Model Manager**:
+  * Pull or delete models directly from the UI.
+  * View comprehensive model info, including size, parameter specifications, Modelfiles, templates, and licenses.
+* **Rich Markdown & Code Rendering**: Full Markdown support and code syntax highlighting (powered by GTKSourceView 5).
+* **Multimodal Image Support**: Upload and attach multiple images to your prompts for vision-enabled models.
+* **Thinking & completion Details**:
+  * Inline rendering of the model's `<think>` reasoning stream.
+  * Display generation stats (token counts, load times, speeds) and logprobs.
 
 <img src="./screenshots/gnollama-screenshot.png" alt="gnollama" align="left"/>
 

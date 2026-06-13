@@ -95,6 +95,13 @@
         <p>Update translations</p>
       </description>
     </release>
+    <release version="0.9.2" date="2026-06-12">
+      <url type="details">https://github.com/jackrabbithanna/gnollama/releases/tag/0.9.2</url>
+      <description translate="no">
+        <p>Add pin chat feature to saved chats</p>
+        <p>Use action menu for saved chat actions</p>
+      </description>
+    </release>
   </releases>
 
 </component>

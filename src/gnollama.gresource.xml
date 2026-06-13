@@ -16,5 +16,6 @@
     <file preprocess="xml-stripblanks">widgets/options_panel.ui</file>
     <file preprocess="xml-stripblanks">widgets/message_list.ui</file>
     <file>style.css</file>
+    <file>icons/scalable/actions/pin-active-symbolic.svg</file>
   </gresource>
 </gresources>

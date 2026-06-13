@@ -37,14 +37,28 @@ class HistoryRow(Gtk.ListBoxRow):
     chat_id = GObject.Property(type=str, default="")
 
     label: Gtk.Label = Gtk.Template.Child()
-    edit_btn: Gtk.Button = Gtk.Template.Child()
-    del_btn: Gtk.Button = Gtk.Template.Child()
+    pinned_indicator_img: Gtk.Image = Gtk.Template.Child()
+    popover: Gtk.Popover = Gtk.Template.Child()
+    popover_pin_btn: Gtk.Button = Gtk.Template.Child()
+    popover_rename_btn: Gtk.Button = Gtk.Template.Child()
+    popover_delete_btn: Gtk.Button = Gtk.Template.Child()
 
-    def __init__(self, chat_id: str, title: str, **kwargs: Any) -> None:
+    def __init__(self, chat_id: str, title: str, is_pinned: bool = False, **kwargs: Any) -> None:
         super().__init__(**kwargs)
         self.init_template()
         self.chat_id: str = chat_id
         self.label.set_text(title)
+        self.is_pinned: bool = is_pinned
+        self.update_pin_state_ui()
+
+    def update_pin_state_ui(self) -> None:
+        """Updates the pin indicator and menu label based on the pin state."""
+        if self.is_pinned:
+            self.pinned_indicator_img.set_visible(True)
+            self.popover_pin_btn.set_label(_("Unpin Chat"))
+        else:
+            self.pinned_indicator_img.set_visible(False)
+            self.popover_pin_btn.set_label(_("Pin Chat"))
 
 @Gtk.Template(resource_path='/io/github/jackrabbithanna/Gnollama/window.ui')
 class GnollamaWindow(Adw.ApplicationWindow):
@@ -56,6 +70,10 @@ class GnollamaWindow(Adw.ApplicationWindow):
 
     def __init__(self, **kwargs: Any) -> None:
         super().__init__(**kwargs)
+        # Register custom icons path
+        icon_theme = Gtk.IconTheme.get_for_display(Gdk.Display.get_default())
+        icon_theme.add_resource_path("/io/github/jackrabbithanna/Gnollama/icons")
+
         self.init_template()
         self.settings: Gio.Settings = Gio.Settings.new('io.github.jackrabbithanna.Gnollama')
         self.storage: ChatStorage = ChatStorage()
@@ -211,14 +229,17 @@ class GnollamaWindow(Adw.ApplicationWindow):
     def add_history_row(self, chat: Dict[str, Any]) -> None:
         """Adds a single row to the chat history list using the HistoryRow template."""
         chat_id = chat['id']
-        row = HistoryRow(chat_id, chat.get('title', _('New Chat')))
-        row.edit_btn.connect("clicked", self.on_edit_chat_clicked, chat_id, row, row.label)
-        row.del_btn.connect("clicked", self.on_delete_chat_clicked, chat_id, row)
+        is_pinned = chat.get('is_pinned', False)
+        row = HistoryRow(chat_id, chat.get('title', _('New Chat')), is_pinned=is_pinned)
+        row.popover_pin_btn.connect("clicked", self.on_popover_pin_clicked, chat_id, row)
+        row.popover_rename_btn.connect("clicked", self.on_popover_rename_clicked, chat_id, row)
+        row.popover_delete_btn.connect("clicked", self.on_popover_delete_clicked, chat_id, row)
         self.history_list.append(row)
         self.chat_rows[chat_id] = row
 
-    def on_delete_chat_clicked(self, btn: Gtk.Button, chat_id: str, row: Gtk.ListBoxRow) -> None:
-        """Deletes a chat from storage and UI."""
+    def on_popover_delete_clicked(self, btn: Gtk.Button, chat_id: str, row: HistoryRow) -> None:
+        """Deletes a chat from storage and UI after closing popover."""
+        row.popover.popdown()
         self.storage.delete_chat(chat_id)
         if chat_id in self.chat_rows:
             self.history_list.remove(self.chat_rows[chat_id])
@@ -232,8 +253,22 @@ class GnollamaWindow(Adw.ApplicationWindow):
                 self.close_tab(page)
                 break
 
-    def on_edit_chat_clicked(self, btn: Gtk.Button, chat_id: str, row: Gtk.ListBoxRow, label: Gtk.Label) -> None:
+    def on_popover_pin_clicked(self, btn: Gtk.Button, chat_id: str, row: HistoryRow) -> None:
+        """Toggles the pinned status of a chat and reloads the sidebar."""
+        row.popover.popdown()
+        new_pinned = not row.is_pinned
+        self.storage.update_chat_pinned(chat_id, new_pinned)
+        self.load_history_sidebar()
+        
+        # Reselect active page
+        current_page_idx = self.notebook.get_current_page()
+        if current_page_idx != -1:
+            active_page = self.notebook.get_nth_page(current_page_idx)
+            self.on_tab_switched(self.notebook, active_page, current_page_idx)
+
+    def on_popover_rename_clicked(self, btn: Gtk.Button, chat_id: str, row: HistoryRow) -> None:
         """Opens a dialog to rename a chat."""
+        row.popover.popdown()
         # Create a simple dialog for renaming
         dialog = Adw.AlertDialog(
             heading=_("Rename Chat"),
@@ -246,7 +281,7 @@ class GnollamaWindow(Adw.ApplicationWindow):
         
         # Add entry
         entry = Gtk.Entry()
-        entry.set_text(label.get_text())
+        entry.set_text(row.label.get_text())
         entry.set_activates_default(True)
         dialog.set_extra_child(entry)
         
@@ -255,7 +290,7 @@ class GnollamaWindow(Adw.ApplicationWindow):
                 new_title = entry.get_text().strip()
                 if new_title:
                     self.storage.update_title(chat_id, new_title)
-                    label.set_text(new_title)
+                    row.label.set_text(new_title)
                     # Update active tab if open
                     self.update_tab_title(chat_id, new_title)
             dialog.close()

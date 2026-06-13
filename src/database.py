@@ -12,6 +12,10 @@ MIGRATIONS: List[str] = [
     """
     CREATE INDEX IF NOT EXISTS idx_messages_chat_id ON messages(chat_id);
     CREATE INDEX IF NOT EXISTS idx_message_images_message_id ON message_images(message_id);
+    """,
+    # Version 3: Add is_pinned to chats table
+    """
+    ALTER TABLE chats ADD COLUMN is_pinned INTEGER DEFAULT 0;
     """
 ]
 
@@ -200,9 +204,9 @@ class DatabaseManager:
         """Returns all chats sorted by update time descending, excluding their full messages."""
         with self._get_conn() as conn:
             cursor = conn.execute("""
-                SELECT id, title, created_at, updated_at, model, system_prompt, host_id, options 
+                SELECT id, title, created_at, updated_at, model, system_prompt, host_id, options, is_pinned 
                 FROM chats 
-                ORDER BY updated_at DESC
+                ORDER BY is_pinned DESC, updated_at DESC
             """)
             chats = []
             for row in cursor.fetchall():
@@ -221,6 +225,7 @@ class DatabaseManager:
                     "system": row["system_prompt"],
                     "host": row["host_id"],
                     "options": options_dict,
+                    "is_pinned": bool(row["is_pinned"]),
                     "messages": []  # Empty array by default for list queries
                 })
             return chats
@@ -229,7 +234,7 @@ class DatabaseManager:
         """Returns a specific chat along with all its parsed and ordered messages."""
         with self._get_conn() as conn:
             cursor = conn.execute("""
-                SELECT id, title, created_at, updated_at, model, system_prompt, host_id, options 
+                SELECT id, title, created_at, updated_at, model, system_prompt, host_id, options, is_pinned 
                 FROM chats WHERE id = ?
             """, (chat_id,))
             row = cursor.fetchone()
@@ -254,6 +259,7 @@ class DatabaseManager:
                 "system": row["system_prompt"],
                 "host": row["host_id"],
                 "options": options_dict,
+                "is_pinned": bool(row["is_pinned"]),
                 "messages": messages
             }
 
@@ -282,6 +288,12 @@ class DatabaseManager:
         """Updates a chat's title."""
         with self._get_conn() as conn:
             conn.execute("UPDATE chats SET title = ?, updated_at = ? WHERE id = ?", (title, updated_at, chat_id))
+            conn.commit()
+
+    def update_chat_pinned(self, chat_id: str, is_pinned: bool) -> None:
+        """Updates a chat's pinned status."""
+        with self._get_conn() as conn:
+            conn.execute("UPDATE chats SET is_pinned = ? WHERE id = ?", (1 if is_pinned else 0, chat_id))
             conn.commit()
 
     def delete_chat(self, chat_id: str) -> None:

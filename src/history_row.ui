@@ -19,23 +19,56 @@
           </object>
         </child>
         <child>
-          <object class="GtkButton" id="edit_btn">
-            <property name="icon-name">edit-paste-symbolic</property>
+          <object class="GtkImage" id="pinned_indicator_img">
+            <property name="icon-name">pin-active-symbolic</property>
             <property name="valign">center</property>
-            <property name="tooltip-text" translatable="yes">Rename Chat</property>
             <style>
-              <class name="flat"/>
+              <class name="dim-label"/>
             </style>
           </object>
         </child>
         <child>
-          <object class="GtkButton" id="del_btn">
-            <property name="icon-name">user-trash-symbolic</property>
+          <object class="GtkMenuButton" id="menu_btn">
+            <property name="icon-name">view-more-symbolic</property>
             <property name="valign">center</property>
-            <property name="tooltip-text" translatable="yes">Delete Chat</property>
+            <property name="tooltip-text" translatable="yes">Chat Options</property>
             <style>
               <class name="flat"/>
             </style>
+            <property name="popover">
+              <object class="GtkPopover" id="popover">
+                <child>
+                  <object class="GtkBox">
+                    <property name="orientation">vertical</property>
+                    <property name="spacing">4</property>
+                    <child>
+                      <object class="GtkButton" id="popover_pin_btn">
+                        <property name="label" translatable="yes">Pin Chat</property>
+                        <style>
+                          <class name="flat"/>
+                        </style>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkButton" id="popover_rename_btn">
+                        <property name="label" translatable="yes">Rename Chat</property>
+                        <style>
+                          <class name="flat"/>
+                        </style>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkButton" id="popover_delete_btn">
+                        <property name="label" translatable="yes">Delete Chat</property>
+                        <style>
+                          <class name="flat"/>
+                        </style>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </property>
           </object>
         </child>
       </object>

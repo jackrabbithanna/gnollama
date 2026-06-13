@@ -1,3 +1,4 @@
 .flatpak-builder
 /src/__pycache__/
 src/widgets/__pycache__/
+/src/gnollama.gresource

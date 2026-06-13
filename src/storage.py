@@ -152,6 +152,10 @@ class ChatStorage:
         """Updates the title of a chat."""
         self.db.update_chat_title(chat_id, title, time.time())
 
+    def update_chat_pinned(self, chat_id: str, is_pinned: bool) -> None:
+        """Updates the pinned status of a chat."""
+        self.db.update_chat_pinned(chat_id, is_pinned)
+
     def delete_chat(self, chat_id: str) -> None:
         """Deletes a chat."""
         self.db.delete_chat(chat_id)

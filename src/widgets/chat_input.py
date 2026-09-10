@@ -1,11 +1,12 @@
 from typing import List, Optional, Any, Dict, Callable
-from gi.repository import Gtk, GObject, Gio, GdkPixbuf, GLib, Gdk
+from gi.repository import Gtk, GObject, Gio, GdkPixbuf, GLib, Gdk, Pango
 import threading
 from .. import ollama
 
 @Gtk.Template(resource_path='/io/github/jackrabbithanna/Gnollama/widgets/chat_input.ui')
 class ChatInput(Gtk.Box):
     __gtype_name__ = 'ChatInput'
+    __gsignals__ = {'capabilities-changed': (GObject.SignalFlags.RUN_FIRST, None, ())}
 
     model_dropdown: Gtk.DropDown = Gtk.Template.Child()
     thinking_dropdown: Gtk.DropDown = Gtk.Template.Child()
@@ -17,6 +18,7 @@ class ChatInput(Gtk.Box):
     attach_button: Gtk.Button = Gtk.Template.Child()
     image_label: Gtk.Label = Gtk.Template.Child()
     clear_image_button: Gtk.Button = Gtk.Template.Child()
+    capability_notice = Gtk.Template.Child()
 
     def __init__(self, **kwargs: Any) -> None:
         super().__init__(**kwargs)
@@ -30,6 +32,14 @@ class ChatInput(Gtk.Box):
         self._running = False
         self._desired_thinking = None
         self._thinking_values = []
+        self.image_support = None
+        self.capabilities_loading = False
+        self.has_history_images = False
+        factory = Gtk.SignalListItemFactory()
+        factory.connect('setup', lambda f, item: item.set_child(Gtk.Label(ellipsize=Pango.EllipsizeMode.END, max_width_chars=24, xalign=0)))
+        factory.connect('bind', lambda f, item: item.get_child().set_text(item.get_item().get_string()))
+        self.model_dropdown.set_factory(factory)
+        self.model_dropdown.set_enable_search(True)
         self._set_thinking_options(None)
         self.attach_button.connect('clicked', self.on_attach_clicked)
         self.clear_image_button.connect('clicked', self.on_clear_image_clicked)
@@ -68,7 +78,36 @@ class ChatInput(Gtk.Box):
         self._running = running
         self.send_button.set_icon_name('media-playback-stop-symbolic' if running else 'system-search-symbolic')
         self.send_button.set_tooltip_text(_('Stop response') if running else _('Query Ollama'))
-        self.send_button.set_sensitive(running or self.get_selected_model() is not None)
+        blocked = ((self.image_support is False and bool(self.selected_image_paths)) or
+                   (self.capabilities_loading and (bool(self.selected_image_paths) or self.has_history_images)))
+        self.send_button.set_sensitive(running or (self.get_selected_model() is not None and not blocked))
+
+    def set_model_details(self, details, loading=False):
+        self.capabilities_loading = loading
+        capabilities = details.get('capabilities') if isinstance(details, dict) else None
+        self.image_support = ('vision' in capabilities) if isinstance(capabilities, list) else None
+        self._set_thinking_options(details)
+        self.update_capability_controls()
+        self.emit('capabilities-changed')
+
+    def update_capability_controls(self):
+        self.attach_button.set_sensitive(self.get_selected_model() is not None and
+                                         not self.capabilities_loading and self.image_support is not False)
+        if self.capabilities_loading:
+            notice = _('Checking image support…')
+        elif self.image_support is False:
+            notice = _('This model does not support images.')
+            if self.selected_image_paths:
+                notice += ' ' + _('Remove draft images or select a vision model to send.')
+            if self.has_history_images:
+                notice += ' ' + _('Earlier images remain saved; only text history will be sent.')
+        elif self.image_support is None:
+            notice = _('Image support unknown.') if self.get_selected_model() else ''
+        else:
+            notice = ''
+        self.capability_notice.set_text(notice)
+        self.capability_notice.set_visible(bool(notice))
+        self.set_running(self._running)
 
     def set_models(self, models):
         pending = getattr(self, 'pending_model_selection', None)
@@ -133,29 +172,32 @@ class ChatInput(Gtk.Box):
         request_id = self._capability_id
         if self._capability_cancel is not None:
             self._capability_cancel.cancel()
-        self._set_thinking_options(None)
-        self.set_running(self._running)
         model, host = self.get_selected_model(), self._host
+        self.set_model_details(None, loading=bool(model and host))
         if not model or not host:
             return
         cancel = self._capability_cancel = Gio.Cancellable()
 
         def deliver(details):
             if request_id == self._capability_id:
-                self._set_thinking_options(details)
+                self.set_model_details(details)
             return False
 
         def fetch():
             try:
                 details = ollama.show_model(host, model, cancellable=cancel)
+            except ollama.RequestCancelled:
+                return
             except ollama.OllamaError:
-                return  # Older hosts retain manual controls.
+                details = None  # Older hosts retain manual controls.
             GLib.idle_add(deliver, details)
         from ..session import worker
         worker.submit(fetch)
 
     def on_attach_clicked(self, btn: Gtk.Button) -> None:
         """Opens a file chooser to attach one or multiple images."""
+        if not self.attach_button.get_sensitive():
+            return
         parent_window = self.get_root()
         if not isinstance(parent_window, Gtk.Window):
             return
@@ -189,6 +231,7 @@ class ChatInput(Gtk.Box):
 
     def update_image_preview(self) -> None:
         """Updates the image preview UI based on selected paths."""
+        self.update_capability_controls()
         child = self.image_preview_box.get_first_child()
         while child:
             next_child = child.get_next_sibling()

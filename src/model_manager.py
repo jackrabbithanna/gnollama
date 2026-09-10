@@ -5,6 +5,28 @@ from . import ollama
 from .session import ViewRequests
 import threading
 import json
+from datetime import datetime
+
+
+def model_key(host, model):
+    return (ollama.validate_host(host), model.removesuffix(':latest'))
+
+
+# In-flight unloads also guard requests started from another tab or manager.
+unloading_models = set()
+
+
+def running_model_subtitle(model):
+    def size(key):
+        value = model.get(key)
+        return GLib.format_size(value) if isinstance(value, int) and value >= 0 else _('Unavailable')
+    context = model.get('context_length')
+    context = str(context) if isinstance(context, int) and context >= 0 else _('Unavailable')
+    try:
+        expiry = datetime.fromisoformat(model['expires_at'].replace('Z', '+00:00')).astimezone().strftime('%x %X')
+    except (KeyError, ValueError, TypeError, AttributeError, OverflowError):
+        expiry = _('Unavailable')
+    return _('Memory: {0} · VRAM: {1}\nContext: {2} · Expires: {3}').format(size('size'), size('size_vram'), context, expiry)
 
 @Gtk.Template(resource_path='/io/github/jackrabbithanna/Gnollama/model_details_view.ui')
 class ModelDetailsView(Adw.Window):
@@ -28,14 +50,25 @@ class ModelManagerDialog(Adw.Window):
     models_group: Adw.PreferencesGroup = Gtk.Template.Child()
     refresh_button: Gtk.Button = Gtk.Template.Child()
     pull_button: Gtk.Button = Gtk.Template.Child()
+    model_stack = Gtk.Template.Child()
+    running_group = Gtk.Template.Child()
+    running_status = Gtk.Template.Child()
 
-    def __init__(self, storage: ChatStorage, **kwargs: Any) -> None:
+    def __init__(self, storage: ChatStorage, is_model_busy=None, **kwargs: Any) -> None:
         super().__init__(**kwargs)
         self.requests = ViewRequests(self)
         self.storage: ChatStorage = storage
         self.model_rows: List[Adw.ActionRow] = []
         self.host_list: List[Dict[str, Any]] = []
         self._fetch_cancel = None
+        self._running_cancel = None
+        self._running_pending = False
+        self._poll_id = None
+        self._running_rows = []
+        self.is_model_busy = is_model_busy or (lambda host, model: False)
+        self.model_stack.connect('notify::visible-child-name', self._view_changed)
+        self.connect('map', self._mapped)
+        self.connect('unmap', self._unmapped)
         
         self.refresh_button.connect("clicked", self.on_refresh_clicked)
         self.pull_button.connect("clicked", self.on_pull_clicked)
@@ -45,6 +78,7 @@ class ModelManagerDialog(Adw.Window):
 
     def update_hosts(self) -> None:
         """Reloads the host list from storage."""
+        selected = self.get_selected_host()
         hosts = self.storage.get_all_hosts()
         self.host_list = hosts
         
@@ -57,8 +91,15 @@ class ModelManagerDialog(Adw.Window):
             if h.get('default', False):
                 target_idx = i
                 break
+        if selected:
+            for i, h in enumerate(hosts):
+                if h['id'] == selected['id']:
+                    target_idx = i
+                    break
         self.host_dropdown.set_selected(target_idx)
         self.fetch_models_for_selected_host()
+        self._reset_running()
+        self.refresh_running()
 
     def get_selected_host(self) -> Optional[Dict[str, Any]]:
         """Returns the currently selected host dictionary."""
@@ -70,10 +111,134 @@ class ModelManagerDialog(Adw.Window):
     def on_host_changed(self, dropdown: Gtk.DropDown, pspec: Any) -> None:
         """Callback for host selection changes."""
         self.fetch_models_for_selected_host()
+        self._reset_running()
+        self.refresh_running()
 
     def on_refresh_clicked(self, btn: Gtk.Button) -> None:
         """Callback for the 'Refresh' button."""
-        self.fetch_models_for_selected_host()
+        if self.model_stack.get_visible_child_name() == 'running':
+            self.refresh_running()
+        else:
+            self.fetch_models_for_selected_host()
+
+    def _mapped(self, *args):
+        if self._poll_id is None:
+            self._poll_id = GLib.timeout_add_seconds(5, self._poll_running)
+        self.refresh_running()
+
+    def _unmapped(self, *args):
+        if self._poll_id is not None:
+            GLib.source_remove(self._poll_id)
+            self._poll_id = None
+        self._reset_running()
+
+    def _view_changed(self, *args):
+        running = self.model_stack.get_visible_child_name() == 'running'
+        self.pull_button.set_visible(not running)
+        if running:
+            self.refresh_running()
+        else:
+            self._reset_running()
+
+    def _reset_running(self):
+        if self._running_cancel:
+            self._running_cancel.cancel()
+        self._running_pending = False
+        for row, _host, _model, _button in self._running_rows:
+            self.running_group.remove(row)
+        self._running_rows.clear()
+        self.running_status.set_text('')
+
+    def _poll_running(self):
+        self.update_unload_buttons()
+        self.refresh_running()
+        return True
+
+    def refresh_running(self):
+        if (self.requests.closed or not self.get_mapped() or self.model_stack.get_visible_child_name() != 'running'
+                or self._running_pending):
+            return
+        host = self.get_selected_host()
+        if not host:
+            self.running_status.set_text(_('No host configured.'))
+            return
+        self._running_pending = True
+        cancel = self._running_cancel = self.requests.new_cancel()
+        if not self._running_rows:
+            self.running_status.set_text(_('Loading running models…'))
+        def completed(models, error):
+            self._running_pending = False
+            if error:
+                self.running_status.set_text(_('Could not refresh running models: {0}').format(error))
+                return
+            self.update_running_models(host['hostname'], models)
+        def fetch():
+            try:
+                models = ollama.fetch_running_models(host['hostname'], cancellable=cancel)
+                self.requests.deliver(completed, models, None, cancellable=cancel)
+            except ollama.OllamaError as exc:
+                self.requests.deliver(completed, [], str(exc), cancellable=cancel)
+        from .session import worker
+        worker.submit(fetch)
+
+    def update_running_models(self, hostname, models):
+        for row, _host, _model, _button in self._running_rows:
+            self.running_group.remove(row)
+        self._running_rows.clear()
+        self.running_status.set_text('' if models else _('No models are loaded in memory.'))
+        for model in models:
+            name = model.get('name') or model.get('model')
+            if not name:
+                continue
+            row = Adw.ActionRow(title=name, subtitle=running_model_subtitle(model), use_markup=False)
+            button = Gtk.Button(label=_('Unload'), valign=Gtk.Align.CENTER,
+                                tooltip_text=_('Release this model from memory; keep its downloaded files.'))
+            button.connect('clicked', self.on_unload_clicked, hostname, name)
+            row.add_suffix(button)
+            self.running_group.add(row)
+            self._running_rows.append((row, hostname, name, button))
+        self.update_unload_buttons()
+
+    def update_unload_buttons(self):
+        for _row, host, model, button in self._running_rows:
+            busy = self.is_model_busy(host, model)
+            unloading = model_key(host, model) in unloading_models
+            button.set_sensitive(not busy and not unloading)
+            button.set_label(_('Unloading…') if unloading else _('Unload'))
+            button.set_tooltip_text(_('A response is using this model in Gnollama.') if busy else
+                                    _('Release this model from memory; keep its downloaded files.'))
+
+    def on_unload_clicked(self, button, host, model):
+        key = model_key(host, model)
+        if self.requests.closed or self.is_model_busy(host, model) or key in unloading_models:
+            return
+        unloading_models.add(key)
+        self.update_unload_buttons()
+        cancel = self.requests.new_cancel()
+        def completed(error):
+            unloading_models.discard(key)
+            if self.requests.closed:
+                return False
+            self.update_unload_buttons()
+            selected = self.get_selected_host()
+            if selected and ollama.validate_host(selected['hostname']) == key[0]:
+                if error and not cancel.is_cancelled():
+                    self.show_error(_('Could not unload model'), error)
+                if self._running_cancel:
+                    self._running_cancel.cancel()
+                self._running_pending = False
+                self.refresh_running()
+            return False
+        def unload():
+            error = None
+            try:
+                ollama.unload_model(host, model, cancellable=cancel)
+            except ollama.OllamaError as exc:
+                error = str(exc)
+            finally:
+                GLib.idle_add(completed, error)
+        from .session import worker
+        worker.submit(unload)
 
     def on_pull_clicked(self, btn: Gtk.Button) -> None:
         """Callback for the 'Pull' button."""
@@ -421,4 +586,3 @@ def _dummy_extractions():
     _("License")
     _("Modelfile")
     _("Model Info")
-

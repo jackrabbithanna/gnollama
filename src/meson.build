@@ -12,6 +12,7 @@ gnollama_resources = gnome.compile_resources('gnollama',
 
 python = import('python')
 py3 = python.find_installation('python3')
+run_command(py3, '-c', 'from jsonschema import Draft202012Validator; from referencing import Registry, Resource; from importlib.metadata import version; assert tuple(map(int, version("jsonschema").split(".")[:2])) >= (4, 26), "jsonschema 4.26+ is required"', check: true)
 run_command(py3, '-c', 'import gi; gi.require_version("Gtk", "4.0"); gi.require_version("Adw", "1"); gi.require_version("Soup", "3.0"); from gi.repository import Gtk, Adw, Soup', check: true)
 
 # Check for python-markdown
@@ -51,6 +52,7 @@ gnollama_sources = [
   'window.py',
   'tab.py',
   'session.py',
+  'structured.py',
   'ollama.py',
   'storage.py',
   'writer.py',
@@ -67,6 +69,7 @@ gnollama_widget_sources = [
   'widgets/__init__.py',
   'widgets/chat_input.py',
   'widgets/options_panel.py',
+  'widgets/json_view.py',
   'widgets/message_list.py',
 ]
 

@@ -17,91 +17,52 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from typing import Any, List, Dict, Optional, Union
 from gi.repository import Adw, Gtk, Gio, GLib, Gdk, GObject
-import threading
-import json
-import urllib.request
-import re
-import html
 from .tab import GenerationTab
 from .session import ChatStrategy
 from .storage import ChatStorage
 from .host_manager import HostManagerDialog
 from .model_manager import ModelManagerDialog
 
-@Gtk.Template(resource_path='/io/github/jackrabbithanna/Gnollama/history_row.ui')
-class HistoryRow(Gtk.ListBoxRow):
-    """A row in the chat history list."""
-    __gtype_name__ = 'HistoryRow'
-
-    chat_id = GObject.Property(type=str, default="")
-
-    label: Gtk.Label = Gtk.Template.Child()
-    pinned_indicator_img: Gtk.Image = Gtk.Template.Child()
-    popover: Gtk.Popover = Gtk.Template.Child()
-    popover_pin_btn: Gtk.Button = Gtk.Template.Child()
-    popover_rename_btn: Gtk.Button = Gtk.Template.Child()
-    popover_delete_btn: Gtk.Button = Gtk.Template.Child()
-
-    def __init__(self, chat_id: str, title: str, is_pinned: bool = False, **kwargs: Any) -> None:
-        super().__init__(**kwargs)
-        self.init_template()
-        self.chat_id: str = chat_id
-        self.label.set_text(title)
-        self.is_pinned: bool = is_pinned
-        self.update_pin_state_ui()
-
-    def update_pin_state_ui(self) -> None:
-        """Updates the pin indicator and menu label based on the pin state."""
-        if self.is_pinned:
-            self.pinned_indicator_img.set_visible(True)
-            self.popover_pin_btn.set_label(_("Unpin Chat"))
-        else:
-            self.pinned_indicator_img.set_visible(False)
-            self.popover_pin_btn.set_label(_("Pin Chat"))
 
 @Gtk.Template(resource_path='/io/github/jackrabbithanna/Gnollama/window.ui')
 class GnollamaWindow(Adw.ApplicationWindow):
-    """The main application window for Gnollama."""
     __gtype_name__ = 'GnollamaWindow'
 
-    notebook: Gtk.Notebook = Gtk.Template.Child()
-    history_list: Gtk.ListBox = Gtk.Template.Child()
+    tab_view = Gtk.Template.Child()
+    history_sidebar = Gtk.Template.Child()
+    split_view = Gtk.Template.Child()
+    sidebar_toggle = Gtk.Template.Child()
 
-    def __init__(self, **kwargs: Any) -> None:
+    def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        # Register custom icons path
         icon_theme = Gtk.IconTheme.get_for_display(Gdk.Display.get_default())
-        icon_theme.add_resource_path("/io/github/jackrabbithanna/Gnollama/icons")
-
-        self.init_template()
-        self.settings: Gio.Settings = Gio.Settings.new('io.github.jackrabbithanna.Gnollama')
-        self.storage: ChatStorage = ChatStorage()
+        icon_theme.add_resource_path('/io/github/jackrabbithanna/Gnollama/icons')
+        self.settings = Gio.Settings.new('io.github.jackrabbithanna.Gnollama')
+        self.storage = ChatStorage()
         self.storage.on_error = self._on_save_error
         self._shutting_down = False
         self._allow_close = False
         self._cleanup_future = None
         self._save_error_dialog = None
-        self.chat_rows: Dict[str, HistoryRow] = {}
-        
-        self.history_list.connect("row-activated", self.on_history_row_activated)
-        self.connect("close-request", self.on_close_request)
-        
-        # Setup actions
+        self.chat_rows = {}
+        self.model_managers = []
         self._setup_actions()
-        
-        # Load CSS
+        self._sidebar_menu = Gio.Menu()
+        self.history_sidebar.set_menu_model(self._sidebar_menu)
+        self.history_sidebar.connect('setup-menu', self._setup_sidebar_menu)
+        self.history_sidebar.connect('activated', self.on_history_activated)
+        self.tab_view.connect('notify::selected-page', self.on_tab_switched)
+        self.tab_view.connect('close-page', self._on_close_page)
+        self.connect('close-request', self.on_close_request)
+        self.split_view.bind_property('show-sidebar', self.sidebar_toggle, 'active',
+                                      GObject.BindingFlags.BIDIRECTIONAL | GObject.BindingFlags.SYNC_CREATE)
         self.load_css()
-        
-        # Load history
         self.load_history_sidebar()
-        
-        # Connect tab switching
-        self.notebook.connect("switch-page", self.on_tab_switched)
-        
-        # Create initial tab
         self.new_chat_tab()
+
+    def tabs(self):
+        return [self.tab_view.get_nth_page(i).get_child() for i in range(self.tab_view.get_n_pages())]
 
     def on_close_request(self, *args):
         if self._allow_close:
@@ -113,13 +74,14 @@ class GnollamaWindow(Adw.ApplicationWindow):
         if self._shutting_down:
             return
         self._shutting_down = True
-        self.notebook.set_sensitive(False)
-        self.history_list.set_sensitive(False)
+        self.tab_view.set_sensitive(False)
+        self.history_sidebar.set_sensitive(False)
         from . import ollama
         ollama.cancel_all()
-        for i in range(self.notebook.get_n_pages()):
-            tab = self.notebook.get_nth_page(i)
+        for tab in self.tabs():
             tab.chat_input.cancel_fetches()
+            if tab.options_panel._schema_dialog is not None:
+                tab.options_panel._schema_dialog.close()
             if tab.request:
                 tab.request.cancellable.cancel()
         for window in list(Gtk.Window.list_toplevels()):
@@ -134,8 +96,7 @@ class GnollamaWindow(Adw.ApplicationWindow):
         if not self._shutting_down:
             return False
         from .session import worker
-        if not worker.idle or any(self.notebook.get_nth_page(i).request
-                                  for i in range(self.notebook.get_n_pages())):
+        if not worker.idle or any(tab.request for tab in self.tabs()):
             return True
         if self.storage.writer.error is not None:
             self._on_save_error(self.storage.writer.error)
@@ -160,7 +121,6 @@ class GnollamaWindow(Adw.ApplicationWindow):
         dialog.add_response('retry', _('Retry'))
         dialog.set_default_response('retry')
         dialog.set_close_response('keep')
-
         def response(dialog, choice):
             self._save_error_dialog = None
             if choice == 'retry':
@@ -169,336 +129,238 @@ class GnollamaWindow(Adw.ApplicationWindow):
                 from . import ollama
                 self._shutting_down = False
                 self._cleanup_future = None
-                self.notebook.set_sensitive(True)
-                self.history_list.set_sensitive(True)
+                self.tab_view.set_sensitive(True)
+                self.history_sidebar.set_sensitive(True)
                 ollama.resume()
+                for tab in self.tabs():
+                    if not tab.closing:
+                        tab.on_host_changed()
         dialog.connect('response', response)
         dialog.present(self)
 
-    def _setup_actions(self) -> None:
-        """Initializes application actions and their shortcuts."""
-        actions = [
-            ("new_tab", self.on_new_tab),
-            ("new_chat_tab", self.on_new_chat_tab),
-            ("clear_history", self.on_clear_history),
-            ("manage_hosts", self.on_manage_hosts),
-            ("manage_models", self.on_manage_models)
-        ]
+    def _setup_actions(self):
+        actions = [('new_tab', lambda *args: self.new_tab()),
+                   ('new_chat_tab', lambda *args: self.new_chat_tab()),
+                   ('clear_history', self.on_clear_history),
+                   ('manage_hosts', self.on_manage_hosts),
+                   ('manage_models', self.on_manage_models),
+                   ('close_tab', self.close_selected_tab),
+                   ('next_tab', lambda *args: self.tab_view.select_next_page()),
+                   ('previous_tab', lambda *args: self.tab_view.select_previous_page()),
+                   ('toggle_sidebar', lambda *args: self.split_view.set_show_sidebar(not self.split_view.get_show_sidebar()))]
         for name, callback in actions:
             action = Gio.SimpleAction.new(name, None)
-            action.connect("activate", lambda action, param, cb=callback: cb(action, param) if not self._shutting_down else None)
+            action.connect('activate', lambda action, param, cb=callback: cb(action, param) if not self._shutting_down else None)
             self.add_action(action)
-        
-    def load_css(self) -> None:
-        """Loads application-wide CSS from resources."""
-        css_provider = Gtk.CssProvider()
-        css_provider.load_from_resource('/io/github/jackrabbithanna/Gnollama/style.css')
-        Gtk.StyleContext.add_provider_for_display(
-            Gdk.Display.get_default(),
-            css_provider,
-            Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
-        )
-        
-    def on_clear_history(self, action: Gio.SimpleAction, param: Optional[GLib.Variant]) -> None:
-        """Displays a confirmation dialog to clear all chat history."""
-        dialog = Adw.AlertDialog(
-            heading=_("Clear chat history"),
-            body=_("Are you sure you want to delete all chat history?")
-        )
-        dialog.add_response("cancel", _("Cancel"))
-        dialog.add_response("delete", _("Delete history"))
-        dialog.set_response_appearance("delete", Adw.ResponseAppearance.DESTRUCTIVE)
-        dialog.set_default_response("cancel")
-        dialog.set_close_response("cancel")
-        
-        def on_response(dialog: Adw.AlertDialog, response: str) -> None:
-            if response == "delete":
-                pages_to_close = []
-                for i in range(self.notebook.get_n_pages()):
-                    page = self.notebook.get_nth_page(i)
-                    if isinstance(page, GenerationTab) and hasattr(page.strategy, 'chat_id'):
-                        pages_to_close.append(page)
+        for name, callback in [('history_pin', self.pin_chat), ('history_rename', self.rename_chat), ('history_delete', self.delete_chat)]:
+            action = Gio.SimpleAction.new(name, GLib.VariantType.new('s'))
+            action.connect('activate', lambda a, p, cb=callback: cb(p.get_string()) if not self._shutting_down else None)
+            self.add_action(action)
 
-                for page in pages_to_close:
-                    page.strategy.deleted = True
-                    self.close_tab(page, delete=True)
+    def load_css(self):
+        provider = Gtk.CssProvider()
+        provider.load_from_resource('/io/github/jackrabbithanna/Gnollama/style.css')
+        Gtk.StyleContext.add_provider_for_display(Gdk.Display.get_default(), provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+
+    def on_clear_history(self, *args):
+        dialog = Adw.AlertDialog(heading=_('Clear chat history'), body=_('Are you sure you want to delete all chat history?'))
+        dialog.add_response('cancel', _('Cancel'))
+        dialog.add_response('delete', _('Delete history'))
+        dialog.set_response_appearance('delete', Adw.ResponseAppearance.DESTRUCTIVE)
+        dialog.set_default_response('cancel')
+        dialog.set_close_response('cancel')
+        def response(dialog, choice):
+            if choice == 'delete' and not self._shutting_down:
+                for tab in self.tabs():
+                    if isinstance(tab.strategy, ChatStrategy):
+                        self.close_tab(tab, delete=True)
                 self.storage.clear_all_chats()
                 self.new_chat_tab()
                 self.storage._submit(lambda: None, on_done=self.load_history_sidebar)
-            dialog.close()
-            
-        dialog.connect("response", on_response)
+        dialog.connect('response', response)
         dialog.present(self)
 
-    def on_manage_hosts(self, action: Gio.SimpleAction, param: Optional[GLib.Variant]) -> None:
-        """Opens the Host Manager dialog."""
+    def on_manage_hosts(self, *args):
         dialog = HostManagerDialog(storage=self.storage, on_hosts_changed_cb=self.on_hosts_changed)
         dialog.set_transient_for(self)
         dialog.present()
 
-    def on_manage_models(self, action: Gio.SimpleAction, param: Optional[GLib.Variant]) -> None:
-        """Opens the Model Manager dialog."""
-        dialog = ModelManagerDialog(storage=self.storage)
+    def on_manage_models(self, *args):
+        dialog = ModelManagerDialog(storage=self.storage, is_model_busy=self.is_model_busy)
+        self.model_managers.append(dialog)
+        dialog.connect('close-request', lambda *args: self._forget_manager(dialog))
         dialog.set_transient_for(self)
         dialog.present()
 
-    def on_hosts_changed(self) -> None:
-        """Callback when hosts configuration is updated."""
-        n_pages = self.notebook.get_n_pages()
-        for i in range(n_pages):
-            page = self.notebook.get_nth_page(i)
-            if hasattr(page, 'update_hosts'):
-                page.update_hosts()
+    def _forget_manager(self, dialog):
+        if dialog in self.model_managers:
+            self.model_managers.remove(dialog)
+        return False
 
-    def on_new_tab(self, action: Gio.SimpleAction, param: Optional[GLib.Variant]) -> None:
-        """Action callback for creating a new generation tab."""
-        self.new_tab()
+    def is_model_busy(self, host, model):
+        from .model_manager import model_key
+        key = model_key(host, model)
+        return any(tab.request and model_key(tab.request.settings['host'], tab.request.settings['model']) == key
+                   for tab in self.tabs())
 
-    def on_new_chat_tab(self, action: Gio.SimpleAction, param: Optional[GLib.Variant]) -> None:
-        """Action callback for creating a new chat tab."""
-        self.new_chat_tab()
-        
-    def new_tab(self) -> None:
-        """Creates and adds a new generation tab to the notebook."""
-        tab_label_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
-        icon = Gtk.Image.new_from_icon_name("edit-find-symbolic")
-        tab_label_box.append(icon)
-        
-        tab_title = Gtk.Label(label=_("New Response"))
-        tab_label_box.append(tab_title)
-        
-        close_button = Gtk.Button.new_from_icon_name("window-close-symbolic")
-        close_button.add_css_class("flat")
-        close_button.set_valign(Gtk.Align.CENTER)
-        tab_label_box.append(close_button)
-        
-        tab = GenerationTab(tab_title, mode='generate', storage=self.storage)
-        
-        page_num = self.notebook.append_page(tab, tab_label_box)
-        self.notebook.set_menu_label_text(tab, tab_title.get_label())
-        tab_title.connect("notify::label", lambda lbl, pspec, t=tab: self.notebook.page_num(t) != -1 and self.notebook.set_menu_label_text(t, lbl.get_label()))
-        self.notebook.set_current_page(page_num)
-        self.notebook.set_tab_reorderable(tab, True)
-        self.notebook.set_tab_detachable(tab, True)
-        
-        close_button.connect("clicked", lambda btn: self.close_tab(tab))
-        tab.set_visible(True)
+    def on_hosts_changed(self):
+        for tab in self.tabs():
+            tab.update_hosts()
+        for manager in self.model_managers:
+            manager.update_hosts()
 
-    def load_history_sidebar(self) -> None:
-        """Reloads the chat history list in the sidebar."""
-        while True:
-            row = self.history_list.get_first_child()
-            if not row:
-                break
-            self.history_list.remove(row)
+    def _add_tab(self, tab):
+        page = self.tab_view.append(tab)
+        tab.bind_property('title', page, 'title', GObject.BindingFlags.SYNC_CREATE)
+        page.set_icon(Gio.ThemedIcon.new('network-server-symbolic' if tab.mode == 'chat' else 'edit-find-symbolic'))
+        def request_changed(*args):
+            page.set_loading(tab.request is not None)
+            for manager in self.model_managers:
+                manager.update_unload_buttons()
+        tab.connect('request-changed', request_changed)
+        tab.connect('chat-updated', self.on_chat_updated)
+        self.tab_view.set_selected_page(page)
+        return tab
+
+    def new_tab(self):
+        return self._add_tab(GenerationTab(mode='generate', storage=self.storage))
+
+    def new_chat_tab(self):
+        chat = self.storage.create_chat()
+        self.add_history_row(chat, prepend=True)
+        return self._add_tab(GenerationTab(mode='chat', chat_id=chat['id'], storage=self.storage))
+
+    def open_chat_tab(self, chat_data):
+        for tab in self.tabs():
+            if getattr(tab.strategy, 'chat_id', None) == chat_data['id']:
+                self.tab_view.set_selected_page(self.tab_view.get_page(tab))
+                return tab
+        return self._add_tab(GenerationTab(mode='chat', chat_id=chat_data['id'],
+                                           initial_history=chat_data.get('messages', []), storage=self.storage))
+
+    def load_history_sidebar(self):
+        if self._allow_close:
+            return
+        self.history_sidebar.remove_all()
         self.chat_rows.clear()
-            
-        chats = self.storage.get_all_chats()
-        for chat in chats:
+        self.pinned_section = Adw.SidebarSection(title=_('Pinned'))
+        self.recent_section = Adw.SidebarSection(title=_('Recent'))
+        self.history_sidebar.append(self.pinned_section)
+        self.history_sidebar.append(self.recent_section)
+        for chat in self.storage.get_all_chats():
             self.add_history_row(chat)
+        self.on_tab_switched()
 
-    def add_history_row(self, chat: Dict[str, Any]) -> None:
-        """Adds a single row to the chat history list using the HistoryRow template."""
-        chat_id = chat['id']
-        is_pinned = chat.get('is_pinned', False)
-        row = HistoryRow(chat_id, chat.get('title', _('New Chat')), is_pinned=is_pinned)
-        row.popover_pin_btn.connect("clicked", self.on_popover_pin_clicked, chat_id, row)
-        row.popover_rename_btn.connect("clicked", self.on_popover_rename_clicked, chat_id, row)
-        row.popover_delete_btn.connect("clicked", self.on_popover_delete_clicked, chat_id, row)
-        self.history_list.append(row)
-        self.chat_rows[chat_id] = row
+    def _fill_history_menu(self, menu, item):
+        menu.remove_all()
+        for label, action in [(_('Unpin Chat') if item.is_pinned else _('Pin Chat'), 'history_pin'),
+                              (_('Rename Chat'), 'history_rename'), (_('Delete Chat'), 'history_delete')]:
+            entry = Gio.MenuItem.new(label, None)
+            entry.set_action_and_target_value('win.' + action, GLib.Variant('s', item.chat_id))
+            menu.append_item(entry)
 
-    def on_popover_delete_clicked(self, btn: Gtk.Button, chat_id: str, row: HistoryRow) -> None:
-        """Deletes a chat from storage and UI after closing popover."""
-        row.popover.popdown()
-        self.storage.delete_chat(chat_id)
-        if chat_id in self.chat_rows:
-            self.history_list.remove(self.chat_rows[chat_id])
-            del self.chat_rows[chat_id]
-        
-        # Close matching tab if open
-        n_pages = self.notebook.get_n_pages()
-        for i in range(n_pages):
-            page = self.notebook.get_nth_page(i)
-            if isinstance(page, GenerationTab) and hasattr(page.strategy, 'chat_id') and page.strategy.chat_id == chat_id:
-                self.close_tab(page, delete=True)
-                break
+    def _setup_sidebar_menu(self, sidebar, item):
+        if item is not None:
+            self._fill_history_menu(self._sidebar_menu, item)
 
-    def on_popover_pin_clicked(self, btn: Gtk.Button, chat_id: str, row: HistoryRow) -> None:
-        """Toggles the pinned status of a chat and reloads the sidebar."""
-        row.popover.popdown()
-        new_pinned = not row.is_pinned
-        self.storage.update_chat_pinned(chat_id, new_pinned, on_done=self.load_history_sidebar)
-        
-        # Reselect active page
-        current_page_idx = self.notebook.get_current_page()
-        if current_page_idx != -1:
-            active_page = self.notebook.get_nth_page(current_page_idx)
-            self.on_tab_switched(self.notebook, active_page, current_page_idx)
+    def add_history_row(self, chat, prepend=False):
+        item = Adw.SidebarItem(title=chat.get('title', _('New Chat')), icon_name='chat-message-new-symbolic')
+        item.chat_id = chat['id']
+        item.is_pinned = chat.get('is_pinned', False)
+        item.set_tooltip(item.get_title())
+        menu = Gio.Menu()
+        self._fill_history_menu(menu, item)
+        button = Gtk.MenuButton(icon_name='view-more-symbolic', menu_model=menu, tooltip_text=_('Chat actions'))
+        button.add_css_class('flat')
+        item.set_suffix(button)
+        section = self.pinned_section if item.is_pinned else self.recent_section
+        (section.prepend if prepend else section.append)(item)
+        self.chat_rows[item.chat_id] = item
 
-    def on_popover_rename_clicked(self, btn: Gtk.Button, chat_id: str, row: HistoryRow) -> None:
-        """Opens a dialog to rename a chat."""
-        row.popover.popdown()
-        # Create a simple dialog for renaming
-        dialog = Adw.AlertDialog(
-            heading=_("Rename Chat"),
-            body=_("Enter a new title for this chat.")
-        )
-        dialog.add_response("cancel", _("Cancel"))
-        dialog.add_response("save", _("Save"))
-        dialog.set_default_response("save")
-        dialog.set_close_response("cancel")
-        
-        # Add entry
-        entry = Gtk.Entry()
-        entry.set_text(row.label.get_text())
-        entry.set_activates_default(True)
+    def _remove_history_item(self, chat_id):
+        item = self.chat_rows.pop(chat_id, None)
+        if item and item.get_section():
+            item.get_section().remove(item)
+
+    def on_history_activated(self, sidebar, index):
+        item = sidebar.get_item(index)
+        if item:
+            chat = self.storage.get_chat(item.chat_id)
+            if chat:
+                self.open_chat_tab(chat)
+                if self.split_view.get_collapsed():
+                    self.split_view.set_show_sidebar(False)
+
+    def on_tab_switched(self, *args):
+        page = self.tab_view.get_selected_page()
+        chat_id = getattr(page.get_child().strategy, 'chat_id', None) if page else None
+        item = self.chat_rows.get(chat_id)
+        self.history_sidebar.set_selected(item.get_index() if item else Gtk.INVALID_LIST_POSITION)
+
+    def on_chat_updated(self, tab, chat_id, title):
+        self.update_tab_title(chat_id, title)
+        self.load_history_sidebar()
+
+    def update_tab_title(self, chat_id, title):
+        for tab in self.tabs():
+            if getattr(tab.strategy, 'chat_id', None) == chat_id:
+                tab.title = title
+
+    def pin_chat(self, chat_id):
+        item = self.chat_rows.get(chat_id)
+        if item:
+            self.storage.update_chat_pinned(chat_id, not item.is_pinned, on_done=self.load_history_sidebar)
+
+    def rename_chat(self, chat_id):
+        item = self.chat_rows.get(chat_id)
+        if not item:
+            return
+        dialog = Adw.AlertDialog(heading=_('Rename Chat'), body=_('Enter a new title for this chat.'))
+        entry = Gtk.Entry(text=item.get_title(), activates_default=True)
         dialog.set_extra_child(entry)
-        
-        def on_response(dialog: Adw.AlertDialog, response: str) -> None:
-            if response == "save":
-                new_title = entry.get_text().strip()
-                if new_title:
-                    self.storage.update_title(chat_id, new_title, on_done=self.load_history_sidebar)
-                    row.label.set_text(new_title)
-                    # Update active tab if open
-                    self.update_tab_title(chat_id, new_title)
-            dialog.close()
-            
-        dialog.connect("response", on_response)
+        dialog.add_response('cancel', _('Cancel'))
+        dialog.add_response('save', _('Save'))
+        dialog.set_default_response('save')
+        dialog.set_close_response('cancel')
+        def response(dialog, choice):
+            title = entry.get_text().strip()
+            if choice == 'save' and title and not self._shutting_down:
+                def saved():
+                    self.update_tab_title(chat_id, title)
+                    self.load_history_sidebar()
+                self.storage.update_title(chat_id, title, on_done=saved)
+        dialog.connect('response', response)
         dialog.present(self)
 
-    def update_tab_title(self, chat_id: str, new_title: str) -> None:
-        """Updates the title of an open tab matching a chat ID."""
-        # Iterate pages to find matching chat
-        n_pages = self.notebook.get_n_pages()
-        for i in range(n_pages):
-            page = self.notebook.get_nth_page(i)
-            if isinstance(page, GenerationTab) and hasattr(page.strategy, 'chat_id') and page.strategy.chat_id == chat_id:
-                if page.tab_label:
-                    page.tab_label.set_label(new_title)
-                break
+    def delete_chat(self, chat_id):
+        for tab in self.tabs():
+            if getattr(tab.strategy, 'chat_id', None) == chat_id:
+                self.close_tab(tab, delete=True)
+        self.storage.delete_chat(chat_id, on_done=self.load_history_sidebar)
+        self._remove_history_item(chat_id)
 
-    def on_history_row_activated(self, listbox: Gtk.ListBox, row: Gtk.ListBoxRow) -> None:
-        """Callback when a chat row is activated in the sidebar."""
-        chat_id = getattr(row, 'chat_id', None)
-        if chat_id:
-            chat_data = self.storage.get_chat(chat_id)
-            if chat_data:
-                self.open_chat_tab(chat_data)
+    def close_selected_tab(self, *args):
+        page = self.tab_view.get_selected_page()
+        if page:
+            self.tab_view.close_page(page)
 
-    def open_chat_tab(self, chat_data: Dict[str, Any]) -> None:
-        """Opens an existing chat in a new or existing tab."""
-        # Check if already open
-        chat_id = chat_data['id']
-        n_pages = self.notebook.get_n_pages()
-        for i in range(n_pages):
-            page = self.notebook.get_nth_page(i)
-            if isinstance(page, GenerationTab) and hasattr(page.strategy, 'chat_id') and page.strategy.chat_id == chat_id:
-                self.notebook.set_current_page(i)
-                return
-        
-        tab_label_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
-        icon = Gtk.Image.new_from_icon_name("network-server-symbolic")
-        tab_label_box.append(icon)
-        
-        title = chat_data.get('title', _('Chat'))
-        tab_title = Gtk.Label(label=title)
-        tab_label_box.append(tab_title)
-        
-        close_button = Gtk.Button.new_from_icon_name("window-close-symbolic")
-        close_button.add_css_class("flat")
-        close_button.set_valign(Gtk.Align.CENTER)
-        tab_label_box.append(close_button)
-        
-        # Create tab with existing data
-        tab = GenerationTab(
-            tab_title, 
-            mode='chat', 
-            chat_id=chat_data['id'],
-            initial_history=chat_data.get('messages', []),
-            storage=self.storage
-        )
-        
-        # Add to notebook
-        page_num = self.notebook.append_page(tab, tab_label_box)
-        self.notebook.set_menu_label_text(tab, tab_title.get_label())
-        tab_title.connect("notify::label", lambda lbl, pspec, t=tab: self.notebook.page_num(t) != -1 and self.notebook.set_menu_label_text(t, lbl.get_label()))
-        self.notebook.set_current_page(page_num)
-        self.notebook.set_tab_reorderable(tab, True)
-        self.notebook.set_tab_detachable(tab, True)
-        
-        # Connect signals
-        tab.connect("chat-updated", self.on_chat_updated)
-        close_button.connect("clicked", lambda btn: self.close_tab(tab))
-        tab.set_visible(True)
+    def close_tab(self, tab, delete=False):
+        if delete and isinstance(tab.strategy, ChatStrategy):
+            tab.strategy.deleted = True
+        if not tab.closing:
+            self.tab_view.close_page(self.tab_view.get_page(tab))
 
-    def on_chat_updated(self, tab: GenerationTab, chat_id: str, new_title: str) -> None:
-        """Updates the sidebar row when a chat's title changes."""
-        if chat_id in self.chat_rows:
-            self.chat_rows[chat_id].label.set_text(new_title)
-
-    def new_chat_tab(self) -> None:
-        """Creates a new empty chat session and adds its tab."""
-        # Create new chat in storage
-        chat_data = self.storage.create_chat()
-        
-        # Add to sidebar
-        self.add_history_row(chat_data)
-        
-        # Create tab label widget
-        tab_label_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
-        
-        icon = Gtk.Image.new_from_icon_name("network-server-symbolic")
-        tab_label_box.append(icon)
-        
-        tab_title = Gtk.Label(label=_("New Chat"))
-        tab_label_box.append(tab_title)
-        
-        close_button = Gtk.Button.new_from_icon_name("window-close-symbolic")
-        close_button.add_css_class("flat")
-        close_button.set_valign(Gtk.Align.CENTER)
-        tab_label_box.append(close_button)
-        
-        tab = GenerationTab(tab_title, mode='chat', chat_id=chat_data['id'], storage=self.storage)
-        
-        # Add to notebook
-        page_num = self.notebook.append_page(tab, tab_label_box)
-        self.notebook.set_menu_label_text(tab, tab_title.get_label())
-        tab_title.connect("notify::label", lambda lbl, pspec, t=tab: self.notebook.page_num(t) != -1 and self.notebook.set_menu_label_text(t, lbl.get_label()))
-        self.notebook.set_current_page(page_num)
-        self.notebook.set_tab_reorderable(tab, True)
-        self.notebook.set_tab_detachable(tab, True)
-        
-        # Connect signals
-        tab.connect("chat-updated", self.on_chat_updated)
-        close_button.connect("clicked", lambda btn: self.close_tab(tab))
-        
-        # Show the tab
-        tab.set_visible(True)
-
-    def on_tab_switched(self, notebook: Gtk.Notebook, page: Gtk.Widget, page_num: int) -> None:
-        """Syncs the sidebar selection with the active tab."""
-        # Deselect first
-        self.history_list.select_row(None)
-        
-        if isinstance(page, GenerationTab) and hasattr(page.strategy, 'chat_id') and page.strategy.chat_id:
-            chat_id = page.strategy.chat_id
-            
-            # Find matching row using registry
-            if chat_id in self.chat_rows:
-                 self.history_list.select_row(self.chat_rows[chat_id])
-
-    def close_tab(self, page, delete=False):
+    def _on_close_page(self, view, page):
+        tab = page.get_child()
+        if self._shutting_down:
+            view.close_page_finish(page, False)
+            return True
+        if tab.closing:
+            return True
         def remove():
-            if isinstance(page.strategy, ChatStrategy) and not page.strategy.history and not delete:
-                self.storage.delete_chat(page.strategy.chat_id)
-                row = self.chat_rows.pop(page.strategy.chat_id, None)
-                if row:
-                    self.history_list.remove(row)
-            page_num = self.notebook.page_num(page)
-            if page_num != -1:
-                self.notebook.remove_page(page_num)
-                self.notebook.set_property('enable-popup', False)
-                self.notebook.set_property('enable-popup', True)
-        page.close_session(remove, delete=delete)
+            if isinstance(tab.strategy, ChatStrategy) and not tab.strategy.history and not tab.strategy.deleted:
+                self.storage.delete_chat(tab.strategy.chat_id)
+                self._remove_history_item(tab.strategy.chat_id)
+            view.close_page_finish(page, True)
+        tab.close_session(remove, delete=getattr(tab.strategy, 'deleted', False))
+        return True

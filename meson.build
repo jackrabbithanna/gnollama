@@ -1,5 +1,5 @@
 project('gnollama',
-          version: '0.10.0',
+          version: '0.11.0',
     meson_version: '>= 1.0.0',
   default_options: [ 'warning_level=2', 'werror=false', ],
 )
@@ -8,7 +8,7 @@ i18n = import('i18n')
 gnome = import('gnome')
 
 dependency('gtk4', version: '>= 4.18')
-dependency('libadwaita-1', version: '>= 1.8')
+dependency('libadwaita-1', version: '>= 1.9')
 dependency('libsoup-3.0', version: '>= 3.0')
 
 subdir('data')

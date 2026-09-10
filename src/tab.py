@@ -5,6 +5,7 @@ from .session import RequestState, worker
 from . import ollama
 from .storage import ChatStorage
 from .session import GenerationStrategy, ChatStrategy
+from .structured import InvalidSchema, validate_response
 
 from .widgets.message_list import MessageList
 from .widgets.chat_input import ChatInput
@@ -17,17 +18,19 @@ class GenerationTab(Gtk.Box):
     
     __gsignals__ = {
         'chat-updated': (GObject.SignalFlags.RUN_FIRST, None, (str, str)),
+        'request-changed': (GObject.SignalFlags.RUN_FIRST, None, ()),
     }
+    title = GObject.Property(type=str, default='')
 
     message_list: MessageList = Gtk.Template.Child()
     chat_input: ChatInput = Gtk.Template.Child()
     options_panel: OptionsPanel = Gtk.Template.Child()
 
-    def __init__(self, tab_label: Optional[Gtk.Label] = None, mode: str = 'generate', chat_id: Optional[str] = None, 
+    def __init__(self, mode: str = 'generate', chat_id: Optional[str] = None,
                  initial_history: Optional[List[Dict[str, Any]]] = None, storage: Optional[ChatStorage] = None, **kwargs: Any) -> None:
         super().__init__(**kwargs)
         self.init_template()
-        self.tab_label = tab_label
+        self.title = _('New Chat') if mode == 'chat' else _('New Response')
         self.request = None
         self.closing = False
         self._close_callback = None
@@ -43,6 +46,7 @@ class GenerationTab(Gtk.Box):
             self.strategy = GenerationStrategy()
             
         self.mode = mode
+        self.chat_input.has_history_images = any(m.get('images') for m in getattr(self.strategy, 'history', []))
         
         self.options_panel.storage = self.storage
         self.options_panel.update_hosts()
@@ -64,6 +68,7 @@ class GenerationTab(Gtk.Box):
         self.on_host_changed()
 
     def load_chat_settings(self, chat_data: Dict[str, Any]) -> None:
+        self.title = chat_data.get('title', _('Chat'))
         if 'options' in chat_data:
             options = chat_data['options']
             self.options_panel.load_options(options)
@@ -94,7 +99,7 @@ class GenerationTab(Gtk.Box):
                 self.message_list.add_user_message(content, images=images)
             elif role == 'assistant':
                 from .bubbles import AiBubble
-                bubble = AiBubble(model_name=msg.get('model', ''))
+                bubble = AiBubble(model_name=msg.get('model', ''), output_format=(msg.get('api_details') or {}).get('format'))
                 if 'thinking_content' in msg:
                     bubble.append_thinking(msg['thinking_content'])
                 bubble.append_text(content)
@@ -135,7 +140,15 @@ class GenerationTab(Gtk.Box):
             model = self.chat_input.get_selected_model()
             if not model:
                 raise ValueError(_('Select an available model before sending.'))
+            from .model_manager import model_key, unloading_models
+            if model_key(hostname, model) in unloading_models:
+                raise ValueError(_('Wait for this model to finish unloading before sending.'))
             options = self.options_panel.get_options_from_ui()
+            request_settings = self.options_panel.get_request_settings()
+            if self.chat_input.capabilities_loading and (self.chat_input.selected_image_paths or self.chat_input.has_history_images):
+                raise ValueError(_('Wait for image support to be checked before sending.'))
+            if self.chat_input.image_support is False and self.chat_input.selected_image_paths:
+                raise ValueError(_('Remove draft images or select a vision model to send.'))
             logprobs = self.options_panel.logprobs_check.get_active()
             top = self.options_panel.top_logprobs_entry.get_text().strip()
             top = int(top) if logprobs and top else None
@@ -153,21 +166,29 @@ class GenerationTab(Gtk.Box):
                             system=self.options_panel.system_prompt_entry.get_text().strip() or None,
                             logprobs=logprobs, top_logprobs=top,
                             show_stats=self.options_panel.stats_check.get_active(), endpoint=self.mode)
-        except (ValueError, OSError, GLib.Error, ollama.OllamaError) as exc:
+            settings.update(request_settings)
+            settings['history_images_omitted'] = self.chat_input.image_support is False and self.chat_input.has_history_images
+        except InvalidSchema as exc:
+            self.options_panel.edit_schema(error=str(exc))
+            return
+        except (ValueError, OSError, RecursionError, GLib.Error, ollama.OllamaError) as exc:
             self.message_list.add_system_message(str(exc))
             return
 
         state = RequestState(settings, prompt, images)
         self.request = state
+        self.emit('request-changed')
         self.chat_input.set_running(True)
         self.chat_input.entry.set_text('')
         self.chat_input.on_clear_image_clicked(None)
         self.message_list.add_user_message(prompt, images=images)
         from .bubbles import AiBubble
-        bubble = AiBubble(model_name=model)
+        bubble = AiBubble(model_name=model, output_format=state.settings.get('format'))
         bubble.set_api_details(state.api_details())
         self.message_list.add_ai_bubble(bubble)
         self.strategy.begin(state)
+        self.chat_input.has_history_images = any(m.get('images') for m in getattr(self.strategy, 'history', []))
+        self.chat_input.update_capability_controls()
         worker.submit(self.process_request, state, bubble)
 
     def process_request(self, state, bubble):
@@ -189,6 +210,12 @@ class GenerationTab(Gtk.Box):
             status = 'stopped'
         except Exception as exc:
             error = str(exc)
+        # Validate on the worker so schema evaluation does not block GTK.
+        if state.settings.get('format') is not None:
+            try:
+                state.metadata['validation'] = validate_response(state.content, state.settings['format'], status)
+            except Exception as exc:
+                state.metadata['validation'] = {'status': 'validation_error', 'message': str(exc)}
         GLib.idle_add(self._finish_request, state, bubble, status, error)
 
     def _display_chunk(self, state, bubble, content, thinking, logprobs):
@@ -208,14 +235,14 @@ class GenerationTab(Gtk.Box):
         if not self._disposed:
             bubble.show_response_metadata(state.metadata, state.settings['show_stats'])
         self.request = None
+        self.emit('request-changed')
         self.chat_input.set_running(False)
 
         def saved():
             if isinstance(self.strategy, ChatStrategy) and not self.strategy.deleted:
                 data = self.storage.get_chat(self.strategy.chat_id)
                 if data and not self._disposed:
-                    if self.tab_label:
-                        self.tab_label.set_label(data['title'])
+                    self.title = data['title']
                     self.emit('chat-updated', self.strategy.chat_id, data['title'])
             self._finish_close()
 
@@ -228,6 +255,8 @@ class GenerationTab(Gtk.Box):
         self.closing = True
         self._close_callback = on_done
         self.chat_input.cancel_fetches()
+        if self.options_panel._schema_dialog is not None:
+            self.options_panel._schema_dialog.close()
         self.set_sensitive(False)
         if delete and isinstance(self.strategy, ChatStrategy):
             self.strategy.deleted = True

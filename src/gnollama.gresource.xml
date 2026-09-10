@@ -7,7 +7,6 @@
     <file preprocess="xml-stripblanks">host_manager.ui</file>
     <file preprocess="xml-stripblanks">host_edit_dialog.ui</file>
     <file preprocess="xml-stripblanks">model_manager.ui</file>
-    <file preprocess="xml-stripblanks">history_row.ui</file>
     <file preprocess="xml-stripblanks">pull_model_dialog.ui</file>
     <file preprocess="xml-stripblanks">user_bubble.ui</file>
     <file preprocess="xml-stripblanks">ai_bubble.ui</file>
@@ -17,5 +16,6 @@
     <file preprocess="xml-stripblanks">widgets/message_list.ui</file>
     <file>style.css</file>
     <file>icons/scalable/actions/pin-active-symbolic.svg</file>
+    <file>icons/scalable/actions/gnollama-sidebar-symbolic.svg</file>
   </gresource>
 </gresources>

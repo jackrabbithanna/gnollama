@@ -40,6 +40,10 @@ class Handler(BaseHTTPRequestHandler):
                 self.wfile.write(b'{"status":"success"}\n')
             elif self.server.mode == 'details':
                 self.wfile.write(b'{"capabilities":["thinking"]}')
+            elif self.server.mode == 'ps':
+                self.wfile.write(b'{"models":[{"name":"test","size_vram":0,"context_length":4096}]}')
+            elif self.server.mode == 'unload':
+                self.wfile.write(b'{"done":true,"done_reason":"unload"}')
             elif self.server.mode == 'empty':
                 pass
             else:
@@ -106,6 +110,42 @@ class TransportTests(unittest.TestCase):
                 self.assertNotIn('think', body)
             else:
                 self.assertEqual(body['think'], value)
+
+    def test_structured_formats_and_keep_alive_on_both_endpoints(self):
+        for endpoint in ('generate', 'chat'):
+            for output_format in (None, 'json', {}, {'type': 'object'}):
+                for keep_alive in (None, 0, 300, 1800, -1, 23):
+                    args = dict(host=self.fixture.host, model='test', format=output_format, keep_alive=keep_alive)
+                    if endpoint == 'generate':
+                        list(ollama.generate(prompt='test', **args))
+                    else:
+                        list(ollama.chat(messages=[{'role': 'user', 'content': 'test'}], **args))
+                    path, body = self.fixture.server.received[-1]
+                    self.assertEqual(path, '/api/' + endpoint)
+                    for key, value in (('format', output_format), ('keep_alive', keep_alive)):
+                        if value is None:
+                            self.assertNotIn(key, body)
+                        else:
+                            self.assertEqual(body[key], value)
+                        self.assertNotIn(key, body.get('options', {}))
+
+    def test_running_models_and_unload(self):
+        self.fixture.server.mode = 'ps'
+        models = ollama.fetch_running_models(self.fixture.host)
+        self.assertEqual(models[0]['size_vram'], 0)
+        self.assertEqual(self.fixture.server.received[-1][0], '/api/ps')
+        self.fixture.server.mode = 'unload'
+        self.assertEqual(ollama.unload_model(self.fixture.host, 'test')['done_reason'], 'unload')
+        self.assertEqual(self.fixture.server.received[-1],
+                         ('/api/generate', {'model': 'test', 'stream': False, 'keep_alive': 0}))
+        self.fixture.server.mode = 'error'
+        for call in (ollama.fetch_running_models, lambda host: ollama.unload_model(host, 'test')):
+            with self.assertRaisesRegex(ollama.OllamaError, 'pull this model first'):
+                call(self.fixture.host)
+        cancel = Gio.Cancellable()
+        cancel.cancel()
+        with self.assertRaises(ollama.RequestCancelled):
+            ollama.unload_model(self.fixture.host, 'test', cancellable=cancel)
 
     def test_malformed_stream_fails(self):
         self.fixture.server.mode = 'malformed'

@@ -48,7 +48,8 @@ class AiBubble(Gtk.ListBoxRow):
     thinking_expander: Gtk.Expander = Gtk.Template.Child()
     thinking_label: Gtk.Label = Gtk.Template.Child()
 
-    def __init__(self, model_name: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(self, model_name: Optional[str] = None, output_format=None, **kwargs: Any) -> None:
+        from .widgets.json_view import JsonResponseView
         super().__init__(**kwargs)
         self.init_template()
         
@@ -59,7 +60,8 @@ class AiBubble(Gtk.ListBoxRow):
         self.api_markdown_view = MarkdownView()
         self.api_expander.set_child(self.api_markdown_view)
         
-        self.markdown_view = MarkdownView()
+        self.json_view = JsonResponseView(has_schema=isinstance(output_format, dict)) if output_format is not None else None
+        self.markdown_view = self.json_view or MarkdownView()
         self.bubble_box.append(self.markdown_view)
         
         self.full_text: str = ""
@@ -104,6 +106,12 @@ class AiBubble(Gtk.ListBoxRow):
         self._stats_label.set_text(format_statistics(stats))
 
     def show_response_metadata(self, metadata, show_stats=True):
+        if self.json_view is not None:
+            self.json_view.update(self.full_text)
+            self.json_view.finish(metadata.get('validation'))
+        if metadata.get('history_images_omitted'):
+            self.bubble_box.append(Gtk.Label(label=_('Earlier images were omitted from the text-only request.'),
+                                            xalign=0, wrap=True))
         status = metadata.get('status', 'complete')
         if status in ('stopped', 'failed'):
             label = Gtk.Label(xalign=0, wrap=True, selectable=True)

@@ -10,6 +10,7 @@
     <p>Chat with Ollama models running on your computer or a remote server using a native GNOME interface.</p>
     <p>Keep conversations in separate tabs, attach images to vision models, and read responses with Markdown and highlighted code.</p>
     <p>Manage hosts and models, customize generation and thinking settings, and inspect response statistics including cached prompt tokens.</p>
+    <p>Generate and validate structured JSON, import JSON schemas, and export responses. Inspect loaded models and release their memory when finished.</p>
     <p>Save and organize conversations with pinning and editable titles. Stop a response at any time and keep its partial answer in your history.</p>
   </description>
 
@@ -47,6 +48,14 @@
   </screenshots>
 
   <releases>
+    <release version="0.11.0" date="2026-09-09">
+      <description translate="no">
+        <p>Add JSON and JSON Schema output modes with schema import, local validation, and JSON export.</p>
+        <p>Inspect running models, unload them from memory, and customize model keep-alive durations.</p>
+        <p>Adapt image controls to model capabilities and send text history to models without vision while preserving saved images.</p>
+        <p>Use native GNOME tabs and a collapsible sidebar with pinned and recent conversations.</p>
+      </description>
+    </release>
     <release version="0.10.0" date="2026-09-09">
       <description translate="no">
         <p>Use the GNOME 50 runtime.</p>

@@ -172,7 +172,7 @@ class UITests(unittest.TestCase):
         with patch('src.window.ChatStorage', return_value=self.storage):
             window = GnollamaWindow()
         self.windows.append(window)
-        tab = window.notebook.get_nth_page(0)
+        tab = window.tab_view.get_nth_page(0).get_child()
         self.tabs.append(tab)
         pump_until(lambda: tab.chat_input.get_selected_model() == 'test' and session.worker.idle)
         return window, tab
@@ -288,3 +288,356 @@ class UITests(unittest.TestCase):
         pump_until(lambda: dialog.pull_future.done())
         self.assertTrue(dialog._pull_cancel.is_cancelled())
         self.assertTrue(dialog.requests.closed)
+
+    def test_structured_settings_validation_and_history_restore(self):
+        import json
+        tab = self.make_tab()
+        panel = tab.options_panel
+        panel.output_dropdown.set_selected(2)
+        panel.schema_text = '{'
+        tab.chat_input.entry.set_text('return count')
+        tab.on_send_clicked()
+        self.assertIsNone(tab.request)
+        self.assertEqual(tab.chat_input.entry.get_text(), 'return count')
+        panel.schema_text = json.dumps({'type': 'object', 'properties': {'count': {'type': 'integer'}}, 'required': ['count']})
+        panel.keep_alive_dropdown.set_selected(1)
+        def chat(**kwargs):
+            self.assertEqual(kwargs['format']['type'], 'object')
+            self.assertEqual(kwargs['keep_alive'], 0)
+            yield {'message': {'content': '{"count":"two"}'}, 'done': True}
+        with patch.object(ollama, 'chat', side_effect=chat):
+            tab.on_send_clicked()
+            pump_until(lambda: tab.request is None and self.storage.writer.idle)
+        saved = self.storage.get_chat(tab.strategy.chat_id)
+        self.assertEqual(saved['options']['keep_alive'], 0)
+        self.assertEqual(saved['options']['output_mode'], 'schema')
+        self.assertEqual(saved['messages'][-1]['response_metadata']['validation']['status'], 'schema_mismatch')
+        restored = GenerationTab(mode='chat', chat_id=saved['id'], initial_history=saved['messages'], storage=self.storage)
+        self.tabs.append(restored)
+        self.assertEqual(restored.options_panel.schema_text, panel.schema_text)
+        self.assertEqual(restored.options_panel.get_request_settings()['keep_alive'], 0)
+        bubble = restored.message_list.list_box.get_last_child()
+        self.assertIsNotNone(bubble.json_view)
+        self.assertIn('does not match', bubble.json_view.status_label.get_text())
+        restored.options_panel.output_dropdown.set_selected(0)
+        self.assertIsNotNone(bubble.json_view)
+
+    def test_schema_import_apply_and_json_export(self):
+        import json
+        from pathlib import Path
+        from gi.repository import Gio
+        from src.widgets.json_view import SchemaEditor, JsonResponseView, buffer_text
+        from gi.repository import Adw
+        path = Path(self.temp.name) / 'schema.json'
+        path.write_text('{"type":"object"}')
+        applied = []
+        parent = Adw.Window()
+        self.windows.append(parent)
+        parent.present()
+        editor = SchemaEditor('', applied.append)
+        editor.present(parent)
+        dialog = unittest.mock.Mock()
+        dialog.open.side_effect = lambda parent, cancel, callback: callback(dialog, None)
+        dialog.open_finish.return_value = Gio.File.new_for_path(str(path))
+        with patch('src.widgets.json_view.Gtk.FileDialog', return_value=dialog):
+            editor.import_schema()
+            pump_until(lambda: bool(buffer_text(editor.editor)))
+        editor.apply_schema()
+        self.assertEqual(json.loads(applied[0]), {'type': 'object'})
+        invalid = SchemaEditor('{', applied.append)
+        invalid.apply_schema()
+        self.assertTrue(invalid.error_label.get_visible())
+        self.assertEqual(len(applied), 1)
+        view = JsonResponseView()
+        raw = '{"value": 3}'
+        view.update(raw)
+        view.finish({'status': 'valid'})
+        self.assertTrue(view.save_json.get_sensitive())
+        self.assertEqual(view.raw, raw)
+        export_path = Path(self.temp.name) / 'output.json'
+        dialog.save.side_effect = lambda parent, cancel, callback: callback(dialog, None)
+        dialog.save_finish.return_value = Gio.File.new_for_path(str(export_path))
+        with patch('src.widgets.json_view.Gtk.FileDialog', return_value=dialog):
+            view.export()
+            pump_until(lambda: export_path.exists() and export_path.stat().st_size > 0)
+        self.assertEqual(json.loads(export_path.read_text()), {'value': 3})
+        view.update('{')
+        view.finish({'status': 'incomplete'})
+        self.assertFalse(view.save_json.get_sensitive())
+        self.assertEqual(buffer_text(view.view), '{')
+
+    def test_vision_controls_and_text_only_history_preserve_images(self):
+        from pathlib import Path
+        import base64
+        # A valid 1x1 PNG is also round-tripped through the image table.
+        texture = Gdk.MemoryTexture.new(1, 1, Gdk.MemoryFormat.R8G8B8A8, GLib.Bytes.new(bytes([255, 0, 0, 255])), 4)
+        png = base64.b64encode(texture.save_to_png_bytes().get_data()).decode('ascii')
+        path = Path(self.temp.name) / 'image.png'
+        path.write_bytes(base64.b64decode(png))
+        tab = self.make_tab()
+        tab.chat_input.set_model_details({'capabilities': ['vision']})
+        tab.chat_input.selected_image_paths = [str(path)]
+        tab.chat_input.update_image_preview()
+        tab.chat_input.entry.set_text('describe this')
+        requests = []
+        def chat(**kwargs):
+            requests.append(kwargs['messages'])
+            yield {'message': {'content': 'a red pixel'}, 'done': True}
+        with patch.object(ollama, 'chat', side_effect=chat):
+            tab.on_send_clicked()
+            pump_until(lambda: tab.request is None and self.storage.writer.idle)
+            self.assertIn('images', requests[0][0])
+            tab.chat_input.set_model_details({'capabilities': ['completion']})
+            self.assertFalse(tab.chat_input.attach_button.get_sensitive())
+            self.assertIn('only text history', tab.chat_input.capability_notice.get_text())
+            tab.chat_input.entry.set_text('continue without vision')
+            tab.on_send_clicked()
+            pump_until(lambda: tab.request is None and self.storage.writer.idle)
+            self.assertTrue(all('images' not in msg for msg in requests[-1]))
+            saved = self.storage.get_chat(tab.strategy.chat_id)
+            self.assertEqual(saved['messages'][0]['images'], [png])
+            self.assertTrue(saved['messages'][-1]['response_metadata']['history_images_omitted'])
+            tab.chat_input.selected_image_paths = [str(path)]
+            tab.chat_input.update_image_preview()
+            tab.chat_input.entry.set_text('keep draft')
+            tab.on_send_clicked()
+            self.assertEqual(tab.chat_input.entry.get_text(), 'keep draft')
+            self.assertEqual(len(requests), 2)
+            tab.chat_input.set_model_details({'capabilities': ['vision']})
+            tab.on_send_clicked()
+            pump_until(lambda: tab.request is None and self.storage.writer.idle)
+            self.assertIn('images', requests[-1][0])
+        tab.chat_input.set_model_details(None)
+        self.assertTrue(tab.chat_input.attach_button.get_sensitive())
+        self.assertIn('unknown', tab.chat_input.capability_notice.get_text())
+
+    def test_native_tabs_sidebar_actions_and_deferred_close(self):
+        window, first = self.make_window()
+        second = window.new_chat_tab()
+        self.tabs.append(second)
+        pump_until(lambda: session.worker.idle and self.storage.writer.idle)
+        page = window.tab_view.get_page(first)
+        window.tab_view.reorder_page(page, 1)
+        window.tab_view.set_selected_page(page)
+        self.assertEqual(window.history_sidebar.get_selected_item().chat_id, first.strategy.chat_id)
+        window.pin_chat(first.strategy.chat_id)
+        pump_until(lambda: self.storage.writer.idle and window.chat_rows[first.strategy.chat_id].is_pinned)
+        self.assertEqual(window.chat_rows[first.strategy.chat_id].get_section(), window.pinned_section)
+        self.assertIs(window.open_chat_tab(self.storage.get_chat(first.strategy.chat_id)), first)
+        self.assertEqual(window.tab_view.get_n_pages(), 2)
+        window.update_tab_title(first.strategy.chat_id, 'Renamed')
+        self.assertEqual(page.get_title(), 'Renamed')
+        fixture = Server('stall')
+        self.addCleanup(fixture.close)
+        host = first.options_panel.get_selected_host()
+        self.storage.update_host(host['id'], host['name'], fixture.host, True)
+        first.update_hosts()
+        pump_until(lambda: first.chat_input.get_selected_model() == 'test')
+        first.chat_input.entry.set_text('save before close')
+        first.on_send_clicked()
+        pump_until(lambda: first.request and first.request.content == 'partial')
+        self.assertTrue(page.get_loading())
+        release = threading.Event()
+        self.storage._submit(lambda: release.wait(3))
+        window.tab_view.close_page(page)
+        pump_until(lambda: first.request is None)
+        self.assertEqual(window.tab_view.get_n_pages(), 2)
+        release.set()
+        pump_until(lambda: window.tab_view.get_n_pages() == 1)
+        saved = self.storage.get_chat(first.strategy.chat_id)
+        self.assertEqual(saved['messages'][-1]['response_metadata']['status'], 'stopped')
+        window.delete_chat(first.strategy.chat_id)
+        pump_until(lambda: self.storage.writer.idle)
+        self.assertNotIn(first.strategy.chat_id, window.chat_rows)
+        self.assertIsNone(self.storage.get_chat(first.strategy.chat_id))
+
+    def test_running_models_refresh_unload_busy_and_close(self):
+        from src.model_manager import ModelManagerDialog, unloading_models, model_key, running_model_subtitle
+        self.stack.enter_context(patch.object(ollama, 'fetch_model_details', return_value=[]))
+        calls = []
+        def running(host, **kwargs):
+            calls.append(host)
+            return [{'name': 'test', 'size_vram': 0, 'context_length': 4096}]
+        self.stack.enter_context(patch.object(ollama, 'fetch_running_models', side_effect=running))
+        busy = True
+        manager = ModelManagerDialog(self.storage, is_model_busy=lambda host, model: busy)
+        self.windows.append(manager)
+        manager.model_stack.set_visible_child_name('running')
+        manager.present()
+        pump_until(lambda: bool(manager._running_rows))
+        row, host, model, button = manager._running_rows[0]
+        self.assertFalse(button.get_sensitive())
+        self.assertIn('Unavailable', running_model_subtitle({'size_vram': 0}))
+        self.assertNotIn('VRAM: Unavailable', row.get_subtitle())
+        busy = False
+        manager.update_unload_buttons()
+        gate = threading.Event()
+        def unload(*args, **kwargs):
+            gate.wait(2)
+            return {'done': True}
+        with patch.object(ollama, 'unload_model', side_effect=unload) as api:
+            manager.on_unload_clicked(button, host, model)
+            self.assertIn(model_key(host, model), unloading_models)
+            self.assertFalse(button.get_sensitive())
+            manager.on_unload_clicked(button, host, model)
+            gate.set()
+            pump_until(lambda: model_key(host, model) not in unloading_models and not manager._running_pending)
+            self.assertEqual(api.call_count, 1)
+        self.assertGreaterEqual(len(calls), 2)
+        manager.close()
+        pump_until(lambda: manager._poll_id is None and session.worker.idle)
+        self.assertTrue(manager.requests.closed)
+
+    def test_running_model_refresh_ignores_old_host_and_does_not_overlap(self):
+        from src.model_manager import ModelManagerDialog
+        self.stack.enter_context(patch.object(ollama, 'fetch_model_details', return_value=[]))
+        old_host = self.storage.get_all_hosts()[0]
+        new_host = self.storage.add_host('Other', 'http://other:11434', False)
+        gate, started = threading.Event(), threading.Event()
+        calls = []
+        def running(host, **kwargs):
+            calls.append(host)
+            if host == old_host['hostname']:
+                started.set()
+                gate.wait(3)
+                return [{'name': 'old'}]
+            return [{'name': 'new'}]
+        with patch.object(ollama, 'fetch_running_models', side_effect=running):
+            manager = ModelManagerDialog(self.storage)
+            self.windows.append(manager)
+            manager.model_stack.set_visible_child_name('running')
+            manager.present()
+            pump_until(started.is_set)
+            manager.refresh_running()
+            self.assertEqual(calls.count(old_host['hostname']), 1)
+            manager.host_dropdown.set_selected(1)
+            pump_until(lambda: manager._running_rows and manager._running_rows[0][2] == 'new')
+            gate.set()
+            pump_until(lambda: session.worker.idle)
+            self.assertEqual(manager._running_rows[0][2], 'new')
+            manager.close()
+
+    def test_adaptive_window_shortcuts_and_schema_layout(self):
+        from gi.repository import Adw
+        window, tab = self.make_window()
+        window.set_default_size(400, 800)
+        window.present()
+        pump_until(lambda: window.get_mapped() and window.split_view.get_collapsed())
+        self.assertLessEqual(window.get_width(), 400)
+        window.lookup_action('toggle_sidebar').activate(None)
+        self.assertTrue(window.split_view.get_show_sidebar())
+        item = window.chat_rows[tab.strategy.chat_id]
+        pump_until(lambda: self.storage.writer.idle)
+        window.on_history_activated(window.history_sidebar, item.get_index())
+        self.assertFalse(window.split_view.get_show_sidebar())
+        tab.options_panel.set_expanded(True)
+        self.assertEqual(tab.options_panel.get_label(), 'Advanced Settings')
+        tab.options_panel.output_dropdown.set_selected(2)
+        tab.options_panel.keep_alive_dropdown.set_selected(5)
+        tab.options_panel.keep_alive_entry.set_text('17')
+        tab.options_panel.schema_text = '{"type":"object"}'
+        self.assertEqual(tab.options_panel.get_request_settings()['keep_alive'], 17)
+        pump_until(lambda: tab.options_panel.get_allocated_height() > 200)
+        self.assertLessEqual(window.get_width(), 400)
+        for scheme in (Adw.ColorScheme.FORCE_DARK, Adw.ColorScheme.FORCE_LIGHT):
+            Adw.StyleManager.get_default().set_color_scheme(scheme)
+        second = window.new_tab()
+        self.tabs.append(second)
+        window.lookup_action('previous_tab').activate(None)
+        self.assertIs(window.tab_view.get_selected_page().get_child(), tab)
+        window.lookup_action('next_tab').activate(None)
+        self.assertIs(window.tab_view.get_selected_page().get_child(), second)
+        window.lookup_action('close_tab').activate(None)
+        pump_until(lambda: window.tab_view.get_n_pages() == 1)
+        window.set_default_size(1000, 800)
+        pump_until(lambda: not window.split_view.get_collapsed())
+        self.assertTrue(window.split_view.get_show_sidebar())
+        Adw.StyleManager.get_default().set_color_scheme(Adw.ColorScheme.DEFAULT)
+
+    def test_keep_open_after_save_error_restarts_capability_fetches(self):
+        window, tab = self.make_window()
+        blocked = True
+        def save():
+            if blocked:
+                raise OSError('disk full')
+        with self.assertRaises(OSError):
+            self.storage._submit(save).result(2)
+        tab.chat_input.set_model_details(None, loading=True)
+        window.request_shutdown()
+        pump_until(lambda: window._save_error_dialog is not None)
+        window._save_error_dialog.emit('response', 'keep')
+        pump_until(lambda: tab.chat_input.get_selected_model() == 'test'
+                   and not tab.chat_input.capabilities_loading and session.worker.idle)
+        self.assertFalse(window._shutting_down)
+        self.assertIs(tab.chat_input.image_support, False)
+        blocked = False
+        self.storage.writer.retry()
+        pump_until(lambda: self.storage.writer.idle)
+
+    def test_selecting_schema_opens_editor_and_empty_send_preserves_prompt(self):
+        from src.widgets.json_view import buffer_text
+        window, tab = self.make_window()
+        window.present()
+        panel = tab.options_panel
+        panel.set_expanded(True)
+        pump_until(lambda: panel.output_dropdown.get_mapped())
+        tab.chat_input.entry.set_text('Return JSON with count equal to 7.')
+        response = iter([{'message': {'content': '{"count":7}'}, 'done': True}])
+        with patch.object(ollama, 'chat', return_value=response) as chat:
+            panel.output_dropdown.set_selected(2)
+            pump_until(lambda: panel._schema_dialog is not None)
+            editor = panel._schema_dialog
+            self.assertEqual(buffer_text(editor.editor), '')
+            self.assertFalse(editor.error_label.get_visible())
+            self.assertIsNone(tab.message_list.list_box.get_first_child())
+            chat.assert_not_called()
+            editor.close()
+            pump_until(lambda: panel._schema_dialog is None)
+            tab.on_send_clicked()
+            pump_until(lambda: panel._schema_dialog is not None)
+            editor = panel._schema_dialog
+            self.assertIn('Paste or import', editor.error_label.get_text())
+            self.assertNotIn('Expecting value', editor.error_label.get_text())
+            self.assertIsNone(tab.request)
+            self.assertEqual(tab.chat_input.entry.get_text(), 'Return JSON with count equal to 7.')
+            self.assertIsNone(tab.message_list.list_box.get_first_child())
+            chat.assert_not_called()
+            editor.editor.get_buffer().set_text('{')
+            editor.apply_schema()
+            self.assertIs(panel._schema_dialog, editor)
+            self.assertEqual(panel.schema_text, '')
+            self.assertIn('Invalid schema JSON', editor.error_label.get_text())
+            editor.editor.get_buffer().set_text('{"type":"object","properties":{"count":{"type":"integer"}},"required":["count"]}')
+            editor.apply_schema()
+            pump_until(lambda: panel._schema_dialog is None)
+            tab.on_send_clicked()
+            pump_until(lambda: tab.request is None and self.storage.writer.idle)
+            self.assertEqual(chat.call_count, 1)
+            self.assertEqual(chat.call_args.kwargs['format']['required'], ['count'])
+            self.assertEqual(self.storage.get_chat(tab.strategy.chat_id)['messages'][-1]['response_metadata']['validation']['status'], 'valid')
+
+    def test_restoring_schema_settings_does_not_open_editor(self):
+        window, tab = self.make_window()
+        window.present()
+        panel = tab.options_panel
+        panel.set_expanded(True)
+        pump_until(lambda: panel.output_dropdown.get_mapped())
+        for text in ('{"type":"object"}', ''):
+            panel.output_dropdown.set_selected(0)
+            with patch.object(panel, 'edit_schema') as edit:
+                panel.load_options({'output_mode': 'schema', 'schema_text': text})
+                pump_until(lambda: True)
+                edit.assert_not_called()
+            self.assertEqual(panel.schema_text, text)
+            self.assertTrue(panel.schema_button.get_visible())
+        panel.output_dropdown.set_selected(0)
+        panel.schema_text = '{'
+        panel.output_dropdown.set_selected(2)
+        tab.chat_input.entry.set_text('Keep this prompt')
+        tab.on_send_clicked()
+        pump_until(lambda: panel._schema_dialog is not None)
+        self.assertIn('Invalid schema JSON', panel._schema_dialog.error_label.get_text())
+        self.assertIsNone(tab.message_list.list_box.get_first_child())
+        self.assertEqual(tab.chat_input.entry.get_text(), 'Keep this prompt')
+        panel._schema_dialog.close()
+        pump_until(lambda: panel._schema_dialog is None)

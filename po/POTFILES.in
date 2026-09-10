@@ -5,7 +5,6 @@ data/io.github.jackrabbithanna.Gnollama.gschema.xml
 data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in
 src/ai_bubble.ui
 src/bubbles.py
-src/history_row.ui
 src/host_edit_dialog.ui
 src/host_manager.py
 src/host_manager.ui
@@ -24,3 +23,6 @@ src/widgets/options_panel.py
 src/widgets/options_panel.ui
 src/window.py
 src/window.ui
+
+src/structured.py
+src/widgets/json_view.py

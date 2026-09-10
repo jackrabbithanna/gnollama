@@ -159,6 +159,15 @@ def delete_model(host, model_name, timeout=10, cancellable=None):
     return True
 
 
+def fetch_running_models(host, timeout=10, cancellable=None):
+    return _request(host, '/api/ps', timeout=timeout, cancellable=cancellable).get('models', [])
+
+
+def unload_model(host, model, timeout=30, cancellable=None):
+    return _request(host, '/api/generate', {'model': model, 'keep_alive': 0, 'stream': False},
+                    'POST', timeout, cancellable)
+
+
 def pull(host, model, insecure=False, timeout=300, cancellable=None):
     data = {'model': model, 'insecure': insecure, 'stream': True}
     complete = False
@@ -173,7 +182,15 @@ def pull(host, model, insecure=False, timeout=300, cancellable=None):
         raise OllamaError(_('Model pull ended before completion'))
 
 
-def _add_common_params(data, options, thinking, logprobs, top_logprobs):
+def _add_common_params(data, options, thinking, logprobs, top_logprobs, format=None, keep_alive=None):
+    if format is not None:
+        if format != 'json' and not isinstance(format, dict):
+            raise OllamaError(_('Invalid output format'))
+        data['format'] = copy.deepcopy(format)
+    if keep_alive is not None:
+        if isinstance(keep_alive, bool) or not isinstance(keep_alive, int) or keep_alive < -1:
+            raise OllamaError(_('Keep-alive must be a duration in seconds, 0, or -1'))
+        data['keep_alive'] = keep_alive
     if thinking is not None:
         if not isinstance(thinking, bool) and thinking not in ('low', 'medium', 'high', 'max'):
             raise OllamaError(_('Invalid thinking setting'))
@@ -189,20 +206,21 @@ def _add_common_params(data, options, thinking, logprobs, top_logprobs):
 
 
 def generate(host, model, prompt, system=None, options=None, thinking=None,
-             logprobs=False, top_logprobs=None, images=None, timeout=300, cancellable=None):
+             logprobs=False, top_logprobs=None, images=None, timeout=300, cancellable=None,
+             format=None, keep_alive=None):
     data = {'model': model, 'prompt': prompt, 'stream': True}
     if images:
         data['images'] = images
     if system:
         data['system'] = system
-    _add_common_params(data, options, thinking, logprobs, top_logprobs)
+    _add_common_params(data, options, thinking, logprobs, top_logprobs, format, keep_alive)
     yield from _stream_response(host, '/api/generate', data, timeout, cancellable)
 
 
 def chat(host, model, messages, options=None, thinking=None, logprobs=False,
-         top_logprobs=None, images=None, timeout=300, cancellable=None):
+         top_logprobs=None, images=None, timeout=300, cancellable=None, format=None, keep_alive=None):
     data = {'model': model, 'messages': copy.deepcopy(messages), 'stream': True}
     if images and data['messages'] and data['messages'][-1]['role'] == 'user':
         data['messages'][-1]['images'] = images
-    _add_common_params(data, options, thinking, logprobs, top_logprobs)
+    _add_common_params(data, options, thinking, logprobs, top_logprobs, format, keep_alive)
     yield from _stream_response(host, '/api/chat', data, timeout, cancellable)

@@ -1,7 +1,9 @@
 import math
 from typing import Dict, Any, Callable, List, Optional
-from gi.repository import Gtk, GObject
+from gi.repository import Gtk, GObject, GLib
 from ..storage import ChatStorage
+from ..structured import request_format
+from .json_view import SchemaEditor
 
 @Gtk.Template(resource_path='/io/github/jackrabbithanna/Gnollama/widgets/options_panel.ui')
 class OptionsPanel(Gtk.Expander):
@@ -22,11 +24,73 @@ class OptionsPanel(Gtk.Expander):
     num_ctx_entry: Gtk.Entry = Gtk.Template.Child()
     num_predict_entry: Gtk.Entry = Gtk.Template.Child()
     stop_entry: Gtk.Entry = Gtk.Template.Child()
+    output_dropdown = Gtk.Template.Child()
+    schema_button = Gtk.Template.Child()
+    keep_alive_dropdown = Gtk.Template.Child()
+    keep_alive_entry = Gtk.Template.Child()
 
     def __init__(self, **kwargs: Any) -> None:
         super().__init__(**kwargs)
+        # Also set this construct property in the parent template for GtkBuilder.
+        self.set_label(_('Advanced Settings'))
         self.storage = None
         self.host_list: List[Dict[str, Any]] = []
+        self.schema_text = ''
+        self._schema_dialog = None
+        self._restoring_options = False
+        self.output_modes = ['text', 'json', 'schema']
+        self.keep_alive_values = [None, 0, 300, 1800, -1, 'custom']
+        self.output_dropdown.set_model(Gtk.StringList.new([_('Text'), _('JSON'), _('JSON Schema')]))
+        self.keep_alive_dropdown.set_model(Gtk.StringList.new([
+            _('Server default'), _('Unload after reply'), _('Five minutes'),
+            _('Thirty minutes'), _('Indefinitely'), _('Custom seconds')]))
+        self.output_dropdown.connect('notify::selected', self._format_changed)
+        self.keep_alive_dropdown.connect('notify::selected', self._keep_alive_changed)
+        self.schema_button.connect('clicked', self.edit_schema)
+        self._format_changed()
+        self._keep_alive_changed()
+
+    def _format_changed(self, *args):
+        schema_mode = self.output_dropdown.get_selected() == 2
+        self.schema_button.set_visible(schema_mode)
+        if (args and schema_mode and not self.schema_text.strip()
+                and not self._restoring_options and self.get_mapped()):
+            # Let the dropdown finish handling selection before presenting a dialog.
+            GLib.idle_add(self._open_missing_schema)
+
+    def _open_missing_schema(self):
+        if (self.get_mapped() and self.output_dropdown.get_selected() == 2
+                and not self.schema_text.strip() and self._schema_dialog is None):
+            self.edit_schema()
+        return False
+
+    def _keep_alive_changed(self, *args):
+        self.keep_alive_entry.set_visible(self.keep_alive_dropdown.get_selected() == 5)
+
+    def edit_schema(self, *args, error=None):
+        if not isinstance(self.get_root(), Gtk.Window):
+            return
+        if self._schema_dialog is None:
+            def apply(text):
+                self.schema_text = text
+            self._schema_dialog = SchemaEditor(self.schema_text, apply)
+            self._schema_dialog.connect('closed', lambda *args: setattr(self, '_schema_dialog', None))
+        if error:
+            self._schema_dialog.show_error(error)
+        self._schema_dialog.present(self)
+
+    def get_request_settings(self):
+        mode = self.output_modes[self.output_dropdown.get_selected()]
+        output_format = request_format(mode, self.schema_text)
+        keep_alive = self.keep_alive_values[self.keep_alive_dropdown.get_selected()]
+        if keep_alive == 'custom':
+            try:
+                keep_alive = int(self.keep_alive_entry.get_text())
+            except ValueError as exc:
+                raise ValueError(_('Keep-alive must be a positive number of seconds.')) from exc
+            if keep_alive <= 0:
+                raise ValueError(_('Keep-alive must be a positive number of seconds.'))
+        return dict(output_mode=mode, schema_text=self.schema_text, format=output_format, keep_alive=keep_alive)
 
     def update_hosts(self) -> None:
         """Reloads the host list from storage and updates the dropdown."""
@@ -108,6 +172,17 @@ class OptionsPanel(Gtk.Expander):
 
     def load_options(self, options: Dict[str, Any]) -> None:
         """Populates UI options from a dict."""
+        mode = options.get('output_mode', 'text')
+        self._restoring_options = True
+        self.schema_text = options.get('schema_text', '')
+        self.output_dropdown.set_selected(self.output_modes.index(mode) if mode in self.output_modes else 0)
+        self._restoring_options = False
+        keep_alive = options.get('keep_alive')
+        if keep_alive in self.keep_alive_values:
+            self.keep_alive_dropdown.set_selected(self.keep_alive_values.index(keep_alive))
+        else:
+            self.keep_alive_dropdown.set_selected(5)
+            self.keep_alive_entry.set_text(str(keep_alive))
         self.stats_check.set_active(options.get('show_stats', True))
         self.seed_entry.set_text(str(options.get('seed', '')))
         self.temperature_entry.set_text(str(options.get('temperature', '')))

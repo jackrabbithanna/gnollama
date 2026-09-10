@@ -6,6 +6,7 @@ from threading import Lock
 
 from gi.repository import Gio
 from . import ollama
+from .structured import validate_response
 
 
 class NetworkWorker:
@@ -76,19 +77,26 @@ class RequestState:
         self.metadata['status'] = status
         if error:
             self.metadata['error'] = error
+        validation = self.metadata.get('validation') or validate_response(self.content, self.settings.get('format'), status)
+        if validation is not None:
+            self.metadata['validation'] = validation
+        if self.settings.get('history_images_omitted'):
+            self.metadata['history_images_omitted'] = True
         return True
 
     def api_details(self):
-        return {k: v for k, v in self.settings.items() if k not in ('host_id', 'show_stats')}
+        return {k: v for k, v in self.settings.items()
+                if k not in ('host_id', 'show_stats', 'output_mode', 'schema_text', 'history_images_omitted')}
 
 
-def api_messages(history):
+def api_messages(history, include_images=True):
     """Local display metadata must never become part of the model's prompt."""
     messages = []
     for msg in history:
         if msg['role'] == 'assistant' and not msg.get('content'):
             continue
-        messages.append({k: copy.deepcopy(msg[k]) for k in ('role', 'content', 'images') if k in msg})
+        keys = ('role', 'content', 'images') if include_images else ('role', 'content')
+        messages.append({k: copy.deepcopy(msg[k]) for k in keys if k in msg})
     return messages
 
 
@@ -99,6 +107,7 @@ class GenerationStrategy:
     def process(self, state):
         args = {k: state.settings[k] for k in
                 ('host', 'model', 'options', 'thinking', 'logprobs', 'top_logprobs')}
+        args.update(format=state.settings.get('format'), keep_alive=state.settings.get('keep_alive'))
         return ollama.generate(**args, prompt=state.prompt, system=state.settings['system'],
                                images=state.images, cancellable=state.cancellable)
 
@@ -118,7 +127,7 @@ class ChatStrategy(GenerationStrategy):
         if state.images:
             msg['images'] = state.images
         self.history.append(msg)
-        state.messages = api_messages(self.history)
+        state.messages = api_messages(self.history, include_images=not state.settings.get('history_images_omitted'))
         if state.settings['system']:
             state.messages.insert(0, {'role': 'system', 'content': state.settings['system']})
         self.save(state)
@@ -126,6 +135,7 @@ class ChatStrategy(GenerationStrategy):
     def process(self, state):
         args = {k: state.settings[k] for k in
                 ('host', 'model', 'options', 'thinking', 'logprobs', 'top_logprobs')}
+        args.update(format=state.settings.get('format'), keep_alive=state.settings.get('keep_alive'))
         return ollama.chat(**args, messages=state.messages, cancellable=state.cancellable)
 
     def save(self, state, on_done=None):
@@ -141,6 +151,9 @@ class ChatStrategy(GenerationStrategy):
                        logprobs=state.settings['logprobs'],
                        top_logprobs=state.settings['top_logprobs'],
                        show_stats=state.settings['show_stats'])
+        options.update(output_mode=state.settings.get('output_mode', 'text'),
+                       schema_text=state.settings.get('schema_text', ''),
+                       keep_alive=state.settings.get('keep_alive'))
         return self.storage.save_chat(self.chat_id, self.history, model=state.settings['model'],
                                       options=options, system=state.settings['system'],
                                       host=state.settings['host_id'], on_done=on_done)

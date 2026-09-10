@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <object class="AdwShortcutsDialog" id="shortcuts_dialog">
     <child>
@@ -20,6 +19,30 @@
           <object class="AdwShortcutsItem">
             <property name="title" translatable="yes" context="shortcut window">New Chat Tab</property>
             <property name="action-name">win.new_chat_tab</property>
+          </object>
+        </child>
+        <child>
+          <object class="AdwShortcutsItem">
+            <property name="title" translatable="yes" context="shortcut window">Close Tab</property>
+            <property name="action-name">win.close_tab</property>
+          </object>
+        </child>
+        <child>
+          <object class="AdwShortcutsItem">
+            <property name="title" translatable="yes" context="shortcut window">Next Tab</property>
+            <property name="action-name">win.next_tab</property>
+          </object>
+        </child>
+        <child>
+          <object class="AdwShortcutsItem">
+            <property name="title" translatable="yes" context="shortcut window">Previous Tab</property>
+            <property name="action-name">win.previous_tab</property>
+          </object>
+        </child>
+        <child>
+          <object class="AdwShortcutsItem">
+            <property name="title" translatable="yes" context="shortcut window">Toggle Sidebar</property>
+            <property name="action-name">win.toggle_sidebar</property>
           </object>
         </child>
       </object>

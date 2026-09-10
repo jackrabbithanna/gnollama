@@ -38,19 +38,6 @@
     margin-bottom: 2px;
 }
 
-tab {
-    border: 1px solid alpha(var(--window-fg-color), 0.1);
-    border-bottom: none;
-    border-radius: 6px 6px 0 0;
-    margin: 0 2px;
-    padding: 4px 8px;
-}
-
-#sidebar_box {
-    background-color: var(--sidebar-bg-color);
-    border-right: 1px solid var(--sidebar-border-color);
-}
-
 .template-bg {
     background-color: alpha(var(--window-fg-color), 0.05);
     border-radius: 6px;

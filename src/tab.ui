@@ -14,7 +14,6 @@
     </child>
     <child>
       <object class="OptionsPanel" id="options_panel">
-        <property name="label" translatable="yes">Advanced Settings</property>
       </object>
     </child>
   </template>

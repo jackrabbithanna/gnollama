@@ -19,6 +19,7 @@ Whether you are developing, experimenting, or chatting with local models, Gnolla
 * **Dual Tab Workflows**:
   * **New Chat (`/api/chat`)**: Multi-turn sessions that preserve conversation context.
   * **New Response (`/api/generate`)**: Single-turn completions ideal for prompt engineering and testing.
+  * Chat and Response model pickers exclude models reported as embedding-only. Embedding models remain available in Knowledge and Manage Models; models with unknown capabilities remain selectable for older servers.
 * **Conversation History & Sidebar**:
   * Automatically saves chat logs and model configurations between runs.
   * **Pin Chats**: Pin essential conversations to the top of your history list.
@@ -28,8 +29,9 @@ Whether you are developing, experimenting, or chatting with local models, Gnolla
   * View comprehensive model info, including size, parameter specifications, Modelfiles, templates, and licenses.
   * Switch between Installed and Running models for the selected host. Inspect memory, VRAM, context length, and expiry, or unload a model while keeping its downloaded files.
   * Running models refresh every five seconds while that view is visible. Unload is unavailable while Gnollama has an active response using the model.
-* **Structured Output**: Choose Text, JSON, or JSON Schema in Advanced Settings for either Chat or Response tabs. Paste or import a schema, validate responses locally, and copy or save JSON. The raw response and validation result remain in saved chat history.
+* **Structured Output**: Choose Text, JSON, or JSON Schema below the image controls in either Chat or Response tabs. Paste or import a schema, validate responses locally, and copy or save JSON. The raw response and validation result remain in saved chat history.
 * **Tool Calling Playground**: Define function tools in Chat tabs, inspect model calls and argument validation, supply mock results, and continue with the current model and settings. Import/export definitions as JSON and reopen pending rounds from saved history.
+* **Knowledge Library and RAG**: Import text and PDFs, organize multi-document collections, create local embeddings with Ollama, inspect vectors, and search selected collections using cosine, Euclidean, or Manhattan comparison. Chats retain the passages used for each answer.
 * **Model Lifetime**: Choose the server default, unload after a reply, five or thirty minutes, indefinitely, or a custom duration in seconds in Advanced Settings. This setting applies to requests from that tab.
 * **Rich Markdown & Code Rendering**: Full Markdown support and code syntax highlighting (powered by GTKSourceView 5).
 * **Multimodal Image Support**: Upload and attach multiple images to your prompts for vision-enabled models.
@@ -41,6 +43,51 @@ Whether you are developing, experimenting, or chatting with local models, Gnolla
 * **Stop Responses**: Stop generation while keeping partial answers in chat history. Pending history writes finish before the application quits.
 * **Adaptive GNOME Navigation**: Native tabs support reordering and loading indicators. The Pinned and Recent sidebar collapses on narrow windows. Use Ctrl+W to close a tab, Ctrl+Page Up/Down to switch tabs, and F9 to toggle the sidebar.
 
+### Knowledge Library and RAG
+
+1. Use **Manage Models** to pull an embedding model, such as `qwen3-embedding:0.6b` or `embeddinggemma`, on a configured Ollama host. The model generating chat answers can run on a different host.
+2. Switch to **Knowledge**. Choose **Add Text** to paste content, or **Import Files…** to select UTF-8 text, Markdown, source files, or PDFs containing selectable text. Review the extraction preview and save it.
+3. Choose **New Collection**, give it a name, and choose its embedding host/model, formatting preset, and chunk settings. Add existing documents in bulk, or paste/import directly into the collection. Missing embeddings build automatically; matching completed or queued indexes are reused. A document can belong to several collections without duplicating its text or compatible vectors.
+4. Use the Library selector to browse **All Documents**, **Ungrouped Documents**, or a collection. Collections show document readiness and **Build Missing / Retry Failed**. Open a document to inspect its chunks and normalized vectors, or use its **Create Embeddings** action to compare configurations independently.
+5. Open **Test Search** or a Chat tab’s **Choose sources…**. Select an embedding configuration and compatible host/model, then select collections. Several collections can be combined when they share one embedding configuration. Collections include every member; overlapping selections search shared indexes only once. Individual documents and vectors remain available for inspection in Knowledge.
+6. Enable **Use Knowledge** in a Chat tab. Each new turn resolves the current collection membership before searching. Every selected collection must be nonempty and fully indexed; otherwise the app explains which sources need attention and keeps the draft. An optional search-query override can make a follow-up self-contained without changing the chat message.
+
+Collection names and membership can change. Under **Collection Options**, use **Copy with New Settings** to change a collection’s embedding model, prefixes, dimensions, or chunk settings: the original collection and chats are preserved. **Change Embedding Model** selects a model with the original digest, including on another host. Removing a document from a collection or deleting a collection keeps its library documents and embeddings; deleting an individual embedding index leaves its collection membership needing a rebuild. Cancelling a shared build affects every collection using it, and interrupted builds require an explicit retry after restarting.
+
+For a quick example, create a collection and paste: `The maintenance window is Sunday from 02:00 to 04:00 UTC. Contact the infrastructure team to request an exception.` Wait for its embeddings to complete, select the collection in a chat, and ask: `When is the maintenance window?` Expand **Sources used** to inspect the actual passage supplied to the model.
+
+An embedding configuration fixes the model digest, vector dimensions, and document/query prefixes. Searches must use that configuration; a matching model name alone is insufficient if its digest changed. Built-in presets cover plain input, EmbeddingGemma retrieval, Nomic retrieval, and Qwen3 retrieval; custom prefixes are also available. The Qwen3 preset leaves documents plain and adds its retrieval instruction to queries. Existing configurations retain their saved prefixes. Dimensions must be between 1 and 8,192. Defaults are native dimensions and paragraph-aware chunks of up to 1,600 characters with 200 characters of overlap. Ollama receives `truncate=false`; oversized document chunks are split further and the actual boundaries are saved.
+
+Retrieval defaults to six passages and an 8,000-character source budget, with no minimum similarity. These controls are separate from generation settings. Character budgets are not token limits; allow room in the chat model's context for history, tools, and the answer. Similarity is a ranking score, not confidence. The model is instructed to favor supplied sources, cite passages when the response format permits, and acknowledge missing evidence. This does not guarantee factual accuracy or citation compliance.
+
+**Similarity measure** offers three choices:
+
+| Measure | Closest match | Optional cutoff |
+| --- | --- | --- |
+| Cosine similarity (default) | Higher similarity, from −1 to 1 | Minimum similarity |
+| Euclidean distance (L2) | Lower distance | Maximum distance, zero or greater |
+| Manhattan distance (L1) | Lower distance | Maximum distance, zero or greater |
+
+Switching measures clears the cutoff because its units change. Gnollama stores normalized vectors, so Euclidean and cosine usually produce the same ranking; Manhattan sums absolute component differences and can produce a different ranking. The selected measure and actual scores are saved with each answer and displayed in **Sources used**. Existing snapshots without a measure are interpreted as cosine. No re-embedding or database migration is needed to switch measures.
+
+The original prompt remains visible and saved. Exact retrieved passages, locations, scores, embedding configuration, search query, and resolved collection names/membership are saved with the turn. Collection changes affect future questions; earlier answers retain their original sources. Only that turn's reference passages are added to outgoing context. Tool-call continuations reuse the same snapshot, even after reopening the chat. JSON/JSON Schema output remains supported, with source information in a separate panel rather than additional schema fields.
+
+If retrieval fails or selected sources disappear, the prompt remains in the composer. Adjust sources, retry, or explicitly choose **Send Without Knowledge**. Changing the selection affects subsequent user turns. Applied selections persist even in chats closed before their first prompt.
+
+Older chats may retain individual document/chunk selections. They continue to work until replaced; **Choose sources…** explains that applying collections replaces those older sources. Closing the dialog leaves the saved selection unchanged.
+
+Gnollama stores extracted text and page locations in its local SQLite database, alongside normalized float32 vectors stored only in sqlite-vec virtual tables, one per embedding configuration. It does not copy original files or modify them. Saved source content is immutable; import revisions as new documents. Duplicate text offers opening the existing document. PDF page extraction can lose layout; pages without text are reported, and OCR and password-protected PDFs are not supported. Imports are limited to 50 MiB per file, 2,000 PDF pages, and 5 million extracted characters per document.
+
+When deleting a model, the confirmation reports affected documents, indexes, and vectors. Data is kept by default. The optional vector-cleanup checkbox removes matching indexes across creation hosts while retaining source text. Historical chat passages remain saved. Deleting a model externally never automatically deletes library data; refresh the library to check availability, select a compatible host, or build replacement indexes. Active embedding jobs participate in the model manager's busy checks.
+
+The library uses exact search with sqlite-vec and needs no separate vector database service. Cosine uses the existing vec0 nearest-neighbor search; Euclidean and Manhattan use sqlite-vec’s native distance functions over the selected vectors. Every measure filters sources before ranking, with deterministic ties. The distance options can be slower for large collections. Embedding latency is additional and depends on the model and host.
+
+For the pinned sqlite-vec 0.1.9 layout, distance searches reuse read-only vector block handles, validate slot mappings, and keep only the best candidates in memory. Other extension versions fall back to the public scalar-query interface. A GNOME 50 aarch64 check of 10,000 vectors at 1,024 dimensions matched reference rankings and took about 0.04 seconds for cosine, 0.19 seconds for Euclidean, and 0.21 seconds for Manhattan, excluding Ollama inference.
+
+A GNOME 50 aarch64 benchmark of 50,000 vectors at 1,024 dimensions returned identical top-six results to the preceding batched NumPy ranking. Whole-library retrieval took 0.15–0.19 seconds, selecting one 25,000-vector document took 0.17–0.18 seconds, and selecting 25,000 individual chunks took 0.42–0.44 seconds. These are local retrieval timings, excluding Ollama inference. The one-time migration and backup took about 68 seconds; startup displays migration progress and waits for the database operation to finish if closed.
+
+Database upgrades run automatically on startup, with progress and a recoverable error screen. Schema version 7 migrates existing vectors without contacting Ollama: it copies and verifies their IDs, dimensions, and bytes before removing the old vector column. Version 8 adds collections and membership without copying or rebuilding vectors; existing documents appear under **Ungrouped Documents**, and existing chat selections are preserved. Before upgrading an existing database, Gnollama saves a consistent, timestamped `gnollama.db.pre-v8-*.bak` beside the database and reports its location. Keep that file until you have verified the upgrade; it can then be archived or removed. Failed migrations roll back, and incompatible or damaged vectors are never silently discarded. Databases from newer app versions are refused. Older app versions must not be used with the upgraded database. SQLite can reuse pages freed by migration; the database file need not immediately shrink.
+
 ### Structured output details
 
 Selecting JSON Schema opens the editor when no schema has been applied. Paste or import a schema and click Apply; use Edit Schema to change it later. If a schema is missing or invalid when sending, the editor shows the problem and keeps your prompt intact.
@@ -51,7 +98,7 @@ Completed responses show JSON syntax or schema errors with locations. Valid JSON
 
 ### Testing tool calling
 
-1. Open **New Chat**, select a tool-capable model, and enable **Advanced Settings → Tool Calling**. The definition editor opens automatically when empty.
+1. Open **New Chat**, select a tool-capable model, and enable **Tool Calling** below the image controls. The definition editor opens automatically when empty.
 2. Click **Example**, then **Apply**. This loads five coding-harness tools: `list_files`, `read_file`, `search_code`, `replace_in_file`, and `run_command`. Definitions accept an Ollama `tools` array with unique function names and self-contained object parameter schemas.
 3. Send: **Inspect calculator.py. Its add function subtracts instead of adding. Read the file, fix it with the available tools, then run python3 -m unittest -v and report the test result.**
 4. Inspect each call and its argument check. Click **Enter Result…**, supply a mock result, and click **Save Result**. For `read_file`, use the sample file contents below. For a correct `replace_in_file` call, use `{"success":true,"replacements":1}`. For `run_command`, use `{"exit_code":0,"stdout":"","stderr":"Ran 3 tests in 0.001s\n\nOK\n"}`.
@@ -92,7 +139,7 @@ I wanted a GNOME application for Ollama that I could use to test and experiment 
 
 ### Meson
 
-Requires Python 3.10+, PyGObject, GTK 4.18+, libadwaita 1.9+, libsoup 3, jsonschema 4.26+, and Markdown. The Flatpak manifest uses GNOME 50 and builds the current checkout. It bundles checksum-pinned schema-validation dependencies for aarch64 and x86_64.
+Requires Python 3.10+, PyGObject, GTK 4.18+, libadwaita 1.9+, libsoup 3, jsonschema 4.26+, sqlite-vec 0.1.9, SQLite 3.41+ with extension loading, pypdf, and Markdown. The Flatpak manifest uses GNOME 50 and builds the current checkout. It bundles checksum-pinned dependencies for aarch64 and x86_64, including sqlite-vec 0.1.9 and pypdf 6.18.0.
 Code highlighting requires [GTKSourceView](https://wiki.gnome.org/Projects/GtkSourceView) version 5
 
 To install in Ubuntu:
@@ -100,7 +147,10 @@ To install in Ubuntu:
 apt-get install libgtksourceview-5-0 libgtksourceview-5-common libgtksourceview-5-dev
 apt-get install gir1.2-gtksource-5
 apt-get install python3-markdown python3-jsonschema python3-gi gir1.2-soup-3.0
+apt-get install python3-pypdf
 ```
+
+Install `sqlite-vec==0.1.9` in the Python environment used by Meson (for example, a virtual environment with `--system-site-packages` for PyGObject). GNOME Builder bundles it automatically.
 
 ```bash
 meson setup build
@@ -122,7 +172,6 @@ flatpak-builder --user --force-clean /tmp/gnollama-flatpak-build io.github.jackr
 ## TODO
 
 *   More UI Multi-lingual translations
-*   Embeddings?
  
 ## Contribute
 

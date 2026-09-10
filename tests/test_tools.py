@@ -209,7 +209,7 @@ class ToolUITests(unittest.TestCase):
         window = Gtk.Window(child=tab)
         self.windows.append(window)
         window.present()
-        tab.options_panel.set_expanded(True)
+        tab.options_panel.advanced_expander.set_expanded(False)
         test_ui.pump_until(lambda: tab.options_panel.get_mapped())
         tab.options_panel.tools_check.set_active(True)
         test_ui.pump_until(lambda: tab.options_panel._tools_dialog is not None)
@@ -317,6 +317,8 @@ class ToolUITests(unittest.TestCase):
         with db._get_conn() as conn:
             for column in ('tool_calls', 'tool_name', 'tool_call_id'):
                 conn.execute('ALTER TABLE messages DROP COLUMN ' + column)
+            for table in ('knowledge_collection_documents', 'knowledge_collections', 'knowledge_chunks', 'knowledge_indexes', 'embedding_configs', 'knowledge_documents'):
+                conn.execute('DROP TABLE ' + table)
             conn.execute('PRAGMA user_version = 4')
             conn.commit()
         db = DatabaseManager(path)
@@ -326,7 +328,7 @@ class ToolUITests(unittest.TestCase):
         self.assertEqual(saved['options']['schema_text'], '{}')
         self.assertEqual(saved['messages'][0]['content'], 'answer')
         with db._get_conn() as conn:
-            self.assertEqual(conn.execute('PRAGMA user_version').fetchone()[0], 5)
+            self.assertEqual(conn.execute('PRAGMA user_version').fetchone()[0], 8)
         db.delete_chat('old')
         db.save_tool_state('old', messages=[], options={'tools_text': EXAMPLE_TOOLS})
         self.assertIsNone(db.get_chat('old'))

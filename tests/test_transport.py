@@ -30,6 +30,8 @@ class Handler(BaseHTTPRequestHandler):
         try:
             if self.server.mode == 'error':
                 self.wfile.write(b'{"error":"pull this model first"}')
+            elif self.server.mode == 'json':
+                self.wfile.write(json.dumps(self.server.payload).encode())
             elif self.server.mode == 'malformed':
                 self.wfile.write(b'not json\n')
             elif self.server.mode == 'stall':

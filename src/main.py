@@ -7,11 +7,12 @@ gi.require_version('Adw', '1')
 
 from gi.repository import Gtk, Gio, Adw
 from .window import GnollamaWindow
+from .startup import StartupWindow
 
 class GnollamaApplication(Adw.Application):
     """The main application singleton class."""
 
-    def __init__(self, version="0.12.0") -> None:
+    def __init__(self, version="0.13.0") -> None:
         super().__init__(application_id='io.github.jackrabbithanna.Gnollama',
                          flags=Gio.ApplicationFlags.DEFAULT_FLAGS,
                          resource_base_path='/io/github/jackrabbithanna/Gnollama')
@@ -29,6 +30,9 @@ class GnollamaApplication(Adw.Application):
             if isinstance(window, GnollamaWindow):
                 window.request_shutdown()
                 return
+            if isinstance(window, StartupWindow):
+                window.close()
+                return
         self.quit()
 
     def do_activate(self) -> None:
@@ -39,8 +43,17 @@ class GnollamaApplication(Adw.Application):
         """
         win = self.props.active_window
         if not win:
-            win = GnollamaWindow(application=self)
+            win = StartupWindow(application=self, on_ready=self._storage_ready)
         win.present()
+
+    def _storage_ready(self, storage):
+        win = GnollamaWindow(application=self, storage=storage)
+        win.present()
+        if storage.db.backup_path:
+            dialog = Adw.AlertDialog(heading=_('Database Upgraded'),
+                                    body=_('Your data is ready. A backup of the previous database was saved at:\n{0}').format(storage.db.backup_path))
+            dialog.add_response('close', _('Close'))
+            dialog.present(win)
 
     def on_about_action(self, *args: Any) -> None:
         """Callback for the app.about action."""

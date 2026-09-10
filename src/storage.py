@@ -11,7 +11,7 @@ from .writer import OrderedWriter
 class ChatStorage:
     """Handles persistence for chat history and host configurations using SQLite."""
 
-    def __init__(self, storage_dir=None) -> None:
+    def __init__(self, storage_dir=None, progress=None) -> None:
         self.storage_dir: str = storage_dir or os.path.join(GLib.get_user_data_dir(), "gnollama")
         if not os.path.exists(self.storage_dir):
             os.makedirs(self.storage_dir)
@@ -21,10 +21,13 @@ class ChatStorage:
         self.db_path: str = os.path.join(self.storage_dir, "gnollama.db")
 
         # Initialize SQLite Database Manager
-        self.db = DatabaseManager(self.db_path)
+        self.db = DatabaseManager(self.db_path, progress=progress)
 
         self.on_error = None
         self.writer = OrderedWriter(self._write_failed)
+        self.db.interrupt_knowledge_indexes()
+        from .knowledge import KnowledgeService
+        self.knowledge = KnowledgeService(self)
 
         # Detect legacy JSON files and rename them
         self._handle_legacy_json()

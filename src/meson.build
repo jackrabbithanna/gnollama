@@ -14,6 +14,7 @@ python = import('python')
 py3 = python.find_installation('python3')
 run_command(py3, '-c', 'from jsonschema import Draft202012Validator; from referencing import Registry, Resource; from importlib.metadata import version; assert tuple(map(int, version("jsonschema").split(".")[:2])) >= (4, 26), "jsonschema 4.26+ is required"', check: true)
 run_command(py3, '-c', 'import gi; gi.require_version("Gtk", "4.0"); gi.require_version("Adw", "1"); gi.require_version("Soup", "3.0"); from gi.repository import Gtk, Adw, Soup', check: true)
+run_command(py3, '-c', 'import sqlite3, sqlite_vec; from pypdf import PdfReader; db=sqlite3.connect(":memory:"); db.enable_load_extension(True); sqlite_vec.load(db); db.enable_load_extension(False); assert db.execute("SELECT vec_version()").fetchone()[0] == "v0.1.9"', check: true)
 
 # Check for python-markdown
 markdown_check = run_command(py3, '-c', 'import markdown', check: false)
@@ -49,11 +50,16 @@ configure_file(
 gnollama_sources = [
   '__init__.py',
   'main.py',
+  'startup.py',
+  'vectors.py',
   'window.py',
   'tab.py',
   'session.py',
   'structured.py',
   'tool_calling.py',
+  'knowledge.py',
+  'knowledge_store.py',
+  'collections_store.py',
   'ollama.py',
   'storage.py',
   'writer.py',
@@ -72,6 +78,7 @@ gnollama_widget_sources = [
   'widgets/options_panel.py',
   'widgets/json_view.py',
   'widgets/tool_view.py',
+  'widgets/knowledge_view.py',
   'widgets/message_list.py',
 ]
 

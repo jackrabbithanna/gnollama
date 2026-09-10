@@ -205,14 +205,13 @@ class ModelManagerDialog(Adw.Window):
             unloading = model_key(host, model) in unloading_models
             button.set_sensitive(not busy and not unloading)
             button.set_label(_('Unloading…') if unloading else _('Unload'))
-            button.set_tooltip_text(_('A response is using this model in Gnollama.') if busy else
+            button.set_tooltip_text(_('A chat or embedding job is using this model in Gnollama.') if busy else
                                     _('Release this model from memory; keep its downloaded files.'))
 
     def on_unload_clicked(self, button, host, model):
         key = model_key(host, model)
-        if self.requests.closed or self.is_model_busy(host, model) or key in unloading_models:
+        if self.requests.closed or not self.storage.knowledge.reserve_model(host, model, self.is_model_busy):
             return
-        unloading_models.add(key)
         self.update_unload_buttons()
         cancel = self.requests.new_cancel()
         def completed(error):
@@ -346,24 +345,51 @@ class ModelManagerDialog(Adw.Window):
         host = self.get_selected_host()
         if not host:
             return
+        if self.is_model_busy(host['hostname'], model['name']) or model_key(host['hostname'], model['name']) in unloading_models:
+            self.show_error(_('Model Is Busy'), _('Wait for active chats and embedding jobs before deleting this model.'))
+            return
+        usage = self.storage.db.model_embedding_usage(model.get('digest', ''))
+        body = _('Are you sure you want to delete {0}?').format(model['name'])
+        cleanup = Gtk.CheckButton(label=_('Also delete matching vectors; keep source text'))
+        if usage['indexes']:
+            body += '\n\n' + _('Stored data using this model: {0} documents, {1} indexes, {2} vectors. Kept vectors can be used again with the same model digest on a compatible host.').format(usage['documents'], usage['indexes'], usage['vectors'])
+        if usage['collections']:
+            body += '\n\n' + _('Collections using this configuration: {0}. Deleting vectors keeps their documents and membership, but they will need embeddings rebuilt before searching.').format(usage['collections'])
             
         dialog = Adw.AlertDialog(
             heading=_("Delete Model?"),
-            body=_("Are you sure you want to delete {0}?").format(model['name'])
+            body=body
         )
+        if usage['indexes']:
+            dialog.set_extra_child(cleanup)
+        dialog.set_default_response('cancel')
         dialog.add_response("cancel", _("Cancel"))
         dialog.add_response("delete", _("Delete"))
         dialog.set_response_appearance("delete", Adw.ResponseAppearance.DESTRUCTIVE)
         
         def on_response(d: Adw.AlertDialog, response: str) -> None:
             if response == "delete":
+                delete_vectors = cleanup.get_active()
+                if delete_vectors and self.storage.knowledge.indexing_digest(model['digest']):
+                    self.show_error(_('Model Is Busy'), _('Wait for all indexing jobs using this model before deleting its vectors.'))
+                    return
+                if not self.storage.knowledge.reserve_model(host['hostname'], model['name'], self.is_model_busy):
+                    self.show_error(_('Model Is Busy'), _('Wait for active chats and embedding jobs before deleting this model.'))
+                    return
+                key = model_key(host['hostname'], model['name'])
                 cancel = self.requests.new_cancel()
                 def thread_func() -> None:
                     try:
                         ollama.delete_model(host['hostname'], model['name'], cancellable=cancel)
+                        if delete_vectors:
+                            self.storage._submit(self.storage.db.delete_model_embeddings, model['digest'],
+                                                 on_done=self.storage.knowledge.changed)
+                        self.storage.knowledge.changed()
                         self.requests.deliver(self.fetch_models_for_selected_host)
                     except ollama.OllamaError as e:
                         self.requests.deliver(self.show_error, _("Delete Failed"), str(e), cancellable=cancel)
+                    finally:
+                        unloading_models.discard(key)
                 from .session import worker
                 worker.submit(thread_func)
             d.close()

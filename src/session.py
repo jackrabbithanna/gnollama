@@ -8,6 +8,7 @@ from gi.repository import Gio
 from . import ollama
 from .structured import validate_response
 from .tool_calling import inspect_calls, wire_calls, result_messages
+from .knowledge import augmented_messages
 
 
 class NetworkWorker:
@@ -56,6 +57,7 @@ class RequestState:
     tool_calls: list = field(default_factory=list)
     continuation: bool = False
     saved_message: dict = None
+    retrieval: dict = None
 
     def __post_init__(self):
         self.settings = copy.deepcopy(self.settings)
@@ -73,8 +75,8 @@ class RequestState:
         if calls is not None and calls != []:
             self.tool_calls.extend(copy.deepcopy(calls if isinstance(calls, list) else [calls]))
         if chunk.get('done'):
-            self.metadata = {'status': 'complete',
-                             'metrics': {k: chunk[k] for k in METRIC_KEYS if k in chunk}}
+            self.metadata.update(status='complete',
+                                 metrics={k: chunk[k] for k in METRIC_KEYS if k in chunk})
         return content, thinking, chunk.get('logprobs') or message.get('logprobs')
 
     def finish(self, status, error=None):
@@ -98,7 +100,7 @@ class RequestState:
     def api_details(self):
         return {k: v for k, v in self.settings.items()
                 if k not in ('host_id', 'show_stats', 'output_mode', 'schema_text', 'history_images_omitted',
-                             'tools_enabled', 'tools_text')}
+                             'tools_enabled', 'tools_text', 'knowledge', 'query_override')}
 
 
 def api_messages(history, include_images=True):
@@ -166,12 +168,20 @@ class ChatStrategy(GenerationStrategy):
     def begin(self, state, on_done=None):
         if not state.continuation:
             msg = {'role': 'user', 'content': state.prompt}
+            if state.retrieval:
+                msg['response_metadata'] = {'retrieval': copy.deepcopy(state.retrieval)}
             if state.images:
                 msg['images'] = state.images
             self.history.append(msg)
         state.messages = api_messages(self.history, include_images=not state.settings.get('history_images_omitted'))
         if state.settings['system']:
             state.messages.insert(0, {'role': 'system', 'content': state.settings['system']})
+        if state.continuation:
+            latest = next((m for m in reversed(self.history) if m['role'] == 'user'), {})
+            state.retrieval = copy.deepcopy((latest.get('response_metadata') or {}).get('retrieval'))
+        state.messages = augmented_messages(state.messages, state.retrieval)
+        if state.retrieval:
+            state.metadata['retrieval'] = copy.deepcopy(state.retrieval)
         return self.save(state, on_done=on_done)
 
     def process(self, state):
@@ -202,6 +212,7 @@ class ChatStrategy(GenerationStrategy):
                        keep_alive=state.settings.get('keep_alive'),
                        tools_enabled=state.settings.get('tools_enabled', False),
                        tools_text=state.settings.get('tools_text', ''))
+        options['knowledge'] = copy.deepcopy(state.settings.get('knowledge', {}))
         return self.storage.save_chat(self.chat_id, self.history, model=state.settings['model'],
                                       options=options, system=state.settings['system'],
                                       host=state.settings['host_id'], on_done=on_done)

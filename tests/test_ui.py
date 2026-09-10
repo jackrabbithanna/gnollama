@@ -261,6 +261,94 @@ class UITests(unittest.TestCase):
             self.assertIn('max', widget._thinking_values)
         widget.cancel_fetches()
 
+    def test_chat_model_picker_filters_by_capabilities_and_reuses_details(self):
+        widget = ChatInput()
+        self.addCleanup(widget.cancel_fetches)
+        responses = {
+            'qwen3-embedding:0.6b': {'capabilities': ['embedding']},
+            'custom-search-model': {'capabilities': ['embedding', 'vision']},
+            'chat-embedding-helper': {'capabilities': ['completion', 'vision', 'tools']},
+            'dual-purpose': {'capabilities': ['completion', 'embedding']},
+            'legacy': {},
+            'unavailable-details': None,
+        }
+        def details(host, model, **kwargs):
+            if responses[model] is None:
+                raise ollama.OllamaError('show is unavailable')
+            return responses[model]
+        with patch.object(ollama, 'fetch_models', return_value=list(responses)), \
+                patch.object(ollama, 'show_model', side_effect=details) as show:
+            widget.fetch_models('http://models')
+            pump_until(lambda: widget.get_selected_model() is not None and session.worker.idle)
+            model = widget.model_dropdown.get_model()
+            self.assertEqual([model.get_string(i) for i in range(model.get_n_items())],
+                             list(responses)[2:])
+            self.assertIs(widget.image_support, True)
+            self.assertIs(widget.tool_support, True)
+            widget.select_model('dual-purpose')
+            self.assertIs(widget.image_support, False)
+            widget.select_model('unavailable-details')
+            self.assertIsNone(widget.image_support)
+            self.assertTrue(widget.send_button.get_sensitive())
+            self.assertEqual(show.call_count, len(responses))
+
+    def test_chat_model_refresh_preserves_selection_and_handles_embedding_only_host(self):
+        widget = ChatInput()
+        self.addCleanup(widget.cancel_fetches)
+        responses = {'vectors': {'capabilities': ['embedding']},
+                     'chat-one': {'capabilities': ['completion']},
+                     'chat-two': {'capabilities': ['completion']}}
+        with patch.object(ollama, 'fetch_models', side_effect=lambda *a, **kw: list(responses)), \
+                patch.object(ollama, 'show_model', side_effect=lambda h, m, **kw: responses[m]):
+            widget.pending_model_selection = 'chat-two'
+            widget.fetch_models('http://models')
+            pump_until(lambda: widget.get_selected_model() == 'chat-two' and session.worker.idle)
+            widget.fetch_models('http://models')
+            pump_until(lambda: widget.get_selected_model() == 'chat-two' and session.worker.idle)
+            # A saved embedding selection must not silently switch to another model.
+            widget.pending_model_selection = 'vectors'
+            widget.fetch_models('http://models')
+            pump_until(lambda: session.worker.idle)
+            self.assertIsNone(widget.get_selected_model())
+            self.assertFalse(widget.send_button.get_sensitive())
+            widget.select_model('chat-one')
+            # Refresh must invalidate cached capabilities even on the same host.
+            responses['chat-one'] = {'capabilities': ['embedding']}
+            del responses['chat-two']
+            widget.fetch_models('http://models')
+            pump_until(lambda: session.worker.idle)
+            self.assertEqual(widget.model_dropdown.get_model().get_n_items(), 0)
+            self.assertIsNone(widget.get_selected_model())
+            self.assertFalse(widget.send_button.get_sensitive())
+            self.assertFalse(widget.attach_button.get_sensitive())
+            self.assertIn('No chat models found', widget.capability_notice.get_text())
+
+    def test_chat_model_filter_ignores_cancelled_host_capabilities(self):
+        widget = ChatInput()
+        self.addCleanup(widget.cancel_fetches)
+        started, release = threading.Event(), threading.Event()
+        def details(host, model, **kwargs):
+            if host == 'http://old':
+                started.set()
+                release.wait(2)
+                return {'capabilities': ['embedding']}
+            return {'capabilities': ['completion', 'vision']}
+        with patch.object(ollama, 'fetch_models', return_value=['same-name', 'next-model']), \
+                patch.object(ollama, 'show_model', side_effect=details) as show:
+            try:
+                widget.fetch_models('http://old')
+                self.assertTrue(started.wait(1))
+                widget.fetch_models('http://new')
+                pump_until(lambda: widget.get_selected_model() == 'same-name')
+            finally:
+                release.set()
+            pump_until(lambda: session.worker.idle)
+            self.assertEqual(widget.get_selected_model(), 'same-name')
+            self.assertIs(widget.image_support, True)
+            self.assertEqual([c.args for c in show.call_args_list],
+                             [('http://old', 'same-name'), ('http://new', 'same-name'),
+                              ('http://new', 'next-model')])
+
     def test_generate_mode_and_model_pull_dialog_cancellation(self):
         fixture = Server('stream')
         self.addCleanup(fixture.close)
@@ -530,8 +618,8 @@ class UITests(unittest.TestCase):
         pump_until(lambda: self.storage.writer.idle)
         window.on_history_activated(window.history_sidebar, item.get_index())
         self.assertFalse(window.split_view.get_show_sidebar())
-        tab.options_panel.set_expanded(True)
-        self.assertEqual(tab.options_panel.get_label(), 'Advanced Settings')
+        tab.options_panel.advanced_expander.set_expanded(True)
+        self.assertEqual(tab.options_panel.advanced_expander.get_label(), 'Advanced Settings')
         tab.options_panel.output_dropdown.set_selected(2)
         tab.options_panel.keep_alive_dropdown.set_selected(5)
         tab.options_panel.keep_alive_entry.set_text('17')
@@ -579,7 +667,7 @@ class UITests(unittest.TestCase):
         window, tab = self.make_window()
         window.present()
         panel = tab.options_panel
-        panel.set_expanded(True)
+        panel.advanced_expander.set_expanded(False)
         pump_until(lambda: panel.output_dropdown.get_mapped())
         tab.chat_input.entry.set_text('Return JSON with count equal to 7.')
         response = iter([{'message': {'content': '{"count":7}'}, 'done': True}])
@@ -620,7 +708,7 @@ class UITests(unittest.TestCase):
         window, tab = self.make_window()
         window.present()
         panel = tab.options_panel
-        panel.set_expanded(True)
+        panel.advanced_expander.set_expanded(True)
         pump_until(lambda: panel.output_dropdown.get_mapped())
         for text in ('{"type":"object"}', ''):
             panel.output_dropdown.set_selected(0)

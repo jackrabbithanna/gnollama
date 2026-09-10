@@ -1,5 +1,6 @@
 from typing import List, Optional, Any, Dict, Union
-from gi.repository import Gtk, Gio, GLib, GObject
+from gi.repository import Adw, Gtk, Gio, GLib, GObject
+import copy
 import base64
 from .session import RequestState, worker
 from . import ollama
@@ -8,6 +9,8 @@ from .session import GenerationStrategy, ChatStrategy
 from .structured import InvalidSchema, validate_response
 from .tool_calling import InvalidTools, inspect_calls
 from .widgets.tool_view import ToolCallsView
+from .widgets.knowledge_view import KnowledgeControl, SourcesView
+from .knowledge import validate_rag
 
 from .widgets.message_list import MessageList
 from .widgets.chat_input import ChatInput
@@ -50,6 +53,10 @@ class GenerationTab(Gtk.Box):
             self.strategy = GenerationStrategy()
             
         self.mode = mode
+        self.knowledge_control = KnowledgeControl(storage, self._persist_tool_options)
+        self.knowledge_control.set_visible(mode == 'chat')
+        self.insert_child_after(self.knowledge_control, self.message_list)
+        self._retrieval_dialog = None
         self.chat_input.has_history_images = any(m.get('images') for m in getattr(self.strategy, 'history', []))
         
         self.options_panel.tools_available = mode == 'chat'
@@ -81,6 +88,7 @@ class GenerationTab(Gtk.Box):
         if 'options' in chat_data:
             options = chat_data['options']
             self.options_panel.load_options(options)
+            self.knowledge_control.load(options.get('knowledge', {}))
             
             if 'thinking_val' in options:
                 self.chat_input.load_thinking_val(options['thinking_val'])
@@ -118,6 +126,7 @@ class GenerationTab(Gtk.Box):
                                               self.options_panel.stats_check.get_active())
                 self.message_list.add_ai_bubble(bubble)
                 self._add_tool_view(msg, bubble)
+                self._add_sources(msg.get('response_metadata', {}), bubble)
             elif role == 'system':
                 self.message_list.add_system_message(content)
 
@@ -136,7 +145,7 @@ class GenerationTab(Gtk.Box):
         else:
             self.on_send_clicked()
 
-    def on_send_clicked(self, *args, continuation=False):
+    def on_send_clicked(self, *args, continuation=False, without_knowledge=False):
         if self.request or self.closing or self._disposed or self._tool_busy:
             return
         pending = self.strategy.pending_round if isinstance(self.strategy, ChatStrategy) else None
@@ -183,6 +192,12 @@ class GenerationTab(Gtk.Box):
                             logprobs=logprobs, top_logprobs=top,
                             show_stats=self.options_panel.stats_check.get_active(), endpoint=self.mode)
             settings.update(request_settings)
+            settings['knowledge'] = copy.deepcopy(self.knowledge_control.options)
+            settings['query_override'] = self.knowledge_control.query.get_text().strip()
+            retrieve = (self.mode == 'chat' and settings['knowledge']['enabled'] and
+                        not continuation and not without_knowledge)
+            if retrieve:
+                validate_rag(settings['knowledge'])
             settings['history_images_omitted'] = self.chat_input.image_support is False and self.chat_input.has_history_images
         except InvalidTools as exc:
             self.options_panel.edit_tools(error=str(exc))
@@ -200,16 +215,71 @@ class GenerationTab(Gtk.Box):
         self.request = state
         self.emit('request-changed')
         self.chat_input.set_running(True)
+        if retrieve:
+            self.chat_input.entry.set_sensitive(False)
+            self.knowledge_control.set_sensitive(False)
+            self.knowledge_control.notice.set_text(_('Retrieving sources…'))
+            worker.submit(self._retrieve_sources, state)
+            return
+        self._begin_generation(state)
+
+    def _retrieve_sources(self, state):
+        error = None
+        try:
+            state.retrieval = self.storage.knowledge.retrieve(state.settings['knowledge'],
+                state.settings['query_override'] or state.prompt, state.cancellable)
+        except Exception as exc:
+            error = exc
+        GLib.idle_add(self._retrieval_finished, state, error)
+
+    def _retrieval_finished(self, state, error):
+        if self.request is not state:
+            return False
+        self.knowledge_control.set_sensitive(True)
+        self.knowledge_control._notice()
+        self.chat_input.entry.set_sensitive(True)
+        if error or state.cancellable.is_cancelled() or self.closing:
+            self.request = None
+            self.emit('request-changed')
+            self.chat_input.set_running(False)
+            if not self.closing and not state.cancellable.is_cancelled():
+                dialog = Adw.AlertDialog(heading=_('Could Not Retrieve Sources'), body=str(error))
+                dialog.add_response('adjust', _('Adjust Sources'))
+                dialog.add_response('retry', _('Retry'))
+                dialog.add_response('without', _('Send Without Knowledge'))
+                dialog.add_response('cancel', _('Keep Draft'))
+                dialog.set_default_response('cancel')
+                self._retrieval_dialog = dialog
+                def response(d, choice):
+                    self._retrieval_dialog = None
+                    if self.closing or self._disposed:
+                        return
+                    if choice == 'adjust':
+                        self.knowledge_control.open_picker()
+                    elif choice == 'retry':
+                        self.on_send_clicked()
+                    elif choice == 'without':
+                        self.on_send_clicked(without_knowledge=True)
+                dialog.connect('response', response)
+                dialog.present(self.get_root())
+            self._finish_close()
+        else:
+            self._begin_generation(state)
+        return False
+
+    def _begin_generation(self, state):
+        continuation = state.continuation
         if not continuation:
             self.chat_input.entry.set_text('')
             self.chat_input.on_clear_image_clicked(None)
-            self.message_list.add_user_message(prompt, images=images)
+            self.knowledge_control.query.set_text('')
+            self.message_list.add_user_message(state.prompt, images=state.images)
         from .bubbles import AiBubble
-        bubble = AiBubble(model_name=model, output_format=state.settings.get('format'))
+        bubble = AiBubble(model_name=state.settings['model'], output_format=state.settings.get('format'))
         bubble.set_api_details(state.api_details())
         self.message_list.add_ai_bubble(bubble)
         self._sync_tools()
-        if continuation:
+        if continuation or state.retrieval:
             # Results are committed once before any follow-up HTTP request.
             future = self.strategy.begin(state, on_done=lambda: worker.submit(self.process_request, state, bubble))
             if future is None:
@@ -217,8 +287,13 @@ class GenerationTab(Gtk.Box):
         else:
             self.strategy.begin(state)
             worker.submit(self.process_request, state, bubble)
+        self._add_sources(state.metadata, bubble)
         self.chat_input.has_history_images = any(m.get('images') for m in getattr(self.strategy, 'history', []))
         self.chat_input.update_capability_controls()
+
+    def _add_sources(self, metadata, bubble):
+        if metadata.get('retrieval'):
+            bubble.bubble_box.append(SourcesView(metadata['retrieval']))
 
     def process_request(self, state, bubble):
         status, error = 'failed', None
@@ -285,7 +360,7 @@ class GenerationTab(Gtk.Box):
             self._add_tool_view(state.saved_message, bubble)
             self._sync_tools()
             # Retain definitions edited while the previous request was running.
-            self.storage.save_tool_state(self.strategy.chat_id, options=self.options_panel.get_tools_options(), on_done=saved)
+            self.storage.save_tool_state(self.strategy.chat_id, options=self._local_options(), on_done=saved)
         if future is None:
             saved()
         return False
@@ -300,7 +375,10 @@ class GenerationTab(Gtk.Box):
             def saved():
                 if not self._disposed and not self.strategy.deleted:
                     self.emit('chat-updated', self.strategy.chat_id, self.title)
-            self.storage.save_tool_state(self.strategy.chat_id, options=self.options_panel.get_tools_options(), on_done=saved)
+            self.storage.save_tool_state(self.strategy.chat_id, options=self._local_options(), on_done=saved)
+
+    def _local_options(self):
+        return dict(self.options_panel.get_tools_options(), knowledge=copy.deepcopy(self.knowledge_control.options))
 
     def _add_tool_view(self, message, bubble):
         if not message or not (message.get('response_metadata') or {}).get('tool_round'):
@@ -344,6 +422,9 @@ class GenerationTab(Gtk.Box):
         self.closing = True
         self._close_callback = on_done
         self.chat_input.cancel_fetches()
+        self.knowledge_control.close_dialog(dispose=True)
+        if self._retrieval_dialog:
+            self._retrieval_dialog.close()
         for view in self._tool_views:
             view.close_editor()
         if self.options_panel._tools_dialog is not None:

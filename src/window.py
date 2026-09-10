@@ -33,14 +33,19 @@ class GnollamaWindow(Adw.ApplicationWindow):
     history_sidebar = Gtk.Template.Child()
     split_view = Gtk.Template.Child()
     sidebar_toggle = Gtk.Template.Child()
+    section_stack = Gtk.Template.Child()
 
-    def __init__(self, **kwargs):
+    def __init__(self, storage=None, **kwargs):
         super().__init__(**kwargs)
         icon_theme = Gtk.IconTheme.get_for_display(Gdk.Display.get_default())
         icon_theme.add_resource_path('/io/github/jackrabbithanna/Gnollama/icons')
         self.settings = Gio.Settings.new('io.github.jackrabbithanna.Gnollama')
-        self.storage = ChatStorage()
+        self.storage = storage if storage is not None else ChatStorage()
         self.storage.on_error = self._on_save_error
+        from .widgets.knowledge_view import KnowledgeView
+        self.knowledge_view = KnowledgeView(self.storage)
+        self.section_stack.add_titled_with_icon(self.knowledge_view, 'knowledge', _('Knowledge'), 'folder-documents-symbolic')
+        self.storage.knowledge.listeners.append(self._knowledge_changed)
         self._shutting_down = False
         self._allow_close = False
         self._cleanup_future = None
@@ -76,10 +81,16 @@ class GnollamaWindow(Adw.ApplicationWindow):
         self._shutting_down = True
         self.tab_view.set_sensitive(False)
         self.history_sidebar.set_sensitive(False)
+        self.knowledge_view.set_sensitive(False)
+        self.knowledge_view.close_dialogs()
+        self.storage.knowledge.cancel_all()
         from . import ollama
         ollama.cancel_all()
         for tab in self.tabs():
             tab.chat_input.cancel_fetches()
+            tab.knowledge_control.close_dialog()
+            if tab._retrieval_dialog:
+                tab._retrieval_dialog.close()
             if tab.options_panel._schema_dialog is not None:
                 tab.options_panel._schema_dialog.close()
             if tab.options_panel._tools_dialog is not None:
@@ -100,7 +111,7 @@ class GnollamaWindow(Adw.ApplicationWindow):
         if not self._shutting_down:
             return False
         from .session import worker
-        if not worker.idle or any(tab.request for tab in self.tabs()):
+        if not worker.idle or not self.storage.knowledge.idle or any(tab.request for tab in self.tabs()):
             return True
         if self.storage.writer.error is not None:
             self._on_save_error(self.storage.writer.error)
@@ -110,6 +121,7 @@ class GnollamaWindow(Adw.ApplicationWindow):
         if not self.storage.writer.idle:
             return True
         self.storage.writer.shutdown()
+        self.storage.knowledge.shutdown()
         worker.shutdown(wait=False)
         self._allow_close = True
         self.close()
@@ -118,7 +130,7 @@ class GnollamaWindow(Adw.ApplicationWindow):
     def _on_save_error(self, error):
         if self._save_error_dialog is not None or self._allow_close:
             return
-        dialog = Adw.AlertDialog(heading=_('History could not be saved'),
+        dialog = Adw.AlertDialog(heading=_('Changes could not be saved'),
                                  body=_('Your unsaved changes are kept in memory. Retry saving before quitting.') + '\n\n' + str(error))
         self._save_error_dialog = dialog
         dialog.add_response('keep', _('Keep Open'))
@@ -135,6 +147,8 @@ class GnollamaWindow(Adw.ApplicationWindow):
                 self._cleanup_future = None
                 self.tab_view.set_sensitive(True)
                 self.history_sidebar.set_sensitive(True)
+                self.knowledge_view.set_sensitive(True)
+                self.storage.knowledge.closed = False
                 ollama.resume()
                 for tab in self.tabs():
                     if not tab.closing:
@@ -204,16 +218,22 @@ class GnollamaWindow(Adw.ApplicationWindow):
     def is_model_busy(self, host, model):
         from .model_manager import model_key
         key = model_key(host, model)
-        return any(tab.request and model_key(tab.request.settings['host'], tab.request.settings['model']) == key
+        return self.storage.knowledge.busy(host, model) or any(tab.request and model_key(tab.request.settings['host'], tab.request.settings['model']) == key
                    for tab in self.tabs())
+
+    def _knowledge_changed(self):
+        for manager in self.model_managers:
+            manager.update_unload_buttons()
 
     def on_hosts_changed(self):
         for tab in self.tabs():
             tab.update_hosts()
         for manager in self.model_managers:
             manager.update_hosts()
+        self.knowledge_view.refresh()
 
     def _add_tab(self, tab):
+        self.section_stack.set_visible_child_name('chats')
         page = self.tab_view.append(tab)
         tab.bind_property('title', page, 'title', GObject.BindingFlags.SYNC_CREATE)
         page.set_icon(Gio.ThemedIcon.new('network-server-symbolic' if tab.mode == 'chat' else 'edit-find-symbolic'))
@@ -235,6 +255,7 @@ class GnollamaWindow(Adw.ApplicationWindow):
         return self._add_tab(GenerationTab(mode='chat', chat_id=chat['id'], storage=self.storage))
 
     def open_chat_tab(self, chat_data):
+        self.section_stack.set_visible_child_name('chats')
         for tab in self.tabs():
             if getattr(tab.strategy, 'chat_id', None) == chat_data['id']:
                 self.tab_view.set_selected_page(self.tab_view.get_page(tab))
@@ -268,7 +289,7 @@ class GnollamaWindow(Adw.ApplicationWindow):
             self._fill_history_menu(self._sidebar_menu, item)
 
     def add_history_row(self, chat, prepend=False):
-        item = Adw.SidebarItem(title=chat.get('title', _('New Chat')), icon_name='chat-message-new-symbolic')
+        item = Adw.SidebarItem(title=chat.get('title', _('New Chat')), icon_name='gnollama-chats-symbolic')
         item.chat_id = chat['id']
         item.is_pinned = chat.get('is_pinned', False)
         item.set_tooltip(item.get_title())
@@ -344,6 +365,8 @@ class GnollamaWindow(Adw.ApplicationWindow):
         self._remove_history_item(chat_id)
 
     def close_selected_tab(self, *args):
+        if self.section_stack.get_visible_child_name() != 'chats':
+            return
         page = self.tab_view.get_selected_page()
         if page:
             self.tab_view.close_page(page)
@@ -363,7 +386,7 @@ class GnollamaWindow(Adw.ApplicationWindow):
             return True
         def remove():
             if (isinstance(tab.strategy, ChatStrategy) and not tab.strategy.history and not tab.strategy.deleted
-                    and not tab.options_panel.tools_text.strip()):
+                    and not tab.options_panel.tools_text.strip() and not tab.knowledge_control.options['selection']):
                 self.storage.delete_chat(tab.strategy.chat_id)
                 self._remove_history_item(tab.strategy.chat_id)
             view.close_page_finish(page, True)

@@ -3,12 +3,19 @@ import time
 from contextlib import contextmanager
 import json
 import base64
+import os
+from pathlib import Path
+from datetime import datetime
+from gettext import gettext as _
 from typing import List, Dict, Any, Optional
+from .knowledge_store import KnowledgeDatabase, MIGRATION as KNOWLEDGE_MIGRATION
+from .vectors import load_extension, migrate_vectors, preflight_legacy_vectors
+from .collections_store import MIGRATION as COLLECTIONS_MIGRATION
 
 # Sequential migrations list
-# Add future SQL scripts to this array to run sequentially.
+# Add SQL scripts or functions accepting (conn, progress=None) to run sequentially.
 # E.g. MIGRATIONS = ["ALTER TABLE chats ADD COLUMN is_pinned INTEGER DEFAULT 0;"]
-MIGRATIONS: List[str] = [
+MIGRATIONS = [
     # Version 2: Add indexes for faster foreign key queries and cascades
     """
     CREATE INDEX IF NOT EXISTS idx_messages_chat_id ON messages(chat_id);
@@ -25,22 +32,78 @@ MIGRATIONS: List[str] = [
     ALTER TABLE messages ADD COLUMN tool_calls TEXT;
     ALTER TABLE messages ADD COLUMN tool_name TEXT;
     ALTER TABLE messages ADD COLUMN tool_call_id TEXT;
-    """
+    """,
+    KNOWLEDGE_MIGRATION,
+    migrate_vectors,
+    COLLECTIONS_MIGRATION,
 ]
 
-class DatabaseManager:
+
+class DatabaseUpgradeError(RuntimeError):
+    def __init__(self, message, backup_path=None):
+        super().__init__(message)
+        self.backup_path = backup_path
+
+
+class DatabaseManager(KnowledgeDatabase):
     """Manages SQLite database initialization and operations."""
     
-    def __init__(self, db_path: str) -> None:
+    def __init__(self, db_path: str, progress=None) -> None:
         self.db_path: str = db_path
-        self._init_db()
-        self._run_migrations()
+        self.backup_path = None
+        self.progress = progress or (lambda message: None)
+        try:
+            self._prepare_upgrade()
+            self._init_db()
+            self._run_migrations()
+        except Exception as exc:
+            raise DatabaseUpgradeError(str(exc), self.backup_path) from exc
+        finally:
+            # A startup progress callback can own the temporary GTK window.
+            self.progress = lambda message: None
+
+    def _prepare_upgrade(self):
+        if not os.path.exists(self.db_path) or not os.path.getsize(self.db_path):
+            return
+        source = sqlite3.connect(Path(self.db_path).resolve().as_uri() + '?mode=ro', uri=True)
+        try:
+            version = self._get_version(source)
+            target = len(MIGRATIONS) + 1
+            if version > target:
+                raise ValueError(_('This database was created by a newer Gnollama version. Update Gnollama to open it.'))
+            if version == target:
+                return
+            # Check the native dependency and limits before changing an old schema.
+            load_extension(source)
+            if version == 6:
+                preflight_legacy_vectors(source)
+            self.progress(_('Backing up the database…'))
+            stamp = datetime.now().strftime('%Y%m%d-%H%M%S-%f')
+            backup = self.db_path + f'.pre-v{target}-{stamp}.bak'
+            # Exclusive creation avoids overwriting an earlier recovery copy.
+            fd = os.open(backup, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
+            os.close(fd)
+            destination = None
+            try:
+                destination = sqlite3.connect(backup)
+                source.backup(destination, pages=256)
+                destination.close()
+                destination = None
+                self.backup_path = backup
+            except Exception:
+                if destination is not None:
+                    destination.close()
+                os.unlink(backup)
+                raise
+        finally:
+            source.close()
 
     @contextmanager
     def _get_conn(self):
         """Returns a database connection with foreign key, WAL, and fast-sync enabled."""
         conn = sqlite3.connect(self.db_path)
         try:
+            load_extension(conn)
             conn.execute("PRAGMA foreign_keys = ON;")
             conn.execute("PRAGMA journal_mode = WAL;")
             conn.execute("PRAGMA synchronous = NORMAL;")
@@ -122,7 +185,9 @@ class DatabaseManager:
         with self._get_conn() as conn:
             current_version = self._get_version(conn)
             
-            if current_version >= target_version:
+            if current_version > target_version:
+                raise ValueError(_('This database requires a newer Gnollama version.'))
+            if current_version == target_version:
                 return  # Database is up-to-date
             
             print(f"Database migration needed: current version {current_version}, target version {target_version}")
@@ -140,12 +205,20 @@ class DatabaseManager:
                 
                 try:
                     print(f"Applying database migration to Version {ver + 1}...")
-                    conn.execute("BEGIN TRANSACTION;")
+                    self.progress(_('Upgrading the database to version {0}…').format(ver + 1))
+                    conn.execute("BEGIN IMMEDIATE;")
                     
                     if isinstance(migration_sql, str):
-                        for statement in migration_sql.split(";"):
-                            if statement.strip():
+                        statement = ''
+                        for fragment in migration_sql.split(';'):
+                            statement += fragment + ';'
+                            if sqlite3.complete_statement(statement):
                                 conn.execute(statement)
+                                statement = ''
+                        if statement.strip(' \n\t;'):
+                            raise ValueError('Incomplete migration statement')
+                    else:
+                        migration_sql(conn, progress=self.progress)
                     
                     self._set_version(conn, ver + 1)
                     conn.commit()
@@ -325,7 +398,8 @@ class DatabaseManager:
         with self._get_conn() as conn:
             rows = conn.execute('SELECT id, options FROM chats WHERE id NOT IN (SELECT chat_id FROM messages)').fetchall()
             for row in rows:
-                if not json.loads(row['options'] or '{}').get('tools_text', '').strip():
+                options = json.loads(row['options'] or '{}')
+                if not options.get('tools_text', '').strip() and not options.get('knowledge', {}).get('selection'):
                     conn.execute('DELETE FROM chats WHERE id = ?', (row['id'],))
             conn.commit()
 

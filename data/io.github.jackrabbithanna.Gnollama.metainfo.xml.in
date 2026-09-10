@@ -48,6 +48,20 @@
   </screenshots>
 
   <releases>
+    <release version="0.13.0" date="2026-09-10">
+      <description>
+        <p>Add a Knowledge Library for text and PDF imports, local embedding indexes, and source-grounded chats.</p>
+        <ul>
+          <li>Create and compare embeddings, inspect chunks and vectors, and test semantic searches.</li>
+          <li>Select documents or chunks for chats, with independent embedding hosts and saved source passages.</li>
+          <li>Warn about stored embeddings when deleting models, with optional vector cleanup that retains source text.</li>
+          <li>Search with sqlite-vec, automatically migrate existing vectors with a database backup, and use the Qwen3 retrieval preset.</li>
+          <li>Organize documents into collections with shared embedding settings, automatic builds, and live collection selection in chats.</li>
+          <li>Choose collections as chat sources and compare cosine similarity, Euclidean distance, or Manhattan distance with appropriate search cutoffs.</li>
+          <li>Hide embedding-only models from Chat and Response model selection while keeping them available in Knowledge and Manage Models.</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.12.0" date="2026-09-09">
       <description translate="no">
         <p>Add a tool-calling playground for chat tabs with editable function definitions, JSON import and export, and an example.</p>

@@ -29,6 +29,9 @@ class ChatInput(Gtk.Box):
         self._capability_id = 0
         self._fetch_cancel = None
         self._capability_cancel = None
+        self._model_details = {}
+        self._model_list_notice = ''
+        self._model_placeholder = False
         self._running = False
         self._desired_thinking = None
         self._thinking_values = []
@@ -97,7 +100,9 @@ class ChatInput(Gtk.Box):
     def update_capability_controls(self):
         self.attach_button.set_sensitive(self.get_selected_model() is not None and
                                          not self.capabilities_loading and self.image_support is not False and not self.awaiting_tools)
-        if self.capabilities_loading:
+        if not self.get_selected_model():
+            notice = self._model_list_notice
+        elif self.capabilities_loading:
             notice = _('Checking image support…')
         elif self.image_support is False:
             notice = _('This model does not support images.')
@@ -115,11 +120,13 @@ class ChatInput(Gtk.Box):
 
     def set_models(self, models):
         pending = getattr(self, 'pending_model_selection', None)
-        self.model_dropdown.set_model(Gtk.StringList.new(models))
+        # GtkDropDown selects the first row even when asked to clear selection.
+        # Keep unavailable saved models from silently becoming a different model.
+        self._model_placeholder = bool(models and pending and pending not in models)
+        labels = [_('Select a chat model')] + models if self._model_placeholder else models
+        self.model_dropdown.set_model(Gtk.StringList.new(labels))
         if pending in models:
             self.select_model(pending)
-        elif pending:
-            self.model_dropdown.set_selected(Gtk.INVALID_LIST_POSITION)
         self.pending_model_selection = None
         self.set_running(self._running)
 
@@ -132,6 +139,8 @@ class ChatInput(Gtk.Box):
                     return
 
     def get_selected_model(self):
+        if self._model_placeholder and self.model_dropdown.get_selected() == 0:
+            return None
         item = self.model_dropdown.get_selected_item()
         return item.get_string() if item else None
 
@@ -148,26 +157,48 @@ class ChatInput(Gtk.Box):
         self.cancel_fetches()
         self._host = host
         request_id = self._fetch_id
+        self._model_details = {}
+        self._model_list_notice = _('Checking chat models…') if host else ''
+        self._model_placeholder = False
         # Clear old models immediately, but keep the desired saved selection.
         self.model_dropdown.set_model(Gtk.StringList.new([]))
-        self.set_running(self._running)
+        self.update_capability_controls()
         if not host:
             return
         cancel = self._fetch_cancel = Gio.Cancellable()
 
-        def deliver(models):
+        def deliver(models, details, error):
             if request_id == self._fetch_id:
+                self._model_details = details
+                self._model_list_notice = error or ('' if models else
+                    _('No chat models found. Pull one in Manage Models, then refresh.'))
                 self.set_models(models)
+                self.update_capability_controls()
             return False
 
         def fetch():
+            models, details, error = [], {}, None
             try:
-                models = ollama.fetch_models(host, cancellable=cancel)
+                for model in ollama.fetch_models(host, cancellable=cancel):
+                    if cancel.is_cancelled():
+                        return
+                    try:
+                        info = ollama.show_model(host, model, cancellable=cancel)
+                    except ollama.RequestCancelled:
+                        return
+                    except ollama.OllamaError:
+                        info = None  # Older hosts may not expose capabilities.
+                    capabilities = info.get('capabilities') if isinstance(info, dict) else None
+                    if (isinstance(capabilities, list) and 'embedding' in capabilities
+                            and 'completion' not in capabilities):
+                        continue
+                    models.append(model)
+                    details[model] = info
             except ollama.RequestCancelled:
                 return
-            except ollama.OllamaError:
-                models = []
-            GLib.idle_add(deliver, models)
+            except ollama.OllamaError as exc:
+                error = str(exc)
+            GLib.idle_add(deliver, models, details, error)
         from ..session import worker
         worker.submit(fetch)
 
@@ -177,6 +208,9 @@ class ChatInput(Gtk.Box):
         if self._capability_cancel is not None:
             self._capability_cancel.cancel()
         model, host = self.get_selected_model(), self._host
+        if model in self._model_details:
+            self.set_model_details(self._model_details[model])
+            return
         self.set_model_details(None, loading=bool(model and host))
         if not model or not host:
             return

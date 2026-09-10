@@ -154,6 +154,34 @@ def get_version(host, timeout=5, cancellable=None):
     return _request(host, '/api/version', timeout=timeout, cancellable=cancellable).get('version', 'Unknown')
 
 
+def embed(host, model, input, dimensions=None, keep_alive=None, timeout=300, cancellable=None):
+    """Return validated native embeddings without allowing silent input truncation."""
+    import math
+    texts = [input] if isinstance(input, str) else list(input)
+    if not texts or any(not isinstance(text, str) or not text.strip() for text in texts):
+        raise OllamaError(_('Enter nonempty text to embed.'))
+    data = {'model': model, 'input': texts, 'truncate': False}
+    if dimensions is not None:
+        if type(dimensions) is not int or dimensions <= 0:
+            raise OllamaError(_('Embedding dimensions must be a positive integer.'))
+        data['dimensions'] = dimensions
+    if keep_alive is not None:
+        data['keep_alive'] = keep_alive
+    result = _request(host, '/api/embed', data, 'POST', timeout, cancellable)
+    vectors = result.get('embeddings') if isinstance(result, dict) else None
+    if not isinstance(vectors, list) or len(vectors) != len(texts):
+        raise OllamaError(_('The server returned an incorrect number of embeddings.'))
+    size = dimensions
+    for vector in vectors:
+        if (not isinstance(vector, list) or not vector or
+                any(type(n) not in (int, float) or not math.isfinite(n) for n in vector)):
+            raise OllamaError(_('The server returned an invalid embedding vector.'))
+        size = size or len(vector)
+        if len(vector) != size or not any(vector):
+            raise OllamaError(_('Embedding dimensions do not match, or a vector is zero.'))
+    return result
+
+
 def delete_model(host, model_name, timeout=10, cancellable=None):
     _request(host, '/api/delete', {'model': model_name}, 'DELETE', timeout, cancellable)
     return True

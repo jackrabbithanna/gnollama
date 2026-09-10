@@ -8,8 +8,8 @@ from .tool_view import ToolsEditor
 from ..tool_calling import parse_tools, InvalidTools
 
 @Gtk.Template(resource_path='/io/github/jackrabbithanna/Gnollama/widgets/options_panel.ui')
-class OptionsPanel(Gtk.Expander):
-    """Encapsulates the advanced settings and options for the chat."""
+class OptionsPanel(Gtk.Box):
+    """Common tool/output controls followed by expandable generation settings."""
     __gtype_name__ = 'OptionsPanel'
     __gsignals__ = {'tools-options-changed': (GObject.SignalFlags.RUN_FIRST, None, ())}
 
@@ -35,11 +35,10 @@ class OptionsPanel(Gtk.Expander):
     tools_check = Gtk.Template.Child()
     tools_button = Gtk.Template.Child()
     tools_notice = Gtk.Template.Child()
+    advanced_expander = Gtk.Template.Child()
 
     def __init__(self, **kwargs: Any) -> None:
         super().__init__(**kwargs)
-        # Also set this construct property in the parent template for GtkBuilder.
-        self.set_label(_('Advanced Settings'))
         self.storage = None
         self.host_list: List[Dict[str, Any]] = []
         self.schema_text = ''

@@ -15,6 +15,16 @@
       </object>
     </child>
     <property name="content">
+      <object class="AdwToolbarView">
+        <child type="top">
+          <object class="AdwHeaderBar">
+            <property name="title-widget"><object class="AdwViewSwitcher"><property name="stack">section_stack</property><property name="policy">narrow</property></object></property>
+            <child type="end"><object class="GtkMenuButton"><property name="primary">True</property><property name="icon-name">open-menu-symbolic</property><property name="tooltip-text" translatable="yes">Main Menu</property><property name="menu-model">primary_menu</property></object></child>
+          </object>
+        </child>
+        <property name="content">
+          <object class="AdwViewStack" id="section_stack">
+            <child><object class="AdwViewStackPage"><property name="name">chats</property><property name="title" translatable="yes">Chats</property><property name="icon-name">gnollama-chats-symbolic</property><property name="child">
       <object class="AdwOverlaySplitView" id="split_view">
         <property name="min-sidebar-width">220</property>
         <property name="max-sidebar-width">300</property>
@@ -22,13 +32,15 @@
           <object class="AdwToolbarView">
             <child type="top">
               <object class="AdwHeaderBar">
+                <property name="show-start-title-buttons">False</property>
+                <property name="show-end-title-buttons">False</property>
                 <property name="title-widget"><object class="AdwWindowTitle"><property name="title" translatable="yes">Saved Chats</property></object></property>
                 <child type="start"><object class="GtkButton"><property name="icon-name">list-add-symbolic</property><property name="tooltip-text" translatable="yes">New Chat</property><property name="action-name">win.new_chat_tab</property></object></child>
               </object>
             </child>
             <property name="content">
               <object class="AdwSidebar" id="history_sidebar">
-                <property name="placeholder"><object class="AdwStatusPage"><property name="title" translatable="yes">No Saved Chats</property><property name="icon-name">chat-message-new-symbolic</property></object></property>
+                <property name="placeholder"><object class="AdwStatusPage"><property name="title" translatable="yes">No Saved Chats</property><property name="icon-name">gnollama-chats-symbolic</property></object></property>
               </object>
             </property>
           </object>
@@ -37,8 +49,9 @@
           <object class="AdwToolbarView">
             <child type="top">
               <object class="AdwHeaderBar">
+                <property name="show-start-title-buttons">False</property>
+                <property name="show-end-title-buttons">False</property>
                 <child type="start"><object class="GtkToggleButton" id="sidebar_toggle"><property name="icon-name">gnollama-sidebar-symbolic</property><property name="tooltip-text" translatable="yes">Toggle Sidebar</property></object></child>
-                <child type="end"><object class="GtkMenuButton"><property name="primary">True</property><property name="icon-name">open-menu-symbolic</property><property name="tooltip-text" translatable="yes">Main Menu</property><property name="menu-model">primary_menu</property></object></child>
               </object>
             </child>
             <child type="top">
@@ -47,6 +60,10 @@
               </object>
             </child>
             <property name="content"><object class="AdwTabView" id="tab_view"/></property>
+          </object>
+        </property>
+      </object>
+            </property></object></child>
           </object>
         </property>
       </object>

@@ -360,7 +360,14 @@ class SourcesView(Gtk.Expander):
             if pages:
                 title += ' · ' + _('Pages: {0}').format(pages)
             item = Gtk.Expander(label_widget=label(title, selectable=False))
-            item.set_child(label(hit['text'] + ('\n' + _('Shortened to fit the source budget.') if hit.get('truncated') else '')))
+            content = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+            source = hit.get('web_source')
+            if source:
+                content.append(Gtk.LinkButton(uri=source['final_url'], label=_('Open Source URL'), halign=Gtk.Align.START))
+                content.append(label(source['final_url']))
+                content.append(label(_('Fetched: {0}').format(time.strftime('%Y-%m-%d %H:%M', time.localtime(source['fetched_at'])))))
+            content.append(label(hit['text'] + ('\n' + _('Shortened to fit the source budget.') if hit.get('truncated') else '')))
+            item.set_child(content)
             box.append(item)
         box.append(label(_('Scores compare embeddings; they are not confidence estimates.')))
 
@@ -736,6 +743,7 @@ class KnowledgeView(Gtk.Box):
         self._availability_cancels = []
         self.append(actions(button(_('New Collection'), self.new_collection),
                             button(_('Add Text'), self.add_text), button(_('Import Files…'), self.import_files),
+                            button(_('Add URLs…'), self.add_urls),
                             button(_('Test Search'), self.test_search), button(_('Refresh'), self.refresh_models)))
         sidebar = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
         self.collection_dropdown = dropdown([_('All Documents'), _('Ungrouped Documents')])
@@ -846,6 +854,8 @@ class KnowledgeView(Gtk.Box):
                     self.documents.append(label(_('Add text, import files, or add existing documents to this collection.') if collection else
                                                 _('Add text or import files to build your library.')))
                 key = (document_id, document['title'] if document else '',
+                       document['content_hash'] if document else '',
+                       json.dumps(document.get('web_source'), sort_keys=True) if document else '',
                        scope, tuple((c['id'], c['name']) for c in memberships),
                        tuple(collection.items()) if collection else (),
                        tuple(tuple(m.items()) for m in members),
@@ -1022,6 +1032,12 @@ class KnowledgeView(Gtk.Box):
             return
         self.detail_page.set_title(document['title'])
         self.detail.append(label(document['title']))
+        source = document.get('web_source')
+        if source:
+            self.detail.append(Gtk.LinkButton(uri=source['final_url'], label=_('Open Source URL'), halign=Gtk.Align.START))
+            self.detail.append(label(source['final_url']))
+            self.detail.append(label(_('Fetched: {0}').format(time.strftime('%Y-%m-%d %H:%M', time.localtime(source['fetched_at'])))))
+            self.detail.append(button(_('Fetch Again…'), lambda *args: self.add_urls(url=source['source_url'], document_id=document['id'])))
         if memberships:
             self.detail.append(label(_('Collections: {0}').format(', '.join(c['name'] for c in memberships))))
         if self.collection_id:
@@ -1089,6 +1105,15 @@ class KnowledgeView(Gtk.Box):
         dialog.on_apply = lambda text: self._save_document(make_document(title.get_text(), text), collection_id)
         plain_editor(dialog)
         self.present_dialog(dialog)
+
+    def add_urls(self, *args, url='', document_id=None):
+        from .url_import import URLImportDialog
+        collection_id = self.collection_id
+        if not collection_id and document_id:
+            groups = self.storage.db.source_collections(document_id=document_id)
+            if groups:
+                collection_id = groups[0]['id']
+        self.present_dialog(URLImportDialog(self.storage, collection_id, url))
 
     def _save_document(self, document, collection_id=None):
         existing = next((d for d in self.storage.db.knowledge_documents() if d['content_hash'] == document['content_hash']), None)

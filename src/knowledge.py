@@ -158,7 +158,8 @@ def augmented_messages(messages, snapshot):
     messages = copy.deepcopy(messages)
     if not snapshot:
         return messages
-    passages = '\n\n'.join('[S{0}] {1}\n{2}'.format(i, hit['title'], hit['text'])
+    passages = '\n\n'.join('[S{0}] {1}\n{2}{3}'.format(i, hit['title'],
+                          ('URL: ' + hit['web_source']['final_url'] + '\n') if hit.get('web_source') else '', hit['text'])
                             for i, hit in enumerate(snapshot['hits'], 1))
     for message in reversed(messages):
         if message['role'] == 'user':
@@ -177,6 +178,9 @@ class KnowledgeService:
         self.db = storage.db
         self.executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix='GnollamaKnowledge')
         self.preparations = ThreadPoolExecutor(max_workers=1, thread_name_prefix='GnollamaCollections')
+        self.imports = ThreadPoolExecutor(max_workers=2, thread_name_prefix='GnollamaURLs')
+        self._document_updates = set()
+        self._document_committed = set()
         self.jobs = {}
         self._active = {}
         self._lock = threading.RLock()
@@ -258,7 +262,7 @@ class KnowledgeService:
             raise ValueError(_('The embedding host was removed. Choose a configured host before continuing.'))
 
     def submit(self, title, function, callback=None, host='', model='', index_id=None, document_id=None,
-               preparation=False, metadata=None):
+               preparation=False, metadata=None, importing=False, allow_update=False):
         id = str(uuid.uuid4())
         job = dict(id=id, title=title, host=host.rstrip('/'), model=model, index_id=index_id,
                    document_id=document_id, progress=_('Queued'), cancel=Gio.Cancellable(), done=False, error=None)
@@ -266,6 +270,12 @@ class KnowledgeService:
         with self._lock:
             if self.closed:
                 raise ValueError(_('The Knowledge Library is closing.'))
+            documents = {document_id, *job.get('document_ids', ())}
+            if preparation and self._document_updates and job.get('collection_id'):
+                documents.update(d['id'] for d in self.db.collection_documents(job['collection_id']))
+            if (documents & (self._document_updates - self._document_committed)
+                    and not allow_update and not job.get('reserved_document')):
+                raise ValueError(_('This document is being replaced. Retry the build when replacement finishes.'))
             self.jobs[id] = job
         def progress(text):
             job['progress'] = text
@@ -282,14 +292,65 @@ class KnowledgeService:
                     self.storage._submit(self.db.finish_knowledge_index, index_id,
                                          'interrupted' if job['cancel'].is_cancelled() else 'failed', str(exc), on_done=self.changed)
             finally:
+                if job.get('reserved_document'):
+                    with self._lock:
+                        self._document_updates.discard(job['reserved_document'])
+                        self._document_committed.discard(job['reserved_document'])
                 job['done'] = True
                 job['progress'] = _('Stopped') if job['cancel'].is_cancelled() else (_('Failed') if error else _('Complete'))
                 self.changed()
             if callback:
                 GLib.idle_add(lambda: callback(result, error) or False)
-        (self.preparations if preparation else self.executor).submit(run)
+        (self.imports if importing else self.preparations if preparation else self.executor).submit(run)
         self.changed()
         return job
+
+    def save_web_document(self, document, source, collection_id, expected=None, callback=None):
+        document, source, expected = copy.deepcopy(document), copy.deepcopy(source), copy.deepcopy(expected)
+        id = expected['id'] if expected else document['id']
+        groups = {c['id'] for c in self.db.source_collections(document_id=id)}
+        with self._lock:
+            if id in self._document_updates or any(not j['done'] and (
+                    j.get('document_id') == id and j.get('index_id') or
+                    id in j.get('document_ids', ()) or j.get('collection_id') in groups)
+                    for j in self.jobs.values()):
+                raise ValueError(_('Wait for this document’s embedding builds to finish before replacing it.'))
+            self._document_updates.add(id)
+        def run(cancel, progress):
+            progress(_('Saving the web document…'))
+            check_cancel(cancel)
+            # Once committed, rebuilding may stop, but invalidated vectors must stay invalid.
+            result = self._write(self.db.save_web_document, document, source, collection_id,
+                                 expected['id'] if expected else None, expected['content_hash'] if expected else None)
+            result['warnings'] = []
+            for index in result['indexes']:
+                if self.closed or cancel.is_cancelled():
+                    break  # Persisted interrupted indexes remain available for Retry.
+                config = self.db.embedding_config(index['config_id'])
+                try:
+                    self.create_index(id, index['host'], index['model'], config, index['chunk_size'], index['overlap'],
+                                      index_id=index['id'], prepared=True, replacing=True)
+                except ValueError as exc:
+                    result['warnings'].append(str(exc))
+            # Allow builds of the committed text while still excluding another replacement.
+            with self._lock:
+                self._document_committed.add(id)
+            for group in result['collections']:
+                if self.closed or cancel.is_cancelled():
+                    break
+                try:
+                    self.build_collection(group)
+                except ValueError as exc:
+                    result['warnings'].append(str(exc))
+            self.changed()
+            return result
+        try:
+            return self.submit(_('Save web document'), run, callback, document_id=id,
+                               metadata=dict(reserved_document=id))
+        except Exception:
+            with self._lock:
+                self._document_updates.discard(id)
+            raise
 
     def create_collection(self, name, host, model, config, size=1600, overlap=200, document_ids=(), callback=None):
         if not name.strip():
@@ -306,7 +367,7 @@ class KnowledgeService:
             self._prepare_collection(collection['id'], document_ids, cancel, progress)
             return collection['id']
         return self.submit(_('Create collection'), run, callback, host, model, preparation=True,
-                           metadata=dict(digest=config['digest'], collection_id=collection['id']))
+                           metadata=dict(digest=config['digest'], collection_id=collection['id'], document_ids=list(document_ids)))
 
     def build_collection(self, id, document_ids=(), callback=None):
         collection = self.db.knowledge_collection(id)
@@ -316,7 +377,7 @@ class KnowledgeService:
         return self.submit(_('Prepare collection: {0}').format(collection['name']),
                           lambda cancel, progress: self._prepare_collection(id, document_ids, cancel, progress),
                           callback, collection['host'], collection['model'], preparation=True,
-                          metadata=dict(digest=config['digest'], collection_id=id))
+                          metadata=dict(digest=config['digest'], collection_id=id, document_ids=list(document_ids)))
 
     def _prepare_collection(self, id, document_ids, cancel, progress):
         check_cancel(cancel)
@@ -347,7 +408,7 @@ class KnowledgeService:
         return id
 
     def create_index(self, document_id, host, model, config, size=1600, overlap=200, callback=None, index_id=None,
-                     prepared=False, title=None):
+                     prepared=False, title=None, replacing=False):
         with self._lock:
             if index_id:
                 active = next((j for j in self.jobs.values() if j.get('index_id') == index_id and not j['done']
@@ -430,6 +491,7 @@ class KnowledgeService:
                                      'interrupted' if cancel.is_cancelled() else 'failed', str(exc), on_done=self.changed)
                 raise
         return self.submit(title or _('Create embeddings'), run, callback, host, model, index_id, document_id,
+                           allow_update=replacing,
                            metadata=dict(digest=config['digest'], config_id=config['id'], chunk_size=size,
                                          overlap=overlap, created_at=time.time()))
 
@@ -473,3 +535,4 @@ class KnowledgeService:
     def shutdown(self):
         self.executor.shutdown(wait=False)
         self.preparations.shutdown(wait=False)
+        self.imports.shutdown(wait=False)

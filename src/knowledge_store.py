@@ -6,6 +6,7 @@ import time
 from gettext import gettext as _
 from .vectors import create_vector_table, table_exists, vector_blob, vector_table, vector_values, validate_dimensions, validate_search_metric, distance_candidates
 from .collections_store import CollectionDatabase
+from .web_store import WebSourceDatabase
 
 
 MIGRATION = """
@@ -39,7 +40,7 @@ CREATE INDEX knowledge_chunks_index ON knowledge_chunks(index_id);
 """
 
 
-class KnowledgeDatabase(CollectionDatabase):
+class KnowledgeDatabase(WebSourceDatabase, CollectionDatabase):
     def _delete_index_vectors(self, conn, index_id):
         index = conn.execute('SELECT config_id FROM knowledge_indexes WHERE id=?', (index_id,)).fetchone()
         if index is not None and table_exists(conn, index['config_id']):
@@ -56,6 +57,7 @@ class KnowledgeDatabase(CollectionDatabase):
             if row:
                 result = dict(row)
                 result['pages'] = json.loads(result['pages'])
+                result['web_source'] = self._web_source(conn, id)
                 return result
 
     def add_knowledge_document(self, document):
@@ -315,6 +317,9 @@ class KnowledgeDatabase(CollectionDatabase):
                                  'title': index['title'], 'ordinal': row['ordinal'], 'start': row['start'],
                                  'end': row['start'] + length, 'pages': pages, 'score': score, 'text': text,
                                  'truncated': length < row['end'] - row['start']})
+                    source = self._web_source(conn, index['document_id'])
+                    if source:
+                        hits[-1]['web_source'] = source
                     budget -= length
                 check_cancel()
                 if source_snapshot is not None:

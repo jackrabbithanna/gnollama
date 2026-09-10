@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gnollama\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-10 13:59-0600\n"
+"POT-Creation-Date: 2026-09-10 14:57-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -128,6 +128,18 @@ msgid ""
 "keeping them available in Knowledge and Manage Models."
 msgstr ""
 
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:62
+msgid ""
+"Import batches of URLs into collections with main-content extraction, CSS "
+"selectors, editable previews, and source links in chats."
+msgstr ""
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:63
+msgid ""
+"Review changed web documents before replacing their text and rebuilding all "
+"affected embedding indexes."
+msgstr ""
+
 #: src/ai_bubble.ui:35
 msgid "API Call Details"
 msgstr ""
@@ -140,11 +152,11 @@ msgstr ""
 msgid "Earlier images were omitted from the text-only request."
 msgstr ""
 
-#: src/bubbles.py:124 src/knowledge.py:286
+#: src/bubbles.py:124 src/knowledge.py:300
 msgid "Stopped"
 msgstr ""
 
-#: src/bubbles.py:124 src/knowledge.py:286
+#: src/bubbles.py:124 src/knowledge.py:300
 msgid "Failed"
 msgstr ""
 
@@ -203,37 +215,38 @@ msgstr ""
 msgid "Finish: {0}"
 msgstr ""
 
-#: src/database.py:73
+#: src/database.py:75
 msgid ""
 "This database was created by a newer Gnollama version. Update Gnollama to "
 "open it."
 msgstr ""
 
-#: src/database.py:80
+#: src/database.py:82
 msgid "Backing up the database…"
 msgstr ""
 
-#: src/database.py:189
+#: src/database.py:191
 msgid "This database requires a newer Gnollama version."
 msgstr ""
 
-#: src/database.py:208
+#: src/database.py:210
 #, python-brace-format
 msgid "Upgrading the database to version {0}…"
 msgstr ""
 
 #: src/host_edit_dialog.ui:8 src/host_manager.py:150 src/model_manager.py:366
-#: src/pull_model_dialog.ui:18 src/widgets/knowledge_view.py:945
-#: src/widgets/knowledge_view.py:955 src/widgets/knowledge_view.py:1057
-#: src/widgets/knowledge_view.py:1097 src/widgets/knowledge_view.py:1178
-#: src/widgets/knowledge_view.py:1199 src/window.py:185 src/window.py:346
+#: src/pull_model_dialog.ui:18 src/widgets/knowledge_view.py:955
+#: src/widgets/knowledge_view.py:965 src/widgets/knowledge_view.py:1073
+#: src/widgets/knowledge_view.py:1122 src/widgets/knowledge_view.py:1203
+#: src/widgets/knowledge_view.py:1224 src/widgets/url_import.py:247
+#: src/widgets/url_import.py:334 src/window.py:185 src/window.py:346
 msgid "Cancel"
 msgstr ""
 
-#: src/host_edit_dialog.ui:9 src/widgets/knowledge_view.py:946
-#: src/widgets/knowledge_view.py:979 src/widgets/knowledge_view.py:1086
-#: src/widgets/knowledge_view.py:1159 src/widgets/knowledge_view.py:1179
-#: src/window.py:347
+#: src/host_edit_dialog.ui:9 src/widgets/knowledge_view.py:956
+#: src/widgets/knowledge_view.py:989 src/widgets/knowledge_view.py:1102
+#: src/widgets/knowledge_view.py:1184 src/widgets/knowledge_view.py:1204
+#: src/widgets/url_import.py:73 src/widgets/url_import.py:233 src/window.py:347
 msgid "Save"
 msgstr ""
 
@@ -275,8 +288,8 @@ msgstr ""
 
 #: src/host_manager.py:97 src/main.py:55 src/model_manager.py:340
 #: src/startup.py:23 src/widgets/json_view.py:212
-#: src/widgets/knowledge_view.py:647 src/widgets/knowledge_view.py:793
-#: src/widgets/knowledge_view.py:1078
+#: src/widgets/knowledge_view.py:654 src/widgets/knowledge_view.py:801
+#: src/widgets/knowledge_view.py:1094
 msgid "Close"
 msgstr ""
 
@@ -300,7 +313,7 @@ msgid "Are you sure you want to delete {0}?"
 msgstr ""
 
 #: src/host_manager.py:151 src/model_manager.py:367
-#: src/widgets/knowledge_view.py:1200
+#: src/widgets/knowledge_view.py:1225
 msgid "Delete"
 msgstr ""
 
@@ -330,7 +343,7 @@ msgstr ""
 msgid "Untitled"
 msgstr ""
 
-#: src/knowledge.py:55 src/widgets/knowledge_view.py:1147
+#: src/knowledge.py:55 src/widgets/knowledge_view.py:1172
 msgid "Files must be no larger than 50 MiB."
 msgstr ""
 
@@ -409,165 +422,184 @@ msgstr ""
 msgid "Source budget must be between 256 and 64,000 characters."
 msgstr ""
 
-#: src/knowledge.py:225
+#: src/knowledge.py:229
 msgid "Wait for the model operation to finish."
 msgstr ""
 
-#: src/knowledge.py:258
+#: src/knowledge.py:262
 msgid ""
 "The embedding host was removed. Choose a configured host before continuing."
 msgstr ""
 
-#: src/knowledge.py:264
+#: src/knowledge.py:268 src/widgets/url_import.py:104
+#: src/widgets/url_import.py:117
 msgid "Queued"
 msgstr ""
 
-#: src/knowledge.py:268
+#: src/knowledge.py:272
 msgid "The Knowledge Library is closing."
 msgstr ""
 
-#: src/knowledge.py:286
+#: src/knowledge.py:278
+msgid ""
+"This document is being replaced. Retry the build when replacement finishes."
+msgstr ""
+
+#: src/knowledge.py:300
 msgid "Complete"
 msgstr ""
 
-#: src/knowledge.py:296 src/collections_store.py:107
+#: src/knowledge.py:317
+msgid ""
+"Wait for this document’s embedding builds to finish before replacing it."
+msgstr ""
+
+#: src/knowledge.py:320
+msgid "Saving the web document…"
+msgstr ""
+
+#: src/knowledge.py:348
+msgid "Save web document"
+msgstr ""
+
+#: src/knowledge.py:357 src/collections_store.py:107
 msgid "Enter a collection name."
 msgstr ""
 
-#: src/knowledge.py:308
+#: src/knowledge.py:369
 msgid "Create collection"
 msgstr ""
 
-#: src/knowledge.py:314 src/collections_store.py:141
+#: src/knowledge.py:375 src/collections_store.py:141
 msgid "The collection was deleted."
 msgstr ""
 
-#: src/knowledge.py:316
+#: src/knowledge.py:377
 #, python-brace-format
 msgid "Prepare collection: {0}"
 msgstr ""
 
-#: src/knowledge.py:323
+#: src/knowledge.py:384
 msgid "Reusing embeddings and preparing missing documents…"
 msgstr ""
 
-#: src/knowledge.py:340
+#: src/knowledge.py:401
 #, python-brace-format
 msgid "Create embeddings: {0}"
 msgstr ""
 
-#: src/knowledge.py:345
+#: src/knowledge.py:406
 msgid "Build was stopped before it started."
 msgstr ""
 
-#: src/knowledge.py:362
+#: src/knowledge.py:423
 msgid "The source document was deleted."
 msgstr ""
 
-#: src/knowledge.py:367
+#: src/knowledge.py:428
 msgid ""
 "This index would exceed 100,000 chunks. Increase the chunk size or reduce "
 "overlap."
 msgstr ""
 
-#: src/knowledge.py:383
+#: src/knowledge.py:444
 #, python-brace-format
 msgid "Embedding chunks: {0} complete, {1} remaining"
 msgstr ""
 
-#: src/knowledge.py:407
+#: src/knowledge.py:468
 msgid ""
 "The embedding input cannot fit. Shorten the document prefix or choose "
 "another model."
 msgstr ""
 
-#: src/knowledge.py:417
+#: src/knowledge.py:478
 msgid ""
 "The model returned a different vector dimension. Create a new configuration."
 msgstr ""
 
-#: src/knowledge.py:432
+#: src/knowledge.py:493
 msgid "Create embeddings"
 msgstr ""
 
-#: src/knowledge.py:441
+#: src/knowledge.py:503
 msgid "This embedding configuration has no completed vectors."
 msgstr ""
 
-#: src/knowledge.py:443 src/widgets/knowledge_view.py:550
+#: src/knowledge.py:505 src/widgets/knowledge_view.py:557
 msgid "Enter a search query."
 msgstr ""
 
-#: src/knowledge.py:453 src/knowledge_store.py:245
+#: src/knowledge.py:515 src/knowledge_store.py:247
 msgid "Query dimensions differ from the stored vectors. Rebuild the index."
 msgstr ""
 
-#: src/knowledge.py:460
+#: src/knowledge.py:522
 msgid ""
 "No passages met the search criteria. Adjust the query, sources, or minimum "
 "similarity."
 msgstr ""
 
-#: src/knowledge_store.py:116
+#: src/knowledge_store.py:118
 msgid "The reserved embedding index was deleted."
 msgstr ""
 
-#: src/knowledge_store.py:118
+#: src/knowledge_store.py:120
 msgid "An index cannot change its document or embedding configuration."
 msgstr ""
 
-#: src/knowledge_store.py:133
+#: src/knowledge_store.py:135
 msgid "Embedding dimensions do not match the batch."
 msgstr ""
 
-#: src/knowledge_store.py:140
+#: src/knowledge_store.py:142
 msgid "Embedding configuration does not match the index."
 msgstr ""
 
-#: src/knowledge_store.py:143
+#: src/knowledge_store.py:145
 msgid "Embedding dimensions changed during indexing"
 msgstr ""
 
-#: src/knowledge_store.py:149
+#: src/knowledge_store.py:151
 msgid "A chunk cannot move between indexes."
 msgstr ""
 
-#: src/knowledge_store.py:221
+#: src/knowledge_store.py:223
 msgid "Select at least one indexed document or chunk."
 msgstr ""
 
-#: src/knowledge_store.py:224
+#: src/knowledge_store.py:226
 msgid "Invalid search limits."
 msgstr ""
 
-#: src/knowledge_store.py:252
+#: src/knowledge_store.py:254
 msgid ""
 "A selected index is missing, incomplete, or incompatible. Choose sources "
 "again."
 msgstr ""
 
-#: src/knowledge_store.py:257 src/knowledge_store.py:266
+#: src/knowledge_store.py:259 src/knowledge_store.py:268
 msgid "Selected chunks are missing. Choose sources again."
 msgstr ""
 
-#: src/knowledge_store.py:262
+#: src/knowledge_store.py:264
 msgid "A selected document has no selected chunks."
 msgstr ""
 
-#: src/knowledge_store.py:269 src/knowledge_store.py:287 src/vectors.py:108
+#: src/knowledge_store.py:271 src/knowledge_store.py:289 src/vectors.py:108
 #: src/vectors.py:116
 msgid "Stored vectors are missing. Rebuild this index."
 msgstr ""
 
-#: src/knowledge_store.py:289 src/vectors.py:129
+#: src/knowledge_store.py:291 src/vectors.py:129
 msgid "Stored vectors are damaged. Rebuild this index."
 msgstr ""
 
-#: src/knowledge_store.py:307 src/vectors.py:124
+#: src/knowledge_store.py:309 src/vectors.py:124
 msgid "Stored vectors do not match their source. Rebuild this index."
 msgstr ""
 
-#: src/knowledge_store.py:326
+#: src/knowledge_store.py:331
 #, python-brace-format
 msgid "Knowledge search failed: {0}"
 msgstr ""
@@ -576,11 +608,11 @@ msgstr ""
 msgid "A document was deleted. Choose documents again."
 msgstr ""
 
-#: src/collections_store.py:118 src/widgets/knowledge_view.py:974
+#: src/collections_store.py:118 src/widgets/knowledge_view.py:984
 msgid "Choose a model with the collection’s original digest."
 msgstr ""
 
-#: src/collections_store.py:202 src/widgets/knowledge_view.py:690
+#: src/collections_store.py:202 src/widgets/knowledge_view.py:697
 msgid "A selected collection was deleted. Choose sources again."
 msgstr ""
 
@@ -599,6 +631,92 @@ msgstr ""
 msgid ""
 "Collection “{0}” is not ready. Build missing embeddings or retry failed "
 "documents: {1}"
+msgstr ""
+
+#: src/web_store.py:38
+msgid "The destination collection was deleted. Choose a collection again."
+msgstr ""
+
+#: src/web_store.py:43
+msgid ""
+"This document changed since the preview was opened. Fetch it again before "
+"saving."
+msgstr ""
+
+#: src/web_store.py:53
+msgid "Source content changed. Rebuild required."
+msgstr ""
+
+#: src/web_import.py:48
+msgid "Enter an HTTP or HTTPS URL without embedded login credentials."
+msgstr ""
+
+#: src/web_import.py:54
+msgid "Enter between 1 and 20 URLs, one per line."
+msgstr ""
+
+#: src/web_import.py:86
+#, python-brace-format
+msgid "Downloading {0}"
+msgstr ""
+
+#: src/web_import.py:89
+msgid "This URL could not be opened."
+msgstr ""
+
+#: src/web_import.py:97
+msgid "The URL has an invalid redirect or exceeds five redirects."
+msgstr ""
+
+#: src/web_import.py:103
+#, python-brace-format
+msgid "Download failed: HTTP {0} {1}"
+msgstr ""
+
+#: src/web_import.py:105 src/web_import.py:117
+msgid "Downloads must be no larger than 50 MiB."
+msgstr ""
+
+#: src/web_import.py:128
+msgid "The download timed out. Retry this URL."
+msgstr ""
+
+#: src/web_import.py:129
+#, python-brace-format
+msgid "The URL could not be downloaded: {0}"
+msgstr ""
+
+#: src/web_import.py:212
+msgid "The page does not contain readable HTML."
+msgstr ""
+
+#: src/web_import.py:222
+#, python-brace-format
+msgid "Invalid CSS selector: {0}"
+msgstr ""
+
+#: src/web_import.py:226
+msgid ""
+"The CSS selector did not match any elements. Try main, article, or a content "
+"class."
+msgstr ""
+
+#: src/web_import.py:243
+msgid ""
+"No main content was found. Try a CSS selector, or paste the page text using "
+"Add Text."
+msgstr ""
+
+#: src/web_import.py:251
+msgid "No text was found in the selected content. Try another CSS selector."
+msgstr ""
+
+#: src/web_import.py:259
+msgid "Web document"
+msgstr ""
+
+#: src/web_import.py:274
+msgid "This URL must provide an HTML page, PDF, or UTF-8 text document."
 msgstr ""
 
 #: src/main.py:53
@@ -1004,7 +1122,7 @@ msgstr ""
 msgid "Opening Gnollama"
 msgstr ""
 
-#: src/startup.py:20 src/tab.py:248 src/widgets/knowledge_view.py:1046
+#: src/startup.py:20 src/tab.py:248 src/widgets/knowledge_view.py:1062
 #: src/window.py:137
 msgid "Retry"
 msgstr ""
@@ -1026,7 +1144,7 @@ msgstr ""
 msgid "Database backup: {0}"
 msgstr ""
 
-#: src/vectors.py:16 src/widgets/knowledge_view.py:479
+#: src/vectors.py:16 src/widgets/knowledge_view.py:486
 msgid "Choose a supported similarity measure."
 msgstr ""
 
@@ -1324,8 +1442,8 @@ msgstr ""
 msgid "Import…"
 msgstr ""
 
-#: src/widgets/json_view.py:59 src/widgets/knowledge_view.py:423
-#: src/widgets/knowledge_view.py:581
+#: src/widgets/json_view.py:59 src/widgets/knowledge_view.py:430
+#: src/widgets/knowledge_view.py:588
 msgid "Apply"
 msgstr ""
 
@@ -1420,7 +1538,7 @@ msgstr ""
 msgid "No embedding models found. Pull one in Manage Models, then refresh."
 msgstr ""
 
-#: src/widgets/knowledge_view.py:191 src/widgets/knowledge_view.py:1030
+#: src/widgets/knowledge_view.py:191 src/widgets/knowledge_view.py:1046
 msgid "Create Embeddings"
 msgstr ""
 
@@ -1505,11 +1623,11 @@ msgstr ""
 msgid "{0} (copy)"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:300 src/widgets/knowledge_view.py:917
+#: src/widgets/knowledge_view.py:300 src/widgets/knowledge_view.py:927
 msgid "Add Existing Documents"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:305 src/widgets/knowledge_view.py:745
+#: src/widgets/knowledge_view.py:305 src/widgets/knowledge_view.py:753
 msgid "Search documents"
 msgstr ""
 
@@ -1547,8 +1665,8 @@ msgstr ""
 msgid "Unknown similarity measure"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:355 src/widgets/knowledge_view.py:684
-#: src/widgets/knowledge_view.py:1026
+#: src/widgets/knowledge_view.py:355 src/widgets/knowledge_view.py:691
+#: src/widgets/knowledge_view.py:1042 src/widgets/url_import.py:333
 #, python-brace-format
 msgid "Collections: {0}"
 msgstr ""
@@ -1568,319 +1686,332 @@ msgstr ""
 msgid "Pages: {0}"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:363
+#: src/widgets/knowledge_view.py:366 src/widgets/knowledge_view.py:1037
+msgid "Open Source URL"
+msgstr ""
+
+#: src/widgets/knowledge_view.py:368 src/widgets/knowledge_view.py:1039
+#, python-brace-format
+msgid "Fetched: {0}"
+msgstr ""
+
+#: src/widgets/knowledge_view.py:369
 msgid "Shortened to fit the source budget."
 msgstr ""
 
-#: src/widgets/knowledge_view.py:365
+#: src/widgets/knowledge_view.py:372
 msgid "Scores compare embeddings; they are not confidence estimates."
 msgstr ""
 
-#: src/widgets/knowledge_view.py:370
+#: src/widgets/knowledge_view.py:377
 msgid "Knowledge Sources"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:370 src/widgets/knowledge_view.py:418
-#: src/widgets/knowledge_view.py:739
+#: src/widgets/knowledge_view.py:377 src/widgets/knowledge_view.py:425
+#: src/widgets/knowledge_view.py:747
 msgid "Test Search"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:378
+#: src/widgets/knowledge_view.py:385
 msgid "Embedding configuration"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:389
+#: src/widgets/knowledge_view.py:396
 msgid "Refresh models"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:393
+#: src/widgets/knowledge_view.py:400
 msgid ""
 "This chat has older individual sources. Applying a collection selection "
 "replaces them. Closing this dialog keeps them unchanged."
 msgstr ""
 
-#: src/widgets/knowledge_view.py:398
+#: src/widgets/knowledge_view.py:405
 msgid "Maximum passages"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:398
+#: src/widgets/knowledge_view.py:405
 msgid "Source budget (characters)"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:401
+#: src/widgets/knowledge_view.py:408
 msgid "Similarity measure"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:402
+#: src/widgets/knowledge_view.py:409
 msgid "Cosine similarity"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:402
+#: src/widgets/knowledge_view.py:409
 msgid "Euclidean distance (L2)"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:402
+#: src/widgets/knowledge_view.py:409
 msgid "Manhattan distance (L1)"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:416
+#: src/widgets/knowledge_view.py:423
 msgid "Enter a search query"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:470
+#: src/widgets/knowledge_view.py:477
 msgid "Minimum cosine similarity"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:470
+#: src/widgets/knowledge_view.py:477
 msgid "Maximum distance"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:471
+#: src/widgets/knowledge_view.py:478
 msgid "No minimum"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:471
+#: src/widgets/knowledge_view.py:478
 msgid "No maximum"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:476
+#: src/widgets/knowledge_view.py:483
 msgid "Higher is closer (−1 to 1). This is the default for semantic search."
 msgstr ""
 
-#: src/widgets/knowledge_view.py:477
+#: src/widgets/knowledge_view.py:484
 msgid ""
 "Lower is closer. With normalized embeddings, Euclidean and cosine usually "
 "rank results alike."
 msgstr ""
 
-#: src/widgets/knowledge_view.py:478
+#: src/widgets/knowledge_view.py:485
 msgid ""
 "Lower is closer. Adds absolute differences between vector components and can "
 "rank results differently from cosine."
 msgstr ""
 
-#: src/widgets/knowledge_view.py:486
+#: src/widgets/knowledge_view.py:493
 msgid "Collections"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:487
+#: src/widgets/knowledge_view.py:494
 msgid ""
 "Selected collections include every document and follow future additions. All "
 "documents must be ready to search."
 msgstr ""
 
-#: src/widgets/knowledge_view.py:490
+#: src/widgets/knowledge_view.py:497
 msgid "Some selected collections were deleted. Choose sources again."
 msgstr ""
 
-#: src/widgets/knowledge_view.py:491
+#: src/widgets/knowledge_view.py:498
 msgid "Clear missing collections"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:494
+#: src/widgets/knowledge_view.py:501
 #, python-brace-format
 msgid "{0} · {1}/{2} documents ready"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:496
+#: src/widgets/knowledge_view.py:503
 #, python-brace-format
 msgid "Different embedding configuration: {0}"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:502
+#: src/widgets/knowledge_view.py:509
 msgid "Create collections in the Knowledge Library."
 msgstr ""
 
-#: src/widgets/knowledge_view.py:530
+#: src/widgets/knowledge_view.py:537
 msgid ""
 "Select at least one collection. Create collections in Knowledge first if "
 "needed."
 msgstr ""
 
-#: src/widgets/knowledge_view.py:535
+#: src/widgets/knowledge_view.py:542
 msgid "This model digest does not match the selected embedding configuration."
 msgstr ""
 
-#: src/widgets/knowledge_view.py:570
+#: src/widgets/knowledge_view.py:577
 msgid "Document Chunks"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:579
+#: src/widgets/knowledge_view.py:586
 msgid "Select all"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:580
+#: src/widgets/knowledge_view.py:587
 msgid "Select none"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:584
+#: src/widgets/knowledge_view.py:591
 msgid "Load more chunks"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:621
+#: src/widgets/knowledge_view.py:628
 #, python-brace-format
 msgid "Chunk {0}"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:627
+#: src/widgets/knowledge_view.py:634
 #, python-brace-format
 msgid "Characters {0}–{1}"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:630
+#: src/widgets/knowledge_view.py:637
 msgid "Inspect vector"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:644
+#: src/widgets/knowledge_view.py:651
 msgid "This vector was deleted."
 msgstr ""
 
-#: src/widgets/knowledge_view.py:647
+#: src/widgets/knowledge_view.py:654
 msgid "Embedding Vector"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:647
+#: src/widgets/knowledge_view.py:654
 msgid "Stored normalized vector. Changes are not saved."
 msgstr ""
 
-#: src/widgets/knowledge_view.py:660
+#: src/widgets/knowledge_view.py:667
 msgid "Use Knowledge"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:661
+#: src/widgets/knowledge_view.py:668
 msgid "Choose sources…"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:665
+#: src/widgets/knowledge_view.py:672
 msgid "Search query override for the next turn (optional)"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:686
+#: src/widgets/knowledge_view.py:693
 #, python-brace-format
 msgid "Older individual sources: {0}. Choose collections to replace them."
 msgstr ""
 
-#: src/widgets/knowledge_view.py:688
+#: src/widgets/knowledge_view.py:695
 #, python-brace-format
 msgid "{0}: {1}/{2} ready"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:691
+#: src/widgets/knowledge_view.py:698
 msgid "Knowledge is off."
 msgstr ""
 
-#: src/widgets/knowledge_view.py:737
+#: src/widgets/knowledge_view.py:744
 msgid "New Collection"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:738 src/widgets/knowledge_view.py:1085
+#: src/widgets/knowledge_view.py:745 src/widgets/knowledge_view.py:1101
 msgid "Add Text"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:738
+#: src/widgets/knowledge_view.py:745
 msgid "Import Files…"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:739
+#: src/widgets/knowledge_view.py:746
+msgid "Add URLs…"
+msgstr ""
+
+#: src/widgets/knowledge_view.py:747
 msgid "Refresh"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:741 src/widgets/knowledge_view.py:833
+#: src/widgets/knowledge_view.py:749 src/widgets/knowledge_view.py:841
 msgid "All Documents"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:741 src/widgets/knowledge_view.py:833
+#: src/widgets/knowledge_view.py:749 src/widgets/knowledge_view.py:841
 msgid "Ungrouped Documents"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:743
+#: src/widgets/knowledge_view.py:751
 msgid "Library"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:750 src/widgets/knowledge_view.py:792
-#: src/widgets/knowledge_view.py:895
+#: src/widgets/knowledge_view.py:758 src/widgets/knowledge_view.py:800
+#: src/widgets/knowledge_view.py:905
 msgid "Knowledge Library"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:756
+#: src/widgets/knowledge_view.py:764
 msgid "Document"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:842
+#: src/widgets/knowledge_view.py:850
 #, python-brace-format
 msgid "{0} characters"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:846
+#: src/widgets/knowledge_view.py:854
 msgid "Add text, import files, or add existing documents to this collection."
 msgstr ""
 
-#: src/widgets/knowledge_view.py:847
+#: src/widgets/knowledge_view.py:855
 msgid "Add text or import files to build your library."
 msgstr ""
 
-#: src/widgets/knowledge_view.py:896
+#: src/widgets/knowledge_view.py:906
 msgid ""
 "Select a document to inspect it, or create a collection to search several "
 "documents together."
 msgstr ""
 
-#: src/widgets/knowledge_view.py:900
+#: src/widgets/knowledge_view.py:910
 #, python-brace-format
 msgid "{0}/{1} documents ready · Chunk size: {2} · Overlap: {3}"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:906 src/widgets/knowledge_view.py:1031
+#: src/widgets/knowledge_view.py:916 src/widgets/knowledge_view.py:1047
 msgid "Rename"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:907
+#: src/widgets/knowledge_view.py:917
 msgid "Copy with New Settings"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:908 src/widgets/knowledge_view.py:966
+#: src/widgets/knowledge_view.py:918 src/widgets/knowledge_view.py:976
 msgid "Change Embedding Model"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:909 src/widgets/knowledge_view.py:956
+#: src/widgets/knowledge_view.py:919 src/widgets/knowledge_view.py:966
 msgid "Delete Collection"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:914
+#: src/widgets/knowledge_view.py:924
 msgid "Collection Options"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:918
+#: src/widgets/knowledge_view.py:928
 msgid "Build Missing / Retry Failed"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:920
+#: src/widgets/knowledge_view.py:930
 msgid ""
 "Add Text and Import Files add to this collection. Missing embeddings build "
 "automatically; changes affect future chat questions."
 msgstr ""
 
-#: src/widgets/knowledge_view.py:925
+#: src/widgets/knowledge_view.py:935
 msgid "Ready"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:925
+#: src/widgets/knowledge_view.py:935
 msgid "Needs embeddings"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:928
+#: src/widgets/knowledge_view.py:938
 msgid "Remove from Collection"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:942
+#: src/widgets/knowledge_view.py:952
 msgid "Rename Collection"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:954
+#: src/widgets/knowledge_view.py:964
 msgid "Delete Collection?"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:954
+#: src/widgets/knowledge_view.py:964
 #, python-brace-format
 msgid ""
 "Delete “{0}”? Its documents and embeddings stay in the library. Chats "
@@ -1888,176 +2019,312 @@ msgid ""
 "original passages."
 msgstr ""
 
-#: src/widgets/knowledge_view.py:969
+#: src/widgets/knowledge_view.py:979
 msgid ""
 "Choose a host and embedding model matching the collection’s original model "
 "digest. Embedding settings stay the same."
 msgstr ""
 
-#: src/widgets/knowledge_view.py:997
+#: src/widgets/knowledge_view.py:1007
 msgid "Original model available"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:998
+#: src/widgets/knowledge_view.py:1008
 msgid ""
 "Original model unavailable or changed — choose a compatible host for "
 "searches."
 msgstr ""
 
-#: src/widgets/knowledge_view.py:1000
+#: src/widgets/knowledge_view.py:1010
 #, python-brace-format
 msgid "Host unavailable: {0}"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:1021
+#: src/widgets/knowledge_view.py:1031
 msgid "Select a document to inspect its text and embeddings."
 msgstr ""
 
-#: src/widgets/knowledge_view.py:1028
+#: src/widgets/knowledge_view.py:1040
+msgid "Fetch Again…"
+msgstr ""
+
+#: src/widgets/knowledge_view.py:1044
 msgid "Back to Collection"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:1029
+#: src/widgets/knowledge_view.py:1045
 msgid "Preview Text"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:1032
+#: src/widgets/knowledge_view.py:1048
 msgid "Delete Document"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:1036
+#: src/widgets/knowledge_view.py:1052
 msgid "Checking model availability…"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:1039
+#: src/widgets/knowledge_view.py:1055
 #, python-brace-format
 msgid "Chunks: {0}"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:1042
+#: src/widgets/knowledge_view.py:1058
 msgid "Inspect Chunks"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:1043
+#: src/widgets/knowledge_view.py:1059
 msgid "Check Model"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:1044
+#: src/widgets/knowledge_view.py:1060
 msgid "Delete Index"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:1059
+#: src/widgets/knowledge_view.py:1075
 msgid "Details"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:1067
+#: src/widgets/knowledge_view.py:1083
 msgid "Stop Shared Embedding Build?"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:1068
+#: src/widgets/knowledge_view.py:1084
 #, python-brace-format
 msgid ""
 "These collections use this build: {0}. They will need a retry before chat "
 "search can use them."
 msgstr ""
 
-#: src/widgets/knowledge_view.py:1070
+#: src/widgets/knowledge_view.py:1086
 msgid "Keep Building"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:1071
+#: src/widgets/knowledge_view.py:1087
 msgid "Stop Build"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:1078
+#: src/widgets/knowledge_view.py:1094
 msgid "Saved source text. Import revised content as a new document."
 msgstr ""
 
-#: src/widgets/knowledge_view.py:1085
+#: src/widgets/knowledge_view.py:1101
 msgid "Paste text to save in the Knowledge Library."
 msgstr ""
 
-#: src/widgets/knowledge_view.py:1087
+#: src/widgets/knowledge_view.py:1103 src/widgets/url_import.py:56
 msgid "Document title"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:1096
+#: src/widgets/knowledge_view.py:1121
 msgid "This Text Is Already Saved"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:1098
+#: src/widgets/knowledge_view.py:1123
 msgid "Open Existing"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:1100
+#: src/widgets/knowledge_view.py:1125
 msgid "Add Existing to Collection"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:1127
+#: src/widgets/knowledge_view.py:1152
 msgid "Import Text or PDF Files"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:1144
+#: src/widgets/knowledge_view.py:1169
 msgid "Extracting text…"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:1158
+#: src/widgets/knowledge_view.py:1183
 msgid "Import Preview"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:1175
+#: src/widgets/knowledge_view.py:1200
 msgid "Rename Document"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:1189
+#: src/widgets/knowledge_view.py:1214
 msgid "Cancel this document’s indexing job before deleting it."
 msgstr ""
 
-#: src/widgets/knowledge_view.py:1191
+#: src/widgets/knowledge_view.py:1216
 msgid "Delete Document?"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:1191
+#: src/widgets/knowledge_view.py:1216
 msgid "Delete Embedding Index?"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:1192
+#: src/widgets/knowledge_view.py:1217
 msgid ""
 "Chats selecting this data will need new sources. Passages already saved with "
 "answers remain in chat history."
 msgstr ""
 
-#: src/widgets/knowledge_view.py:1193
+#: src/widgets/knowledge_view.py:1218
 msgid "The saved source text and all its indexes will be deleted."
 msgstr ""
 
-#: src/widgets/knowledge_view.py:1193
+#: src/widgets/knowledge_view.py:1218
 msgid "The saved source text will be kept."
 msgstr ""
 
-#: src/widgets/knowledge_view.py:1196
+#: src/widgets/knowledge_view.py:1221
 #, python-brace-format
 msgid "Affected collections: {0}."
 msgstr ""
 
-#: src/widgets/knowledge_view.py:1197
+#: src/widgets/knowledge_view.py:1222
 msgid "This document will be removed from their membership."
 msgstr ""
 
-#: src/widgets/knowledge_view.py:1198
+#: src/widgets/knowledge_view.py:1223
 msgid "Their documents will need embeddings rebuilt."
 msgstr ""
 
-#: src/widgets/knowledge_view.py:1217
+#: src/widgets/knowledge_view.py:1242
 msgid "Embedding Model Availability"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:1218
+#: src/widgets/knowledge_view.py:1243
 msgid "Checking…"
 msgstr ""
 
-#: src/widgets/knowledge_view.py:1221
+#: src/widgets/knowledge_view.py:1246
 msgid "The original model is available on this host."
+msgstr ""
+
+#: src/widgets/url_import.py:14
+msgid "Add URLs"
+msgstr ""
+
+#: src/widgets/url_import.py:30
+msgid "Destination collection"
+msgstr ""
+
+#: src/widgets/url_import.py:32
+msgid "Paste up to 20 URLs, one per line. Review each page before saving."
+msgstr ""
+
+#: src/widgets/url_import.py:37
+msgid "Fetch URLs"
+msgstr ""
+
+#: src/widgets/url_import.py:42
+msgid "Create a collection in the Knowledge Library before importing URLs."
+msgstr ""
+
+#: src/widgets/url_import.py:60
+msgid "CSS selector (optional)"
+msgstr ""
+
+#: src/widgets/url_import.py:61
+msgid "For example: main, article, or .article-body"
+msgstr ""
+
+#: src/widgets/url_import.py:63
+msgid "Re-extract"
+msgstr ""
+
+#: src/widgets/url_import.py:75
+msgid "Retry / Fetch Again"
+msgstr ""
+
+#: src/widgets/url_import.py:76
+msgid "Skip"
+msgstr ""
+
+#: src/widgets/url_import.py:84
+msgid "Choose a destination collection."
+msgstr ""
+
+#: src/widgets/url_import.py:97
+#, python-brace-format
+msgid "Collection: {0}"
+msgstr ""
+
+#: src/widgets/url_import.py:117
+msgid "Downloading…"
+msgstr ""
+
+#: src/widgets/url_import.py:117
+msgid "Extracting…"
+msgstr ""
+
+#: src/widgets/url_import.py:118
+msgid "Ready to review"
+msgstr ""
+
+#: src/widgets/url_import.py:118
+msgid "Needs attention"
+msgstr ""
+
+#: src/widgets/url_import.py:118
+msgid "Saving…"
+msgstr ""
+
+#: src/widgets/url_import.py:119
+msgid "Saved"
+msgstr ""
+
+#: src/widgets/url_import.py:119
+msgid "Skipped"
+msgstr ""
+
+#: src/widgets/url_import.py:132
+msgid "Save or skip reviewed pages to make room for queued downloads."
+msgstr ""
+
+#: src/widgets/url_import.py:133
+msgid ""
+"Saved documents build embeddings in the background. Closing discards unsaved "
+"previews."
+msgstr ""
+
+#: src/widgets/url_import.py:157
+msgid "Extracting content…"
+msgstr ""
+
+#: src/widgets/url_import.py:195
+#, python-brace-format
+msgid "Import URL: {0}"
+msgstr ""
+
+#: src/widgets/url_import.py:233
+msgid "Save / Replace…"
+msgstr ""
+
+#: src/widgets/url_import.py:245
+msgid "Discard Preview Edits?"
+msgstr ""
+
+#: src/widgets/url_import.py:246
+msgid "Extracting again replaces your edited text with the page content."
+msgstr ""
+
+#: src/widgets/url_import.py:248
+msgid "Discard Edits"
+msgstr ""
+
+#: src/widgets/url_import.py:331
+msgid "Replace Document and Rebuild?"
+msgstr ""
+
+#: src/widgets/url_import.py:332
+#, python-brace-format
+msgid ""
+"Replace “{0}” and rebuild {1} embedding indexes? Saved chat answers keep "
+"their original passages. Affected collections cannot search this content "
+"until rebuilding succeeds."
+msgstr ""
+
+#: src/widgets/url_import.py:333
+msgid "None"
+msgstr ""
+
+#: src/widgets/url_import.py:335
+msgid "Replace and Rebuild"
 msgstr ""
 
 #: src/widgets/options_panel.py:54

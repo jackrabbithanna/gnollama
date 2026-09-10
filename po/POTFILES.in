@@ -11,6 +11,8 @@ src/host_manager.ui
 src/knowledge.py
 src/knowledge_store.py
 src/collections_store.py
+src/web_store.py
+src/web_import.py
 src/main.py
 src/model_details_view.ui
 src/model_manager.py
@@ -28,6 +30,7 @@ src/widgets/chat_input.py
 src/widgets/chat_input.ui
 src/widgets/json_view.py
 src/widgets/knowledge_view.py
+src/widgets/url_import.py
 src/widgets/options_panel.py
 src/widgets/options_panel.ui
 src/widgets/tool_view.py

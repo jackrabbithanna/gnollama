@@ -59,6 +59,8 @@
           <li>Organize documents into collections with shared embedding settings, automatic builds, and live collection selection in chats.</li>
           <li>Choose collections as chat sources and compare cosine similarity, Euclidean distance, or Manhattan distance with appropriate search cutoffs.</li>
           <li>Hide embedding-only models from Chat and Response model selection while keeping them available in Knowledge and Manage Models.</li>
+          <li>Import batches of URLs into collections with main-content extraction, CSS selectors, editable previews, and source links in chats.</li>
+          <li>Review changed web documents before replacing their text and rebuilding all affected embedding indexes.</li>
         </ul>
       </description>
     </release>

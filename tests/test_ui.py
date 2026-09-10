@@ -316,7 +316,8 @@ class UITests(unittest.TestCase):
             responses['chat-one'] = {'capabilities': ['embedding']}
             del responses['chat-two']
             widget.fetch_models('http://models')
-            pump_until(lambda: session.worker.idle)
+            # Worker completion can precede delivery of its GTK callback.
+            pump_until(lambda: session.worker.idle and 'No chat models found' in widget.capability_notice.get_text())
             self.assertEqual(widget.model_dropdown.get_model().get_n_items(), 0)
             self.assertIsNone(widget.get_selected_model())
             self.assertFalse(widget.send_button.get_sensitive())

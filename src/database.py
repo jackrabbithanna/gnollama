@@ -11,6 +11,7 @@ from typing import List, Dict, Any, Optional
 from .knowledge_store import KnowledgeDatabase, MIGRATION as KNOWLEDGE_MIGRATION
 from .vectors import load_extension, migrate_vectors, preflight_legacy_vectors
 from .collections_store import MIGRATION as COLLECTIONS_MIGRATION
+from .web_store import MIGRATION as WEB_MIGRATION
 
 # Sequential migrations list
 # Add SQL scripts or functions accepting (conn, progress=None) to run sequentially.
@@ -36,6 +37,7 @@ MIGRATIONS = [
     KNOWLEDGE_MIGRATION,
     migrate_vectors,
     COLLECTIONS_MIGRATION,
+    WEB_MIGRATION,
 ]
 
 

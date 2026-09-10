@@ -84,7 +84,7 @@ class VectorStorageTests(unittest.TestCase):
         self.assertEqual({i['status'] for i in upgraded.knowledge_indexes()}, {'complete', 'interrupted'})
         self.assertEqual(upgraded.embedding_config(config['id']), config)
         with upgraded._get_conn() as conn:
-            self.assertEqual(conn.execute('PRAGMA user_version').fetchone()[0], 8)
+            self.assertEqual(conn.execute('PRAGMA user_version').fetchone()[0], 9)
             self.assertNotIn('vector', [r['name'] for r in conn.execute('PRAGMA table_info(knowledge_chunks)')])
             self.assertEqual(conn.execute(f'SELECT count(*) FROM {vector_table(config["id"])}').fetchone()[0], 2)
         with sqlite3.connect(upgraded.backup_path) as backup:

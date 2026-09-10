@@ -1,16 +1,18 @@
 import os
+import copy
 import uuid
 import time
 from typing import List, Dict, Any, Optional, Callable
 from gi.repository import GLib
 
 from .database import DatabaseManager
+from .writer import OrderedWriter
 
 class ChatStorage:
     """Handles persistence for chat history and host configurations using SQLite."""
 
-    def __init__(self) -> None:
-        self.storage_dir: str = os.path.join(GLib.get_user_data_dir(), "gnollama")
+    def __init__(self, storage_dir=None) -> None:
+        self.storage_dir: str = storage_dir or os.path.join(GLib.get_user_data_dir(), "gnollama")
         if not os.path.exists(self.storage_dir):
             os.makedirs(self.storage_dir)
             
@@ -20,6 +22,9 @@ class ChatStorage:
 
         # Initialize SQLite Database Manager
         self.db = DatabaseManager(self.db_path)
+
+        self.on_error = None
+        self.writer = OrderedWriter(self._write_failed)
 
         # Detect legacy JSON files and rename them
         self._handle_legacy_json()
@@ -92,78 +97,47 @@ class ChatStorage:
         """Returns a specific chat by its ID."""
         return self.db.get_chat(chat_id)
 
-    def create_chat(self, model: str = "") -> Dict[str, Any]:
-        """Creates a new empty chat."""
+    def _write_failed(self, error):
+        def notify():
+            if self.on_error:
+                self.on_error(error)
+            return False
+        GLib.idle_add(notify)
+
+    def _submit(self, fn, *args, on_done=None, **kwargs):
+        def job():
+            result = fn(*args, **kwargs)
+            if on_done:
+                def notify():
+                    on_done()
+                    return False
+                GLib.idle_add(notify)
+            return result
+        return self.writer.submit(job)
+
+    def create_chat(self, model=''):
         chat_id = str(uuid.uuid4())
         timestamp = time.time()
-        self.db.create_chat(chat_id, "New Chat", timestamp, timestamp, model)
-        return self.db.get_chat(chat_id)
+        self._submit(self.db.create_chat, chat_id, 'New Chat', timestamp, timestamp, model)
+        return {'id': chat_id, 'title': 'New Chat', 'created_at': timestamp,
+                'updated_at': timestamp, 'model': model, 'messages': [], 'options': {}}
 
-    def save_chat(self, chat_id: str, messages: List[Dict[str, Any]], 
-                  model: Optional[str] = None, options: Optional[Dict[str, Any]] = None, 
-                  system: Optional[str] = None, host: Optional[str] = None,
-                  on_done: Optional[Callable[[], None]] = None) -> None:
-        """Saves messages and settings to a chat asynchronously."""
-        import copy
-        messages_snapshot = copy.deepcopy(messages)
-        options_snapshot = copy.deepcopy(options) if options else None
+    def save_chat(self, chat_id, messages, model=None, options=None, system=None,
+                  host=None, on_done=None):
+        return self._submit(self.db.save_chat, chat_id, copy.deepcopy(messages), model,
+                            copy.deepcopy(options), system, host, on_done=on_done)
 
-        def save_task() -> None:
-            try:
-                # Auto-generate title if it's the default "New Chat" and we have messages
-                chat_data = self.db.get_chat(chat_id)
-                if chat_data and chat_data.get("title") == "New Chat" and messages_snapshot:
-                    for msg in messages_snapshot:
-                        if msg.get("role") == "user":
-                            content = msg.get("content", "").strip()
-                            if content:
-                                # Take first 30 chars/first line
-                                title = content.split('\n')[0][:30]
-                                if len(content) > 30:
-                                    title += "..."
-                                self.db.update_chat_title(chat_id, title, time.time())
-                                break
+    def update_title(self, chat_id, title, on_done=None):
+        return self._submit(self.db.update_chat_title, chat_id, title, time.time(), on_done=on_done)
 
-                # Update chat properties
-                self.db.update_chat(
-                    chat_id=chat_id,
-                    model=model,
-                    options=options_snapshot,
-                    system_prompt=system,
-                    host_id=host,
-                    updated_at=time.time()
-                )
+    def update_chat_pinned(self, chat_id, is_pinned, on_done=None):
+        return self._submit(self.db.update_chat_pinned, chat_id, is_pinned, on_done=on_done)
 
-                # Save new set of messages
-                self.db.save_messages(chat_id, messages_snapshot)
+    def delete_chat(self, chat_id, on_done=None):
+        return self._submit(self.db.delete_chat, chat_id, on_done=on_done)
 
-                if on_done:
-                    GLib.idle_add(on_done)
-            except Exception as e:
-                print(f"Error saving chat asynchronously in DB: {e}")
+    def cleanup_empty_chats(self, on_done=None):
+        return self._submit(self.db.cleanup_empty_chats, on_done=on_done)
 
-        try:
-            from .session import worker
-            worker.submit(save_task)
-        except ImportError:
-            save_task()
-
-    def update_title(self, chat_id: str, title: str) -> None:
-        """Updates the title of a chat."""
-        self.db.update_chat_title(chat_id, title, time.time())
-
-    def update_chat_pinned(self, chat_id: str, is_pinned: bool) -> None:
-        """Updates the pinned status of a chat."""
-        self.db.update_chat_pinned(chat_id, is_pinned)
-
-    def delete_chat(self, chat_id: str) -> None:
-        """Deletes a chat."""
-        self.db.delete_chat(chat_id)
-
-    def cleanup_empty_chats(self) -> None:
-        """Deletes all chats that have no messages."""
-        self.db.cleanup_empty_chats()
-
-    def clear_all_chats(self) -> None:
-        """Deletes all chat history."""
-        self.db.clear_all_chats()
+    def clear_all_chats(self, on_done=None):
+        return self._submit(self.db.clear_all_chats, on_done=on_done)

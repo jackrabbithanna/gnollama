@@ -1,3 +1,4 @@
+import math
 from typing import Dict, Any, Callable, List, Optional
 from gi.repository import Gtk, GObject
 from ..storage import ChatStorage
@@ -31,6 +32,8 @@ class OptionsPanel(Gtk.Expander):
         """Reloads the host list from storage and updates the dropdown."""
         if not self.storage:
             return
+        selected = self.get_selected_host()
+        selected_id = selected['id'] if selected else None
         hosts = self.storage.get_all_hosts()
         self.host_list = hosts
         
@@ -47,6 +50,10 @@ class OptionsPanel(Gtk.Expander):
                 target_idx = i
                 break
                 
+        for i, host in enumerate(hosts):
+            if host['id'] == selected_id:
+                target_idx = i
+                break
         if hosts:
             self.host_dropdown.set_selected(target_idx)
 
@@ -69,7 +76,9 @@ class OptionsPanel(Gtk.Expander):
                     val = type_func(text)
                     options[key] = val
                 except ValueError:
-                    pass
+                    raise ValueError(_("Invalid value for {0}.").format(key))
+                if isinstance(val, float) and not math.isfinite(val):
+                    raise ValueError(_("Invalid value for {0}.").format(key))
         
         add_option(self.seed_entry, 'seed', int)
         add_option(self.temperature_entry, 'temperature', float)
@@ -85,10 +94,21 @@ class OptionsPanel(Gtk.Expander):
             if stops:
                 options['stop'] = stops
         
+        for key in ('temperature', 'top_k'):
+            if options.get(key, 0) < 0:
+                raise ValueError(_("{0} must not be negative.").format(key))
+        for key in ('top_p', 'min_p'):
+            if key in options and not 0 <= options[key] <= 1:
+                raise ValueError(_("{0} must be between 0 and 1.").format(key))
+        if 'num_ctx' in options and options['num_ctx'] <= 0:
+            raise ValueError(_("Context size must be positive."))
+        if 'num_predict' in options and options['num_predict'] < -2:
+            raise ValueError(_("Max tokens must be -2, -1, or a nonnegative integer."))
         return options
 
     def load_options(self, options: Dict[str, Any]) -> None:
         """Populates UI options from a dict."""
+        self.stats_check.set_active(options.get('show_stats', True))
         self.seed_entry.set_text(str(options.get('seed', '')))
         self.temperature_entry.set_text(str(options.get('temperature', '')))
         self.top_k_entry.set_text(str(options.get('top_k', '')))

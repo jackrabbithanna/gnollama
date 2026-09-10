@@ -5,17 +5,15 @@
   <project_license>GPL-3.0-or-later</project_license>
 
   <name>Gnollama</name>
-  <summary>GNOME based UI for Ollama</summary>
+  <summary>Chat with Ollama models</summary>
   <description>
-    <p>Chat with Ollama on any host.</p>
-    <p>Supports "generate" and "chat" Ollama APIs</p>
-    <p>Displays the "Thinking" stream in a fieldset in the response bubble.</p>
-    <p>Chats are saved between sessions, and chat titles can be edited, and chats deleted</p>
-    <p>Supports all API parameters including system prompt, images, temperature, etc..</p>
-    <p>Renders Markdown and code blocks have code highlighting</p>
+    <p>Chat with Ollama models running on your computer or a remote server using a native GNOME interface.</p>
+    <p>Keep conversations in separate tabs, attach images to vision models, and read responses with Markdown and highlighted code.</p>
+    <p>Manage hosts and models, customize generation and thinking settings, and inspect response statistics including cached prompt tokens.</p>
+    <p>Save and organize conversations with pinning and editable titles. Stop a response at any time and keep its partial answer in your history.</p>
   </description>
 
-  <developer id="tld.vendor">
+  <developer id="io.github.jackrabbithanna">
     <name>jackrabbithanna</name>
   </developer>
 
@@ -49,28 +47,30 @@
   </screenshots>
 
   <releases>
-    <release version="0.5.6" date="2025-12-28">
-      <url type="details">https://github.com/jackrabbithanna/gnollama/releases/tag/0.5.6</url>
+    <release version="0.10.0" date="2026-09-09">
       <description translate="no">
-        <p>First production release</p>
+        <p>Use the GNOME 50 runtime.</p>
+        <p>Stop responses and model downloads, preserve partial answers, and reliably save history before quitting.</p>
+        <p>Correct thinking controls, refresh host selections, and show cached prompt tokens and generation speed.</p>
       </description>
     </release>
-    <release version="0.6.0" date="2026-04-25">
-      <url type="details">https://github.com/jackrabbithanna/gnollama/releases/tag/0.6.0</url>
+    <release version="0.9.2" date="2026-06-12">
+      <url type="details">https://github.com/jackrabbithanna/gnollama/releases/tag/0.9.2</url>
       <description translate="no">
-        <p>Add API Details fieldset in response</p>
-        <p>Add Clear chat history dialog</p>
-        <p>Save model, host, system prompt and other options for each chat in the chat storage</p>
-        <p>Set "Show Statistics" checkbox to be checked by default</p>
-        <p>Fix chat API extraneous system parameter</p>
+        <p>Add pin chat feature to saved chats</p>
+        <p>Use action menu for saved chat actions</p>
       </description>
     </release>
-    <release version="0.7.0" date="2026-04-26">
-      <url type="details">https://github.com/jackrabbithanna/gnollama/releases/tag/0.7.0</url>
+    <release version="0.9.1" date="2026-05-16">
+      <url type="details">https://github.com/jackrabbithanna/gnollama/releases/tag/0.9.1</url>
       <description translate="no">
-        <p>Add Manage Hosts dialog to create/edit/delete multiple hosts</p>
-        <p>Add Manage Models dialog to add/remove models from a host</p>
-        <p>Add model information dialog</p>
+        <p>Update translations</p>
+      </description>
+    </release>
+    <release version="0.9.0" date="2026-05-16">
+      <url type="details">https://github.com/jackrabbithanna/gnollama/releases/tag/0.9.0</url>
+      <description translate="no">
+        <p>Change storage to use SQLite for hosts and chat history</p>
       </description>
     </release>
     <release version="0.8.0" date="2026-05-16">
@@ -83,23 +83,28 @@
         <p>Improve GTK theme Dark/Light mode</p>
       </description>
     </release>
-    <release version="0.9.0" date="2026-05-16">
-      <url type="details">https://github.com/jackrabbithanna/gnollama/releases/tag/0.9.0</url>
+    <release version="0.7.0" date="2026-04-26">
+      <url type="details">https://github.com/jackrabbithanna/gnollama/releases/tag/0.7.0</url>
       <description translate="no">
-        <p>Change storage to use SQLite for hosts and chat history</p>
+        <p>Add Manage Hosts dialog to create/edit/delete multiple hosts</p>
+        <p>Add Manage Models dialog to add/remove models from a host</p>
+        <p>Add model information dialog</p>
       </description>
     </release>
-    <release version="0.9.1" date="2026-05-16">
-      <url type="details">https://github.com/jackrabbithanna/gnollama/releases/tag/0.9.1</url>
+    <release version="0.6.0" date="2026-04-25">
+      <url type="details">https://github.com/jackrabbithanna/gnollama/releases/tag/0.6.0</url>
       <description translate="no">
-        <p>Update translations</p>
+        <p>Add API Details fieldset in response</p>
+        <p>Add Clear chat history dialog</p>
+        <p>Save model, host, system prompt and other options for each chat in the chat storage</p>
+        <p>Set "Show Statistics" checkbox to be checked by default</p>
+        <p>Fix chat API extraneous system parameter</p>
       </description>
     </release>
-    <release version="0.9.2" date="2026-06-12">
-      <url type="details">https://github.com/jackrabbithanna/gnollama/releases/tag/0.9.2</url>
+    <release version="0.5.6" date="2025-12-28">
+      <url type="details">https://github.com/jackrabbithanna/gnollama/releases/tag/0.5.6</url>
       <description translate="no">
-        <p>Add pin chat feature to saved chats</p>
-        <p>Use action menu for saved chat actions</p>
+        <p>First production release</p>
       </description>
     </release>
   </releases>

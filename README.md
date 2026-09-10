@@ -29,8 +29,9 @@ Whether you are developing, experimenting, or chatting with local models, Gnolla
 * **Rich Markdown & Code Rendering**: Full Markdown support and code syntax highlighting (powered by GTKSourceView 5).
 * **Multimodal Image Support**: Upload and attach multiple images to your prompts for vision-enabled models.
 * **Thinking & completion Details**:
-  * Inline rendering of the model's `<think>` reasoning stream.
-  * Display generation stats (token counts, load times, speeds) and logprobs.
+  * Separate display of Ollama's native thinking stream, with model-dependent thinking controls.
+  * Display generation stats (including cached prompt tokens, finish reason, and tokens/second) and logprobs.
+* **Stop Responses**: Stop generation while keeping partial answers in chat history. Pending history writes finish before the application quits.
 
 <img src="./screenshots/gnollama-screenshot.png" alt="gnollama" align="left"/>
 
@@ -54,14 +55,14 @@ I wanted a GNOME application for Ollama that I could use to test and experiment 
 
 ### Meson
 
-Requires python3 and markdown
+Requires Python 3, PyGObject, GTK 4.18+, libadwaita 1.8+, libsoup 3, and Markdown. The Flatpak manifest uses GNOME 50 and builds the current checkout.
 Code highlighting requires [GTKSourceView](https://wiki.gnome.org/Projects/GtkSourceView) version 5
 
 To install in Ubuntu:
 ```bash
 apt-get install libgtksourceview-5-0 libgtksourceview-5-common libgtksourceview-5-dev
 apt-get install gir1.2-gtksource-5
-apt-get install python3-markdown python3-gi
+apt-get install python3-markdown python3-gi gir1.2-soup-3.0
 ```
 
 ```bash
@@ -70,6 +71,16 @@ meson compile -C build
 meson install -C build
 ```
 You can then run `gnollama` to execute the application.
+
+## Validation
+
+Run `meson test -C build --print-errorlogs` after building. Regression tests use temporary databases and a local HTTP fixture server; they do not contact your Ollama servers. GTK smoke tests require a display and are skipped when none is available.
+
+GNOME Builder builds the repository Flatpak manifest from the current checkout. For a command-line Flatpak build, use:
+
+```bash
+flatpak-builder --user --force-clean /tmp/gnollama-flatpak-build io.github.jackrabbithanna.Gnollama.json
+```
 
 ## TODO
 

@@ -12,7 +12,7 @@ A GNOME based user interface to Ollama. Supports connecting to models from any h
 Supports choosing multiple images to send in the prompt.
 Supports rendering Markdown and code highlighting in responses.
 Saves chat history and allows management of saved chats.
-Supports all settings in the Ollama API including images, system prompt, Thinking mode, Log probabilities, Temperature, etc..
+Supports images, system prompts, thinking controls, log probabilities, and generation settings such as temperature.
   </description>
 
   <homepage rdf:resource="https://github.com/jackrabbithanna/gnollama/" />

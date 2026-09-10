@@ -2,6 +2,7 @@ from typing import Any, List, Dict, Optional, Union, Callable
 from gi.repository import Adw, Gtk, Gio, GLib, GObject
 from .storage import ChatStorage
 from . import ollama
+from .session import ViewRequests
 import threading
 import json
 
@@ -14,6 +15,7 @@ class ModelDetailsView(Adw.Window):
 
     def __init__(self, transient_for: Gtk.Window, model_name: str, **kwargs: Any) -> None:
         super().__init__(**kwargs)
+        self.requests = ViewRequests(self)
         self.set_transient_for(transient_for)
         self.set_title(f"{_('Model Details')}: {model_name}")
 
@@ -29,9 +31,11 @@ class ModelManagerDialog(Adw.Window):
 
     def __init__(self, storage: ChatStorage, **kwargs: Any) -> None:
         super().__init__(**kwargs)
+        self.requests = ViewRequests(self)
         self.storage: ChatStorage = storage
         self.model_rows: List[Adw.ActionRow] = []
         self.host_list: List[Dict[str, Any]] = []
+        self._fetch_cancel = None
         
         self.refresh_button.connect("clicked", self.on_refresh_clicked)
         self.pull_button.connect("clicked", self.on_pull_clicked)
@@ -81,16 +85,20 @@ class ModelManagerDialog(Adw.Window):
 
     def fetch_models_for_selected_host(self) -> None:
         """Fetches models from the currently selected host and updates the list."""
+        if self._fetch_cancel is not None:
+            self._fetch_cancel.cancel()
+        self.update_models_list([])
         host = self.get_selected_host()
         if not host:
             return
-            
+        cancel = self._fetch_cancel = self.requests.new_cancel()
+
         def thread_func() -> None:
             try:
-                models = ollama.fetch_model_details(host['hostname'])
-                GLib.idle_add(self.update_models_list, models)
+                models = ollama.fetch_model_details(host['hostname'], cancellable=cancel)
+                self.requests.deliver(self.update_models_list, models, cancellable=cancel)
             except ollama.OllamaError as e:
-                GLib.idle_add(self.show_error, _("Connection Error"), str(e))
+                self.requests.deliver(self.show_error, _("Connection Error"), str(e), cancellable=cancel)
             
         from .session import worker
         worker.submit(thread_func)
@@ -144,15 +152,17 @@ class ModelManagerDialog(Adw.Window):
         spinner.set_size_request(32, 32)
         view.main_box.append(spinner)
         view.present()
-        
+        cancel = view.requests.new_cancel()
+        self.requests._cancellables.add(cancel)
+
         def thread_func() -> None:
             try:
-                data = ollama.show_model(host['hostname'], model['name'])
-                GLib.idle_add(view.main_box.remove, spinner)
-                GLib.idle_add(self.populate_model_details, view, data, model)
+                data = ollama.show_model(host['hostname'], model['name'], cancellable=cancel)
+                view.requests.deliver(view.main_box.remove, spinner, cancellable=cancel)
+                view.requests.deliver(self.populate_model_details, view, data, model, cancellable=cancel)
             except ollama.OllamaError as e:
-                GLib.idle_add(view.close)
-                GLib.idle_add(self.show_error, _("Failed to fetch details"), str(e))
+                view.requests.deliver(view.close, cancellable=cancel)
+                self.requests.deliver(self.show_error, _("Failed to fetch details"), str(e), cancellable=cancel)
                 
         from .session import worker
         worker.submit(thread_func)
@@ -182,12 +192,13 @@ class ModelManagerDialog(Adw.Window):
         
         def on_response(d: Adw.AlertDialog, response: str) -> None:
             if response == "delete":
+                cancel = self.requests.new_cancel()
                 def thread_func() -> None:
                     try:
-                        ollama.delete_model(host['hostname'], model['name'])
-                        GLib.idle_add(self.fetch_models_for_selected_host)
+                        ollama.delete_model(host['hostname'], model['name'], cancellable=cancel)
+                        self.requests.deliver(self.fetch_models_for_selected_host)
                     except ollama.OllamaError as e:
-                        GLib.idle_add(self.show_error, _("Delete Failed"), str(e))
+                        self.requests.deliver(self.show_error, _("Delete Failed"), str(e), cancellable=cancel)
                 from .session import worker
                 worker.submit(thread_func)
             d.close()
@@ -307,6 +318,7 @@ class PullModelDialog(Adw.Window):
 
     def __init__(self, transient_for: Gtk.Window, hostname: str, **kwargs: Any) -> None:
         super().__init__(**kwargs)
+        self.requests = ViewRequests(self)
         self.set_transient_for(transient_for)
         self.hostname: str = hostname
         self.pulling: bool = False
@@ -319,6 +331,8 @@ class PullModelDialog(Adw.Window):
         """Handles cancel action, stops pulling if active."""
         if self.pulling:
             self.pulling = False
+            self._pull_cancel.cancel()
+        self.requests.close()
         self.close()
 
     def on_pull_clicked(self, btn: Gtk.Button) -> None:
@@ -331,6 +345,7 @@ class PullModelDialog(Adw.Window):
         self.insecure_check.set_sensitive(False)
         self.pull_btn.set_sensitive(False)
         self.pulling = True
+        self._pull_cancel = self.requests.new_cancel()
         
         buffer = self.status_textview.get_buffer()
         buffer.set_text("")
@@ -342,14 +357,16 @@ class PullModelDialog(Adw.Window):
     def pull_task(self, model_name: str, insecure: bool) -> None:
         """Thread worker to stream pull status."""
         try:
-            for response in ollama.pull(self.hostname, model_name, insecure):
+            for response in ollama.pull(self.hostname, model_name, insecure, cancellable=self._pull_cancel):
                 if not self.pulling:
                     break
-                GLib.idle_add(self.update_status, response)
-            GLib.idle_add(self.pull_finished)
+                self.requests.deliver(self.update_status, response)
+            self.requests.deliver(self.pull_finished)
+        except ollama.RequestCancelled:
+            pass
         except Exception as e:
-            GLib.idle_add(self.update_status, {"error": str(e)})
-            GLib.idle_add(self.pull_finished)
+            self.requests.deliver(self.update_status, {"error": str(e)})
+            self.requests.deliver(self.pull_finished)
 
     def update_status(self, response: Dict[str, Any]) -> None:
         """Updates the status log in the UI."""

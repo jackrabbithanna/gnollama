@@ -11,13 +11,21 @@ from .window import GnollamaWindow
 class GnollamaApplication(Adw.Application):
     """The main application singleton class."""
 
-    def __init__(self) -> None:
+    def __init__(self, version="0.10.0") -> None:
         super().__init__(application_id='io.github.jackrabbithanna.Gnollama',
                          flags=Gio.ApplicationFlags.DEFAULT_FLAGS,
                          resource_base_path='/io/github/jackrabbithanna/Gnollama')
-        self.create_action('quit', lambda *_: self.quit(), ['<control>q'])
+        self.version = version
+        self.create_action('quit', self.request_quit, ['<control>q'])
         self.create_action('about', self.on_about_action)
         self.set_accels_for_action('win.new_chat_tab', ['<control>n'])
+
+    def request_quit(self, *args):
+        for window in self.get_windows():
+            if isinstance(window, GnollamaWindow):
+                window.request_shutdown()
+                return
+        self.quit()
 
     def do_activate(self) -> None:
         """Called when the application is activated.
@@ -35,7 +43,7 @@ class GnollamaApplication(Adw.Application):
         about = Adw.AboutDialog(application_name='gnollama',
                                 application_icon='io.github.jackrabbithanna.Gnollama',
                                 developer_name='Jackrabbithanna',
-                                version='0.9.2',
+                                version=self.version,
                                 developers=['Jackrabbithanna'],
                                 copyright='© 2026 Jackrabbithanna')
         # Translators: Replace "translator-credits" with your name/username, and optionally an email or URL.
@@ -59,5 +67,5 @@ class GnollamaApplication(Adw.Application):
 
 def main(version: str) -> int:
     """The application's entry point."""
-    app = GnollamaApplication()
+    app = GnollamaApplication(version)
     return app.run(sys.argv)

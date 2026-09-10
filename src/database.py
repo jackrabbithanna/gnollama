@@ -1,5 +1,6 @@
 import sqlite3
-import os
+import time
+from contextlib import contextmanager
 import json
 import base64
 from typing import List, Dict, Any, Optional
@@ -16,7 +17,9 @@ MIGRATIONS: List[str] = [
     # Version 3: Add is_pinned to chats table
     """
     ALTER TABLE chats ADD COLUMN is_pinned INTEGER DEFAULT 0;
-    """
+    """,
+    # Version 4: Preserve response outcomes and generation statistics.
+    "ALTER TABLE messages ADD COLUMN response_metadata TEXT;"
 ]
 
 class DatabaseManager:
@@ -27,14 +30,21 @@ class DatabaseManager:
         self._init_db()
         self._run_migrations()
 
-    def _get_conn(self) -> sqlite3.Connection:
+    @contextmanager
+    def _get_conn(self):
         """Returns a database connection with foreign key, WAL, and fast-sync enabled."""
         conn = sqlite3.connect(self.db_path)
-        conn.execute("PRAGMA foreign_keys = ON;")
-        conn.execute("PRAGMA journal_mode = WAL;")
-        conn.execute("PRAGMA synchronous = NORMAL;")
-        conn.row_factory = sqlite3.Row
-        return conn
+        try:
+            conn.execute("PRAGMA foreign_keys = ON;")
+            conn.execute("PRAGMA journal_mode = WAL;")
+            conn.execute("PRAGMA synchronous = NORMAL;")
+            conn.row_factory = sqlite3.Row
+            yield conn
+        except Exception:
+            conn.rollback()
+            raise
+        finally:
+            conn.close()
 
     def _init_db(self) -> None:
         """Initializes tables if they do not exist."""
@@ -127,7 +137,9 @@ class DatabaseManager:
                     conn.execute("BEGIN TRANSACTION;")
                     
                     if isinstance(migration_sql, str):
-                        conn.executescript(migration_sql)
+                        for statement in migration_sql.split(";"):
+                            if statement.strip():
+                                conn.execute(statement)
                     
                     self._set_version(conn, ver + 1)
                     conn.commit()
@@ -325,7 +337,7 @@ class DatabaseManager:
         messages = []
         with self._get_conn() as conn:
             cursor = conn.execute("""
-                SELECT id, role, content, model, thinking_content, api_details 
+                SELECT id, role, content, model, thinking_content, api_details, response_metadata
                 FROM messages 
                 WHERE chat_id = ? 
                 ORDER BY order_index ASC
@@ -347,6 +359,9 @@ class DatabaseManager:
                     except Exception:
                         pass
                 
+                if row["response_metadata"]:
+                    msg["response_metadata"] = json.loads(row["response_metadata"])
+
                 # Fetch attached images
                 img_cursor = conn.execute("SELECT image_data FROM message_images WHERE message_id = ?", (msg_id,))
                 img_rows = img_cursor.fetchall()
@@ -361,41 +376,44 @@ class DatabaseManager:
                 messages.append(msg)
         return messages
 
-    def save_messages(self, chat_id: str, messages: List[Dict[str, Any]]) -> None:
-        """Saves a clean array of messages, replacing older ones. Decodes base64 images into BLOBs."""
+    def _save_messages(self, conn, chat_id, messages):
+        conn.execute("DELETE FROM messages WHERE chat_id = ?", (chat_id,))
+        for idx, msg in enumerate(messages):
+            cursor = conn.execute("""
+                INSERT INTO messages (chat_id, role, content, model, thinking_content,
+                                      api_details, response_metadata, order_index)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """, (chat_id, msg['role'], msg.get('content', ''), msg.get('model'),
+                  msg.get('thinking_content'),
+                  json.dumps(msg['api_details']) if msg.get('api_details') else None,
+                  json.dumps(msg['response_metadata']) if msg.get('response_metadata') else None, idx))
+            for image in msg.get('images', []):
+                raw = base64.b64decode(image.split(',', 1)[-1], validate=True)
+                conn.execute('INSERT INTO message_images (message_id, image_data) VALUES (?, ?)',
+                             (cursor.lastrowid, sqlite3.Binary(raw)))
+
+    def save_messages(self, chat_id, messages):
         with self._get_conn() as conn:
-            # Delete old messages; cascades to delete from message_images too
-            conn.execute("DELETE FROM messages WHERE chat_id = ?", (chat_id,))
-            
-            for idx, msg in enumerate(messages):
-                cursor = conn.cursor()
-                cursor.execute("""
-                    INSERT INTO messages (chat_id, role, content, model, thinking_content, api_details, order_index)
-                    VALUES (?, ?, ?, ?, ?, ?, ?)
-                """, (
-                    chat_id,
-                    msg.get("role"),
-                    msg.get("content"),
-                    msg.get("model"),
-                    msg.get("thinking_content"),
-                    json.dumps(msg.get("api_details")) if msg.get("api_details") else None,
-                    idx
-                ))
-                msg_id = cursor.lastrowid
-                
-                # Save associated images
-                images = msg.get("images", [])
-                for img_b64 in images:
-                    try:
-                        if "," in img_b64:
-                            img_data = base64.b64decode(img_b64.split(",")[1])
-                        else:
-                            img_data = base64.b64decode(img_b64)
-                        
-                        conn.execute("""
-                            INSERT INTO message_images (message_id, image_data)
-                            VALUES (?, ?)
-                        """, (msg_id, sqlite3.Binary(img_data)))
-                    except Exception as e:
-                        print(f"Error decoding or saving image blob: {e}")
+            self._save_messages(conn, chat_id, messages)
+            conn.commit()
+
+    def save_chat(self, chat_id, messages, model=None, options=None, system=None, host=None):
+        """Atomically update an existing chat; never recreate a deleted chat."""
+        with self._get_conn() as conn:
+            conn.execute('BEGIN IMMEDIATE')
+            row = conn.execute('SELECT title FROM chats WHERE id = ?', (chat_id,)).fetchone()
+            if row is None:
+                return
+            title = row['title']
+            if title == 'New Chat':
+                prompt = next((m.get('content', '').strip() for m in messages
+                               if m['role'] == 'user' and m.get('content', '').strip()), '')
+                if prompt:
+                    title = prompt.splitlines()[0][:30] + ('...' if len(prompt) > 30 else '')
+            if host and not conn.execute('SELECT 1 FROM hosts WHERE id = ?', (host,)).fetchone():
+                host = None
+            conn.execute("""UPDATE chats SET title = ?, model = ?, options = ?,
+                         system_prompt = ?, host_id = ?, updated_at = ? WHERE id = ?""",
+                         (title, model, json.dumps(options or {}), system, host, time.time(), chat_id))
+            self._save_messages(conn, chat_id, messages)
             conn.commit()

@@ -96,26 +96,24 @@ class AiBubble(Gtk.ListBoxRow):
         self.thinking_text += text
         self.thinking_label.set_label(self.thinking_text)
 
-    def show_stats(self, stats: Dict[str, Any]) -> None:
-        """Displays generation performance statistics."""
-        total_duration = stats.get('total_duration', 0) / 1e9
-        load_duration = stats.get('load_duration', 0) / 1e9
-        prompt_eval_count = stats.get('prompt_eval_count', 0)
-        prompt_eval_duration = stats.get('prompt_eval_duration', 0) / 1e9
-        eval_count = stats.get('eval_count', 0)
-        eval_duration = stats.get('eval_duration', 0) / 1e9
-        
-        stats_text = (
-            f"Total: {total_duration:.2f}s | Load: {load_duration:.2f}s | "
-            f"Prompt: {prompt_eval_count} tokens ({prompt_eval_duration:.2f}s) | "
-            f"Eval: {eval_count} tokens ({eval_duration:.2f}s)"
-        )
-        
-        label = Gtk.Label(label=stats_text)
-        label.set_xalign(0)
-        label.set_halign(Gtk.Align.START)
-        label.add_css_class("dim-label")
-        self.bubble_box.append(label)
+    def show_stats(self, stats):
+        if not hasattr(self, '_stats_label'):
+            self._stats_label = Gtk.Label(xalign=0, wrap=True, selectable=True)
+            self._stats_label.add_css_class('dim-label')
+            self.bubble_box.append(self._stats_label)
+        self._stats_label.set_text(format_statistics(stats))
+
+    def show_response_metadata(self, metadata, show_stats=True):
+        status = metadata.get('status', 'complete')
+        if status in ('stopped', 'failed'):
+            label = Gtk.Label(xalign=0, wrap=True, selectable=True)
+            title = _('Stopped') if status == 'stopped' else _('Failed')
+            error = metadata.get('error')
+            label.set_text(title + (': ' + error if error else ''))
+            label.add_css_class('dim-label')
+            self.bubble_box.append(label)
+        if show_stats and metadata.get('metrics'):
+            self.show_stats(metadata['metrics'])
 
     def append_logprobs(self, logprobs_data: Any) -> None:
         """Appends logprobs data to a text view in an expander."""
@@ -163,3 +161,33 @@ class AiBubble(Gtk.ListBoxRow):
              text_chunk = json.dumps(logprobs_data) + "\n"
              
         buffer.insert(end_iter, text_chunk)
+
+
+def format_statistics(stats):
+    """Format optional API metrics without treating missing values as zero."""
+    unavailable = _('Unavailable')
+    def count(key):
+        value = stats.get(key)
+        return str(value) if isinstance(value, (int, float)) and value >= 0 else unavailable
+
+    def duration(key):
+        value = stats.get(key)
+        return f'{value / 1e9:.2f}s' if isinstance(value, (int, float)) and value >= 0 else unavailable
+
+    tokens, elapsed = stats.get('eval_count'), stats.get('eval_duration')
+    speed = (f'{tokens * 1e9 / elapsed:.2f}'
+             if isinstance(tokens, (int, float)) and tokens >= 0
+             and isinstance(elapsed, (int, float)) and elapsed > 0 else unavailable)
+    fields = [
+        _('Total: {0}').format(duration('total_duration')),
+        _('Load: {0}').format(duration('load_duration')),
+        _('Prompt: {0} tokens').format(count('prompt_eval_count')),
+        _('Cached: {0} tokens').format(count('prompt_eval_cached_count')),
+        _('Prompt evaluation: {0}').format(duration('prompt_eval_duration')),
+        _('Generated: {0} tokens').format(count('eval_count')),
+        _('Generation: {0}').format(duration('eval_duration')),
+        _('Tokens/s: {0}').format(speed),
+    ]
+    if stats.get('done_reason'):
+        fields.append(_('Finish: {0}').format(stats['done_reason']))
+    return ' | '.join(fields)

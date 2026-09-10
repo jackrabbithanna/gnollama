@@ -2,7 +2,7 @@ pkgdatadir = get_option('prefix') / get_option('datadir') / meson.project_name()
 moduledir = pkgdatadir / 'gnollama'
 gnome = import('gnome')
 
-gnome.compile_resources('gnollama',
+gnollama_resources = gnome.compile_resources('gnollama',
   'gnollama.gresource.xml',
   gresource_bundle: true,
   install: true,
@@ -12,6 +12,7 @@ gnome.compile_resources('gnollama',
 
 python = import('python')
 py3 = python.find_installation('python3')
+run_command(py3, '-c', 'import gi; gi.require_version("Gtk", "4.0"); gi.require_version("Adw", "1"); gi.require_version("Soup", "3.0"); from gi.repository import Gtk, Adw, Soup', check: true)
 
 # Check for python-markdown
 markdown_check = run_command(py3, '-c', 'import markdown', check: false)
@@ -52,6 +53,7 @@ gnollama_sources = [
   'session.py',
   'ollama.py',
   'storage.py',
+  'writer.py',
   'database.py',
   'markdown_view.py',
   'bubbles.py',

@@ -2,6 +2,7 @@ from typing import Any, List, Dict, Optional, Callable
 from gi.repository import Adw, Gtk, Gio, GLib
 from .storage import ChatStorage
 from . import ollama
+from .session import ViewRequests
 import threading
 
 @Gtk.Template(resource_path='/io/github/jackrabbithanna/Gnollama/host_edit_dialog.ui')
@@ -31,6 +32,7 @@ class HostManagerDialog(Adw.Window):
 
     def __init__(self, storage: ChatStorage, on_hosts_changed_cb: Optional[Callable[[], None]] = None, **kwargs: Any) -> None:
         super().__init__(**kwargs)
+        self.requests = ViewRequests(self)
         self.storage: ChatStorage = storage
         self.on_hosts_changed_cb: Optional[Callable[[], None]] = on_hosts_changed_cb
         self.host_rows: List[Adw.ActionRow] = []
@@ -96,14 +98,16 @@ class HostManagerDialog(Adw.Window):
         dialog.set_default_response("close")
         dialog.set_close_response("close")
         dialog.present(self)
-        
+        cancel = self.requests.new_cancel()
+        dialog.connect('closed', lambda *_: cancel.cancel())
+
         def fetch_version_thread() -> None:
             try:
-                version = ollama.get_version(host['hostname'])
+                version = ollama.get_version(host['hostname'], cancellable=cancel)
                 msg = _("Connected\nOllama Version: {0}").format(version)
             except ollama.OllamaError as e:
                 msg = _("Connection failed\n{0}").format(str(e))
-            GLib.idle_add(dialog.set_body, msg)
+            self.requests.deliver(dialog.set_body, msg, cancellable=cancel)
             
         from .session import worker
         worker.submit(fetch_version_thread)

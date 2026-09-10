@@ -25,6 +25,7 @@ import urllib.request
 import re
 import html
 from .tab import GenerationTab
+from .session import ChatStrategy
 from .storage import ChatStorage
 from .host_manager import HostManagerDialog
 from .model_manager import ModelManagerDialog
@@ -77,6 +78,11 @@ class GnollamaWindow(Adw.ApplicationWindow):
         self.init_template()
         self.settings: Gio.Settings = Gio.Settings.new('io.github.jackrabbithanna.Gnollama')
         self.storage: ChatStorage = ChatStorage()
+        self.storage.on_error = self._on_save_error
+        self._shutting_down = False
+        self._allow_close = False
+        self._cleanup_future = None
+        self._save_error_dialog = None
         self.chat_rows: Dict[str, HistoryRow] = {}
         
         self.history_list.connect("row-activated", self.on_history_row_activated)
@@ -97,12 +103,77 @@ class GnollamaWindow(Adw.ApplicationWindow):
         # Create initial tab
         self.new_chat_tab()
 
-    def on_close_request(self, *args: Any) -> bool:
-        """Handles the window close request and performs cleanup."""
-        self.storage.cleanup_empty_chats()
+    def on_close_request(self, *args):
+        if self._allow_close:
+            return False
+        self.request_shutdown()
+        return True
+
+    def request_shutdown(self):
+        if self._shutting_down:
+            return
+        self._shutting_down = True
+        self.notebook.set_sensitive(False)
+        self.history_list.set_sensitive(False)
+        from . import ollama
+        ollama.cancel_all()
+        for i in range(self.notebook.get_n_pages()):
+            tab = self.notebook.get_nth_page(i)
+            tab.chat_input.cancel_fetches()
+            if tab.request:
+                tab.request.cancellable.cancel()
+        for window in list(Gtk.Window.list_toplevels()):
+            parent = window.get_transient_for()
+            while parent is not None and parent is not self:
+                parent = parent.get_transient_for()
+            if parent is self:
+                window.close()
+        GLib.timeout_add(50, self._poll_shutdown)
+
+    def _poll_shutdown(self):
+        if not self._shutting_down:
+            return False
         from .session import worker
+        if not worker.idle or any(self.notebook.get_nth_page(i).request
+                                  for i in range(self.notebook.get_n_pages())):
+            return True
+        if self.storage.writer.error is not None:
+            self._on_save_error(self.storage.writer.error)
+            return True
+        if self._cleanup_future is None:
+            self._cleanup_future = self.storage.cleanup_empty_chats()
+        if not self.storage.writer.idle:
+            return True
+        self.storage.writer.shutdown()
         worker.shutdown(wait=False)
+        self._allow_close = True
+        self.close()
         return False
+
+    def _on_save_error(self, error):
+        if self._save_error_dialog is not None or self._allow_close:
+            return
+        dialog = Adw.AlertDialog(heading=_('History could not be saved'),
+                                 body=_('Your unsaved changes are kept in memory. Retry saving before quitting.') + '\n\n' + str(error))
+        self._save_error_dialog = dialog
+        dialog.add_response('keep', _('Keep Open'))
+        dialog.add_response('retry', _('Retry'))
+        dialog.set_default_response('retry')
+        dialog.set_close_response('keep')
+
+        def response(dialog, choice):
+            self._save_error_dialog = None
+            if choice == 'retry':
+                self.storage.writer.retry()
+            elif self._shutting_down:
+                from . import ollama
+                self._shutting_down = False
+                self._cleanup_future = None
+                self.notebook.set_sensitive(True)
+                self.history_list.set_sensitive(True)
+                ollama.resume()
+        dialog.connect('response', response)
+        dialog.present(self)
 
     def _setup_actions(self) -> None:
         """Initializes application actions and their shortcuts."""
@@ -115,7 +186,7 @@ class GnollamaWindow(Adw.ApplicationWindow):
         ]
         for name, callback in actions:
             action = Gio.SimpleAction.new(name, None)
-            action.connect("activate", callback)
+            action.connect("activate", lambda action, param, cb=callback: cb(action, param) if not self._shutting_down else None)
             self.add_action(action)
         
     def load_css(self) -> None:
@@ -148,12 +219,12 @@ class GnollamaWindow(Adw.ApplicationWindow):
                     if isinstance(page, GenerationTab) and hasattr(page.strategy, 'chat_id'):
                         pages_to_close.append(page)
 
-                self.storage.clear_all_chats()
-                self.load_history_sidebar()
-                self.new_chat_tab()
-
                 for page in pages_to_close:
-                    self.close_tab(page)
+                    page.strategy.deleted = True
+                    self.close_tab(page, delete=True)
+                self.storage.clear_all_chats()
+                self.new_chat_tab()
+                self.storage._submit(lambda: None, on_done=self.load_history_sidebar)
             dialog.close()
             
         dialog.connect("response", on_response)
@@ -250,15 +321,14 @@ class GnollamaWindow(Adw.ApplicationWindow):
         for i in range(n_pages):
             page = self.notebook.get_nth_page(i)
             if isinstance(page, GenerationTab) and hasattr(page.strategy, 'chat_id') and page.strategy.chat_id == chat_id:
-                self.close_tab(page)
+                self.close_tab(page, delete=True)
                 break
 
     def on_popover_pin_clicked(self, btn: Gtk.Button, chat_id: str, row: HistoryRow) -> None:
         """Toggles the pinned status of a chat and reloads the sidebar."""
         row.popover.popdown()
         new_pinned = not row.is_pinned
-        self.storage.update_chat_pinned(chat_id, new_pinned)
-        self.load_history_sidebar()
+        self.storage.update_chat_pinned(chat_id, new_pinned, on_done=self.load_history_sidebar)
         
         # Reselect active page
         current_page_idx = self.notebook.get_current_page()
@@ -289,7 +359,7 @@ class GnollamaWindow(Adw.ApplicationWindow):
             if response == "save":
                 new_title = entry.get_text().strip()
                 if new_title:
-                    self.storage.update_title(chat_id, new_title)
+                    self.storage.update_title(chat_id, new_title, on_done=self.load_history_sidebar)
                     row.label.set_text(new_title)
                     # Update active tab if open
                     self.update_tab_title(chat_id, new_title)
@@ -419,20 +489,16 @@ class GnollamaWindow(Adw.ApplicationWindow):
             if chat_id in self.chat_rows:
                  self.history_list.select_row(self.chat_rows[chat_id])
 
-    def close_tab(self, page: Gtk.Widget) -> None:
-        """Closes a notebook tab and performs cleanups."""
-        # Cleanup empty chats if they weren't used
-        if isinstance(page, GenerationTab) and page.mode == 'chat' and hasattr(page.strategy, 'chat_id'):
-            chat_id = page.strategy.chat_id
-            if chat_id and hasattr(page.strategy, 'history') and not page.strategy.history:
-                self.storage.delete_chat(chat_id)
-                if chat_id in self.chat_rows:
-                    self.history_list.remove(self.chat_rows[chat_id])
-                    del self.chat_rows[chat_id]
-
-        page_num = self.notebook.page_num(page)
-        if page_num != -1:
-            self.notebook.remove_page(page_num)
-            # Workaround for GTK4 bug: force rebuild of popup menu to prevent layout assertions
-            self.notebook.set_property("enable-popup", False)
-            self.notebook.set_property("enable-popup", True)
+    def close_tab(self, page, delete=False):
+        def remove():
+            if isinstance(page.strategy, ChatStrategy) and not page.strategy.history and not delete:
+                self.storage.delete_chat(page.strategy.chat_id)
+                row = self.chat_rows.pop(page.strategy.chat_id, None)
+                if row:
+                    self.history_list.remove(row)
+            page_num = self.notebook.page_num(page)
+            if page_num != -1:
+                self.notebook.remove_page(page_num)
+                self.notebook.set_property('enable-popup', False)
+                self.notebook.set_property('enable-popup', True)
+        page.close_session(remove, delete=delete)

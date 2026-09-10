@@ -13,7 +13,9 @@ src/main.py
 src/model_details_view.ui
 src/model_manager.py
 src/model_manager.ui
+src/ollama.py
 src/pull_model_dialog.ui
+src/session.py
 src/shortcuts-dialog.ui
 src/tab.py
 src/widgets/chat_input.py

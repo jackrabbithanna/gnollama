@@ -1,6 +1,7 @@
 from typing import List, Optional, Any, Dict, Union
 from gi.repository import Gtk, Gio, GLib, GObject
-import threading
+import base64
+from .session import RequestState, worker
 from . import ollama
 from .storage import ChatStorage
 from .session import GenerationStrategy, ChatStrategy
@@ -27,6 +28,10 @@ class GenerationTab(Gtk.Box):
         super().__init__(**kwargs)
         self.init_template()
         self.tab_label = tab_label
+        self.request = None
+        self.closing = False
+        self._close_callback = None
+        self._disposed = False
         
         if not storage:
             storage = ChatStorage()
@@ -42,14 +47,12 @@ class GenerationTab(Gtk.Box):
         self.options_panel.storage = self.storage
         self.options_panel.update_hosts()
         
-        self.chat_input.send_button.connect('clicked', self.on_send_clicked)
+        self.chat_input.send_button.connect('clicked', self.on_send_or_stop)
         self.chat_input.entry.connect('activate', self.on_send_clicked)
         self.options_panel.system_prompt_entry.connect('activate', self.on_send_clicked)
         
         self.options_panel.host_dropdown.connect('notify::selected-item', self.on_host_changed)
         
-        self.on_host_changed()
-
         if mode == 'chat':
             if chat_id:
                 chat_data = storage.get_chat(chat_id)
@@ -58,6 +61,7 @@ class GenerationTab(Gtk.Box):
             
             if initial_history:
                  self.load_initial_history(initial_history)
+        self.on_host_changed()
 
     def load_chat_settings(self, chat_data: Dict[str, Any]) -> None:
         if 'options' in chat_data:
@@ -96,175 +100,146 @@ class GenerationTab(Gtk.Box):
                 bubble.append_text(content)
                 if 'api_details' in msg:
                     bubble.set_api_details(msg['api_details'])
+                bubble.show_response_metadata(msg.get('response_metadata', {}),
+                                              self.options_panel.stats_check.get_active())
                 self.message_list.add_ai_bubble(bubble)
             elif role == 'system':
                 self.message_list.add_system_message(content)
 
-    def on_host_changed(self, *args: Any) -> None:
+    def on_host_changed(self, *args):
         host = self.options_panel.get_selected_host()
-        if host:
-            self.chat_input.fetch_models(host['hostname'])
+        self.chat_input.fetch_models(host['hostname'] if host else None)
 
-    def on_send_clicked(self, *args: Any) -> None:
-        prompt = self.chat_input.entry.get_text().strip()
-        if not prompt: return
-        
-        if self.tab_label:
-            truncated = prompt[:20] + "..." if len(prompt) > 20 else prompt
-            self.tab_label.set_label(truncated)
-            
-        self.chat_input.entry.set_text("")
-        images = []
-        if self.chat_input.selected_image_paths:
-            import base64
-            for path in self.chat_input.selected_image_paths:
-                with open(path, "rb") as image_file:
-                    encoded = base64.b64encode(image_file.read()).decode('utf-8')
-                    images.append(encoded)
-            self.chat_input.on_clear_image_clicked(None)
+    def update_hosts(self):
+        self.options_panel.update_hosts()
+        self.on_host_changed()
 
-        self.message_list.add_user_message(prompt, images=images)
-        
-        # Extract all UI state on the main thread before launching the background request
-        host = self.options_panel.get_selected_host()
-        model = self.chat_input.get_selected_model()
-        thinking = self.chat_input.get_thinking_value()
-        
-        options = self.options_panel.get_options_from_ui()
-        system = self.options_panel.system_prompt_entry.get_text().strip()
-        logprobs = self.options_panel.logprobs_check.get_active()
-        show_stats = self.options_panel.stats_check.get_active()
-        
-        top_logprobs = None
-        if logprobs:
-            try:
-                top_logprobs = int(self.options_panel.top_logprobs_entry.get_text().strip())
-            except ValueError:
-                pass
-                
-        req_data = {
-            'host': host,
-            'model': model,
-            'thinking': thinking,
-            'options': options,
-            'system': system,
-            'logprobs': logprobs,
-            'show_stats': show_stats,
-            'top_logprobs': top_logprobs
-        }
-        
-        from .session import worker
-        worker.submit(self.process_request, prompt, images, req_data)
+    def on_send_or_stop(self, *args):
+        if self.request:
+            self.request.cancellable.cancel()
+            self.chat_input.send_button.set_sensitive(False)
+        else:
+            self.on_send_clicked()
 
-    def process_request(self, prompt: str, images: Optional[List[str]], req_data: Dict[str, Any]) -> None:
-        host = req_data.get('host')
-        if not host:
-            GLib.idle_add(self.message_list.add_system_message, _("Error: No host configured."))
+    def on_send_clicked(self, *args):
+        if self.request or self.closing or self._disposed:
             return
-            
-        model = req_data.get('model')
-        thinking = req_data.get('thinking')
-        options = req_data.get('options')
-        system = req_data.get('system')
-        logprobs = req_data.get('logprobs')
-        show_stats = req_data.get('show_stats', False)
-        top_logprobs = req_data.get('top_logprobs')
-                
-        api_params = {
-            "endpoint": "chat" if isinstance(self.strategy, ChatStrategy) else "generate",
-            "host": host['hostname'],
-            "model": model,
-            "options": options if options else None,
-            "thinking": thinking,
-            "logprobs": logprobs,
-            "top_logprobs": top_logprobs,
-        }
-        
-        if not isinstance(self.strategy, ChatStrategy) and system:
-            api_params["system"] = system
-            
-        self.strategy.current_api_params = api_params
-        
-        ai_bubble = None
-        def create_bubble():
-            nonlocal ai_bubble
-            from .bubbles import AiBubble
-            ai_bubble = AiBubble(model_name=model)
-            ai_bubble.set_api_details(api_params)
-            self.message_list.add_ai_bubble(ai_bubble)
-            
-        GLib.idle_add(create_bubble)
-        
-        import time
-        while ai_bubble is None:
-            time.sleep(0.01)
-
-        if hasattr(self.strategy, 'current_response_full_text'):
-            self.strategy.current_response_full_text = ""
-        if hasattr(self.strategy, 'current_thinking_full_text'):
-            self.strategy.current_thinking_full_text = ""
-
+        prompt = self.chat_input.entry.get_text().strip()
+        if not prompt:
+            return
         try:
-            for chunk in self.strategy.process(
-                self,
-                host=host['hostname'],
-                host_id=host['id'],
-                model=model,
-                prompt=prompt,
-                system=system if system else None,
-                options=options if options else None,
-                thinking=thinking,
-                logprobs=logprobs,
-                top_logprobs=top_logprobs,
-                images=images
-            ):
-                if 'error' in chunk:
-                    error_header = _("Error")
-                    GLib.idle_add(ai_bubble.append_text, f"\n\n### {error_header}\n\n{chunk['error']}")
-                    break
-                    
-                native_thinking = chunk.get('thinking', chunk.get('thought', ''))
-                if not native_thinking and 'message' in chunk:
-                    native_thinking = chunk['message'].get('thinking', '')
-                    
-                
-                # Tag logic to support <think> fallback
-                content = chunk.get('message', {}).get('content') or chunk.get('response', '')
-                
-                if content and not native_thinking:
-                    # Simple fallback logic since we don't track full state across chunks here
-                    # Actually, we should just let the user see <think> for now or keep it simple.
-                    pass
+            host = self.options_panel.get_selected_host()
+            if not host:
+                raise ValueError(_('No host configured.'))
+            hostname = ollama.validate_host(host['hostname'])
+            model = self.chat_input.get_selected_model()
+            if not model:
+                raise ValueError(_('Select an available model before sending.'))
+            options = self.options_panel.get_options_from_ui()
+            logprobs = self.options_panel.logprobs_check.get_active()
+            top = self.options_panel.top_logprobs_entry.get_text().strip()
+            top = int(top) if logprobs and top else None
+            if top is not None and not 0 <= top <= 20:
+                raise ValueError(_('Top logprobs must be between 0 and 20.'))
+            images = []
+            for path in self.chat_input.selected_image_paths:
+                with open(path, 'rb') as image_file:
+                    raw = image_file.read()
+                from gi.repository import Gdk
+                Gdk.Texture.new_from_bytes(GLib.Bytes.new(raw))
+                images.append(base64.b64encode(raw).decode('ascii'))
+            settings = dict(host=hostname, host_id=host['id'], model=model,
+                            options=options, thinking=self.chat_input.get_thinking_value(),
+                            system=self.options_panel.system_prompt_entry.get_text().strip() or None,
+                            logprobs=logprobs, top_logprobs=top,
+                            show_stats=self.options_panel.stats_check.get_active(), endpoint=self.mode)
+        except (ValueError, OSError, GLib.Error, ollama.OllamaError) as exc:
+            self.message_list.add_system_message(str(exc))
+            return
 
-                if native_thinking:
-                    GLib.idle_add(ai_bubble.append_thinking, native_thinking)
-                    if hasattr(self.strategy, 'append_thinking'):
-                        self.strategy.append_thinking(native_thinking)
-                        
-                if content:
-                    GLib.idle_add(ai_bubble.append_text, content)
-                    if hasattr(self.strategy, 'append_response_chunk'):
-                        self.strategy.append_response_chunk(content)
-                        
-                logprobs_data = chunk.get('logprobs')
-                if not logprobs_data and 'message' in chunk:
-                    logprobs_data = chunk['message'].get('logprobs')
-                if logprobs_data:
-                    GLib.idle_add(ai_bubble.append_logprobs, logprobs_data)
-                        
-                if chunk.get('done', False):
-                    metrics = {
-                        k: chunk[k] for k in [
-                            'total_duration', 'load_duration', 'prompt_eval_count', 
-                            'prompt_eval_duration', 'eval_count', 'eval_duration'
-                        ] if k in chunk
-                    }
-                    if show_stats and metrics:
-                        GLib.idle_add(ai_bubble.show_stats, metrics)
-                        
-                    if hasattr(self.strategy, 'on_response_complete'):
-                        self.strategy.on_response_complete(self, model)
-                        
-        except Exception as e:
-            conn_err = _("Connection Error")
-            GLib.idle_add(ai_bubble.append_text, f"\n\n### {conn_err}\n\n{str(e)}")
+        state = RequestState(settings, prompt, images)
+        self.request = state
+        self.chat_input.set_running(True)
+        self.chat_input.entry.set_text('')
+        self.chat_input.on_clear_image_clicked(None)
+        self.message_list.add_user_message(prompt, images=images)
+        from .bubbles import AiBubble
+        bubble = AiBubble(model_name=model)
+        bubble.set_api_details(state.api_details())
+        self.message_list.add_ai_bubble(bubble)
+        self.strategy.begin(state)
+        worker.submit(self.process_request, state, bubble)
+
+    def process_request(self, state, bubble):
+        status, error = 'failed', None
+        try:
+            if state.cancellable.is_cancelled():
+                raise ollama.RequestCancelled()
+            for chunk in self.strategy.process(state):
+                if state.cancellable.is_cancelled():
+                    raise ollama.RequestCancelled()
+                content, thinking, logprobs = state.consume(chunk)
+                GLib.idle_add(self._display_chunk, state, bubble, content, thinking, logprobs)
+                if chunk.get('done'):
+                    status = 'complete'
+                    break
+            else:
+                raise ollama.OllamaError(_('Response ended before completion.'))
+        except ollama.RequestCancelled:
+            status = 'stopped'
+        except Exception as exc:
+            error = str(exc)
+        GLib.idle_add(self._finish_request, state, bubble, status, error)
+
+    def _display_chunk(self, state, bubble, content, thinking, logprobs):
+        if self._disposed or self.request is not state:
+            return False
+        if content:
+            bubble.append_text(content)
+        if thinking:
+            bubble.append_thinking(thinking)
+        if logprobs:
+            bubble.append_logprobs(logprobs)
+        return False
+
+    def _finish_request(self, state, bubble, status, error):
+        if not state.finish(status, error):
+            return False
+        if not self._disposed:
+            bubble.show_response_metadata(state.metadata, state.settings['show_stats'])
+        self.request = None
+        self.chat_input.set_running(False)
+
+        def saved():
+            if isinstance(self.strategy, ChatStrategy) and not self.strategy.deleted:
+                data = self.storage.get_chat(self.strategy.chat_id)
+                if data and not self._disposed:
+                    if self.tab_label:
+                        self.tab_label.set_label(data['title'])
+                    self.emit('chat-updated', self.strategy.chat_id, data['title'])
+            self._finish_close()
+
+        future = self.strategy.save(state, on_done=saved)
+        if future is None:
+            saved()
+        return False
+
+    def close_session(self, on_done, delete=False):
+        self.closing = True
+        self._close_callback = on_done
+        self.chat_input.cancel_fetches()
+        self.set_sensitive(False)
+        if delete and isinstance(self.strategy, ChatStrategy):
+            self.strategy.deleted = True
+        if self.request:
+            self.request.cancellable.cancel()
+        else:
+            # Keep the tab until earlier saves have completed, so reopening cannot
+            # start another request from an older database snapshot.
+            self.storage._submit(lambda: None, on_done=self._finish_close)
+
+    def _finish_close(self):
+        if self.closing and self.request is None and self._close_callback:
+            callback, self._close_callback = self._close_callback, None
+            self._disposed = True
+            callback()

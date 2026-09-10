@@ -21,92 +21,138 @@ class ChatInput(Gtk.Box):
     def __init__(self, **kwargs: Any) -> None:
         super().__init__(**kwargs)
         
-        # Setup thinking dropdown
-        thinking_options = Gtk.StringList.new([_("Thinking"), _("Low"), _("Medium"), _("High"), _("Max"), _("None")])
-        self.thinking_dropdown.set_model(thinking_options)
-        self.thinking_dropdown.set_selected(0)
+        self.selected_image_paths = []
+        self._host = None
+        self._fetch_id = 0
+        self._capability_id = 0
+        self._fetch_cancel = None
+        self._capability_cancel = None
+        self._running = False
+        self._desired_thinking = None
+        self._thinking_values = []
+        self._set_thinking_options(None)
+        self.attach_button.connect('clicked', self.on_attach_clicked)
+        self.clear_image_button.connect('clicked', self.on_clear_image_clicked)
+        self.model_dropdown.connect('notify::selected-item', self._model_changed)
+        self.thinking_dropdown.connect('notify::selected-item', self._thinking_changed)
 
-        self.selected_image_paths: List[str] = []
-        
-        self.attach_button.connect("clicked", self.on_attach_clicked)
-        self.clear_image_button.connect("clicked", self.on_clear_image_clicked)
-        
-        # We don't connect send_button here; the parent handles it.
-        # But we could also emit a custom signal if we wanted to be more self-contained.
+    def _thinking_changed(self, *args):
+        self._desired_thinking = self.get_thinking_value()
 
-    def set_models(self, models: List[str]) -> None:
-        """Populates the model dropdown."""
-        string_list = Gtk.StringList.new(models)
-        self.model_dropdown.set_model(string_list)
-        if models:
-            pending = getattr(self, 'pending_model_selection', None)
-            if pending and pending in models:
-                self.select_model(pending)
-                self.pending_model_selection = None
-            else:
-                self.model_dropdown.set_selected(0)
+    def _set_thinking_options(self, details):
+        values = [None, False, True, 'low', 'medium', 'high', 'max']
+        labels = [_('Model default'), _('Off'), _('On'), _('Low'), _('Medium'), _('High'), _('Max')]
+        if details is not None:
+            family = details.get('details', {}).get('family', '').replace('-', '').lower()
+            if family == 'gptoss':
+                values = [None, 'low', 'medium', 'high']
+                labels = [_('Model default'), _('Low'), _('Medium'), _('High')]
+            elif 'capabilities' in details and 'thinking' not in details['capabilities']:
+                values, labels = [None], [_('Model default')]
+        desired = self._desired_thinking
+        self._thinking_values = values
+        self.thinking_dropdown.set_model(Gtk.StringList.new(labels))
+        self.thinking_dropdown.set_selected(values.index(desired) if desired in values else 0)
+        self.thinking_dropdown.set_sensitive(len(values) > 1)
 
-    def select_model(self, model_name: str) -> None:
-        """Selects a specific model in the dropdown if available."""
+    def get_thinking_value(self):
+        index = self.thinking_dropdown.get_selected()
+        return self._thinking_values[index] if index < len(self._thinking_values) else None
+
+    def load_thinking_val(self, value):
+        self._desired_thinking = value
+        if value in self._thinking_values:
+            self.thinking_dropdown.set_selected(self._thinking_values.index(value))
+
+    def set_running(self, running):
+        self._running = running
+        self.send_button.set_icon_name('media-playback-stop-symbolic' if running else 'system-search-symbolic')
+        self.send_button.set_tooltip_text(_('Stop response') if running else _('Query Ollama'))
+        self.send_button.set_sensitive(running or self.get_selected_model() is not None)
+
+    def set_models(self, models):
+        pending = getattr(self, 'pending_model_selection', None)
+        self.model_dropdown.set_model(Gtk.StringList.new(models))
+        if pending in models:
+            self.select_model(pending)
+        elif pending:
+            self.model_dropdown.set_selected(Gtk.INVALID_LIST_POSITION)
+        self.pending_model_selection = None
+        self.set_running(self._running)
+
+    def select_model(self, model_name):
         model = self.model_dropdown.get_model()
-        if not model: return
-        for i in range(model.get_n_items()):
-            item = model.get_item(i)
-            if item and item.get_string() == model_name:
-                self.model_dropdown.set_selected(i)
-                break
+        if model:
+            for i in range(model.get_n_items()):
+                if model.get_item(i).get_string() == model_name:
+                    self.model_dropdown.set_selected(i)
+                    return
 
-    def get_selected_model(self) -> str:
-        """Returns the currently selected model name."""
-        selected_item = self.model_dropdown.get_selected_item()
-        if selected_item:
-            return selected_item.get_string()
-        return "llama3"
+    def get_selected_model(self):
+        item = self.model_dropdown.get_selected_item()
+        return item.get_string() if item else None
 
-    def get_thinking_value(self) -> Any:
-        """Returns the currently selected thinking value."""
-        thinking_item = self.thinking_dropdown.get_selected_item()
-        if thinking_item:
-            thinking_str = thinking_item.get_string()
-            if thinking_str == _("Thinking"): return True
-            elif thinking_str == _("Low"): return "low"
-            elif thinking_str == _("Medium"): return "medium"
-            elif thinking_str == _("High"): return "high"
-            elif thinking_str == _("Max"): return "max"    
-            elif thinking_str == _("None"): return None
-            elif thinking_str == _("No thinking"): return False
-        return None
+    def cancel_fetches(self):
+        self._fetch_id += 1
+        self._capability_id += 1
+        for cancellable in (self._fetch_cancel, self._capability_cancel):
+            if cancellable is not None:
+                cancellable.cancel()
 
-    def load_thinking_val(self, val: Any) -> None:
-        """Sets the thinking dropdown based on the stored value."""
-        model = self.thinking_dropdown.get_model()
-        if not model: return
-        
-        target = _("None")
-        if val is True: target = _("Thinking")
-        elif val == "low": target = _("Low")
-        elif val == "medium": target = _("Medium")
-        elif val == "high": target = _("High")
-        elif val == "max": target = _("Max")
-        elif val is False: target = _("No thinking")
-        
-        for i in range(model.get_n_items()):
-            item = model.get_item(i)
-            if item and item.get_string() == target:
-                self.thinking_dropdown.set_selected(i)
-                break
+    def fetch_models(self, host):
+        if host == self._host and not getattr(self, 'pending_model_selection', None):
+            self.pending_model_selection = self.get_selected_model()
+        self.cancel_fetches()
+        self._host = host
+        request_id = self._fetch_id
+        # Clear old models immediately, but keep the desired saved selection.
+        self.model_dropdown.set_model(Gtk.StringList.new([]))
+        self.set_running(self._running)
+        if not host:
+            return
+        cancel = self._fetch_cancel = Gio.Cancellable()
 
-    def fetch_models(self, host: str) -> None:
-        """Asynchronously fetches available models from the host."""
-        def thread_func() -> None:
+        def deliver(models):
+            if request_id == self._fetch_id:
+                self.set_models(models)
+            return False
+
+        def fetch():
             try:
-                models = ollama.fetch_models(host)
-                GLib.idle_add(self.set_models, models)
+                models = ollama.fetch_models(host, cancellable=cancel)
+            except ollama.RequestCancelled:
+                return
             except ollama.OllamaError:
-                GLib.idle_add(self.set_models, [])
-            
+                models = []
+            GLib.idle_add(deliver, models)
         from ..session import worker
-        worker.submit(thread_func)
+        worker.submit(fetch)
+
+    def _model_changed(self, *args):
+        self._capability_id += 1
+        request_id = self._capability_id
+        if self._capability_cancel is not None:
+            self._capability_cancel.cancel()
+        self._set_thinking_options(None)
+        self.set_running(self._running)
+        model, host = self.get_selected_model(), self._host
+        if not model or not host:
+            return
+        cancel = self._capability_cancel = Gio.Cancellable()
+
+        def deliver(details):
+            if request_id == self._capability_id:
+                self._set_thinking_options(details)
+            return False
+
+        def fetch():
+            try:
+                details = ollama.show_model(host, model, cancellable=cancel)
+            except ollama.OllamaError:
+                return  # Older hosts retain manual controls.
+            GLib.idle_add(deliver, details)
+        from ..session import worker
+        worker.submit(fetch)
 
     def on_attach_clicked(self, btn: Gtk.Button) -> None:
         """Opens a file chooser to attach one or multiple images."""

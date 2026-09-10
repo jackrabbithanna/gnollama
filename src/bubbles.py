@@ -102,7 +102,8 @@ class AiBubble(Gtk.ListBoxRow):
         if not hasattr(self, '_stats_label'):
             self._stats_label = Gtk.Label(xalign=0, wrap=True, selectable=True)
             self._stats_label.add_css_class('dim-label')
-            self.bubble_box.append(self._stats_label)
+            expander = Gtk.Expander(label=_('Response Statistics'), child=self._stats_label)
+            self.bubble_box.append(expander)
         self._stats_label.set_text(format_statistics(stats))
 
     def show_response_metadata(self, metadata, show_stats=True):

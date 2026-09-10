@@ -8,6 +8,7 @@ class ChatInput(Gtk.Box):
     __gtype_name__ = 'ChatInput'
     __gsignals__ = {'capabilities-changed': (GObject.SignalFlags.RUN_FIRST, None, ())}
 
+    connection_box = Gtk.Template.Child()
     model_dropdown: Gtk.DropDown = Gtk.Template.Child()
     thinking_dropdown: Gtk.DropDown = Gtk.Template.Child()
     entry: Gtk.Entry = Gtk.Template.Child()
@@ -81,8 +82,8 @@ class ChatInput(Gtk.Box):
 
     def set_running(self, running):
         self._running = running
-        self.send_button.set_icon_name('media-playback-stop-symbolic' if running else 'system-search-symbolic')
-        self.send_button.set_tooltip_text(_('Stop response') if running else _('Query Ollama'))
+        self.send_button.set_icon_name('media-playback-stop-symbolic' if running else 'mail-send-symbolic')
+        self.send_button.set_tooltip_text(_('Stop response') if running else _('Send Message'))
         blocked = ((self.image_support is False and bool(self.selected_image_paths)) or
                    (self.capabilities_loading and (bool(self.selected_image_paths) or self.has_history_images)))
         self.send_button.set_sensitive(running or (self.get_selected_model() is not None and not blocked and not self.awaiting_tools))

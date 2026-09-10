@@ -1,5 +1,5 @@
 from typing import List, Optional, Any, Dict
-from gi.repository import Gtk, GObject, GLib
+from gi.repository import Adw, Gtk, GObject, GLib
 from ..bubbles import UserBubble, AiBubble
 
 @Gtk.Template(resource_path='/io/github/jackrabbithanna/Gnollama/widgets/message_list.ui')
@@ -12,6 +12,14 @@ class MessageList(Gtk.ScrolledWindow):
     def __init__(self, **kwargs: Any) -> None:
         super().__init__(**kwargs)
         self._user_scrolling = False
+        self.set_child(None)
+        self.stack = Gtk.Stack()
+        self.stack.add_named(self.list_box, 'messages')
+        self.stack.add_named(Adw.StatusPage(title=_('Start a Conversation'),
+            description=_('Choose a model and enter a message. Select knowledge collections to ask questions about your documents.'),
+            icon_name='gnollama-chats-symbolic', css_classes=['compact']), 'empty')
+        self.stack.set_visible_child_name('empty')
+        self.set_child(self.stack)
         
         # Connect auto-scroll
         vadjustment = self.get_vadjustment()
@@ -35,6 +43,7 @@ class MessageList(Gtk.ScrolledWindow):
     def add_user_message(self, text: str, images: Optional[List[str]] = None) -> None:
         """Adds a user message bubble."""
         bubble = UserBubble(text, images=images)
+        self.stack.set_visible_child_name('messages')
         self.list_box.append(bubble)
         GLib.idle_add(self.auto_scroll)
 
@@ -48,11 +57,13 @@ class MessageList(Gtk.ScrolledWindow):
         label.set_xalign(0)
         label.add_css_class("system-message")
         row.set_child(label)
+        self.stack.set_visible_child_name('messages')
         self.list_box.append(row)
         GLib.idle_add(self.auto_scroll)
 
     def add_ai_bubble(self, bubble: AiBubble) -> None:
         """Adds an AI bubble."""
+        self.stack.set_visible_child_name('messages')
         self.list_box.append(bubble)
         GLib.idle_add(self.auto_scroll)
         
@@ -63,3 +74,4 @@ class MessageList(Gtk.ScrolledWindow):
             next_child = child.get_next_sibling()
             self.list_box.remove(child)
             child = next_child
+        self.stack.set_visible_child_name('empty')

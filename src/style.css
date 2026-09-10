@@ -32,11 +32,6 @@
     margin-bottom: 12px;
 }
 
-.dim-label {
-    opacity: 0.7;
-    font-size: smaller;
-    margin-bottom: 2px;
-}
 
 .template-bg {
     background-color: alpha(var(--window-fg-color), 0.05);
@@ -74,3 +69,8 @@
 .margin-6-12 {
     margin: 6px 12px;
 }
+
+.chat-options { border-top: 1px solid var(--border-color); padding-top: 12px; }
+.editor-frame { border: 1px solid var(--border-color); border-radius: 6px; }
+.knowledge-sidebar { padding: 12px; }
+.knowledge-section { margin-top: 12px; }

@@ -52,6 +52,8 @@
       <description>
         <p>Add a Knowledge Library for text and PDF imports, local embedding indexes, and source-grounded chats.</p>
         <ul>
+          <li>Start with knowledge collections and add text, files, or URLs with explicit destinations and guided previews.</li>
+          <li>Choose collections before search settings, and use adaptive chat settings with clearer controls and feedback.</li>
           <li>Create and compare embeddings, inspect chunks and vectors, and test semantic searches.</li>
           <li>Select documents or chunks for chats, with independent embedding hosts and saved source passages.</li>
           <li>Warn about stored embeddings when deleting models, with optional vector cleanup that retains source text.</li>

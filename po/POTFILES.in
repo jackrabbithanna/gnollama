@@ -36,3 +36,4 @@ src/widgets/options_panel.ui
 src/widgets/tool_view.py
 src/window.py
 src/window.ui
+src/widgets/knowledge_import.py

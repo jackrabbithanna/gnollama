@@ -32,7 +32,8 @@
               <object class="AdwPreferencesPage">
                 <child>
                   <object class="AdwPreferencesGroup" id="hosts_group">
-                    <property name="title" translatable="yes">Host Records</property>
+                    <property name="title" translatable="yes">Ollama Servers</property>
+                    <property name="description" translatable="yes">Select a server to edit its name or address.</property>
                   </object>
                 </child>
               </object>

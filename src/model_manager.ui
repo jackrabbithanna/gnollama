@@ -58,7 +58,7 @@
                 <property name="margin-bottom">12</property>
                 <child>
                   <object class="GtkButton" id="pull_button">
-                    <property name="label" translatable="yes">Pull model</property>
+                    <property name="label" translatable="yes">Download Model…</property>
                     <property name="hexpand">True</property>
                   </object>
                 </child>

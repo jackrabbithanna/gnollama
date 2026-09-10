@@ -83,6 +83,7 @@ gnollama_widget_sources = [
   'widgets/tool_view.py',
   'widgets/knowledge_view.py',
   'widgets/url_import.py',
+  'widgets/knowledge_import.py',
   'widgets/message_list.py',
 ]
 

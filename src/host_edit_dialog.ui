@@ -1,9 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <interface>
-  <requires lib="gtk" version="4.0"/>
-  <requires lib="Adw" version="1.0"/>
+  <requires lib="gtk" version="4.0" />
+  <requires lib="Adw" version="1.0" />
   <template class="HostEditDialog" parent="AdwAlertDialog">
-    <property name="width-request">400</property>
     <responses>
       <response id="cancel" translatable="yes">Cancel</response>
       <response id="save" translatable="yes">Save</response>
@@ -19,13 +17,27 @@
         <property name="margin-top">12</property>
         <property name="margin-bottom">12</property>
         <child>
+          <object class="GtkLabel">
+            <property name="label" translatable="yes">Name</property>
+            <property name="xalign">0</property>
+            <property name="mnemonic-widget">name_entry</property>
+          </object>
+        </child>
+        <child>
           <object class="GtkEntry" id="name_entry">
-            <property name="placeholder-text" translatable="yes">Name (e.g. Localhost)</property>
+            <property name="placeholder-text" translatable="yes">For example: Local Ollama</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkLabel">
+            <property name="label" translatable="yes">Server address</property>
+            <property name="xalign">0</property>
+            <property name="mnemonic-widget">hostname_entry</property>
           </object>
         </child>
         <child>
           <object class="GtkEntry" id="hostname_entry">
-            <property name="placeholder-text" translatable="yes">Hostname (e.g. http://localhost:11434)</property>
+            <property name="placeholder-text" translatable="yes">http://localhost:11434</property>
           </object>
         </child>
         <child>

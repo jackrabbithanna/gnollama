@@ -46,6 +46,29 @@ def actions(*buttons):
     return flow
 
 
+def field(box, title, widget):
+    box.append(label(title, selectable=False, mnemonic_widget=widget))
+    box.append(widget)
+
+
+def section(box, title, expanded=False):
+    content = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8, margin_top=12)
+    expander = Gtk.Expander(label=title, child=content, expanded=expanded)
+    expander.add_css_class('knowledge-section')
+    box.append(expander)
+    return content, expander
+
+
+def document_status(member):
+    if member['status'] == 'complete' and member['chunks']:
+        return _('Ready')
+    if member['status'] in ('failed', 'interrupted'):
+        return _('Needs Attention')
+    if member['status'] in ('pending', 'indexing'):
+        return _('Preparing')
+    return _('Needs Preparation')
+
+
 def config_label(config):
     return '{0} · {1} · {2} · {3}'.format(config['model'], config['preset'],
                                          config['dimensions'] or _('Native dimensions'), config['digest'][:10])
@@ -71,7 +94,7 @@ class WorkDialog(Adw.Dialog):
         self.cancel = Gio.Cancellable()
         self.closed = False
         self.connect('closed', self._closed)
-        toolbar = Adw.ToolbarView()
+        toolbar = self.toolbar = Adw.ToolbarView()
         self.header = Adw.HeaderBar()
         toolbar.add_top_bar(self.header)
         self.box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12,
@@ -89,6 +112,7 @@ class WorkDialog(Adw.Dialog):
     def show_error(self, error):
         self.error.set_text(str(error))
         self.error.set_visible(True)
+        self.error.grab_focus()
 
     def run(self, function, callback):
         def task():
@@ -119,11 +143,11 @@ class HostModels(Gtk.Box):
         self.model_dropdown = dropdown([])
         self.model_dropdown.set_enable_search(True)
         self.notice = label()
-        self.append(label(_('Embedding host')))
-        self.append(self.host_dropdown)
-        self.append(label(_('Embedding model')))
-        self.append(self.model_dropdown)
+        field(self, _('Embedding server'), self.host_dropdown)
+        field(self, _('Embedding model'), self.model_dropdown)
         self.append(self.notice)
+        self.append(actions(button(_('Manage Models…'), self.manage_models),
+                            button(_('Refresh'), self.refresh)))
         for i, h in enumerate(self.hosts):
             if h['hostname'].rstrip('/') == host.rstrip('/'):
                 self.host_dropdown.set_selected(i)
@@ -131,6 +155,21 @@ class HostModels(Gtk.Box):
         self.host_dropdown.connect('notify::selected', self.refresh)
         self.model_dropdown.connect('notify::selected', lambda *args: self.on_change())
         self.refresh()
+
+    def manage_models(self, *args):
+        from ..model_manager import ModelManagerDialog
+        root = self.get_root()
+        if not isinstance(root, Gtk.Window):
+            return
+        manager = root.on_manage_models() if hasattr(root, 'on_manage_models') else ModelManagerDialog(
+            self.storage, is_model_busy=self.storage.knowledge.busy, transient_for=root)
+        for n, host in enumerate(manager.host_list):
+            if host['hostname'].rstrip('/') == self.host().rstrip('/'):
+                manager.host_dropdown.set_selected(n)
+                break
+        # Refresh after a model has been downloaded without requiring the picker to close.
+        manager.connect('close-request', lambda *args: (self.refresh() if self.get_mapped() else None) or False)
+        manager.present()
 
     def stop(self):
         self.generation += 1
@@ -179,7 +218,7 @@ class HostModels(Gtk.Box):
                     if model['name'] == self.desired_model:
                         self.model_dropdown.set_selected(i)
                         break
-                self.notice.set_text(error or ('' if models else _('No embedding models found. Pull one in Manage Models, then refresh.')))
+                self.notice.set_text(error or ('' if models else _('No embedding models found. Download one in Manage Models, then refresh.')))
                 self.on_change()
                 return False
             GLib.idle_add(deliver)
@@ -197,14 +236,12 @@ class IndexDialog(WorkDialog):
         self.box.append(self.host_models)
         self.connect('closed', lambda *args: self.host_models.stop())
         self.preset = Gtk.DropDown.new_from_strings([_('Plain'), _('EmbeddingGemma retrieval'), _('Nomic retrieval'), _('Qwen3 retrieval'), _('Custom prefixes')])
-        self.box.append(label(_('Embedding format')))
-        self.box.append(self.preset)
+        self.advanced, self.advanced_expander = section(self.box, _('Advanced Embedding Settings'))
+        field(self.advanced, _('Embedding format'), self.preset)
         self.document_prefix = Gtk.Entry()
         self.query_prefix = Gtk.Entry()
-        self.box.append(label(_('Document prefix')))
-        self.box.append(self.document_prefix)
-        self.box.append(label(_('Query prefix')))
-        self.box.append(self.query_prefix)
+        field(self.advanced, _('Document prefix'), self.document_prefix)
+        field(self.advanced, _('Query prefix'), self.query_prefix)
         self.dimensions = Gtk.Entry(placeholder_text=_('Model default'))
         self.size = Gtk.SpinButton.new_with_range(64, 32000, 1)
         self.size.set_value(1600)
@@ -212,8 +249,7 @@ class IndexDialog(WorkDialog):
         self.overlap.set_value(200)
         for title, widget in [(_('Dimensions'), self.dimensions), (_('Chunk size (characters)'), self.size),
                               (_('Overlap (characters)'), self.overlap)]:
-            self.box.append(label(title))
-            self.box.append(widget)
+            field(self.advanced, title, widget)
         self.preset.connect('notify::selected', self._preset_changed)
         self._preset_changed()
         self.start = button(_('Create'), lambda *args: self._start(on_started))
@@ -270,11 +306,12 @@ class IndexDialog(WorkDialog):
 
 class CollectionDialog(IndexDialog):
     def __init__(self, storage, on_created, collection=None):
-        super().__init__(storage, dict(title=_('Documents share these embedding settings.')), on_created, collection)
+        super().__init__(storage, dict(title=_('An embedding model makes documents searchable. It can differ from the model used for chat.')), on_created, collection)
         self.set_title(_('Copy Collection with New Settings') if collection else _('Create Collection'))
         self.name = Gtk.Entry(placeholder_text=_('Collection name'),
                               text=_('{0} (copy)').format(collection['name']) if collection else '')
         self.box.prepend(self.name)
+        self.box.prepend(label(_('Collection name'), selectable=False, mnemonic_widget=self.name))
         self.document_ids = [m['id'] for m in storage.db.collection_documents(collection['id'])] if collection else []
 
     def _start(self, callback):
@@ -293,6 +330,39 @@ class CollectionDialog(IndexDialog):
             self.start.set_sensitive(False)
         except (ValueError, TypeError) as exc:
             self.show_error(exc)
+
+
+class CollectionDestination(Gtk.Box):
+    """Explicit destination shared by all import dialogs, with in-place creation."""
+    def __init__(self, storage, owner, collection_id=None):
+        super().__init__(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+        self.storage, self.owner = storage, owner
+        self.dropdown = dropdown([])
+        field(self, _('Destination collection'), self.dropdown)
+        self.create = button(_('New Collection…'), self.new_collection)
+        self.create.set_halign(Gtk.Align.START)
+        self.append(self.create)
+        self.refresh(collection_id)
+
+    def refresh(self, collection_id=None):
+        self.collections = self.storage.db.knowledge_collections()
+        self.dropdown.set_model(Gtk.StringList.new([_('Choose a collection')] + [c['name'] for c in self.collections]))
+        self.dropdown.set_selected(next((n + 1 for n, c in enumerate(self.collections) if c['id'] == collection_id), 0))
+
+    def selected(self):
+        n = self.dropdown.get_selected()
+        return self.collections[n - 1] if 0 < n <= len(self.collections) else None
+
+    def require(self):
+        collection = self.selected()
+        if collection is None or not self.storage.db.knowledge_collection(collection['id']):
+            self.dropdown.grab_focus()
+            raise ValueError(_('Choose a destination collection, or create a new one.'))
+        return collection
+
+    def new_collection(self, *args):
+        dialog = CollectionDialog(self.storage, self.refresh)
+        dialog.present(self.owner)
 
 
 class DocumentPicker(WorkDialog):
@@ -381,9 +451,15 @@ class SourcePicker(WorkDialog):
         self.collections = storage.db.knowledge_collections()
         self.configs = [c for c in storage.db.embedding_configs() if any(group['config_id'] == c['id'] for group in self.collections)]
         self._refreshing = False
+        self.collection_search = Gtk.SearchEntry(placeholder_text=_('Search collections'))
+        self.collection_search.connect('search-changed', lambda *args: self._render_sources())
+        self.box.append(self.collection_search)
+        self.collection_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
+        self.box.append(self.collection_box)
+        self.search_settings, self.settings_expander = section(self.box, _('Search Settings'))
         self.config_dropdown = dropdown([config_label(c) for c in self.configs])
-        self.box.append(label(_('Embedding configuration')))
-        self.box.append(self.config_dropdown)
+        self.config_dropdown.set_sensitive(False)
+        field(self.search_settings, _('Embedding configuration (from selected collections)'), self.config_dropdown)
         for i, config in enumerate(self.configs):
             if config['id'] == self.options['config_id']:
                 self.config_dropdown.set_selected(i)
@@ -391,11 +467,9 @@ class SourcePicker(WorkDialog):
         if self.options['config_id'] and not any(c['id'] == self.options['config_id'] for c in self.configs):
             self.config_dropdown.set_selected(Gtk.INVALID_LIST_POSITION)
         self.host_models = HostModels(storage, self.options['host'], self.options['model'])
-        self.box.append(self.host_models)
+        self.search_settings.append(self.host_models)
         self.connect('closed', lambda *args: self.host_models.stop())
-        self.box.append(button(_('Refresh models'), lambda *args: self.host_models.refresh()))
-        self.collection_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
-        self.box.append(self.collection_box)
+        self.search_settings.append(label(_('The query must use the same embedding configuration as the selected collections. A compatible server can be chosen here.')))
         if self.options['selection']:
             self.box.append(label(_('This chat has older individual sources. Applying a collection selection replaces them. Closing this dialog keeps them unchanged.')))
         self.count = Gtk.SpinButton.new_with_range(1, 20, 1)
@@ -403,29 +477,30 @@ class SourcePicker(WorkDialog):
         self.budget = Gtk.SpinButton.new_with_range(256, 64000, 256)
         self.budget.set_value(self.options['budget'])
         for title, widget in [(_('Maximum passages'), self.count), (_('Source budget (characters)'), self.budget)]:
-            self.box.append(label(title))
-            self.box.append(widget)
-        self.box.append(label(_('Similarity measure')))
+            self.search_settings.append(label(title))
+            self.search_settings.append(widget)
+        self.search_settings.append(label(_('Similarity measure')))
         self.metric_dropdown = dropdown([_('Cosine similarity'), _('Euclidean distance (L2)'), _('Manhattan distance (L1)')])
         metric = self.options['metric']
         self.metric_dropdown.set_selected(SEARCH_METRICS.index(metric) if metric in SEARCH_METRICS else Gtk.INVALID_LIST_POSITION)
-        self.box.append(self.metric_dropdown)
+        self.search_settings.append(self.metric_dropdown)
         self.metric_notice = label()
-        self.box.append(self.metric_notice)
+        self.search_settings.append(self.metric_notice)
         self.threshold_label = label()
-        self.box.append(self.threshold_label)
+        self.search_settings.append(self.threshold_label)
         self.threshold = Gtk.Entry()
-        self.box.append(self.threshold)
+        self.search_settings.append(self.threshold)
         self._metric_changed(clear_threshold=False)
         threshold = self.options['minimum'] if metric == 'cosine' else self.options['maximum']
         self.threshold.set_text('' if threshold is None else str(threshold))
         self.metric_dropdown.connect('notify::selected', self._metric_changed)
+        self.test_box, self.test_expander = section(self.box, _('Test Search'), expanded=on_apply is None)
         self.query = Gtk.Entry(placeholder_text=_('Enter a search query'))
-        self.box.append(self.query)
+        self.test_box.append(self.query)
         self.search_button = button(_('Test Search'), self._search)
-        self.box.append(self.search_button)
+        self.test_box.append(self.search_button)
         self.results = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
-        self.box.append(self.results)
+        self.test_box.append(self.results)
         if on_apply:
             apply = button(_('Apply'), self._apply)
             apply.add_css_class('suggested-action')
@@ -491,32 +566,48 @@ class SourcePicker(WorkDialog):
     def _render_collections(self, config):
         clear(self.collection_box)
         self.collection_box.append(label(_('Collections')))
-        self.collection_box.append(label(_('Selected collections include every document and follow future additions. All documents must be ready to search.')))
+        self.collection_box.append(label(_('Choose collections to search. New documents added to them are included automatically. All documents must be ready.')))
+        self.collection_checks = {}
         missing = self.collection_ids - {c['id'] for c in self.collections}
         if missing:
             self.collection_box.append(label(_('Some selected collections were deleted. Choose sources again.')))
             self.collection_box.append(button(_('Clear missing collections'), lambda *args: self._clear_collections(missing)))
         for collection in self.collections:
-            compatible = config is not None and collection['config_id'] == config['id']
+            if self.collection_search.get_text().casefold() not in collection['name'].casefold():
+                continue
+            compatible = not self.collection_ids or (config is not None and collection['config_id'] == config['id'])
             text = _('{0} · {1}/{2} documents ready').format(collection['name'], collection['ready'], collection['documents'])
             if not compatible:
                 text += '\n' + _('Different embedding configuration: {0}').format(config_label(collection))
             check = Gtk.CheckButton(child=label(text, selectable=False), sensitive=compatible,
                                      active=collection['id'] in self.collection_ids)
             check.connect('toggled', self._select_collection, collection)
+            self.collection_checks[collection['id']] = (check, collection)
             self.collection_box.append(check)
+        if self.collections and not self.collection_checks:
+            self.collection_box.append(label(_('No matching collections')))
         if not self.collections:
-            self.collection_box.append(label(_('Create collections in the Knowledge Library.')))
+            self.collection_box.append(label(_('Create a collection and add text, files, or URLs in the Knowledge Library.')))
+            self.collection_box.append(button(_('Open Knowledge Library'), self.open_library))
 
     def _clear_collections(self, ids):
         self.collection_ids.difference_update(ids)
         self._render_sources()
+
+    def open_library(self, *args):
+        root = self.get_root()
+        if hasattr(root, 'section_stack'):
+            self.close()
+            root.section_stack.set_visible_child_name('knowledge')
 
     def _select_collection(self, check, collection):
         if check.get_active():
             first = not self.collection_ids
             self.collection_ids.add(collection['id'])
             if first:
+                self._refreshing = True
+                self.config_dropdown.set_selected(next(n for n, c in enumerate(self.configs) if c['id'] == collection['config_id']))
+                self._refreshing = False
                 self.host_models.desired_model = collection['model']
                 for n, host in enumerate(self.host_models.hosts):
                     if host['hostname'].rstrip('/') == collection['host'].rstrip('/'):
@@ -525,6 +616,15 @@ class SourcePicker(WorkDialog):
                 self.host_models.refresh()
         else:
             self.collection_ids.discard(collection['id'])
+        config = self.config()
+        # Keep the focused row alive while changing compatibility.
+        for widget, value in self.collection_checks.values():
+            compatible = not self.collection_ids or (config is not None and value['config_id'] == config['id'])
+            widget.set_sensitive(compatible)
+            text = _('{0} · {1}/{2} documents ready').format(value['name'], value['ready'], value['documents'])
+            if not compatible:
+                text += '\n' + _('Uses different embedding settings. Clear the current selection to choose this collection.')
+            widget.get_child().set_text(text)
 
     def current_options(self):
         config, model = self.config(), self.host_models.model()
@@ -538,7 +638,7 @@ class SourcePicker(WorkDialog):
         if self.threshold.get_text().strip():
             options['minimum' if self.metric() == 'cosine' else 'maximum'] = float(self.threshold.get_text())
         validate_rag(options)
-        if model.get('digest') != config['digest']:
+        if model is None or config is None or model.get('digest') != config['digest']:
             raise ValueError(_('This model digest does not match the selected embedding configuration.'))
         return options
 
@@ -670,7 +770,9 @@ class KnowledgeControl(Gtk.Box):
         self.notice = label()
         self.append(self.notice)
         self.query = Gtk.Entry(placeholder_text=_('Search query override for the next turn (optional)'), visible=False)
-        self.append(self.query)
+        self.query.set_placeholder_text(_('Use a different search query for the next message'))
+        self.query_options = Gtk.Expander(label=_('Search Query Override'), child=self.query, visible=False)
+        self.append(self.query_options)
         self.toggle.connect('toggled', self._changed)
         self.storage.knowledge.listeners.append(self._notice)
         self.load({})
@@ -688,15 +790,17 @@ class KnowledgeControl(Gtk.Box):
         count = len(self.options['selection'])
         ids = set(self.options['collection_ids'])
         groups = [c for c in self.storage.db.knowledge_collections() if c['id'] in ids] if ids else []
-        text = _('Collections: {0}').format(len(ids))
+        text = _('Choose collections to search.') if not ids else ''
         if count:
             text += '\n' + _('Older individual sources: {0}. Choose collections to replace them.').format(count)
         if groups:
-            text += '\n' + ', '.join(_('{0}: {1}/{2} ready').format(c['name'], c['ready'], c['documents']) for c in groups)
+            text += ', '.join(_('{0}: {1}/{2} ready').format(c['name'], c['ready'], c['documents']) for c in groups)
         if ids - {c['id'] for c in groups}:
             text += '\n' + _('A selected collection was deleted. Choose sources again.')
-        self.notice.set_text(text if self.toggle.get_active() else _('Knowledge is off.'))
-        self.query.set_visible(self.toggle.get_active())
+        self.notice.set_text(text)
+        self.notice.set_visible(self.toggle.get_active())
+        self.query.set_visible(True)
+        self.query_options.set_visible(self.toggle.get_active())
 
     def _changed(self, *args):
         self.options['enabled'] = self.toggle.get_active()
@@ -729,8 +833,8 @@ class KnowledgeView(Gtk.Box):
         self.storage = storage
         self.document_id = None
         self.collection_id = None
-        self.library_scope = 'all'
-        self._library_choices = ['all', 'ungrouped']
+        self.library_scope = 'collections'
+        self._library_choices = ['collections', 'all', 'ungrouped']
         self._refreshing_collections = False
         self.dialogs = []
         self.closed = False
@@ -741,12 +845,12 @@ class KnowledgeView(Gtk.Box):
         self._availability_loading = set()
         self._file_cancels = []
         self._availability_cancels = []
-        self.append(actions(button(_('New Collection'), self.new_collection),
-                            button(_('Add Text'), self.add_text), button(_('Import Files…'), self.import_files),
-                            button(_('Add URLs…'), self.add_urls),
-                            button(_('Test Search'), self.test_search), button(_('Refresh'), self.refresh_models)))
-        sidebar = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
-        self.collection_dropdown = dropdown([_('All Documents'), _('Ungrouped Documents')])
+        sidebar = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12)
+        sidebar.add_css_class('knowledge-sidebar')
+        create = button(_('New Collection…'), self.new_collection)
+        create.add_css_class('suggested-action')
+        sidebar.append(create)
+        self.collection_dropdown = dropdown([_('Collections'), _('All Documents'), _('Ungrouped Documents')])
         self.collection_dropdown.connect('notify::selected', self._library_changed)
         sidebar.append(label(_('Library')))
         sidebar.append(self.collection_dropdown)
@@ -770,8 +874,10 @@ class KnowledgeView(Gtk.Box):
         bin.add_breakpoint(breakpoint)
         self.append(bin)
         self.jobs_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4, margin_start=12, margin_end=12)
-        self.append(Gtk.ScrolledWindow(child=self.jobs_box, max_content_height=160, propagate_natural_height=True,
+        self.jobs_expander = Gtk.Expander(label=_('Background Tasks'), margin_start=12, margin_end=12, margin_bottom=12)
+        self.jobs_expander.set_child(Gtk.ScrolledWindow(child=self.jobs_box, max_content_height=160, propagate_natural_height=True,
                                        hscrollbar_policy=Gtk.PolicyType.NEVER))
+        self.append(self.jobs_expander)
         self.storage.knowledge.listeners.append(self.refresh)
         self.connect('destroy', self._destroyed)
         self.refresh()
@@ -818,7 +924,7 @@ class KnowledgeView(Gtk.Box):
                 if scope == 'ungrouped':
                     ungrouped = self.storage.db.ungrouped_document_ids()
                     docs = [d for d in docs if d['id'] in ungrouped]
-                elif scope != 'all':
+                elif scope not in ('all', 'collections'):
                     ids = {m['id'] for m in members}
                     docs = [d for d in docs if d['id'] in ids]
                 indexes = self.storage.db.knowledge_indexes(document_id=document_id) if document_id else []
@@ -836,23 +942,40 @@ class KnowledgeView(Gtk.Box):
                     self.refresh()
                     return False
                 self._refreshing_collections = True
-                self._library_choices = ['all', 'ungrouped'] + [c['id'] for c in collections]
+                self._library_choices = ['collections', 'all', 'ungrouped'] + [c['id'] for c in collections]
                 self.collection_dropdown.set_model(Gtk.StringList.new(
-                    [_('All Documents'), _('Ungrouped Documents')] + [c['name'] for c in collections]))
+                    [_('Collections'), _('All Documents'), _('Ungrouped Documents')] + [c['name'] for c in collections]))
                 self.collection_dropdown.set_selected(self._library_choices.index(scope) if scope in self._library_choices else 0)
                 self._refreshing_collections = False
                 if scope not in self._library_choices:
                     self.open_collection(None)
                     return False
                 clear(self.documents)
-                for doc in docs:
-                    if query in (doc['title'] + '\n' + doc['filename']).casefold():
-                        row = Adw.ActionRow(title=doc['title'], subtitle=_('{0} characters').format(doc['characters']), activatable=True, use_markup=False)
-                        row.connect('activated', lambda row, id=doc['id']: self.open_document(id))
+                self.search.set_placeholder_text(_('Search collections') if scope == 'collections' else _('Search documents'))
+                shown = 0
+                if scope == 'collections':
+                    for group in collections:
+                        if query not in group['name'].casefold():
+                            continue
+                        row = Adw.ActionRow(title=group['name'],
+                            subtitle=_('{0}/{1} documents ready').format(group['ready'], group['documents']),
+                            activatable=True, use_markup=False)
+                        row.add_suffix(Gtk.Image(icon_name='go-next-symbolic'))
+                        row.connect('activated', lambda row, id=group['id']: self.open_collection(id))
                         self.documents.append(row)
-                if not docs:
-                    self.documents.append(label(_('Add text, import files, or add existing documents to this collection.') if collection else
-                                                _('Add text or import files to build your library.')))
+                        shown += 1
+                else:
+                    for doc in docs:
+                        if query in (doc['title'] + '\n' + doc['filename']).casefold():
+                            row = Adw.ActionRow(title=doc['title'], subtitle=_('{0} characters').format(doc['characters']), activatable=True, use_markup=False)
+                            row.add_suffix(Gtk.Image(icon_name='go-next-symbolic'))
+                            row.connect('activated', lambda row, id=doc['id']: self.open_document(id))
+                            self.documents.append(row)
+                            shown += 1
+                if not shown:
+                    self.documents.append(label(_('No matches') if query else
+                        _('Create a collection to organize text, files, and URLs.') if scope == 'collections' else
+                        _('Add text, files, or URLs to a collection.')))
                 key = (document_id, document['title'] if document else '',
                        document['content_hash'] if document else '',
                        json.dumps(document.get('web_source'), sort_keys=True) if document else '',
@@ -889,8 +1012,8 @@ class KnowledgeView(Gtk.Box):
             self.open_collection(self._library_choices[n])
 
     def open_collection(self, id):
-        self.library_scope = id or 'all'
-        self.collection_id = id if id and id not in ('all', 'ungrouped') else None
+        self.library_scope = id or 'collections'
+        self.collection_id = id if id and id not in ('collections', 'all', 'ungrouped') else None
         self.document_id = None
         self.search.set_text('')
         self.split.set_show_content(bool(self.collection_id))
@@ -903,13 +1026,30 @@ class KnowledgeView(Gtk.Box):
         clear(self.detail)
         if not collection:
             self.detail_page.set_title(_('Knowledge Library'))
-            self.detail.append(label(_('Select a document to inspect it, or create a collection to search several documents together.')))
+            if self.library_scope == 'collections':
+                page = Adw.StatusPage(title=_('Knowledge Collections'), icon_name='folder-symbolic',
+                    description=_('Group documents into collections, then select a collection in chat to ask questions about its content.'))
+                page.set_child(button(_('Create Collection…'), self.new_collection))
+                self.detail.append(page)
+            else:
+                self.detail.append(label(_('Select a document to inspect it. New imports always ask for a destination collection.')))
+                self.detail.append(self.import_actions())
             return
         self.detail_page.set_title(collection['name'])
-        self.detail.append(label(config_label(collection)))
-        self.detail.append(label(_('{0}/{1} documents ready · Chunk size: {2} · Overlap: {3}').format(
-            collection['ready'], collection['documents'], collection['chunk_size'], collection['overlap'])))
-        self.detail.append(label(collection['host']))
+        self.detail.append(label(_('{0}/{1} documents ready').format(collection['ready'], collection['documents'])))
+        self.detail.append(label(_('Add text, files, or URLs to this collection. Gnollama prepares the documents automatically so chats can search them.')))
+        self.detail.append(self.import_actions())
+        self.detail.append(button(_('Add Existing Documents…'), lambda *args: self.present_dialog(DocumentPicker(self.storage, collection['id'], self.refresh))))
+        if collection['documents'] and collection['ready'] == collection['documents']:
+            use = button(_('Use in New Chat'), lambda *args: self.use_collection(collection))
+            use.add_css_class('suggested-action')
+            self.detail.append(use)
+        elif collection['documents']:
+            self.detail.append(button(_('Prepare Documents'), lambda *args: self._build_collection(collection)))
+        settings, _expander = section(self.detail, _('Embedding Details'))
+        settings.append(label(config_label(collection)))
+        settings.append(label(_('Chunk size: {0} characters · Overlap: {1} characters').format(collection['chunk_size'], collection['overlap'])))
+        settings.append(label(collection['host']))
         menu = Gio.Menu()
         menu_actions = Gio.SimpleActionGroup()
         for name, title, callback in (
@@ -923,16 +1063,15 @@ class KnowledgeView(Gtk.Box):
             menu.append(title, 'collection.' + name)
         options = Gtk.MenuButton(label=_('Collection Options'), menu_model=menu)
         options.insert_action_group('collection', menu_actions)
-        self.detail.append(actions(
-            button(_('Add Existing Documents'), lambda *args: self.present_dialog(DocumentPicker(self.storage, collection['id'], self.refresh))),
-            button(_('Build Missing / Retry Failed'), lambda *args: self._build_collection(collection)),
-            options))
-        self.detail.append(label(_('Add Text and Import Files add to this collection. Missing embeddings build automatically; changes affect future chat questions.')))
+        options.set_halign(Gtk.Align.START)
+        self.detail.append(options)
         rows = Gtk.ListBox(selection_mode=Gtk.SelectionMode.NONE)
         rows.add_css_class('boxed-list')
         self.detail.append(rows)
         for member in members:
-            status = _('Ready') if member['status'] == 'complete' and member['chunks'] else member['error'] or member['status'] or _('Needs embeddings')
+            status = document_status(member)
+            if member['error']:
+                status += '\n' + member['error']
             row = Adw.ActionRow(title=member['title'], subtitle=status, activatable=True, use_markup=False)
             row.connect('activated', lambda row, id=member['id']: self.open_document(id))
             remove = Gtk.Button(icon_name='list-remove-symbolic', tooltip_text=_('Remove from Collection'), valign=Gtk.Align.CENTER)
@@ -941,6 +1080,20 @@ class KnowledgeView(Gtk.Box):
                 self.storage.db.remove_collection_document, collection['id'], id, on_done=self.storage.knowledge.changed))
             row.add_suffix(remove)
             rows.append(row)
+
+    def import_actions(self):
+        return actions(button(_('Add Text…'), self.add_text), button(_('Add Files…'), self.import_files),
+                       button(_('Add URLs…'), self.add_urls))
+
+    def use_collection(self, collection):
+        root = self.get_root()
+        if hasattr(root, 'new_chat_tab'):
+            tab = root.new_chat_tab()
+            options = dict(copy.deepcopy(DEFAULT_RAG), enabled=True, config_id=collection['config_id'],
+                           host=collection['host'], model=collection['model'], collection_ids=[collection['id']])
+            tab.knowledge_control.load(options)
+            tab.knowledge_control.on_change()
+            tab.chat_input.entry.grab_focus()
 
     def _build_collection(self, collection):
         try:
@@ -1005,9 +1158,9 @@ class KnowledgeView(Gtk.Box):
                     for index in selected:
                         match = next((m for m in models if canonical_model(m['name']) == canonical_model(index['model'])), None)
                         states[index['id']] = (_('Original model available') if match and match.get('digest') == index['digest']
-                                               else _('Original model unavailable or changed — choose a compatible host for searches.'))
+                                               else _('Unavailable — the original model changed or was removed. Choose a compatible server for searches.'))
                 except Exception as exc:
-                    states = {i['id']: _('Host unavailable: {0}').format(str(exc)) for i in selected}
+                    states = {i['id']: _('Unavailable: {0}').format(str(exc)) for i in selected}
                 def deliver():
                     self._availability_loading.discard(host)
                     if cancel in self._availability_cancels:
@@ -1046,12 +1199,14 @@ class KnowledgeView(Gtk.Box):
                                    button(_('Create Embeddings'), lambda *args: self.present_dialog(IndexDialog(self.storage, document, self.refresh))),
                                    button(_('Rename'), lambda *args: self._rename(document)),
                                    button(_('Delete Document'), lambda *args: self._delete(document=document))))
+        self.detail.append(button(_('Add to Collection…'), lambda *args: self.assign_document(document)))
         for index in indexes:
-            group = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+            group = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8,
+                            margin_start=12, margin_end=12, margin_top=12, margin_bottom=12)
             group.append(label(config_label(index)))
             group.append(label(self.availability.get(index['id'], _('Checking model availability…'))))
             group.append(label('{0}\n{1} · {2} · {3}'.format(index['host'],
-                               time.strftime('%Y-%m-%d %H:%M', time.localtime(index['created_at'])), index['status'],
+                               time.strftime('%Y-%m-%d %H:%M', time.localtime(index['created_at'])), document_status(index),
                                _('Chunks: {0}').format(index['chunks']))))
             if index['error']:
                 group.append(label(index['error']))
@@ -1061,11 +1216,30 @@ class KnowledgeView(Gtk.Box):
             if index['status'] in ('failed', 'interrupted'):
                 row_actions.append(button(_('Retry'), lambda *args, i=index: self._retry(i)))
             group.append(actions(*row_actions))
-            self.detail.append(group)
+            self.detail.append(Gtk.Frame(child=group))
+
+    def assign_document(self, document):
+        dialog = WorkDialog(_('Add to Collection'), height=320)
+        destination = CollectionDestination(self.storage, dialog, self.collection_id)
+        dialog.box.append(label(document['title']))
+        dialog.box.append(destination)
+        def add(*args):
+            try:
+                target = destination.require()
+                self.storage.knowledge.build_collection(target['id'], [document['id']])
+                self.open_collection(target['id'])
+                dialog.close()
+            except ValueError as exc:
+                dialog.show_error(exc)
+        dialog.header.pack_end(button(_('Add'), add))
+        self.present_dialog(dialog)
 
     def _jobs(self):
         clear(self.jobs_box)
         jobs = list(self.storage.knowledge.jobs.values())
+        active = sum(not j['done'] for j in jobs)
+        self.jobs_expander.set_visible(bool(jobs))
+        self.jobs_expander.set_label(_('Background Tasks · {0} running').format(active) if active else _('Recent Background Tasks'))
         for job in [j for j in jobs if not j['done']] + [j for j in jobs if j['done']][-3:]:
             row = Gtk.Box(spacing=6)
             row.append(label(job['title'] + ': ' + job['progress'], hexpand=True))
@@ -1091,20 +1265,14 @@ class KnowledgeView(Gtk.Box):
 
     def _preview(self, document):
         dialog = TextEditor(preview_text(document), lambda text: None, title=document['title'],
-                            hint=_('Saved source text. Import revised content as a new document.'), apply_label=_('Close'))
+                            hint=_('Saved source text. Use Fetch Again to update this URL document.') if document.get('web_source') else _('Saved source text. Import revised content as a new document.'), apply_label=_('Close'))
         dialog.editor.set_editable(False)
         plain_editor(dialog)
         self.present_dialog(dialog)
 
     def add_text(self, *args):
-        collection_id = self.collection_id
-        dialog = TextEditor('', lambda text: None, title=_('Add Text'), hint=_('Paste text to save in the Knowledge Library.'),
-                            validate=lambda text: make_document('text', text), apply_label=_('Save'))
-        title = Gtk.Entry(placeholder_text=_('Document title'))
-        dialog.content_box.prepend(title)
-        dialog.on_apply = lambda text: self._save_document(make_document(title.get_text(), text), collection_id)
-        plain_editor(dialog)
-        self.present_dialog(dialog)
+        from .knowledge_import import TextImportDialog
+        self.present_dialog(TextImportDialog(self.storage, self.collection_id))
 
     def add_urls(self, *args, url='', document_id=None):
         from .url_import import URLImportDialog
@@ -1148,45 +1316,8 @@ class KnowledgeView(Gtk.Box):
             self.open_document(document_id)
 
     def import_files(self, *args):
-        collection_id = self.collection_id
-        dialog = Gtk.FileDialog(title=_('Import Text or PDF Files'))
-        cancel = Gio.Cancellable()
-        self._file_cancels.append(cancel)
-        def selected(dialog, result):
-            if cancel in self._file_cancels:
-                self._file_cancels.remove(cancel)
-            if self.closed or cancel.is_cancelled() or self.storage.knowledge.closed:
-                return
-            try:
-                files = dialog.open_multiple_finish(result)
-            except GLib.Error as exc:
-                if not exc.matches(Gtk.dialog_error_quark(), Gtk.DialogError.DISMISSED):
-                    self.error(exc)
-                return
-            for n in range(files.get_n_items()):
-                file = files.get_item(n)
-                def extract(cancel, progress, file=file):
-                    progress(_('Extracting text…'))
-                    info = file.query_info('standard::size', Gio.FileQueryInfoFlags.NONE, cancel)
-                    if info.get_size() > 50 * 1024 * 1024:
-                        raise ValueError(_('Files must be no larger than 50 MiB.'))
-                    _, raw, _etag = file.load_contents(cancel)
-                    return extract_document(file.get_basename(), raw, cancel)
-                def preview(result, error):
-                    if self.closed or self.storage.knowledge.closed:
-                        return
-                    if error:
-                        self.error(error)
-                        return
-                    document, warnings = result
-                    editor = TextEditor(preview_text(document), lambda text: self._save_document(document, collection_id),
-                                        title=_('Import Preview'), hint=document['filename'] + '\n' + '\n'.join(warnings),
-                                        apply_label=_('Save'))
-                    editor.editor.set_editable(False)
-                    plain_editor(editor)
-                    self.present_dialog(editor)
-                self.storage.knowledge.submit(file.get_basename(), extract, preview)
-        dialog.open_multiple(self.get_root(), cancel, selected)
+        from .knowledge_import import FileImportDialog
+        self.present_dialog(FileImportDialog(self.storage, self.collection_id))
 
     def test_search(self, *args):
         options = copy.deepcopy(DEFAULT_RAG)

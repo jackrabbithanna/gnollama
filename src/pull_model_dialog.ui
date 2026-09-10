@@ -1,9 +1,8 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <interface>
-  <requires lib="gtk" version="4.0"/>
-  <requires lib="Adw" version="1.0"/>
+  <requires lib="gtk" version="4.0" />
+  <requires lib="Adw" version="1.0" />
   <template class="PullModelDialog" parent="AdwWindow">
-    <property name="title" translatable="yes">Pull Model</property>
+    <property name="title" translatable="yes">Download Model</property>
     <property name="default-width">500</property>
     <property name="default-height">400</property>
     <property name="modal">True</property>
@@ -20,9 +19,9 @@
             </child>
             <child type="end">
               <object class="GtkButton" id="pull_btn">
-                <property name="label" translatable="yes">Pull model</property>
+                <property name="label" translatable="yes">Download Model…</property>
                 <style>
-                  <class name="suggested-action"/>
+                  <class name="suggested-action" />
                 </style>
               </object>
             </child>
@@ -48,7 +47,7 @@
                 </child>
                 <child>
                   <object class="GtkEntry" id="model_name_entry">
-                    <property name="placeholder-text" translatable="yes">Name of the model to download</property>
+                    <property name="placeholder-text" translatable="yes">For example: qwen3:4b</property>
                   </object>
                 </child>
               </object>
@@ -67,7 +66,7 @@
                     <property name="halign">start</property>
                     <property name="margin-start">28</property>
                     <style>
-                      <class name="dim-label"/>
+                      <class name="dim-label" />
                     </style>
                   </object>
                 </child>
@@ -80,13 +79,23 @@
               </object>
             </child>
             <child>
-              <object class="GtkScrolledWindow">
-                <property name="vexpand">True</property>
+              <object class="GtkProgressBar" id="progress_bar">
+                <property name="show-text">True</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkExpander">
+                <property name="label" translatable="yes">Download Details</property>
                 <child>
-                  <object class="GtkTextView" id="status_textview">
-                    <property name="editable">False</property>
-                    <property name="wrap-mode">word-char</property>
-                    <property name="cursor-visible">False</property>
+                  <object class="GtkScrolledWindow">
+                    <property name="vexpand">True</property>
+                    <child>
+                      <object class="GtkTextView" id="status_textview">
+                        <property name="editable">False</property>
+                        <property name="wrap-mode">word-char</property>
+                        <property name="cursor-visible">False</property>
+                      </object>
+                    </child>
                   </object>
                 </child>
               </object>

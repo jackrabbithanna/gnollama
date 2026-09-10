@@ -5,8 +5,8 @@ from gi.repository import Adw, Gtk
 
 from ..knowledge import check_cancel, make_document
 from ..web_import import MAX_CACHE, MAX_DOWNLOAD, extract_download, fetch_url, parse_urls
-from .json_view import buffer_text, code_view
-from .knowledge_view import WorkDialog, actions, button, dropdown, label
+from .json_view import buffer_text, code_view, editor_frame
+from .knowledge_view import CollectionDestination, WorkDialog, actions, button, field, label, section
 
 
 class URLImportDialog(WorkDialog):
@@ -22,24 +22,20 @@ class URLImportDialog(WorkDialog):
         self.connect('closed', self._stop)
         self.setup = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
         self.box.append(self.setup)
-        self.destination = dropdown([c['name'] for c in self.collections])
-        for i, collection in enumerate(self.collections):
-            if collection['id'] == collection_id:
-                self.destination.set_selected(i)
-                break
-        self.setup.append(label(_('Destination collection')))
-        self.setup.append(self.destination)
+        self.destination_picker = CollectionDestination(storage, self, collection_id)
+        self.destination = self.destination_picker.dropdown
+        self.setup.append(self.destination_picker)
         self.setup.append(label(_('Paste up to 20 URLs, one per line. Review each page before saving.')))
         self.urls = Gtk.TextView(wrap_mode=Gtk.WrapMode.WORD_CHAR)
         self.urls.get_buffer().set_text(url)
-        self.setup.append(Gtk.ScrolledWindow(child=self.urls, min_content_height=80,
-                                             hscrollbar_policy=Gtk.PolicyType.NEVER))
+        self.urls.set_left_margin(12)
+        self.urls.set_right_margin(12)
+        self.urls.set_top_margin(8)
+        self.urls.set_bottom_margin(8)
+        self.setup.append(editor_frame(self.urls, min_content_height=80))
         self.fetch_button = button(_('Fetch URLs'), self.start)
         self.fetch_button.add_css_class('suggested-action')
         self.header.pack_end(self.fetch_button)
-        if not self.collections:
-            self.fetch_button.set_sensitive(False)
-            self.show_error(_('Create a collection in the Knowledge Library before importing URLs.'))
         self.destination_label = label(visible=False)
         self.box.append(self.destination_label)
         self.notice = label()
@@ -53,36 +49,38 @@ class URLImportDialog(WorkDialog):
         self.box.append(self.preview)
         self.source_label = label()
         self.preview.append(self.source_label)
-        self.preview.append(label(_('Document title')))
         self.title_entry = Gtk.Entry()
-        self.preview.append(self.title_entry)
-        self.selector_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+        field(self.preview, _('Document title'), self.title_entry)
+        self.selector_box, self.selector_expander = section(self.preview, _('Refine Extraction'))
+        self.selector_box.append(label(_('If the preview includes navigation or misses the article, select the page region to extract using a CSS selector.')))
         self.selector_box.append(label(_('CSS selector (optional)')))
         self.selector = Gtk.Entry(placeholder_text=_('For example: main, article, or .article-body'))
         self.selector_box.append(self.selector)
         self.reextract_button = button(_('Re-extract'), self.reextract)
         self.selector_box.append(self.reextract_button)
-        self.preview.append(self.selector_box)
         self.editor = code_view(editable=True)
         if hasattr(self.editor.get_buffer(), 'set_language'):
             self.editor.get_buffer().set_language(None)
-        self.preview.append(Gtk.ScrolledWindow(child=self.editor, min_content_height=220,
-                                               hscrollbar_policy=Gtk.PolicyType.NEVER))
+        self.preview.append(label(_('Extracted content (editable)')))
+        self.preview.append(editor_frame(self.editor, min_content_height=220))
         self.page_notice = label()
         self.preview.append(self.page_notice)
-        self.save_button = button(_('Save'), self.save)
+        self.save_button = button(_('Add to Collection'), self.save)
         self.save_button.add_css_class('suggested-action')
-        self.retry_button = button(_('Retry / Fetch Again'), self.retry)
+        self.retry_button = button(_('Fetch Again'), self.retry)
         self.skip_button = button(_('Skip'), self.skip)
-        self.preview.append(actions(self.save_button, self.skip_button, self.retry_button))
+        self.footer = actions(self.save_button, self.skip_button, self.retry_button)
+        for side in ('start', 'end', 'top', 'bottom'):
+            getattr(self.footer, 'set_margin_' + side)(12)
+        self.footer.set_visible(False)
+        self.toolbar.add_bottom_bar(self.footer)
+        self.storage.knowledge.listeners.append(self.update_saved)
 
     def start(self, *args):
         try:
             urls = parse_urls(buffer_text(self.urls))
-            n = self.destination.get_selected()
-            if n >= len(self.collections):
-                raise ValueError(_('Choose a destination collection.'))
-            self.collection_id = self.collections[n]['id']
+            target = self.destination_picker.require()
+            self.collection_id = target['id']
         except ValueError as exc:
             self.show_error(exc)
             return
@@ -94,7 +92,7 @@ class URLImportDialog(WorkDialog):
         self.fetch_button.set_sensitive(False)
         self.setup.set_visible(False)
         self.fetch_button.set_visible(False)
-        self.destination_label.set_text(_('Collection: {0}').format(self.collections[n]['name']))
+        self.destination_label.set_text(_('Collection: {0}').format(target['name']))
         self.destination_label.set_visible(True)
         for url in urls:
             row = Gtk.ListBoxRow()
@@ -116,7 +114,7 @@ class URLImportDialog(WorkDialog):
         item['status_label'].set_text({
             'queued': _('Queued'), 'fetching': _('Downloading…'), 'extracting': _('Extracting…'),
             'ready': _('Ready to review'), 'failed': _('Needs attention'), 'saving': _('Saving…'),
-            'saved': _('Saved'), 'skipped': _('Skipped'),
+            'saved': _('Added to Collection — Preparing'), 'skipped': _('Skipped'),
         }[status])
 
     def _schedule(self):
@@ -214,6 +212,7 @@ class URLImportDialog(WorkDialog):
     def _render(self):
         item = self.current
         self.preview.set_visible(item is not None)
+        self.footer.set_visible(item is not None)
         if item is None:
             return
         busy = item['status'] in ('queued', 'fetching', 'extracting', 'saving')
@@ -226,12 +225,13 @@ class URLImportDialog(WorkDialog):
         self.selector.set_text(item['selector'])
         download = item['download']
         html = download is not None and download.content_type in ('text/html', 'application/xhtml+xml')
-        self.selector_box.set_visible(html)
+        self.selector_expander.set_visible(html)
         self.selector_box.set_sensitive(editable)
         self.source_label.set_text(download.final_url if download else item['url'])
         self.page_notice.set_text(item['error'] or '\n'.join(item['warnings']))
         self.save_button.set_sensitive(editable and item['document'] is not None and not item['error'])
-        self.save_button.set_label(_('Save / Replace…') if item['expected'] else _('Save'))
+        self.save_button.set_label(_('Replace Document…') if item['expected'] else _('Add to Collection'))
+        self.retry_button.set_label(_('Retry') if item['status'] == 'failed' else _('Fetch Again'))
         self.skip_button.set_sensitive(not finished and item['status'] != 'saving')
         self._refresh_actions()
 
@@ -309,6 +309,7 @@ class URLImportDialog(WorkDialog):
                     self._status(item, 'failed')
                 else:
                     item['warnings'] = result['warnings']
+                    item['saved_id'] = result['id']
                     self._status(item, 'saved')
                     if item['download']:
                         item['download'].discard()
@@ -317,6 +318,7 @@ class URLImportDialog(WorkDialog):
                     item['text'] = ''
                 if item is self.current:
                     self._render()
+                self.update_saved()
                 self._schedule()
             try:
                 item['job'] = self.storage.knowledge.save_web_document(document, source, self.collection_id, item['expected'], done)
@@ -340,7 +342,21 @@ class URLImportDialog(WorkDialog):
         else:
             commit()
 
+    def update_saved(self):
+        if self.closed or not self.collection_id:
+            return
+        members = {m['id']: m for m in self.storage.db.collection_documents(self.collection_id)}
+        for item in self.items:
+            if item['status'] != 'saved':
+                continue
+            member = members.get(item.get('saved_id'))
+            ready = member and member['status'] == 'complete' and member['chunks']
+            failed = member and member['status'] in ('failed', 'interrupted')
+            item['status_label'].set_text(_('Ready to Search') if ready else _('Added to Collection — Needs Attention') if failed else _('Added to Collection — Preparing'))
+
     def _stop(self, *args):
+        if self.update_saved in self.storage.knowledge.listeners:
+            self.storage.knowledge.listeners.remove(self.update_saved)
         for item in self.items:
             if item['job'] and item['status'] in ('fetching', 'extracting'):
                 item['job']['cancel'].cancel()

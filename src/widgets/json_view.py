@@ -24,7 +24,17 @@ def code_view(editable=False):
     view.set_editable(editable)
     view.set_wrap_mode(Gtk.WrapMode.WORD_CHAR)
     view.set_hexpand(True)
+    view.set_left_margin(12)
+    view.set_right_margin(12)
+    view.set_top_margin(8)
+    view.set_bottom_margin(8)
     return view
+
+
+def editor_frame(view, **kwargs):
+    scrolled = Gtk.ScrolledWindow(child=view, hscrollbar_policy=Gtk.PolicyType.NEVER, **kwargs)
+    scrolled.add_css_class('editor-frame')
+    return scrolled
 
 
 def buffer_text(view):
@@ -59,6 +69,7 @@ class TextEditor(Adw.Dialog):
         apply = Gtk.Button(label=apply_label or _('Apply'))
         apply.add_css_class('suggested-action')
         apply.connect('clicked', self.apply_text)
+        self.apply_button = apply
         header.pack_end(apply)
         toolbar.add_top_bar(header)
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12,
@@ -69,7 +80,9 @@ class TextEditor(Adw.Dialog):
         box.append(hint)
         self.editor = code_view(editable=True)
         self.editor.get_buffer().set_text(text)
-        box.append(Gtk.ScrolledWindow(child=self.editor, vexpand=True, hscrollbar_policy=Gtk.PolicyType.NEVER))
+        editor_label = Gtk.Label(label=_('Content'), xalign=0, mnemonic_widget=self.editor)
+        box.append(editor_label)
+        box.append(editor_frame(self.editor, vexpand=True))
         self.error_label = Gtk.Label(wrap=True, xalign=0, selectable=True, visible=False)
         self.error_label.add_css_class('error')
         box.append(self.error_label)
@@ -88,7 +101,8 @@ class TextEditor(Adw.Dialog):
         except (ValueError, RecursionError) as exc:
             self.show_error(exc)
             return
-        self.on_apply(text)
+        if self.on_apply(text) is False:
+            return
         self.close()
 
     def import_text(self, *args):

@@ -209,7 +209,7 @@ class ToolUITests(unittest.TestCase):
         window = Gtk.Window(child=tab)
         self.windows.append(window)
         window.present()
-        tab.options_panel.advanced_expander.set_expanded(False)
+        self.assertIsNone(tab.options_panel._settings_dialog)
         test_ui.pump_until(lambda: tab.options_panel.get_mapped())
         tab.options_panel.tools_check.set_active(True)
         test_ui.pump_until(lambda: tab.options_panel._tools_dialog is not None)

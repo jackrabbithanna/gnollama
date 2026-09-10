@@ -95,6 +95,8 @@ class GnollamaWindow(Adw.ApplicationWindow):
                 tab.options_panel._schema_dialog.close()
             if tab.options_panel._tools_dialog is not None:
                 tab.options_panel._tools_dialog.close()
+            if tab.options_panel._settings_dialog is not None:
+                tab.options_panel._settings_dialog.close()
             for view in tab._tool_views:
                 view.close_editor()
             if tab.request:
@@ -209,6 +211,7 @@ class GnollamaWindow(Adw.ApplicationWindow):
         dialog.connect('close-request', lambda *args: self._forget_manager(dialog))
         dialog.set_transient_for(self)
         dialog.present()
+        return dialog
 
     def _forget_manager(self, dialog):
         if dialog in self.model_managers:

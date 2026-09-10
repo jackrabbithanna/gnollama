@@ -1,6 +1,6 @@
 import math
 from typing import Dict, Any, Callable, List, Optional
-from gi.repository import Gtk, GObject, GLib
+from gi.repository import Adw, Gtk, GObject, GLib, Pango
 from ..storage import ChatStorage
 from ..structured import request_format
 from .json_view import SchemaEditor
@@ -9,36 +9,23 @@ from ..tool_calling import parse_tools, InvalidTools
 
 @Gtk.Template(resource_path='/io/github/jackrabbithanna/Gnollama/widgets/options_panel.ui')
 class OptionsPanel(Gtk.Box):
-    """Common tool/output controls followed by expandable generation settings."""
+    """Common controls and reusable, adaptive chat settings."""
     __gtype_name__ = 'OptionsPanel'
     __gsignals__ = {'tools-options-changed': (GObject.SignalFlags.RUN_FIRST, None, ())}
 
-    host_dropdown: Gtk.DropDown = Gtk.Template.Child()
-    system_prompt_entry: Gtk.Entry = Gtk.Template.Child()
-    stats_check: Gtk.CheckButton = Gtk.Template.Child()
-    logprobs_check: Gtk.CheckButton = Gtk.Template.Child()
-    top_logprobs_entry: Gtk.Entry = Gtk.Template.Child()
-    
-    seed_entry: Gtk.Entry = Gtk.Template.Child()
-    temperature_entry: Gtk.Entry = Gtk.Template.Child()
-    top_k_entry: Gtk.Entry = Gtk.Template.Child()
-    top_p_entry: Gtk.Entry = Gtk.Template.Child()
-    min_p_entry: Gtk.Entry = Gtk.Template.Child()
-    num_ctx_entry: Gtk.Entry = Gtk.Template.Child()
-    num_predict_entry: Gtk.Entry = Gtk.Template.Child()
-    stop_entry: Gtk.Entry = Gtk.Template.Child()
     output_dropdown = Gtk.Template.Child()
     schema_button = Gtk.Template.Child()
-    keep_alive_dropdown = Gtk.Template.Child()
-    keep_alive_entry = Gtk.Template.Child()
     tools_box = Gtk.Template.Child()
     tools_check = Gtk.Template.Child()
     tools_button = Gtk.Template.Child()
     tools_notice = Gtk.Template.Child()
-    advanced_expander = Gtk.Template.Child()
+    settings_button = Gtk.Template.Child()
 
     def __init__(self, **kwargs: Any) -> None:
         super().__init__(**kwargs)
+        self._settings_dialog = None
+        self._build_settings()
+        self.settings_button.connect('clicked', self.open_settings)
         self.storage = None
         self.host_list: List[Dict[str, Any]] = []
         self.schema_text = ''
@@ -62,6 +49,133 @@ class OptionsPanel(Gtk.Box):
         self.tools_button.connect('clicked', self.edit_tools)
         self._format_changed()
         self._keep_alive_changed()
+
+    def _build_settings(self):
+        self.settings_content = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=24,
+                                       margin_start=12, margin_end=12, margin_top=12, margin_bottom=12)
+        self.field_errors = {}
+        self.host_dropdown = Gtk.DropDown(enable_search=True, hexpand=True)
+        factory = Gtk.SignalListItemFactory()
+        factory.connect('setup', lambda f, item: item.set_child(Gtk.Label(xalign=0, ellipsize=Pango.EllipsizeMode.END, max_width_chars=20)))
+        factory.connect('bind', lambda f, item: item.get_child().set_text(item.get_item().get_string()))
+        self.host_dropdown.set_factory(factory)
+        self.host_row = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
+        self.host_row.append(Gtk.Label(label=_('Server'), xalign=0, mnemonic_widget=self.host_dropdown))
+        self.host_row.append(self.host_dropdown)
+
+        def group(title, description=''):
+            value = Adw.PreferencesGroup(title=title, description=description)
+            self.settings_content.append(value)
+            return value
+
+        def field(group, name, title, hint):
+            entry = Gtk.Entry(placeholder_text=_('Server default'), hexpand=True)
+            entry.set_width_chars(8)
+            setattr(self, name, entry)
+            box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6,
+                          margin_top=8, margin_bottom=8)
+            box.append(Gtk.Label(label=title, xalign=0, mnemonic_widget=entry))
+            box.append(entry)
+            help_label = Gtk.Label(label=hint, xalign=0, wrap=True)
+            box.append(help_label)
+            error = Gtk.Label(xalign=0, wrap=True, visible=False)
+            error.add_css_class('error')
+            box.append(error)
+            self.field_errors[name] = error
+            entry.connect('changed', lambda *args: (error.set_visible(False), entry.remove_css_class('error')))
+            group.add(box)
+
+        system = group(_('System Instructions'))
+        field(system, 'system_prompt_entry', _('System prompt'), _('Optional instructions applied to this conversation.'))
+        self.system_prompt_entry.set_placeholder_text(_('Optional instructions'))
+        limits = group(_('Generation Limits'), _('Blank fields use the server’s defaults.'))
+        field(limits, 'num_ctx_entry', _('Context size (tokens)'), _('Maximum context available to the model; larger values need more memory.'))
+        field(limits, 'num_predict_entry', _('Maximum output tokens'), _('Use −1 for unlimited output or −2 to fill the context.'))
+        field(limits, 'stop_entry', _('Stop sequences'), _('Separate sequences with commas. Generation stops when one is produced.'))
+        sampling = group(_('Sampling'))
+        for name, title, hint in [
+            ('temperature_entry', _('Temperature'), _('Higher values increase variation; zero is more predictable.')),
+            ('seed_entry', _('Seed'), _('An integer used to initialize random sampling.')),
+            ('top_k_entry', _('Top K'), _('Number of candidate tokens to consider.')),
+            ('top_p_entry', _('Top P'), _('Cumulative probability cutoff, between 0 and 1.')),
+            ('min_p_entry', _('Min P'), _('Minimum relative token probability, between 0 and 1.'))]:
+            field(sampling, name, title, hint)
+        memory = group(_('Model Retention'))
+        self.keep_alive_dropdown = Gtk.DropDown(hexpand=True)
+        row = Adw.ActionRow(title=_('Keep model loaded'))
+        row.add_suffix(self.keep_alive_dropdown)
+        memory.add(row)
+        field(memory, 'keep_alive_entry', _('Custom duration (seconds)'), _('Enter a positive whole number of seconds.'))
+        self.keep_alive_row = self.keep_alive_entry.get_parent()
+        diagnostics = group(_('Diagnostics'))
+        self.stats_check = Gtk.CheckButton(label=_('Show response statistics'), active=True)
+        self.logprobs_check = Gtk.CheckButton(label=_('Return token probabilities (logprobs)'))
+        diagnostics.add(self.stats_check)
+        diagnostics.add(self.logprobs_check)
+        field(diagnostics, 'top_logprobs_entry', _('Top logprobs'), _('Number of alternative token probabilities, from 0 to 20.'))
+        self.logprobs_check.connect('toggled', lambda w: self.top_logprobs_entry.get_parent().set_sensitive(w.get_active()))
+        self.top_logprobs_entry.get_parent().set_sensitive(False)
+
+    def field_error(self, name, message):
+        widget = getattr(self, name)
+        self.field_errors[name].set_text(message)
+        self.field_errors[name].set_visible(True)
+        widget.add_css_class('error')
+        self.open_settings()
+        widget.grab_focus()
+        raise ValueError(message)
+
+    def open_settings(self, *args):
+        if not isinstance(self.get_root(), Gtk.Window):
+            return
+        if self._settings_dialog is None:
+            dialog = self._settings_dialog = Adw.Dialog(title=_('Chat Settings'), content_width=600, content_height=660)
+            toolbar = Adw.ToolbarView()
+            header = Adw.HeaderBar()
+            done = Gtk.Button(label=_('Done'), css_classes=['suggested-action'])
+            done.connect('clicked', self._settings_done)
+            header.pack_end(done)
+            toolbar.add_top_bar(header)
+            scroll = Gtk.ScrolledWindow(child=self.settings_content, hscrollbar_policy=Gtk.PolicyType.NEVER)
+            toolbar.set_content(scroll)
+            dialog.set_child(toolbar)
+            def closed(*args):
+                scroll.set_child(None)
+                self._settings_dialog = None
+            dialog.connect('closed', closed)
+        self._settings_dialog.present(self)
+
+    def _settings_done(self, *args):
+        try:
+            self.get_options_from_ui()
+            self.get_keep_alive()
+            self.get_logprobs()
+        except ValueError:
+            return
+        self._settings_dialog.close()
+
+    def get_keep_alive(self):
+        value = self.keep_alive_values[self.keep_alive_dropdown.get_selected()]
+        if value == 'custom':
+            try:
+                value = int(self.keep_alive_entry.get_text())
+                if value <= 0:
+                    raise ValueError()
+            except ValueError:
+                self.field_error('keep_alive_entry', _('Enter a positive whole number of seconds.'))
+        return value
+
+    def get_logprobs(self):
+        text = self.top_logprobs_entry.get_text().strip()
+        if not self.logprobs_check.get_active() or not text:
+            return None
+        try:
+            value = int(text)
+            if not 0 <= value <= 20:
+                raise ValueError()
+        except ValueError:
+            self.field_error('top_logprobs_entry', _('Top logprobs must be between 0 and 20.'))
+        return value
 
     def _tools_changed(self, *args):
         self.update_tools_notice()
@@ -91,6 +205,7 @@ class OptionsPanel(Gtk.Box):
             elif self.tool_support is None:
                 notice += ' ' + _('Tool support is unknown.')
         self.tools_notice.set_text(notice)
+        self.tools_notice.set_visible(enabled)
 
     def edit_tools(self, *args, error=None):
         if not self.tools_available or not isinstance(self.get_root(), Gtk.Window):
@@ -123,7 +238,7 @@ class OptionsPanel(Gtk.Box):
         return False
 
     def _keep_alive_changed(self, *args):
-        self.keep_alive_entry.set_visible(self.keep_alive_dropdown.get_selected() == 5)
+        self.keep_alive_row.set_visible(self.keep_alive_dropdown.get_selected() == 5)
 
     def edit_schema(self, *args, error=None):
         if not isinstance(self.get_root(), Gtk.Window):
@@ -140,14 +255,7 @@ class OptionsPanel(Gtk.Box):
     def get_request_settings(self):
         mode = self.output_modes[self.output_dropdown.get_selected()]
         output_format = request_format(mode, self.schema_text)
-        keep_alive = self.keep_alive_values[self.keep_alive_dropdown.get_selected()]
-        if keep_alive == 'custom':
-            try:
-                keep_alive = int(self.keep_alive_entry.get_text())
-            except ValueError as exc:
-                raise ValueError(_('Keep-alive must be a positive number of seconds.')) from exc
-            if keep_alive <= 0:
-                raise ValueError(_('Keep-alive must be a positive number of seconds.'))
+        keep_alive = self.get_keep_alive()
         tools_options = self.get_tools_options()
         tools = parse_tools(self.tools_text) if tools_options['tools_enabled'] else None
         return dict(output_mode=mode, schema_text=self.schema_text, format=output_format,
@@ -194,6 +302,7 @@ class OptionsPanel(Gtk.Box):
     def get_options_from_ui(self) -> Dict[str, Any]:
         """Extracts Ollama generation options from the UI input fields."""
         options = {}
+        key_names = {'seed': 'seed_entry', 'temperature': 'temperature_entry', 'top_k': 'top_k_entry', 'top_p': 'top_p_entry', 'min_p': 'min_p_entry', 'num_ctx': 'num_ctx_entry', 'num_predict': 'num_predict_entry'}
         def add_option(entry: Gtk.Entry, key: str, type_func: Callable[[str], Any]) -> None:
             text = entry.get_text().strip()
             if text:
@@ -201,9 +310,9 @@ class OptionsPanel(Gtk.Box):
                     val = type_func(text)
                     options[key] = val
                 except ValueError:
-                    raise ValueError(_("Invalid value for {0}.").format(key))
+                    self.field_error(key_names[key], _("Enter a valid number."))
                 if isinstance(val, float) and not math.isfinite(val):
-                    raise ValueError(_("Invalid value for {0}.").format(key))
+                    self.field_error(key_names[key], _("Enter a valid number."))
         
         add_option(self.seed_entry, 'seed', int)
         add_option(self.temperature_entry, 'temperature', float)
@@ -221,14 +330,14 @@ class OptionsPanel(Gtk.Box):
         
         for key in ('temperature', 'top_k'):
             if options.get(key, 0) < 0:
-                raise ValueError(_("{0} must not be negative.").format(key))
+                self.field_error(key_names[key], _("Value must not be negative."))
         for key in ('top_p', 'min_p'):
             if key in options and not 0 <= options[key] <= 1:
-                raise ValueError(_("{0} must be between 0 and 1.").format(key))
+                self.field_error(key_names[key], _("Value must be between 0 and 1."))
         if 'num_ctx' in options and options['num_ctx'] <= 0:
-            raise ValueError(_("Context size must be positive."))
+            self.field_error('num_ctx_entry', _('Context size must be positive.'))
         if 'num_predict' in options and options['num_predict'] < -2:
-            raise ValueError(_("Max tokens must be -2, -1, or a nonnegative integer."))
+            self.field_error('num_predict_entry', _('Max tokens must be -2, -1, or a nonnegative integer.'))
         return options
 
     def load_options(self, options: Dict[str, Any]) -> None:

@@ -619,14 +619,16 @@ class UITests(unittest.TestCase):
         pump_until(lambda: self.storage.writer.idle)
         window.on_history_activated(window.history_sidebar, item.get_index())
         self.assertFalse(window.split_view.get_show_sidebar())
-        tab.options_panel.advanced_expander.set_expanded(True)
-        self.assertEqual(tab.options_panel.advanced_expander.get_label(), 'Advanced Settings')
+        tab.options_panel.open_settings()
+        self.assertEqual(tab.options_panel._settings_dialog.get_title(), 'Chat Settings')
         tab.options_panel.output_dropdown.set_selected(2)
         tab.options_panel.keep_alive_dropdown.set_selected(5)
         tab.options_panel.keep_alive_entry.set_text('17')
         tab.options_panel.schema_text = '{"type":"object"}'
         self.assertEqual(tab.options_panel.get_request_settings()['keep_alive'], 17)
-        pump_until(lambda: tab.options_panel.get_allocated_height() > 200)
+        pump_until(lambda: tab.options_panel._settings_dialog.get_mapped())
+        tab.options_panel._settings_dialog.close()
+        pump_until(lambda: tab.options_panel._settings_dialog is None)
         self.assertLessEqual(window.get_width(), 400)
         for scheme in (Adw.ColorScheme.FORCE_DARK, Adw.ColorScheme.FORCE_LIGHT):
             Adw.StyleManager.get_default().set_color_scheme(scheme)
@@ -668,7 +670,7 @@ class UITests(unittest.TestCase):
         window, tab = self.make_window()
         window.present()
         panel = tab.options_panel
-        panel.advanced_expander.set_expanded(False)
+        self.assertIsNone(panel._settings_dialog)
         pump_until(lambda: panel.output_dropdown.get_mapped())
         tab.chat_input.entry.set_text('Return JSON with count equal to 7.')
         response = iter([{'message': {'content': '{"count":7}'}, 'done': True}])
@@ -709,7 +711,7 @@ class UITests(unittest.TestCase):
         window, tab = self.make_window()
         window.present()
         panel = tab.options_panel
-        panel.advanced_expander.set_expanded(True)
+        self.assertIsNone(panel._settings_dialog)
         pump_until(lambda: panel.output_dropdown.get_mapped())
         for text in ('{"type":"object"}', ''):
             panel.output_dropdown.set_selected(0)

@@ -369,6 +369,21 @@ class KnowledgeService:
         return self.submit(_('Create collection'), run, callback, host, model, preparation=True,
                            metadata=dict(digest=config['digest'], collection_id=collection['id'], document_ids=list(document_ids)))
 
+    def import_document(self, document, collection_id, callback=None):
+        document = copy.deepcopy(document)
+        def run(cancel, progress):
+            check_cancel(cancel)
+            id = self._write(self.db.import_collection_document, document, collection_id)
+            warning = None
+            try:
+                self.build_collection(collection_id, [id])
+            except ValueError as exc:
+                warning = str(exc)
+            self.changed()
+            return dict(id=id, warning=warning)
+        return self.submit(_('Add document: {0}').format(document['title']), run, callback,
+                           preparation=True, metadata=dict(collection_id=collection_id))
+
     def build_collection(self, id, document_ids=(), callback=None):
         collection = self.db.knowledge_collection(id)
         if collection is None:

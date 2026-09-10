@@ -507,6 +507,8 @@ class PullModelDialog(Adw.Window):
     status_label: Gtk.Label = Gtk.Template.Child()
     status_textview: Gtk.TextView = Gtk.Template.Child()
 
+    progress_bar = Gtk.Template.Child()
+
     def __init__(self, transient_for: Gtk.Window, hostname: str, **kwargs: Any) -> None:
         super().__init__(**kwargs)
         self.requests = ViewRequests(self)
@@ -540,7 +542,7 @@ class PullModelDialog(Adw.Window):
         
         buffer = self.status_textview.get_buffer()
         buffer.set_text("")
-        self.status_label.set_text(_("Starting pull..."))
+        self.status_label.set_text(_("Starting download…"))
         
         from .session import worker
         self.pull_future = worker.submit(self.pull_task, model_name, self.insecure_check.get_active())
@@ -581,11 +583,22 @@ class PullModelDialog(Adw.Window):
         mark = buffer.create_mark(None, buffer.get_end_iter(), False)
         self.status_textview.scroll_to_mark(mark, 0.0, True, 0.0, 1.0)
         self.status_label.set_text(status)
+        total = response.get('total', 0)
+        completed = response.get('completed', 0)
+        if total:
+            self.progress_bar.set_fraction(min(1, max(0, completed / total)))
+            self.progress_bar.set_text(_('{0:.0f}%').format(100 * completed / total))
+        elif status == 'success':
+            self.progress_bar.set_fraction(1)
+            self.progress_bar.set_text(_('Download complete'))
+        else:
+            self.progress_bar.pulse()
+            self.progress_bar.set_text(status)
 
     def pull_finished(self) -> None:
         """Cleans up after the pull process ends."""
         self.pulling = False
-        self.cancel_btn.set_label(_("Dismiss"))
+        self.cancel_btn.set_label(_("Close"))
         self.cancel_btn.add_css_class("suggested-action")
         self.pull_btn.set_visible(False)
         parent = self.get_transient_for()

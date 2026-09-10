@@ -62,11 +62,11 @@ class GenerationTab(Gtk.Box):
         self.options_panel.tools_available = mode == 'chat'
         self.options_panel.tools_box.set_visible(mode == 'chat')
         self.options_panel.storage = self.storage
+        self.chat_input.connection_box.prepend(self.options_panel.host_row)
         self.options_panel.update_hosts()
         
         self.chat_input.send_button.connect('clicked', self.on_send_or_stop)
         self.chat_input.entry.connect('activate', self.on_send_clicked)
-        self.options_panel.system_prompt_entry.connect('activate', self.on_send_clicked)
         
         self.options_panel.host_dropdown.connect('notify::selected-item', self.on_host_changed)
         self.options_panel.connect('tools-options-changed', self._persist_tool_options)
@@ -175,10 +175,7 @@ class GenerationTab(Gtk.Box):
             if self.chat_input.image_support is False and draft_images:
                 raise ValueError(_('Remove draft images or select a vision model to send.'))
             logprobs = self.options_panel.logprobs_check.get_active()
-            top = self.options_panel.top_logprobs_entry.get_text().strip()
-            top = int(top) if logprobs and top else None
-            if top is not None and not 0 <= top <= 20:
-                raise ValueError(_('Top logprobs must be between 0 and 20.'))
+            top = self.options_panel.get_logprobs()
             images = []
             for path in draft_images:
                 with open(path, 'rb') as image_file:
@@ -431,6 +428,8 @@ class GenerationTab(Gtk.Box):
             self.options_panel._tools_dialog.close()
         if self.options_panel._schema_dialog is not None:
             self.options_panel._schema_dialog.close()
+        if self.options_panel._settings_dialog is not None:
+            self.options_panel._settings_dialog.close()
         self.set_sensitive(False)
         if delete and isinstance(self.strategy, ChatStrategy):
             self.strategy.deleted = True

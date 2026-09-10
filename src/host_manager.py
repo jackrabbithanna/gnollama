@@ -17,10 +17,29 @@ class HostEditDialog(Adw.AlertDialog):
     def __init__(self, host: Optional[Dict[str, Any]] = None, **kwargs: Any) -> None:
         super().__init__(**kwargs)
         self.set_heading(_("Edit Host") if host else _("Add Host"))
+        self.validation_error = Gtk.Label(xalign=0, wrap=True, visible=False)
+        self.validation_error.add_css_class('error')
+        self.get_extra_child().append(self.validation_error)
+        self.name_entry.connect('changed', self.validate_fields)
+        self.hostname_entry.connect('changed', self.validate_fields)
         if host:
             self.name_entry.set_text(host['name'])
             self.hostname_entry.set_text(host['hostname'])
             self.default_check.set_active(host.get("default", False))
+        self.validate_fields()
+
+    def validate_fields(self, *args):
+        error = ''
+        if not self.name_entry.get_text().strip():
+            error = _('Enter a name for this server.')
+        else:
+            try:
+                ollama.validate_host(self.hostname_entry.get_text().strip())
+            except (ValueError, ollama.OllamaError) as exc:
+                error = str(exc)
+        self.set_response_enabled('save', not error)
+        self.validation_error.set_text(error)
+        self.validation_error.set_visible(bool(error) and bool(args))
 
 @Gtk.Template(resource_path='/io/github/jackrabbithanna/Gnollama/host_manager.ui')
 class HostManagerDialog(Adw.Window):
@@ -60,20 +79,17 @@ class HostManagerDialog(Adw.Window):
         else:
             row.set_subtitle(host['hostname'])
         
-        info_btn = Gtk.Button.new_from_icon_name("dialog-information-symbolic")
+        info_btn = Gtk.Button(label=_("Test Connection"))
         info_btn.set_valign(Gtk.Align.CENTER)
         info_btn.add_css_class("flat")
         info_btn.connect("clicked", self.on_info_clicked, host)
         info_btn.set_tooltip_text(_("Test Connection"))
         row.add_suffix(info_btn)
         
-        edit_btn = Gtk.Button.new_from_icon_name("document-open-symbolic")
-        edit_btn.set_valign(Gtk.Align.CENTER)
-        edit_btn.add_css_class("flat")
-        edit_btn.connect("clicked", self.on_edit_clicked, host)
-        edit_btn.set_tooltip_text(_("Edit Host"))
-        row.add_suffix(edit_btn)
-        
+        row.set_activatable(True)
+        row.connect('activated', lambda *args: self.show_edit_dialog(host))
+        row.set_tooltip_text(_('Edit Server'))
+
         del_btn = Gtk.Button.new_from_icon_name("user-trash-symbolic")
         del_btn.set_valign(Gtk.Align.CENTER)
         del_btn.add_css_class("flat")
@@ -129,6 +145,10 @@ class HostManagerDialog(Adw.Window):
                 hostname = dialog.hostname_entry.get_text().strip()
                 is_default = dialog.default_check.get_active()
                 if name and hostname:
+                    try:
+                        hostname = ollama.validate_host(hostname)
+                    except (ValueError, ollama.OllamaError):
+                        return
                     if host:
                         self.storage.update_host(host['id'], name, hostname, is_default)
                     else:

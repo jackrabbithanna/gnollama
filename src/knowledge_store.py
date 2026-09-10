@@ -41,6 +41,24 @@ CREATE INDEX knowledge_chunks_index ON knowledge_chunks(index_id);
 
 
 class KnowledgeDatabase(WebSourceDatabase, CollectionDatabase):
+    def import_collection_document(self, document, collection_id):
+        """Save source and membership together, reusing an identical library source."""
+        with self._get_conn() as conn:
+            conn.execute('BEGIN IMMEDIATE')
+            if not conn.execute('SELECT 1 FROM knowledge_collections WHERE id=?', (collection_id,)).fetchone():
+                raise ValueError(_('The destination collection was deleted.'))
+            existing = conn.execute('SELECT id FROM knowledge_documents WHERE content_hash=? ORDER BY created_at, id LIMIT 1',
+                                    (document['content_hash'],)).fetchone()
+            id = existing['id'] if existing else document['id']
+            if existing is None:
+                conn.execute('INSERT INTO knowledge_documents (id, title, filename, text, pages, content_hash, file_hash, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+                             (id, document['title'], document['filename'], document['text'], json.dumps(document['pages']),
+                              document['content_hash'], document['file_hash'], document['created_at']))
+            conn.execute('INSERT OR IGNORE INTO knowledge_collection_documents (collection_id, document_id) VALUES (?, ?)',
+                         (collection_id, id))
+            conn.commit()
+            return id
+
     def _delete_index_vectors(self, conn, index_id):
         index = conn.execute('SELECT config_id FROM knowledge_indexes WHERE id=?', (index_id,)).fetchone()
         if index is not None and table_exists(conn, index['config_id']):

@@ -17,6 +17,7 @@ class HostEditDialog(Adw.AlertDialog):
     def __init__(self, host: Optional[Dict[str, Any]] = None, **kwargs: Any) -> None:
         super().__init__(**kwargs)
         self.set_heading(_("Edit Host") if host else _("Add Host"))
+        self.hostname_entry.set_direction(Gtk.TextDirection.LTR)
         self.validation_error = Gtk.Label(xalign=0, wrap=True, visible=False)
         self.validation_error.add_css_class('error')
         self.get_extra_child().append(self.validation_error)

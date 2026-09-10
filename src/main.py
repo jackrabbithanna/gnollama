@@ -1,4 +1,5 @@
 import sys
+from gettext import pgettext
 from typing import List, Optional, Any, Callable
 import gi
 
@@ -17,6 +18,7 @@ class GnollamaApplication(Adw.Application):
                          flags=Gio.ApplicationFlags.DEFAULT_FLAGS,
                          resource_base_path='/io/github/jackrabbithanna/Gnollama')
         self.version = version
+        self.connect('startup', self._set_text_direction)
         self.create_action('quit', self.request_quit, ['<control>q'])
         self.create_action('about', self.on_about_action)
         self.set_accels_for_action('win.new_chat_tab', ['<control>n'])
@@ -24,6 +26,12 @@ class GnollamaApplication(Adw.Application):
         self.set_accels_for_action('win.next_tab', ['<control>Page_Down'])
         self.set_accels_for_action('win.previous_tab', ['<control>Page_Up'])
         self.set_accels_for_action('win.toggle_sidebar', ['F9'])
+
+    def _set_text_direction(self, application):
+        # Translators: Translate "ltr" as "rtl" for right-to-left languages.
+        # Use the app's language even when GTK's language pack is not installed.
+        direction = pgettext('text direction', 'ltr')
+        Gtk.Widget.set_default_direction(Gtk.TextDirection.RTL if direction == 'rtl' else Gtk.TextDirection.LTR)
 
     def request_quit(self, *args):
         for window in self.get_windows():

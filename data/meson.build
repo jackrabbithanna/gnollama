@@ -1,8 +1,20 @@
-desktop_file = i18n.merge_file(
+fs = import('fs')
+msgfmt = find_program('msgfmt', version: '>= 0.19.7')
+po_dir = meson.project_source_root() / 'po'
+translation_files = files('../po/LINGUAS')
+foreach line : fs.read('../po/LINGUAS').split('\n')
+  foreach language : line.split('#')[0].split()
+    translation_files += files('../po' / (language + '.po'))
+  endforeach
+endforeach
+
+# i18n.merge_file does not track catalogs as dependencies. Explicit inputs to
+# the merge targets keep installed metadata current after translation edits.
+desktop_file = custom_target('desktop-translations',
         input: 'io.github.jackrabbithanna.Gnollama.desktop.in',
        output: 'io.github.jackrabbithanna.Gnollama.desktop',
-         type: 'desktop',
-       po_dir: '../po',
+      command: [msgfmt, '--desktop', '--template', '@INPUT@', '-d', po_dir, '-o', '@OUTPUT@'],
+ depend_files: translation_files,
       install: true,
   install_dir: get_option('datadir') / 'applications'
 )
@@ -12,10 +24,11 @@ if desktop_utils.found()
   test('Validate desktop file', desktop_utils, args: [desktop_file])
 endif
 
-appstream_file = i18n.merge_file(
+appstream_file = custom_target('appstream-translations',
         input: 'io.github.jackrabbithanna.Gnollama.metainfo.xml.in',
        output: 'io.github.jackrabbithanna.Gnollama.metainfo.xml',
-       po_dir: '../po',
+      command: [msgfmt, '--xml', '--template', '@INPUT@', '-d', po_dir, '-o', '@OUTPUT@'],
+ depend_files: translation_files,
       install: true,
   install_dir: get_option('datadir') / 'metainfo'
 )

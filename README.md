@@ -180,9 +180,12 @@ GNOME Builder builds the repository Flatpak manifest from the current checkout. 
 flatpak-builder --user --force-clean /tmp/gnollama-flatpak-build io.github.jackrabbithanna.Gnollama.json
 ```
 
-## TODO
+## Languages
 
-*   More UI Multi-lingual translations
+The interface follows your desktop language. Arabic, German, Spanish, French,
+Hindi, Portuguese, and Simplified Chinese have complete application catalogs.
+See the [translation review and maintenance guide](po/README.md) for coverage,
+language selection, review findings, and translation checks.
  
 ## Contribute
 

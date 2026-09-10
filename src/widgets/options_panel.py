@@ -74,7 +74,8 @@ class OptionsPanel(Gtk.Box):
             setattr(self, name, entry)
             box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6,
                           margin_top=8, margin_bottom=8)
-            box.append(Gtk.Label(label=title, xalign=0, mnemonic_widget=entry))
+            box.append(Gtk.Label(label=title, xalign=0, wrap=True,
+                                 wrap_mode=Pango.WrapMode.WORD_CHAR, mnemonic_widget=entry))
             box.append(entry)
             help_label = Gtk.Label(label=hint, xalign=0, wrap=True)
             box.append(help_label)
@@ -102,14 +103,22 @@ class OptionsPanel(Gtk.Box):
             field(sampling, name, title, hint)
         memory = group(_('Model Retention'))
         self.keep_alive_dropdown = Gtk.DropDown(hexpand=True)
-        row = Adw.ActionRow(title=_('Keep model loaded'))
-        row.add_suffix(self.keep_alive_dropdown)
+        self.keep_alive_dropdown.set_factory(factory)
+        row = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6,
+                      margin_top=8, margin_bottom=8)
+        row.append(Gtk.Label(label=_('Keep model loaded'), xalign=0, wrap=True,
+                             mnemonic_widget=self.keep_alive_dropdown))
+        row.append(self.keep_alive_dropdown)
         memory.add(row)
         field(memory, 'keep_alive_entry', _('Custom duration (seconds)'), _('Enter a positive whole number of seconds.'))
         self.keep_alive_row = self.keep_alive_entry.get_parent()
         diagnostics = group(_('Diagnostics'))
-        self.stats_check = Gtk.CheckButton(label=_('Show response statistics'), active=True)
-        self.logprobs_check = Gtk.CheckButton(label=_('Return token probabilities (logprobs)'))
+        self.stats_check = Gtk.CheckButton(active=True)
+        self.stats_check.set_child(Gtk.Label(label=_('Show response statistics'),
+                                            xalign=0, wrap=True, mnemonic_widget=self.stats_check))
+        self.logprobs_check = Gtk.CheckButton()
+        self.logprobs_check.set_child(Gtk.Label(label=_('Return token probabilities (logprobs)'),
+                                               xalign=0, wrap=True, mnemonic_widget=self.logprobs_check))
         diagnostics.add(self.stats_check)
         diagnostics.add(self.logprobs_check)
         field(diagnostics, 'top_logprobs_entry', _('Top logprobs'), _('Number of alternative token probabilities, from 0 to 20.'))

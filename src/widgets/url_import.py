@@ -58,9 +58,7 @@ class URLImportDialog(WorkDialog):
         self.selector_box.append(self.selector)
         self.reextract_button = button(_('Re-extract'), self.reextract)
         self.selector_box.append(self.reextract_button)
-        self.editor = code_view(editable=True)
-        if hasattr(self.editor.get_buffer(), 'set_language'):
-            self.editor.get_buffer().set_language(None)
+        self.editor = code_view(editable=True, language=None)
         self.preview.append(label(_('Extracted content (editable)')))
         self.preview.append(editor_frame(self.editor, min_content_height=220))
         self.page_notice = label()

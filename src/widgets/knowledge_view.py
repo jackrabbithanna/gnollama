@@ -2,6 +2,7 @@
 import copy
 import json
 import time
+from gettext import ngettext
 from gi.repository import Adw, Gtk, Gio, GLib, Pango
 
 from .. import ollama
@@ -82,6 +83,7 @@ def preview_text(document):
 
 
 def plain_editor(dialog):
+    dialog.editor.set_direction(Gtk.TextDirection.NONE)
     buffer = dialog.editor.get_buffer()
     if hasattr(buffer, 'set_language'):
         buffer.set_language(None)
@@ -967,7 +969,8 @@ class KnowledgeView(Gtk.Box):
                 else:
                     for doc in docs:
                         if query in (doc['title'] + '\n' + doc['filename']).casefold():
-                            row = Adw.ActionRow(title=doc['title'], subtitle=_('{0} characters').format(doc['characters']), activatable=True, use_markup=False)
+                            count = doc['characters']
+                            row = Adw.ActionRow(title=doc['title'], subtitle=ngettext('{0} character', '{0} characters', count).format(count), activatable=True, use_markup=False)
                             row.add_suffix(Gtk.Image(icon_name='go-next-symbolic'))
                             row.connect('activated', lambda row, id=doc['id']: self.open_document(id))
                             self.documents.append(row)

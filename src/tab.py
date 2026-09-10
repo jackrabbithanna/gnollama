@@ -5,7 +5,7 @@ import base64
 from .session import RequestState, worker
 from . import ollama
 from .storage import ChatStorage
-from .session import GenerationStrategy, ChatStrategy
+from .session import GenerationStrategy, ChatStrategy, display_chat_title
 from .structured import InvalidSchema, validate_response
 from .tool_calling import InvalidTools, inspect_calls
 from .widgets.tool_view import ToolCallsView
@@ -84,7 +84,7 @@ class GenerationTab(Gtk.Box):
         self._sync_tools()
 
     def load_chat_settings(self, chat_data: Dict[str, Any]) -> None:
-        self.title = chat_data.get('title', _('Chat'))
+        self.title = display_chat_title(chat_data.get('title', _('Chat')))
         if 'options' in chat_data:
             options = chat_data['options']
             self.options_panel.load_options(options)
@@ -348,7 +348,7 @@ class GenerationTab(Gtk.Box):
             if isinstance(self.strategy, ChatStrategy) and not self.strategy.deleted:
                 data = self.storage.get_chat(self.strategy.chat_id)
                 if data and not self._disposed:
-                    self.title = data['title']
+                    self.title = display_chat_title(data['title'])
                     self.emit('chat-updated', self.strategy.chat_id, data['title'])
             self._finish_close()
 

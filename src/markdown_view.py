@@ -409,6 +409,7 @@ class MarkdownView(Gtk.Box):
             view.set_monospace(True)
             
         view.set_editable(False)
+        view.set_direction(Gtk.TextDirection.LTR)
         view.set_wrap_mode(Gtk.WrapMode.NONE)
         view.set_top_margin(12)
         view.set_bottom_margin(12)

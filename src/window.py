@@ -19,7 +19,7 @@
 
 from gi.repository import Adw, Gtk, Gio, GLib, Gdk, GObject
 from .tab import GenerationTab
-from .session import ChatStrategy
+from .session import ChatStrategy, display_chat_title
 from .storage import ChatStorage
 from .host_manager import HostManagerDialog
 from .model_manager import ModelManagerDialog
@@ -292,7 +292,7 @@ class GnollamaWindow(Adw.ApplicationWindow):
             self._fill_history_menu(self._sidebar_menu, item)
 
     def add_history_row(self, chat, prepend=False):
-        item = Adw.SidebarItem(title=chat.get('title', _('New Chat')), icon_name='gnollama-chats-symbolic')
+        item = Adw.SidebarItem(title=display_chat_title(chat.get('title', 'New Chat')), icon_name='gnollama-chats-symbolic')
         item.chat_id = chat['id']
         item.is_pinned = chat.get('is_pinned', False)
         item.set_tooltip(item.get_title())
@@ -332,7 +332,7 @@ class GnollamaWindow(Adw.ApplicationWindow):
     def update_tab_title(self, chat_id, title):
         for tab in self.tabs():
             if getattr(tab.strategy, 'chat_id', None) == chat_id:
-                tab.title = title
+                tab.title = display_chat_title(title)
 
     def pin_chat(self, chat_id):
         item = self.chat_rows.get(chat_id)
@@ -352,7 +352,7 @@ class GnollamaWindow(Adw.ApplicationWindow):
         dialog.set_close_response('cancel')
         def response(dialog, choice):
             title = entry.get_text().strip()
-            if choice == 'save' and title and not self._shutting_down:
+            if choice == 'save' and title and title != item.get_title() and not self._shutting_down:
                 def saved():
                     self.update_tab_title(chat_id, title)
                     self.load_history_sidebar()

@@ -4,10 +4,10 @@ from ..markdown_view import GtkSource
 from ..structured import formatted_json, request_format
 
 
-def code_view(editable=False):
+def code_view(editable=False, *, language='json'):
     if GtkSource:
         buffer = GtkSource.Buffer()
-        buffer.set_language(GtkSource.LanguageManager.get_default().get_language('json'))
+        buffer.set_language(GtkSource.LanguageManager.get_default().get_language(language) if language else None)
         view = GtkSource.View.new_with_buffer(buffer)
         view.set_show_line_numbers(editable)
         view.set_auto_indent(True)
@@ -22,6 +22,10 @@ def code_view(editable=False):
     else:
         view = Gtk.TextView(monospace=True)
     view.set_editable(editable)
+    # Code and JSON retain their syntax direction inside an Arabic interface.
+    # Plain document editors inherit the interface direction.
+    if language:
+        view.set_direction(Gtk.TextDirection.LTR)
     view.set_wrap_mode(Gtk.WrapMode.WORD_CHAR)
     view.set_hexpand(True)
     view.set_left_margin(12)

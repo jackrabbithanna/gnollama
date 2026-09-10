@@ -1,4 +1,4 @@
-<interface>
+<interface domain="gnollama">
   <requires lib="gtk" version="4.0" />
   <requires lib="Adw" version="1.9" />
   <template class="GnollamaWindow" parent="AdwApplicationWindow">

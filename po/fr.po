@@ -3,173 +3,424 @@
 # This file is distributed under the same license as the gnollama package.
 # Automatically generated, 2025.
 #
+# Reviewed and updated with AI assistance, 2026.
 msgid ""
 msgstr ""
-"Project-Id-Version: gnollama 0.1.0\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-16 22:42-0600\n"
-"PO-Revision-Date: 2025-12-26 19:05-0700\n"
+"Project-Id-Version: gnollama 0.13.0\n"
+"Report-Msgid-Bugs-To: https://github.com/jackrabbithanna/gnollama/issues\n"
+"POT-Creation-Date: 2026-09-10 17:08-0600\n"
+"PO-Revision-Date: 2026-09-10 00:00+0000\n"
 "Last-Translator: \n"
-"Language-Team: none\n"
 "Language: fr\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
+"Language-Team: none\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
 
 #: data/io.github.jackrabbithanna.Gnollama.desktop.in:2
-#, fuzzy
 msgid "gnollama"
-msgstr "Gnollama"
+msgstr "gnollama"
 
 #: data/io.github.jackrabbithanna.Gnollama.desktop.in:8
 msgid "GTK;"
-msgstr ""
+msgstr "GTK;"
 
 #: data/io.github.jackrabbithanna.Gnollama.gschema.xml:7
-#, fuzzy
 msgid "Default Ollama Host"
-msgstr "Hôte Ollama"
+msgstr "Hôte Ollama par défaut"
 
 #: data/io.github.jackrabbithanna.Gnollama.gschema.xml:8
 msgid "The default URL for the Ollama API server."
-msgstr ""
+msgstr "L’URL par défaut du serveur de l’API Ollama."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:7 src/window.ui:6
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:7 src/startup.py:10
+#: src/window.ui:5
 msgid "Gnollama"
 msgstr "Gnollama"
 
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:8
-msgid "GNOME based UI for Ollama"
-msgstr ""
+msgid "Chat with Ollama models"
+msgstr "Discutez avec des modèles Ollama"
 
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:10
-msgid "Chat with Ollama on any host."
+msgid ""
+"Chat with Ollama models running on your computer or a remote server using a native "
+"GNOME interface."
 msgstr ""
+"Discutez avec des modèles Ollama exécutés sur votre ordinateur ou un serveur distant "
+"grâce à une interface GNOME native."
 
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:11
-msgid "Supports \"generate\" and \"chat\" Ollama APIs"
+msgid ""
+"Keep conversations in separate tabs, attach images to vision models, and read "
+"responses with Markdown and highlighted code."
 msgstr ""
+"Gardez vos discussions dans des onglets séparés, joignez des images aux modèles de "
+"vision et lisez les réponses avec Markdown et la coloration du code."
 
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:12
-msgid "Displays the \"Thinking\" stream in a fieldset in the response bubble."
+msgid ""
+"Manage hosts and models, customize generation and thinking settings, and inspect "
+"response statistics including cached prompt tokens."
 msgstr ""
+"Gérez les hôtes et les modèles, personnalisez les paramètres de génération et de "
+"réflexion et consultez les statistiques des réponses, notamment les jetons d’invite "
+"mis en cache."
 
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:13
 msgid ""
-"Chats are saved between sessions, and chat titles can be edited, and chats "
-"deleted"
+"Generate and validate structured JSON, import JSON schemas, and export responses. "
+"Inspect loaded models and release their memory when finished."
 msgstr ""
+"Générez et validez du JSON structuré, importez des schémas JSON et exportez les "
+"réponses. Consultez les modèles chargés et libérez leur mémoire lorsque vous avez "
+"terminé."
 
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:14
 msgid ""
-"Supports all API parameters including system prompt, images, temperature, "
-"etc.."
+"Save and organize conversations with pinning and editable titles. Stop a response at "
+"any time and keep its partial answer in your history."
 msgstr ""
+"Enregistrez et organisez vos discussions en les épinglant et en modifiant leurs "
+"titres. Arrêtez une réponse à tout moment et conservez la partie déjà générée dans "
+"l’historique."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:15
-msgid "Renders Markdown and code blocks have code highlighting"
-msgstr ""
-
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:19
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:18
 msgid "jackrabbithanna"
-msgstr ""
+msgstr "jackrabbithanna"
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:47
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:46
 msgid "Ollama chat with code highlighting"
-msgstr ""
+msgstr "Discussion Ollama avec coloration du code"
 
-#: src/ai_bubble.ui:35
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:53
+msgid ""
+"Add a Knowledge Library for text and PDF imports, local embedding indexes, and "
+"source-grounded chats."
+msgstr ""
+"Ajout d’une bibliothèque de connaissances pour importer du texte et des PDF, créer "
+"des index locaux de plongements et discuter à partir de sources."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:55
+msgid ""
+"Start with knowledge collections and add text, files, or URLs with explicit "
+"destinations and guided previews."
+msgstr ""
+"Commencez par les collections de connaissances et ajoutez du texte, des fichiers ou "
+"des URL avec des destinations explicites et des aperçus guidés."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:56
+msgid ""
+"Choose collections before search settings, and use adaptive chat settings with "
+"clearer controls and feedback."
+msgstr ""
+"Choisissez les collections avant les paramètres de recherche et utilisez des "
+"paramètres de discussion adaptatifs avec des commandes et des indications plus "
+"claires."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:57
+msgid "Create and compare embeddings, inspect chunks and vectors, and test semantic searches."
+msgstr ""
+"Créez et comparez des plongements, examinez les segments et les vecteurs et testez "
+"des recherches sémantiques."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:58
+msgid ""
+"Select documents or chunks for chats, with independent embedding hosts and saved "
+"source passages."
+msgstr ""
+"Sélectionnez des documents ou des segments pour les discussions, avec des hôtes de "
+"plongement indépendants et des passages sources enregistrés."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:59
+msgid ""
+"Warn about stored embeddings when deleting models, with optional vector cleanup that "
+"retains source text."
+msgstr ""
+"Avertissement sur les plongements enregistrés lors de la suppression de modèles, avec"
+" nettoyage facultatif des vecteurs en conservant le texte source."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:60
+msgid ""
+"Search with sqlite-vec, automatically migrate existing vectors with a database "
+"backup, and use the Qwen3 retrieval preset."
+msgstr ""
+"Recherchez avec sqlite-vec, migrez automatiquement les vecteurs existants avec une "
+"sauvegarde de la base de données et utilisez le préréglage de recherche Qwen3."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:61
+msgid ""
+"Organize documents into collections with shared embedding settings, automatic builds,"
+" and live collection selection in chats."
+msgstr ""
+"Organisez les documents en collections avec des paramètres de plongement partagés, "
+"une construction automatique et une sélection directe des collections dans les "
+"discussions."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:62
+msgid ""
+"Choose collections as chat sources and compare cosine similarity, Euclidean distance,"
+" or Manhattan distance with appropriate search cutoffs."
+msgstr ""
+"Choisissez des collections comme sources de discussion et comparez la similarité "
+"cosinus, la distance euclidienne ou la distance de Manhattan avec des seuils de "
+"recherche adaptés."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:63
+msgid ""
+"Hide embedding-only models from Chat and Response model selection while keeping them "
+"available in Knowledge and Manage Models."
+msgstr ""
+"Masquez les modèles dédiés aux plongements dans la sélection des modèles de "
+"discussion et de réponse, tout en les gardant disponibles dans Connaissances et Gérer"
+" les modèles."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:64
+msgid ""
+"Import batches of URLs into collections with main-content extraction, CSS selectors, "
+"editable previews, and source links in chats."
+msgstr ""
+"Importez des lots d’URL dans les collections avec extraction du contenu principal, "
+"sélecteurs CSS, aperçus modifiables et liens vers les sources dans les discussions."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:65
+msgid ""
+"Review changed web documents before replacing their text and rebuilding all affected "
+"embedding indexes."
+msgstr ""
+"Examinez les documents web modifiés avant de remplacer leur texte et de reconstruire "
+"tous les index de plongements concernés."
+
+#: src/ai_bubble.ui:35 src/bubbles.ui:74
 msgid "API Call Details"
 msgstr "Détails de l'appel API"
 
-#: src/ai_bubble.ui:41
+#: src/ai_bubble.ui:41 src/bubbles.ui:80
 msgid "Thinking..."
-msgstr "Pensée..."
+msgstr "Réflexion…"
+
+#: src/bubbles.py:105
+msgid "Response Statistics"
+msgstr "Statistiques de la réponse"
+
+#: src/bubbles.py:120
+msgid "Earlier images were omitted from the text-only request."
+msgstr "Les images précédentes ont été omises de la requête textuelle."
+
+#: src/bubbles.py:125 src/knowledge.py:300
+msgid "Stopped"
+msgstr "Arrêté"
+
+#: src/bubbles.py:125 src/knowledge.py:300
+msgid "Failed"
+msgstr "Échec"
 
 #. Create expander for logprobs
-#: src/bubbles.py:124
+#: src/bubbles.py:137
 msgid "Logprobs"
-msgstr "Logprobs"
+msgstr "Log-probabilités"
 
-#: src/history_row.ui:25 src/window.py:239
-msgid "Rename Chat"
-msgstr "Renommer la discussion"
+#: src/bubbles.py:183 src/model_manager.py:22 src/model_manager.py:24
+#: src/model_manager.py:28
+msgid "Unavailable"
+msgstr "Indisponible"
 
-#: src/history_row.ui:35
-msgid "Delete Chat"
-msgstr "Supprimer la discussion"
+#: src/bubbles.py:197
+#, python-brace-format
+msgid "Total: {0}"
+msgstr "Total : {0}"
 
-#: src/host_edit_dialog.ui:8 src/host_manager.py:146 src/model_manager.py:179
-#: src/pull_model_dialog.ui:18 src/window.py:119 src/window.py:242
+#: src/bubbles.py:198
+#, python-brace-format
+msgid "Load: {0}"
+msgstr "Chargement : {0}"
+
+#: src/bubbles.py:199
+#, python-brace-format
+msgid "Prompt: {0} tokens"
+msgstr "Jetons de l’invite : {0}"
+
+#: src/bubbles.py:200
+#, python-brace-format
+msgid "Cached: {0} tokens"
+msgstr "Jetons en cache : {0}"
+
+#: src/bubbles.py:201
+#, python-brace-format
+msgid "Prompt evaluation: {0}"
+msgstr "Évaluation de l’invite : {0}"
+
+#: src/bubbles.py:202
+#, python-brace-format
+msgid "Generated: {0} tokens"
+msgstr "Jetons générés : {0}"
+
+#: src/bubbles.py:203
+#, python-brace-format
+msgid "Generation: {0}"
+msgstr "Génération : {0}"
+
+#: src/bubbles.py:204
+#, python-brace-format
+msgid "Tokens/s: {0}"
+msgstr "Jetons/s : {0}"
+
+#: src/bubbles.py:207
+#, python-brace-format
+msgid "Finish: {0}"
+msgstr "Motif de fin : {0}"
+
+#: src/collections_store.py:96 src/collections_store.py:144
+msgid "A document was deleted. Choose documents again."
+msgstr "Un document a été supprimé. Sélectionnez à nouveau les documents."
+
+#: src/collections_store.py:107 src/knowledge.py:357
+msgid "Enter a collection name."
+msgstr "Saisissez un nom de collection."
+
+#: src/collections_store.py:118 src/widgets/knowledge_view.py:1140
+msgid "Choose a model with the collection’s original digest."
+msgstr "Choisissez un modèle ayant l’empreinte d’origine de la collection."
+
+#: src/collections_store.py:141 src/knowledge.py:390
+msgid "The collection was deleted."
+msgstr "La collection a été supprimée."
+
+#: src/collections_store.py:202 src/widgets/knowledge_view.py:801
+msgid "A selected collection was deleted. Choose sources again."
+msgstr "Une collection sélectionnée a été supprimée. Sélectionnez à nouveau les sources."
+
+#: src/collections_store.py:204
+#, python-brace-format
+msgid "Collection “{0}” uses a different embedding configuration."
+msgstr "La collection « {0} » utilise une autre configuration de plongement."
+
+#: src/collections_store.py:207
+#, python-brace-format
+msgid "Collection “{0}” is empty. Add documents or adjust sources."
+msgstr "La collection « {0} » est vide. Ajoutez des documents ou modifiez les sources."
+
+#: src/collections_store.py:210
+#, python-brace-format
+msgid "Collection “{0}” is not ready. Build missing embeddings or retry failed documents: {1}"
+msgstr ""
+"La collection « {0} » n’est pas prête. Créez les plongements manquants ou réessayez "
+"les documents en échec : {1}"
+
+#: src/database.py:75
+msgid "This database was created by a newer Gnollama version. Update Gnollama to open it."
+msgstr ""
+"Cette base de données a été créée avec une version plus récente de Gnollama. Mettez "
+"Gnollama à jour pour l’ouvrir."
+
+#: src/database.py:82
+msgid "Backing up the database…"
+msgstr "Sauvegarde de la base de données…"
+
+#: src/database.py:191
+msgid "This database requires a newer Gnollama version."
+msgstr "Cette base de données nécessite une version plus récente de Gnollama."
+
+#: src/database.py:210
+#, python-brace-format
+msgid "Upgrading the database to version {0}…"
+msgstr "Mise à niveau de la base de données vers la version {0}…"
+
+#: src/host_edit_dialog.ui:6 src/host_manager.py:171 src/model_manager.py:366
+#: src/pull_model_dialog.ui:17 src/widgets/knowledge_view.py:1111
+#: src/widgets/knowledge_view.py:1121 src/widgets/knowledge_view.py:1250
+#: src/widgets/knowledge_view.py:1293 src/widgets/knowledge_view.py:1337
+#: src/widgets/knowledge_view.py:1358 src/widgets/url_import.py:246
+#: src/widgets/url_import.py:335 src/window.py:187 src/window.py:349
 msgid "Cancel"
 msgstr "Annuler"
 
-#: src/host_edit_dialog.ui:9 src/window.py:243
+#: src/host_edit_dialog.ui:7 src/widgets/knowledge_view.py:1112
+#: src/widgets/knowledge_view.py:1145 src/widgets/knowledge_view.py:1338 src/window.py:350
 msgid "Save"
 msgstr "Enregistrer"
 
-#: src/host_edit_dialog.ui:23
-msgid "Name (e.g. Localhost)"
-msgstr ""
+#: src/host_edit_dialog.ui:21 src/model_manager.py:610
+msgid "Name"
+msgstr "Nom"
 
 #: src/host_edit_dialog.ui:28
-#, fuzzy
-msgid "Hostname (e.g. http://localhost:11434)"
-msgstr "http://localhost:11434"
+msgid "For example: Local Ollama"
+msgstr "Par exemple : Ollama local"
 
 #: src/host_edit_dialog.ui:33
-msgid "Set as default host"
-msgstr ""
+msgid "Server address"
+msgstr "Adresse du serveur"
 
-#: src/host_manager.py:18 src/host_manager.py:72
+#: src/host_edit_dialog.ui:45
+msgid "Set as default host"
+msgstr "Définir comme hôte par défaut"
+
+#: src/host_manager.py:19
 msgid "Edit Host"
 msgstr "Modifier l'hôte"
 
-#: src/host_manager.py:18 src/host_manager.ui:23
+#: src/host_manager.py:19 src/host_manager.ui:23
 msgid "Add Host"
 msgstr "Ajouter un hôte"
 
-#: src/host_manager.py:56
+#: src/host_manager.py:35
+msgid "Enter a name for this server."
+msgstr "Saisissez un nom pour ce serveur."
+
+#: src/host_manager.py:78
 msgid "Default"
 msgstr "Par défaut"
 
-#: src/host_manager.py:65
+#: src/host_manager.py:83 src/host_manager.py:87
 msgid "Test Connection"
 msgstr "Tester la connexion"
 
-#: src/host_manager.py:79 src/host_manager.py:143
+#: src/host_manager.py:92
+msgid "Edit Server"
+msgstr "Modifier le serveur"
+
+#: src/host_manager.py:98 src/host_manager.py:168
 msgid "Delete Host"
 msgstr "Supprimer l'hôte"
 
-#: src/host_manager.py:93
+#: src/host_manager.py:112
 msgid "Fetching version..."
 msgstr "Obtention de la version..."
 
-#: src/host_manager.py:95 src/model_manager.py:166
+#: src/host_manager.py:114 src/main.py:63 src/model_manager.py:340 src/model_manager.py:601
+#: src/startup.py:23 src/widgets/json_view.py:230 src/widgets/knowledge_import.py:51
+#: src/widgets/knowledge_view.py:756 src/widgets/knowledge_view.py:909
+#: src/widgets/knowledge_view.py:1271
 msgid "Close"
-msgstr ""
+msgstr "Fermer"
 
-#: src/host_manager.py:103
+#: src/host_manager.py:124
 #, python-brace-format
 msgid ""
 "Connected\n"
 "Ollama Version: {0}"
-msgstr "Connecté\nVersion d'Ollama : {0}"
+msgstr ""
+"Connecté\n"
+"Version d'Ollama : {0}"
 
-#: src/host_manager.py:105
+#: src/host_manager.py:126
 #, python-brace-format
 msgid ""
 "Connection failed\n"
 "{0}"
-msgstr "Échec de la connexion\n{0}"
+msgstr ""
+"Échec de la connexion\n"
+"{0}"
 
-#: src/host_manager.py:144 src/model_manager.py:177
+#: src/host_manager.py:169 src/model_manager.py:352
 #, python-brace-format
 msgid "Are you sure you want to delete {0}?"
 msgstr "Voulez-vous vraiment supprimer {0} ?"
 
-#: src/host_manager.py:147 src/model_manager.py:180
+#: src/host_manager.py:172 src/model_manager.py:367 src/widgets/knowledge_view.py:1359
 msgid "Delete"
 msgstr "Supprimer"
 
@@ -178,458 +429,2764 @@ msgid "Manage Hosts"
 msgstr "Gérer les hôtes"
 
 #: src/host_manager.ui:35
-msgid "Host Records"
-msgstr "Enregistrements d'hôte"
+msgid "Ollama Servers"
+msgstr "Serveurs Ollama"
 
-#. Translators: Replace "translator-credits" with your name/username, and optionally an email or URL.
-#: src/main.py:42
+#: src/host_manager.ui:36
+msgid "Select a server to edit its name or address."
+msgstr "Sélectionnez un serveur pour modifier son nom ou son adresse."
+
+#: src/knowledge.py:39
+msgid "Operation stopped"
+msgstr "Opération arrêtée"
+
+#: src/knowledge.py:44
+msgid "No text was found. Scanned documents require OCR before import."
+msgstr ""
+"Aucun texte trouvé. Les documents numérisés nécessitent une reconnaissance optique de"
+" caractères (OCR) avant l’importation."
+
+#: src/knowledge.py:46
+msgid ""
+"This document exceeds the limit of 5 million extracted characters. Split it into "
+"smaller files."
+msgstr ""
+"Ce document dépasse la limite de 5 millions de caractères extraits. Divisez-le en "
+"fichiers plus petits."
+
+#: src/knowledge.py:47
+msgid "Untitled"
+msgstr "Sans titre"
+
+#: src/knowledge.py:55 src/widgets/knowledge_import.py:174
+msgid "Files must be no larger than 50 MiB."
+msgstr "Les fichiers ne doivent pas dépasser 50 Mio."
+
+#: src/knowledge.py:61
+msgid "Password-protected PDFs are not supported. Import an unencrypted copy."
+msgstr ""
+"Les PDF protégés par mot de passe ne sont pas pris en charge. Importez une copie non "
+"chiffrée."
+
+#: src/knowledge.py:64
+msgid "PDFs must contain no more than 2,000 pages."
+msgstr "Les PDF ne doivent pas contenir plus de 2 000 pages."
+
+#: src/knowledge.py:70
+msgid "A PDF page is too complex to extract. Import its text instead."
+msgstr "Une page du PDF est trop complexe à extraire. Importez plutôt son texte."
+
+#: src/knowledge.py:73
+#, python-brace-format
+msgid "Page {0} has no extractable text."
+msgstr "La page {0} ne contient aucun texte extractible."
+
+#: src/knowledge.py:78
+msgid "The PDF contains too much text. Split it into smaller files."
+msgstr "Le PDF contient trop de texte. Divisez-le en fichiers plus petits."
+
+#: src/knowledge.py:84
+msgid "Import a UTF-8 text file or a PDF containing text."
+msgstr "Importez un fichier texte UTF-8 ou un PDF contenant du texte."
+
+#: src/knowledge.py:86
+msgid "This appears to be a binary file, not a text document."
+msgstr "Il semble s’agir d’un fichier binaire et non d’un document texte."
+
+#: src/knowledge.py:93
+msgid "Chunk size must be 64–32,000 characters; overlap must be smaller than the chunk."
+msgstr ""
+"La taille des segments doit être comprise entre 64 et 32 000 caractères ; le "
+"chevauchement doit être inférieur à cette taille."
+
+#: src/knowledge.py:119
+msgid ""
+"The embedding model is unavailable or its digest is missing. Choose a compatible host"
+" and model."
+msgstr ""
+"Le modèle de plongement est indisponible ou son empreinte manque. Choisissez un hôte "
+"et un modèle compatibles."
+
+#: src/knowledge.py:121
+msgid ""
+"The embedding model has changed. Select a model with the original digest or build a "
+"new index."
+msgstr ""
+"Le modèle de plongement a changé. Sélectionnez un modèle ayant l’empreinte d’origine "
+"ou créez un nouvel index."
+
+#: src/knowledge.py:127
+msgid "Unknown embedding format."
+msgstr "Format de plongement inconnu."
+
+#: src/knowledge.py:133
+msgid "Embedding prefixes must be no longer than 4,000 characters."
+msgstr "Les préfixes de plongement ne doivent pas dépasser 4 000 caractères."
+
+#: src/knowledge.py:142
+msgid "Choose an embedding configuration and at least one source."
+msgstr "Choisissez une configuration de plongement et au moins une source."
+
+#: src/knowledge.py:145
+msgid "Invalid collection selection. Choose sources again."
+msgstr "Sélection de collections invalide. Sélectionnez à nouveau les sources."
+
+#: src/knowledge.py:148
+msgid "Select the embedding model on the chosen host."
+msgstr "Sélectionnez le modèle de plongement sur l’hôte choisi."
+
+#: src/knowledge.py:150
+msgid "Passage count must be between 1 and 20."
+msgstr "Le nombre de passages doit être compris entre 1 et 20."
+
+#: src/knowledge.py:152
+msgid "Source budget must be between 256 and 64,000 characters."
+msgstr "La limite des sources doit être comprise entre 256 et 64 000 caractères."
+
+#: src/knowledge.py:229
+msgid "Wait for the model operation to finish."
+msgstr "Attendez la fin de l’opération du modèle."
+
+#: src/knowledge.py:262
+msgid "The embedding host was removed. Choose a configured host before continuing."
+msgstr "L’hôte de plongement a été supprimé. Choisissez un hôte configuré avant de continuer."
+
+#: src/knowledge.py:268 src/widgets/knowledge_import.py:146 src/widgets/url_import.py:100
+#: src/widgets/url_import.py:113
+msgid "Queued"
+msgstr "En attente"
+
+#: src/knowledge.py:272
+msgid "The Knowledge Library is closing."
+msgstr "La bibliothèque de connaissances est en cours de fermeture."
+
+#: src/knowledge.py:278
+msgid "This document is being replaced. Retry the build when replacement finishes."
+msgstr ""
+"Ce document est en cours de remplacement. Réessayez la construction une fois le "
+"remplacement terminé."
+
+#: src/knowledge.py:300
+msgid "Complete"
+msgstr "Terminé"
+
+#: src/knowledge.py:317
+msgid "Wait for this document’s embedding builds to finish before replacing it."
+msgstr ""
+"Attendez la fin de la construction des plongements de ce document avant de le "
+"remplacer."
+
+#: src/knowledge.py:320
+msgid "Saving the web document…"
+msgstr "Enregistrement du document web…"
+
+#: src/knowledge.py:348
+msgid "Save web document"
+msgstr "Enregistrer le document web"
+
+#: src/knowledge.py:369
+msgid "Create collection"
+msgstr "Créer une collection"
+
+#: src/knowledge.py:384
+#, python-brace-format
+msgid "Add document: {0}"
+msgstr "Ajouter un document : {0}"
+
+#: src/knowledge.py:392
+#, python-brace-format
+msgid "Prepare collection: {0}"
+msgstr "Préparer la collection : {0}"
+
+#: src/knowledge.py:399
+msgid "Reusing embeddings and preparing missing documents…"
+msgstr "Réutilisation des plongements et préparation des documents manquants…"
+
+#: src/knowledge.py:416
+#, python-brace-format
+msgid "Create embeddings: {0}"
+msgstr "Créer des plongements : {0}"
+
+#: src/knowledge.py:421
+msgid "Build was stopped before it started."
+msgstr "La construction a été arrêtée avant de commencer."
+
+#: src/knowledge.py:438
+msgid "The source document was deleted."
+msgstr "Le document source a été supprimé."
+
+#: src/knowledge.py:443
+msgid "This index would exceed 100,000 chunks. Increase the chunk size or reduce overlap."
+msgstr ""
+"Cet index dépasserait 100 000 segments. Augmentez la taille des segments ou réduisez "
+"le chevauchement."
+
+#: src/knowledge.py:459
+#, python-brace-format
+msgid "Embedding chunks: {0} complete, {1} remaining"
+msgstr "Plongements des segments : {0} terminés, {1} restants"
+
+#: src/knowledge.py:483
+msgid "The embedding input cannot fit. Shorten the document prefix or choose another model."
+msgstr ""
+"L’entrée de plongement est trop longue. Raccourcissez le préfixe du document ou "
+"choisissez un autre modèle."
+
+#: src/knowledge.py:493
+msgid "The model returned a different vector dimension. Create a new configuration."
+msgstr ""
+"Le modèle a renvoyé une dimension de vecteur différente. Créez une nouvelle "
+"configuration."
+
+#: src/knowledge.py:508
+msgid "Create embeddings"
+msgstr "Créer des plongements"
+
+#: src/knowledge.py:518
+msgid "This embedding configuration has no completed vectors."
+msgstr "Cette configuration de plongement ne contient aucun vecteur terminé."
+
+#: src/knowledge.py:520 src/widgets/knowledge_view.py:659
+msgid "Enter a search query."
+msgstr "Saisissez une requête de recherche."
+
+#: src/knowledge.py:530 src/knowledge_store.py:265
+msgid "Query dimensions differ from the stored vectors. Rebuild the index."
+msgstr ""
+"Les dimensions de la requête diffèrent de celles des vecteurs enregistrés. "
+"Reconstruisez l’index."
+
+#: src/knowledge.py:537
+msgid "No passages met the search criteria. Adjust the query, sources, or minimum similarity."
+msgstr ""
+"Aucun passage ne répond aux critères de recherche. Modifiez la requête, les sources "
+"ou la similarité minimale."
+
+#: src/knowledge_store.py:49
+msgid "The destination collection was deleted."
+msgstr "La collection de destination a été supprimée."
+
+#: src/knowledge_store.py:136
+msgid "The reserved embedding index was deleted."
+msgstr "L’index de plongements réservé a été supprimé."
+
+#: src/knowledge_store.py:138
+msgid "An index cannot change its document or embedding configuration."
+msgstr "Un index ne peut pas changer de document ni de configuration de plongement."
+
+#: src/knowledge_store.py:153
+msgid "Embedding dimensions do not match the batch."
+msgstr "Les dimensions des plongements ne correspondent pas à celles du lot."
+
+#: src/knowledge_store.py:160
+msgid "Embedding configuration does not match the index."
+msgstr "La configuration de plongement ne correspond pas à celle de l’index."
+
+#: src/knowledge_store.py:163
+msgid "Embedding dimensions changed during indexing"
+msgstr "Les dimensions des plongements ont changé pendant l’indexation"
+
+#: src/knowledge_store.py:169
+msgid "A chunk cannot move between indexes."
+msgstr "Un segment ne peut pas être déplacé d’un index à un autre."
+
+#: src/knowledge_store.py:241
+msgid "Select at least one indexed document or chunk."
+msgstr "Sélectionnez au moins un document ou segment indexé."
+
+#: src/knowledge_store.py:244
+msgid "Invalid search limits."
+msgstr "Limites de recherche invalides."
+
+#: src/knowledge_store.py:272
+msgid "A selected index is missing, incomplete, or incompatible. Choose sources again."
+msgstr ""
+"Un index sélectionné est manquant, incomplet ou incompatible. Sélectionnez à nouveau "
+"les sources."
+
+#: src/knowledge_store.py:277 src/knowledge_store.py:286
+msgid "Selected chunks are missing. Choose sources again."
+msgstr "Des segments sélectionnés sont manquants. Sélectionnez à nouveau les sources."
+
+#: src/knowledge_store.py:282
+msgid "A selected document has no selected chunks."
+msgstr "Un document sélectionné ne contient aucun segment sélectionné."
+
+#: src/knowledge_store.py:289 src/knowledge_store.py:307 src/vectors.py:108
+#: src/vectors.py:116
+msgid "Stored vectors are missing. Rebuild this index."
+msgstr "Des vecteurs enregistrés sont manquants. Reconstruisez cet index."
+
+#: src/knowledge_store.py:309 src/vectors.py:129
+msgid "Stored vectors are damaged. Rebuild this index."
+msgstr "Des vecteurs enregistrés sont endommagés. Reconstruisez cet index."
+
+#: src/knowledge_store.py:327 src/vectors.py:124
+msgid "Stored vectors do not match their source. Rebuild this index."
+msgstr "Les vecteurs enregistrés ne correspondent pas à leur source. Reconstruisez cet index."
+
+#: src/knowledge_store.py:349
+#, python-brace-format
+msgid "Knowledge search failed: {0}"
+msgstr "Échec de la recherche dans les connaissances : {0}"
+
+#. Translators: Translate "ltr" as "rtl" for right-to-left languages.
+#. Use the app's language even when GTK's language pack is not installed.
+#: src/main.py:33
+msgctxt "text direction"
+msgid "ltr"
+msgstr "ltr"
+
+#: src/main.py:61
+msgid "Database Upgraded"
+msgstr "Base de données mise à niveau"
+
+#: src/main.py:62
+#, python-brace-format
+msgid ""
+"Your data is ready. A backup of the previous database was saved at:\n"
+"{0}"
+msgstr ""
+"Vos données sont prêtes. Une sauvegarde de la base de données précédente a été "
+"enregistrée ici :\n"
+"{0}"
+
+#. Translators: Replace "translator-credits" with your name/username, and optionally an
+#. email or URL.
+#: src/main.py:75
 msgid "translator-credits"
 msgstr "Jackrabbithanna"
 
-#: src/model_details_view.ui:6 src/model_manager.py:18 src/model_manager.py:119
+#: src/model_details_view.ui:6 src/model_manager.py:42 src/model_manager.py:291
 msgid "Model Details"
 msgstr "Détails du modèle"
 
-#: src/model_manager.py:93 src/tab.py:269
-msgid "Connection Error"
-msgstr "Erreur de conexión"
+#: src/model_manager.py:29
+#, python-brace-format
+msgid ""
+"Memory: {0} · VRAM: {1}\n"
+"Context: {2} · Expires: {3}"
+msgstr ""
+"Mémoire : {0} · VRAM : {1}\n"
+"Contexte : {2} · Expiration : {3}"
 
-#: src/model_manager.py:126
+#: src/model_manager.py:163 src/tab.py:162
+msgid "No host configured."
+msgstr "Aucun hôte configuré."
+
+#: src/model_manager.py:168
+msgid "Loading running models…"
+msgstr "Chargement des modèles en cours d’exécution…"
+
+#: src/model_manager.py:172
+#, python-brace-format
+msgid "Could not refresh running models: {0}"
+msgstr "Impossible d’actualiser les modèles en cours d’exécution : {0}"
+
+#: src/model_manager.py:188
+msgid "No models are loaded in memory."
+msgstr "Aucun modèle n’est chargé en mémoire."
+
+#: src/model_manager.py:194 src/model_manager.py:207
+msgid "Unload"
+msgstr "Décharger de la mémoire"
+
+#: src/model_manager.py:195 src/model_manager.py:209
+msgid "Release this model from memory; keep its downloaded files."
+msgstr "Libérez ce modèle de la mémoire en conservant ses fichiers téléchargés."
+
+#: src/model_manager.py:207
+msgid "Unloading…"
+msgstr "Déchargement de la mémoire…"
+
+#: src/model_manager.py:208
+msgid "A chat or embedding job is using this model in Gnollama."
+msgstr "Une discussion ou une tâche de plongement utilise ce modèle dans Gnollama."
+
+#: src/model_manager.py:225
+msgid "Could not unload model"
+msgstr "Impossible de décharger le modèle"
+
+#: src/model_manager.py:265
+msgid "Connection Error"
+msgstr "Erreur de connexion"
+
+#: src/model_manager.py:298
 msgid "Delete Model"
 msgstr "Supprimer le modèle"
 
-#: src/model_manager.py:155
+#: src/model_manager.py:329
 msgid "Failed to fetch details"
 msgstr "Échec de l'obtention des détails"
 
-#: src/model_manager.py:176
+#: src/model_manager.py:349 src/model_manager.py:374 src/model_manager.py:377
+msgid "Model Is Busy"
+msgstr "Modèle occupé"
+
+#: src/model_manager.py:349 src/model_manager.py:377
+msgid "Wait for active chats and embedding jobs before deleting this model."
+msgstr ""
+"Attendez la fin des discussions et des tâches de plongement actives avant de "
+"supprimer ce modèle."
+
+#: src/model_manager.py:353
+msgid "Also delete matching vectors; keep source text"
+msgstr "Supprimer aussi les vecteurs correspondants ; conserver le texte source"
+
+#: src/model_manager.py:355
+#, python-brace-format
+msgid ""
+"Stored data using this model: {0} documents, {1} indexes, {2} vectors. Kept vectors "
+"can be used again with the same model digest on a compatible host."
+msgstr ""
+"Données enregistrées utilisant ce modèle : documents : {0}, index : {1}, vecteurs : "
+"{2}. Les vecteurs conservés peuvent être réutilisés avec la même empreinte de modèle "
+"sur un hôte compatible."
+
+#: src/model_manager.py:357
+#, python-brace-format
+msgid ""
+"Collections using this configuration: {0}. Deleting vectors keeps their documents and"
+" membership, but they will need embeddings rebuilt before searching."
+msgstr ""
+"Collections utilisant cette configuration : {0}. La suppression des vecteurs conserve"
+" les documents et leur appartenance, mais leurs plongements devront être reconstruits"
+" avant toute recherche."
+
+#: src/model_manager.py:360
 msgid "Delete Model?"
 msgstr "Supprimer le modèle ?"
 
-#: src/model_manager.py:190
+#: src/model_manager.py:374
+msgid "Wait for all indexing jobs using this model before deleting its vectors."
+msgstr ""
+"Attendez la fin de toutes les tâches d’indexation utilisant ce modèle avant de "
+"supprimer ses vecteurs."
+
+#: src/model_manager.py:390
 msgid "Delete Failed"
 msgstr "Échec de la suppression"
 
-#: src/model_manager.py:337
-msgid "Starting pull..."
-msgstr "Démarrage du téléchargement..."
+#: src/model_manager.py:545
+msgid "Starting download…"
+msgstr "Démarrage du téléchargement…"
 
-#: src/model_manager.py:360 src/tab.py:222
+#: src/model_manager.py:570
 msgid "Error"
 msgstr "Erreur"
 
-#: src/model_manager.py:361
+#: src/model_manager.py:571
 msgid "Error occurred."
 msgstr "Une erreur est survenue."
 
-#: src/model_manager.py:380
-msgid "Dismiss"
-msgstr "Fermer"
+#: src/model_manager.py:590
+#, python-brace-format
+msgid "{0:.0f}%"
+msgstr "{0:.0f} %"
 
-#: src/model_manager.py:389
-msgid "Name"
-msgstr "Nom"
+#: src/model_manager.py:593
+msgid "Download complete"
+msgstr "Téléchargement terminé"
 
-#: src/model_manager.py:390
+#: src/model_manager.py:611 src/widgets/chat_input.ui:27
 msgid "Model"
 msgstr "Modèle"
 
-#: src/model_manager.py:391
+#: src/model_manager.py:612
 msgid "Remote Model"
 msgstr "Modèle distant"
 
-#: src/model_manager.py:392
+#: src/model_manager.py:613
 msgid "Remote Host"
 msgstr "Hôte distant"
 
-#: src/model_manager.py:393
+#: src/model_manager.py:614
 msgid "Modified At"
 msgstr "Modifié le"
 
-#: src/model_manager.py:394
+#: src/model_manager.py:615
 msgid "Size"
 msgstr "Taille"
 
-#: src/model_manager.py:395
+#: src/model_manager.py:616
 msgid "Digest"
-msgstr "Digest"
+msgstr "Empreinte"
 
-#: src/model_manager.py:396
+#: src/model_manager.py:617
 msgid "Detail: Format"
 msgstr "Détail : Format"
 
-#: src/model_manager.py:397
+#: src/model_manager.py:618
 msgid "Detail: Family"
 msgstr "Détail : Famille"
 
-#: src/model_manager.py:398
+#: src/model_manager.py:619
 msgid "Detail: Families"
 msgstr "Détail : Familles"
 
-#: src/model_manager.py:399
+#: src/model_manager.py:620
 msgid "Detail: Parameter Size"
-msgstr "Détail : Taille des paramètres"
+msgstr "Détail : Nombre de paramètres"
 
-#: src/model_manager.py:400
+#: src/model_manager.py:621
 msgid "Detail: Quantization Level"
 msgstr "Détail : Niveau de quantification"
 
-#: src/model_manager.py:401
+#: src/model_manager.py:622
 msgid "Parameters"
 msgstr "Paramètres"
 
-#: src/model_manager.py:402
+#: src/model_manager.py:623
 msgid "Capabilities"
 msgstr "Capacités"
 
-#: src/model_manager.py:403
+#: src/model_manager.py:624
 msgid "Template"
-msgstr "Modèle (Template)"
+msgstr "Gabarit"
 
-#: src/model_manager.py:404
+#: src/model_manager.py:625
 msgid "License"
 msgstr "Licence"
 
-#: src/model_manager.py:405
+#: src/model_manager.py:626
 msgid "Modelfile"
 msgstr "Modelfile"
 
-#: src/model_manager.py:406
+#: src/model_manager.py:627
 msgid "Model Info"
-msgstr "Informations du modèle"
+msgstr "Informations sur le modèle"
 
-#: src/model_manager.ui:6 src/model_manager.ui:17
+#: src/model_manager.ui:5 src/model_manager.ui:16
 msgid "Manage Models"
 msgstr "Gérer les modèles"
 
-#: src/model_manager.ui:35
+#: src/model_manager.ui:34
 msgid "Host:"
 msgstr "Hôte :"
 
-#: src/model_manager.ui:46
+#: src/model_manager.ui:45
 msgid "Refresh models list"
 msgstr "Actualiser la liste des modèles"
 
-#: src/model_manager.ui:62 src/pull_model_dialog.ui:23
-msgid "Pull model"
-msgstr "Télécharger le modèle"
+#: src/model_manager.ui:61 src/pull_model_dialog.ui:22
+msgid "Download Model…"
+msgstr "Télécharger un modèle…"
 
-#: src/model_manager.ui:76
+#: src/model_manager.ui:80
+msgid "Installed"
+msgstr "Installés"
+
+#: src/model_manager.ui:90
 msgid "Available Models"
 msgstr "Modèles disponibles"
 
-#: src/pull_model_dialog.ui:6
-msgid "Pull Model"
-msgstr "Télécharger le modèle"
+#: src/model_manager.ui:102
+msgid "Running"
+msgstr "En cours d’exécution"
 
-#: src/pull_model_dialog.ui:45
+#: src/model_manager.ui:121
+msgid "Models in Memory"
+msgstr "Modèles en mémoire"
+
+#: src/ollama.py:52
+msgid "Enter a valid http:// or https:// Ollama host URL."
+msgstr "Saisissez une URL d’hôte Ollama valide commençant par http:// ou https://."
+
+#: src/ollama.py:61 src/ollama.py:84
+msgid "Request stopped"
+msgstr "Requête arrêtée"
+
+#: src/ollama.py:110
+msgid "Invalid JSON received from Ollama"
+msgstr "JSON invalide reçu d’Ollama"
+
+#: src/ollama.py:112
+msgid "Expected a JSON object from Ollama"
+msgstr "Un objet JSON était attendu d’Ollama"
+
+#: src/ollama.py:162
+msgid "Enter nonempty text to embed."
+msgstr "Saisissez un texte non vide pour créer le plongement."
+
+#: src/ollama.py:166
+msgid "Embedding dimensions must be a positive integer."
+msgstr "Le nombre de dimensions des plongements doit être un entier positif."
+
+#: src/ollama.py:173
+msgid "The server returned an incorrect number of embeddings."
+msgstr "Le serveur a renvoyé un nombre incorrect de plongements."
+
+#: src/ollama.py:178
+msgid "The server returned an invalid embedding vector."
+msgstr "Le serveur a renvoyé un vecteur de plongement invalide."
+
+#: src/ollama.py:181
+msgid "Embedding dimensions do not match, or a vector is zero."
+msgstr "Les dimensions des plongements ne correspondent pas, ou un vecteur est nul."
+
+#: src/ollama.py:210
+msgid "Model pull ended before completion"
+msgstr "Le téléchargement du modèle s’est terminé prématurément"
+
+#: src/ollama.py:216
+msgid "Invalid output format"
+msgstr "Format de sortie invalide"
+
+#: src/ollama.py:220
+msgid "Keep-alive must be a duration in seconds, 0, or -1"
+msgstr "La durée de maintien doit être une durée en secondes, 0 ou -1"
+
+#: src/ollama.py:224
+msgid "Invalid thinking setting"
+msgstr "Paramètre de réflexion invalide"
+
+#: src/ollama.py:230
+msgid "Top logprobs must be between 0 and 20"
+msgstr "Le nombre de log-probabilités les plus élevées doit être compris entre 0 et 20"
+
+#: src/pull_model_dialog.ui:5
+msgid "Download Model"
+msgstr "Télécharger un modèle"
+
+#: src/pull_model_dialog.ui:44
 msgid "Model name"
 msgstr "Nom du modèle"
 
-#: src/pull_model_dialog.ui:51
-msgid "Name of the model to download"
-msgstr "Nom du modèle à télécharger"
+#: src/pull_model_dialog.ui:50
+msgid "For example: qwen3:4b"
+msgstr "Par exemple : qwen3:4b"
 
-#: src/pull_model_dialog.ui:61
+#: src/pull_model_dialog.ui:60
 msgid "Insecure"
 msgstr "Non sécurisé"
 
-#: src/pull_model_dialog.ui:66
+#: src/pull_model_dialog.ui:65
 msgid "Allow downloading over insecure connections"
 msgstr "Autoriser le téléchargement via des connexions non sécurisées"
 
-#: src/shortcuts-dialog.ui:6
+#: src/pull_model_dialog.ui:88
+msgid "Download Details"
+msgstr "Détails du téléchargement"
+
+#: src/session.py:16 src/tab.py:38 src/window.ui:61 src/window.ui:88
+msgid "New Chat"
+msgstr "Nouvelle discussion"
+
+#: src/session.py:167
+msgid "There are no pending tool calls."
+msgstr "Aucun appel d’outil en attente."
+
+#: src/shortcuts-dialog.ui:5
 msgid "Shortcuts"
 msgstr "Raccourcis"
 
-#: src/shortcuts-dialog.ui:9
+#: src/shortcuts-dialog.ui:8
 msgctxt "shortcut window"
 msgid "Show Shortcuts"
 msgstr "Afficher les raccourcis"
 
-#: src/shortcuts-dialog.ui:15
+#: src/shortcuts-dialog.ui:14
 msgctxt "shortcut window"
 msgid "Quit"
 msgstr "Quitter"
 
-#: src/shortcuts-dialog.ui:21
+#: src/shortcuts-dialog.ui:20
 msgctxt "shortcut window"
 msgid "New Chat Tab"
-msgstr "Nouvel onglet de chat"
+msgstr "Nouvel onglet de discussion"
 
-#: src/tab.py:162
-msgid "Error: No host configured."
-msgstr "Erreur : aucun hôte configuré."
+#: src/shortcuts-dialog.ui:26
+msgctxt "shortcut window"
+msgid "Close Tab"
+msgstr "Fermer l’onglet"
 
-#. Setup thinking dropdown
-#: src/widgets/chat_input.py:25 src/widgets/chat_input.py:71
-#: src/widgets/chat_input.py:86
-msgid "Thinking"
-msgstr "Réflexion"
+#: src/shortcuts-dialog.ui:32
+msgctxt "shortcut window"
+msgid "Next Tab"
+msgstr "Onglet suivant"
 
-#: src/widgets/chat_input.py:25 src/widgets/chat_input.py:72
-#: src/widgets/chat_input.py:87
-msgid "Low"
-msgstr "Faible"
+#: src/shortcuts-dialog.ui:38
+msgctxt "shortcut window"
+msgid "Previous Tab"
+msgstr "Onglet précédent"
 
-#: src/widgets/chat_input.py:25 src/widgets/chat_input.py:73
-#: src/widgets/chat_input.py:88
-msgid "Medium"
-msgstr "Moyen"
+#: src/shortcuts-dialog.ui:44
+msgctxt "shortcut window"
+msgid "Toggle Sidebar"
+msgstr "Afficher ou masquer le panneau latéral"
 
-#: src/widgets/chat_input.py:25 src/widgets/chat_input.py:74
-#: src/widgets/chat_input.py:89
-msgid "High"
-msgstr "Élevé"
+#: src/startup.py:16 src/startup.py:53
+msgid "Opening Gnollama"
+msgstr "Ouverture de Gnollama"
 
-#: src/widgets/chat_input.py:25 src/widgets/chat_input.py:75
-#: src/widgets/chat_input.py:90
-msgid "Max"
-msgstr "Maximum"
+#: src/startup.py:20 src/tab.py:245 src/widgets/knowledge_import.py:88
+#: src/widgets/knowledge_view.py:1220 src/widgets/url_import.py:232 src/window.py:139
+msgid "Retry"
+msgstr "Réessayer"
 
-#: src/widgets/chat_input.py:25 src/widgets/chat_input.py:76
-#: src/widgets/chat_input.py:85
-msgid "None"
-msgstr "Aucun"
+#: src/startup.py:42
+msgid "Finishing the database operation before closing…"
+msgstr "Fin de l’opération de base de données avant la fermeture…"
 
-#: src/widgets/chat_input.py:77 src/widgets/chat_input.py:91
-msgid "No thinking"
-msgstr "Sans réflexion"
+#: src/startup.py:54
+msgid "Checking the database…"
+msgstr "Vérification de la base de données…"
 
-#: src/widgets/chat_input.py:118
-msgid "Select Images"
-msgstr "Sélectionner des images"
+#: src/startup.py:90
+msgid "Could Not Open the Database"
+msgstr "Impossible d’ouvrir la base de données"
 
-#: src/widgets/chat_input.py:122
-msgid "Images"
-msgstr "Images"
-
-#: src/widgets/chat_input.py:154 src/widgets/chat_input.ui:77
-msgid "No image selected"
-msgstr "Aucune image sélectionnée"
-
-#: src/widgets/chat_input.py:160
+#: src/startup.py:94
 #, python-brace-format
-msgid "{0} image(s) selected"
-msgstr "{0} image(s) sélectionnée(s)"
+msgid "Database backup: {0}"
+msgstr "Sauvegarde de la base de données : {0}"
 
-#: src/widgets/chat_input.ui:18
-msgid "Select Model"
-msgstr "Sélectionner un modèle"
+#: src/structured.py:18
+msgid "Non-finite numbers are not valid JSON."
+msgstr "Les nombres non finis ne sont pas valides en JSON."
 
-#: src/widgets/chat_input.ui:24
-msgid "Thinking Level"
-msgstr "Niveau de réflexion"
+#: src/structured.py:23
+msgid "JSON number is too large to format."
+msgstr "Le nombre JSON est trop grand pour être mis en forme."
 
-#: src/widgets/chat_input.ui:30
-msgid "Type a message..."
-msgstr "Tapez un message..."
+#: src/structured.py:30
+#, python-brace-format
+msgid "Duplicate JSON key: {0}"
+msgstr "Clé JSON en double : {0}"
 
-#: src/widgets/chat_input.ui:36
-msgid "Query Ollama"
-msgstr "Interroger Ollama"
+#: src/structured.py:39
+msgid "The schema must be a JSON object."
+msgstr "Le schéma doit être un objet JSON."
 
-#: src/widgets/chat_input.ui:72
-msgid "Attach Image"
-msgstr "Joindre une image"
+#: src/structured.py:42
+msgid "Unsupported JSON Schema version."
+msgstr "Version de schéma JSON non prise en charge."
 
-#: src/widgets/chat_input.ui:86
-msgid "Clear Image"
-msgstr "Effacer l'image"
+#: src/structured.py:60
+#, python-brace-format
+msgid "Invalid schema: {0}"
+msgstr "Schéma invalide : {0}"
 
-#: src/widgets/options_panel.py:39
-msgid "No hosts configured"
-msgstr "Aucun hôte configuré"
+#: src/structured.py:62
+#, python-brace-format
+msgid "Unresolved schema reference: {0}. Import a self-contained schema."
+msgstr "Référence de schéma non résolue : {0}. Importez un schéma autonome."
 
-#: src/widgets/options_panel.ui:6
-msgid "Advanced Settings"
-msgstr "Paramètres avancés"
+#: src/structured.py:71
+msgid "Unknown output format."
+msgstr "Format de sortie inconnu."
 
-#: src/widgets/options_panel.ui:20
-msgid "Ollama Host:"
-msgstr "Hôte Ollama :"
+#: src/structured.py:73
+msgid "Paste or import a JSON schema, then click Apply before sending."
+msgstr "Collez ou importez un schéma JSON, puis cliquez sur Appliquer avant l’envoi."
 
-#: src/widgets/options_panel.ui:33
-msgid "System Prompt (optional)"
-msgstr "Prompt système (optionnel)"
+#: src/structured.py:77
+#, python-brace-format
+msgid "Invalid schema JSON: {0}"
+msgstr "JSON du schéma invalide : {0}"
 
-#: src/widgets/options_panel.ui:38
-msgid "Show statistics"
-msgstr "Afficher les statistiques"
-
-#: src/widgets/options_panel.ui:44
-msgid "Return logprobs"
-msgstr "Retourner les logprobs"
-
-#: src/widgets/options_panel.ui:53
-msgid "Top Logprobs:"
-msgstr "Meilleurs Logprobs :"
-
-#: src/widgets/options_panel.ui:58
-msgid "Integer (e.g., 5)"
-msgstr "Entier (ex. 5)"
-
-#: src/widgets/options_panel.ui:63
-msgid "Number of top logprobs to return"
-msgstr "Nombre de meilleurs logprobs à retourner"
-
-#: src/widgets/options_panel.ui:77
-msgid "Seed:"
-msgstr "Graine (Seed) :"
-
-#: src/widgets/options_panel.ui:87 src/widgets/options_panel.ui:129
-#: src/widgets/options_panel.ui:192 src/widgets/options_panel.ui:213
-msgid "Integer"
-msgstr "Entier"
-
-#: src/widgets/options_panel.ui:88
-msgid "Random number seed"
-msgstr "Graine de nombre aléatoire"
-
-#: src/widgets/options_panel.ui:98
-msgid "Temperature:"
-msgstr "Température :"
-
-#: src/widgets/options_panel.ui:108 src/widgets/options_panel.ui:150
-#: src/widgets/options_panel.ui:171
-msgid "Float"
-msgstr "Flottant"
-
-#: src/widgets/options_panel.ui:109
-msgid "Creativity (0.0 - 1.0)"
-msgstr "Créativité (0.0 - 1.0)"
-
-#: src/widgets/options_panel.ui:119
-msgid "Top K:"
-msgstr "Top K :"
-
-#: src/widgets/options_panel.ui:130
-msgid "Limit to top K tokens"
-msgstr "Limiter aux K meilleurs tokens"
-
-#: src/widgets/options_panel.ui:140
-msgid "Top P:"
-msgstr "Top P :"
-
-#: src/widgets/options_panel.ui:151
-msgid "Limit to cumulative probability P"
-msgstr "Limiter à la probabilité cumulée P"
-
-#: src/widgets/options_panel.ui:161
-msgid "Min P:"
-msgstr "Min P :"
-
-#: src/widgets/options_panel.ui:172
-msgid "Minimum probability"
-msgstr "Probabilité minimale"
-
-#: src/widgets/options_panel.ui:182
-msgid "Context Size:"
-msgstr "Taille du contexte :"
-
-#: src/widgets/options_panel.ui:193
-msgid "Context window size (num_ctx)"
-msgstr "Taille de la fenêtre contextuelle (num_ctx)"
-
-#: src/widgets/options_panel.ui:203
-msgid "Max Tokens:"
-msgstr "Max Tokens :"
-
-#: src/widgets/options_panel.ui:214
-msgid "Max tokens to generate (num_predict)"
-msgstr "Max tokens à générer (num_predict)"
-
-#: src/widgets/options_panel.ui:224
-msgid "Stop Seq:"
-msgstr "Séquence d'arrêt :"
-
-#: src/widgets/options_panel.ui:234
-msgid "String"
-msgstr "Chaîne"
-
-#: src/widgets/options_panel.ui:235
-msgid "Stop sequence (comma separated)"
-msgstr "Séquence d'arrêt (séparée par des virgules)"
-
-#: src/window.py:116 src/window.ui:105
-msgid "Clear chat history"
-msgstr "Effacer l'historique du chat"
-
-#: src/window.py:117
-msgid "Are you sure you want to delete all chat history?"
-msgstr "Voulez-vous vraiment supprimer tout l'historique des discussions ?"
-
-#: src/window.py:120
-msgid "Delete history"
-msgstr "Supprimer l'historique"
-
-#: src/window.py:178
+#: src/tab.py:38
 msgid "New Response"
 msgstr "Nouvelle réponse"
 
-#: src/window.py:214 src/window.py:350
-msgid "New Chat"
-msgstr "Nouvelle discussion"
-
-#: src/window.py:240
-msgid "Enter a new title for this chat."
-msgstr "Entrez un nouveau titre pour cette discussion."
-
-#: src/window.py:300
+#: src/tab.py:87
 msgid "Chat"
 msgstr "Discussion"
 
-#: src/window.ui:17
+#: src/tab.py:166
+msgid "Select an available model before sending."
+msgstr "Sélectionnez un modèle disponible avant l’envoi."
+
+#: src/tab.py:169
+msgid "Wait for this model to finish unloading before sending."
+msgstr "Attendez la fin du déchargement de ce modèle avant l’envoi."
+
+#: src/tab.py:174
+msgid "Wait for image support to be checked before sending."
+msgstr "Attendez la vérification de la prise en charge des images avant l’envoi."
+
+#: src/tab.py:176 src/widgets/chat_input.py:112
+msgid "Remove draft images or select a vision model to send."
+msgstr "Retirez les images du brouillon ou sélectionnez un modèle de vision pour envoyer."
+
+#: src/tab.py:218
+msgid "Retrieving sources…"
+msgstr "Récupération des sources…"
+
+#: src/tab.py:243
+msgid "Could Not Retrieve Sources"
+msgstr "Impossible de récupérer les sources"
+
+#: src/tab.py:244
+msgid "Adjust Sources"
+msgstr "Modifier les sources"
+
+#: src/tab.py:246
+msgid "Send Without Knowledge"
+msgstr "Envoyer sans connaissances"
+
+#: src/tab.py:247
+msgid "Keep Draft"
+msgstr "Conserver le brouillon"
+
+#: src/tab.py:309
+msgid "Response ended before completion."
+msgstr "La réponse s’est terminée prématurément."
+
+#: src/tool_calling.py:104
+msgid "Paste, import, or load the example tools, then click Apply."
+msgstr "Collez ou importez des outils, ou chargez les exemples, puis cliquez sur Appliquer."
+
+#: src/tool_calling.py:107
+msgid "Provide a nonempty JSON array of function tools."
+msgstr "Fournissez un tableau JSON non vide d’outils de fonction."
+
+#: src/tool_calling.py:111
+#, python-brace-format
+msgid "Tool {0} must have type \"function\"."
+msgstr "L’outil {0} doit être de type \"function\"."
+
+#: src/tool_calling.py:114
+#, python-brace-format
+msgid "Tool {0} needs a function object."
+msgstr "L’outil {0} nécessite un objet function."
+
+#: src/tool_calling.py:117
+msgid "Function names must be nonempty and unique."
+msgstr "Les noms de fonctions doivent être non vides et uniques."
+
+#: src/tool_calling.py:120
+msgid "Function descriptions must be strings."
+msgstr "Les descriptions de fonctions doivent être des chaînes de caractères."
+
+#: src/tool_calling.py:123
+#, python-brace-format
+msgid "Parameters for {0} must be an object schema."
+msgstr "Les paramètres de {0} doivent être un schéma d’objet."
+
+#: src/tool_calling.py:149
+msgid "Malformed tool call; continuation is unavailable."
+msgstr "Appel d’outil mal formé ; impossible de continuer."
+
+#: src/tool_calling.py:153
+msgid "Unknown function; a mock result can still be supplied."
+msgstr "Fonction inconnue ; un résultat simulé peut tout de même être fourni."
+
+#: src/tool_calling.py:158
+msgid "Arguments match the parameter schema."
+msgstr "Les arguments correspondent au schéma des paramètres."
+
+#: src/tool_calling.py:184
+msgid "This tool round has already been submitted."
+msgstr "Cette série d’appels d’outils a déjà été envoyée."
+
+#: src/tool_calling.py:187
+msgid "Save a result for every tool call before continuing."
+msgstr "Enregistrez un résultat pour chaque appel d’outil avant de continuer."
+
+#: src/tool_calling.py:193
+msgid "Tool result not provided: tool round cancelled by user."
+msgstr "Résultat d’outil non fourni : série d’appels annulée par l’utilisateur."
+
+#: src/vectors.py:16 src/widgets/knowledge_view.py:563
+msgid "Choose a supported similarity measure."
+msgstr "Choisissez une mesure de similarité prise en charge."
+
+#: src/vectors.py:19
+msgid "Cosine similarity uses a minimum similarity, not a maximum distance."
+msgstr "La similarité cosinus utilise une similarité minimale, pas une distance maximale."
+
+#: src/vectors.py:21
+msgid "Minimum cosine similarity must be between -1 and 1, or blank."
+msgstr "La similarité cosinus minimale doit être comprise entre -1 et 1, ou être vide."
+
+#: src/vectors.py:24
+msgid "Distance measures use a maximum distance. Clear the minimum similarity."
+msgstr ""
+"Les mesures de distance utilisent une distance maximale. Effacez la similarité "
+"minimale."
+
+#: src/vectors.py:26
+msgid "Maximum distance must be a finite, nonnegative number, or blank."
+msgstr "La distance maximale doit être un nombre fini positif ou nul, ou être vide."
+
+#: src/vectors.py:31
+msgid ""
+"Vector dimensions must be between 1 and 8,192. Choose a supported dimension or "
+"embedding model."
+msgstr ""
+"Le nombre de dimensions des vecteurs doit être compris entre 1 et 8 192. Choisissez "
+"une dimension ou un modèle de plongement pris en charge."
+
+#: src/vectors.py:36
+msgid "Stored vector data is damaged. Rebuild this index."
+msgstr "Les données vectorielles enregistrées sont endommagées. Reconstruisez cet index."
+
+#: src/vectors.py:39
+msgid "Stored vectors must be finite and nonzero. Rebuild this index."
+msgstr "Les vecteurs enregistrés doivent être finis et non nuls. Reconstruisez cet index."
+
+#: src/vectors.py:54
+msgid "Invalid embedding vector; expected 1–8,192 finite, nonzero dimensions."
+msgstr ""
+"Vecteur de plongement invalide ; un vecteur fini non nul de 1 à 8 192 dimensions est "
+"attendu."
+
+#: src/vectors.py:66
+msgid "Could not load sqlite-vec. Reinstall Gnollama or install its sqlite-vec dependency."
+msgstr ""
+"Impossible de charger sqlite-vec. Réinstallez Gnollama ou installez sa dépendance "
+"sqlite-vec."
+
+#: src/vectors.py:120
+msgid "Stored vector blocks are damaged. Rebuild this index."
+msgstr "Les blocs de vecteurs enregistrés sont endommagés. Reconstruisez cet index."
+
+#: src/vectors.py:165
+msgid "The database contains broken references. Restore a database backup before upgrading."
+msgstr ""
+"La base de données contient des références rompues. Restaurez une sauvegarde avant la"
+" mise à niveau."
+
+#: src/vectors.py:176
+msgid ""
+"Stored vector dimensions do not match their configuration. Rebuild the index before "
+"upgrading."
+msgstr ""
+"Les dimensions des vecteurs enregistrés ne correspondent pas à leur configuration. "
+"Reconstruisez l’index avant la mise à niveau."
+
+#: src/vectors.py:181
+#, python-brace-format
+msgid "Migrating vectors: {0} of {1}"
+msgstr "Migration des vecteurs : {0} sur {1}"
+
+#: src/vectors.py:183
+msgid "Verifying migrated vectors…"
+msgstr "Vérification des vecteurs migrés…"
+
+#: src/vectors.py:185 src/vectors.py:192
+msgid "Vector migration verification failed."
+msgstr "La vérification de la migration des vecteurs a échoué."
+
+#: src/vectors.py:193
+msgid "Finishing the database upgrade…"
+msgstr "Fin de la mise à niveau de la base de données…"
+
+#: src/web_import.py:48
+msgid "Enter an HTTP or HTTPS URL without embedded login credentials."
+msgstr "Saisissez une URL HTTP ou HTTPS sans identifiants de connexion intégrés."
+
+#: src/web_import.py:54
+msgid "Enter between 1 and 20 URLs, one per line."
+msgstr "Saisissez entre 1 et 20 URL, une par ligne."
+
+#: src/web_import.py:86
+#, python-brace-format
+msgid "Downloading {0}"
+msgstr "Téléchargement de {0}"
+
+#: src/web_import.py:89
+msgid "This URL could not be opened."
+msgstr "Impossible d’ouvrir cette URL."
+
+#: src/web_import.py:97
+msgid "The URL has an invalid redirect or exceeds five redirects."
+msgstr "L’URL contient une redirection invalide ou dépasse cinq redirections."
+
+#: src/web_import.py:103
+#, python-brace-format
+msgid "Download failed: HTTP {0} {1}"
+msgstr "Échec du téléchargement : HTTP {0} {1}"
+
+#: src/web_import.py:105 src/web_import.py:117
+msgid "Downloads must be no larger than 50 MiB."
+msgstr "Les téléchargements ne doivent pas dépasser 50 Mio."
+
+#: src/web_import.py:128
+msgid "The download timed out. Retry this URL."
+msgstr "Le téléchargement a expiré. Réessayez cette URL."
+
+#: src/web_import.py:129
+#, python-brace-format
+msgid "The URL could not be downloaded: {0}"
+msgstr "Impossible de télécharger l’URL : {0}"
+
+#: src/web_import.py:212
+msgid "The page does not contain readable HTML."
+msgstr "La page ne contient pas de HTML lisible."
+
+#: src/web_import.py:222
+#, python-brace-format
+msgid "Invalid CSS selector: {0}"
+msgstr "Sélecteur CSS invalide : {0}"
+
+#: src/web_import.py:226
+msgid "The CSS selector did not match any elements. Try main, article, or a content class."
+msgstr ""
+"Le sélecteur CSS ne correspond à aucun élément. Essayez main, article ou une classe "
+"de contenu."
+
+#: src/web_import.py:243
+msgid "No main content was found. Try a CSS selector, or paste the page text using Add Text."
+msgstr ""
+"Aucun contenu principal trouvé. Essayez un sélecteur CSS ou collez le texte de la "
+"page avec Ajouter du texte."
+
+#: src/web_import.py:251
+msgid "No text was found in the selected content. Try another CSS selector."
+msgstr "Aucun texte trouvé dans le contenu sélectionné. Essayez un autre sélecteur CSS."
+
+#: src/web_import.py:259
+msgid "Web document"
+msgstr "Document web"
+
+#: src/web_import.py:274
+msgid "This URL must provide an HTML page, PDF, or UTF-8 text document."
+msgstr "Cette URL doit fournir une page HTML, un PDF ou un document texte UTF-8."
+
+#: src/web_store.py:38
+msgid "The destination collection was deleted. Choose a collection again."
+msgstr "La collection de destination a été supprimée. Sélectionnez à nouveau une collection."
+
+#: src/web_store.py:43
+msgid "This document changed since the preview was opened. Fetch it again before saving."
+msgstr ""
+"Ce document a changé depuis l’ouverture de l’aperçu. Récupérez-le à nouveau avant de "
+"l’enregistrer."
+
+#: src/web_store.py:53
+msgid "Source content changed. Rebuild required."
+msgstr "Le contenu source a changé. Une reconstruction est nécessaire."
+
+#: src/widgets/chat_input.py:61 src/widgets/chat_input.py:66 src/widgets/chat_input.py:68
+#: src/widgets/knowledge_view.py:247
+msgid "Model default"
+msgstr "Valeur par défaut du modèle"
+
+#: src/widgets/chat_input.py:61
+msgid "Off"
+msgstr "Désactivé"
+
+#: src/widgets/chat_input.py:61
+msgid "On"
+msgstr "Activé"
+
+#: src/widgets/chat_input.py:61 src/widgets/chat_input.py:66
+msgid "Low"
+msgstr "Faible"
+
+#: src/widgets/chat_input.py:61 src/widgets/chat_input.py:66
+msgid "Medium"
+msgstr "Moyen"
+
+#: src/widgets/chat_input.py:61 src/widgets/chat_input.py:66
+msgid "High"
+msgstr "Élevé"
+
+#: src/widgets/chat_input.py:61
+msgid "Max"
+msgstr "Maximum"
+
+#: src/widgets/chat_input.py:87
+msgid "Stop response"
+msgstr "Arrêter la réponse"
+
+#: src/widgets/chat_input.py:87 src/widgets/chat_input.ui:73
+msgid "Send Message"
+msgstr "Envoyer le message"
+
+#: src/widgets/chat_input.py:108
+msgid "Checking image support…"
+msgstr "Vérification de la prise en charge des images…"
+
+#: src/widgets/chat_input.py:110
+msgid "This model does not support images."
+msgstr "Ce modèle ne prend pas en charge les images."
+
+#: src/widgets/chat_input.py:114
+msgid "Earlier images remain saved; only text history will be sent."
+msgstr "Les images précédentes restent enregistrées ; seul l’historique textuel sera envoyé."
+
+#: src/widgets/chat_input.py:116
+msgid "Image support unknown."
+msgstr "Prise en charge des images inconnue."
+
+#: src/widgets/chat_input.py:128
+msgid "Select a chat model"
+msgstr "Sélectionner un modèle de discussion"
+
+#: src/widgets/chat_input.py:163
+msgid "Checking chat models…"
+msgstr "Vérification des modèles de discussion…"
+
+#: src/widgets/chat_input.py:176
+msgid "No chat models found. Pull one in Manage Models, then refresh."
+msgstr ""
+"Aucun modèle de discussion trouvé. Téléchargez-en un dans Gérer les modèles, puis "
+"actualisez la liste."
+
+#: src/widgets/chat_input.py:246
+msgid "Select Images"
+msgstr "Sélectionner des images"
+
+#: src/widgets/chat_input.py:250
+msgid "Images"
+msgstr "Images"
+
+#: src/widgets/chat_input.py:283 src/widgets/chat_input.ui:116
+msgid "No image selected"
+msgstr "Aucune image sélectionnée"
+
+#: src/widgets/chat_input.py:289
+#, python-brace-format
+msgid "{0} image selected"
+msgid_plural "{0} images selected"
+msgstr[0] "{0} image sélectionnée"
+msgstr[1] "{0} images sélectionnées"
+
+#: src/widgets/chat_input.ui:35
+msgid "Select Model"
+msgstr "Sélectionner un modèle"
+
+#: src/widgets/chat_input.ui:46
+msgid "Thinking"
+msgstr "Réflexion"
+
+#: src/widgets/chat_input.ui:54
+msgid "Thinking Level"
+msgstr "Niveau de réflexion"
+
+#: src/widgets/chat_input.ui:67
+msgid "Type a message..."
+msgstr "Tapez un message..."
+
+#: src/widgets/chat_input.ui:111
+msgid "Attach Image"
+msgstr "Joindre une image"
+
+#: src/widgets/chat_input.ui:125
+msgid "Clear Image"
+msgstr "Retirer l’image"
+
+#: src/widgets/json_view.py:50
+msgid "JSON files"
+msgstr "Fichiers JSON"
+
+#: src/widgets/json_view.py:70
+msgid "Import…"
+msgstr "Importer…"
+
+#: src/widgets/json_view.py:73 src/widgets/knowledge_view.py:507
+#: src/widgets/knowledge_view.py:690
+msgid "Apply"
+msgstr "Appliquer"
+
+#: src/widgets/json_view.py:87
+msgid "Content"
+msgstr "Contenu"
+
+#: src/widgets/json_view.py:160 src/widgets/options_panel.py:41
+msgid "JSON Schema"
+msgstr "Schéma JSON"
+
+#: src/widgets/json_view.py:161
+msgid ""
+"Paste or import a self-contained JSON Schema. Describe the expected JSON in your "
+"prompt."
+msgstr ""
+"Collez ou importez un schéma JSON autonome. Décrivez le JSON attendu dans votre "
+"invite."
+
+#: src/widgets/json_view.py:162
+msgid "Import JSON Schema"
+msgstr "Importer un schéma JSON"
+
+#: src/widgets/json_view.py:182
+msgid "Raw"
+msgstr "Brut"
+
+#: src/widgets/json_view.py:184
+msgid "Copy JSON"
+msgstr "Copier le JSON"
+
+#: src/widgets/json_view.py:186
+msgid "Save JSON…"
+msgstr "Enregistrer le JSON…"
+
+#: src/widgets/json_view.py:188
+msgid "Copy Raw"
+msgstr "Copier le contenu brut"
+
+#: src/widgets/json_view.py:204
+msgid "Matches JSON Schema"
+msgstr "Conforme au schéma JSON"
+
+#: src/widgets/json_view.py:204
+msgid "Valid JSON"
+msgstr "JSON valide"
+
+#: src/widgets/json_view.py:205
+msgid "Incomplete JSON response"
+msgstr "Réponse JSON incomplète"
+
+#: src/widgets/json_view.py:206
+msgid "Invalid JSON"
+msgstr "JSON invalide"
+
+#: src/widgets/json_view.py:206
+msgid "JSON does not match the schema"
+msgstr "Le JSON n’est pas conforme au schéma"
+
+#: src/widgets/json_view.py:207
+msgid "Schema validation could not finish"
+msgstr "Impossible de terminer la validation du schéma"
+
+#: src/widgets/json_view.py:208
+msgid "JSON response"
+msgstr "Réponse JSON"
+
+#: src/widgets/json_view.py:226
+msgid "Save JSON"
+msgstr "Enregistrer le JSON"
+
+#: src/widgets/json_view.py:229
+msgid "JSON could not be saved"
+msgstr "Impossible d’enregistrer le JSON"
+
+#: src/widgets/knowledge_import.py:12
+msgid "Add Text"
+msgstr "Ajouter du texte"
+
+#: src/widgets/knowledge_import.py:13
+msgid "Paste text, choose a collection, and review it before adding."
+msgstr "Collez du texte, choisissez une collection et vérifiez-le avant de l’ajouter."
+
+#: src/widgets/knowledge_import.py:14 src/widgets/knowledge_import.py:85
+#: src/widgets/knowledge_view.py:1225 src/widgets/url_import.py:66
+#: src/widgets/url_import.py:231
+msgid "Add to Collection"
+msgstr "Ajouter à la collection"
+
+#: src/widgets/knowledge_import.py:22 src/widgets/knowledge_import.py:79
+#: src/widgets/url_import.py:53
+msgid "Document title"
+msgstr "Titre du document"
+
+#: src/widgets/knowledge_import.py:50 src/widgets/knowledge_import.py:214
+#: src/widgets/knowledge_import.py:246 src/widgets/url_import.py:353
+msgid "Added to Collection — Needs Attention"
+msgstr "Ajouté à la collection — Intervention requise"
+
+#: src/widgets/knowledge_import.py:60
+msgid "Add Files"
+msgstr "Ajouter des fichiers"
+
+#: src/widgets/knowledge_import.py:67
+msgid ""
+"Import PDF or UTF-8 text files, including Markdown and source code. Maximum size: 50 "
+"MiB per file. Review one file at a time before adding."
+msgstr ""
+"Importez des PDF ou des fichiers texte UTF-8, y compris du Markdown et du code "
+"source. Taille maximale : 50 Mio par fichier. Vérifiez les fichiers un par un avant "
+"de les ajouter."
+
+#: src/widgets/knowledge_import.py:68
+msgid "Choose Files…"
+msgstr "Choisir des fichiers…"
+
+#: src/widgets/knowledge_import.py:81
+msgid "Extracted content (read-only)"
+msgstr "Contenu extrait (lecture seule)"
+
+#: src/widgets/knowledge_import.py:87 src/widgets/url_import.py:69
+msgid "Skip"
+msgstr "Ignorer"
+
+#: src/widgets/knowledge_import.py:103
+msgid "Text and PDF files"
+msgstr "Fichiers texte et PDF"
+
+#: src/widgets/knowledge_import.py:108
+msgid "All files"
+msgstr "Tous les fichiers"
+
+#: src/widgets/knowledge_import.py:113
+msgid "Choose Text or PDF Files"
+msgstr "Choisir des fichiers texte ou PDF"
+
+#: src/widgets/knowledge_import.py:146
+msgid "Extracting"
+msgstr "Extraction"
+
+#: src/widgets/knowledge_import.py:146
+msgid "Ready to Review"
+msgstr "Prêt à être vérifié"
+
+#: src/widgets/knowledge_import.py:147
+msgid "Adding to Collection"
+msgstr "Ajout à la collection"
+
+#: src/widgets/knowledge_import.py:147 src/widgets/knowledge_import.py:246
+#: src/widgets/url_import.py:115 src/widgets/url_import.py:353
+msgid "Added to Collection — Preparing"
+msgstr "Ajouté à la collection — Préparation"
+
+#: src/widgets/knowledge_import.py:148 src/widgets/knowledge_view.py:67
+msgid "Needs Attention"
+msgstr "Intervention requise"
+
+#: src/widgets/knowledge_import.py:148 src/widgets/url_import.py:115
+msgid "Skipped"
+msgstr "Ignoré"
+
+#: src/widgets/knowledge_import.py:158
+msgid ""
+"Review complete. Added documents prepare in the background; their status is shown in "
+"the collection."
+msgstr ""
+"Vérification terminée. Les documents ajoutés sont préparés en arrière-plan ; leur "
+"état apparaît dans la collection."
+
+#: src/widgets/knowledge_import.py:166
+msgid "Extracting text…"
+msgstr "Extraction du texte…"
+
+#: src/widgets/knowledge_import.py:193
+#, python-brace-format
+msgid "Import file: {0}"
+msgstr "Importer le fichier : {0}"
+
+#: src/widgets/knowledge_import.py:246 src/widgets/url_import.py:353
+msgid "Ready to Search"
+msgstr "Prêt pour la recherche"
+
+#: src/widgets/knowledge_view.py:65
+msgid "Ready"
+msgstr "Prêt"
+
+#: src/widgets/knowledge_view.py:69
+msgid "Preparing"
+msgstr "Préparation"
+
+#: src/widgets/knowledge_view.py:70
+msgid "Needs Preparation"
+msgstr "Préparation requise"
+
+#: src/widgets/knowledge_view.py:75
+msgid "Native dimensions"
+msgstr "Dimensions natives"
+
+#: src/widgets/knowledge_view.py:81
+#, python-brace-format
+msgid "Page {0}"
+msgstr "Page {0}"
+
+#: src/widgets/knowledge_view.py:148
+msgid "Embedding server"
+msgstr "Serveur de plongement"
+
+#: src/widgets/knowledge_view.py:149
+msgid "Embedding model"
+msgstr "Modèle de plongement"
+
+#: src/widgets/knowledge_view.py:151
+msgid "Manage Models…"
+msgstr "Gérer les modèles…"
+
+#: src/widgets/knowledge_view.py:152
+msgid "Refresh"
+msgstr "Actualiser"
+
+#: src/widgets/knowledge_view.py:196
+msgid "Checking embedding models…"
+msgstr "Vérification des modèles de plongement…"
+
+#: src/widgets/knowledge_view.py:223
+msgid "No embedding models found. Download one in Manage Models, then refresh."
+msgstr ""
+"Aucun modèle de plongement trouvé. Téléchargez-en un dans Gérer les modèles, puis "
+"actualisez la liste."
+
+#: src/widgets/knowledge_view.py:232 src/widgets/knowledge_view.py:1202
+msgid "Create Embeddings"
+msgstr "Créer des plongements"
+
+#: src/widgets/knowledge_view.py:240
+msgid "Plain"
+msgstr "Sans préfixe"
+
+#: src/widgets/knowledge_view.py:240
+msgid "EmbeddingGemma retrieval"
+msgstr "Recherche EmbeddingGemma"
+
+#: src/widgets/knowledge_view.py:240
+msgid "Nomic retrieval"
+msgstr "Recherche Nomic"
+
+#: src/widgets/knowledge_view.py:240
+msgid "Qwen3 retrieval"
+msgstr "Recherche Qwen3"
+
+#: src/widgets/knowledge_view.py:240
+msgid "Custom prefixes"
+msgstr "Préfixes personnalisés"
+
+#: src/widgets/knowledge_view.py:241
+msgid "Advanced Embedding Settings"
+msgstr "Paramètres avancés de plongement"
+
+#: src/widgets/knowledge_view.py:242
+msgid "Embedding format"
+msgstr "Format de plongement"
+
+#: src/widgets/knowledge_view.py:245
+msgid "Document prefix"
+msgstr "Préfixe de document"
+
+#: src/widgets/knowledge_view.py:246
+msgid "Query prefix"
+msgstr "Préfixe de requête"
+
+#: src/widgets/knowledge_view.py:252
+msgid "Dimensions"
+msgstr "Dimensions"
+
+#: src/widgets/knowledge_view.py:252
+msgid "Chunk size (characters)"
+msgstr "Taille des segments (caractères)"
+
+#: src/widgets/knowledge_view.py:253
+msgid "Overlap (characters)"
+msgstr "Chevauchement (caractères)"
+
+#: src/widgets/knowledge_view.py:257
+msgid "Create"
+msgstr "Créer"
+
+#: src/widgets/knowledge_view.py:297
+msgid "Select an embedding model."
+msgstr "Sélectionnez un modèle de plongement."
+
+#: src/widgets/knowledge_view.py:299
+msgid "The host did not provide a model digest."
+msgstr "L’hôte n’a pas fourni d’empreinte du modèle."
+
+#: src/widgets/knowledge_view.py:305
+msgid "Overlap must be smaller than the chunk size."
+msgstr "Le chevauchement doit être inférieur à la taille des segments."
+
+#: src/widgets/knowledge_view.py:311
+msgid ""
+"An embedding model makes documents searchable. It can differ from the model used for "
+"chat."
+msgstr ""
+"Un modèle de plongement permet de rechercher dans les documents. Il peut être "
+"différent du modèle utilisé pour la discussion."
+
+#: src/widgets/knowledge_view.py:312
+msgid "Copy Collection with New Settings"
+msgstr "Copier la collection avec de nouveaux paramètres"
+
+#: src/widgets/knowledge_view.py:312
+msgid "Create Collection"
+msgstr "Créer une collection"
+
+#: src/widgets/knowledge_view.py:313 src/widgets/knowledge_view.py:316
+msgid "Collection name"
+msgstr "Nom de la collection"
+
+#: src/widgets/knowledge_view.py:314
+#, python-brace-format
+msgid "{0} (copy)"
+msgstr "{0} (copie)"
+
+#: src/widgets/knowledge_view.py:343
+msgid "Destination collection"
+msgstr "Collection de destination"
+
+#: src/widgets/knowledge_view.py:344 src/widgets/knowledge_view.py:852
+msgid "New Collection…"
+msgstr "Nouvelle collection…"
+
+#: src/widgets/knowledge_view.py:351
+msgid "Choose a collection"
+msgstr "Choisir une collection"
+
+#: src/widgets/knowledge_view.py:362
+msgid "Choose a destination collection, or create a new one."
+msgstr "Choisissez une collection de destination ou créez-en une."
+
+#: src/widgets/knowledge_view.py:372
+msgid "Add Existing Documents"
+msgstr "Ajouter des documents existants"
+
+#: src/widgets/knowledge_view.py:377 src/widgets/knowledge_view.py:859
+#: src/widgets/knowledge_view.py:956
+msgid "Search documents"
+msgstr "Rechercher des documents"
+
+#: src/widgets/knowledge_view.py:382 src/widgets/knowledge_view.py:1237
+msgid "Add"
+msgstr "Ajouter"
+
+#: src/widgets/knowledge_view.py:397
+msgid "All library documents are already in this collection."
+msgstr "Tous les documents de la bibliothèque sont déjà dans cette collection."
+
+#: src/widgets/knowledge_view.py:415
+#, python-brace-format
+msgid "Sources used ({0})"
+msgstr "Sources utilisées ({0})"
+
+#: src/widgets/knowledge_view.py:418
+#, python-brace-format
+msgid "Search query: {0}"
+msgstr "Requête de recherche : {0}"
+
+#: src/widgets/knowledge_view.py:422
+msgid "Cosine similarity · Higher is closer"
+msgstr "Similarité cosinus · Plus élevée signifie plus proche"
+
+#: src/widgets/knowledge_view.py:423
+msgid "Euclidean distance (L2) · Lower is closer"
+msgstr "Distance euclidienne (L2) · Plus faible signifie plus proche"
+
+#: src/widgets/knowledge_view.py:424
+msgid "Manhattan distance (L1) · Lower is closer"
+msgstr "Distance de Manhattan (L1) · Plus faible signifie plus proche"
+
+#: src/widgets/knowledge_view.py:425
+msgid "Unknown similarity measure"
+msgstr "Mesure de similarité inconnue"
+
+#: src/widgets/knowledge_view.py:427 src/widgets/knowledge_view.py:1198
+#: src/widgets/url_import.py:334
+#, python-brace-format
+msgid "Collections: {0}"
+msgstr "Collections : {0}"
+
+#: src/widgets/knowledge_view.py:430
+#, python-brace-format
+msgid "Similarity: {0:.4f}"
+msgstr "Similarité : {0:.4f}"
+
+#: src/widgets/knowledge_view.py:430
+#, python-brace-format
+msgid "Distance: {0:.4f}"
+msgstr "Distance : {0:.4f}"
+
+#: src/widgets/knowledge_view.py:433
+#, python-brace-format
+msgid "Pages: {0}"
+msgstr "Pages : {0}"
+
+#: src/widgets/knowledge_view.py:438 src/widgets/knowledge_view.py:1193
+msgid "Open Source URL"
+msgstr "Ouvrir l’URL source"
+
+#: src/widgets/knowledge_view.py:440 src/widgets/knowledge_view.py:1195
+#, python-brace-format
+msgid "Fetched: {0}"
+msgstr "Récupéré le : {0}"
+
+#: src/widgets/knowledge_view.py:441
+msgid "Shortened to fit the source budget."
+msgstr "Raccourci pour respecter la limite des sources."
+
+#: src/widgets/knowledge_view.py:444
+msgid "Scores compare embeddings; they are not confidence estimates."
+msgstr "Les scores comparent les plongements ; ce ne sont pas des estimations de confiance."
+
+#: src/widgets/knowledge_view.py:449
+msgid "Knowledge Sources"
+msgstr "Sources de connaissances"
+
+#: src/widgets/knowledge_view.py:449 src/widgets/knowledge_view.py:499
+#: src/widgets/knowledge_view.py:502
+msgid "Test Search"
+msgstr "Tester la recherche"
+
+#: src/widgets/knowledge_view.py:456 src/widgets/knowledge_view.py:956
+msgid "Search collections"
+msgstr "Rechercher des collections"
+
+#: src/widgets/knowledge_view.py:461
+msgid "Search Settings"
+msgstr "Paramètres de recherche"
+
+#: src/widgets/knowledge_view.py:464
+msgid "Embedding configuration (from selected collections)"
+msgstr "Configuration de plongement (des collections sélectionnées)"
+
+#: src/widgets/knowledge_view.py:474
+msgid ""
+"The query must use the same embedding configuration as the selected collections. A "
+"compatible server can be chosen here."
+msgstr ""
+"La requête doit utiliser la même configuration de plongement que les collections "
+"sélectionnées. Vous pouvez choisir un serveur compatible ici."
+
+#: src/widgets/knowledge_view.py:476
+msgid ""
+"This chat has older individual sources. Applying a collection selection replaces "
+"them. Closing this dialog keeps them unchanged."
+msgstr ""
+"Cette discussion contient d’anciennes sources individuelles. L’application d’une "
+"sélection de collections les remplace. La fermeture de cette boîte de dialogue les "
+"conserve."
+
+#: src/widgets/knowledge_view.py:481
+msgid "Maximum passages"
+msgstr "Nombre maximal de passages"
+
+#: src/widgets/knowledge_view.py:481
+msgid "Source budget (characters)"
+msgstr "Limite des sources (caractères)"
+
+#: src/widgets/knowledge_view.py:484
+msgid "Similarity measure"
+msgstr "Mesure de similarité"
+
+#: src/widgets/knowledge_view.py:485
+msgid "Cosine similarity"
+msgstr "Similarité cosinus"
+
+#: src/widgets/knowledge_view.py:485
+msgid "Euclidean distance (L2)"
+msgstr "Distance euclidienne (L2)"
+
+#: src/widgets/knowledge_view.py:485
+msgid "Manhattan distance (L1)"
+msgstr "Distance de Manhattan (L1)"
+
+#: src/widgets/knowledge_view.py:500
+msgid "Enter a search query"
+msgstr "Saisir une requête de recherche"
+
+#: src/widgets/knowledge_view.py:554
+msgid "Minimum cosine similarity"
+msgstr "Similarité cosinus minimale"
+
+#: src/widgets/knowledge_view.py:554
+msgid "Maximum distance"
+msgstr "Distance maximale"
+
+#: src/widgets/knowledge_view.py:555
+msgid "No minimum"
+msgstr "Aucun minimum"
+
+#: src/widgets/knowledge_view.py:555
+msgid "No maximum"
+msgstr "Aucun maximum"
+
+#: src/widgets/knowledge_view.py:560
+msgid "Higher is closer (−1 to 1). This is the default for semantic search."
+msgstr ""
+"Plus élevée signifie plus proche (−1 à 1). C’est la mesure par défaut pour la "
+"recherche sémantique."
+
+#: src/widgets/knowledge_view.py:561
+msgid ""
+"Lower is closer. With normalized embeddings, Euclidean and cosine usually rank "
+"results alike."
+msgstr ""
+"Plus faible signifie plus proche. Avec des plongements normalisés, la distance "
+"euclidienne et la similarité cosinus classent généralement les résultats de la même "
+"manière."
+
+#: src/widgets/knowledge_view.py:562
+msgid ""
+"Lower is closer. Adds absolute differences between vector components and can rank "
+"results differently from cosine."
+msgstr ""
+"Plus faible signifie plus proche. Additionne les différences absolues entre les "
+"composantes des vecteurs et peut classer les résultats différemment de la similarité "
+"cosinus."
+
+#: src/widgets/knowledge_view.py:570 src/widgets/knowledge_view.py:855
+#: src/widgets/knowledge_view.py:949
+msgid "Collections"
+msgstr "Collections"
+
+#: src/widgets/knowledge_view.py:571
+msgid ""
+"Choose collections to search. New documents added to them are included automatically."
+" All documents must be ready."
+msgstr ""
+"Choisissez les collections dans lesquelles rechercher. Les nouveaux documents ajoutés"
+" sont inclus automatiquement. Tous les documents doivent être prêts."
+
+#: src/widgets/knowledge_view.py:575
+msgid "Some selected collections were deleted. Choose sources again."
+msgstr ""
+"Certaines collections sélectionnées ont été supprimées. Sélectionnez à nouveau les "
+"sources."
+
+#: src/widgets/knowledge_view.py:576
+msgid "Clear missing collections"
+msgstr "Retirer les collections manquantes"
+
+#: src/widgets/knowledge_view.py:581 src/widgets/knowledge_view.py:626
+#, python-brace-format
+msgid "{0} · {1}/{2} documents ready"
+msgstr "{0} · Documents prêts : {1}/{2}"
+
+#: src/widgets/knowledge_view.py:583
+#, python-brace-format
+msgid "Different embedding configuration: {0}"
+msgstr "Configuration de plongement différente : {0}"
+
+#: src/widgets/knowledge_view.py:590
+msgid "No matching collections"
+msgstr "Aucune collection correspondante"
+
+#: src/widgets/knowledge_view.py:592
+msgid "Create a collection and add text, files, or URLs in the Knowledge Library."
+msgstr ""
+"Créez une collection et ajoutez du texte, des fichiers ou des URL dans la "
+"bibliothèque de connaissances."
+
+#: src/widgets/knowledge_view.py:593
+msgid "Open Knowledge Library"
+msgstr "Ouvrir la bibliothèque de connaissances"
+
+#: src/widgets/knowledge_view.py:628
+msgid ""
+"Uses different embedding settings. Clear the current selection to choose this "
+"collection."
+msgstr ""
+"Utilise des paramètres de plongement différents. Effacez la sélection actuelle pour "
+"choisir cette collection."
+
+#: src/widgets/knowledge_view.py:639
+msgid "Select at least one collection. Create collections in Knowledge first if needed."
+msgstr ""
+"Sélectionnez au moins une collection. Si nécessaire, créez d’abord des collections "
+"dans Connaissances."
+
+#: src/widgets/knowledge_view.py:644
+msgid "This model digest does not match the selected embedding configuration."
+msgstr ""
+"L’empreinte de ce modèle ne correspond pas à la configuration de plongement "
+"sélectionnée."
+
+#: src/widgets/knowledge_view.py:679
+msgid "Document Chunks"
+msgstr "Segments du document"
+
+#: src/widgets/knowledge_view.py:688
+msgid "Select all"
+msgstr "Tout sélectionner"
+
+#: src/widgets/knowledge_view.py:689
+msgid "Select none"
+msgstr "Tout désélectionner"
+
+#: src/widgets/knowledge_view.py:693
+msgid "Load more chunks"
+msgstr "Charger plus de segments"
+
+#: src/widgets/knowledge_view.py:730
+#, python-brace-format
+msgid "Chunk {0}"
+msgstr "Segment {0}"
+
+#: src/widgets/knowledge_view.py:736
+#, python-brace-format
+msgid "Characters {0}–{1}"
+msgstr "Caractères {0}–{1}"
+
+#: src/widgets/knowledge_view.py:739
+msgid "Inspect vector"
+msgstr "Examiner le vecteur"
+
+#: src/widgets/knowledge_view.py:753
+msgid "This vector was deleted."
+msgstr "Ce vecteur a été supprimé."
+
+#: src/widgets/knowledge_view.py:756
+msgid "Embedding Vector"
+msgstr "Vecteur de plongement"
+
+#: src/widgets/knowledge_view.py:756
+msgid "Stored normalized vector. Changes are not saved."
+msgstr "Vecteur normalisé enregistré. Les modifications ne sont pas enregistrées."
+
+#: src/widgets/knowledge_view.py:769
+msgid "Use Knowledge"
+msgstr "Utiliser les connaissances"
+
+#: src/widgets/knowledge_view.py:770
+msgid "Choose sources…"
+msgstr "Choisir les sources…"
+
+#: src/widgets/knowledge_view.py:774
+msgid "Search query override for the next turn (optional)"
+msgstr "Remplacer la requête de recherche du prochain tour (facultatif)"
+
+#: src/widgets/knowledge_view.py:775
+msgid "Use a different search query for the next message"
+msgstr "Utiliser une autre requête de recherche pour le prochain message"
+
+#: src/widgets/knowledge_view.py:776
+msgid "Search Query Override"
+msgstr "Remplacer la requête de recherche"
+
+#: src/widgets/knowledge_view.py:795
+msgid "Choose collections to search."
+msgstr "Choisissez les collections dans lesquelles rechercher."
+
+#: src/widgets/knowledge_view.py:797
+#, python-brace-format
+msgid "Older individual sources: {0}. Choose collections to replace them."
+msgstr "Anciennes sources individuelles : {0}. Choisissez des collections pour les remplacer."
+
+#: src/widgets/knowledge_view.py:799
+#, python-brace-format
+msgid "{0}: {1}/{2} ready"
+msgstr "{0} : {1}/{2} prêts"
+
+#: src/widgets/knowledge_view.py:855 src/widgets/knowledge_view.py:949
+msgid "All Documents"
+msgstr "Tous les documents"
+
+#: src/widgets/knowledge_view.py:855 src/widgets/knowledge_view.py:949
+msgid "Ungrouped Documents"
+msgstr "Documents non regroupés"
+
+#: src/widgets/knowledge_view.py:857
+msgid "Library"
+msgstr "Bibliothèque"
+
+#: src/widgets/knowledge_view.py:864 src/widgets/knowledge_view.py:908
+#: src/widgets/knowledge_view.py:1031
+msgid "Knowledge Library"
+msgstr "Bibliothèque de connaissances"
+
+#: src/widgets/knowledge_view.py:870
+msgid "Document"
+msgstr "Document"
+
+#: src/widgets/knowledge_view.py:879
+msgid "Background Tasks"
+msgstr "Tâches en arrière-plan"
+
+#: src/widgets/knowledge_view.py:963 src/widgets/knowledge_view.py:1042
+#, python-brace-format
+msgid "{0}/{1} documents ready"
+msgstr "Documents prêts : {0}/{1}"
+
+#: src/widgets/knowledge_view.py:973
+#, python-brace-format
+msgid "{0} character"
+msgid_plural "{0} characters"
+msgstr[0] "{0} caractère"
+msgstr[1] "{0} caractères"
+
+#: src/widgets/knowledge_view.py:979
+msgid "No matches"
+msgstr "Aucun résultat"
+
+#: src/widgets/knowledge_view.py:980
+msgid "Create a collection to organize text, files, and URLs."
+msgstr "Créez une collection pour organiser du texte, des fichiers et des URL."
+
+#: src/widgets/knowledge_view.py:981
+msgid "Add text, files, or URLs to a collection."
+msgstr "Ajoutez du texte, des fichiers ou des URL à une collection."
+
+#: src/widgets/knowledge_view.py:1033
+msgid "Knowledge Collections"
+msgstr "Collections de connaissances"
+
+#: src/widgets/knowledge_view.py:1034
+msgid ""
+"Group documents into collections, then select a collection in chat to ask questions "
+"about its content."
+msgstr ""
+"Regroupez les documents en collections, puis sélectionnez une collection dans la "
+"discussion pour poser des questions sur son contenu."
+
+#: src/widgets/knowledge_view.py:1035
+msgid "Create Collection…"
+msgstr "Créer une collection…"
+
+#: src/widgets/knowledge_view.py:1038
+msgid "Select a document to inspect it. New imports always ask for a destination collection."
+msgstr ""
+"Sélectionnez un document pour l’examiner. Les nouvelles importations demandent "
+"toujours une collection de destination."
+
+#: src/widgets/knowledge_view.py:1043
+msgid ""
+"Add text, files, or URLs to this collection. Gnollama prepares the documents "
+"automatically so chats can search them."
+msgstr ""
+"Ajoutez du texte, des fichiers ou des URL à cette collection. Gnollama prépare "
+"automatiquement les documents pour permettre leur recherche dans les discussions."
+
+#: src/widgets/knowledge_view.py:1045
+msgid "Add Existing Documents…"
+msgstr "Ajouter des documents existants…"
+
+#: src/widgets/knowledge_view.py:1047
+msgid "Use in New Chat"
+msgstr "Utiliser dans une nouvelle discussion"
+
+#: src/widgets/knowledge_view.py:1051
+msgid "Prepare Documents"
+msgstr "Préparer les documents"
+
+#: src/widgets/knowledge_view.py:1052
+msgid "Embedding Details"
+msgstr "Détails des plongements"
+
+#: src/widgets/knowledge_view.py:1054
+#, python-brace-format
+msgid "Chunk size: {0} characters · Overlap: {1} characters"
+msgstr "Taille des segments en caractères : {0} · Chevauchement en caractères : {1}"
+
+#: src/widgets/knowledge_view.py:1059 src/widgets/knowledge_view.py:1203
+msgid "Rename"
+msgstr "Renommer"
+
+#: src/widgets/knowledge_view.py:1060
+msgid "Copy with New Settings"
+msgstr "Copier avec de nouveaux paramètres"
+
+#: src/widgets/knowledge_view.py:1061 src/widgets/knowledge_view.py:1132
+msgid "Change Embedding Model"
+msgstr "Changer le modèle de plongement"
+
+#: src/widgets/knowledge_view.py:1062 src/widgets/knowledge_view.py:1122
+msgid "Delete Collection"
+msgstr "Supprimer la collection"
+
+#: src/widgets/knowledge_view.py:1067
+msgid "Collection Options"
+msgstr "Options de la collection"
+
+#: src/widgets/knowledge_view.py:1080
+msgid "Remove from Collection"
+msgstr "Retirer de la collection"
+
+#: src/widgets/knowledge_view.py:1088
+msgid "Add Text…"
+msgstr "Ajouter du texte…"
+
+#: src/widgets/knowledge_view.py:1088
+msgid "Add Files…"
+msgstr "Ajouter des fichiers…"
+
+#: src/widgets/knowledge_view.py:1089
+msgid "Add URLs…"
+msgstr "Ajouter des URL…"
+
+#: src/widgets/knowledge_view.py:1108
+msgid "Rename Collection"
+msgstr "Renommer la collection"
+
+#: src/widgets/knowledge_view.py:1120
+msgid "Delete Collection?"
+msgstr "Supprimer la collection ?"
+
+#: src/widgets/knowledge_view.py:1120
+#, python-brace-format
+msgid ""
+"Delete “{0}”? Its documents and embeddings stay in the library. Chats selecting this "
+"collection will need new sources; saved answers keep their original passages."
+msgstr ""
+"Supprimer « {0} » ? Ses documents et plongements restent dans la bibliothèque. Les "
+"discussions utilisant cette collection auront besoin de nouvelles sources ; les "
+"réponses enregistrées conservent leurs passages d’origine."
+
+#: src/widgets/knowledge_view.py:1135
+msgid ""
+"Choose a host and embedding model matching the collection’s original model digest. "
+"Embedding settings stay the same."
+msgstr ""
+"Choisissez un hôte et un modèle de plongement correspondant à l’empreinte du modèle "
+"d’origine de la collection. Les paramètres de plongement restent inchangés."
+
+#: src/widgets/knowledge_view.py:1163
+msgid "Original model available"
+msgstr "Modèle d’origine disponible"
+
+#: src/widgets/knowledge_view.py:1164
+msgid ""
+"Unavailable — the original model changed or was removed. Choose a compatible server "
+"for searches."
+msgstr ""
+"Indisponible — le modèle d’origine a changé ou a été supprimé. Choisissez un serveur "
+"compatible pour les recherches."
+
+#: src/widgets/knowledge_view.py:1166
+#, python-brace-format
+msgid "Unavailable: {0}"
+msgstr "Indisponible : {0}"
+
+#: src/widgets/knowledge_view.py:1187
+msgid "Select a document to inspect its text and embeddings."
+msgstr "Sélectionnez un document pour examiner son texte et ses plongements."
+
+#: src/widgets/knowledge_view.py:1196
+msgid "Fetch Again…"
+msgstr "Récupérer à nouveau…"
+
+#: src/widgets/knowledge_view.py:1200
+msgid "Back to Collection"
+msgstr "Revenir à la collection"
+
+#: src/widgets/knowledge_view.py:1201
+msgid "Preview Text"
+msgstr "Aperçu du texte"
+
+#: src/widgets/knowledge_view.py:1204
+msgid "Delete Document"
+msgstr "Supprimer le document"
+
+#: src/widgets/knowledge_view.py:1205
+msgid "Add to Collection…"
+msgstr "Ajouter à la collection…"
+
+#: src/widgets/knowledge_view.py:1210
+msgid "Checking model availability…"
+msgstr "Vérification de la disponibilité du modèle…"
+
+#: src/widgets/knowledge_view.py:1213
+#, python-brace-format
+msgid "Chunks: {0}"
+msgstr "Segments : {0}"
+
+#: src/widgets/knowledge_view.py:1216
+msgid "Inspect Chunks"
+msgstr "Examiner les segments"
+
+#: src/widgets/knowledge_view.py:1217
+msgid "Check Model"
+msgstr "Vérifier le modèle"
+
+#: src/widgets/knowledge_view.py:1218
+msgid "Delete Index"
+msgstr "Supprimer l’index"
+
+#: src/widgets/knowledge_view.py:1245
+#, python-brace-format
+msgid "Background Tasks · {0} running"
+msgstr "Tâches en arrière-plan · En cours : {0}"
+
+#: src/widgets/knowledge_view.py:1245
+msgid "Recent Background Tasks"
+msgstr "Tâches récentes en arrière-plan"
+
+#: src/widgets/knowledge_view.py:1252
+msgid "Details"
+msgstr "Détails"
+
+#: src/widgets/knowledge_view.py:1260
+msgid "Stop Shared Embedding Build?"
+msgstr "Arrêter la construction partagée des plongements ?"
+
+#: src/widgets/knowledge_view.py:1261
+#, python-brace-format
+msgid ""
+"These collections use this build: {0}. They will need a retry before chat search can "
+"use them."
+msgstr ""
+"La construction des plongements est partagée par ces collections : {0}. Une nouvelle "
+"tentative sera nécessaire avant de pouvoir les utiliser pour rechercher dans les "
+"discussions."
+
+#: src/widgets/knowledge_view.py:1263
+msgid "Keep Building"
+msgstr "Continuer la construction"
+
+#: src/widgets/knowledge_view.py:1264
+msgid "Stop Build"
+msgstr "Arrêter la construction"
+
+#: src/widgets/knowledge_view.py:1271
+msgid "Saved source text. Use Fetch Again to update this URL document."
+msgstr ""
+"Texte source enregistré. Utilisez Récupérer à nouveau pour mettre à jour ce document "
+"issu d’une URL."
+
+#: src/widgets/knowledge_view.py:1271
+msgid "Saved source text. Import revised content as a new document."
+msgstr "Texte source enregistré. Importez le contenu révisé en tant que nouveau document."
+
+#: src/widgets/knowledge_view.py:1292
+msgid "This Text Is Already Saved"
+msgstr "Ce texte est déjà enregistré"
+
+#: src/widgets/knowledge_view.py:1294
+msgid "Open Existing"
+msgstr "Ouvrir le document existant"
+
+#: src/widgets/knowledge_view.py:1296
+msgid "Add Existing to Collection"
+msgstr "Ajouter le document existant à la collection"
+
+#: src/widgets/knowledge_view.py:1334
+msgid "Rename Document"
+msgstr "Renommer le document"
+
+#: src/widgets/knowledge_view.py:1348
+msgid "Cancel this document’s indexing job before deleting it."
+msgstr "Annulez la tâche d’indexation de ce document avant de le supprimer."
+
+#: src/widgets/knowledge_view.py:1350
+msgid "Delete Document?"
+msgstr "Supprimer le document ?"
+
+#: src/widgets/knowledge_view.py:1350
+msgid "Delete Embedding Index?"
+msgstr "Supprimer l’index de plongements ?"
+
+#: src/widgets/knowledge_view.py:1351
+msgid ""
+"Chats selecting this data will need new sources. Passages already saved with answers "
+"remain in chat history."
+msgstr ""
+"Les discussions utilisant ces données auront besoin de nouvelles sources. Les "
+"passages déjà enregistrés avec les réponses restent dans l’historique."
+
+#: src/widgets/knowledge_view.py:1352
+msgid "The saved source text and all its indexes will be deleted."
+msgstr "Le texte source enregistré et tous ses index seront supprimés."
+
+#: src/widgets/knowledge_view.py:1352
+msgid "The saved source text will be kept."
+msgstr "Le texte source enregistré sera conservé."
+
+#: src/widgets/knowledge_view.py:1355
+#, python-brace-format
+msgid "Affected collections: {0}."
+msgstr "Collections concernées : {0}."
+
+#: src/widgets/knowledge_view.py:1356
+msgid "This document will be removed from their membership."
+msgstr "Ce document sera retiré de ces collections."
+
+#: src/widgets/knowledge_view.py:1357
+msgid "Their documents will need embeddings rebuilt."
+msgstr "Les plongements de leurs documents devront être reconstruits."
+
+#: src/widgets/knowledge_view.py:1376
+msgid "Embedding Model Availability"
+msgstr "Disponibilité du modèle de plongement"
+
+#: src/widgets/knowledge_view.py:1377
+msgid "Checking…"
+msgstr "Vérification…"
+
+#: src/widgets/knowledge_view.py:1380
+msgid "The original model is available on this host."
+msgstr "Le modèle d’origine est disponible sur cet hôte."
+
+#: src/widgets/message_list.py:18
+msgid "Start a Conversation"
+msgstr "Commencer une discussion"
+
+#: src/widgets/message_list.py:19
+msgid ""
+"Choose a model and enter a message. Select knowledge collections to ask questions "
+"about your documents."
+msgstr ""
+"Choisissez un modèle et saisissez un message. Sélectionnez des collections de "
+"connaissances pour poser des questions sur vos documents."
+
+#: src/widgets/options_panel.py:41
+msgid "Text"
+msgstr "Texte"
+
+#: src/widgets/options_panel.py:41
+msgid "JSON"
+msgstr "JSON"
+
+#: src/widgets/options_panel.py:43 src/widgets/options_panel.py:72
+msgid "Server default"
+msgstr "Valeur par défaut du serveur"
+
+#: src/widgets/options_panel.py:43
+msgid "Unload after reply"
+msgstr "Décharger après la réponse"
+
+#: src/widgets/options_panel.py:43
+msgid "Five minutes"
+msgstr "Cinq minutes"
+
+#: src/widgets/options_panel.py:44
+msgid "Thirty minutes"
+msgstr "Trente minutes"
+
+#: src/widgets/options_panel.py:44
+msgid "Indefinitely"
+msgstr "Indéfiniment"
+
+#: src/widgets/options_panel.py:44
+msgid "Custom seconds"
+msgstr "Durée personnalisée en secondes"
+
+#: src/widgets/options_panel.py:63
+msgid "Server"
+msgstr "Serveur"
+
+#: src/widgets/options_panel.py:88
+msgid "System Instructions"
+msgstr "Instructions système"
+
+#: src/widgets/options_panel.py:89
+msgid "System prompt"
+msgstr "Invite système"
+
+#: src/widgets/options_panel.py:89
+msgid "Optional instructions applied to this conversation."
+msgstr "Instructions facultatives appliquées à cette discussion."
+
+#: src/widgets/options_panel.py:90
+msgid "Optional instructions"
+msgstr "Instructions facultatives"
+
+#: src/widgets/options_panel.py:91
+msgid "Generation Limits"
+msgstr "Limites de génération"
+
+#: src/widgets/options_panel.py:91
+msgid "Blank fields use the server’s defaults."
+msgstr "Les champs vides utilisent les valeurs par défaut du serveur."
+
+#: src/widgets/options_panel.py:92
+msgid "Context size (tokens)"
+msgstr "Taille du contexte (jetons)"
+
+#: src/widgets/options_panel.py:92
+msgid "Maximum context available to the model; larger values need more memory."
+msgstr ""
+"Contexte maximal disponible pour le modèle ; les valeurs plus élevées nécessitent "
+"davantage de mémoire."
+
+#: src/widgets/options_panel.py:93
+msgid "Maximum output tokens"
+msgstr "Nombre maximal de jetons de sortie"
+
+#: src/widgets/options_panel.py:93
+msgid "Use −1 for unlimited output or −2 to fill the context."
+msgstr "Utilisez −1 pour une sortie illimitée ou −2 pour remplir le contexte."
+
+#: src/widgets/options_panel.py:94
+msgid "Stop sequences"
+msgstr "Séquences d’arrêt"
+
+#: src/widgets/options_panel.py:94
+msgid "Separate sequences with commas. Generation stops when one is produced."
+msgstr ""
+"Séparez les séquences par des virgules. La génération s’arrête dès que l’une d’elles "
+"est produite."
+
+#: src/widgets/options_panel.py:95
+msgid "Sampling"
+msgstr "Échantillonnage"
+
+#: src/widgets/options_panel.py:97
+msgid "Temperature"
+msgstr "Température"
+
+#: src/widgets/options_panel.py:97
+msgid "Higher values increase variation; zero is more predictable."
+msgstr ""
+"Les valeurs plus élevées augmentent la variation ; zéro donne des résultats plus "
+"prévisibles."
+
+#: src/widgets/options_panel.py:98
+msgid "Seed"
+msgstr "Graine"
+
+#: src/widgets/options_panel.py:98
+msgid "An integer used to initialize random sampling."
+msgstr "Un entier utilisé pour initialiser l’échantillonnage aléatoire."
+
+#: src/widgets/options_panel.py:99
+msgid "Top K"
+msgstr "Top K"
+
+#: src/widgets/options_panel.py:99
+msgid "Number of candidate tokens to consider."
+msgstr "Nombre de jetons candidats à prendre en compte."
+
+#: src/widgets/options_panel.py:100
+msgid "Top P"
+msgstr "Top P"
+
+#: src/widgets/options_panel.py:100
+msgid "Cumulative probability cutoff, between 0 and 1."
+msgstr "Seuil de probabilité cumulée, entre 0 et 1."
+
+#: src/widgets/options_panel.py:101
+msgid "Min P"
+msgstr "Min P"
+
+#: src/widgets/options_panel.py:101
+msgid "Minimum relative token probability, between 0 and 1."
+msgstr "Probabilité relative minimale d’un jeton, entre 0 et 1."
+
+#: src/widgets/options_panel.py:103
+msgid "Model Retention"
+msgstr "Maintien du modèle en mémoire"
+
+#: src/widgets/options_panel.py:105
+msgid "Keep model loaded"
+msgstr "Garder le modèle chargé"
+
+#: src/widgets/options_panel.py:108
+msgid "Custom duration (seconds)"
+msgstr "Durée personnalisée (secondes)"
+
+#: src/widgets/options_panel.py:108 src/widgets/options_panel.py:165
+msgid "Enter a positive whole number of seconds."
+msgstr "Saisissez un nombre entier positif de secondes."
+
+#: src/widgets/options_panel.py:110
+msgid "Diagnostics"
+msgstr "Diagnostic"
+
+#: src/widgets/options_panel.py:111
+msgid "Show response statistics"
+msgstr "Afficher les statistiques de la réponse"
+
+#: src/widgets/options_panel.py:112
+msgid "Return token probabilities (logprobs)"
+msgstr "Renvoyer les probabilités des jetons (logprobs)"
+
+#: src/widgets/options_panel.py:115
+msgid "Top logprobs"
+msgstr "Meilleures logprobs"
+
+#: src/widgets/options_panel.py:115
+msgid "Number of alternative token probabilities, from 0 to 20."
+msgstr "Nombre de probabilités de jetons alternatifs, de 0 à 20."
+
+#: src/widgets/options_panel.py:132
+msgid "Chat Settings"
+msgstr "Paramètres de la discussion"
+
+#: src/widgets/options_panel.py:135
+msgid "Done"
+msgstr "Terminé"
+
+#: src/widgets/options_panel.py:177
+msgid "Top logprobs must be between 0 and 20."
+msgstr "Le nombre de meilleures logprobs doit être compris entre 0 et 20."
+
+#: src/widgets/options_panel.py:199
+#, python-brace-format
+msgid "Enabled tools: {0}. Results are supplied manually."
+msgstr "Outils activés : {0}. Les résultats sont fournis manuellement."
+
+#: src/widgets/options_panel.py:199
+msgid "Tool calling is off."
+msgstr "Les appels d’outils sont désactivés."
+
+#: src/widgets/options_panel.py:202
+msgid "Checking tool support…"
+msgstr "Vérification de la prise en charge des outils…"
+
+#: src/widgets/options_panel.py:204
+msgid "This model reports no tool support; you can still test the API."
+msgstr ""
+"Ce modèle indique ne pas prendre en charge les outils ; vous pouvez tout de même "
+"tester l’API."
+
+#: src/widgets/options_panel.py:206
+msgid "Tool support is unknown."
+msgstr "La prise en charge des outils est inconnue."
+
+#: src/widgets/options_panel.py:275
+msgid "No hosts configured"
+msgstr "Aucun hôte configuré"
+
+#: src/widgets/options_panel.py:313 src/widgets/options_panel.py:315
+msgid "Enter a valid number."
+msgstr "Saisissez un nombre valide."
+
+#: src/widgets/options_panel.py:333
+msgid "Value must not be negative."
+msgstr "La valeur ne doit pas être négative."
+
+#: src/widgets/options_panel.py:336
+msgid "Value must be between 0 and 1."
+msgstr "La valeur doit être comprise entre 0 et 1."
+
+#: src/widgets/options_panel.py:338
+msgid "Context size must be positive."
+msgstr "La taille du contexte doit être positive."
+
+#: src/widgets/options_panel.py:340
+msgid "Max tokens must be -2, -1, or a nonnegative integer."
+msgstr "Le nombre maximal de jetons doit être -2, -1 ou un entier positif ou nul."
+
+#: src/widgets/options_panel.ui:20
+msgid "Tool Calling"
+msgstr "Appels d’outils"
+
+#: src/widgets/options_panel.ui:26
+msgid "Edit Tools…"
+msgstr "Modifier les outils…"
+
+#: src/widgets/options_panel.ui:44
+msgid "Output:"
+msgstr "Sortie :"
+
+#: src/widgets/options_panel.ui:56
+msgid "Edit Schema…"
+msgstr "Modifier le schéma…"
+
+#: src/widgets/options_panel.ui:63
+msgid "Chat Settings…"
+msgstr "Paramètres de la discussion…"
+
+#: src/widgets/options_panel.ui:65
+msgid "Generation, Model Retention, and Diagnostics"
+msgstr "Génération, maintien du modèle en mémoire et diagnostic"
+
+#: src/widgets/tool_view.py:10
+msgid "Tool Definitions"
+msgstr "Définitions d’outils"
+
+#: src/widgets/tool_view.py:11
+msgid "Import Tools"
+msgstr "Importer des outils"
+
+#: src/widgets/tool_view.py:12
+msgid ""
+"Define an Ollama tools array. Results are supplied manually. Example prompt: Read "
+"calculator.py, fix add so it adds instead of subtracting, then run python3 -m "
+"unittest -v."
+msgstr ""
+"Définissez un tableau tools pour Ollama. Les résultats sont fournis manuellement. "
+"Exemple d’invite : Lis calculator.py, corrige add pour que la fonction additionne au "
+"lieu de soustraire, puis exécute python3 -m unittest -v."
+
+#: src/widgets/tool_view.py:13
+msgid "Example"
+msgstr "Exemple"
+
+#: src/widgets/tool_view.py:15
+msgid "Export…"
+msgstr "Exporter…"
+
+#: src/widgets/tool_view.py:16
+msgid "Export Tools"
+msgstr "Exporter les outils"
+
+#: src/widgets/tool_view.py:44
+msgid "Malformed tool call"
+msgstr "Appel d’outil mal formé"
+
+#: src/widgets/tool_view.py:45
+#, python-brace-format
+msgid "Tool {0}: {1}"
+msgstr "Outil {0} : {1}"
+
+#: src/widgets/tool_view.py:52
+msgid "Copy Call"
+msgstr "Copier l’appel"
+
+#: src/widgets/tool_view.py:55 src/widgets/tool_view.py:95
+msgid "Enter Result…"
+msgstr "Saisir le résultat…"
+
+#: src/widgets/tool_view.py:70
+msgid "Continue"
+msgstr "Continuer"
+
+#: src/widgets/tool_view.py:73
+msgid "Cancel Tool Round"
+msgstr "Annuler la série d’appels"
+
+#: src/widgets/tool_view.py:83
+msgid "Awaiting manual tool results"
+msgstr "En attente des résultats manuels des outils"
+
+#: src/widgets/tool_view.py:83
+msgid "Tool results submitted"
+msgstr "Résultats des outils envoyés"
+
+#: src/widgets/tool_view.py:84
+msgid "Tool round cancelled"
+msgstr "Série d’appels d’outils annulée"
+
+#: src/widgets/tool_view.py:84
+msgid "Incomplete tool calls"
+msgstr "Appels d’outils incomplets"
+
+#: src/widgets/tool_view.py:85
+msgid "Malformed tool calls cannot be continued"
+msgstr "Impossible de poursuivre avec des appels d’outils mal formés"
+
+#: src/widgets/tool_view.py:95
+msgid "Edit Result…"
+msgstr "Modifier le résultat…"
+
+#: src/widgets/tool_view.py:96
+#, python-brace-format
+msgid "Saved mock result: {0}"
+msgstr "Résultat simulé enregistré : {0}"
+
+#: src/widgets/tool_view.py:96
+msgid "(empty)"
+msgstr "(vide)"
+
+#: src/widgets/tool_view.py:104
+msgid "Mock Tool Result"
+msgstr "Résultat d’outil simulé"
+
+#: src/widgets/tool_view.py:105
+msgid ""
+"Enter the result to send to the model. Text, JSON, and empty results are accepted. No"
+" tool is executed."
+msgstr ""
+"Saisissez le résultat à envoyer au modèle. Le texte, le JSON et les résultats vides "
+"sont acceptés. Aucun outil n’est exécuté."
+
+#: src/widgets/tool_view.py:106
+msgid "Save Result"
+msgstr "Enregistrer le résultat"
+
+#: src/widgets/url_import.py:14
+msgid "Add URLs"
+msgstr "Ajouter des URL"
+
+#: src/widgets/url_import.py:28
+msgid "Paste up to 20 URLs, one per line. Review each page before saving."
+msgstr "Collez jusqu’à 20 URL, une par ligne. Vérifiez chaque page avant de l’enregistrer."
+
+#: src/widgets/url_import.py:36
+msgid "Fetch URLs"
+msgstr "Récupérer les URL"
+
+#: src/widgets/url_import.py:54
+msgid "Refine Extraction"
+msgstr "Affiner l’extraction"
+
+#: src/widgets/url_import.py:55
+msgid ""
+"If the preview includes navigation or misses the article, select the page region to "
+"extract using a CSS selector."
+msgstr ""
+"Si l’aperçu inclut des éléments de navigation ou omet l’article, choisissez la zone "
+"de la page à extraire à l’aide d’un sélecteur CSS."
+
+#: src/widgets/url_import.py:56
+msgid "CSS selector (optional)"
+msgstr "Sélecteur CSS (facultatif)"
+
+#: src/widgets/url_import.py:57
+msgid "For example: main, article, or .article-body"
+msgstr "Par exemple : main, article ou .article-body"
+
+#: src/widgets/url_import.py:59
+msgid "Re-extract"
+msgstr "Extraire à nouveau"
+
+#: src/widgets/url_import.py:62
+msgid "Extracted content (editable)"
+msgstr "Contenu extrait (modifiable)"
+
+#: src/widgets/url_import.py:68 src/widgets/url_import.py:232
+msgid "Fetch Again"
+msgstr "Récupérer à nouveau"
+
+#: src/widgets/url_import.py:93
+#, python-brace-format
+msgid "Collection: {0}"
+msgstr "Collection : {0}"
+
+#: src/widgets/url_import.py:113
+msgid "Downloading…"
+msgstr "Téléchargement…"
+
+#: src/widgets/url_import.py:113
+msgid "Extracting…"
+msgstr "Extraction…"
+
+#: src/widgets/url_import.py:114
+msgid "Ready to review"
+msgstr "Prêt à être vérifié"
+
+#: src/widgets/url_import.py:114
+msgid "Needs attention"
+msgstr "Intervention requise"
+
+#: src/widgets/url_import.py:114
+msgid "Saving…"
+msgstr "Enregistrement…"
+
+#: src/widgets/url_import.py:128
+msgid "Save or skip reviewed pages to make room for queued downloads."
+msgstr ""
+"Enregistrez ou ignorez les pages vérifiées pour faire de la place aux téléchargements"
+" en attente."
+
+#: src/widgets/url_import.py:129
+msgid "Saved documents build embeddings in the background. Closing discards unsaved previews."
+msgstr ""
+"Les plongements des documents enregistrés sont créés en arrière-plan. La fermeture "
+"supprime les aperçus non enregistrés."
+
+#: src/widgets/url_import.py:153
+msgid "Extracting content…"
+msgstr "Extraction du contenu…"
+
+#: src/widgets/url_import.py:192
+#, python-brace-format
+msgid "Import URL: {0}"
+msgstr "Importer l’URL : {0}"
+
+#: src/widgets/url_import.py:231
+msgid "Replace Document…"
+msgstr "Remplacer le document…"
+
+#: src/widgets/url_import.py:244
+msgid "Discard Preview Edits?"
+msgstr "Abandonner les modifications de l’aperçu ?"
+
+#: src/widgets/url_import.py:245
+msgid "Extracting again replaces your edited text with the page content."
+msgstr "Une nouvelle extraction remplace votre texte modifié par le contenu de la page."
+
+#: src/widgets/url_import.py:247
+msgid "Discard Edits"
+msgstr "Abandonner les modifications"
+
+#: src/widgets/url_import.py:332
+msgid "Replace Document and Rebuild?"
+msgstr "Remplacer le document et reconstruire ?"
+
+#: src/widgets/url_import.py:333
+#, python-brace-format
+msgid ""
+"Replace “{0}” and rebuild {1} embedding indexes? Saved chat answers keep their "
+"original passages. Affected collections cannot search this content until rebuilding "
+"succeeds."
+msgstr ""
+"Remplacer « {0} » et reconstruire les index de plongement concernés ({1}) ? Les "
+"réponses enregistrées des discussions conservent leurs passages d’origine. Les "
+"collections concernées ne pourront pas rechercher dans ce contenu tant que la "
+"reconstruction n’aura pas abouti."
+
+#: src/widgets/url_import.py:334
+msgid "None"
+msgstr "Aucun"
+
+#: src/widgets/url_import.py:336
+msgid "Replace and Rebuild"
+msgstr "Remplacer et reconstruire"
+
+#: src/window.py:47
+msgid "Knowledge"
+msgstr "Connaissances"
+
+#: src/window.py:135
+msgid "Changes could not be saved"
+msgstr "Impossible d’enregistrer les modifications"
+
+#: src/window.py:136
+msgid "Your unsaved changes are kept in memory. Retry saving before quitting."
+msgstr ""
+"Vos modifications non enregistrées sont conservées en mémoire. Réessayez de les "
+"enregistrer avant de quitter."
+
+#: src/window.py:138
+msgid "Keep Open"
+msgstr "Garder ouvert"
+
+#: src/window.py:186 src/window.ui:138
+msgid "Clear chat history"
+msgstr "Effacer l’historique des discussions"
+
+#: src/window.py:186
+msgid "Are you sure you want to delete all chat history?"
+msgstr "Voulez-vous vraiment supprimer tout l'historique des discussions ?"
+
+#: src/window.py:188
+msgid "Delete history"
+msgstr "Supprimer l'historique"
+
+#: src/window.py:274
+msgid "Pinned"
+msgstr "Épinglées"
+
+#: src/window.py:275
+msgid "Recent"
+msgstr "Récentes"
+
+#: src/window.py:284
+msgid "Unpin Chat"
+msgstr "Désépingler la discussion"
+
+#: src/window.py:284
+msgid "Pin Chat"
+msgstr "Épingler la discussion"
+
+#: src/window.py:285 src/window.py:346
+msgid "Rename Chat"
+msgstr "Renommer la discussion"
+
+#: src/window.py:285
+msgid "Delete Chat"
+msgstr "Supprimer la discussion"
+
+#: src/window.py:301
+msgid "Chat actions"
+msgstr "Actions de la discussion"
+
+#: src/window.py:346
+msgid "Enter a new title for this chat."
+msgstr "Entrez un nouveau titre pour cette discussion."
+
+#: src/window.ui:30
 msgid "Main Menu"
 msgstr "Menu principal"
 
-#: src/window.ui:39
-msgid "Saved Chats"
-msgstr "Chats enregistrés"
+#: src/window.ui:41
+msgid "Chats"
+msgstr "Discussions"
 
-#: src/window.ui:87
+#: src/window.ui:55
+msgid "Saved Chats"
+msgstr "Discussions enregistrées"
+
+#: src/window.ui:71
+msgid "No Saved Chats"
+msgstr "Aucune discussion enregistrée"
+
+#: src/window.ui:98
+msgid "Toggle Sidebar"
+msgstr "Afficher ou masquer le panneau latéral"
+
+#: src/window.ui:120
 msgid "_New Chat"
 msgstr "_Nouvelle discussion"
 
-#: src/window.ui:91
+#: src/window.ui:124
 msgid "_New Response"
-msgstr "_Nouvelle réponse"
+msgstr "Nouvelle _réponse"
 
-#: src/window.ui:97
+#: src/window.ui:130
 msgid "_Manage hosts"
 msgstr "Gérer les _hôtes"
 
-#: src/window.ui:101
+#: src/window.ui:134
 msgid "_Manage models"
 msgstr "Gérer les _modèles"
 
-#: src/window.ui:109
+#: src/window.ui:142
 msgid "_Keyboard Shortcuts"
-msgstr "_Raccourcis clavier"
+msgstr "Raccourcis _clavier"
 
-#: src/window.ui:113
+#: src/window.ui:146
 msgid "_About Gnollama"
 msgstr "_À propos de Gnollama"
-
-#~ msgid "Ollama Configuration"
-#~ msgstr "Configuration Ollama"
-
-#~ msgid "Open"
-#~ msgstr "Ouvrir"
-
-#~ msgid "You"
-#~ msgstr "Vous"
-
-#, python-brace-format
-#~ msgid "Error loading images: {e}"
-#~ msgstr "Erreur lors du chargement des images : {e}"
-
-#~ msgid "See thinking"
-#~ msgstr "Voir la réflexion"
-
-#~ msgid "Chats"
-#~ msgstr "Discussions"
-
-#~ msgid "_Preferences"
-#~ msgstr "_Préférences"
 

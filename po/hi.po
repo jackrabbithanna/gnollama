@@ -1,0 +1,3125 @@
+# Hindi translations for Gnollama.
+# Copyright (C) 2026 Gnollama contributors
+# Distributed under the same license as the gnollama package.
+# AI-assisted translation; native-speaker review is welcome.
+msgid ""
+msgstr ""
+"Project-Id-Version: gnollama 0.13.0\n"
+"Report-Msgid-Bugs-To: https://github.com/jackrabbithanna/gnollama/issues\n"
+"POT-Creation-Date: 2026-09-10 17:08-0600\n"
+"PO-Revision-Date: 2026-09-10 00:00+0000\n"
+"Last-Translator: AI-assisted translation\n"
+"Language-Team: Hindi\n"
+"Language: hi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: data/io.github.jackrabbithanna.Gnollama.desktop.in:2
+msgid "gnollama"
+msgstr "gnollama"
+
+#: data/io.github.jackrabbithanna.Gnollama.desktop.in:8
+msgid "GTK;"
+msgstr "GTK;"
+
+#: data/io.github.jackrabbithanna.Gnollama.gschema.xml:7
+msgid "Default Ollama Host"
+msgstr "डिफ़ॉल्ट Ollama होस्ट"
+
+#: data/io.github.jackrabbithanna.Gnollama.gschema.xml:8
+msgid "The default URL for the Ollama API server."
+msgstr "Ollama API सर्वर का डिफ़ॉल्ट URL।"
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:7 src/startup.py:10
+#: src/window.ui:5
+msgid "Gnollama"
+msgstr "Gnollama"
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:8
+msgid "Chat with Ollama models"
+msgstr "Ollama मॉडल से चैट करें"
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:10
+msgid ""
+"Chat with Ollama models running on your computer or a remote server using a "
+"native GNOME interface."
+msgstr "मूल GNOME इंटरफ़ेस से अपने कंप्यूटर या दूरस्थ सर्वर पर चल रहे Ollama मॉडल से चैट करें।"
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:11
+msgid ""
+"Keep conversations in separate tabs, attach images to vision models, and "
+"read responses with Markdown and highlighted code."
+msgstr ""
+"बातचीत अलग-अलग टैब में रखें, दृष्टि मॉडल के लिए चित्र जोड़ें और Markdown तथा हाइलाइट किए "
+"गए कोड के साथ उत्तर पढ़ें।"
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:12
+msgid ""
+"Manage hosts and models, customize generation and thinking settings, and "
+"inspect response statistics including cached prompt tokens."
+msgstr ""
+"होस्ट और मॉडल प्रबंधित करें, उत्तर बनाने और विचार करने की सेटिंग बदलें, और कैश किए गए "
+"प्रॉम्प्ट टोकन सहित उत्तर के आँकड़े देखें।"
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:13
+msgid ""
+"Generate and validate structured JSON, import JSON schemas, and export "
+"responses. Inspect loaded models and release their memory when finished."
+msgstr ""
+"संरचित JSON बनाएँ और जाँचें, JSON स्कीमा आयात करें और उत्तर निर्यात करें। लोड किए गए "
+"मॉडल देखें और काम पूरा होने पर उनकी मेमोरी खाली करें।"
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:14
+msgid ""
+"Save and organize conversations with pinning and editable titles. Stop a "
+"response at any time and keep its partial answer in your history."
+msgstr ""
+"बातचीत सहेजें और पिन करने तथा शीर्षक बदलने की सुविधा से उन्हें व्यवस्थित करें। उत्तर कभी भी "
+"रोकें और उसका अधूरा भाग इतिहास में रखें।"
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:18
+msgid "jackrabbithanna"
+msgstr "jackrabbithanna"
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:46
+msgid "Ollama chat with code highlighting"
+msgstr "कोड हाइलाइटिंग के साथ Ollama चैट"
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:53
+msgid ""
+"Add a Knowledge Library for text and PDF imports, local embedding indexes, "
+"and source-grounded chats."
+msgstr ""
+"टेक्स्ट और PDF आयात, स्थानीय एम्बेडिंग इंडेक्स और स्रोतों पर आधारित चैट के लिए ज्ञान "
+"पुस्तकालय जोड़ें।"
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:55
+msgid ""
+"Start with knowledge collections and add text, files, or URLs with explicit "
+"destinations and guided previews."
+msgstr ""
+"ज्ञान संग्रह से शुरू करें और स्पष्ट गंतव्य तथा निर्देशित पूर्वावलोकन के साथ टेक्स्ट, फ़ाइलें या URL "
+"जोड़ें।"
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:56
+msgid ""
+"Choose collections before search settings, and use adaptive chat settings "
+"with clearer controls and feedback."
+msgstr ""
+"खोज सेटिंग से पहले संग्रह चुनें और स्पष्ट नियंत्रण तथा प्रतिक्रिया वाली अनुकूलनीय चैट सेटिंग "
+"इस्तेमाल करें।"
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:57
+msgid ""
+"Create and compare embeddings, inspect chunks and vectors, and test semantic "
+"searches."
+msgstr "एम्बेडिंग बनाएँ और तुलना करें, टेक्स्ट खंड तथा वेक्टर देखें और अर्थ-आधारित खोज परखें।"
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:58
+msgid ""
+"Select documents or chunks for chats, with independent embedding hosts and "
+"saved source passages."
+msgstr "चैट के लिए दस्तावेज़ या खंड चुनें, अलग एम्बेडिंग होस्ट इस्तेमाल करें और स्रोत अंश सहेजें।"
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:59
+msgid ""
+"Warn about stored embeddings when deleting models, with optional vector "
+"cleanup that retains source text."
+msgstr ""
+"मॉडल हटाते समय सहेजी गई एम्बेडिंग की चेतावनी दें और स्रोत टेक्स्ट रखते हुए वेक्टर हटाने का "
+"विकल्प दें।"
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:60
+msgid ""
+"Search with sqlite-vec, automatically migrate existing vectors with a "
+"database backup, and use the Qwen3 retrieval preset."
+msgstr ""
+"sqlite-vec से खोजें, डेटाबेस बैकअप के साथ मौजूदा वेक्टर अपने-आप स्थानांतरित करें और Qwen3 "
+"पुनर्प्राप्ति प्रीसेट इस्तेमाल करें।"
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:61
+msgid ""
+"Organize documents into collections with shared embedding settings, "
+"automatic builds, and live collection selection in chats."
+msgstr ""
+"साझा एम्बेडिंग सेटिंग और अपने-आप निर्माण वाले संग्रहों में दस्तावेज़ व्यवस्थित करें तथा चैट में "
+"संग्रह सीधे चुनें।"
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:62
+msgid ""
+"Choose collections as chat sources and compare cosine similarity, Euclidean "
+"distance, or Manhattan distance with appropriate search cutoffs."
+msgstr ""
+"संग्रहों को चैट स्रोत चुनें और उचित खोज सीमाओं के साथ कोसाइन समानता, यूक्लिडीय दूरी या "
+"मैनहैटन दूरी की तुलना करें।"
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:63
+msgid ""
+"Hide embedding-only models from Chat and Response model selection while "
+"keeping them available in Knowledge and Manage Models."
+msgstr ""
+"केवल एम्बेडिंग वाले मॉडल चैट और उत्तर की मॉडल सूची में छिपाएँ, लेकिन ज्ञान और मॉडल प्रबंधन "
+"में उपलब्ध रखें।"
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:64
+msgid ""
+"Import batches of URLs into collections with main-content extraction, CSS "
+"selectors, editable previews, and source links in chats."
+msgstr ""
+"मुख्य सामग्री निकालने, CSS चयनकर्ता, संपादन योग्य पूर्वावलोकन और चैट में स्रोत लिंक के साथ "
+"URL समूहों को संग्रह में आयात करें।"
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:65
+msgid ""
+"Review changed web documents before replacing their text and rebuilding all "
+"affected embedding indexes."
+msgstr ""
+"वेब दस्तावेज़ों का टेक्स्ट बदलने और प्रभावित एम्बेडिंग इंडेक्स दोबारा बनाने से पहले बदलावों की "
+"समीक्षा करें।"
+
+#: src/ai_bubble.ui:35 src/bubbles.ui:74
+msgid "API Call Details"
+msgstr "API कॉल का विवरण"
+
+#: src/ai_bubble.ui:41 src/bubbles.ui:80
+msgid "Thinking..."
+msgstr "विचार कर रहा है…"
+
+#: src/bubbles.py:105
+msgid "Response Statistics"
+msgstr "उत्तर के आँकड़े"
+
+#: src/bubbles.py:120
+msgid "Earlier images were omitted from the text-only request."
+msgstr "केवल टेक्स्ट वाले अनुरोध में पहले के चित्र शामिल नहीं किए गए।"
+
+#: src/bubbles.py:125 src/knowledge.py:300
+msgid "Stopped"
+msgstr "रोक दिया गया"
+
+#: src/bubbles.py:125 src/knowledge.py:300
+msgid "Failed"
+msgstr "विफल"
+
+#. Create expander for logprobs
+#: src/bubbles.py:137
+msgid "Logprobs"
+msgstr "लॉग प्रायिकताएँ"
+
+#: src/bubbles.py:183 src/model_manager.py:22 src/model_manager.py:24
+#: src/model_manager.py:28
+msgid "Unavailable"
+msgstr "अनुपलब्ध"
+
+#: src/bubbles.py:197
+#, python-brace-format
+msgid "Total: {0}"
+msgstr "कुल: {0}"
+
+#: src/bubbles.py:198
+#, python-brace-format
+msgid "Load: {0}"
+msgstr "लोड: {0}"
+
+#: src/bubbles.py:199
+#, python-brace-format
+msgid "Prompt: {0} tokens"
+msgstr "प्रॉम्प्ट टोकन: {0}"
+
+#: src/bubbles.py:200
+#, python-brace-format
+msgid "Cached: {0} tokens"
+msgstr "कैश किए गए टोकन: {0}"
+
+#: src/bubbles.py:201
+#, python-brace-format
+msgid "Prompt evaluation: {0}"
+msgstr "प्रॉम्प्ट संसाधन: {0}"
+
+#: src/bubbles.py:202
+#, python-brace-format
+msgid "Generated: {0} tokens"
+msgstr "बनाए गए टोकन: {0}"
+
+#: src/bubbles.py:203
+#, python-brace-format
+msgid "Generation: {0}"
+msgstr "उत्तर निर्माण: {0}"
+
+#: src/bubbles.py:204
+#, python-brace-format
+msgid "Tokens/s: {0}"
+msgstr "टोकन/सेकंड: {0}"
+
+#: src/bubbles.py:207
+#, python-brace-format
+msgid "Finish: {0}"
+msgstr "समाप्ति का कारण: {0}"
+
+#: src/collections_store.py:96 src/collections_store.py:144
+msgid "A document was deleted. Choose documents again."
+msgstr "एक दस्तावेज़ हटा दिया गया है। दस्तावेज़ फिर से चुनें।"
+
+#: src/collections_store.py:107 src/knowledge.py:357
+msgid "Enter a collection name."
+msgstr "संग्रह का नाम दर्ज करें।"
+
+#: src/collections_store.py:118 src/widgets/knowledge_view.py:1140
+msgid "Choose a model with the collection’s original digest."
+msgstr "संग्रह के मूल डाइजेस्ट वाला मॉडल चुनें।"
+
+#: src/collections_store.py:141 src/knowledge.py:390
+msgid "The collection was deleted."
+msgstr "संग्रह हटा दिया गया है।"
+
+#: src/collections_store.py:202 src/widgets/knowledge_view.py:801
+msgid "A selected collection was deleted. Choose sources again."
+msgstr "चुना गया संग्रह हटा दिया गया है। स्रोत फिर से चुनें।"
+
+#: src/collections_store.py:204
+#, python-brace-format
+msgid "Collection “{0}” uses a different embedding configuration."
+msgstr "संग्रह “{0}” अलग एम्बेडिंग कॉन्फ़िगरेशन इस्तेमाल करता है।"
+
+#: src/collections_store.py:207
+#, python-brace-format
+msgid "Collection “{0}” is empty. Add documents or adjust sources."
+msgstr "संग्रह “{0}” खाली है। दस्तावेज़ जोड़ें या स्रोत बदलें।"
+
+#: src/collections_store.py:210
+#, python-brace-format
+msgid ""
+"Collection “{0}” is not ready. Build missing embeddings or retry failed "
+"documents: {1}"
+msgstr ""
+"संग्रह “{0}” तैयार नहीं है। गायब एम्बेडिंग बनाएँ या विफल दस्तावेज़ों के लिए फिर कोशिश करें: "
+"{1}"
+
+#: src/database.py:75
+msgid ""
+"This database was created by a newer Gnollama version. Update Gnollama to "
+"open it."
+msgstr "यह डेटाबेस Gnollama के नए संस्करण से बना है। इसे खोलने के लिए Gnollama अपडेट करें।"
+
+#: src/database.py:82
+msgid "Backing up the database…"
+msgstr "डेटाबेस का बैकअप लिया जा रहा है…"
+
+#: src/database.py:191
+msgid "This database requires a newer Gnollama version."
+msgstr "इस डेटाबेस के लिए Gnollama का नया संस्करण चाहिए।"
+
+#: src/database.py:210
+#, python-brace-format
+msgid "Upgrading the database to version {0}…"
+msgstr "डेटाबेस को संस्करण {0} में अपग्रेड किया जा रहा है…"
+
+#: src/host_edit_dialog.ui:6 src/host_manager.py:171 src/model_manager.py:366
+#: src/pull_model_dialog.ui:17 src/widgets/knowledge_view.py:1111
+#: src/widgets/knowledge_view.py:1121 src/widgets/knowledge_view.py:1250
+#: src/widgets/knowledge_view.py:1293 src/widgets/knowledge_view.py:1337
+#: src/widgets/knowledge_view.py:1358 src/widgets/url_import.py:246
+#: src/widgets/url_import.py:335 src/window.py:187 src/window.py:349
+msgid "Cancel"
+msgstr "रद्द करें"
+
+#: src/host_edit_dialog.ui:7 src/widgets/knowledge_view.py:1112
+#: src/widgets/knowledge_view.py:1145 src/widgets/knowledge_view.py:1338
+#: src/window.py:350
+msgid "Save"
+msgstr "सहेजें"
+
+#: src/host_edit_dialog.ui:21 src/model_manager.py:610
+msgid "Name"
+msgstr "नाम"
+
+#: src/host_edit_dialog.ui:28
+msgid "For example: Local Ollama"
+msgstr "उदाहरण: स्थानीय Ollama"
+
+#: src/host_edit_dialog.ui:33
+msgid "Server address"
+msgstr "सर्वर का पता"
+
+#: src/host_edit_dialog.ui:45
+msgid "Set as default host"
+msgstr "डिफ़ॉल्ट होस्ट बनाएँ"
+
+#: src/host_manager.py:19
+msgid "Edit Host"
+msgstr "होस्ट संपादित करें"
+
+#: src/host_manager.py:19 src/host_manager.ui:23
+msgid "Add Host"
+msgstr "होस्ट जोड़ें"
+
+#: src/host_manager.py:35
+msgid "Enter a name for this server."
+msgstr "इस सर्वर के लिए नाम दर्ज करें।"
+
+#: src/host_manager.py:78
+msgid "Default"
+msgstr "डिफ़ॉल्ट"
+
+#: src/host_manager.py:83 src/host_manager.py:87
+msgid "Test Connection"
+msgstr "कनेक्शन जाँचें"
+
+#: src/host_manager.py:92
+msgid "Edit Server"
+msgstr "सर्वर संपादित करें"
+
+#: src/host_manager.py:98 src/host_manager.py:168
+msgid "Delete Host"
+msgstr "होस्ट हटाएँ"
+
+#: src/host_manager.py:112
+msgid "Fetching version..."
+msgstr "संस्करण प्राप्त किया जा रहा है…"
+
+#: src/host_manager.py:114 src/main.py:63 src/model_manager.py:340
+#: src/model_manager.py:601 src/startup.py:23 src/widgets/json_view.py:230
+#: src/widgets/knowledge_import.py:51 src/widgets/knowledge_view.py:756
+#: src/widgets/knowledge_view.py:909 src/widgets/knowledge_view.py:1271
+msgid "Close"
+msgstr "बंद करें"
+
+#: src/host_manager.py:124
+#, python-brace-format
+msgid ""
+"Connected\n"
+"Ollama Version: {0}"
+msgstr ""
+"कनेक्ट हो गया\n"
+"Ollama संस्करण: {0}"
+
+#: src/host_manager.py:126
+#, python-brace-format
+msgid ""
+"Connection failed\n"
+"{0}"
+msgstr ""
+"कनेक्शन विफल\n"
+"{0}"
+
+#: src/host_manager.py:169 src/model_manager.py:352
+#, python-brace-format
+msgid "Are you sure you want to delete {0}?"
+msgstr "क्या आप वाकई {0} हटाना चाहते हैं?"
+
+#: src/host_manager.py:172 src/model_manager.py:367
+#: src/widgets/knowledge_view.py:1359
+msgid "Delete"
+msgstr "हटाएँ"
+
+#: src/host_manager.ui:6 src/host_manager.ui:17
+msgid "Manage Hosts"
+msgstr "होस्ट प्रबंधित करें"
+
+#: src/host_manager.ui:35
+msgid "Ollama Servers"
+msgstr "Ollama सर्वर"
+
+#: src/host_manager.ui:36
+msgid "Select a server to edit its name or address."
+msgstr "नाम या पता बदलने के लिए सर्वर चुनें।"
+
+#: src/knowledge.py:39
+msgid "Operation stopped"
+msgstr "कार्य रोक दिया गया"
+
+#: src/knowledge.py:44
+msgid "No text was found. Scanned documents require OCR before import."
+msgstr "कोई टेक्स्ट नहीं मिला। स्कैन किए गए दस्तावेज़ों को आयात करने से पहले OCR चाहिए।"
+
+#: src/knowledge.py:46
+msgid ""
+"This document exceeds the limit of 5 million extracted characters. Split it "
+"into smaller files."
+msgstr "इस दस्तावेज़ से निकले अक्षर 50 लाख की सीमा से अधिक हैं। इसे छोटी फ़ाइलों में बाँटें।"
+
+#: src/knowledge.py:47
+msgid "Untitled"
+msgstr "बिना शीर्षक"
+
+#: src/knowledge.py:55 src/widgets/knowledge_import.py:174
+msgid "Files must be no larger than 50 MiB."
+msgstr "फ़ाइल का आकार 50 MiB से अधिक नहीं होना चाहिए।"
+
+#: src/knowledge.py:61
+msgid "Password-protected PDFs are not supported. Import an unencrypted copy."
+msgstr "पासवर्ड से सुरक्षित PDF समर्थित नहीं हैं। बिना एन्क्रिप्शन वाली प्रति आयात करें।"
+
+#: src/knowledge.py:64
+msgid "PDFs must contain no more than 2,000 pages."
+msgstr "PDF में 2,000 से अधिक पृष्ठ नहीं होने चाहिए।"
+
+#: src/knowledge.py:70
+msgid "A PDF page is too complex to extract. Import its text instead."
+msgstr "PDF का एक पृष्ठ निकालने के लिए बहुत जटिल है। उसकी जगह उसका टेक्स्ट आयात करें।"
+
+#: src/knowledge.py:73
+#, python-brace-format
+msgid "Page {0} has no extractable text."
+msgstr "पृष्ठ {0} में निकालने योग्य टेक्स्ट नहीं है।"
+
+#: src/knowledge.py:78
+msgid "The PDF contains too much text. Split it into smaller files."
+msgstr "PDF में बहुत अधिक टेक्स्ट है। इसे छोटी फ़ाइलों में बाँटें।"
+
+#: src/knowledge.py:84
+msgid "Import a UTF-8 text file or a PDF containing text."
+msgstr "UTF-8 टेक्स्ट फ़ाइल या टेक्स्ट वाला PDF आयात करें।"
+
+#: src/knowledge.py:86
+msgid "This appears to be a binary file, not a text document."
+msgstr "यह टेक्स्ट दस्तावेज़ के बजाय बाइनरी फ़ाइल लगती है।"
+
+#: src/knowledge.py:93
+msgid ""
+"Chunk size must be 64–32,000 characters; overlap must be smaller than the "
+"chunk."
+msgstr "खंड का आकार 64–32,000 अक्षर होना चाहिए; ओवरलैप खंड से छोटा होना चाहिए।"
+
+#: src/knowledge.py:119
+msgid ""
+"The embedding model is unavailable or its digest is missing. Choose a "
+"compatible host and model."
+msgstr "एम्बेडिंग मॉडल अनुपलब्ध है या उसका डाइजेस्ट नहीं है। संगत होस्ट और मॉडल चुनें।"
+
+#: src/knowledge.py:121
+msgid ""
+"The embedding model has changed. Select a model with the original digest or "
+"build a new index."
+msgstr "एम्बेडिंग मॉडल बदल गया है। मूल डाइजेस्ट वाला मॉडल चुनें या नया इंडेक्स बनाएँ।"
+
+#: src/knowledge.py:127
+msgid "Unknown embedding format."
+msgstr "अज्ञात एम्बेडिंग प्रारूप।"
+
+#: src/knowledge.py:133
+msgid "Embedding prefixes must be no longer than 4,000 characters."
+msgstr "एम्बेडिंग प्रीफ़िक्स 4,000 अक्षरों से लंबे नहीं होने चाहिए।"
+
+#: src/knowledge.py:142
+msgid "Choose an embedding configuration and at least one source."
+msgstr "एम्बेडिंग कॉन्फ़िगरेशन और कम से कम एक स्रोत चुनें।"
+
+#: src/knowledge.py:145
+msgid "Invalid collection selection. Choose sources again."
+msgstr "संग्रह चयन अमान्य है। स्रोत फिर से चुनें।"
+
+#: src/knowledge.py:148
+msgid "Select the embedding model on the chosen host."
+msgstr "चुने गए होस्ट पर एम्बेडिंग मॉडल चुनें।"
+
+#: src/knowledge.py:150
+msgid "Passage count must be between 1 and 20."
+msgstr "अंशों की संख्या 1 से 20 के बीच होनी चाहिए।"
+
+#: src/knowledge.py:152
+msgid "Source budget must be between 256 and 64,000 characters."
+msgstr "स्रोत की अक्षर सीमा 256 से 64,000 के बीच होनी चाहिए।"
+
+#: src/knowledge.py:229
+msgid "Wait for the model operation to finish."
+msgstr "मॉडल का कार्य पूरा होने दें।"
+
+#: src/knowledge.py:262
+msgid ""
+"The embedding host was removed. Choose a configured host before continuing."
+msgstr "एम्बेडिंग होस्ट हटा दिया गया है। जारी रखने से पहले कॉन्फ़िगर किया गया होस्ट चुनें।"
+
+#: src/knowledge.py:268 src/widgets/knowledge_import.py:146
+#: src/widgets/url_import.py:100 src/widgets/url_import.py:113
+msgid "Queued"
+msgstr "कतार में"
+
+#: src/knowledge.py:272
+msgid "The Knowledge Library is closing."
+msgstr "ज्ञान पुस्तकालय बंद हो रहा है।"
+
+#: src/knowledge.py:278
+msgid ""
+"This document is being replaced. Retry the build when replacement finishes."
+msgstr "यह दस्तावेज़ बदला जा रहा है। बदलाव पूरा होने पर फिर से निर्माण करें।"
+
+#: src/knowledge.py:300
+msgid "Complete"
+msgstr "पूर्ण"
+
+#: src/knowledge.py:317
+msgid ""
+"Wait for this document’s embedding builds to finish before replacing it."
+msgstr "इस दस्तावेज़ को बदलने से पहले उसकी एम्बेडिंग का निर्माण पूरा होने दें।"
+
+#: src/knowledge.py:320
+msgid "Saving the web document…"
+msgstr "वेब दस्तावेज़ सहेजा जा रहा है…"
+
+#: src/knowledge.py:348
+msgid "Save web document"
+msgstr "वेब दस्तावेज़ सहेजें"
+
+#: src/knowledge.py:369
+msgid "Create collection"
+msgstr "संग्रह बनाएँ"
+
+#: src/knowledge.py:384
+#, python-brace-format
+msgid "Add document: {0}"
+msgstr "दस्तावेज़ जोड़ें: {0}"
+
+#: src/knowledge.py:392
+#, python-brace-format
+msgid "Prepare collection: {0}"
+msgstr "संग्रह तैयार करें: {0}"
+
+#: src/knowledge.py:399
+msgid "Reusing embeddings and preparing missing documents…"
+msgstr "एम्बेडिंग का दोबारा उपयोग किया जा रहा है और बाकी दस्तावेज़ तैयार हो रहे हैं…"
+
+#: src/knowledge.py:416
+#, python-brace-format
+msgid "Create embeddings: {0}"
+msgstr "एम्बेडिंग बनाएँ: {0}"
+
+#: src/knowledge.py:421
+msgid "Build was stopped before it started."
+msgstr "निर्माण शुरू होने से पहले रोक दिया गया।"
+
+#: src/knowledge.py:438
+msgid "The source document was deleted."
+msgstr "स्रोत दस्तावेज़ हटा दिया गया है।"
+
+#: src/knowledge.py:443
+msgid ""
+"This index would exceed 100,000 chunks. Increase the chunk size or reduce "
+"overlap."
+msgstr "इस इंडेक्स में 1,00,000 से अधिक खंड होंगे। खंड का आकार बढ़ाएँ या ओवरलैप घटाएँ।"
+
+#: src/knowledge.py:459
+#, python-brace-format
+msgid "Embedding chunks: {0} complete, {1} remaining"
+msgstr "खंडों की एम्बेडिंग बन रही है: {0} पूरे, {1} बाकी"
+
+#: src/knowledge.py:483
+msgid ""
+"The embedding input cannot fit. Shorten the document prefix or choose "
+"another model."
+msgstr "एम्बेडिंग इनपुट बहुत बड़ा है। दस्तावेज़ प्रीफ़िक्स छोटा करें या दूसरा मॉडल चुनें।"
+
+#: src/knowledge.py:493
+msgid ""
+"The model returned a different vector dimension. Create a new configuration."
+msgstr "मॉडल ने अलग आयाम वाला वेक्टर लौटाया। नया कॉन्फ़िगरेशन बनाएँ।"
+
+#: src/knowledge.py:508
+msgid "Create embeddings"
+msgstr "एम्बेडिंग बनाएँ"
+
+#: src/knowledge.py:518
+msgid "This embedding configuration has no completed vectors."
+msgstr "इस एम्बेडिंग कॉन्फ़िगरेशन में पूर्ण वेक्टर नहीं हैं।"
+
+#: src/knowledge.py:520 src/widgets/knowledge_view.py:659
+msgid "Enter a search query."
+msgstr "खोज क्वेरी दर्ज करें।"
+
+#: src/knowledge.py:530 src/knowledge_store.py:265
+msgid "Query dimensions differ from the stored vectors. Rebuild the index."
+msgstr "क्वेरी के आयाम सहेजे गए वेक्टर से अलग हैं। इंडेक्स फिर से बनाएँ।"
+
+#: src/knowledge.py:537
+msgid ""
+"No passages met the search criteria. Adjust the query, sources, or minimum "
+"similarity."
+msgstr "कोई अंश खोज की शर्तों से मेल नहीं खाता। क्वेरी, स्रोत या न्यूनतम समानता बदलें।"
+
+#: src/knowledge_store.py:49
+msgid "The destination collection was deleted."
+msgstr "गंतव्य संग्रह हटा दिया गया है।"
+
+#: src/knowledge_store.py:136
+msgid "The reserved embedding index was deleted."
+msgstr "आरक्षित एम्बेडिंग इंडेक्स हटा दिया गया है।"
+
+#: src/knowledge_store.py:138
+msgid "An index cannot change its document or embedding configuration."
+msgstr "इंडेक्स का दस्तावेज़ या एम्बेडिंग कॉन्फ़िगरेशन नहीं बदला जा सकता।"
+
+#: src/knowledge_store.py:153
+msgid "Embedding dimensions do not match the batch."
+msgstr "एम्बेडिंग के आयाम बैच से मेल नहीं खाते।"
+
+#: src/knowledge_store.py:160
+msgid "Embedding configuration does not match the index."
+msgstr "एम्बेडिंग कॉन्फ़िगरेशन इंडेक्स से मेल नहीं खाता।"
+
+#: src/knowledge_store.py:163
+msgid "Embedding dimensions changed during indexing"
+msgstr "इंडेक्स बनाते समय एम्बेडिंग के आयाम बदल गए"
+
+#: src/knowledge_store.py:169
+msgid "A chunk cannot move between indexes."
+msgstr "खंड को एक इंडेक्स से दूसरे में नहीं ले जाया जा सकता।"
+
+#: src/knowledge_store.py:241
+msgid "Select at least one indexed document or chunk."
+msgstr "कम से कम एक इंडेक्स किया गया दस्तावेज़ या खंड चुनें।"
+
+#: src/knowledge_store.py:244
+msgid "Invalid search limits."
+msgstr "खोज की सीमाएँ अमान्य हैं।"
+
+#: src/knowledge_store.py:272
+msgid ""
+"A selected index is missing, incomplete, or incompatible. Choose sources "
+"again."
+msgstr "चुना गया इंडेक्स गायब, अधूरा या असंगत है। स्रोत फिर से चुनें।"
+
+#: src/knowledge_store.py:277 src/knowledge_store.py:286
+msgid "Selected chunks are missing. Choose sources again."
+msgstr "चुने गए खंड गायब हैं। स्रोत फिर से चुनें।"
+
+#: src/knowledge_store.py:282
+msgid "A selected document has no selected chunks."
+msgstr "चुने गए दस्तावेज़ का कोई खंड चयनित नहीं है।"
+
+#: src/knowledge_store.py:289 src/knowledge_store.py:307 src/vectors.py:108
+#: src/vectors.py:116
+msgid "Stored vectors are missing. Rebuild this index."
+msgstr "सहेजे गए वेक्टर गायब हैं। यह इंडेक्स फिर से बनाएँ।"
+
+#: src/knowledge_store.py:309 src/vectors.py:129
+msgid "Stored vectors are damaged. Rebuild this index."
+msgstr "सहेजे गए वेक्टर क्षतिग्रस्त हैं। यह इंडेक्स फिर से बनाएँ।"
+
+#: src/knowledge_store.py:327 src/vectors.py:124
+msgid "Stored vectors do not match their source. Rebuild this index."
+msgstr "सहेजे गए वेक्टर अपने स्रोत से मेल नहीं खाते। यह इंडेक्स फिर से बनाएँ।"
+
+#: src/knowledge_store.py:349
+#, python-brace-format
+msgid "Knowledge search failed: {0}"
+msgstr "ज्ञान खोज विफल: {0}"
+
+#. Translators: Translate "ltr" as "rtl" for right-to-left languages.
+#. Use the app's language even when GTK's language pack is not installed.
+#: src/main.py:33
+msgctxt "text direction"
+msgid "ltr"
+msgstr "ltr"
+
+#: src/main.py:61
+msgid "Database Upgraded"
+msgstr "डेटाबेस अपग्रेड हो गया"
+
+#: src/main.py:62
+#, python-brace-format
+msgid ""
+"Your data is ready. A backup of the previous database was saved at:\n"
+"{0}"
+msgstr ""
+"आपका डेटा तैयार है। पिछले डेटाबेस का बैकअप यहाँ सहेजा गया है:\n"
+"{0}"
+
+#. Translators: Replace "translator-credits" with your name/username, and optionally an email or URL.
+#: src/main.py:75
+msgid "translator-credits"
+msgstr "AI की सहायता से अनुवाद"
+
+#: src/model_details_view.ui:6 src/model_manager.py:42 src/model_manager.py:291
+msgid "Model Details"
+msgstr "मॉडल का विवरण"
+
+#: src/model_manager.py:29
+#, python-brace-format
+msgid ""
+"Memory: {0} · VRAM: {1}\n"
+"Context: {2} · Expires: {3}"
+msgstr ""
+"मेमोरी: {0} · VRAM: {1}\n"
+"कॉन्टेक्स्ट: {2} · समाप्ति: {3}"
+
+#: src/model_manager.py:163 src/tab.py:162
+msgid "No host configured."
+msgstr "कोई होस्ट कॉन्फ़िगर नहीं है।"
+
+#: src/model_manager.py:168
+msgid "Loading running models…"
+msgstr "चल रहे मॉडल लोड हो रहे हैं…"
+
+#: src/model_manager.py:172
+#, python-brace-format
+msgid "Could not refresh running models: {0}"
+msgstr "चल रहे मॉडल रीफ़्रेश नहीं हो सके: {0}"
+
+#: src/model_manager.py:188
+msgid "No models are loaded in memory."
+msgstr "मेमोरी में कोई मॉडल लोड नहीं है।"
+
+#: src/model_manager.py:194 src/model_manager.py:207
+msgid "Unload"
+msgstr "मेमोरी से हटाएँ"
+
+#: src/model_manager.py:195 src/model_manager.py:209
+msgid "Release this model from memory; keep its downloaded files."
+msgstr "डाउनलोड की गई फ़ाइलें रखते हुए मॉडल को मेमोरी से हटाएँ।"
+
+#: src/model_manager.py:207
+msgid "Unloading…"
+msgstr "मेमोरी से हटाया जा रहा है…"
+
+#: src/model_manager.py:208
+msgid "A chat or embedding job is using this model in Gnollama."
+msgstr "Gnollama में कोई चैट या एम्बेडिंग कार्य इस मॉडल को इस्तेमाल कर रहा है।"
+
+#: src/model_manager.py:225
+msgid "Could not unload model"
+msgstr "मॉडल को मेमोरी से नहीं हटाया जा सका"
+
+#: src/model_manager.py:265
+msgid "Connection Error"
+msgstr "कनेक्शन त्रुटि"
+
+#: src/model_manager.py:298
+msgid "Delete Model"
+msgstr "मॉडल हटाएँ"
+
+#: src/model_manager.py:329
+msgid "Failed to fetch details"
+msgstr "विवरण प्राप्त नहीं हो सका"
+
+#: src/model_manager.py:349 src/model_manager.py:374 src/model_manager.py:377
+msgid "Model Is Busy"
+msgstr "मॉडल व्यस्त है"
+
+#: src/model_manager.py:349 src/model_manager.py:377
+msgid "Wait for active chats and embedding jobs before deleting this model."
+msgstr "इस मॉडल को हटाने से पहले सक्रिय चैट और एम्बेडिंग कार्य पूरे होने दें।"
+
+#: src/model_manager.py:353
+msgid "Also delete matching vectors; keep source text"
+msgstr "मेल खाने वाले वेक्टर भी हटाएँ; स्रोत टेक्स्ट रखें"
+
+#: src/model_manager.py:355
+#, python-brace-format
+msgid ""
+"Stored data using this model: {0} documents, {1} indexes, {2} vectors. Kept "
+"vectors can be used again with the same model digest on a compatible host."
+msgstr ""
+"इस मॉडल का उपयोग करने वाला सहेजा गया डेटा: {0} दस्तावेज़, {1} इंडेक्स, {2} वेक्टर। रखे "
+"गए वेक्टर संगत होस्ट पर समान मॉडल डाइजेस्ट के साथ फिर इस्तेमाल हो सकते हैं।"
+
+#: src/model_manager.py:357
+#, python-brace-format
+msgid ""
+"Collections using this configuration: {0}. Deleting vectors keeps their "
+"documents and membership, but they will need embeddings rebuilt before "
+"searching."
+msgstr ""
+"इस कॉन्फ़िगरेशन वाले संग्रह: {0}। वेक्टर हटाने पर दस्तावेज़ और सदस्यता रहेंगे, लेकिन खोज से "
+"पहले एम्बेडिंग फिर बनानी होगी।"
+
+#: src/model_manager.py:360
+msgid "Delete Model?"
+msgstr "मॉडल हटाएँ?"
+
+#: src/model_manager.py:374
+msgid ""
+"Wait for all indexing jobs using this model before deleting its vectors."
+msgstr "इसके वेक्टर हटाने से पहले इस मॉडल का उपयोग करने वाले सभी इंडेक्स कार्य पूरे होने दें।"
+
+#: src/model_manager.py:390
+msgid "Delete Failed"
+msgstr "हटाना विफल"
+
+#: src/model_manager.py:545
+msgid "Starting download…"
+msgstr "डाउनलोड शुरू हो रहा है…"
+
+#: src/model_manager.py:570
+msgid "Error"
+msgstr "त्रुटि"
+
+#: src/model_manager.py:571
+msgid "Error occurred."
+msgstr "एक त्रुटि हुई।"
+
+#: src/model_manager.py:590
+#, python-brace-format
+msgid "{0:.0f}%"
+msgstr "{0:.0f}%"
+
+#: src/model_manager.py:593
+msgid "Download complete"
+msgstr "डाउनलोड पूरा हुआ"
+
+#: src/model_manager.py:611 src/widgets/chat_input.ui:27
+msgid "Model"
+msgstr "मॉडल"
+
+#: src/model_manager.py:612
+msgid "Remote Model"
+msgstr "दूरस्थ मॉडल"
+
+#: src/model_manager.py:613
+msgid "Remote Host"
+msgstr "दूरस्थ होस्ट"
+
+#: src/model_manager.py:614
+msgid "Modified At"
+msgstr "बदलाव का समय"
+
+#: src/model_manager.py:615
+msgid "Size"
+msgstr "आकार"
+
+#: src/model_manager.py:616
+msgid "Digest"
+msgstr "डाइजेस्ट"
+
+#: src/model_manager.py:617
+msgid "Detail: Format"
+msgstr "विवरण: प्रारूप"
+
+#: src/model_manager.py:618
+msgid "Detail: Family"
+msgstr "विवरण: परिवार"
+
+#: src/model_manager.py:619
+msgid "Detail: Families"
+msgstr "विवरण: परिवारों की सूची"
+
+#: src/model_manager.py:620
+msgid "Detail: Parameter Size"
+msgstr "विवरण: पैरामीटर संख्या"
+
+#: src/model_manager.py:621
+msgid "Detail: Quantization Level"
+msgstr "विवरण: क्वांटाइज़ेशन स्तर"
+
+#: src/model_manager.py:622
+msgid "Parameters"
+msgstr "पैरामीटर"
+
+#: src/model_manager.py:623
+msgid "Capabilities"
+msgstr "क्षमताएँ"
+
+#: src/model_manager.py:624
+msgid "Template"
+msgstr "टेम्पलेट"
+
+#: src/model_manager.py:625
+msgid "License"
+msgstr "लाइसेंस"
+
+#: src/model_manager.py:626
+msgid "Modelfile"
+msgstr "Modelfile"
+
+#: src/model_manager.py:627
+msgid "Model Info"
+msgstr "मॉडल की जानकारी"
+
+#: src/model_manager.ui:5 src/model_manager.ui:16
+msgid "Manage Models"
+msgstr "मॉडल प्रबंधित करें"
+
+#: src/model_manager.ui:34
+msgid "Host:"
+msgstr "होस्ट:"
+
+#: src/model_manager.ui:45
+msgid "Refresh models list"
+msgstr "मॉडल सूची रीफ़्रेश करें"
+
+#: src/model_manager.ui:61 src/pull_model_dialog.ui:22
+msgid "Download Model…"
+msgstr "मॉडल डाउनलोड करें…"
+
+#: src/model_manager.ui:80
+msgid "Installed"
+msgstr "इंस्टॉल किए गए"
+
+#: src/model_manager.ui:90
+msgid "Available Models"
+msgstr "उपलब्ध मॉडल"
+
+#: src/model_manager.ui:102
+msgid "Running"
+msgstr "चल रहे"
+
+#: src/model_manager.ui:121
+msgid "Models in Memory"
+msgstr "मेमोरी में मॉडल"
+
+#: src/ollama.py:52
+msgid "Enter a valid http:// or https:// Ollama host URL."
+msgstr "मान्य http:// या https:// Ollama होस्ट URL दर्ज करें।"
+
+#: src/ollama.py:61 src/ollama.py:84
+msgid "Request stopped"
+msgstr "अनुरोध रोक दिया गया"
+
+#: src/ollama.py:110
+msgid "Invalid JSON received from Ollama"
+msgstr "Ollama से अमान्य JSON मिला"
+
+#: src/ollama.py:112
+msgid "Expected a JSON object from Ollama"
+msgstr "Ollama से JSON ऑब्जेक्ट अपेक्षित था"
+
+#: src/ollama.py:162
+msgid "Enter nonempty text to embed."
+msgstr "एम्बेडिंग के लिए खाली न होने वाला टेक्स्ट दर्ज करें।"
+
+#: src/ollama.py:166
+msgid "Embedding dimensions must be a positive integer."
+msgstr "एम्बेडिंग के आयाम धनात्मक पूर्णांक होने चाहिए।"
+
+#: src/ollama.py:173
+msgid "The server returned an incorrect number of embeddings."
+msgstr "सर्वर ने एम्बेडिंग की गलत संख्या लौटाई।"
+
+#: src/ollama.py:178
+msgid "The server returned an invalid embedding vector."
+msgstr "सर्वर ने अमान्य एम्बेडिंग वेक्टर लौटाया।"
+
+#: src/ollama.py:181
+msgid "Embedding dimensions do not match, or a vector is zero."
+msgstr "एम्बेडिंग के आयाम मेल नहीं खाते या कोई वेक्टर शून्य है।"
+
+#: src/ollama.py:210
+msgid "Model pull ended before completion"
+msgstr "मॉडल डाउनलोड पूरा होने से पहले समाप्त हो गया"
+
+#: src/ollama.py:216
+msgid "Invalid output format"
+msgstr "अमान्य आउटपुट प्रारूप"
+
+#: src/ollama.py:220
+msgid "Keep-alive must be a duration in seconds, 0, or -1"
+msgstr "मॉडल रखने की अवधि सेकंड में, 0 या -1 होनी चाहिए"
+
+#: src/ollama.py:224
+msgid "Invalid thinking setting"
+msgstr "अमान्य विचार सेटिंग"
+
+#: src/ollama.py:230
+msgid "Top logprobs must be between 0 and 20"
+msgstr "शीर्ष लॉग प्रायिकताओं की संख्या 0 से 20 के बीच होनी चाहिए"
+
+#: src/pull_model_dialog.ui:5
+msgid "Download Model"
+msgstr "मॉडल डाउनलोड करें"
+
+#: src/pull_model_dialog.ui:44
+msgid "Model name"
+msgstr "मॉडल का नाम"
+
+#: src/pull_model_dialog.ui:50
+msgid "For example: qwen3:4b"
+msgstr "उदाहरण: qwen3:4b"
+
+#: src/pull_model_dialog.ui:60
+msgid "Insecure"
+msgstr "असुरक्षित"
+
+#: src/pull_model_dialog.ui:65
+msgid "Allow downloading over insecure connections"
+msgstr "असुरक्षित कनेक्शन पर डाउनलोड की अनुमति दें"
+
+#: src/pull_model_dialog.ui:88
+msgid "Download Details"
+msgstr "डाउनलोड का विवरण"
+
+#: src/session.py:16 src/tab.py:38 src/window.ui:61 src/window.ui:88
+msgid "New Chat"
+msgstr "नई चैट"
+
+#: src/session.py:167
+msgid "There are no pending tool calls."
+msgstr "कोई लंबित टूल कॉल नहीं है।"
+
+#: src/shortcuts-dialog.ui:5
+msgid "Shortcuts"
+msgstr "शॉर्टकट"
+
+#: src/shortcuts-dialog.ui:8
+msgctxt "shortcut window"
+msgid "Show Shortcuts"
+msgstr "शॉर्टकट दिखाएँ"
+
+#: src/shortcuts-dialog.ui:14
+msgctxt "shortcut window"
+msgid "Quit"
+msgstr "बाहर निकलें"
+
+#: src/shortcuts-dialog.ui:20
+msgctxt "shortcut window"
+msgid "New Chat Tab"
+msgstr "नया चैट टैब"
+
+#: src/shortcuts-dialog.ui:26
+msgctxt "shortcut window"
+msgid "Close Tab"
+msgstr "टैब बंद करें"
+
+#: src/shortcuts-dialog.ui:32
+msgctxt "shortcut window"
+msgid "Next Tab"
+msgstr "अगला टैब"
+
+#: src/shortcuts-dialog.ui:38
+msgctxt "shortcut window"
+msgid "Previous Tab"
+msgstr "पिछला टैब"
+
+#: src/shortcuts-dialog.ui:44
+msgctxt "shortcut window"
+msgid "Toggle Sidebar"
+msgstr "साइडबार दिखाएँ/छिपाएँ"
+
+#: src/startup.py:16 src/startup.py:53
+msgid "Opening Gnollama"
+msgstr "Gnollama खुल रहा है"
+
+#: src/startup.py:20 src/tab.py:245 src/widgets/knowledge_import.py:88
+#: src/widgets/knowledge_view.py:1220 src/widgets/url_import.py:232
+#: src/window.py:139
+msgid "Retry"
+msgstr "फिर कोशिश करें"
+
+#: src/startup.py:42
+msgid "Finishing the database operation before closing…"
+msgstr "बंद करने से पहले डेटाबेस का कार्य पूरा हो रहा है…"
+
+#: src/startup.py:54
+msgid "Checking the database…"
+msgstr "डेटाबेस जाँचा जा रहा है…"
+
+#: src/startup.py:90
+msgid "Could Not Open the Database"
+msgstr "डेटाबेस नहीं खुल सका"
+
+#: src/startup.py:94
+#, python-brace-format
+msgid "Database backup: {0}"
+msgstr "डेटाबेस बैकअप: {0}"
+
+#: src/structured.py:18
+msgid "Non-finite numbers are not valid JSON."
+msgstr "असीमित या अपरिभाषित संख्याएँ मान्य JSON नहीं हैं।"
+
+#: src/structured.py:23
+msgid "JSON number is too large to format."
+msgstr "JSON संख्या प्रारूपित करने के लिए बहुत बड़ी है।"
+
+#: src/structured.py:30
+#, python-brace-format
+msgid "Duplicate JSON key: {0}"
+msgstr "दोहराई गई JSON कुंजी: {0}"
+
+#: src/structured.py:39
+msgid "The schema must be a JSON object."
+msgstr "स्कीमा JSON ऑब्जेक्ट होना चाहिए।"
+
+#: src/structured.py:42
+msgid "Unsupported JSON Schema version."
+msgstr "JSON स्कीमा का संस्करण समर्थित नहीं है।"
+
+#: src/structured.py:60
+#, python-brace-format
+msgid "Invalid schema: {0}"
+msgstr "अमान्य स्कीमा: {0}"
+
+#: src/structured.py:62
+#, python-brace-format
+msgid "Unresolved schema reference: {0}. Import a self-contained schema."
+msgstr "स्कीमा संदर्भ हल नहीं हुआ: {0}। सभी परिभाषाओं वाला स्वयंपूर्ण स्कीमा आयात करें।"
+
+#: src/structured.py:71
+msgid "Unknown output format."
+msgstr "अज्ञात आउटपुट प्रारूप।"
+
+#: src/structured.py:73
+msgid "Paste or import a JSON schema, then click Apply before sending."
+msgstr "JSON स्कीमा चिपकाएँ या आयात करें, फिर भेजने से पहले “लागू करें” पर क्लिक करें।"
+
+#: src/structured.py:77
+#, python-brace-format
+msgid "Invalid schema JSON: {0}"
+msgstr "स्कीमा का JSON अमान्य है: {0}"
+
+#: src/tab.py:38
+msgid "New Response"
+msgstr "नया उत्तर"
+
+#: src/tab.py:87
+msgid "Chat"
+msgstr "चैट"
+
+#: src/tab.py:166
+msgid "Select an available model before sending."
+msgstr "भेजने से पहले उपलब्ध मॉडल चुनें।"
+
+#: src/tab.py:169
+msgid "Wait for this model to finish unloading before sending."
+msgstr "भेजने से पहले मॉडल को मेमोरी से हटाने की प्रक्रिया पूरी होने दें।"
+
+#: src/tab.py:174
+msgid "Wait for image support to be checked before sending."
+msgstr "भेजने से पहले चित्र समर्थन की जाँच पूरी होने दें।"
+
+#: src/tab.py:176 src/widgets/chat_input.py:112
+msgid "Remove draft images or select a vision model to send."
+msgstr "भेजने के लिए ड्राफ़्ट के चित्र हटाएँ या दृष्टि मॉडल चुनें।"
+
+#: src/tab.py:218
+msgid "Retrieving sources…"
+msgstr "स्रोत खोजे जा रहे हैं…"
+
+#: src/tab.py:243
+msgid "Could Not Retrieve Sources"
+msgstr "स्रोत नहीं मिल सके"
+
+#: src/tab.py:244
+msgid "Adjust Sources"
+msgstr "स्रोत बदलें"
+
+#: src/tab.py:246
+msgid "Send Without Knowledge"
+msgstr "ज्ञान के बिना भेजें"
+
+#: src/tab.py:247
+msgid "Keep Draft"
+msgstr "ड्राफ़्ट रखें"
+
+#: src/tab.py:309
+msgid "Response ended before completion."
+msgstr "उत्तर पूरा होने से पहले समाप्त हो गया।"
+
+#: src/tool_calling.py:104
+msgid "Paste, import, or load the example tools, then click Apply."
+msgstr "टूल चिपकाएँ, आयात करें या उदाहरण लोड करें, फिर “लागू करें” पर क्लिक करें।"
+
+#: src/tool_calling.py:107
+msgid "Provide a nonempty JSON array of function tools."
+msgstr "फ़ंक्शन टूल का खाली न होने वाला JSON ऐरे दें।"
+
+#: src/tool_calling.py:111
+#, python-brace-format
+msgid "Tool {0} must have type \"function\"."
+msgstr "टूल {0} का प्रकार \"function\" होना चाहिए।"
+
+#: src/tool_calling.py:114
+#, python-brace-format
+msgid "Tool {0} needs a function object."
+msgstr "टूल {0} में function ऑब्जेक्ट होना चाहिए।"
+
+#: src/tool_calling.py:117
+msgid "Function names must be nonempty and unique."
+msgstr "फ़ंक्शन के नाम खाली नहीं हो सकते और अनन्य होने चाहिए।"
+
+#: src/tool_calling.py:120
+msgid "Function descriptions must be strings."
+msgstr "फ़ंक्शन का विवरण स्ट्रिंग होना चाहिए।"
+
+#: src/tool_calling.py:123
+#, python-brace-format
+msgid "Parameters for {0} must be an object schema."
+msgstr "{0} के पैरामीटर ऑब्जेक्ट स्कीमा होने चाहिए।"
+
+#: src/tool_calling.py:149
+msgid "Malformed tool call; continuation is unavailable."
+msgstr "टूल कॉल का प्रारूप गलत है; जारी रखना उपलब्ध नहीं है।"
+
+#: src/tool_calling.py:153
+msgid "Unknown function; a mock result can still be supplied."
+msgstr "अज्ञात फ़ंक्शन; फिर भी नकली परिणाम दिया जा सकता है।"
+
+#: src/tool_calling.py:158
+msgid "Arguments match the parameter schema."
+msgstr "आर्ग्युमेंट पैरामीटर स्कीमा से मेल खाते हैं।"
+
+#: src/tool_calling.py:184
+msgid "This tool round has already been submitted."
+msgstr "यह टूल चरण पहले ही भेजा जा चुका है।"
+
+#: src/tool_calling.py:187
+msgid "Save a result for every tool call before continuing."
+msgstr "जारी रखने से पहले हर टूल कॉल का परिणाम सहेजें।"
+
+#: src/tool_calling.py:193
+msgid "Tool result not provided: tool round cancelled by user."
+msgstr "टूल परिणाम नहीं दिया गया: उपयोगकर्ता ने टूल चरण रद्द किया।"
+
+#: src/vectors.py:16 src/widgets/knowledge_view.py:563
+msgid "Choose a supported similarity measure."
+msgstr "समर्थित समानता माप चुनें।"
+
+#: src/vectors.py:19
+msgid "Cosine similarity uses a minimum similarity, not a maximum distance."
+msgstr "कोसाइन समानता में न्यूनतम समानता इस्तेमाल होती है, अधिकतम दूरी नहीं।"
+
+#: src/vectors.py:21
+msgid "Minimum cosine similarity must be between -1 and 1, or blank."
+msgstr "न्यूनतम कोसाइन समानता -1 से 1 के बीच होनी चाहिए या खाली रखें।"
+
+#: src/vectors.py:24
+msgid "Distance measures use a maximum distance. Clear the minimum similarity."
+msgstr "दूरी माप में अधिकतम दूरी इस्तेमाल होती है। न्यूनतम समानता खाली करें।"
+
+#: src/vectors.py:26
+msgid "Maximum distance must be a finite, nonnegative number, or blank."
+msgstr "अधिकतम दूरी सीमित, ऋणात्मक न होने वाली संख्या होनी चाहिए या खाली रखें।"
+
+#: src/vectors.py:31
+msgid ""
+"Vector dimensions must be between 1 and 8,192. Choose a supported dimension "
+"or embedding model."
+msgstr "वेक्टर के आयाम 1 से 8,192 के बीच होने चाहिए। समर्थित आयाम या एम्बेडिंग मॉडल चुनें।"
+
+#: src/vectors.py:36
+msgid "Stored vector data is damaged. Rebuild this index."
+msgstr "सहेजा गया वेक्टर डेटा क्षतिग्रस्त है। यह इंडेक्स फिर से बनाएँ।"
+
+#: src/vectors.py:39
+msgid "Stored vectors must be finite and nonzero. Rebuild this index."
+msgstr "सहेजे गए वेक्टर सीमित और शून्येतर होने चाहिए। यह इंडेक्स फिर से बनाएँ।"
+
+#: src/vectors.py:54
+msgid "Invalid embedding vector; expected 1–8,192 finite, nonzero dimensions."
+msgstr "अमान्य एम्बेडिंग वेक्टर; 1–8,192 आयामों वाला सीमित, शून्येतर वेक्टर अपेक्षित है।"
+
+#: src/vectors.py:66
+msgid ""
+"Could not load sqlite-vec. Reinstall Gnollama or install its sqlite-vec "
+"dependency."
+msgstr ""
+"sqlite-vec लोड नहीं हुआ। Gnollama फिर इंस्टॉल करें या उसकी sqlite-vec निर्भरता "
+"इंस्टॉल करें।"
+
+#: src/vectors.py:120
+msgid "Stored vector blocks are damaged. Rebuild this index."
+msgstr "सहेजे गए वेक्टर ब्लॉक क्षतिग्रस्त हैं। यह इंडेक्स फिर से बनाएँ।"
+
+#: src/vectors.py:165
+msgid ""
+"The database contains broken references. Restore a database backup before "
+"upgrading."
+msgstr "डेटाबेस में टूटे हुए संदर्भ हैं। अपग्रेड से पहले डेटाबेस बैकअप बहाल करें।"
+
+#: src/vectors.py:176
+msgid ""
+"Stored vector dimensions do not match their configuration. Rebuild the index "
+"before upgrading."
+msgstr ""
+"सहेजे गए वेक्टर के आयाम उनके कॉन्फ़िगरेशन से मेल नहीं खाते। अपग्रेड से पहले इंडेक्स फिर बनाएँ।"
+
+#: src/vectors.py:181
+#, python-brace-format
+msgid "Migrating vectors: {0} of {1}"
+msgstr "वेक्टर स्थानांतरित हो रहे हैं: {1} में से {0}"
+
+#: src/vectors.py:183
+msgid "Verifying migrated vectors…"
+msgstr "स्थानांतरित वेक्टर की जाँच हो रही है…"
+
+#: src/vectors.py:185 src/vectors.py:192
+msgid "Vector migration verification failed."
+msgstr "वेक्टर स्थानांतरण की जाँच विफल रही।"
+
+#: src/vectors.py:193
+msgid "Finishing the database upgrade…"
+msgstr "डेटाबेस अपग्रेड पूरा हो रहा है…"
+
+#: src/web_import.py:48
+msgid "Enter an HTTP or HTTPS URL without embedded login credentials."
+msgstr "बिना अंतर्निहित लॉगिन जानकारी वाला HTTP या HTTPS URL दर्ज करें।"
+
+#: src/web_import.py:54
+msgid "Enter between 1 and 20 URLs, one per line."
+msgstr "1 से 20 URL दर्ज करें, हर पंक्ति में एक।"
+
+#: src/web_import.py:86
+#, python-brace-format
+msgid "Downloading {0}"
+msgstr "{0} डाउनलोड हो रहा है"
+
+#: src/web_import.py:89
+msgid "This URL could not be opened."
+msgstr "यह URL नहीं खोला जा सका।"
+
+#: src/web_import.py:97
+msgid "The URL has an invalid redirect or exceeds five redirects."
+msgstr "इस URL में अमान्य पुनर्निर्देशन है या पाँच से अधिक पुनर्निर्देशन हैं।"
+
+#: src/web_import.py:103
+#, python-brace-format
+msgid "Download failed: HTTP {0} {1}"
+msgstr "डाउनलोड विफल: HTTP {0} {1}"
+
+#: src/web_import.py:105 src/web_import.py:117
+msgid "Downloads must be no larger than 50 MiB."
+msgstr "डाउनलोड का आकार 50 MiB से अधिक नहीं होना चाहिए।"
+
+#: src/web_import.py:128
+msgid "The download timed out. Retry this URL."
+msgstr "डाउनलोड का समय समाप्त हो गया। इस URL के लिए फिर कोशिश करें।"
+
+#: src/web_import.py:129
+#, python-brace-format
+msgid "The URL could not be downloaded: {0}"
+msgstr "यह URL डाउनलोड नहीं हो सका: {0}"
+
+#: src/web_import.py:212
+msgid "The page does not contain readable HTML."
+msgstr "पृष्ठ में पढ़ने योग्य HTML नहीं है।"
+
+#: src/web_import.py:222
+#, python-brace-format
+msgid "Invalid CSS selector: {0}"
+msgstr "अमान्य CSS चयनकर्ता: {0}"
+
+#: src/web_import.py:226
+msgid ""
+"The CSS selector did not match any elements. Try main, article, or a content "
+"class."
+msgstr ""
+"CSS चयनकर्ता किसी तत्व से मेल नहीं खाता। main, article या सामग्री का कोई क्लास "
+"आज़माएँ।"
+
+#: src/web_import.py:243
+msgid ""
+"No main content was found. Try a CSS selector, or paste the page text using "
+"Add Text."
+msgstr ""
+"मुख्य सामग्री नहीं मिली। CSS चयनकर्ता आज़माएँ या “टेक्स्ट जोड़ें” से पृष्ठ का टेक्स्ट चिपकाएँ।"
+
+#: src/web_import.py:251
+msgid "No text was found in the selected content. Try another CSS selector."
+msgstr "चुनी गई सामग्री में टेक्स्ट नहीं मिला। दूसरा CSS चयनकर्ता आज़माएँ।"
+
+#: src/web_import.py:259
+msgid "Web document"
+msgstr "वेब दस्तावेज़"
+
+#: src/web_import.py:274
+msgid "This URL must provide an HTML page, PDF, or UTF-8 text document."
+msgstr "इस URL पर HTML पृष्ठ, PDF या UTF-8 टेक्स्ट दस्तावेज़ होना चाहिए।"
+
+#: src/web_store.py:38
+msgid "The destination collection was deleted. Choose a collection again."
+msgstr "गंतव्य संग्रह हटा दिया गया है। संग्रह फिर से चुनें।"
+
+#: src/web_store.py:43
+msgid ""
+"This document changed since the preview was opened. Fetch it again before "
+"saving."
+msgstr "पूर्वावलोकन खुलने के बाद यह दस्तावेज़ बदल गया है। सहेजने से पहले इसे फिर से प्राप्त करें।"
+
+#: src/web_store.py:53
+msgid "Source content changed. Rebuild required."
+msgstr "स्रोत सामग्री बदल गई है। दोबारा निर्माण ज़रूरी है।"
+
+#: src/widgets/chat_input.py:61 src/widgets/chat_input.py:66
+#: src/widgets/chat_input.py:68 src/widgets/knowledge_view.py:247
+msgid "Model default"
+msgstr "मॉडल डिफ़ॉल्ट"
+
+#: src/widgets/chat_input.py:61
+msgid "Off"
+msgstr "बंद"
+
+#: src/widgets/chat_input.py:61
+msgid "On"
+msgstr "चालू"
+
+#: src/widgets/chat_input.py:61 src/widgets/chat_input.py:66
+msgid "Low"
+msgstr "कम"
+
+#: src/widgets/chat_input.py:61 src/widgets/chat_input.py:66
+msgid "Medium"
+msgstr "मध्यम"
+
+#: src/widgets/chat_input.py:61 src/widgets/chat_input.py:66
+msgid "High"
+msgstr "अधिक"
+
+#: src/widgets/chat_input.py:61
+msgid "Max"
+msgstr "अधिकतम"
+
+#: src/widgets/chat_input.py:87
+msgid "Stop response"
+msgstr "उत्तर रोकें"
+
+#: src/widgets/chat_input.py:87 src/widgets/chat_input.ui:73
+msgid "Send Message"
+msgstr "संदेश भेजें"
+
+#: src/widgets/chat_input.py:108
+msgid "Checking image support…"
+msgstr "चित्र समर्थन जाँचा जा रहा है…"
+
+#: src/widgets/chat_input.py:110
+msgid "This model does not support images."
+msgstr "यह मॉडल चित्रों का समर्थन नहीं करता।"
+
+#: src/widgets/chat_input.py:114
+msgid "Earlier images remain saved; only text history will be sent."
+msgstr "पहले के चित्र सहेजे रहेंगे; केवल टेक्स्ट इतिहास भेजा जाएगा।"
+
+#: src/widgets/chat_input.py:116
+msgid "Image support unknown."
+msgstr "चित्र समर्थन अज्ञात है।"
+
+#: src/widgets/chat_input.py:128
+msgid "Select a chat model"
+msgstr "चैट मॉडल चुनें"
+
+#: src/widgets/chat_input.py:163
+msgid "Checking chat models…"
+msgstr "चैट मॉडल जाँचे जा रहे हैं…"
+
+#: src/widgets/chat_input.py:176
+msgid "No chat models found. Pull one in Manage Models, then refresh."
+msgstr "कोई चैट मॉडल नहीं मिला। “मॉडल प्रबंधित करें” में एक डाउनलोड करें, फिर रीफ़्रेश करें।"
+
+#: src/widgets/chat_input.py:246
+msgid "Select Images"
+msgstr "चित्र चुनें"
+
+#: src/widgets/chat_input.py:250
+msgid "Images"
+msgstr "चित्र"
+
+#: src/widgets/chat_input.py:283 src/widgets/chat_input.ui:116
+msgid "No image selected"
+msgstr "कोई चित्र नहीं चुना गया"
+
+#: src/widgets/chat_input.py:289
+#, python-brace-format
+msgid "{0} image selected"
+msgid_plural "{0} images selected"
+msgstr[0] "{0} चित्र चुना गया"
+msgstr[1] "{0} चित्र चुने गए"
+
+#: src/widgets/chat_input.ui:35
+msgid "Select Model"
+msgstr "मॉडल चुनें"
+
+#: src/widgets/chat_input.ui:46
+msgid "Thinking"
+msgstr "विचार"
+
+#: src/widgets/chat_input.ui:54
+msgid "Thinking Level"
+msgstr "विचार का स्तर"
+
+#: src/widgets/chat_input.ui:67
+msgid "Type a message..."
+msgstr "संदेश लिखें…"
+
+#: src/widgets/chat_input.ui:111
+msgid "Attach Image"
+msgstr "चित्र जोड़ें"
+
+#: src/widgets/chat_input.ui:125
+msgid "Clear Image"
+msgstr "चित्र हटाएँ"
+
+#: src/widgets/json_view.py:50
+msgid "JSON files"
+msgstr "JSON फ़ाइलें"
+
+#: src/widgets/json_view.py:70
+msgid "Import…"
+msgstr "आयात करें…"
+
+#: src/widgets/json_view.py:73 src/widgets/knowledge_view.py:507
+#: src/widgets/knowledge_view.py:690
+msgid "Apply"
+msgstr "लागू करें"
+
+#: src/widgets/json_view.py:87
+msgid "Content"
+msgstr "सामग्री"
+
+#: src/widgets/json_view.py:160 src/widgets/options_panel.py:41
+msgid "JSON Schema"
+msgstr "JSON स्कीमा"
+
+#: src/widgets/json_view.py:161
+msgid ""
+"Paste or import a self-contained JSON Schema. Describe the expected JSON in "
+"your prompt."
+msgstr "स्वयंपूर्ण JSON स्कीमा चिपकाएँ या आयात करें। प्रॉम्प्ट में अपेक्षित JSON का वर्णन करें।"
+
+#: src/widgets/json_view.py:162
+msgid "Import JSON Schema"
+msgstr "JSON स्कीमा आयात करें"
+
+#: src/widgets/json_view.py:182
+msgid "Raw"
+msgstr "मूल"
+
+#: src/widgets/json_view.py:184
+msgid "Copy JSON"
+msgstr "JSON कॉपी करें"
+
+#: src/widgets/json_view.py:186
+msgid "Save JSON…"
+msgstr "JSON सहेजें…"
+
+#: src/widgets/json_view.py:188
+msgid "Copy Raw"
+msgstr "मूल कॉपी करें"
+
+#: src/widgets/json_view.py:204
+msgid "Matches JSON Schema"
+msgstr "JSON स्कीमा से मेल खाता है"
+
+#: src/widgets/json_view.py:204
+msgid "Valid JSON"
+msgstr "मान्य JSON"
+
+#: src/widgets/json_view.py:205
+msgid "Incomplete JSON response"
+msgstr "अधूरा JSON उत्तर"
+
+#: src/widgets/json_view.py:206
+msgid "Invalid JSON"
+msgstr "अमान्य JSON"
+
+#: src/widgets/json_view.py:206
+msgid "JSON does not match the schema"
+msgstr "JSON स्कीमा से मेल नहीं खाता"
+
+#: src/widgets/json_view.py:207
+msgid "Schema validation could not finish"
+msgstr "स्कीमा की जाँच पूरी नहीं हो सकी"
+
+#: src/widgets/json_view.py:208
+msgid "JSON response"
+msgstr "JSON उत्तर"
+
+#: src/widgets/json_view.py:226
+msgid "Save JSON"
+msgstr "JSON सहेजें"
+
+#: src/widgets/json_view.py:229
+msgid "JSON could not be saved"
+msgstr "JSON सहेजा नहीं जा सका"
+
+#: src/widgets/knowledge_import.py:12
+msgid "Add Text"
+msgstr "टेक्स्ट जोड़ें"
+
+#: src/widgets/knowledge_import.py:13
+msgid "Paste text, choose a collection, and review it before adding."
+msgstr "टेक्स्ट चिपकाएँ, संग्रह चुनें और जोड़ने से पहले समीक्षा करें।"
+
+#: src/widgets/knowledge_import.py:14 src/widgets/knowledge_import.py:85
+#: src/widgets/knowledge_view.py:1225 src/widgets/url_import.py:66
+#: src/widgets/url_import.py:231
+msgid "Add to Collection"
+msgstr "संग्रह में जोड़ें"
+
+#: src/widgets/knowledge_import.py:22 src/widgets/knowledge_import.py:79
+#: src/widgets/url_import.py:53
+msgid "Document title"
+msgstr "दस्तावेज़ का शीर्षक"
+
+#: src/widgets/knowledge_import.py:50 src/widgets/knowledge_import.py:214
+#: src/widgets/knowledge_import.py:246 src/widgets/url_import.py:353
+msgid "Added to Collection — Needs Attention"
+msgstr "संग्रह में जोड़ा गया — ध्यान देने की ज़रूरत है"
+
+#: src/widgets/knowledge_import.py:60
+msgid "Add Files"
+msgstr "फ़ाइलें जोड़ें"
+
+#: src/widgets/knowledge_import.py:67
+msgid ""
+"Import PDF or UTF-8 text files, including Markdown and source code. Maximum "
+"size: 50 MiB per file. Review one file at a time before adding."
+msgstr ""
+"PDF या UTF-8 टेक्स्ट फ़ाइलें आयात करें, जिनमें Markdown और स्रोत कोड भी शामिल हैं। अधिकतम "
+"आकार: हर फ़ाइल 50 MiB। जोड़ने से पहले एक-एक फ़ाइल की समीक्षा करें।"
+
+#: src/widgets/knowledge_import.py:68
+msgid "Choose Files…"
+msgstr "फ़ाइलें चुनें…"
+
+#: src/widgets/knowledge_import.py:81
+msgid "Extracted content (read-only)"
+msgstr "निकाली गई सामग्री (केवल पढ़ने योग्य)"
+
+#: src/widgets/knowledge_import.py:87 src/widgets/url_import.py:69
+msgid "Skip"
+msgstr "छोड़ें"
+
+#: src/widgets/knowledge_import.py:103
+msgid "Text and PDF files"
+msgstr "टेक्स्ट और PDF फ़ाइलें"
+
+#: src/widgets/knowledge_import.py:108
+msgid "All files"
+msgstr "सभी फ़ाइलें"
+
+#: src/widgets/knowledge_import.py:113
+msgid "Choose Text or PDF Files"
+msgstr "टेक्स्ट या PDF फ़ाइलें चुनें"
+
+#: src/widgets/knowledge_import.py:146
+msgid "Extracting"
+msgstr "निकाला जा रहा है"
+
+#: src/widgets/knowledge_import.py:146
+msgid "Ready to Review"
+msgstr "समीक्षा के लिए तैयार"
+
+#: src/widgets/knowledge_import.py:147
+msgid "Adding to Collection"
+msgstr "संग्रह में जोड़ा जा रहा है"
+
+#: src/widgets/knowledge_import.py:147 src/widgets/knowledge_import.py:246
+#: src/widgets/url_import.py:115 src/widgets/url_import.py:353
+msgid "Added to Collection — Preparing"
+msgstr "संग्रह में जोड़ा गया — तैयार हो रहा है"
+
+#: src/widgets/knowledge_import.py:148 src/widgets/knowledge_view.py:67
+msgid "Needs Attention"
+msgstr "ध्यान देने की ज़रूरत है"
+
+#: src/widgets/knowledge_import.py:148 src/widgets/url_import.py:115
+msgid "Skipped"
+msgstr "छोड़ दिया गया"
+
+#: src/widgets/knowledge_import.py:158
+msgid ""
+"Review complete. Added documents prepare in the background; their status is "
+"shown in the collection."
+msgstr ""
+"समीक्षा पूरी हुई। जोड़े गए दस्तावेज़ पृष्ठभूमि में तैयार होंगे; उनकी स्थिति संग्रह में दिखाई "
+"जाएगी।"
+
+#: src/widgets/knowledge_import.py:166
+msgid "Extracting text…"
+msgstr "टेक्स्ट निकाला जा रहा है…"
+
+#: src/widgets/knowledge_import.py:193
+#, python-brace-format
+msgid "Import file: {0}"
+msgstr "फ़ाइल आयात करें: {0}"
+
+#: src/widgets/knowledge_import.py:246 src/widgets/url_import.py:353
+msgid "Ready to Search"
+msgstr "खोज के लिए तैयार"
+
+#: src/widgets/knowledge_view.py:65
+msgid "Ready"
+msgstr "तैयार"
+
+#: src/widgets/knowledge_view.py:69
+msgid "Preparing"
+msgstr "तैयार हो रहा है"
+
+#: src/widgets/knowledge_view.py:70
+msgid "Needs Preparation"
+msgstr "तैयारी की ज़रूरत है"
+
+#: src/widgets/knowledge_view.py:75
+msgid "Native dimensions"
+msgstr "मूल आयाम"
+
+#: src/widgets/knowledge_view.py:81
+#, python-brace-format
+msgid "Page {0}"
+msgstr "पृष्ठ {0}"
+
+#: src/widgets/knowledge_view.py:148
+msgid "Embedding server"
+msgstr "एम्बेडिंग सर्वर"
+
+#: src/widgets/knowledge_view.py:149
+msgid "Embedding model"
+msgstr "एम्बेडिंग मॉडल"
+
+#: src/widgets/knowledge_view.py:151
+msgid "Manage Models…"
+msgstr "मॉडल प्रबंधित करें…"
+
+#: src/widgets/knowledge_view.py:152
+msgid "Refresh"
+msgstr "रीफ़्रेश करें"
+
+#: src/widgets/knowledge_view.py:196
+msgid "Checking embedding models…"
+msgstr "एम्बेडिंग मॉडल जाँचे जा रहे हैं…"
+
+#: src/widgets/knowledge_view.py:223
+msgid "No embedding models found. Download one in Manage Models, then refresh."
+msgstr ""
+"कोई एम्बेडिंग मॉडल नहीं मिला। “मॉडल प्रबंधित करें” में एक डाउनलोड करें, फिर रीफ़्रेश करें।"
+
+#: src/widgets/knowledge_view.py:232 src/widgets/knowledge_view.py:1202
+msgid "Create Embeddings"
+msgstr "एम्बेडिंग बनाएँ"
+
+#: src/widgets/knowledge_view.py:240
+msgid "Plain"
+msgstr "बिना प्रीफ़िक्स"
+
+#: src/widgets/knowledge_view.py:240
+msgid "EmbeddingGemma retrieval"
+msgstr "EmbeddingGemma पुनर्प्राप्ति"
+
+#: src/widgets/knowledge_view.py:240
+msgid "Nomic retrieval"
+msgstr "Nomic पुनर्प्राप्ति"
+
+#: src/widgets/knowledge_view.py:240
+msgid "Qwen3 retrieval"
+msgstr "Qwen3 पुनर्प्राप्ति"
+
+#: src/widgets/knowledge_view.py:240
+msgid "Custom prefixes"
+msgstr "कस्टम प्रीफ़िक्स"
+
+#: src/widgets/knowledge_view.py:241
+msgid "Advanced Embedding Settings"
+msgstr "उन्नत एम्बेडिंग सेटिंग"
+
+#: src/widgets/knowledge_view.py:242
+msgid "Embedding format"
+msgstr "एम्बेडिंग प्रारूप"
+
+#: src/widgets/knowledge_view.py:245
+msgid "Document prefix"
+msgstr "दस्तावेज़ प्रीफ़िक्स"
+
+#: src/widgets/knowledge_view.py:246
+msgid "Query prefix"
+msgstr "क्वेरी प्रीफ़िक्स"
+
+#: src/widgets/knowledge_view.py:252
+msgid "Dimensions"
+msgstr "आयाम"
+
+#: src/widgets/knowledge_view.py:252
+msgid "Chunk size (characters)"
+msgstr "खंड का आकार (अक्षर)"
+
+#: src/widgets/knowledge_view.py:253
+msgid "Overlap (characters)"
+msgstr "ओवरलैप (अक्षर)"
+
+#: src/widgets/knowledge_view.py:257
+msgid "Create"
+msgstr "बनाएँ"
+
+#: src/widgets/knowledge_view.py:297
+msgid "Select an embedding model."
+msgstr "एम्बेडिंग मॉडल चुनें।"
+
+#: src/widgets/knowledge_view.py:299
+msgid "The host did not provide a model digest."
+msgstr "होस्ट ने मॉडल डाइजेस्ट नहीं दिया।"
+
+#: src/widgets/knowledge_view.py:305
+msgid "Overlap must be smaller than the chunk size."
+msgstr "ओवरलैप खंड के आकार से छोटा होना चाहिए।"
+
+#: src/widgets/knowledge_view.py:311
+msgid ""
+"An embedding model makes documents searchable. It can differ from the model "
+"used for chat."
+msgstr ""
+"एम्बेडिंग मॉडल दस्तावेज़ों को खोजने योग्य बनाता है। यह चैट वाले मॉडल से अलग हो सकता है।"
+
+#: src/widgets/knowledge_view.py:312
+msgid "Copy Collection with New Settings"
+msgstr "नई सेटिंग के साथ संग्रह की प्रति बनाएँ"
+
+#: src/widgets/knowledge_view.py:312
+msgid "Create Collection"
+msgstr "संग्रह बनाएँ"
+
+#: src/widgets/knowledge_view.py:313 src/widgets/knowledge_view.py:316
+msgid "Collection name"
+msgstr "संग्रह का नाम"
+
+#: src/widgets/knowledge_view.py:314
+#, python-brace-format
+msgid "{0} (copy)"
+msgstr "{0} (प्रति)"
+
+#: src/widgets/knowledge_view.py:343
+msgid "Destination collection"
+msgstr "गंतव्य संग्रह"
+
+#: src/widgets/knowledge_view.py:344 src/widgets/knowledge_view.py:852
+msgid "New Collection…"
+msgstr "नया संग्रह…"
+
+#: src/widgets/knowledge_view.py:351
+msgid "Choose a collection"
+msgstr "संग्रह चुनें"
+
+#: src/widgets/knowledge_view.py:362
+msgid "Choose a destination collection, or create a new one."
+msgstr "गंतव्य संग्रह चुनें या नया बनाएँ।"
+
+#: src/widgets/knowledge_view.py:372
+msgid "Add Existing Documents"
+msgstr "मौजूदा दस्तावेज़ जोड़ें"
+
+#: src/widgets/knowledge_view.py:377 src/widgets/knowledge_view.py:859
+#: src/widgets/knowledge_view.py:956
+msgid "Search documents"
+msgstr "दस्तावेज़ खोजें"
+
+#: src/widgets/knowledge_view.py:382 src/widgets/knowledge_view.py:1237
+msgid "Add"
+msgstr "जोड़ें"
+
+#: src/widgets/knowledge_view.py:397
+msgid "All library documents are already in this collection."
+msgstr "पुस्तकालय के सभी दस्तावेज़ पहले से इस संग्रह में हैं।"
+
+#: src/widgets/knowledge_view.py:415
+#, python-brace-format
+msgid "Sources used ({0})"
+msgstr "इस्तेमाल किए गए स्रोत ({0})"
+
+#: src/widgets/knowledge_view.py:418
+#, python-brace-format
+msgid "Search query: {0}"
+msgstr "खोज क्वेरी: {0}"
+
+#: src/widgets/knowledge_view.py:422
+msgid "Cosine similarity · Higher is closer"
+msgstr "कोसाइन समानता · अधिक मान का अर्थ अधिक निकट"
+
+#: src/widgets/knowledge_view.py:423
+msgid "Euclidean distance (L2) · Lower is closer"
+msgstr "यूक्लिडीय दूरी (L2) · कम मान का अर्थ अधिक निकट"
+
+#: src/widgets/knowledge_view.py:424
+msgid "Manhattan distance (L1) · Lower is closer"
+msgstr "मैनहैटन दूरी (L1) · कम मान का अर्थ अधिक निकट"
+
+#: src/widgets/knowledge_view.py:425
+msgid "Unknown similarity measure"
+msgstr "अज्ञात समानता माप"
+
+#: src/widgets/knowledge_view.py:427 src/widgets/knowledge_view.py:1198
+#: src/widgets/url_import.py:334
+#, python-brace-format
+msgid "Collections: {0}"
+msgstr "संग्रह: {0}"
+
+#: src/widgets/knowledge_view.py:430
+#, python-brace-format
+msgid "Similarity: {0:.4f}"
+msgstr "समानता: {0:.4f}"
+
+#: src/widgets/knowledge_view.py:430
+#, python-brace-format
+msgid "Distance: {0:.4f}"
+msgstr "दूरी: {0:.4f}"
+
+#: src/widgets/knowledge_view.py:433
+#, python-brace-format
+msgid "Pages: {0}"
+msgstr "पृष्ठ: {0}"
+
+#: src/widgets/knowledge_view.py:438 src/widgets/knowledge_view.py:1193
+msgid "Open Source URL"
+msgstr "स्रोत URL खोलें"
+
+#: src/widgets/knowledge_view.py:440 src/widgets/knowledge_view.py:1195
+#, python-brace-format
+msgid "Fetched: {0}"
+msgstr "प्राप्ति का समय: {0}"
+
+#: src/widgets/knowledge_view.py:441
+msgid "Shortened to fit the source budget."
+msgstr "स्रोत की अक्षर सीमा में रखने के लिए छोटा किया गया।"
+
+#: src/widgets/knowledge_view.py:444
+msgid "Scores compare embeddings; they are not confidence estimates."
+msgstr "स्कोर एम्बेडिंग की तुलना करते हैं; वे विश्वसनीयता के अनुमान नहीं हैं।"
+
+#: src/widgets/knowledge_view.py:449
+msgid "Knowledge Sources"
+msgstr "ज्ञान स्रोत"
+
+#: src/widgets/knowledge_view.py:449 src/widgets/knowledge_view.py:499
+#: src/widgets/knowledge_view.py:502
+msgid "Test Search"
+msgstr "खोज परखें"
+
+#: src/widgets/knowledge_view.py:456 src/widgets/knowledge_view.py:956
+msgid "Search collections"
+msgstr "संग्रह खोजें"
+
+#: src/widgets/knowledge_view.py:461
+msgid "Search Settings"
+msgstr "खोज सेटिंग"
+
+#: src/widgets/knowledge_view.py:464
+msgid "Embedding configuration (from selected collections)"
+msgstr "एम्बेडिंग कॉन्फ़िगरेशन (चुने गए संग्रहों से)"
+
+#: src/widgets/knowledge_view.py:474
+msgid ""
+"The query must use the same embedding configuration as the selected "
+"collections. A compatible server can be chosen here."
+msgstr ""
+"क्वेरी में चुने गए संग्रहों वाला एम्बेडिंग कॉन्फ़िगरेशन ही इस्तेमाल होना चाहिए। यहाँ संगत सर्वर "
+"चुन सकते हैं।"
+
+#: src/widgets/knowledge_view.py:476
+msgid ""
+"This chat has older individual sources. Applying a collection selection "
+"replaces them. Closing this dialog keeps them unchanged."
+msgstr ""
+"इस चैट में पुराने अलग-अलग स्रोत हैं। संग्रह चयन लागू करने पर वे बदल जाएँगे। यह संवाद बंद करने "
+"पर वे जैसे हैं वैसे रहेंगे।"
+
+#: src/widgets/knowledge_view.py:481
+msgid "Maximum passages"
+msgstr "अधिकतम अंश"
+
+#: src/widgets/knowledge_view.py:481
+msgid "Source budget (characters)"
+msgstr "स्रोत की अक्षर सीमा"
+
+#: src/widgets/knowledge_view.py:484
+msgid "Similarity measure"
+msgstr "समानता माप"
+
+#: src/widgets/knowledge_view.py:485
+msgid "Cosine similarity"
+msgstr "कोसाइन समानता"
+
+#: src/widgets/knowledge_view.py:485
+msgid "Euclidean distance (L2)"
+msgstr "यूक्लिडीय दूरी (L2)"
+
+#: src/widgets/knowledge_view.py:485
+msgid "Manhattan distance (L1)"
+msgstr "मैनहैटन दूरी (L1)"
+
+#: src/widgets/knowledge_view.py:500
+msgid "Enter a search query"
+msgstr "खोज क्वेरी दर्ज करें"
+
+#: src/widgets/knowledge_view.py:554
+msgid "Minimum cosine similarity"
+msgstr "न्यूनतम कोसाइन समानता"
+
+#: src/widgets/knowledge_view.py:554
+msgid "Maximum distance"
+msgstr "अधिकतम दूरी"
+
+#: src/widgets/knowledge_view.py:555
+msgid "No minimum"
+msgstr "कोई न्यूनतम नहीं"
+
+#: src/widgets/knowledge_view.py:555
+msgid "No maximum"
+msgstr "कोई अधिकतम नहीं"
+
+#: src/widgets/knowledge_view.py:560
+msgid "Higher is closer (−1 to 1). This is the default for semantic search."
+msgstr "अधिक मान का अर्थ अधिक निकट (−1 से 1)। अर्थ-आधारित खोज के लिए यह डिफ़ॉल्ट है।"
+
+#: src/widgets/knowledge_view.py:561
+msgid ""
+"Lower is closer. With normalized embeddings, Euclidean and cosine usually "
+"rank results alike."
+msgstr ""
+"कम मान का अर्थ अधिक निकट। सामान्यीकृत एम्बेडिंग में यूक्लिडीय दूरी और कोसाइन समानता आम "
+"तौर पर परिणामों का समान क्रम देते हैं।"
+
+#: src/widgets/knowledge_view.py:562
+msgid ""
+"Lower is closer. Adds absolute differences between vector components and can "
+"rank results differently from cosine."
+msgstr ""
+"कम मान का अर्थ अधिक निकट। यह वेक्टर घटकों के अंतरों के निरपेक्ष मान जोड़ता है और कोसाइन "
+"से अलग क्रम दे सकता है।"
+
+#: src/widgets/knowledge_view.py:570 src/widgets/knowledge_view.py:855
+#: src/widgets/knowledge_view.py:949
+msgid "Collections"
+msgstr "संग्रह"
+
+#: src/widgets/knowledge_view.py:571
+msgid ""
+"Choose collections to search. New documents added to them are included "
+"automatically. All documents must be ready."
+msgstr ""
+"खोजने के लिए संग्रह चुनें। उनमें जोड़े गए नए दस्तावेज़ अपने-आप शामिल होंगे। सभी दस्तावेज़ तैयार "
+"होने चाहिए।"
+
+#: src/widgets/knowledge_view.py:575
+msgid "Some selected collections were deleted. Choose sources again."
+msgstr "कुछ चुने गए संग्रह हटा दिए गए हैं। स्रोत फिर से चुनें।"
+
+#: src/widgets/knowledge_view.py:576
+msgid "Clear missing collections"
+msgstr "गायब संग्रह हटाएँ"
+
+#: src/widgets/knowledge_view.py:581 src/widgets/knowledge_view.py:626
+#, python-brace-format
+msgid "{0} · {1}/{2} documents ready"
+msgstr "{0} · तैयार दस्तावेज़: {1}/{2}"
+
+#: src/widgets/knowledge_view.py:583
+#, python-brace-format
+msgid "Different embedding configuration: {0}"
+msgstr "अलग एम्बेडिंग कॉन्फ़िगरेशन: {0}"
+
+#: src/widgets/knowledge_view.py:590
+msgid "No matching collections"
+msgstr "कोई मेल खाता संग्रह नहीं"
+
+#: src/widgets/knowledge_view.py:592
+msgid ""
+"Create a collection and add text, files, or URLs in the Knowledge Library."
+msgstr "ज्ञान पुस्तकालय में संग्रह बनाएँ और टेक्स्ट, फ़ाइलें या URL जोड़ें।"
+
+#: src/widgets/knowledge_view.py:593
+msgid "Open Knowledge Library"
+msgstr "ज्ञान पुस्तकालय खोलें"
+
+#: src/widgets/knowledge_view.py:628
+msgid ""
+"Uses different embedding settings. Clear the current selection to choose "
+"this collection."
+msgstr ""
+"यह अलग एम्बेडिंग सेटिंग इस्तेमाल करता है। इस संग्रह को चुनने के लिए वर्तमान चयन साफ़ करें।"
+
+#: src/widgets/knowledge_view.py:639
+msgid ""
+"Select at least one collection. Create collections in Knowledge first if "
+"needed."
+msgstr "कम से कम एक संग्रह चुनें। ज़रूरत हो तो पहले ज्ञान में संग्रह बनाएँ।"
+
+#: src/widgets/knowledge_view.py:644
+msgid "This model digest does not match the selected embedding configuration."
+msgstr "इस मॉडल का डाइजेस्ट चुने गए एम्बेडिंग कॉन्फ़िगरेशन से मेल नहीं खाता।"
+
+#: src/widgets/knowledge_view.py:679
+msgid "Document Chunks"
+msgstr "दस्तावेज़ के खंड"
+
+#: src/widgets/knowledge_view.py:688
+msgid "Select all"
+msgstr "सभी चुनें"
+
+#: src/widgets/knowledge_view.py:689
+msgid "Select none"
+msgstr "सभी का चयन हटाएँ"
+
+#: src/widgets/knowledge_view.py:693
+msgid "Load more chunks"
+msgstr "और खंड लोड करें"
+
+#: src/widgets/knowledge_view.py:730
+#, python-brace-format
+msgid "Chunk {0}"
+msgstr "खंड {0}"
+
+#: src/widgets/knowledge_view.py:736
+#, python-brace-format
+msgid "Characters {0}–{1}"
+msgstr "अक्षर {0}–{1}"
+
+#: src/widgets/knowledge_view.py:739
+msgid "Inspect vector"
+msgstr "वेक्टर देखें"
+
+#: src/widgets/knowledge_view.py:753
+msgid "This vector was deleted."
+msgstr "यह वेक्टर हटा दिया गया है।"
+
+#: src/widgets/knowledge_view.py:756
+msgid "Embedding Vector"
+msgstr "एम्बेडिंग वेक्टर"
+
+#: src/widgets/knowledge_view.py:756
+msgid "Stored normalized vector. Changes are not saved."
+msgstr "सहेजा गया सामान्यीकृत वेक्टर। बदलाव सहेजे नहीं जाएँगे।"
+
+#: src/widgets/knowledge_view.py:769
+msgid "Use Knowledge"
+msgstr "ज्ञान इस्तेमाल करें"
+
+#: src/widgets/knowledge_view.py:770
+msgid "Choose sources…"
+msgstr "स्रोत चुनें…"
+
+#: src/widgets/knowledge_view.py:774
+msgid "Search query override for the next turn (optional)"
+msgstr "अगले चरण की खोज क्वेरी बदलें (वैकल्पिक)"
+
+#: src/widgets/knowledge_view.py:775
+msgid "Use a different search query for the next message"
+msgstr "अगले संदेश के लिए अलग खोज क्वेरी इस्तेमाल करें"
+
+#: src/widgets/knowledge_view.py:776
+msgid "Search Query Override"
+msgstr "खोज क्वेरी बदलें"
+
+#: src/widgets/knowledge_view.py:795
+msgid "Choose collections to search."
+msgstr "खोजने के लिए संग्रह चुनें।"
+
+#: src/widgets/knowledge_view.py:797
+#, python-brace-format
+msgid "Older individual sources: {0}. Choose collections to replace them."
+msgstr "पुराने अलग-अलग स्रोत: {0}। उन्हें बदलने के लिए संग्रह चुनें।"
+
+#: src/widgets/knowledge_view.py:799
+#, python-brace-format
+msgid "{0}: {1}/{2} ready"
+msgstr "{0}: {1}/{2} तैयार"
+
+#: src/widgets/knowledge_view.py:855 src/widgets/knowledge_view.py:949
+msgid "All Documents"
+msgstr "सभी दस्तावेज़"
+
+#: src/widgets/knowledge_view.py:855 src/widgets/knowledge_view.py:949
+msgid "Ungrouped Documents"
+msgstr "बिना समूह के दस्तावेज़"
+
+#: src/widgets/knowledge_view.py:857
+msgid "Library"
+msgstr "पुस्तकालय"
+
+#: src/widgets/knowledge_view.py:864 src/widgets/knowledge_view.py:908
+#: src/widgets/knowledge_view.py:1031
+msgid "Knowledge Library"
+msgstr "ज्ञान पुस्तकालय"
+
+#: src/widgets/knowledge_view.py:870
+msgid "Document"
+msgstr "दस्तावेज़"
+
+#: src/widgets/knowledge_view.py:879
+msgid "Background Tasks"
+msgstr "पृष्ठभूमि कार्य"
+
+#: src/widgets/knowledge_view.py:963 src/widgets/knowledge_view.py:1042
+#, python-brace-format
+msgid "{0}/{1} documents ready"
+msgstr "तैयार दस्तावेज़: {0}/{1}"
+
+#: src/widgets/knowledge_view.py:973
+#, python-brace-format
+msgid "{0} character"
+msgid_plural "{0} characters"
+msgstr[0] "{0} अक्षर"
+msgstr[1] "{0} अक्षर"
+
+#: src/widgets/knowledge_view.py:979
+msgid "No matches"
+msgstr "कोई मेल नहीं"
+
+#: src/widgets/knowledge_view.py:980
+msgid "Create a collection to organize text, files, and URLs."
+msgstr "टेक्स्ट, फ़ाइलें और URL व्यवस्थित करने के लिए संग्रह बनाएँ।"
+
+#: src/widgets/knowledge_view.py:981
+msgid "Add text, files, or URLs to a collection."
+msgstr "संग्रह में टेक्स्ट, फ़ाइलें या URL जोड़ें।"
+
+#: src/widgets/knowledge_view.py:1033
+msgid "Knowledge Collections"
+msgstr "ज्ञान संग्रह"
+
+#: src/widgets/knowledge_view.py:1034
+msgid ""
+"Group documents into collections, then select a collection in chat to ask "
+"questions about its content."
+msgstr "दस्तावेज़ों को संग्रहों में रखें, फिर चैट में संग्रह चुनकर उसकी सामग्री के बारे में प्रश्न पूछें।"
+
+#: src/widgets/knowledge_view.py:1035
+msgid "Create Collection…"
+msgstr "संग्रह बनाएँ…"
+
+#: src/widgets/knowledge_view.py:1038
+msgid ""
+"Select a document to inspect it. New imports always ask for a destination "
+"collection."
+msgstr "देखने के लिए दस्तावेज़ चुनें। नए आयात में हमेशा गंतव्य संग्रह चुनना होगा।"
+
+#: src/widgets/knowledge_view.py:1043
+msgid ""
+"Add text, files, or URLs to this collection. Gnollama prepares the documents "
+"automatically so chats can search them."
+msgstr ""
+"इस संग्रह में टेक्स्ट, फ़ाइलें या URL जोड़ें। Gnollama दस्तावेज़ अपने-आप तैयार करता है ताकि चैट "
+"में उन्हें खोजा जा सके।"
+
+#: src/widgets/knowledge_view.py:1045
+msgid "Add Existing Documents…"
+msgstr "मौजूदा दस्तावेज़ जोड़ें…"
+
+#: src/widgets/knowledge_view.py:1047
+msgid "Use in New Chat"
+msgstr "नई चैट में इस्तेमाल करें"
+
+#: src/widgets/knowledge_view.py:1051
+msgid "Prepare Documents"
+msgstr "दस्तावेज़ तैयार करें"
+
+#: src/widgets/knowledge_view.py:1052
+msgid "Embedding Details"
+msgstr "एम्बेडिंग का विवरण"
+
+#: src/widgets/knowledge_view.py:1054
+#, python-brace-format
+msgid "Chunk size: {0} characters · Overlap: {1} characters"
+msgstr "खंड का आकार: {0} अक्षर · ओवरलैप: {1} अक्षर"
+
+#: src/widgets/knowledge_view.py:1059 src/widgets/knowledge_view.py:1203
+msgid "Rename"
+msgstr "नाम बदलें"
+
+#: src/widgets/knowledge_view.py:1060
+msgid "Copy with New Settings"
+msgstr "नई सेटिंग के साथ प्रति बनाएँ"
+
+#: src/widgets/knowledge_view.py:1061 src/widgets/knowledge_view.py:1132
+msgid "Change Embedding Model"
+msgstr "एम्बेडिंग मॉडल बदलें"
+
+#: src/widgets/knowledge_view.py:1062 src/widgets/knowledge_view.py:1122
+msgid "Delete Collection"
+msgstr "संग्रह हटाएँ"
+
+#: src/widgets/knowledge_view.py:1067
+msgid "Collection Options"
+msgstr "संग्रह विकल्प"
+
+#: src/widgets/knowledge_view.py:1080
+msgid "Remove from Collection"
+msgstr "संग्रह से हटाएँ"
+
+#: src/widgets/knowledge_view.py:1088
+msgid "Add Text…"
+msgstr "टेक्स्ट जोड़ें…"
+
+#: src/widgets/knowledge_view.py:1088
+msgid "Add Files…"
+msgstr "फ़ाइलें जोड़ें…"
+
+#: src/widgets/knowledge_view.py:1089
+msgid "Add URLs…"
+msgstr "URL जोड़ें…"
+
+#: src/widgets/knowledge_view.py:1108
+msgid "Rename Collection"
+msgstr "संग्रह का नाम बदलें"
+
+#: src/widgets/knowledge_view.py:1120
+msgid "Delete Collection?"
+msgstr "संग्रह हटाएँ?"
+
+#: src/widgets/knowledge_view.py:1120
+#, python-brace-format
+msgid ""
+"Delete “{0}”? Its documents and embeddings stay in the library. Chats "
+"selecting this collection will need new sources; saved answers keep their "
+"original passages."
+msgstr ""
+"“{0}” हटाएँ? उसके दस्तावेज़ और एम्बेडिंग पुस्तकालय में रहेंगे। यह संग्रह चुनने वाली चैट को नए "
+"स्रोत चाहिए होंगे; सहेजे गए उत्तरों में मूल अंश रहेंगे।"
+
+#: src/widgets/knowledge_view.py:1135
+msgid ""
+"Choose a host and embedding model matching the collection’s original model "
+"digest. Embedding settings stay the same."
+msgstr ""
+"संग्रह के मूल मॉडल डाइजेस्ट से मेल खाने वाला होस्ट और एम्बेडिंग मॉडल चुनें। एम्बेडिंग सेटिंग वही "
+"रहेगी।"
+
+#: src/widgets/knowledge_view.py:1163
+msgid "Original model available"
+msgstr "मूल मॉडल उपलब्ध है"
+
+#: src/widgets/knowledge_view.py:1164
+msgid ""
+"Unavailable — the original model changed or was removed. Choose a compatible "
+"server for searches."
+msgstr "अनुपलब्ध — मूल मॉडल बदल गया है या हटा दिया गया है। खोज के लिए संगत सर्वर चुनें।"
+
+#: src/widgets/knowledge_view.py:1166
+#, python-brace-format
+msgid "Unavailable: {0}"
+msgstr "अनुपलब्ध: {0}"
+
+#: src/widgets/knowledge_view.py:1187
+msgid "Select a document to inspect its text and embeddings."
+msgstr "टेक्स्ट और एम्बेडिंग देखने के लिए दस्तावेज़ चुनें।"
+
+#: src/widgets/knowledge_view.py:1196
+msgid "Fetch Again…"
+msgstr "फिर से प्राप्त करें…"
+
+#: src/widgets/knowledge_view.py:1200
+msgid "Back to Collection"
+msgstr "संग्रह में वापस जाएँ"
+
+#: src/widgets/knowledge_view.py:1201
+msgid "Preview Text"
+msgstr "टेक्स्ट का पूर्वावलोकन"
+
+#: src/widgets/knowledge_view.py:1204
+msgid "Delete Document"
+msgstr "दस्तावेज़ हटाएँ"
+
+#: src/widgets/knowledge_view.py:1205
+msgid "Add to Collection…"
+msgstr "संग्रह में जोड़ें…"
+
+#: src/widgets/knowledge_view.py:1210
+msgid "Checking model availability…"
+msgstr "मॉडल की उपलब्धता जाँची जा रही है…"
+
+#: src/widgets/knowledge_view.py:1213
+#, python-brace-format
+msgid "Chunks: {0}"
+msgstr "खंड: {0}"
+
+#: src/widgets/knowledge_view.py:1216
+msgid "Inspect Chunks"
+msgstr "खंड देखें"
+
+#: src/widgets/knowledge_view.py:1217
+msgid "Check Model"
+msgstr "मॉडल जाँचें"
+
+#: src/widgets/knowledge_view.py:1218
+msgid "Delete Index"
+msgstr "इंडेक्स हटाएँ"
+
+#: src/widgets/knowledge_view.py:1245
+#, python-brace-format
+msgid "Background Tasks · {0} running"
+msgstr "पृष्ठभूमि कार्य · चल रहे: {0}"
+
+#: src/widgets/knowledge_view.py:1245
+msgid "Recent Background Tasks"
+msgstr "हाल के पृष्ठभूमि कार्य"
+
+#: src/widgets/knowledge_view.py:1252
+msgid "Details"
+msgstr "विवरण"
+
+#: src/widgets/knowledge_view.py:1260
+msgid "Stop Shared Embedding Build?"
+msgstr "साझा एम्बेडिंग निर्माण रोकें?"
+
+#: src/widgets/knowledge_view.py:1261
+#, python-brace-format
+msgid ""
+"These collections use this build: {0}. They will need a retry before chat "
+"search can use them."
+msgstr ""
+"यह निर्माण इन संग्रहों में इस्तेमाल हो रहा है: {0}। चैट में खोजने से पहले इनके लिए फिर कोशिश "
+"करनी होगी।"
+
+#: src/widgets/knowledge_view.py:1263
+msgid "Keep Building"
+msgstr "निर्माण जारी रखें"
+
+#: src/widgets/knowledge_view.py:1264
+msgid "Stop Build"
+msgstr "निर्माण रोकें"
+
+#: src/widgets/knowledge_view.py:1271
+msgid "Saved source text. Use Fetch Again to update this URL document."
+msgstr ""
+"सहेजा गया स्रोत टेक्स्ट। इस URL दस्तावेज़ को अपडेट करने के लिए “फिर से प्राप्त करें” इस्तेमाल "
+"करें।"
+
+#: src/widgets/knowledge_view.py:1271
+msgid "Saved source text. Import revised content as a new document."
+msgstr "सहेजा गया स्रोत टेक्स्ट। बदली हुई सामग्री को नए दस्तावेज़ के रूप में आयात करें।"
+
+#: src/widgets/knowledge_view.py:1292
+msgid "This Text Is Already Saved"
+msgstr "यह टेक्स्ट पहले से सहेजा गया है"
+
+#: src/widgets/knowledge_view.py:1294
+msgid "Open Existing"
+msgstr "मौजूदा खोलें"
+
+#: src/widgets/knowledge_view.py:1296
+msgid "Add Existing to Collection"
+msgstr "मौजूदा दस्तावेज़ संग्रह में जोड़ें"
+
+#: src/widgets/knowledge_view.py:1334
+msgid "Rename Document"
+msgstr "दस्तावेज़ का नाम बदलें"
+
+#: src/widgets/knowledge_view.py:1348
+msgid "Cancel this document’s indexing job before deleting it."
+msgstr "इस दस्तावेज़ को हटाने से पहले उसका इंडेक्स कार्य रद्द करें।"
+
+#: src/widgets/knowledge_view.py:1350
+msgid "Delete Document?"
+msgstr "दस्तावेज़ हटाएँ?"
+
+#: src/widgets/knowledge_view.py:1350
+msgid "Delete Embedding Index?"
+msgstr "एम्बेडिंग इंडेक्स हटाएँ?"
+
+#: src/widgets/knowledge_view.py:1351
+msgid ""
+"Chats selecting this data will need new sources. Passages already saved with "
+"answers remain in chat history."
+msgstr ""
+"यह डेटा चुनने वाली चैट को नए स्रोत चाहिए होंगे। उत्तरों के साथ पहले से सहेजे गए अंश चैट "
+"इतिहास में रहेंगे।"
+
+#: src/widgets/knowledge_view.py:1352
+msgid "The saved source text and all its indexes will be deleted."
+msgstr "सहेजा गया स्रोत टेक्स्ट और उसके सभी इंडेक्स हटा दिए जाएँगे।"
+
+#: src/widgets/knowledge_view.py:1352
+msgid "The saved source text will be kept."
+msgstr "सहेजा गया स्रोत टेक्स्ट रखा जाएगा।"
+
+#: src/widgets/knowledge_view.py:1355
+#, python-brace-format
+msgid "Affected collections: {0}."
+msgstr "प्रभावित संग्रह: {0}।"
+
+#: src/widgets/knowledge_view.py:1356
+msgid "This document will be removed from their membership."
+msgstr "यह दस्तावेज़ उनकी सदस्यता से हटा दिया जाएगा।"
+
+#: src/widgets/knowledge_view.py:1357
+msgid "Their documents will need embeddings rebuilt."
+msgstr "उनके दस्तावेज़ों की एम्बेडिंग फिर बनानी होगी।"
+
+#: src/widgets/knowledge_view.py:1376
+msgid "Embedding Model Availability"
+msgstr "एम्बेडिंग मॉडल की उपलब्धता"
+
+#: src/widgets/knowledge_view.py:1377
+msgid "Checking…"
+msgstr "जाँच हो रही है…"
+
+#: src/widgets/knowledge_view.py:1380
+msgid "The original model is available on this host."
+msgstr "इस होस्ट पर मूल मॉडल उपलब्ध है।"
+
+#: src/widgets/message_list.py:18
+msgid "Start a Conversation"
+msgstr "बातचीत शुरू करें"
+
+#: src/widgets/message_list.py:19
+msgid ""
+"Choose a model and enter a message. Select knowledge collections to ask "
+"questions about your documents."
+msgstr ""
+"मॉडल चुनें और संदेश दर्ज करें। अपने दस्तावेज़ों के बारे में प्रश्न पूछने के लिए ज्ञान संग्रह चुनें।"
+
+#: src/widgets/options_panel.py:41
+msgid "Text"
+msgstr "टेक्स्ट"
+
+#: src/widgets/options_panel.py:41
+msgid "JSON"
+msgstr "JSON"
+
+#: src/widgets/options_panel.py:43 src/widgets/options_panel.py:72
+msgid "Server default"
+msgstr "सर्वर डिफ़ॉल्ट"
+
+#: src/widgets/options_panel.py:43
+msgid "Unload after reply"
+msgstr "उत्तर के बाद मेमोरी से हटाएँ"
+
+#: src/widgets/options_panel.py:43
+msgid "Five minutes"
+msgstr "पाँच मिनट"
+
+#: src/widgets/options_panel.py:44
+msgid "Thirty minutes"
+msgstr "तीस मिनट"
+
+#: src/widgets/options_panel.py:44
+msgid "Indefinitely"
+msgstr "अनिश्चित काल तक"
+
+#: src/widgets/options_panel.py:44
+msgid "Custom seconds"
+msgstr "कस्टम सेकंड"
+
+#: src/widgets/options_panel.py:63
+msgid "Server"
+msgstr "सर्वर"
+
+#: src/widgets/options_panel.py:88
+msgid "System Instructions"
+msgstr "सिस्टम निर्देश"
+
+#: src/widgets/options_panel.py:89
+msgid "System prompt"
+msgstr "सिस्टम प्रॉम्प्ट"
+
+#: src/widgets/options_panel.py:89
+msgid "Optional instructions applied to this conversation."
+msgstr "इस बातचीत पर लागू वैकल्पिक निर्देश।"
+
+#: src/widgets/options_panel.py:90
+msgid "Optional instructions"
+msgstr "वैकल्पिक निर्देश"
+
+#: src/widgets/options_panel.py:91
+msgid "Generation Limits"
+msgstr "उत्तर निर्माण की सीमाएँ"
+
+#: src/widgets/options_panel.py:91
+msgid "Blank fields use the server’s defaults."
+msgstr "खाली फ़ील्ड सर्वर के डिफ़ॉल्ट मान इस्तेमाल करती हैं।"
+
+#: src/widgets/options_panel.py:92
+msgid "Context size (tokens)"
+msgstr "कॉन्टेक्स्ट का आकार (टोकन)"
+
+#: src/widgets/options_panel.py:92
+msgid "Maximum context available to the model; larger values need more memory."
+msgstr "मॉडल के लिए अधिकतम उपलब्ध कॉन्टेक्स्ट; बड़े मान के लिए अधिक मेमोरी चाहिए।"
+
+#: src/widgets/options_panel.py:93
+msgid "Maximum output tokens"
+msgstr "अधिकतम आउटपुट टोकन"
+
+#: src/widgets/options_panel.py:93
+msgid "Use −1 for unlimited output or −2 to fill the context."
+msgstr "असीमित आउटपुट के लिए −1 या कॉन्टेक्स्ट भरने के लिए −2 इस्तेमाल करें।"
+
+#: src/widgets/options_panel.py:94
+msgid "Stop sequences"
+msgstr "रोकने वाले अनुक्रम"
+
+#: src/widgets/options_panel.py:94
+msgid "Separate sequences with commas. Generation stops when one is produced."
+msgstr "अनुक्रमों को कॉमा से अलग करें। इनमें से कोई बनने पर उत्तर बनना रुक जाएगा।"
+
+#: src/widgets/options_panel.py:95
+msgid "Sampling"
+msgstr "सैंपलिंग"
+
+#: src/widgets/options_panel.py:97
+msgid "Temperature"
+msgstr "तापमान"
+
+#: src/widgets/options_panel.py:97
+msgid "Higher values increase variation; zero is more predictable."
+msgstr "बड़े मान विविधता बढ़ाते हैं; शून्य अधिक पूर्वानुमान योग्य है।"
+
+#: src/widgets/options_panel.py:98
+msgid "Seed"
+msgstr "सीड"
+
+#: src/widgets/options_panel.py:98
+msgid "An integer used to initialize random sampling."
+msgstr "यादृच्छिक सैंपलिंग शुरू करने के लिए इस्तेमाल किया जाने वाला पूर्णांक।"
+
+#: src/widgets/options_panel.py:99
+msgid "Top K"
+msgstr "Top K"
+
+#: src/widgets/options_panel.py:99
+msgid "Number of candidate tokens to consider."
+msgstr "विचार किए जाने वाले संभावित टोकन की संख्या।"
+
+#: src/widgets/options_panel.py:100
+msgid "Top P"
+msgstr "Top P"
+
+#: src/widgets/options_panel.py:100
+msgid "Cumulative probability cutoff, between 0 and 1."
+msgstr "संचयी प्रायिकता की सीमा, 0 से 1 के बीच।"
+
+#: src/widgets/options_panel.py:101
+msgid "Min P"
+msgstr "Min P"
+
+#: src/widgets/options_panel.py:101
+msgid "Minimum relative token probability, between 0 and 1."
+msgstr "न्यूनतम सापेक्ष टोकन प्रायिकता, 0 से 1 के बीच।"
+
+#: src/widgets/options_panel.py:103
+msgid "Model Retention"
+msgstr "मॉडल को मेमोरी में रखना"
+
+#: src/widgets/options_panel.py:105
+msgid "Keep model loaded"
+msgstr "मॉडल लोड रखें"
+
+#: src/widgets/options_panel.py:108
+msgid "Custom duration (seconds)"
+msgstr "कस्टम अवधि (सेकंड)"
+
+#: src/widgets/options_panel.py:108 src/widgets/options_panel.py:165
+msgid "Enter a positive whole number of seconds."
+msgstr "सेकंड की संख्या धनात्मक पूर्णांक में दर्ज करें।"
+
+#: src/widgets/options_panel.py:110
+msgid "Diagnostics"
+msgstr "निदान"
+
+#: src/widgets/options_panel.py:111
+msgid "Show response statistics"
+msgstr "उत्तर के आँकड़े दिखाएँ"
+
+#: src/widgets/options_panel.py:112
+msgid "Return token probabilities (logprobs)"
+msgstr "टोकन प्रायिकताएँ लौटाएँ (लॉग प्रायिकताएँ)"
+
+#: src/widgets/options_panel.py:115
+msgid "Top logprobs"
+msgstr "शीर्ष लॉग प्रायिकताएँ"
+
+#: src/widgets/options_panel.py:115
+msgid "Number of alternative token probabilities, from 0 to 20."
+msgstr "वैकल्पिक टोकन प्रायिकताओं की संख्या, 0 से 20 तक।"
+
+#: src/widgets/options_panel.py:132
+msgid "Chat Settings"
+msgstr "चैट सेटिंग"
+
+#: src/widgets/options_panel.py:135
+msgid "Done"
+msgstr "हो गया"
+
+#: src/widgets/options_panel.py:177
+msgid "Top logprobs must be between 0 and 20."
+msgstr "शीर्ष लॉग प्रायिकताओं की संख्या 0 से 20 के बीच होनी चाहिए।"
+
+#: src/widgets/options_panel.py:199
+#, python-brace-format
+msgid "Enabled tools: {0}. Results are supplied manually."
+msgstr "सक्रिय टूल: {0}। परिणाम हाथ से दिए जाते हैं।"
+
+#: src/widgets/options_panel.py:199
+msgid "Tool calling is off."
+msgstr "टूल कॉल बंद हैं।"
+
+#: src/widgets/options_panel.py:202
+msgid "Checking tool support…"
+msgstr "टूल समर्थन जाँचा जा रहा है…"
+
+#: src/widgets/options_panel.py:204
+msgid "This model reports no tool support; you can still test the API."
+msgstr "यह मॉडल टूल समर्थन न होने की सूचना देता है; फिर भी आप API परख सकते हैं।"
+
+#: src/widgets/options_panel.py:206
+msgid "Tool support is unknown."
+msgstr "टूल समर्थन अज्ञात है।"
+
+#: src/widgets/options_panel.py:275
+msgid "No hosts configured"
+msgstr "कोई होस्ट कॉन्फ़िगर नहीं है"
+
+#: src/widgets/options_panel.py:313 src/widgets/options_panel.py:315
+msgid "Enter a valid number."
+msgstr "मान्य संख्या दर्ज करें।"
+
+#: src/widgets/options_panel.py:333
+msgid "Value must not be negative."
+msgstr "मान ऋणात्मक नहीं होना चाहिए।"
+
+#: src/widgets/options_panel.py:336
+msgid "Value must be between 0 and 1."
+msgstr "मान 0 से 1 के बीच होना चाहिए।"
+
+#: src/widgets/options_panel.py:338
+msgid "Context size must be positive."
+msgstr "कॉन्टेक्स्ट का आकार धनात्मक होना चाहिए।"
+
+#: src/widgets/options_panel.py:340
+msgid "Max tokens must be -2, -1, or a nonnegative integer."
+msgstr "अधिकतम टोकन -2, -1 या ऋणात्मक न होने वाला पूर्णांक होना चाहिए।"
+
+#: src/widgets/options_panel.ui:20
+msgid "Tool Calling"
+msgstr "टूल कॉल"
+
+#: src/widgets/options_panel.ui:26
+msgid "Edit Tools…"
+msgstr "टूल संपादित करें…"
+
+#: src/widgets/options_panel.ui:44
+msgid "Output:"
+msgstr "आउटपुट:"
+
+#: src/widgets/options_panel.ui:56
+msgid "Edit Schema…"
+msgstr "स्कीमा संपादित करें…"
+
+#: src/widgets/options_panel.ui:63
+msgid "Chat Settings…"
+msgstr "चैट सेटिंग…"
+
+#: src/widgets/options_panel.ui:65
+msgid "Generation, Model Retention, and Diagnostics"
+msgstr "उत्तर निर्माण, मॉडल को मेमोरी में रखना और निदान"
+
+#: src/widgets/tool_view.py:10
+msgid "Tool Definitions"
+msgstr "टूल परिभाषाएँ"
+
+#: src/widgets/tool_view.py:11
+msgid "Import Tools"
+msgstr "टूल आयात करें"
+
+#: src/widgets/tool_view.py:12
+msgid ""
+"Define an Ollama tools array. Results are supplied manually. Example prompt: "
+"Read calculator.py, fix add so it adds instead of subtracting, then run "
+"python3 -m unittest -v."
+msgstr ""
+"Ollama टूल ऐरे परिभाषित करें। परिणाम हाथ से दिए जाते हैं। उदाहरण प्रॉम्प्ट: "
+"calculator.py पढ़ें, add ठीक करें ताकि वह घटाने के बजाय जोड़े, फिर python3 -m "
+"unittest -v चलाएँ।"
+
+#: src/widgets/tool_view.py:13
+msgid "Example"
+msgstr "उदाहरण"
+
+#: src/widgets/tool_view.py:15
+msgid "Export…"
+msgstr "निर्यात करें…"
+
+#: src/widgets/tool_view.py:16
+msgid "Export Tools"
+msgstr "टूल निर्यात करें"
+
+#: src/widgets/tool_view.py:44
+msgid "Malformed tool call"
+msgstr "टूल कॉल का प्रारूप गलत है"
+
+#: src/widgets/tool_view.py:45
+#, python-brace-format
+msgid "Tool {0}: {1}"
+msgstr "टूल {0}: {1}"
+
+#: src/widgets/tool_view.py:52
+msgid "Copy Call"
+msgstr "कॉल कॉपी करें"
+
+#: src/widgets/tool_view.py:55 src/widgets/tool_view.py:95
+msgid "Enter Result…"
+msgstr "परिणाम दर्ज करें…"
+
+#: src/widgets/tool_view.py:70
+msgid "Continue"
+msgstr "जारी रखें"
+
+#: src/widgets/tool_view.py:73
+msgid "Cancel Tool Round"
+msgstr "टूल चरण रद्द करें"
+
+#: src/widgets/tool_view.py:83
+msgid "Awaiting manual tool results"
+msgstr "हाथ से दिए जाने वाले टूल परिणामों की प्रतीक्षा है"
+
+#: src/widgets/tool_view.py:83
+msgid "Tool results submitted"
+msgstr "टूल परिणाम भेज दिए गए"
+
+#: src/widgets/tool_view.py:84
+msgid "Tool round cancelled"
+msgstr "टूल चरण रद्द हो गया"
+
+#: src/widgets/tool_view.py:84
+msgid "Incomplete tool calls"
+msgstr "अधूरे टूल कॉल"
+
+#: src/widgets/tool_view.py:85
+msgid "Malformed tool calls cannot be continued"
+msgstr "गलत प्रारूप वाले टूल कॉल जारी नहीं रखे जा सकते"
+
+#: src/widgets/tool_view.py:95
+msgid "Edit Result…"
+msgstr "परिणाम संपादित करें…"
+
+#: src/widgets/tool_view.py:96
+#, python-brace-format
+msgid "Saved mock result: {0}"
+msgstr "सहेजा गया नकली परिणाम: {0}"
+
+#: src/widgets/tool_view.py:96
+msgid "(empty)"
+msgstr "(खाली)"
+
+#: src/widgets/tool_view.py:104
+msgid "Mock Tool Result"
+msgstr "नकली टूल परिणाम"
+
+#: src/widgets/tool_view.py:105
+msgid ""
+"Enter the result to send to the model. Text, JSON, and empty results are "
+"accepted. No tool is executed."
+msgstr ""
+"मॉडल को भेजने वाला परिणाम दर्ज करें। टेक्स्ट, JSON और खाली परिणाम स्वीकार हैं। कोई टूल "
+"चलाया नहीं जाता।"
+
+#: src/widgets/tool_view.py:106
+msgid "Save Result"
+msgstr "परिणाम सहेजें"
+
+#: src/widgets/url_import.py:14
+msgid "Add URLs"
+msgstr "URL जोड़ें"
+
+#: src/widgets/url_import.py:28
+msgid "Paste up to 20 URLs, one per line. Review each page before saving."
+msgstr "अधिकतम 20 URL चिपकाएँ, हर पंक्ति में एक। सहेजने से पहले हर पृष्ठ की समीक्षा करें।"
+
+#: src/widgets/url_import.py:36
+msgid "Fetch URLs"
+msgstr "URL प्राप्त करें"
+
+#: src/widgets/url_import.py:54
+msgid "Refine Extraction"
+msgstr "निष्कर्षण सुधारें"
+
+#: src/widgets/url_import.py:55
+msgid ""
+"If the preview includes navigation or misses the article, select the page "
+"region to extract using a CSS selector."
+msgstr ""
+"यदि पूर्वावलोकन में नेविगेशन है या लेख छूट गया है, तो CSS चयनकर्ता से निकालने वाला पृष्ठ "
+"क्षेत्र चुनें।"
+
+#: src/widgets/url_import.py:56
+msgid "CSS selector (optional)"
+msgstr "CSS चयनकर्ता (वैकल्पिक)"
+
+#: src/widgets/url_import.py:57
+msgid "For example: main, article, or .article-body"
+msgstr "उदाहरण: main, article या .article-body"
+
+#: src/widgets/url_import.py:59
+msgid "Re-extract"
+msgstr "फिर से निकालें"
+
+#: src/widgets/url_import.py:62
+msgid "Extracted content (editable)"
+msgstr "निकाली गई सामग्री (संपादन योग्य)"
+
+#: src/widgets/url_import.py:68 src/widgets/url_import.py:232
+msgid "Fetch Again"
+msgstr "फिर से प्राप्त करें"
+
+#: src/widgets/url_import.py:93
+#, python-brace-format
+msgid "Collection: {0}"
+msgstr "संग्रह: {0}"
+
+#: src/widgets/url_import.py:113
+msgid "Downloading…"
+msgstr "डाउनलोड हो रहा है…"
+
+#: src/widgets/url_import.py:113
+msgid "Extracting…"
+msgstr "निकाला जा रहा है…"
+
+#: src/widgets/url_import.py:114
+msgid "Ready to review"
+msgstr "समीक्षा के लिए तैयार"
+
+#: src/widgets/url_import.py:114
+msgid "Needs attention"
+msgstr "ध्यान देने की ज़रूरत है"
+
+#: src/widgets/url_import.py:114
+msgid "Saving…"
+msgstr "सहेजा जा रहा है…"
+
+#: src/widgets/url_import.py:128
+msgid "Save or skip reviewed pages to make room for queued downloads."
+msgstr "कतार में लगे डाउनलोड के लिए जगह बनाने को समीक्षा किए गए पृष्ठ सहेजें या छोड़ें।"
+
+#: src/widgets/url_import.py:129
+msgid ""
+"Saved documents build embeddings in the background. Closing discards unsaved "
+"previews."
+msgstr ""
+"सहेजे गए दस्तावेज़ों की एम्बेडिंग पृष्ठभूमि में बनती है। बंद करने पर बिना सहेजे पूर्वावलोकन हट "
+"जाएँगे।"
+
+#: src/widgets/url_import.py:153
+msgid "Extracting content…"
+msgstr "सामग्री निकाली जा रही है…"
+
+#: src/widgets/url_import.py:192
+#, python-brace-format
+msgid "Import URL: {0}"
+msgstr "URL आयात करें: {0}"
+
+#: src/widgets/url_import.py:231
+msgid "Replace Document…"
+msgstr "दस्तावेज़ बदलें…"
+
+#: src/widgets/url_import.py:244
+msgid "Discard Preview Edits?"
+msgstr "पूर्वावलोकन के बदलाव हटाएँ?"
+
+#: src/widgets/url_import.py:245
+msgid "Extracting again replaces your edited text with the page content."
+msgstr "फिर से निकालने पर आपका संपादित टेक्स्ट पृष्ठ की सामग्री से बदल जाएगा।"
+
+#: src/widgets/url_import.py:247
+msgid "Discard Edits"
+msgstr "बदलाव हटाएँ"
+
+#: src/widgets/url_import.py:332
+msgid "Replace Document and Rebuild?"
+msgstr "दस्तावेज़ बदलें और फिर बनाएँ?"
+
+#: src/widgets/url_import.py:333
+#, python-brace-format
+msgid ""
+"Replace “{0}” and rebuild {1} embedding indexes? Saved chat answers keep "
+"their original passages. Affected collections cannot search this content "
+"until rebuilding succeeds."
+msgstr ""
+"“{0}” बदलें और {1} एम्बेडिंग इंडेक्स फिर बनाएँ? सहेजे गए चैट उत्तरों में मूल अंश रहेंगे। दोबारा "
+"निर्माण सफल होने तक प्रभावित संग्रह इस सामग्री में खोज नहीं कर सकेंगे।"
+
+#: src/widgets/url_import.py:334
+msgid "None"
+msgstr "कोई नहीं"
+
+#: src/widgets/url_import.py:336
+msgid "Replace and Rebuild"
+msgstr "बदलें और फिर बनाएँ"
+
+#: src/window.py:47
+msgid "Knowledge"
+msgstr "ज्ञान"
+
+#: src/window.py:135
+msgid "Changes could not be saved"
+msgstr "बदलाव सहेजे नहीं जा सके"
+
+#: src/window.py:136
+msgid "Your unsaved changes are kept in memory. Retry saving before quitting."
+msgstr "बिना सहेजे बदलाव मेमोरी में रखे गए हैं। बाहर निकलने से पहले सहेजने की फिर कोशिश करें।"
+
+#: src/window.py:138
+msgid "Keep Open"
+msgstr "खुला रखें"
+
+#: src/window.py:186 src/window.ui:138
+msgid "Clear chat history"
+msgstr "चैट इतिहास साफ़ करें"
+
+#: src/window.py:186
+msgid "Are you sure you want to delete all chat history?"
+msgstr "क्या आप वाकई पूरा चैट इतिहास हटाना चाहते हैं?"
+
+#: src/window.py:188
+msgid "Delete history"
+msgstr "इतिहास हटाएँ"
+
+#: src/window.py:274
+msgid "Pinned"
+msgstr "पिन की गई"
+
+#: src/window.py:275
+msgid "Recent"
+msgstr "हाल की"
+
+#: src/window.py:284
+msgid "Unpin Chat"
+msgstr "चैट का पिन हटाएँ"
+
+#: src/window.py:284
+msgid "Pin Chat"
+msgstr "चैट पिन करें"
+
+#: src/window.py:285 src/window.py:346
+msgid "Rename Chat"
+msgstr "चैट का नाम बदलें"
+
+#: src/window.py:285
+msgid "Delete Chat"
+msgstr "चैट हटाएँ"
+
+#: src/window.py:301
+msgid "Chat actions"
+msgstr "चैट कार्रवाइयाँ"
+
+#: src/window.py:346
+msgid "Enter a new title for this chat."
+msgstr "इस चैट के लिए नया शीर्षक दर्ज करें।"
+
+#: src/window.ui:30
+msgid "Main Menu"
+msgstr "मुख्य मेन्यू"
+
+#: src/window.ui:41
+msgid "Chats"
+msgstr "चैट"
+
+#: src/window.ui:55
+msgid "Saved Chats"
+msgstr "सहेजी गई चैट"
+
+#: src/window.ui:71
+msgid "No Saved Chats"
+msgstr "कोई सहेजी गई चैट नहीं"
+
+#: src/window.ui:98
+msgid "Toggle Sidebar"
+msgstr "साइडबार दिखाएँ/छिपाएँ"
+
+#: src/window.ui:120
+msgid "_New Chat"
+msgstr "_नई चैट"
+
+#: src/window.ui:124
+msgid "_New Response"
+msgstr "नया _उत्तर"
+
+#: src/window.ui:130
+msgid "_Manage hosts"
+msgstr "_होस्ट प्रबंधित करें"
+
+#: src/window.ui:134
+msgid "_Manage models"
+msgstr "_मॉडल प्रबंधित करें"
+
+#: src/window.ui:142
+msgid "_Keyboard Shortcuts"
+msgstr "_कीबोर्ड शॉर्टकट"
+
+#: src/window.ui:146
+msgid "_About Gnollama"
+msgstr "Gnollama के _बारे में"

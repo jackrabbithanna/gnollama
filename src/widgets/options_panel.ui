@@ -1,6 +1,6 @@
-<interface>
+<interface domain="gnollama">
   <requires lib="gtk" version="4.0" />
-  <requires lib="Adw" version="1.0" />
+  <requires lib="Adw" version="1.9" />
   <template class="OptionsPanel" parent="GtkBox">
     <property name="orientation">vertical</property>
     <property name="spacing">6</property>
@@ -13,8 +13,9 @@
         <property name="spacing">6</property>
         <property name="visible">False</property>
         <child>
-          <object class="GtkBox">
-            <property name="spacing">6</property>
+          <object class="AdwWrapBox">
+            <property name="child-spacing">6</property>
+            <property name="line-spacing">6</property>
             <child>
               <object class="GtkCheckButton" id="tools_check">
                 <property name="label" translatable="yes">Tool Calling</property>
@@ -37,8 +38,9 @@
       </object>
     </child>
     <child>
-      <object class="GtkBox">
-        <property name="spacing">6</property>
+      <object class="AdwWrapBox">
+        <property name="child-spacing">6</property>
+        <property name="line-spacing">6</property>
         <child>
           <object class="GtkLabel">
             <property name="label" translatable="yes">Output:</property>

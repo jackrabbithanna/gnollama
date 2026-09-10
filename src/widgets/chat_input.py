@@ -1,4 +1,5 @@
 from typing import List, Optional, Any, Dict, Callable
+from gettext import ngettext
 from gi.repository import Gtk, GObject, Gio, GdkPixbuf, GLib, Gdk, Pango
 import threading
 from .. import ollama
@@ -285,7 +286,7 @@ class ChatInput(Gtk.Box):
 
         self.image_preview_scrolled.set_visible(True)
         count = len(self.selected_image_paths)
-        self.image_label.set_text(_("{0} image(s) selected").format(count))
+        self.image_label.set_text(ngettext("{0} image selected", "{0} images selected", count).format(count))
         self.clear_image_button.set_visible(True)
 
         for path in self.selected_image_paths:

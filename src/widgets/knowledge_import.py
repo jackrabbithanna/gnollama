@@ -77,9 +77,7 @@ class FileImportDialog(WorkDialog):
         self.preview.append(self.filename)
         self.title_entry = Gtk.Entry()
         field(self.preview, _('Document title'), self.title_entry)
-        self.editor = code_view()
-        if hasattr(self.editor.get_buffer(), 'set_language'):
-            self.editor.get_buffer().set_language(None)
+        self.editor = code_view(language=None)
         self.preview.append(label(_('Extracted content (read-only)')))
         self.preview.append(editor_frame(self.editor, min_content_height=200))
         self.notice = label()

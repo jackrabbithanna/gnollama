@@ -11,6 +11,11 @@ from .tool_calling import inspect_calls, wire_calls, result_messages
 from .knowledge import augmented_messages
 
 
+def display_chat_title(title):
+    """Localize the database's automatic-title marker only when displaying it."""
+    return _('New Chat') if title == 'New Chat' else title
+
+
 class NetworkWorker:
     def __init__(self, max_workers=4):
         self.executor = ThreadPoolExecutor(max_workers=max_workers, thread_name_prefix='GnollamaNetwork')

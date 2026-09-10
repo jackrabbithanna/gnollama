@@ -4,11 +4,14 @@ from gi.repository import Gtk, GObject, GLib
 from ..storage import ChatStorage
 from ..structured import request_format
 from .json_view import SchemaEditor
+from .tool_view import ToolsEditor
+from ..tool_calling import parse_tools, InvalidTools
 
 @Gtk.Template(resource_path='/io/github/jackrabbithanna/Gnollama/widgets/options_panel.ui')
 class OptionsPanel(Gtk.Expander):
     """Encapsulates the advanced settings and options for the chat."""
     __gtype_name__ = 'OptionsPanel'
+    __gsignals__ = {'tools-options-changed': (GObject.SignalFlags.RUN_FIRST, None, ())}
 
     host_dropdown: Gtk.DropDown = Gtk.Template.Child()
     system_prompt_entry: Gtk.Entry = Gtk.Template.Child()
@@ -28,6 +31,10 @@ class OptionsPanel(Gtk.Expander):
     schema_button = Gtk.Template.Child()
     keep_alive_dropdown = Gtk.Template.Child()
     keep_alive_entry = Gtk.Template.Child()
+    tools_box = Gtk.Template.Child()
+    tools_check = Gtk.Template.Child()
+    tools_button = Gtk.Template.Child()
+    tools_notice = Gtk.Template.Child()
 
     def __init__(self, **kwargs: Any) -> None:
         super().__init__(**kwargs)
@@ -38,6 +45,11 @@ class OptionsPanel(Gtk.Expander):
         self.schema_text = ''
         self._schema_dialog = None
         self._restoring_options = False
+        self.tools_text = ''
+        self._tools_dialog = None
+        self.tools_available = False
+        self.tool_support = None
+        self.tools_loading = False
         self.output_modes = ['text', 'json', 'schema']
         self.keep_alive_values = [None, 0, 300, 1800, -1, 'custom']
         self.output_dropdown.set_model(Gtk.StringList.new([_('Text'), _('JSON'), _('JSON Schema')]))
@@ -47,8 +59,55 @@ class OptionsPanel(Gtk.Expander):
         self.output_dropdown.connect('notify::selected', self._format_changed)
         self.keep_alive_dropdown.connect('notify::selected', self._keep_alive_changed)
         self.schema_button.connect('clicked', self.edit_schema)
+        self.tools_check.connect('toggled', self._tools_changed)
+        self.tools_button.connect('clicked', self.edit_tools)
         self._format_changed()
         self._keep_alive_changed()
+
+    def _tools_changed(self, *args):
+        self.update_tools_notice()
+        if not self._restoring_options:
+            self.emit('tools-options-changed')
+            if self.tools_check.get_active() and not self.tools_text.strip() and self.get_mapped():
+                GLib.idle_add(self._open_missing_tools)
+
+    def _open_missing_tools(self):
+        if (self.tools_available and self.get_mapped() and self.tools_check.get_active()
+                and not self.tools_text.strip() and self._tools_dialog is None):
+            self.edit_tools()
+        return False
+
+    def update_tools_notice(self):
+        try:
+            count = len(parse_tools(self.tools_text)) if self.tools_text.strip() else 0
+        except InvalidTools:
+            count = 0
+        enabled = self.tools_check.get_active()
+        notice = _('Enabled tools: {0}. Results are supplied manually.').format(count) if enabled else _('Tool calling is off.')
+        if enabled:
+            if self.tools_loading:
+                notice += ' ' + _('Checking tool support…')
+            elif self.tool_support is False:
+                notice += ' ' + _('This model reports no tool support; you can still test the API.')
+            elif self.tool_support is None:
+                notice += ' ' + _('Tool support is unknown.')
+        self.tools_notice.set_text(notice)
+
+    def edit_tools(self, *args, error=None):
+        if not self.tools_available or not isinstance(self.get_root(), Gtk.Window):
+            return
+        if self._tools_dialog is None:
+            def apply(text):
+                self.tools_text = text
+                self._tools_changed()
+            self._tools_dialog = ToolsEditor(self.tools_text, apply)
+            self._tools_dialog.connect('closed', lambda *args: setattr(self, '_tools_dialog', None))
+        if error:
+            self._tools_dialog.show_error(error)
+        self._tools_dialog.present(self)
+
+    def get_tools_options(self):
+        return {'tools_enabled': self.tools_available and self.tools_check.get_active(), 'tools_text': self.tools_text}
 
     def _format_changed(self, *args):
         schema_mode = self.output_dropdown.get_selected() == 2
@@ -90,7 +149,10 @@ class OptionsPanel(Gtk.Expander):
                 raise ValueError(_('Keep-alive must be a positive number of seconds.')) from exc
             if keep_alive <= 0:
                 raise ValueError(_('Keep-alive must be a positive number of seconds.'))
-        return dict(output_mode=mode, schema_text=self.schema_text, format=output_format, keep_alive=keep_alive)
+        tools_options = self.get_tools_options()
+        tools = parse_tools(self.tools_text) if tools_options['tools_enabled'] else None
+        return dict(output_mode=mode, schema_text=self.schema_text, format=output_format,
+                    keep_alive=keep_alive, tools=tools, **tools_options)
 
     def update_hosts(self) -> None:
         """Reloads the host list from storage and updates the dropdown."""
@@ -174,6 +236,9 @@ class OptionsPanel(Gtk.Expander):
         """Populates UI options from a dict."""
         mode = options.get('output_mode', 'text')
         self._restoring_options = True
+        self.tools_text = options.get('tools_text', '')
+        self.tools_check.set_active(options.get('tools_enabled', False))
+        self.update_tools_notice()
         self.schema_text = options.get('schema_text', '')
         self.output_dropdown.set_selected(self.output_modes.index(mode) if mode in self.output_modes else 0)
         self._restoring_options = False

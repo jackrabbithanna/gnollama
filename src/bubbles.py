@@ -106,6 +106,12 @@ class AiBubble(Gtk.ListBoxRow):
         self._stats_label.set_text(format_statistics(stats))
 
     def show_response_metadata(self, metadata, show_stats=True):
+        if metadata.get('tool_round') and self.json_view is not None:
+            self.bubble_box.remove(self.json_view)
+            self.json_view = None
+            self.markdown_view = MarkdownView()
+            self.markdown_view.update(self.full_text)
+            self.bubble_box.append(self.markdown_view)
         if self.json_view is not None:
             self.json_view.update(self.full_text)
             self.json_view.finish(metadata.get('validation'))

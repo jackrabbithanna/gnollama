@@ -6,6 +6,8 @@ from . import ollama
 from .storage import ChatStorage
 from .session import GenerationStrategy, ChatStrategy
 from .structured import InvalidSchema, validate_response
+from .tool_calling import InvalidTools, inspect_calls
+from .widgets.tool_view import ToolCallsView
 
 from .widgets.message_list import MessageList
 from .widgets.chat_input import ChatInput
@@ -35,6 +37,8 @@ class GenerationTab(Gtk.Box):
         self.closing = False
         self._close_callback = None
         self._disposed = False
+        self._tool_busy = False
+        self._tool_views = []
         
         if not storage:
             storage = ChatStorage()
@@ -48,6 +52,8 @@ class GenerationTab(Gtk.Box):
         self.mode = mode
         self.chat_input.has_history_images = any(m.get('images') for m in getattr(self.strategy, 'history', []))
         
+        self.options_panel.tools_available = mode == 'chat'
+        self.options_panel.tools_box.set_visible(mode == 'chat')
         self.options_panel.storage = self.storage
         self.options_panel.update_hosts()
         
@@ -56,6 +62,8 @@ class GenerationTab(Gtk.Box):
         self.options_panel.system_prompt_entry.connect('activate', self.on_send_clicked)
         
         self.options_panel.host_dropdown.connect('notify::selected-item', self.on_host_changed)
+        self.options_panel.connect('tools-options-changed', self._persist_tool_options)
+        self.chat_input.connect('capabilities-changed', self._tool_capabilities_changed)
         
         if mode == 'chat':
             if chat_id:
@@ -64,8 +72,9 @@ class GenerationTab(Gtk.Box):
                     self.load_chat_settings(chat_data)
             
             if initial_history:
-                 self.load_initial_history(initial_history)
+                 self.load_initial_history(self.strategy.history)
         self.on_host_changed()
+        self._sync_tools()
 
     def load_chat_settings(self, chat_data: Dict[str, Any]) -> None:
         self.title = chat_data.get('title', _('Chat'))
@@ -108,6 +117,7 @@ class GenerationTab(Gtk.Box):
                 bubble.show_response_metadata(msg.get('response_metadata', {}),
                                               self.options_panel.stats_check.get_active())
                 self.message_list.add_ai_bubble(bubble)
+                self._add_tool_view(msg, bubble)
             elif role == 'system':
                 self.message_list.add_system_message(content)
 
@@ -126,11 +136,16 @@ class GenerationTab(Gtk.Box):
         else:
             self.on_send_clicked()
 
-    def on_send_clicked(self, *args):
-        if self.request or self.closing or self._disposed:
+    def on_send_clicked(self, *args, continuation=False):
+        if self.request or self.closing or self._disposed or self._tool_busy:
             return
-        prompt = self.chat_input.entry.get_text().strip()
-        if not prompt:
+        pending = self.strategy.pending_round if isinstance(self.strategy, ChatStrategy) else None
+        if pending is not None and not continuation:
+            return
+        if continuation and (pending is None or any(r is None for r in pending['response_metadata']['tool_round']['results'])):
+            return
+        prompt = '' if continuation else self.chat_input.entry.get_text().strip()
+        if not prompt and not continuation:
             return
         try:
             host = self.options_panel.get_selected_host()
@@ -145,9 +160,10 @@ class GenerationTab(Gtk.Box):
                 raise ValueError(_('Wait for this model to finish unloading before sending.'))
             options = self.options_panel.get_options_from_ui()
             request_settings = self.options_panel.get_request_settings()
-            if self.chat_input.capabilities_loading and (self.chat_input.selected_image_paths or self.chat_input.has_history_images):
+            draft_images = [] if continuation else self.chat_input.selected_image_paths
+            if self.chat_input.capabilities_loading and (draft_images or self.chat_input.has_history_images):
                 raise ValueError(_('Wait for image support to be checked before sending.'))
-            if self.chat_input.image_support is False and self.chat_input.selected_image_paths:
+            if self.chat_input.image_support is False and draft_images:
                 raise ValueError(_('Remove draft images or select a vision model to send.'))
             logprobs = self.options_panel.logprobs_check.get_active()
             top = self.options_panel.top_logprobs_entry.get_text().strip()
@@ -155,7 +171,7 @@ class GenerationTab(Gtk.Box):
             if top is not None and not 0 <= top <= 20:
                 raise ValueError(_('Top logprobs must be between 0 and 20.'))
             images = []
-            for path in self.chat_input.selected_image_paths:
+            for path in draft_images:
                 with open(path, 'rb') as image_file:
                     raw = image_file.read()
                 from gi.repository import Gdk
@@ -168,6 +184,9 @@ class GenerationTab(Gtk.Box):
                             show_stats=self.options_panel.stats_check.get_active(), endpoint=self.mode)
             settings.update(request_settings)
             settings['history_images_omitted'] = self.chat_input.image_support is False and self.chat_input.has_history_images
+        except InvalidTools as exc:
+            self.options_panel.edit_tools(error=str(exc))
+            return
         except InvalidSchema as exc:
             self.options_panel.edit_schema(error=str(exc))
             return
@@ -175,21 +194,31 @@ class GenerationTab(Gtk.Box):
             self.message_list.add_system_message(str(exc))
             return
 
-        state = RequestState(settings, prompt, images)
+        state = RequestState(settings, prompt, images, continuation=continuation)
+        if continuation:
+            self.strategy.commit_results()
         self.request = state
         self.emit('request-changed')
         self.chat_input.set_running(True)
-        self.chat_input.entry.set_text('')
-        self.chat_input.on_clear_image_clicked(None)
-        self.message_list.add_user_message(prompt, images=images)
+        if not continuation:
+            self.chat_input.entry.set_text('')
+            self.chat_input.on_clear_image_clicked(None)
+            self.message_list.add_user_message(prompt, images=images)
         from .bubbles import AiBubble
         bubble = AiBubble(model_name=model, output_format=state.settings.get('format'))
         bubble.set_api_details(state.api_details())
         self.message_list.add_ai_bubble(bubble)
-        self.strategy.begin(state)
+        self._sync_tools()
+        if continuation:
+            # Results are committed once before any follow-up HTTP request.
+            future = self.strategy.begin(state, on_done=lambda: worker.submit(self.process_request, state, bubble))
+            if future is None:
+                worker.submit(self.process_request, state, bubble)
+        else:
+            self.strategy.begin(state)
+            worker.submit(self.process_request, state, bubble)
         self.chat_input.has_history_images = any(m.get('images') for m in getattr(self.strategy, 'history', []))
         self.chat_input.update_capability_controls()
-        worker.submit(self.process_request, state, bubble)
 
     def process_request(self, state, bubble):
         status, error = 'failed', None
@@ -211,7 +240,9 @@ class GenerationTab(Gtk.Box):
         except Exception as exc:
             error = str(exc)
         # Validate on the worker so schema evaluation does not block GTK.
-        if state.settings.get('format') is not None:
+        if state.tool_calls:
+            state.metadata['tool_round'] = inspect_calls(state.tool_calls, state.settings.get('tools'), status)
+        if not state.tool_calls and state.settings.get('format') is not None:
             try:
                 state.metadata['validation'] = validate_response(state.content, state.settings['format'], status)
             except Exception as exc:
@@ -234,11 +265,14 @@ class GenerationTab(Gtk.Box):
             return False
         if not self._disposed:
             bubble.show_response_metadata(state.metadata, state.settings['show_stats'])
+        self._tool_busy = bool(state.tool_calls)
         self.request = None
         self.emit('request-changed')
         self.chat_input.set_running(False)
 
         def saved():
+            self._tool_busy = False
+            self._sync_tools()
             if isinstance(self.strategy, ChatStrategy) and not self.strategy.deleted:
                 data = self.storage.get_chat(self.strategy.chat_id)
                 if data and not self._disposed:
@@ -246,15 +280,74 @@ class GenerationTab(Gtk.Box):
                     self.emit('chat-updated', self.strategy.chat_id, data['title'])
             self._finish_close()
 
-        future = self.strategy.save(state, on_done=saved)
+        future = self.strategy.save(state)
+        if future is not None:
+            self._add_tool_view(state.saved_message, bubble)
+            self._sync_tools()
+            # Retain definitions edited while the previous request was running.
+            self.storage.save_tool_state(self.strategy.chat_id, options=self.options_panel.get_tools_options(), on_done=saved)
         if future is None:
             saved()
         return False
+
+    def _tool_capabilities_changed(self, *args):
+        self.options_panel.tool_support = self.chat_input.tool_support
+        self.options_panel.tools_loading = self.chat_input.capabilities_loading
+        self.options_panel.update_tools_notice()
+
+    def _persist_tool_options(self, *args):
+        if isinstance(self.strategy, ChatStrategy) and not self.closing and not self.strategy.deleted:
+            def saved():
+                if not self._disposed and not self.strategy.deleted:
+                    self.emit('chat-updated', self.strategy.chat_id, self.title)
+            self.storage.save_tool_state(self.strategy.chat_id, options=self.options_panel.get_tools_options(), on_done=saved)
+
+    def _add_tool_view(self, message, bubble):
+        if not message or not (message.get('response_metadata') or {}).get('tool_round'):
+            return
+        view = ToolCallsView(message, self._save_tool_result,
+                             lambda: self.on_send_clicked(continuation=True), self._cancel_tool_round)
+        self._tool_views.append(view)
+        bubble.bubble_box.append(view)
+
+    def _sync_tools(self):
+        pending = self.strategy.pending_round if isinstance(self.strategy, ChatStrategy) else None
+        editable = not (self.request or self._tool_busy or self.closing or self._disposed)
+        for view in self._tool_views:
+            view.update(editable and view.message is pending)
+        self.chat_input.awaiting_tools = pending is not None or self._tool_busy
+        self.chat_input.update_capability_controls()
+
+    def _save_tool_result(self, message, index, text):
+        if (self.request or self._tool_busy or self.closing or self._disposed
+                or self.strategy.pending_round is not message):
+            return
+        message['response_metadata']['tool_round']['results'][index] = text
+        self._save_tool_history()
+
+    def _save_tool_history(self):
+        self._tool_busy = True
+        self._sync_tools()
+        def saved():
+            self._tool_busy = False
+            self._sync_tools()
+        self.storage.save_tool_state(self.strategy.chat_id, messages=self.strategy.history, on_done=saved)
+
+    def _cancel_tool_round(self):
+        if (self.request or self._tool_busy or self.closing or self._disposed
+                or self.strategy.pending_round is None):
+            return
+        self.strategy.commit_results(cancel=True)
+        self._save_tool_history()
 
     def close_session(self, on_done, delete=False):
         self.closing = True
         self._close_callback = on_done
         self.chat_input.cancel_fetches()
+        for view in self._tool_views:
+            view.close_editor()
+        if self.options_panel._tools_dialog is not None:
+            self.options_panel._tools_dialog.close()
         if self.options_panel._schema_dialog is not None:
             self.options_panel._schema_dialog.close()
         self.set_sensitive(False)

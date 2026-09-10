@@ -41,25 +41,30 @@ def json_filter():
     return filters
 
 
-class SchemaEditor(Adw.Dialog):
-    def __init__(self, text, on_apply):
-        super().__init__(title=_('JSON Schema'), content_width=640, content_height=520)
+class TextEditor(Adw.Dialog):
+    def __init__(self, text, on_apply, *, title, hint, validate=None, import_title=None, apply_label=None):
+        super().__init__(title=title, content_width=640, content_height=520)
+        self.validate = validate
+        self.import_title = import_title
         self._cancel = Gio.Cancellable()
         self.connect('closed', lambda *args: self._cancel.cancel())
         self.on_apply = on_apply
         toolbar = Adw.ToolbarView()
         header = Adw.HeaderBar()
-        import_button = Gtk.Button(label=_('Import…'))
-        import_button.connect('clicked', self.import_schema)
-        header.pack_start(import_button)
-        apply = Gtk.Button(label=_('Apply'))
+        self.header = header
+        if import_title:
+            import_button = Gtk.Button(label=_('Import…'))
+            import_button.connect('clicked', self.import_text)
+            header.pack_start(import_button)
+        apply = Gtk.Button(label=apply_label or _('Apply'))
         apply.add_css_class('suggested-action')
-        apply.connect('clicked', self.apply_schema)
+        apply.connect('clicked', self.apply_text)
         header.pack_end(apply)
         toolbar.add_top_bar(header)
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12,
                       margin_start=12, margin_end=12, margin_top=12, margin_bottom=12)
-        hint = Gtk.Label(label=_('Paste or import a self-contained JSON Schema. Describe the expected JSON in your prompt.'),
+        self.content_box = box
+        hint = Gtk.Label(label=hint,
                          wrap=True, xalign=0)
         box.append(hint)
         self.editor = code_view(editable=True)
@@ -75,18 +80,19 @@ class SchemaEditor(Adw.Dialog):
         self.error_label.set_text(str(error))
         self.error_label.set_visible(True)
 
-    def apply_schema(self, *args):
+    def apply_text(self, *args):
         text = buffer_text(self.editor)
         try:
-            request_format('schema', text)
+            if self.validate:
+                self.validate(text)
         except (ValueError, RecursionError) as exc:
             self.show_error(exc)
             return
         self.on_apply(text)
         self.close()
 
-    def import_schema(self, *args):
-        dialog = Gtk.FileDialog(title=_('Import JSON Schema'), filters=json_filter())
+    def import_text(self, *args):
+        dialog = Gtk.FileDialog(title=self.import_title, filters=json_filter())
         def selected(dialog, result):
             try:
                 file = dialog.open_finish(result)
@@ -104,6 +110,41 @@ class SchemaEditor(Adw.Dialog):
                 if not self._cancel.is_cancelled():
                     self.show_error(exc)
         dialog.open(self.get_root(), self._cancel, selected)
+
+    def export_text(self, title, filename):
+        text = buffer_text(self.editor)
+        try:
+            if self.validate:
+                self.validate(text)
+        except (ValueError, RecursionError) as exc:
+            self.show_error(exc)
+            return
+        dialog = Gtk.FileDialog(title=title, initial_name=filename, filters=json_filter())
+        def selected(dialog, result):
+            try:
+                file = dialog.save_finish(result)
+                file.replace_contents_bytes_async(GLib.Bytes.new(text.encode('utf-8')), None, False,
+                                                  Gio.FileCreateFlags.NONE, self._cancel, saved)
+            except GLib.Error as exc:
+                if not self._cancel.is_cancelled() and not exc.matches(Gtk.dialog_error_quark(), Gtk.DialogError.DISMISSED):
+                    self.show_error(exc)
+        def saved(file, result):
+            try:
+                file.replace_contents_finish(result)
+            except GLib.Error as exc:
+                if not self._cancel.is_cancelled():
+                    self.show_error(exc)
+        dialog.save(self.get_root(), self._cancel, selected)
+
+
+class SchemaEditor(TextEditor):
+    def __init__(self, text, on_apply):
+        super().__init__(text, on_apply, title=_('JSON Schema'),
+                         hint=_('Paste or import a self-contained JSON Schema. Describe the expected JSON in your prompt.'),
+                         validate=lambda text: request_format('schema', text), import_title=_('Import JSON Schema'))
+
+    apply_schema = TextEditor.apply_text
+    import_schema = TextEditor.import_text
 
 
 class JsonResponseView(Gtk.Box):

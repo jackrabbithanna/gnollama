@@ -82,6 +82,10 @@ class GnollamaWindow(Adw.ApplicationWindow):
             tab.chat_input.cancel_fetches()
             if tab.options_panel._schema_dialog is not None:
                 tab.options_panel._schema_dialog.close()
+            if tab.options_panel._tools_dialog is not None:
+                tab.options_panel._tools_dialog.close()
+            for view in tab._tool_views:
+                view.close_editor()
             if tab.request:
                 tab.request.cancellable.cancel()
         for window in list(Gtk.Window.list_toplevels()):
@@ -358,7 +362,8 @@ class GnollamaWindow(Adw.ApplicationWindow):
         if tab.closing:
             return True
         def remove():
-            if isinstance(tab.strategy, ChatStrategy) and not tab.strategy.history and not tab.strategy.deleted:
+            if (isinstance(tab.strategy, ChatStrategy) and not tab.strategy.history and not tab.strategy.deleted
+                    and not tab.options_panel.tools_text.strip()):
                 self.storage.delete_chat(tab.strategy.chat_id)
                 self._remove_history_item(tab.strategy.chat_id)
             view.close_page_finish(page, True)

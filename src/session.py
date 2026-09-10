@@ -7,6 +7,7 @@ from threading import Lock
 from gi.repository import Gio
 from . import ollama
 from .structured import validate_response
+from .tool_calling import inspect_calls, wire_calls, result_messages
 
 
 class NetworkWorker:
@@ -52,6 +53,9 @@ class RequestState:
     thinking: str = ''
     metadata: dict = field(default_factory=lambda: {'status': 'running'})
     finalized: bool = False
+    tool_calls: list = field(default_factory=list)
+    continuation: bool = False
+    saved_message: dict = None
 
     def __post_init__(self):
         self.settings = copy.deepcopy(self.settings)
@@ -65,6 +69,9 @@ class RequestState:
         thinking = message.get('thinking') or chunk.get('thinking', '')
         self.content += content
         self.thinking += thinking
+        calls = message.get('tool_calls')
+        if calls is not None and calls != []:
+            self.tool_calls.extend(copy.deepcopy(calls if isinstance(calls, list) else [calls]))
         if chunk.get('done'):
             self.metadata = {'status': 'complete',
                              'metrics': {k: chunk[k] for k in METRIC_KEYS if k in chunk}}
@@ -77,31 +84,47 @@ class RequestState:
         self.metadata['status'] = status
         if error:
             self.metadata['error'] = error
-        validation = self.metadata.get('validation') or validate_response(self.content, self.settings.get('format'), status)
+        validation = None if self.tool_calls else (self.metadata.get('validation') or validate_response(self.content, self.settings.get('format'), status))
         if validation is not None:
             self.metadata['validation'] = validation
+        if self.tool_calls:
+            self.metadata.pop('validation', None)
+            if 'tool_round' not in self.metadata:
+                self.metadata['tool_round'] = inspect_calls(self.tool_calls, self.settings.get('tools'), status)
         if self.settings.get('history_images_omitted'):
             self.metadata['history_images_omitted'] = True
         return True
 
     def api_details(self):
         return {k: v for k, v in self.settings.items()
-                if k not in ('host_id', 'show_stats', 'output_mode', 'schema_text', 'history_images_omitted')}
+                if k not in ('host_id', 'show_stats', 'output_mode', 'schema_text', 'history_images_omitted',
+                             'tools_enabled', 'tools_text')}
 
 
 def api_messages(history, include_images=True):
     """Local display metadata must never become part of the model's prompt."""
     messages = []
     for msg in history:
-        if msg['role'] == 'assistant' and not msg.get('content'):
+        calls = wire_calls(msg) if msg['role'] == 'assistant' else []
+        if msg['role'] == 'assistant' and not msg.get('content') and not calls:
             continue
         keys = ('role', 'content', 'images') if include_images else ('role', 'content')
-        messages.append({k: copy.deepcopy(msg[k]) for k in keys if k in msg})
+        item = {k: copy.deepcopy(msg[k]) for k in keys if k in msg}
+        if msg['role'] == 'assistant':
+            if msg.get('thinking_content'):
+                item['thinking'] = msg['thinking_content']
+            if calls:
+                item['tool_calls'] = calls
+        elif msg['role'] == 'tool':
+            for key in ('tool_name', 'tool_call_id'):
+                if key in msg:
+                    item[key] = msg[key]
+        messages.append(item)
     return messages
 
 
 class GenerationStrategy:
-    def begin(self, state):
+    def begin(self, state, on_done=None):
         pass
 
     def process(self, state):
@@ -122,30 +145,53 @@ class ChatStrategy(GenerationStrategy):
         self.history = copy.deepcopy(initial_history or [])
         self.deleted = False
 
-    def begin(self, state):
-        msg = {'role': 'user', 'content': state.prompt}
-        if state.images:
-            msg['images'] = state.images
-        self.history.append(msg)
+    @property
+    def pending_round(self):
+        for msg in reversed(self.history):
+            if msg['role'] == 'assistant':
+                if (msg.get('response_metadata') or {}).get('tool_round', {}).get('state') == 'pending':
+                    return msg
+                return None
+        return None
+
+    def commit_results(self, cancel=False):
+        message = self.pending_round
+        if message is None:
+            raise ValueError(_('There are no pending tool calls.'))
+        results = result_messages(message, cancel)
+        message['response_metadata']['tool_round']['state'] = 'cancelled' if cancel else 'submitted'
+        message['response_metadata']['tool_round']['results'] = [r['content'] for r in results]
+        self.history.extend(results)
+
+    def begin(self, state, on_done=None):
+        if not state.continuation:
+            msg = {'role': 'user', 'content': state.prompt}
+            if state.images:
+                msg['images'] = state.images
+            self.history.append(msg)
         state.messages = api_messages(self.history, include_images=not state.settings.get('history_images_omitted'))
         if state.settings['system']:
             state.messages.insert(0, {'role': 'system', 'content': state.settings['system']})
-        self.save(state)
+        return self.save(state, on_done=on_done)
 
     def process(self, state):
         args = {k: state.settings[k] for k in
                 ('host', 'model', 'options', 'thinking', 'logprobs', 'top_logprobs')}
         args.update(format=state.settings.get('format'), keep_alive=state.settings.get('keep_alive'))
-        return ollama.chat(**args, messages=state.messages, cancellable=state.cancellable)
+        return ollama.chat(**args, messages=state.messages, cancellable=state.cancellable,
+                           tools=state.settings.get('tools'))
 
     def save(self, state, on_done=None):
         if self.deleted or not self.chat_id:
             return
-        if state.finalized:
-            self.history.append({'role': 'assistant', 'content': state.content,
+        if state.finalized and state.saved_message is None:
+            state.saved_message = {'role': 'assistant', 'content': state.content,
                                  'thinking_content': state.thinking, 'model': state.settings['model'],
                                  'api_details': state.api_details(),
-                                 'response_metadata': copy.deepcopy(state.metadata)})
+                                 'response_metadata': copy.deepcopy(state.metadata)}
+            if state.tool_calls:
+                state.saved_message['tool_calls'] = copy.deepcopy(state.tool_calls)
+            self.history.append(state.saved_message)
         options = dict(state.settings['options'])
         options.update(thinking_val=state.settings['thinking'],
                        logprobs=state.settings['logprobs'],
@@ -153,7 +199,9 @@ class ChatStrategy(GenerationStrategy):
                        show_stats=state.settings['show_stats'])
         options.update(output_mode=state.settings.get('output_mode', 'text'),
                        schema_text=state.settings.get('schema_text', ''),
-                       keep_alive=state.settings.get('keep_alive'))
+                       keep_alive=state.settings.get('keep_alive'),
+                       tools_enabled=state.settings.get('tools_enabled', False),
+                       tools_text=state.settings.get('tools_text', ''))
         return self.storage.save_chat(self.chat_id, self.history, model=state.settings['model'],
                                       options=options, system=state.settings['system'],
                                       host=state.settings['host_id'], on_done=on_done)

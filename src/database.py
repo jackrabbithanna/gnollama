@@ -19,7 +19,13 @@ MIGRATIONS: List[str] = [
     ALTER TABLE chats ADD COLUMN is_pinned INTEGER DEFAULT 0;
     """,
     # Version 4: Preserve response outcomes and generation statistics.
-    "ALTER TABLE messages ADD COLUMN response_metadata TEXT;"
+    "ALTER TABLE messages ADD COLUMN response_metadata TEXT;",
+    # Version 5: Native tool calls and manually supplied results.
+    """
+    ALTER TABLE messages ADD COLUMN tool_calls TEXT;
+    ALTER TABLE messages ADD COLUMN tool_name TEXT;
+    ALTER TABLE messages ADD COLUMN tool_call_id TEXT;
+    """
 ]
 
 class DatabaseManager:
@@ -315,12 +321,12 @@ class DatabaseManager:
             conn.commit()
 
     def cleanup_empty_chats(self) -> None:
-        """Deletes chats that have no messages."""
+        """Discard unused tabs, preserving applied playground definitions."""
         with self._get_conn() as conn:
-            conn.execute("""
-                DELETE FROM chats 
-                WHERE id NOT IN (SELECT DISTINCT chat_id FROM messages)
-            """)
+            rows = conn.execute('SELECT id, options FROM chats WHERE id NOT IN (SELECT chat_id FROM messages)').fetchall()
+            for row in rows:
+                if not json.loads(row['options'] or '{}').get('tools_text', '').strip():
+                    conn.execute('DELETE FROM chats WHERE id = ?', (row['id'],))
             conn.commit()
 
     def clear_all_chats(self) -> None:
@@ -337,7 +343,8 @@ class DatabaseManager:
         messages = []
         with self._get_conn() as conn:
             cursor = conn.execute("""
-                SELECT id, role, content, model, thinking_content, api_details, response_metadata
+                SELECT id, role, content, model, thinking_content, api_details, response_metadata,
+                       tool_calls, tool_name, tool_call_id
                 FROM messages 
                 WHERE chat_id = ? 
                 ORDER BY order_index ASC
@@ -361,6 +368,11 @@ class DatabaseManager:
                 
                 if row["response_metadata"]:
                     msg["response_metadata"] = json.loads(row["response_metadata"])
+                if row['tool_calls'] is not None:
+                    msg['tool_calls'] = json.loads(row['tool_calls'])
+                for key in ('tool_name', 'tool_call_id'):
+                    if row[key] is not None:
+                        msg[key] = row[key]
 
                 # Fetch attached images
                 img_cursor = conn.execute("SELECT image_data FROM message_images WHERE message_id = ?", (msg_id,))
@@ -381,12 +393,14 @@ class DatabaseManager:
         for idx, msg in enumerate(messages):
             cursor = conn.execute("""
                 INSERT INTO messages (chat_id, role, content, model, thinking_content,
-                                      api_details, response_metadata, order_index)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                                      api_details, response_metadata, tool_calls, tool_name, tool_call_id, order_index)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, (chat_id, msg['role'], msg.get('content', ''), msg.get('model'),
                   msg.get('thinking_content'),
                   json.dumps(msg['api_details']) if msg.get('api_details') else None,
-                  json.dumps(msg['response_metadata']) if msg.get('response_metadata') else None, idx))
+                  json.dumps(msg['response_metadata']) if msg.get('response_metadata') else None,
+                  json.dumps(msg['tool_calls']) if 'tool_calls' in msg else None,
+                  msg.get('tool_name'), msg.get('tool_call_id'), idx))
             for image in msg.get('images', []):
                 raw = base64.b64decode(image.split(',', 1)[-1], validate=True)
                 conn.execute('INSERT INTO message_images (message_id, image_data) VALUES (?, ?)',
@@ -395,6 +409,21 @@ class DatabaseManager:
     def save_messages(self, chat_id, messages):
         with self._get_conn() as conn:
             self._save_messages(conn, chat_id, messages)
+            conn.commit()
+
+    def save_tool_state(self, chat_id, messages=None, options=None):
+        """Merge playground edits without overwriting unrelated saved settings."""
+        with self._get_conn() as conn:
+            conn.execute('BEGIN IMMEDIATE')
+            row = conn.execute('SELECT options FROM chats WHERE id = ?', (chat_id,)).fetchone()
+            if row is None:
+                return
+            saved = json.loads(row['options'] or '{}')
+            saved.update(options or {})
+            if messages is not None:
+                self._save_messages(conn, chat_id, messages)
+            conn.execute('UPDATE chats SET options = ?, updated_at = ? WHERE id = ?',
+                         (json.dumps(saved), time.time(), chat_id))
             conn.commit()
 
     def save_chat(self, chat_id, messages, model=None, options=None, system=None, host=None):

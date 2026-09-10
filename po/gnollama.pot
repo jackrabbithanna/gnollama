@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gnollama\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-09 23:12-0600\n"
+"POT-Creation-Date: 2026-09-10 00:08-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -87,79 +87,79 @@ msgstr ""
 msgid "Thinking..."
 msgstr ""
 
-#: src/bubbles.py:113
+#: src/bubbles.py:119
 msgid "Earlier images were omitted from the text-only request."
 msgstr ""
 
-#: src/bubbles.py:118
+#: src/bubbles.py:124
 msgid "Stopped"
 msgstr ""
 
-#: src/bubbles.py:118
+#: src/bubbles.py:124
 msgid "Failed"
 msgstr ""
 
 #. Create expander for logprobs
-#: src/bubbles.py:130
+#: src/bubbles.py:136
 msgid "Logprobs"
 msgstr ""
 
-#: src/bubbles.py:176 src/model_manager.py:22 src/model_manager.py:24
+#: src/bubbles.py:182 src/model_manager.py:22 src/model_manager.py:24
 #: src/model_manager.py:28
 msgid "Unavailable"
 msgstr ""
 
-#: src/bubbles.py:190
+#: src/bubbles.py:196
 #, python-brace-format
 msgid "Total: {0}"
 msgstr ""
 
-#: src/bubbles.py:191
+#: src/bubbles.py:197
 #, python-brace-format
 msgid "Load: {0}"
 msgstr ""
 
-#: src/bubbles.py:192
+#: src/bubbles.py:198
 #, python-brace-format
 msgid "Prompt: {0} tokens"
 msgstr ""
 
-#: src/bubbles.py:193
+#: src/bubbles.py:199
 #, python-brace-format
 msgid "Cached: {0} tokens"
 msgstr ""
 
-#: src/bubbles.py:194
+#: src/bubbles.py:200
 #, python-brace-format
 msgid "Prompt evaluation: {0}"
 msgstr ""
 
-#: src/bubbles.py:195
+#: src/bubbles.py:201
 #, python-brace-format
 msgid "Generated: {0} tokens"
 msgstr ""
 
-#: src/bubbles.py:196
+#: src/bubbles.py:202
 #, python-brace-format
 msgid "Generation: {0}"
 msgstr ""
 
-#: src/bubbles.py:197
+#: src/bubbles.py:203
 #, python-brace-format
 msgid "Tokens/s: {0}"
 msgstr ""
 
-#: src/bubbles.py:200
+#: src/bubbles.py:206
 #, python-brace-format
 msgid "Finish: {0}"
 msgstr ""
 
 #: src/host_edit_dialog.ui:8 src/host_manager.py:150 src/model_manager.py:354
-#: src/pull_model_dialog.ui:18 src/window.py:167 src/window.py:321
+#: src/pull_model_dialog.ui:18 src/window.py:171 src/window.py:325
 msgid "Cancel"
 msgstr ""
 
-#: src/host_edit_dialog.ui:9 src/window.py:322
+#: src/host_edit_dialog.ui:9 src/window.py:326
 msgid "Save"
 msgstr ""
 
@@ -199,7 +199,7 @@ msgstr ""
 msgid "Fetching version..."
 msgstr ""
 
-#: src/host_manager.py:97 src/model_manager.py:341 src/widgets/json_view.py:171
+#: src/host_manager.py:97 src/model_manager.py:341 src/widgets/json_view.py:212
 msgid "Close"
 msgstr ""
 
@@ -250,7 +250,7 @@ msgid ""
 "Context: {2} · Expires: {3}"
 msgstr ""
 
-#: src/model_manager.py:163 src/tab.py:138
+#: src/model_manager.py:163 src/tab.py:153
 msgid "No host configured."
 msgstr ""
 
@@ -483,6 +483,10 @@ msgstr ""
 msgid "Allow downloading over insecure connections"
 msgstr ""
 
+#: src/session.py:160
+msgid "There are no pending tool calls."
+msgstr ""
+
 #: src/shortcuts-dialog.ui:5
 msgid "Shortcuts"
 msgstr ""
@@ -520,426 +524,6 @@ msgstr ""
 #: src/shortcuts-dialog.ui:44
 msgctxt "shortcut window"
 msgid "Toggle Sidebar"
-msgstr ""
-
-#: src/tab.py:33 src/window.py:267 src/window.ui:26 src/window.ui:46
-msgid "New Chat"
-msgstr ""
-
-#: src/tab.py:33
-msgid "New Response"
-msgstr ""
-
-#: src/tab.py:71
-msgid "Chat"
-msgstr ""
-
-#: src/tab.py:142
-msgid "Select an available model before sending."
-msgstr ""
-
-#: src/tab.py:145
-msgid "Wait for this model to finish unloading before sending."
-msgstr ""
-
-#: src/tab.py:149
-msgid "Wait for image support to be checked before sending."
-msgstr ""
-
-#: src/tab.py:151 src/widgets/chat_input.py:101
-msgid "Remove draft images or select a vision model to send."
-msgstr ""
-
-#: src/tab.py:156
-msgid "Top logprobs must be between 0 and 20."
-msgstr ""
-
-#: src/tab.py:208
-msgid "Response ended before completion."
-msgstr ""
-
-#: src/widgets/chat_input.py:54 src/widgets/chat_input.py:59
-#: src/widgets/chat_input.py:61
-msgid "Model default"
-msgstr ""
-
-#: src/widgets/chat_input.py:54
-msgid "Off"
-msgstr ""
-
-#: src/widgets/chat_input.py:54
-msgid "On"
-msgstr ""
-
-#: src/widgets/chat_input.py:54 src/widgets/chat_input.py:59
-msgid "Low"
-msgstr ""
-
-#: src/widgets/chat_input.py:54 src/widgets/chat_input.py:59
-msgid "Medium"
-msgstr ""
-
-#: src/widgets/chat_input.py:54 src/widgets/chat_input.py:59
-msgid "High"
-msgstr ""
-
-#: src/widgets/chat_input.py:54
-msgid "Max"
-msgstr ""
-
-#: src/widgets/chat_input.py:80
-msgid "Stop response"
-msgstr ""
-
-#: src/widgets/chat_input.py:80 src/widgets/chat_input.ui:47
-msgid "Query Ollama"
-msgstr ""
-
-#: src/widgets/chat_input.py:97
-msgid "Checking image support…"
-msgstr ""
-
-#: src/widgets/chat_input.py:99
-msgid "This model does not support images."
-msgstr ""
-
-#: src/widgets/chat_input.py:103
-msgid "Earlier images remain saved; only text history will be sent."
-msgstr ""
-
-#: src/widgets/chat_input.py:105
-msgid "Image support unknown."
-msgstr ""
-
-#: src/widgets/chat_input.py:206
-msgid "Select Images"
-msgstr ""
-
-#: src/widgets/chat_input.py:210
-msgid "Images"
-msgstr ""
-
-#: src/widgets/chat_input.py:243 src/widgets/chat_input.ui:90
-msgid "No image selected"
-msgstr ""
-
-#: src/widgets/chat_input.py:249
-#, python-brace-format
-msgid "{0} image(s) selected"
-msgstr ""
-
-#: src/widgets/chat_input.ui:24
-msgid "Select Model"
-msgstr ""
-
-#: src/widgets/chat_input.ui:30
-msgid "Thinking Level"
-msgstr ""
-
-#: src/widgets/chat_input.ui:41
-msgid "Type a message..."
-msgstr ""
-
-#: src/widgets/chat_input.ui:85
-msgid "Attach Image"
-msgstr ""
-
-#: src/widgets/chat_input.ui:99
-msgid "Clear Image"
-msgstr ""
-
-#. Also set this construct property in the parent template for GtkBuilder.
-#: src/widgets/options_panel.py:35 src/widgets/options_panel.ui:5
-msgid "Advanced Settings"
-msgstr ""
-
-#: src/widgets/options_panel.py:43
-msgid "Text"
-msgstr ""
-
-#: src/widgets/options_panel.py:43
-msgid "JSON"
-msgstr ""
-
-#: src/widgets/options_panel.py:43 src/widgets/json_view.py:46
-msgid "JSON Schema"
-msgstr ""
-
-#: src/widgets/options_panel.py:45
-msgid "Server default"
-msgstr ""
-
-#: src/widgets/options_panel.py:45
-msgid "Unload after reply"
-msgstr ""
-
-#: src/widgets/options_panel.py:45
-msgid "Five minutes"
-msgstr ""
-
-#: src/widgets/options_panel.py:46
-msgid "Thirty minutes"
-msgstr ""
-
-#: src/widgets/options_panel.py:46
-msgid "Indefinitely"
-msgstr ""
-
-#: src/widgets/options_panel.py:46
-msgid "Custom seconds"
-msgstr ""
-
-#: src/widgets/options_panel.py:90 src/widgets/options_panel.py:92
-msgid "Keep-alive must be a positive number of seconds."
-msgstr ""
-
-#: src/widgets/options_panel.py:106
-msgid "No hosts configured"
-msgstr ""
-
-#: src/widgets/options_panel.py:143 src/widgets/options_panel.py:145
-#, python-brace-format
-msgid "Invalid value for {0}."
-msgstr ""
-
-#: src/widgets/options_panel.py:163
-#, python-brace-format
-msgid "{0} must not be negative."
-msgstr ""
-
-#: src/widgets/options_panel.py:166
-#, python-brace-format
-msgid "{0} must be between 0 and 1."
-msgstr ""
-
-#: src/widgets/options_panel.py:168
-msgid "Context size must be positive."
-msgstr ""
-
-#: src/widgets/options_panel.py:170
-msgid "Max tokens must be -2, -1, or a nonnegative integer."
-msgstr ""
-
-#: src/widgets/options_panel.ui:23
-msgid "Output:"
-msgstr ""
-
-#: src/widgets/options_panel.ui:34
-msgid "Edit Schema…"
-msgstr ""
-
-#: src/widgets/options_panel.ui:45
-msgid "Keep model loaded"
-msgstr ""
-
-#: src/widgets/options_panel.ui:55
-msgid "Positive number of seconds"
-msgstr ""
-
-#: src/widgets/options_panel.ui:69
-msgid "Ollama Host:"
-msgstr ""
-
-#: src/widgets/options_panel.ui:83
-msgid "System Prompt (optional)"
-msgstr ""
-
-#: src/widgets/options_panel.ui:90
-msgid "Show statistics"
-msgstr ""
-
-#: src/widgets/options_panel.ui:96
-msgid "Return logprobs"
-msgstr ""
-
-#: src/widgets/options_panel.ui:105
-msgid "Top Logprobs:"
-msgstr ""
-
-#: src/widgets/options_panel.ui:111
-msgid "Integer (e.g., 5)"
-msgstr ""
-
-#: src/widgets/options_panel.ui:118
-msgid "Number of top logprobs to return"
-msgstr ""
-
-#: src/widgets/options_panel.ui:133
-msgid "Seed:"
-msgstr ""
-
-#: src/widgets/options_panel.ui:144 src/widgets/options_panel.ui:192
-#: src/widgets/options_panel.ui:264 src/widgets/options_panel.ui:288
-msgid "Integer"
-msgstr ""
-
-#: src/widgets/options_panel.ui:145
-msgid "Random number seed"
-msgstr ""
-
-#: src/widgets/options_panel.ui:157
-msgid "Temperature:"
-msgstr ""
-
-#: src/widgets/options_panel.ui:168 src/widgets/options_panel.ui:216
-#: src/widgets/options_panel.ui:240
-msgid "Float"
-msgstr ""
-
-#: src/widgets/options_panel.ui:169
-msgid "Creativity (0.0 - 1.0)"
-msgstr ""
-
-#: src/widgets/options_panel.ui:181
-msgid "Top K:"
-msgstr ""
-
-#: src/widgets/options_panel.ui:193
-msgid "Limit to top K tokens"
-msgstr ""
-
-#: src/widgets/options_panel.ui:205
-msgid "Top P:"
-msgstr ""
-
-#: src/widgets/options_panel.ui:217
-msgid "Limit to cumulative probability P"
-msgstr ""
-
-#: src/widgets/options_panel.ui:229
-msgid "Min P:"
-msgstr ""
-
-#: src/widgets/options_panel.ui:241
-msgid "Minimum probability"
-msgstr ""
-
-#: src/widgets/options_panel.ui:253
-msgid "Context Size:"
-msgstr ""
-
-#: src/widgets/options_panel.ui:265
-msgid "Context window size (num_ctx)"
-msgstr ""
-
-#: src/widgets/options_panel.ui:277
-msgid "Max Tokens:"
-msgstr ""
-
-#: src/widgets/options_panel.ui:289
-msgid "Max tokens to generate (num_predict)"
-msgstr ""
-
-#: src/widgets/options_panel.ui:301
-msgid "Stop Seq:"
-msgstr ""
-
-#: src/widgets/options_panel.ui:312
-msgid "String"
-msgstr ""
-
-#: src/widgets/options_panel.ui:313
-msgid "Stop sequence (comma separated)"
-msgstr ""
-
-#: src/window.py:117
-msgid "History could not be saved"
-msgstr ""
-
-#: src/window.py:118
-msgid "Your unsaved changes are kept in memory. Retry saving before quitting."
-msgstr ""
-
-#: src/window.py:120
-msgid "Keep Open"
-msgstr ""
-
-#: src/window.py:121
-msgid "Retry"
-msgstr ""
-
-#: src/window.py:166 src/window.ui:76
-msgid "Clear chat history"
-msgstr ""
-
-#: src/window.py:166
-msgid "Are you sure you want to delete all chat history?"
-msgstr ""
-
-#: src/window.py:168
-msgid "Delete history"
-msgstr ""
-
-#: src/window.py:246
-msgid "Pinned"
-msgstr ""
-
-#: src/window.py:247
-msgid "Recent"
-msgstr ""
-
-#: src/window.py:256
-msgid "Unpin Chat"
-msgstr ""
-
-#: src/window.py:256
-msgid "Pin Chat"
-msgstr ""
-
-#: src/window.py:257 src/window.py:318
-msgid "Rename Chat"
-msgstr ""
-
-#: src/window.py:257
-msgid "Delete Chat"
-msgstr ""
-
-#: src/window.py:273
-msgid "Chat actions"
-msgstr ""
-
-#: src/window.py:318
-msgid "Enter a new title for this chat."
-msgstr ""
-
-#: src/window.ui:25
-msgid "Saved Chats"
-msgstr ""
-
-#: src/window.ui:31
-msgid "No Saved Chats"
-msgstr ""
-
-#: src/window.ui:40
-msgid "Toggle Sidebar"
-msgstr ""
-
-#: src/window.ui:41
-msgid "Main Menu"
-msgstr ""
-
-#: src/window.ui:58
-msgid "_New Chat"
-msgstr ""
-
-#: src/window.ui:62
-msgid "_New Response"
-msgstr ""
-
-#: src/window.ui:68
-msgid "_Manage hosts"
-msgstr ""
-
-#: src/window.ui:72
-msgid "_Manage models"
-msgstr ""
-
-#: src/window.ui:80
-msgid "_Keyboard Shortcuts"
-msgstr ""
-
-#: src/window.ui:84
-msgid "_About Gnollama"
 msgstr ""
 
 #: src/structured.py:18
@@ -986,76 +570,679 @@ msgstr ""
 msgid "Invalid schema JSON: {0}"
 msgstr ""
 
+#: src/tab.py:35 src/window.py:271 src/window.ui:26 src/window.ui:46
+msgid "New Chat"
+msgstr ""
+
+#: src/tab.py:35
+msgid "New Response"
+msgstr ""
+
+#: src/tab.py:80
+msgid "Chat"
+msgstr ""
+
+#: src/tab.py:157
+msgid "Select an available model before sending."
+msgstr ""
+
+#: src/tab.py:160
+msgid "Wait for this model to finish unloading before sending."
+msgstr ""
+
+#: src/tab.py:165
+msgid "Wait for image support to be checked before sending."
+msgstr ""
+
+#: src/tab.py:167 src/widgets/chat_input.py:105
+msgid "Remove draft images or select a vision model to send."
+msgstr ""
+
+#: src/tab.py:172
+msgid "Top logprobs must be between 0 and 20."
+msgstr ""
+
+#: src/tab.py:237
+msgid "Response ended before completion."
+msgstr ""
+
+#: src/tool_calling.py:104
+msgid "Paste, import, or load the example tools, then click Apply."
+msgstr ""
+
+#: src/tool_calling.py:107
+msgid "Provide a nonempty JSON array of function tools."
+msgstr ""
+
+#: src/tool_calling.py:111
+#, python-brace-format
+msgid "Tool {0} must have type \"function\"."
+msgstr ""
+
+#: src/tool_calling.py:114
+#, python-brace-format
+msgid "Tool {0} needs a function object."
+msgstr ""
+
+#: src/tool_calling.py:117
+msgid "Function names must be nonempty and unique."
+msgstr ""
+
+#: src/tool_calling.py:120
+msgid "Function descriptions must be strings."
+msgstr ""
+
+#: src/tool_calling.py:123
+#, python-brace-format
+msgid "Parameters for {0} must be an object schema."
+msgstr ""
+
+#: src/tool_calling.py:149
+msgid "Malformed tool call; continuation is unavailable."
+msgstr ""
+
+#: src/tool_calling.py:153
+msgid "Unknown function; a mock result can still be supplied."
+msgstr ""
+
+#: src/tool_calling.py:158
+msgid "Arguments match the parameter schema."
+msgstr ""
+
+#: src/tool_calling.py:184
+msgid "This tool round has already been submitted."
+msgstr ""
+
+#: src/tool_calling.py:187
+msgid "Save a result for every tool call before continuing."
+msgstr ""
+
+#: src/tool_calling.py:193
+msgid "Tool result not provided: tool round cancelled by user."
+msgstr ""
+
+#: src/widgets/chat_input.py:56 src/widgets/chat_input.py:61
+#: src/widgets/chat_input.py:63
+msgid "Model default"
+msgstr ""
+
+#: src/widgets/chat_input.py:56
+msgid "Off"
+msgstr ""
+
+#: src/widgets/chat_input.py:56
+msgid "On"
+msgstr ""
+
+#: src/widgets/chat_input.py:56 src/widgets/chat_input.py:61
+msgid "Low"
+msgstr ""
+
+#: src/widgets/chat_input.py:56 src/widgets/chat_input.py:61
+msgid "Medium"
+msgstr ""
+
+#: src/widgets/chat_input.py:56 src/widgets/chat_input.py:61
+msgid "High"
+msgstr ""
+
+#: src/widgets/chat_input.py:56
+msgid "Max"
+msgstr ""
+
+#: src/widgets/chat_input.py:82
+msgid "Stop response"
+msgstr ""
+
+#: src/widgets/chat_input.py:82 src/widgets/chat_input.ui:47
+msgid "Query Ollama"
+msgstr ""
+
+#: src/widgets/chat_input.py:101
+msgid "Checking image support…"
+msgstr ""
+
+#: src/widgets/chat_input.py:103
+msgid "This model does not support images."
+msgstr ""
+
+#: src/widgets/chat_input.py:107
+msgid "Earlier images remain saved; only text history will be sent."
+msgstr ""
+
+#: src/widgets/chat_input.py:109
+msgid "Image support unknown."
+msgstr ""
+
+#: src/widgets/chat_input.py:210
+msgid "Select Images"
+msgstr ""
+
+#: src/widgets/chat_input.py:214
+msgid "Images"
+msgstr ""
+
+#: src/widgets/chat_input.py:247 src/widgets/chat_input.ui:90
+msgid "No image selected"
+msgstr ""
+
+#: src/widgets/chat_input.py:253
+#, python-brace-format
+msgid "{0} image(s) selected"
+msgstr ""
+
+#: src/widgets/chat_input.ui:24
+msgid "Select Model"
+msgstr ""
+
+#: src/widgets/chat_input.ui:30
+msgid "Thinking Level"
+msgstr ""
+
+#: src/widgets/chat_input.ui:41
+msgid "Type a message..."
+msgstr ""
+
+#: src/widgets/chat_input.ui:85
+msgid "Attach Image"
+msgstr ""
+
+#: src/widgets/chat_input.ui:99
+msgid "Clear Image"
+msgstr ""
+
 #: src/widgets/json_view.py:36
 msgid "JSON files"
 msgstr ""
 
-#: src/widgets/json_view.py:52
+#: src/widgets/json_view.py:56
 msgid "Import…"
 msgstr ""
 
-#: src/widgets/json_view.py:55
+#: src/widgets/json_view.py:59
 msgid "Apply"
 msgstr ""
 
-#: src/widgets/json_view.py:62
+#: src/widgets/json_view.py:142 src/widgets/options_panel.py:55
+msgid "JSON Schema"
+msgstr ""
+
+#: src/widgets/json_view.py:143
 msgid ""
 "Paste or import a self-contained JSON Schema. Describe the expected JSON in "
 "your prompt."
 msgstr ""
 
-#: src/widgets/json_view.py:89
+#: src/widgets/json_view.py:144
 msgid "Import JSON Schema"
 msgstr ""
 
-#: src/widgets/json_view.py:123
+#: src/widgets/json_view.py:164
 msgid "Raw"
 msgstr ""
 
-#: src/widgets/json_view.py:125
+#: src/widgets/json_view.py:166
 msgid "Copy JSON"
 msgstr ""
 
-#: src/widgets/json_view.py:127
+#: src/widgets/json_view.py:168
 msgid "Save JSON…"
 msgstr ""
 
-#: src/widgets/json_view.py:129
+#: src/widgets/json_view.py:170
 msgid "Copy Raw"
 msgstr ""
 
-#: src/widgets/json_view.py:145
+#: src/widgets/json_view.py:186
 msgid "Matches JSON Schema"
 msgstr ""
 
-#: src/widgets/json_view.py:145
+#: src/widgets/json_view.py:186
 msgid "Valid JSON"
 msgstr ""
 
-#: src/widgets/json_view.py:146
+#: src/widgets/json_view.py:187
 msgid "Incomplete JSON response"
 msgstr ""
 
-#: src/widgets/json_view.py:147
+#: src/widgets/json_view.py:188
 msgid "Invalid JSON"
 msgstr ""
 
-#: src/widgets/json_view.py:147
+#: src/widgets/json_view.py:188
 msgid "JSON does not match the schema"
 msgstr ""
 
-#: src/widgets/json_view.py:148
+#: src/widgets/json_view.py:189
 msgid "Schema validation could not finish"
 msgstr ""
 
-#: src/widgets/json_view.py:149
+#: src/widgets/json_view.py:190
 msgid "JSON response"
 msgstr ""
 
-#: src/widgets/json_view.py:167
+#: src/widgets/json_view.py:208
 msgid "Save JSON"
 msgstr ""
 
-#: src/widgets/json_view.py:170
+#: src/widgets/json_view.py:211
 msgid "JSON could not be saved"
+msgstr ""
+
+#. Also set this construct property in the parent template for GtkBuilder.
+#: src/widgets/options_panel.py:42 src/widgets/options_panel.ui:5
+msgid "Advanced Settings"
+msgstr ""
+
+#: src/widgets/options_panel.py:55
+msgid "Text"
+msgstr ""
+
+#: src/widgets/options_panel.py:55
+msgid "JSON"
+msgstr ""
+
+#: src/widgets/options_panel.py:57
+msgid "Server default"
+msgstr ""
+
+#: src/widgets/options_panel.py:57
+msgid "Unload after reply"
+msgstr ""
+
+#: src/widgets/options_panel.py:57
+msgid "Five minutes"
+msgstr ""
+
+#: src/widgets/options_panel.py:58
+msgid "Thirty minutes"
+msgstr ""
+
+#: src/widgets/options_panel.py:58
+msgid "Indefinitely"
+msgstr ""
+
+#: src/widgets/options_panel.py:58
+msgid "Custom seconds"
+msgstr ""
+
+#: src/widgets/options_panel.py:86
+#, python-brace-format
+msgid "Enabled tools: {0}. Results are supplied manually."
+msgstr ""
+
+#: src/widgets/options_panel.py:86
+msgid "Tool calling is off."
+msgstr ""
+
+#: src/widgets/options_panel.py:89
+msgid "Checking tool support…"
+msgstr ""
+
+#: src/widgets/options_panel.py:91
+msgid "This model reports no tool support; you can still test the API."
+msgstr ""
+
+#: src/widgets/options_panel.py:93
+msgid "Tool support is unknown."
+msgstr ""
+
+#: src/widgets/options_panel.py:149 src/widgets/options_panel.py:151
+msgid "Keep-alive must be a positive number of seconds."
+msgstr ""
+
+#: src/widgets/options_panel.py:168
+msgid "No hosts configured"
+msgstr ""
+
+#: src/widgets/options_panel.py:205 src/widgets/options_panel.py:207
+#, python-brace-format
+msgid "Invalid value for {0}."
+msgstr ""
+
+#: src/widgets/options_panel.py:225
+#, python-brace-format
+msgid "{0} must not be negative."
+msgstr ""
+
+#: src/widgets/options_panel.py:228
+#, python-brace-format
+msgid "{0} must be between 0 and 1."
+msgstr ""
+
+#: src/widgets/options_panel.py:230
+msgid "Context size must be positive."
+msgstr ""
+
+#: src/widgets/options_panel.py:232
+msgid "Max tokens must be -2, -1, or a nonnegative integer."
+msgstr ""
+
+#: src/widgets/options_panel.ui:25
+msgid "Tool Calling"
+msgstr ""
+
+#: src/widgets/options_panel.ui:30
+msgid "Edit Tools…"
+msgstr ""
+
+#: src/widgets/options_panel.ui:46
+msgid "Output:"
+msgstr ""
+
+#: src/widgets/options_panel.ui:57
+msgid "Edit Schema…"
+msgstr ""
+
+#: src/widgets/options_panel.ui:68
+msgid "Keep model loaded"
+msgstr ""
+
+#: src/widgets/options_panel.ui:78
+msgid "Positive number of seconds"
+msgstr ""
+
+#: src/widgets/options_panel.ui:92
+msgid "Ollama Host:"
+msgstr ""
+
+#: src/widgets/options_panel.ui:106
+msgid "System Prompt (optional)"
+msgstr ""
+
+#: src/widgets/options_panel.ui:113
+msgid "Show statistics"
+msgstr ""
+
+#: src/widgets/options_panel.ui:119
+msgid "Return logprobs"
+msgstr ""
+
+#: src/widgets/options_panel.ui:128
+msgid "Top Logprobs:"
+msgstr ""
+
+#: src/widgets/options_panel.ui:134
+msgid "Integer (e.g., 5)"
+msgstr ""
+
+#: src/widgets/options_panel.ui:141
+msgid "Number of top logprobs to return"
+msgstr ""
+
+#: src/widgets/options_panel.ui:156
+msgid "Seed:"
+msgstr ""
+
+#: src/widgets/options_panel.ui:167 src/widgets/options_panel.ui:215
+#: src/widgets/options_panel.ui:287 src/widgets/options_panel.ui:311
+msgid "Integer"
+msgstr ""
+
+#: src/widgets/options_panel.ui:168
+msgid "Random number seed"
+msgstr ""
+
+#: src/widgets/options_panel.ui:180
+msgid "Temperature:"
+msgstr ""
+
+#: src/widgets/options_panel.ui:191 src/widgets/options_panel.ui:239
+#: src/widgets/options_panel.ui:263
+msgid "Float"
+msgstr ""
+
+#: src/widgets/options_panel.ui:192
+msgid "Creativity (0.0 - 1.0)"
+msgstr ""
+
+#: src/widgets/options_panel.ui:204
+msgid "Top K:"
+msgstr ""
+
+#: src/widgets/options_panel.ui:216
+msgid "Limit to top K tokens"
+msgstr ""
+
+#: src/widgets/options_panel.ui:228
+msgid "Top P:"
+msgstr ""
+
+#: src/widgets/options_panel.ui:240
+msgid "Limit to cumulative probability P"
+msgstr ""
+
+#: src/widgets/options_panel.ui:252
+msgid "Min P:"
+msgstr ""
+
+#: src/widgets/options_panel.ui:264
+msgid "Minimum probability"
+msgstr ""
+
+#: src/widgets/options_panel.ui:276
+msgid "Context Size:"
+msgstr ""
+
+#: src/widgets/options_panel.ui:288
+msgid "Context window size (num_ctx)"
+msgstr ""
+
+#: src/widgets/options_panel.ui:300
+msgid "Max Tokens:"
+msgstr ""
+
+#: src/widgets/options_panel.ui:312
+msgid "Max tokens to generate (num_predict)"
+msgstr ""
+
+#: src/widgets/options_panel.ui:324
+msgid "Stop Seq:"
+msgstr ""
+
+#: src/widgets/options_panel.ui:335
+msgid "String"
+msgstr ""
+
+#: src/widgets/options_panel.ui:336
+msgid "Stop sequence (comma separated)"
+msgstr ""
+
+#: src/widgets/tool_view.py:10
+msgid "Tool Definitions"
+msgstr ""
+
+#: src/widgets/tool_view.py:11
+msgid "Import Tools"
+msgstr ""
+
+#: src/widgets/tool_view.py:12
+msgid ""
+"Define an Ollama tools array. Results are supplied manually. Example prompt: "
+"Read calculator.py, fix add so it adds instead of subtracting, then run "
+"python3 -m unittest -v."
+msgstr ""
+
+#: src/widgets/tool_view.py:13
+msgid "Example"
+msgstr ""
+
+#: src/widgets/tool_view.py:15
+msgid "Export…"
+msgstr ""
+
+#: src/widgets/tool_view.py:16
+msgid "Export Tools"
+msgstr ""
+
+#: src/widgets/tool_view.py:44
+msgid "Malformed tool call"
+msgstr ""
+
+#: src/widgets/tool_view.py:45
+#, python-brace-format
+msgid "Tool {0}: {1}"
+msgstr ""
+
+#: src/widgets/tool_view.py:52
+msgid "Copy Call"
+msgstr ""
+
+#: src/widgets/tool_view.py:55 src/widgets/tool_view.py:95
+msgid "Enter Result…"
+msgstr ""
+
+#: src/widgets/tool_view.py:70
+msgid "Continue"
+msgstr ""
+
+#: src/widgets/tool_view.py:73
+msgid "Cancel Tool Round"
+msgstr ""
+
+#: src/widgets/tool_view.py:83
+msgid "Awaiting manual tool results"
+msgstr ""
+
+#: src/widgets/tool_view.py:83
+msgid "Tool results submitted"
+msgstr ""
+
+#: src/widgets/tool_view.py:84
+msgid "Tool round cancelled"
+msgstr ""
+
+#: src/widgets/tool_view.py:84
+msgid "Incomplete tool calls"
+msgstr ""
+
+#: src/widgets/tool_view.py:85
+msgid "Malformed tool calls cannot be continued"
+msgstr ""
+
+#: src/widgets/tool_view.py:95
+msgid "Edit Result…"
+msgstr ""
+
+#: src/widgets/tool_view.py:96
+#, python-brace-format
+msgid "Saved mock result: {0}"
+msgstr ""
+
+#: src/widgets/tool_view.py:96
+msgid "(empty)"
+msgstr ""
+
+#: src/widgets/tool_view.py:104
+msgid "Mock Tool Result"
+msgstr ""
+
+#: src/widgets/tool_view.py:105
+msgid ""
+"Enter the result to send to the model. Text, JSON, and empty results are "
+"accepted. No tool is executed."
+msgstr ""
+
+#: src/widgets/tool_view.py:106
+msgid "Save Result"
+msgstr ""
+
+#: src/window.py:121
+msgid "History could not be saved"
+msgstr ""
+
+#: src/window.py:122
+msgid "Your unsaved changes are kept in memory. Retry saving before quitting."
+msgstr ""
+
+#: src/window.py:124
+msgid "Keep Open"
+msgstr ""
+
+#: src/window.py:125
+msgid "Retry"
+msgstr ""
+
+#: src/window.py:170 src/window.ui:76
+msgid "Clear chat history"
+msgstr ""
+
+#: src/window.py:170
+msgid "Are you sure you want to delete all chat history?"
+msgstr ""
+
+#: src/window.py:172
+msgid "Delete history"
+msgstr ""
+
+#: src/window.py:250
+msgid "Pinned"
+msgstr ""
+
+#: src/window.py:251
+msgid "Recent"
+msgstr ""
+
+#: src/window.py:260
+msgid "Unpin Chat"
+msgstr ""
+
+#: src/window.py:260
+msgid "Pin Chat"
+msgstr ""
+
+#: src/window.py:261 src/window.py:322
+msgid "Rename Chat"
+msgstr ""
+
+#: src/window.py:261
+msgid "Delete Chat"
+msgstr ""
+
+#: src/window.py:277
+msgid "Chat actions"
+msgstr ""
+
+#: src/window.py:322
+msgid "Enter a new title for this chat."
+msgstr ""
+
+#: src/window.ui:25
+msgid "Saved Chats"
+msgstr ""
+
+#: src/window.ui:31
+msgid "No Saved Chats"
+msgstr ""
+
+#: src/window.ui:40
+msgid "Toggle Sidebar"
+msgstr ""
+
+#: src/window.ui:41
+msgid "Main Menu"
+msgstr ""
+
+#: src/window.ui:58
+msgid "_New Chat"
+msgstr ""
+
+#: src/window.ui:62
+msgid "_New Response"
+msgstr ""
+
+#: src/window.ui:68
+msgid "_Manage hosts"
+msgstr ""
+
+#: src/window.ui:72
+msgid "_Manage models"
+msgstr ""
+
+#: src/window.ui:80
+msgid "_Keyboard Shortcuts"
+msgstr ""
+
+#: src/window.ui:84
+msgid "_About Gnollama"
 msgstr ""

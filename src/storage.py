@@ -130,6 +130,10 @@ class ChatStorage:
     def update_title(self, chat_id, title, on_done=None):
         return self._submit(self.db.update_chat_title, chat_id, title, time.time(), on_done=on_done)
 
+    def save_tool_state(self, chat_id, messages=None, options=None, on_done=None):
+        return self._submit(self.db.save_tool_state, chat_id, copy.deepcopy(messages),
+                            copy.deepcopy(options), on_done=on_done)
+
     def update_chat_pinned(self, chat_id, is_pinned, on_done=None):
         return self._submit(self.db.update_chat_pinned, chat_id, is_pinned, on_done=on_done)
 

@@ -1,5 +1,4 @@
 # List of source files containing translatable strings.
-# Please keep this file sorted alphabetically.
 data/io.github.jackrabbithanna.Gnollama.desktop.in
 data/io.github.jackrabbithanna.Gnollama.gschema.xml
 data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in
@@ -16,13 +15,14 @@ src/ollama.py
 src/pull_model_dialog.ui
 src/session.py
 src/shortcuts-dialog.ui
+src/structured.py
 src/tab.py
+src/tool_calling.py
 src/widgets/chat_input.py
 src/widgets/chat_input.ui
+src/widgets/json_view.py
 src/widgets/options_panel.py
 src/widgets/options_panel.ui
+src/widgets/tool_view.py
 src/window.py
 src/window.ui
-
-src/structured.py
-src/widgets/json_view.py

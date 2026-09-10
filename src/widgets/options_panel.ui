@@ -16,6 +16,29 @@
             <property name="orientation">vertical</property>
             <property name="spacing">6</property>
             <child>
+              <object class="GtkBox" id="tools_box">
+                <property name="orientation">vertical</property>
+                <property name="spacing">6</property>
+                <property name="visible">False</property>
+                <child>
+                  <object class="GtkCheckButton" id="tools_check">
+                    <property name="label" translatable="yes">Tool Calling</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkButton" id="tools_button">
+                    <property name="label" translatable="yes">Edit Tools…</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="tools_notice">
+                    <property name="xalign">0</property>
+                    <property name="wrap">True</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
               <object class="GtkBox">
                 <property name="spacing">6</property>
                 <child>

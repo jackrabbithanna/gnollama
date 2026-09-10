@@ -33,6 +33,8 @@ class ChatInput(Gtk.Box):
         self._desired_thinking = None
         self._thinking_values = []
         self.image_support = None
+        self.tool_support = None
+        self.awaiting_tools = False
         self.capabilities_loading = False
         self.has_history_images = False
         factory = Gtk.SignalListItemFactory()
@@ -80,19 +82,21 @@ class ChatInput(Gtk.Box):
         self.send_button.set_tooltip_text(_('Stop response') if running else _('Query Ollama'))
         blocked = ((self.image_support is False and bool(self.selected_image_paths)) or
                    (self.capabilities_loading and (bool(self.selected_image_paths) or self.has_history_images)))
-        self.send_button.set_sensitive(running or (self.get_selected_model() is not None and not blocked))
+        self.send_button.set_sensitive(running or (self.get_selected_model() is not None and not blocked and not self.awaiting_tools))
+        self.entry.set_sensitive(not self.awaiting_tools)
 
     def set_model_details(self, details, loading=False):
         self.capabilities_loading = loading
         capabilities = details.get('capabilities') if isinstance(details, dict) else None
         self.image_support = ('vision' in capabilities) if isinstance(capabilities, list) else None
+        self.tool_support = ('tools' in capabilities) if isinstance(capabilities, list) else None
         self._set_thinking_options(details)
         self.update_capability_controls()
         self.emit('capabilities-changed')
 
     def update_capability_controls(self):
         self.attach_button.set_sensitive(self.get_selected_model() is not None and
-                                         not self.capabilities_loading and self.image_support is not False)
+                                         not self.capabilities_loading and self.image_support is not False and not self.awaiting_tools)
         if self.capabilities_loading:
             notice = _('Checking image support…')
         elif self.image_support is False:

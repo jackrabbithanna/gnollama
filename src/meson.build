@@ -53,6 +53,7 @@ gnollama_sources = [
   'tab.py',
   'session.py',
   'structured.py',
+  'tool_calling.py',
   'ollama.py',
   'storage.py',
   'writer.py',
@@ -70,6 +71,7 @@ gnollama_widget_sources = [
   'widgets/chat_input.py',
   'widgets/options_panel.py',
   'widgets/json_view.py',
+  'widgets/tool_view.py',
   'widgets/message_list.py',
 ]
 

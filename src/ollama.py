@@ -218,8 +218,10 @@ def generate(host, model, prompt, system=None, options=None, thinking=None,
 
 
 def chat(host, model, messages, options=None, thinking=None, logprobs=False,
-         top_logprobs=None, images=None, timeout=300, cancellable=None, format=None, keep_alive=None):
+         top_logprobs=None, images=None, timeout=300, cancellable=None, format=None, keep_alive=None, tools=None):
     data = {'model': model, 'messages': copy.deepcopy(messages), 'stream': True}
+    if tools:
+        data['tools'] = copy.deepcopy(tools)
     if images and data['messages'] and data['messages'][-1]['role'] == 'user':
         data['messages'][-1]['images'] = images
     _add_common_params(data, options, thinking, logprobs, top_logprobs, format, keep_alive)

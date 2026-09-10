@@ -57,13 +57,14 @@ class StorageTests(unittest.TestCase):
         db.create_chat('chat', 'old chat', 1, 1, 'model')
         db.save_messages('chat', [{'role': 'assistant', 'content': 'saved'}])
         with db._get_conn() as conn:
-            conn.execute('ALTER TABLE messages DROP COLUMN response_metadata')
+            for column in ('response_metadata', 'tool_calls', 'tool_name', 'tool_call_id'):
+                conn.execute('ALTER TABLE messages DROP COLUMN ' + column)
             conn.execute('PRAGMA user_version = 3')
             conn.commit()
         db = DatabaseManager(path)
         self.assertEqual(db.get_chat('chat')['messages'], [{'role': 'assistant', 'content': 'saved'}])
         with db._get_conn() as conn:
-            self.assertEqual(conn.execute('PRAGMA user_version').fetchone()[0], 4)
+            self.assertEqual(conn.execute('PRAGMA user_version').fetchone()[0], 5)
 
     def test_connection_closes_after_context(self):
         with self.storage.db._get_conn() as conn:

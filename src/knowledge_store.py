@@ -64,6 +64,26 @@ class KnowledgeDatabase(WebSourceDatabase, CollectionDatabase):
         if index is not None and table_exists(conn, index['config_id']):
             conn.execute(f'DELETE FROM {vector_table(index["config_id"])} WHERE index_id=?', (index_id,))
 
+    def document_page(self, query='', scope='all', limit=100, offset=0, exclude_collection=None):
+        with self._get_conn() as conn:
+            where, args = [], []
+            if exclude_collection:
+                where.append('NOT EXISTS (SELECT 1 FROM knowledge_collection_documents c WHERE c.document_id=d.id AND c.collection_id=?)')
+                args.append(exclude_collection)
+            if query:
+                where.append("instr(casefold(d.title || char(10) || d.filename), casefold(?)) > 0")
+                args.append(query)
+            if scope == 'ungrouped':
+                where.append('NOT EXISTS (SELECT 1 FROM knowledge_collection_documents c WHERE c.document_id=d.id)')
+            elif scope not in ('all', 'collections'):
+                where.append('EXISTS (SELECT 1 FROM knowledge_collection_documents c WHERE c.document_id=d.id AND c.collection_id=?)')
+                args.append(scope)
+            sql = 'SELECT d.id,d.title,d.filename,d.content_hash,d.created_at,length(d.text) AS characters FROM knowledge_documents d'
+            if where:
+                sql += ' WHERE ' + ' AND '.join(where)
+            sql += ' ORDER BY d.created_at DESC,d.id LIMIT ? OFFSET ?'
+            return [dict(r) for r in conn.execute(sql, (*args, limit, offset))]
+
     def knowledge_documents(self):
         with self._get_conn() as conn:
             return [dict(r) for r in conn.execute('''SELECT id, title, filename, content_hash,

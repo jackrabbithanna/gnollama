@@ -2,7 +2,7 @@ import html
 import re
 from typing import List, Dict, Any, Optional, Tuple, Union
 from html.parser import HTMLParser
-from gi.repository import Gtk, Gdk, Pango, GObject
+from gi.repository import Gtk, Gdk, Pango, GObject, Adw
 
 try:
     import markdown
@@ -209,10 +209,12 @@ class MarkdownView(Gtk.Box):
     """
     __gtype_name__ = 'MarkdownView'
 
-    def __init__(self, text: str = "", **kwargs: Any) -> None:
+    def __init__(self, text: str = "", wrap_code=False, **kwargs: Any) -> None:
         super().__init__(**kwargs)
         self.set_orientation(Gtk.Orientation.VERTICAL)
         self.set_spacing(12)
+        self.set_hexpand(True)
+        self.wrap_code = wrap_code
         self.add_css_class("markdown-view")
         self._text: str = text
         
@@ -244,7 +246,7 @@ class MarkdownView(Gtk.Box):
         curr_child = self.get_first_child()
         while curr_child:
             if curr_child.has_css_class("code-block"):
-                scrolled = curr_child.get_first_child()
+                scrolled = getattr(curr_child, '_code_scrolled', None)
                 if isinstance(scrolled, Gtk.ScrolledWindow):
                     view = scrolled.get_child()
                     if isinstance(view, GtkSource.View):
@@ -278,17 +280,6 @@ class MarkdownView(Gtk.Box):
                 lang = raw_lang.strip()
                 
                 content_start_idx = i + 1
-                if not lang and content_start_idx < n:
-                    next_line = lines[content_start_idx].strip()
-                    clean_lang = next_line.strip('`')
-                    lower_clean = clean_lang.lower()
-                    
-                    if lower_clean in ['markdown', 'md', 'python', 'py', 'bash', 'sh', 'javascript', 'js', 'html', 'css', 'json', 'xml', 'sql', 'java', 'c', 'cpp', 'go', 'rs', 'rust']:
-                        lang = clean_lang
-                        content_start_idx += 1
-                    elif re.match(r'^[-*_]{3,}\s*$', next_line) or re.match(r'^#{1,6}\s', next_line):
-                        lang = 'markdown'
-                
                 code_lines = []
                 i = content_start_idx
                 while i < n:
@@ -303,15 +294,7 @@ class MarkdownView(Gtk.Box):
                     code_lines.append(curr_line)
                     i += 1
                 
-                if lang.lower() in ['markdown', 'md']:
-                    inner_blocks = self._parse_blocks("\n".join(code_lines))
-                    blocks.extend(inner_blocks)
-                else:
-                    blocks.append({
-                        'type': 'code',
-                        'lang': lang,
-                        'content': "\n".join(code_lines)
-                    })
+                blocks.append({'type': 'code', 'lang': lang, 'content': "\n".join(code_lines)})
                 continue
             
             text_buffer = []
@@ -341,7 +324,7 @@ class MarkdownView(Gtk.Box):
                 is_code = curr_child.has_css_class("code-block")
                 is_text = isinstance(curr_child, Gtk.Label)
                 
-                if block['type'] == 'code' and is_code:
+                if block['type'] == 'code' and is_code and curr_child._lang == block['lang']:
                     self._update_code_block(curr_child, block['lang'], block['content'])
                     match = True
                 elif block['type'] == 'text' and is_text:
@@ -371,6 +354,7 @@ class MarkdownView(Gtk.Box):
         if block['type'] == 'text':
              label = Gtk.Label()
              label.set_wrap(True)
+             label.set_wrap_mode(Pango.WrapMode.WORD_CHAR)
              label.set_xalign(0)
              label.set_selectable(True)
              self._update_text_block(label, block['content'])
@@ -380,7 +364,7 @@ class MarkdownView(Gtk.Box):
 
     def _create_code_widget(self, lang: str, code: str) -> Gtk.Box:
         """Creates a styled code view widget, using GtkSource if available."""
-        wrapper = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        wrapper = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, hexpand=True)
         wrapper.add_css_class("code-block")
         wrapper.add_css_class("margin-v-6")
         
@@ -410,7 +394,8 @@ class MarkdownView(Gtk.Box):
             
         view.set_editable(False)
         view.set_direction(Gtk.TextDirection.LTR)
-        view.set_wrap_mode(Gtk.WrapMode.NONE)
+        view.set_wrap_mode(Gtk.WrapMode.WORD_CHAR if self.wrap_code else Gtk.WrapMode.NONE)
+        view.set_hexpand(True)
         view.set_top_margin(12)
         view.set_bottom_margin(12)
         view.set_left_margin(12)
@@ -419,12 +404,32 @@ class MarkdownView(Gtk.Box):
         
         view.get_buffer().set_text(code)
 
-        scrolled = Gtk.ScrolledWindow()
+        scrolled = Gtk.ScrolledWindow(hexpand=True)
         scrolled.set_child(view)
         scrolled.set_propagate_natural_height(True)
-        scrolled.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.NEVER)
+        scrolled.set_policy(Gtk.PolicyType.NEVER if self.wrap_code else Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.NEVER)
         
         wrapper.append(scrolled)
+        wrapper._code_scrolled = scrolled
+        wrapper._raw_code = code
+        wrapper._lang = lang
+        toolbar = Adw.WrapBox(child_spacing=6, line_spacing=6, halign=Gtk.Align.END)
+        copy_button = Gtk.Button(label=_('Copy Code'))
+        from .widgets.feedback import copy_text
+        copy_button.connect('clicked', lambda button: copy_text(button, wrapper._raw_code))
+        toolbar.append(copy_button)
+        wrapper.append(toolbar)
+        wrapper._preview = None
+        if lang.lower() in ('markdown', 'md'):
+            preview = MarkdownView(code, visible=False)
+            wrapper._preview = preview
+            toggle = Gtk.ToggleButton(label=_('Preview Markdown'))
+            def toggled(button):
+                preview.set_visible(button.get_active())
+                scrolled.set_visible(not button.get_active())
+            toggle.connect('toggled', toggled)
+            toolbar.append(toggle)
+            wrapper.append(preview)
         return wrapper
 
     def _update_text_block(self, label: Gtk.Label, text: str) -> None:
@@ -454,7 +459,10 @@ class MarkdownView(Gtk.Box):
 
     def _update_code_block(self, wrapper: Gtk.Box, lang: str, code: str) -> None:
         """Updates an existing code block widget with new content."""
-        scrolled = wrapper.get_first_child()
+        wrapper._raw_code = code
+        if wrapper._preview is not None:
+            wrapper._preview.update(code)
+        scrolled = wrapper._code_scrolled
         if isinstance(scrolled, Gtk.ScrolledWindow):
             view = scrolled.get_child()
             if isinstance(view, Gtk.TextView):

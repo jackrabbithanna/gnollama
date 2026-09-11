@@ -7,7 +7,8 @@
     <property name="selectable">False</property>
     <child>
       <object class="GtkBox" id="container">
-        <property name="halign">start</property>
+        <property name="halign">fill</property>
+        <property name="hexpand">True</property>
         <property name="margin-start">12</property>
         <property name="margin-end">12</property>
         <property name="margin-top">6</property>
@@ -15,7 +16,7 @@
         <child>
           <object class="GtkBox" id="bubble_box">
             <property name="orientation">vertical</property>
-            <property name="halign">start</property>
+            <property name="halign">fill</property>
             <property name="hexpand">True</property>
             <style>
               <class name="bot-bubble"/>
@@ -23,6 +24,7 @@
             <child>
               <object class="GtkLabel" id="header">
                 <property name="halign">start</property>
+                <property name="ellipsize">end</property>
                 <property name="margin-bottom">4</property>
                 <property name="visible">False</property>
                 <style>
@@ -43,6 +45,7 @@
                 <child>
                   <object class="GtkLabel" id="thinking_label">
                     <property name="wrap">True</property>
+                    <property name="wrap-mode">word-char</property>
                     <property name="xalign">0</property>
                     <style>
                       <class name="thinking-text"/>

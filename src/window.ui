@@ -124,6 +124,10 @@
         <attribute name="label" translatable="yes">_New Response</attribute>
         <attribute name="action">win.new_tab</attribute>
       </item>
+      <item>
+        <attribute name="label" translatable="yes">New Comparison</attribute>
+        <attribute name="action">win.new_comparison</attribute>
+      </item>
     </section>
     <section>
       <item>

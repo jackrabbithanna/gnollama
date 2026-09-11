@@ -13,7 +13,7 @@ class URLImportDialog(WorkDialog):
     def __init__(self, storage, collection_id=None, url=''):
         super().__init__(_('Add URLs'), width=800, height=760)
         self.storage = storage
-        self.collections = storage.db.knowledge_collections()
+        self.collections = storage.library.knowledge_collections()
         self.collection_id = None
         self.items = []
         self.current = None
@@ -137,7 +137,7 @@ class URLImportDialog(WorkDialog):
             if item['download']:
                 item['download'].discard()
                 item['download'] = None
-            item['expected'] = self.storage.db.web_document(item['url'])
+            item['expected'] = self.storage.library.web_document(item['url'])
             item['selector'] = (item['expected'] or {}).get('web_source', {}).get('selector', item['selector'])
         selector = item['selector']
         item['error'] = ''
@@ -327,8 +327,8 @@ class URLImportDialog(WorkDialog):
                 self.show_error(exc)
         expected = item['expected']
         if expected and expected['content_hash'] != document['content_hash']:
-            collections = self.storage.db.source_collections(document_id=expected['id'])
-            count = len(self.storage.db.knowledge_indexes(document_id=expected['id']))
+            collections = self.storage.library.source_collections(document_id=expected['id'])
+            count = len(self.storage.library.knowledge_indexes(document_id=expected['id']))
             dialog = Adw.AlertDialog(heading=_('Replace Document and Rebuild?'),
                 body=_('Replace “{0}” and rebuild {1} embedding indexes? Saved chat answers keep their original passages. Affected collections cannot search this content until rebuilding succeeds.').format(expected['title'], count)
                      + '\n\n' + _('Collections: {0}').format(', '.join(c['name'] for c in collections) or _('None')))
@@ -343,7 +343,7 @@ class URLImportDialog(WorkDialog):
     def update_saved(self):
         if self.closed or not self.collection_id:
             return
-        members = {m['id']: m for m in self.storage.db.collection_documents(self.collection_id)}
+        members = {m['id']: m for m in self.storage.library.collection_documents(self.collection_id)}
         for item in self.items:
             if item['status'] != 'saved':
                 continue

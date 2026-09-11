@@ -19,7 +19,7 @@ Whether you are developing, experimenting, or chatting with local models, Gnolla
 * **Dual Tab Workflows**:
   * **New Chat (`/api/chat`)**: Multi-turn sessions that preserve conversation context.
   * **New Response (`/api/generate`)**: Single-turn completions ideal for prompt engineering and testing.
-  * Chat and Response model pickers exclude models reported as embedding-only. Embedding models remain available in Knowledge and Manage Models; models with unknown capabilities remain selectable for older servers.
+  * Model lists appear before capability checks. Only the selected model is checked; models known to be embedding-only are excluded from Chat, Response, and Comparison. Opening an empty selector retries discovery. Embedding models remain available in Knowledge and Manage Models; unknown capabilities remain supported for older servers.
 * **Conversation History & Sidebar**:
   * Automatically saves chat logs and model configurations between runs.
   * **Pin Chats**: Pin essential conversations to the top of your history list.
@@ -42,7 +42,7 @@ Whether you are developing, experimenting, or chatting with local models, Gnolla
   * Separate display of Ollama's native thinking stream, with model-dependent thinking controls.
   * Display generation stats (including cached prompt tokens, finish reason, and tokens/second) and logprobs.
 * **Stop Responses**: Stop generation while keeping partial answers in chat history. Pending history writes finish before the application quits.
-* **Adaptive GNOME Navigation**: Native tabs support reordering and loading indicators. The Pinned and Recent sidebar collapses on narrow windows. Use Ctrl+W to close a tab, Ctrl+Page Up/Down to switch tabs, and F9 to toggle the sidebar.
+* **Adaptive GNOME Navigation**: Native tabs support reordering and loading indicators. The sidebar groups Drafts, Pinned, Recent chats, and Recent comparisons, and collapses on narrow windows. Use Ctrl+W to close a tab, Ctrl+Page Up/Down to switch tabs, and F9 to toggle the sidebar.
 
 ### Ollama Cloud
 
@@ -107,7 +107,7 @@ For the pinned sqlite-vec 0.1.9 layout, distance searches reuse read-only vector
 
 A GNOME 50 aarch64 benchmark of 50,000 vectors at 1,024 dimensions returned identical top-six results to the preceding batched NumPy ranking. Whole-library retrieval took 0.15–0.19 seconds, selecting one 25,000-vector document took 0.17–0.18 seconds, and selecting 25,000 individual chunks took 0.42–0.44 seconds. These are local retrieval timings, excluding Ollama inference. The one-time migration and backup took about 68 seconds; startup displays migration progress and waits for the database operation to finish if closed.
 
-Database upgrades run automatically on startup, with progress and a recoverable error screen. Schema version 7 migrates existing vectors without contacting Ollama: it copies and verifies their IDs, dimensions, and bytes before removing the old vector column. Version 8 adds collections and membership without copying or rebuilding vectors; existing documents appear under **Ungrouped Documents**, and existing chat selections are preserved. Version 9 adds web-source provenance without reindexing existing documents. Version 10 adds cloud host types and keyring references without storing API keys in the database. Before upgrading an existing database, Gnollama saves a consistent, timestamped `gnollama.db.pre-v10-*.bak` beside the database and reports its location. Keep that file until you have verified the upgrade; it can then be archived or removed. Failed migrations roll back, and incompatible or damaged vectors are never silently discarded. Databases from newer app versions are refused. Older app versions must not be used with the upgraded database. SQLite can reuse pages freed by migration; the database file need not immediately shrink.
+Database upgrades run automatically on startup, with progress and a recoverable error screen. Schema version 7 migrates existing vectors without contacting Ollama: it copies and verifies their IDs, dimensions, and bytes before removing the old vector column. Version 8 adds collections and membership without copying or rebuilding vectors; existing documents appear under **Ungrouped Documents**, and existing chat selections are preserved. Version 9 adds web-source provenance without reindexing existing documents. Version 10 adds cloud host types and keyring references without storing API keys in the database. Version 11 adds stable message identifiers, managed drafts, full-text search, and comparison runs while preserving message attachments and metadata. Before upgrading an existing database, Gnollama saves a consistent, timestamped `gnollama.db.pre-v11-*.bak` beside the database and reports its location. Keep that file until you have verified the upgrade; it can then be archived or removed. Failed migrations roll back, and incompatible or damaged vectors are never silently discarded. Databases from newer app versions are refused. Older app versions must not be used with the upgraded database. SQLite can reuse pages freed by migration; the database file need not immediately shrink.
 
 ### Structured output details
 
@@ -160,18 +160,22 @@ I wanted a GNOME application for Ollama that I could use to test and experiment 
 
 ### Meson
 
-Requires Python 3.10+, PyGObject, GTK 4.18+, libadwaita 1.9+, libsoup 3, libsecret 0.20+ with Secret 1 introspection, jsonschema 4.26+, sqlite-vec 0.1.9, SQLite 3.41+ with extension loading, pypdf, and Markdown. The Flatpak manifest uses GNOME 50 and builds the current checkout. It bundles checksum-pinned dependencies for aarch64 and x86_64, including sqlite-vec 0.1.9 and pypdf 6.18.0.
+Requires Python 3.11+, PyGObject, GTK 4.18+, libadwaita 1.9+, libsoup 3, libsecret 0.20+ with Secret 1 introspection, jsonschema 4.26+, sqlite-vec 0.1.9, SQLite 3.41+ with extension loading, pypdf, and Markdown. The Flatpak manifest uses GNOME 50 and builds the current checkout. It bundles checksum-pinned dependencies for aarch64 and x86_64, including sqlite-vec 0.1.9 and pypdf 6.18.0.
 Code highlighting requires [GTKSourceView](https://wiki.gnome.org/Projects/GtkSourceView) version 5
 
-To install in Ubuntu:
+For a native build on a Debian/Ubuntu installation whose GTK and libadwaita packages meet the minimum versions above, install the development and introspection packages, then use the locked Python dependencies:
+
 ```bash
-apt-get install libgtksourceview-5-0 libgtksourceview-5-common libgtksourceview-5-dev
-apt-get install gir1.2-gtksource-5
-apt-get install python3-markdown python3-jsonschema python3-gi gir1.2-soup-3.0
-apt-get install python3-pypdf
+sudo apt-get install meson ninja-build gettext desktop-file-utils python3-venv python3-gi \
+  libgtk-4-dev libadwaita-1-dev libsoup-3.0-dev libsecret-1-dev \
+  gir1.2-gtk-4.0 gir1.2-adw-1 gir1.2-soup-3.0 gir1.2-secret-1 \
+  libgtksourceview-5-dev gir1.2-gtksource-5
+python3 -m venv --system-site-packages .venv
+. .venv/bin/activate
+python -m pip install -r requirements.lock
 ```
 
-Install `sqlite-vec==0.1.9` in the Python environment used by Meson (for example, a virtual environment with `--system-site-packages` for PyGObject). GNOME Builder bundles it automatically.
+The Flatpak build supplies its own GNOME 50 SDK and pinned Python dependencies.
 
 ```bash
 meson setup build
@@ -182,7 +186,7 @@ You can then run `gnollama` to execute the application.
 
 ## Validation
 
-Run `meson test -C build --print-errorlogs` after building. Regression tests use temporary databases and a local HTTP fixture server; they do not contact your Ollama servers. GTK smoke tests require a display and are skipped when none is available.
+Run `meson test -C build --print-errorlogs` after building. Regression tests use temporary databases and a local HTTP fixture server; they do not contact your Ollama servers. GTK tests require a display. Set `GNOLLAMA_REQUIRE_DISPLAY=1` to reject missing GTK coverage, as CI does. `tools/ci-test.sh` runs the complete suite under Xvfb. The CI matrix builds GNOME 50 Flatpaks on x86_64 and aarch64 and runs core compatibility tests on Python 3.11.
 
 GNOME Builder builds the repository Flatpak manifest from the current checkout. For a command-line Flatpak build, use:
 
@@ -211,8 +215,42 @@ No warranty provided. No guarantee it does anything at all. Use at your own risk
 
 ### Interface and settings
 
-The server, model, and thinking controls identify what handles each request. Tool calling and output formatting remain below the image controls. **Chat Settings…** opens an adaptive dialog for system instructions, generation limits, sampling, model retention, and diagnostics. Empty numeric fields preserve server defaults; invalid fields show an explanation beside the input. Response statistics can be expanded below an answer.
+Server and model selectors stay visible. Expand **Options** for thinking, tools, output formatting, and **Chat Settings…**; its label summarizes active controls. **Chat Settings…** opens an adaptive dialog for system instructions, generation limits, sampling, model retention, and diagnostics. Empty numeric fields preserve server defaults; invalid fields show an explanation beside the input. Response statistics can be expanded below an answer.
 
 **Manage Models** uses **Download Model…**, with a progress bar and expandable download details. Server records have persistent name/address labels, address validation, and a visible **Test Connection** action.
 
-These usability changes keep database schema version 9 and preserve existing documents, embeddings, collection memberships, chat settings, and historical citations.
+The current release uses database schema version 11 and preserves existing documents, embeddings, collection memberships, chat settings, and historical citations.
+
+
+### Drafts, search, and comparisons
+
+Enter sends a prompt; Shift+Enter inserts a newline. The composer and system instructions accept multiline text without stripping indentation. Unsent text, images, and settings are saved after 500 ms and flushed on close. Reopen an existing chat to recover its draft, or use **Drafts** for unsent Chat, Response, and Comparison editors. **Discard Draft** removes the saved draft. Completed Response output stays temporary.
+
+Search titles and user/assistant messages from the sidebar. Search uses literal token prefixes and shows matching passages. Selecting a result opens its matching message. History and library lists load in pages of 100; conversations initially render 50 messages. **Load Older Messages** keeps the current reading position. During generation, scroll upward to stop following; use **Jump to latest** to resume.
+
+The conversation menu exports Markdown or versioned JSON after pending saves finish. JSON preserves settings, thinking, outcomes, tool rounds, retrieval snapshots, and embedded attachments; credentials and their references are excluded. Copy actions retain literal code, including fenced Markdown. **Preview Markdown** is an optional rendering of that source.
+
+Choose **New Comparison** (Ctrl+Shift+N) to compare one fresh prompt across 2–4 distinct host/model pairs. All targets share the prompt, system instruction, settings, images, and one retrieval snapshot. Incompatible settings keep the draft available for correction. Stop individual targets or use **Stop All**. Results remain together in history with pin, rename, search, delete confirmation, and export. Reopening a result sends no requests; **Run Again** creates a new editor and run.
+
+The sidebar separates **Recent chats** and **Recent comparisons**; pinned items share **Pinned**. Comparison responses fill equal columns on wide windows and use a target switcher on narrow windows. Chat and comparison bubbles resize with the window. API details wrap, while code preserves its formatting and scrolls horizontally only when a line exceeds the available width.
+
+**Context estimate** reports text estimates using UTF-8 bytes divided by four, plus a positive configured output allowance. Image and chat-template overhead are unknown. An advisory appears at 80% of an explicitly configured context size. Estimates never truncate the conversation or change settings.
+
+### Architecture and evaluation
+
+`Services` owns four inference workers, two control/read workers, two discovery workers, and two transfer workers. Model lists and selected-model capabilities use separate shared requests with a 60-second cache and digest-based capability identities. Subscribers do not occupy workers while waiting for another subscriber's request. Empty lists are not cached, and interacting with an empty selector refreshes discovery. Knowledge processing retains its bounded queues. An ordered writer serializes retryable transactions; submitted prompts consume only their matching draft revision. Message writes append or update changed records and retain unchanged attachment rows.
+
+See [the implementation plan](docs/stabilization-improvement-plan.md) and [validation notes](docs/stabilization-validation.md). Reproduce the isolated performance and retrieval fixtures in the configured Python/SDK environment:
+
+```bash
+python3 tools/benchmark_workspace.py --output workspace-benchmark.json
+python3 tools/evaluate_retrieval.py --output retrieval-evaluation.json
+python3 tools/review_layout.py --resource build/src/gnollama.gresource --output validation-screenshots
+```
+
+Live retrieval evaluation is opt-in and contacts only the explicitly supplied host and models. It records model digests, ranked passages, recall@6, reciprocal rank, and optional generated answers for human review of correctness and citation support:
+
+```bash
+python3 tools/evaluate_retrieval.py --live-host http://localhost:11434 \
+  --embedding-model embeddinggemma --answer-model qwen3:4b --output live-evaluation.json
+```

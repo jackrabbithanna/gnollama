@@ -58,8 +58,14 @@ def legacy_database(path, dimensions=2, raw=None):
     messages = [dict(role='assistant', content='Saved answer [S1]', response_metadata={'retrieval': {'hits': [{'text': doc['text']}]}}),
                 dict(role='assistant', content='', tool_calls=[{'function': {'name': 'read_file', 'arguments': {'path': 'test'}}}]),
                 dict(role='tool', content='saved result', tool_name='read_file')]
-    db.save_messages('old', messages)
-    return db, config, copy.deepcopy(db.get_chat('old'))
+    with db._get_conn() as conn:
+        for i, m in enumerate(messages):
+            conn.execute('INSERT INTO messages(chat_id,order_index,role,content,response_metadata,tool_calls,tool_name) VALUES (?,?,?,?,?,?,?)',
+                ('old', i, m['role'], m['content'], json.dumps(m['response_metadata']) if 'response_metadata' in m else None,
+                 json.dumps(m['tool_calls']) if 'tool_calls' in m else None, m.get('tool_name')))
+        conn.commit()
+    return db, config, dict(id='old', title='Keep chat', created_at=1, updated_at=2, model='chat-model',
+        options=options, system=None, host=None, is_pinned=False, kind='chat', messages=messages)
 
 
 class VectorStorageTests(unittest.TestCase):
@@ -84,7 +90,7 @@ class VectorStorageTests(unittest.TestCase):
         self.assertEqual({i['status'] for i in upgraded.knowledge_indexes()}, {'complete', 'interrupted'})
         self.assertEqual(upgraded.embedding_config(config['id']), config)
         with upgraded._get_conn() as conn:
-            self.assertEqual(conn.execute('PRAGMA user_version').fetchone()[0], 10)
+            self.assertEqual(conn.execute('PRAGMA user_version').fetchone()[0], 11)
             self.assertNotIn('vector', [r['name'] for r in conn.execute('PRAGMA table_info(knowledge_chunks)')])
             self.assertEqual(conn.execute(f'SELECT count(*) FROM {vector_table(config["id"])}').fetchone()[0], 2)
         with sqlite3.connect(upgraded.backup_path) as backup:

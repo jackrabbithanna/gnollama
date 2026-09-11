@@ -139,12 +139,14 @@ class CloudStorageTests(CloudStorageFixture, unittest.TestCase):
         with self.storage.db._get_conn() as conn:
             conn.execute('ALTER TABLE hosts DROP COLUMN provider')
             conn.execute('ALTER TABLE hosts DROP COLUMN credential_id')
+            from legacy_schema import remove_workspace
+            remove_workspace(conn)
             conn.execute('PRAGMA user_version=9')
             conn.commit()
         upgraded = self.open_storage(FakeCredentials())
         self.assertEqual(upgraded.get_host(host['id']), host)
         with upgraded.db._get_conn() as conn:
-            self.assertEqual(conn.execute('PRAGMA user_version').fetchone()[0], 10)
+            self.assertEqual(conn.execute('PRAGMA user_version').fetchone()[0], 11)
         self.assertIsNotNone(upgraded.db.backup_path)
 
 

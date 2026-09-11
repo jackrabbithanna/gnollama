@@ -210,6 +210,7 @@ class ToolUITests(unittest.TestCase):
         self.windows.append(window)
         window.present()
         self.assertIsNone(tab.options_panel._settings_dialog)
+        tab.advanced.set_expanded(True)
         test_ui.pump_until(lambda: tab.options_panel.get_mapped())
         tab.options_panel.tools_check.set_active(True)
         test_ui.pump_until(lambda: tab.options_panel._tools_dialog is not None)
@@ -321,6 +322,8 @@ class ToolUITests(unittest.TestCase):
                 conn.execute('DROP TABLE ' + table)
             conn.execute('ALTER TABLE hosts DROP COLUMN provider')
             conn.execute('ALTER TABLE hosts DROP COLUMN credential_id')
+            from legacy_schema import remove_workspace
+            remove_workspace(conn)
             conn.execute('PRAGMA user_version = 4')
             conn.commit()
         db = DatabaseManager(path)
@@ -330,7 +333,7 @@ class ToolUITests(unittest.TestCase):
         self.assertEqual(saved['options']['schema_text'], '{}')
         self.assertEqual(saved['messages'][0]['content'], 'answer')
         with db._get_conn() as conn:
-            self.assertEqual(conn.execute('PRAGMA user_version').fetchone()[0], 10)
+            self.assertEqual(conn.execute('PRAGMA user_version').fetchone()[0], 11)
         db.delete_chat('old')
         db.save_tool_state('old', messages=[], options={'tools_text': EXAMPLE_TOOLS})
         self.assertIsNone(db.get_chat('old'))

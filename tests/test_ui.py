@@ -41,6 +41,7 @@ class UITests(unittest.TestCase):
 
     def tearDown(self):
         for tab in self.tabs:
+            tab.draft.close(discard=True)
             tab.chat_input.cancel_fetches()
             if tab.request:
                 tab.request.cancellable.cancel()
@@ -188,7 +189,7 @@ class UITests(unittest.TestCase):
         pump_until(lambda: tab.request.content == 'partial')
         release = threading.Event()
         self.storage._submit(lambda: release.wait(3))
-        with patch.object(session.worker, 'shutdown') as shutdown:
+        with patch.object(self.storage.services, 'shutdown') as shutdown:
             self.assertTrue(window.on_close_request())
             pump_until(lambda: tab.request is None)
             self.assertFalse(window._allow_close)
@@ -212,7 +213,7 @@ class UITests(unittest.TestCase):
         pump_until(lambda: window._save_error_dialog is not None)
         self.assertFalse(window._allow_close)
         blocked = False
-        with patch.object(session.worker, 'shutdown'):
+        with patch.object(self.storage.services, 'shutdown'):
             window._save_error_dialog.emit('response', 'retry')
             pump_until(lambda: window._allow_close)
 
@@ -279,18 +280,22 @@ class UITests(unittest.TestCase):
         with patch.object(ollama, 'fetch_models', return_value=list(responses)), \
                 patch.object(ollama, 'show_model', side_effect=details) as show:
             widget.fetch_models('http://models')
-            pump_until(lambda: widget.get_selected_model() is not None and session.worker.idle)
+            pump_until(lambda: widget.get_selected_model() is not None
+                       and not widget.capabilities_loading and session.worker.idle)
             model = widget.model_dropdown.get_model()
             self.assertEqual([model.get_string(i) for i in range(model.get_n_items())],
                              list(responses)[2:])
             self.assertIs(widget.image_support, True)
             self.assertIs(widget.tool_support, True)
             widget.select_model('dual-purpose')
+            pump_until(lambda: not widget.capabilities_loading)
             self.assertIs(widget.image_support, False)
             widget.select_model('unavailable-details')
+            pump_until(lambda: not widget.capabilities_loading)
             self.assertIsNone(widget.image_support)
             self.assertTrue(widget.send_button.get_sensitive())
-            self.assertEqual(show.call_count, len(responses))
+            self.assertEqual(show.call_count, 5)
+            self.assertNotIn('legacy', [call.args[1] for call in show.call_args_list])
 
     def test_chat_model_refresh_preserves_selection_and_handles_embedding_only_host(self):
         widget = ChatInput()
@@ -308,7 +313,7 @@ class UITests(unittest.TestCase):
             # A saved embedding selection must not silently switch to another model.
             widget.pending_model_selection = 'vectors'
             widget.fetch_models('http://models')
-            pump_until(lambda: session.worker.idle)
+            pump_until(lambda: not widget._models_loading and not widget.capabilities_loading and session.worker.idle)
             self.assertIsNone(widget.get_selected_model())
             self.assertFalse(widget.send_button.get_sensitive())
             widget.select_model('chat-one')
@@ -316,6 +321,9 @@ class UITests(unittest.TestCase):
             responses['chat-one'] = {'capabilities': ['embedding']}
             del responses['chat-two']
             widget.fetch_models('http://models')
+            pump_until(lambda: not widget._models_loading and not widget.capabilities_loading and session.worker.idle)
+            # Unchecked entries remain available until their capabilities are known.
+            widget.select_model('vectors')
             # Worker completion can precede delivery of its GTK callback.
             pump_until(lambda: session.worker.idle and 'No chat models found' in widget.capability_notice.get_text())
             self.assertEqual(widget.model_dropdown.get_model().get_n_items(), 0)
@@ -338,7 +346,7 @@ class UITests(unittest.TestCase):
                 patch.object(ollama, 'show_model', side_effect=details) as show:
             try:
                 widget.fetch_models('http://old')
-                self.assertTrue(started.wait(1))
+                pump_until(started.is_set)
                 widget.fetch_models('http://new')
                 pump_until(lambda: widget.get_selected_model() == 'same-name')
             finally:
@@ -347,8 +355,7 @@ class UITests(unittest.TestCase):
             self.assertEqual(widget.get_selected_model(), 'same-name')
             self.assertIs(widget.image_support, True)
             self.assertEqual([c.args for c in show.call_args_list],
-                             [('http://old', 'same-name'), ('http://new', 'same-name'),
-                              ('http://new', 'next-model')])
+                             [('http://old', 'same-name'), ('http://new', 'same-name')])
 
     def test_generate_mode_and_model_pull_dialog_cancellation(self):
         fixture = Server('stream')
@@ -381,6 +388,7 @@ class UITests(unittest.TestCase):
     def test_structured_settings_validation_and_history_restore(self):
         import json
         tab = self.make_tab()
+        tab.advanced.set_expanded(True)
         panel = tab.options_panel
         panel.output_dropdown.set_selected(2)
         panel.schema_text = '{'
@@ -535,13 +543,15 @@ class UITests(unittest.TestCase):
         pump_until(lambda: window.tab_view.get_n_pages() == 1)
         saved = self.storage.get_chat(first.strategy.chat_id)
         self.assertEqual(saved['messages'][-1]['response_metadata']['status'], 'stopped')
-        window.delete_chat(first.strategy.chat_id)
+        dialog = window.delete_chat(first.strategy.chat_id)
+        dialog.emit('response', 'delete')
         pump_until(lambda: self.storage.writer.idle)
         self.assertNotIn(first.strategy.chat_id, window.chat_rows)
         self.assertIsNone(self.storage.get_chat(first.strategy.chat_id))
 
     def test_running_models_refresh_unload_busy_and_close(self):
-        from src.model_manager import ModelManagerDialog, unloading_models, model_key, running_model_subtitle
+        from src.model_manager import ModelManagerDialog, model_key, running_model_subtitle
+        unloading_models = self.storage.services.models.reserved
         self.stack.enter_context(patch.object(ollama, 'fetch_model_details', return_value=[]))
         calls = []
         def running(host, **kwargs):
@@ -619,6 +629,7 @@ class UITests(unittest.TestCase):
         pump_until(lambda: self.storage.writer.idle)
         window.on_history_activated(window.history_sidebar, item.get_index())
         self.assertFalse(window.split_view.get_show_sidebar())
+        tab.advanced.set_expanded(True)
         tab.options_panel.open_settings()
         self.assertEqual(tab.options_panel._settings_dialog.get_title(), 'Chat Settings')
         tab.options_panel.output_dropdown.set_selected(2)
@@ -669,6 +680,7 @@ class UITests(unittest.TestCase):
         from src.widgets.json_view import buffer_text
         window, tab = self.make_window()
         window.present()
+        tab.advanced.set_expanded(True)
         panel = tab.options_panel
         self.assertIsNone(panel._settings_dialog)
         pump_until(lambda: panel.output_dropdown.get_mapped())
@@ -710,6 +722,7 @@ class UITests(unittest.TestCase):
     def test_restoring_schema_settings_does_not_open_editor(self):
         window, tab = self.make_window()
         window.present()
+        tab.advanced.set_expanded(True)
         panel = tab.options_panel
         self.assertIsNone(panel._settings_dialog)
         pump_until(lambda: panel.output_dropdown.get_mapped())

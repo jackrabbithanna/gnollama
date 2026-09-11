@@ -6,6 +6,7 @@ from ..structured import request_format
 from .json_view import SchemaEditor
 from .tool_view import ToolsEditor
 from ..tool_calling import parse_tools, InvalidTools
+from .composer import Composer
 
 @Gtk.Template(resource_path='/io/github/jackrabbithanna/Gnollama/widgets/options_panel.ui')
 class OptionsPanel(Gtk.Box):
@@ -61,6 +62,36 @@ class OptionsPanel(Gtk.Box):
         self.cloud_notice.set_visible(cloud)
         self._format_changed()
 
+    def snapshot_draft(self):
+        return dict(fields={name: getattr(self, name).get_text() for name in self.field_errors},
+            output=self.output_dropdown.get_selected(), retention=self.keep_alive_dropdown.get_selected(),
+            stats=self.stats_check.get_active(), logprobs=self.logprobs_check.get_active(),
+            tools=self.tools_check.get_active(), tools_text=self.tools_text, schema_text=self.schema_text)
+
+    def restore_draft(self, settings):
+        self._restoring_options = True
+        try:
+            for name, value in settings.get('fields', {}).items():
+                if name in self.field_errors:
+                    getattr(self, name).set_text(value)
+            self.tools_text = settings.get('tools_text', '')
+            self.schema_text = settings.get('schema_text', '')
+            for key, widget in [('output', self.output_dropdown), ('retention', self.keep_alive_dropdown)]:
+                widget.set_selected(settings.get(key, 0))
+            for key, widget in [('stats', self.stats_check), ('logprobs', self.logprobs_check), ('tools', self.tools_check)]:
+                widget.set_active(settings.get(key, key == 'stats'))
+        finally:
+            self._restoring_options = False
+
+    def watch_draft(self, callback):
+        for name in self.field_errors:
+            getattr(self, name).connect('changed', callback)
+        for widget in (self.output_dropdown, self.keep_alive_dropdown):
+            widget.connect('notify::selected', callback)
+        for widget in (self.stats_check, self.logprobs_check, self.tools_check):
+            widget.connect('toggled', callback)
+        self.connect('tools-options-changed', callback)
+
     def _build_settings(self):
         self.settings_content = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=24,
                                        margin_start=12, margin_end=12, margin_top=12, margin_bottom=12)
@@ -80,7 +111,10 @@ class OptionsPanel(Gtk.Box):
             return value
 
         def field(group, name, title, hint):
-            entry = Gtk.Entry(placeholder_text=_('Server default'), hexpand=True)
+            entry = Composer(hexpand=True) if name == 'system_prompt_entry' else Gtk.Entry(hexpand=True)
+            if isinstance(entry, Composer):
+                entry.send_on_enter = False
+            entry.set_placeholder_text(_('Server default'))
             entry.set_width_chars(8)
             setattr(self, name, entry)
             box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6,

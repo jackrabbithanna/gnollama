@@ -48,6 +48,18 @@
   </screenshots>
 
   <releases>
+    <release version="0.15.0" date="2026-09-11">
+      <description>
+        <ul>
+          <li>New Comparison</li>
+          <li>Drafts</li>
+          <li>Search conversations</li>
+          <li>Export Markdown</li>
+          <li>Export JSON</li>
+          <li>Context estimate</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.14.0" date="2026-09-10">
       <description>
         <p>Connect directly to Ollama Cloud from Chat and Response tabs.</p>

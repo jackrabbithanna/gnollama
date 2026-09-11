@@ -12,6 +12,7 @@ gnollama_resources = gnome.compile_resources('gnollama',
 
 python = import('python')
 py3 = python.find_installation('python3')
+run_command(py3, '-c', 'import sys, sqlite3; assert sys.version_info >= (3, 11), "Python 3.11+ is required"; assert sqlite3.sqlite_version_info >= (3, 41, 0), "SQLite 3.41+ is required"; db=sqlite3.connect(":memory:"); assert hasattr(db, "blobopen"); db.execute("CREATE VIRTUAL TABLE test USING fts5(text)"); db.close()', check: true)
 run_command(py3, '-c', 'from jsonschema import Draft202012Validator; from referencing import Registry, Resource; from importlib.metadata import version; assert tuple(map(int, version("jsonschema").split(".")[:2])) >= (4, 26), "jsonschema 4.26+ is required"', check: true)
 run_command(py3, '-c', 'import gi; gi.require_version("Gtk", "4.0"); gi.require_version("Adw", "1"); gi.require_version("Soup", "3.0"); from gi.repository import Gtk, Adw, Soup', check: true)
 run_command(py3, '-c', 'import gi; gi.require_version("Secret", "1"); from gi.repository import Secret', check: true)
@@ -57,6 +58,15 @@ gnollama_sources = [
   'window.py',
   'tab.py',
   'session.py',
+  'records.py',
+  'services.py',
+  'workspace_store.py',
+  'request_runner.py',
+  'drafts.py',
+  'context.py',
+  'export.py',
+  'comparison.py',
+  'library_repository.py',
   'structured.py',
   'tool_calling.py',
   'knowledge.py',
@@ -79,11 +89,17 @@ install_data(gnollama_sources, install_dir: moduledir)
 
 gnollama_widget_sources = [
   'widgets/__init__.py',
+  'widgets/feedback.py',
+  'widgets/composer.py',
+  'widgets/comparison_view.py',
   'widgets/chat_input.py',
   'widgets/options_panel.py',
   'widgets/json_view.py',
   'widgets/tool_view.py',
   'widgets/knowledge_view.py',
+  'widgets/knowledge_common.py',
+  'widgets/collection_views.py',
+  'widgets/source_views.py',
   'widgets/url_import.py',
   'widgets/knowledge_import.py',
   'widgets/message_list.py',

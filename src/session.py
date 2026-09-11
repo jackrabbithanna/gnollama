@@ -1,3 +1,4 @@
+from .records import RequestSettings
 """Per-request generation state and conversation persistence."""
 import copy
 from concurrent.futures import ThreadPoolExecutor
@@ -16,33 +17,8 @@ def display_chat_title(title):
     return _('New Chat') if title == 'New Chat' else title
 
 
-class NetworkWorker:
-    def __init__(self, max_workers=4):
-        self.executor = ThreadPoolExecutor(max_workers=max_workers, thread_name_prefix='GnollamaNetwork')
-        self._futures = set()
-        self._lock = Lock()
+from .services import WorkerPool as NetworkWorker, worker_monitor as worker
 
-    def submit(self, fn, *args, **kwargs):
-        future = self.executor.submit(fn, *args, **kwargs)
-        with self._lock:
-            self._futures.add(future)
-        future.add_done_callback(self._finished)
-        return future
-
-    def _finished(self, future):
-        with self._lock:
-            self._futures.discard(future)
-
-    @property
-    def idle(self):
-        with self._lock:
-            return not self._futures
-
-    def shutdown(self, wait=True):
-        self.executor.shutdown(wait=wait)
-
-
-worker = NetworkWorker()
 METRIC_KEYS = ('total_duration', 'load_duration', 'prompt_eval_count',
                'prompt_eval_cached_count', 'prompt_eval_duration', 'eval_count',
                'eval_duration', 'done_reason')
@@ -50,7 +26,7 @@ METRIC_KEYS = ('total_duration', 'load_duration', 'prompt_eval_count',
 
 @dataclass
 class RequestState:
-    settings: dict
+    settings: RequestSettings
     prompt: str
     images: list = field(default_factory=list)
     messages: list = field(default_factory=list)
@@ -64,6 +40,8 @@ class RequestState:
     saved_message: dict = None
     retrieval: dict = None
     connection: object = field(default=None, repr=False)
+    draft_id: str | None = None
+    draft_revision: int | None = None
 
     def __post_init__(self):
         self.settings = copy.deepcopy(self.settings)
@@ -106,7 +84,7 @@ class RequestState:
     def api_details(self):
         return {k: v for k, v in self.settings.items()
                 if k not in ('host_id', 'show_stats', 'output_mode', 'schema_text', 'history_images_omitted',
-                             'tools_enabled', 'tools_text', 'knowledge', 'query_override')}
+                             'tools_enabled', 'tools_text', 'knowledge', 'query_override', 'draft_settings')}
 
 
 def api_messages(history, include_images=True):
@@ -152,6 +130,7 @@ class ChatStrategy(GenerationStrategy):
         self.storage = storage
         self.chat_id = chat_id
         self.history = copy.deepcopy(initial_history or [])
+        self._saved_count = len(self.history)
         self.deleted = False
 
     @property
@@ -167,6 +146,7 @@ class ChatStrategy(GenerationStrategy):
         message = self.pending_round
         if message is None:
             raise ValueError(_('There are no pending tool calls.'))
+        self._saved_count = min(self._saved_count, self.history.index(message))
         results = result_messages(message, cancel)
         message['response_metadata']['tool_round']['state'] = 'cancelled' if cancel else 'submitted'
         message['response_metadata']['tool_round']['results'] = [r['content'] for r in results]
@@ -221,7 +201,12 @@ class ChatStrategy(GenerationStrategy):
                        tools_enabled=state.settings.get('tools_enabled', False),
                        tools_text=state.settings.get('tools_text', ''))
         options['knowledge'] = copy.deepcopy(state.settings.get('knowledge', {}))
-        return self.storage.save_chat(self.chat_id, self.history, model=state.settings['model'],
+        start = self._saved_count
+        self._saved_count = len(self.history)
+        return self.storage.save_chat_delta(self.chat_id, self.history[start:], start,
+                                      draft_id=state.draft_id if not state.finalized else None,
+                                      draft_revision=state.draft_revision,
+                                      model=state.settings['model'],
                                       options=options, system=state.settings['system'],
                                       host=state.settings['host_id'], on_done=on_done)
 

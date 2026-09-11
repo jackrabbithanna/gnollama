@@ -202,7 +202,7 @@ class HostManagerDialog(Adw.Window):
             self.requests.deliver(dialog.set_body, msg, cancellable=cancel)
             
         from .session import worker
-        worker.submit(fetch_version_thread)
+        self.storage.services.control.submit(fetch_version_thread)
 
     def on_edit_clicked(self, btn: Gtk.Button, host: Dict[str, Any]) -> None:
         """Callback for the 'Edit' button."""
@@ -252,7 +252,7 @@ class HostManagerDialog(Adw.Window):
                     values.pop('api_key', None)
                 GLib.idle_add(completed, error)
             from .session import worker
-            worker.submit(save)
+            self.storage.services.control.submit(save)
             
         dialog.connect("response", on_response)
         dialog.present(self)
@@ -290,7 +290,7 @@ class HostManagerDialog(Adw.Window):
                         error = exc
                     GLib.idle_add(completed, error)
                 from .session import worker
-                worker.submit(delete)
+                self.storage.services.control.submit(delete)
             dialog.close()
             
         dialog.connect("response", on_response)

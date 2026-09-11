@@ -63,12 +63,14 @@ class StorageTests(unittest.TestCase):
                 conn.execute('DROP TABLE ' + table)
             conn.execute('ALTER TABLE hosts DROP COLUMN provider')
             conn.execute('ALTER TABLE hosts DROP COLUMN credential_id')
-            conn.execute('PRAGMA user_version = 3')
+            from legacy_schema import remove_workspace
+            remove_workspace(conn)
+            conn.execute('PRAGMA user_version=3')
             conn.commit()
         db = DatabaseManager(path)
         self.assertEqual(db.get_chat('chat')['messages'], [{'role': 'assistant', 'content': 'saved'}])
         with db._get_conn() as conn:
-            self.assertEqual(conn.execute('PRAGMA user_version').fetchone()[0], 10)
+            self.assertEqual(conn.execute('PRAGMA user_version').fetchone()[0], 11)
 
     def test_connection_closes_after_context(self):
         with self.storage.db._get_conn() as conn:

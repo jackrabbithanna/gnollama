@@ -13,7 +13,7 @@ from .startup import StartupWindow
 class GnollamaApplication(Adw.Application):
     """The main application singleton class."""
 
-    def __init__(self, version="0.14.0") -> None:
+    def __init__(self, version="0.15.0") -> None:
         super().__init__(application_id='io.github.jackrabbithanna.Gnollama',
                          flags=Gio.ApplicationFlags.DEFAULT_FLAGS,
                          resource_base_path='/io/github/jackrabbithanna/Gnollama')
@@ -22,6 +22,7 @@ class GnollamaApplication(Adw.Application):
         self.create_action('quit', self.request_quit, ['<control>q'])
         self.create_action('about', self.on_about_action)
         self.set_accels_for_action('win.new_chat_tab', ['<control>n'])
+        self.set_accels_for_action('win.new_comparison', ['<control><shift>n'])
         self.set_accels_for_action('win.close_tab', ['<control>w'])
         self.set_accels_for_action('win.next_tab', ['<control>Page_Down'])
         self.set_accels_for_action('win.previous_tab', ['<control>Page_Up'])

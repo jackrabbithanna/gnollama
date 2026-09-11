@@ -57,7 +57,7 @@ class AiBubble(Gtk.ListBoxRow):
             self.header.set_visible(True)
             self.header.set_label(f"Ollama ({model_name})")
         
-        self.api_markdown_view = MarkdownView()
+        self.api_markdown_view = MarkdownView(wrap_code=True)
         self.api_expander.set_child(self.api_markdown_view)
         
         self.json_view = JsonResponseView(has_schema=isinstance(output_format, dict)) if output_format is not None else None
@@ -67,6 +67,11 @@ class AiBubble(Gtk.ListBoxRow):
         self.full_text: str = ""
         self.thinking_text: str = ""
         self._update_scheduled: bool = False
+        self._update_source = None
+        self.copy_button = Gtk.Button(label=_('Copy Answer'), halign=Gtk.Align.END)
+        from .widgets.feedback import copy_text
+        self.copy_button.connect('clicked', lambda button: copy_text(button, self.full_text))
+        self.bubble_box.append(self.copy_button)
 
     def set_api_details(self, details_dict: Dict[str, Any]) -> None:
         """Displays the raw API request details in an expander."""
@@ -82,16 +87,25 @@ class AiBubble(Gtk.ListBoxRow):
         
         if not self._update_scheduled:
             self._update_scheduled = True
-            GLib.timeout_add(50, self._flush_update)
+            self._update_source = GLib.timeout_add(50, self._flush_update)
             
     def _flush_update(self) -> bool:
         """Flushes the accumulated text to the MarkdownView."""
+        self._update_source = None
         self.markdown_view.update(self.full_text)
         self._update_scheduled = False
         return False
+
+    def cancel_delivery(self):
+        if self._update_source is not None:
+            GLib.source_remove(self._update_source)
+            self._update_source = None
+        self._update_scheduled = False
         
     def append_thinking(self, text: str) -> None:
         """Appends text to the thinking section."""
+        if not text:
+            return
         if not self.thinking_expander.get_visible():
             self.thinking_expander.set_visible(True)
         
@@ -107,6 +121,8 @@ class AiBubble(Gtk.ListBoxRow):
         self._stats_label.set_text(format_statistics(stats))
 
     def show_response_metadata(self, metadata, show_stats=True):
+        self.cancel_delivery()
+        self._flush_update()
         if metadata.get('tool_round') and self.json_view is not None:
             self.bubble_box.remove(self.json_view)
             self.json_view = None
@@ -129,6 +145,9 @@ class AiBubble(Gtk.ListBoxRow):
             self.bubble_box.append(label)
         if show_stats and metadata.get('metrics'):
             self.show_stats(metadata['metrics'])
+        if show_stats and metadata.get('elapsed_seconds') is not None:
+            self.bubble_box.append(Gtk.Label(label=_('Elapsed: {0}s').format(round(metadata['elapsed_seconds'], 2)),
+                                            xalign=0, wrap=True, css_classes=['dim-label']))
 
     def append_logprobs(self, logprobs_data: Any) -> None:
         """Appends logprobs data to a text view in an expander."""
@@ -140,6 +159,7 @@ class AiBubble(Gtk.ListBoxRow):
             
             # Use ScrolledWindow + TextView for performance with large data
             scrolled = Gtk.ScrolledWindow()
+            scrolled.set_hscrollbar_policy(Gtk.PolicyType.NEVER)
             scrolled.set_min_content_height(150)
             scrolled.set_propagate_natural_height(True)
             

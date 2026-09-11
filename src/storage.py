@@ -11,12 +11,14 @@ from .database import DatabaseManager
 from .writer import OrderedWriter
 from .credentials import CredentialStore, CredentialError
 from . import ollama
+from .services import Services
 
 class ChatStorage:
     """Handles persistence for chat history and host configurations using SQLite."""
 
     def __init__(self, storage_dir=None, progress=None, credentials=None) -> None:
         self.credentials = credentials if credentials is not None else CredentialStore()
+        self.services = Services()
         self._host_lock = RLock()
         self.storage_dir: str = storage_dir or os.path.join(GLib.get_user_data_dir(), "gnollama")
         if not os.path.exists(self.storage_dir):
@@ -29,9 +31,13 @@ class ChatStorage:
         # Initialize SQLite Database Manager
         self.db = DatabaseManager(self.db_path, progress=progress)
 
+        from .library_repository import LibraryRepository
+        self.library = LibraryRepository(self.db)
         self.on_error = None
+        self.pending_callbacks = 0
         self.writer = OrderedWriter(self._write_failed)
         self.db.interrupt_knowledge_indexes()
+        self.db.interrupt_comparisons()
         from .knowledge import KnowledgeService
         self.knowledge = KnowledgeService(self)
 
@@ -79,6 +85,7 @@ class ChatStorage:
 
     def add_host(self, name: str, hostname: str, is_default: bool = False) -> Dict[str, Any]:
         """Adds a new host configuration."""
+        self.services.catalog.invalidate()
         host_id = str(uuid.uuid4())
         self.db.add_host(host_id, name, hostname, is_default)
         if is_default:
@@ -87,6 +94,7 @@ class ChatStorage:
 
     def update_host(self, host_id: str, name: str, hostname: str, is_default: bool = False) -> Optional[Dict[str, Any]]:
         """Updates an existing host configuration."""
+        self.services.catalog.invalidate()
         self.db.update_host(host_id, name, hostname, is_default)
         if is_default:
             self.db.set_default_host(host_id)
@@ -94,6 +102,7 @@ class ChatStorage:
 
     def delete_host(self, host_id: str) -> None:
         """Deletes a host configuration."""
+        self.services.catalog.invalidate()
         with self._host_lock:
             host = self.get_host(host_id)
             if host:
@@ -111,6 +120,7 @@ class ChatStorage:
     def save_host(self, name, hostname, is_default=False, *, host_id=None,
                   provider='ollama', api_key='', session_only=False):
         """Save from a worker; a keyring failure leaves the host unchanged."""
+        self.services.catalog.invalidate()
         with self._host_lock:
             previous = self.get_host(host_id) if host_id else None
             if host_id and previous is None:
@@ -158,6 +168,40 @@ class ChatStorage:
         """Returns all chats, sorted by last update time (descending)."""
         return self.db.get_all_chats()
 
+    def export_snapshot(self, id):
+        return self.db.export_snapshot(id)
+
+    def chat_title(self, id):
+        return self.db.chat_title(id)
+
+    def conversation_page(self, id, match_uid=None):
+        return self.db.conversation_page(id, match_uid)
+
+    def list_history(self, query='', limit=100, offset=0):
+        return self.db.list_history(query, limit, offset)
+
+    def list_drafts(self, limit=100, offset=0):
+        return self.db.list_drafts(limit, offset)
+
+    def get_draft(self, id):
+        return self.db.get_draft(id)
+
+    def save_draft(self, draft, on_done=None):
+        return self._submit(self.db.save_draft, copy.deepcopy(draft), on_done=on_done)
+
+    def delete_draft(self, id, revision=None, on_done=None):
+        return self._submit(self.db.delete_draft, id, revision, on_done=on_done)
+
+    def get_messages(self, id, limit=None, offset=0, include_ids=False):
+        return self.db.get_messages(id, limit, offset, include_ids)
+
+    def save_chat_delta(self, chat_id, messages, start, *, draft_id=None, draft_revision=None, on_done=None, **settings):
+        snapshot = copy.deepcopy(messages)
+        for message in snapshot:
+            message.setdefault('uid', str(uuid.uuid4()))
+        return self._submit(self.db.save_chat, chat_id, snapshot, start=start, draft_id=draft_id,
+                            draft_revision=draft_revision, on_done=on_done, **copy.deepcopy(settings))
+
     def get_chat(self, chat_id: str) -> Optional[Dict[str, Any]]:
         """Returns a specific chat by its ID."""
         return self.db.get_chat(chat_id)
@@ -173,8 +217,12 @@ class ChatStorage:
         def job():
             result = fn(*args, **kwargs)
             if on_done:
+                self.pending_callbacks += 1
                 def notify():
-                    on_done()
+                    try:
+                        on_done()
+                    finally:
+                        self.pending_callbacks -= 1
                     return False
                 GLib.idle_add(notify)
             return result
@@ -207,6 +255,9 @@ class ChatStorage:
 
     def cleanup_empty_chats(self, on_done=None):
         return self._submit(self.db.cleanup_empty_chats, on_done=on_done)
+
+    def cleanup_empty_chat(self, chat_id, on_done=None):
+        return self._submit(self.db.cleanup_empty_chats, chat_id, on_done=on_done)
 
     def clear_all_chats(self, on_done=None):
         return self._submit(self.db.clear_all_chats, on_done=on_done)

@@ -4,10 +4,10 @@
 # Translated and reviewed with AI assistance, 2026.
 msgid ""
 msgstr ""
-"Project-Id-Version: gnollama 0.14.0\n"
+"Project-Id-Version: gnollama 0.15.0\n"
 "Report-Msgid-Bugs-To: https://github.com/jackrabbithanna/gnollama/issues\n"
-"POT-Creation-Date: 2026-09-10 20:09-0600\n"
-"PO-Revision-Date: 2026-09-10 00:00+0000\n"
+"POT-Creation-Date: 2026-09-11 12:07-0600\n"
+"PO-Revision-Date: 2026-09-11 00:00+0000\n"
 "Last-Translator: AI-assisted translation\n"
 "Language: uk\n"
 "Language-Team: uk\n"
@@ -16,7 +16,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 
 #: data/io.github.jackrabbithanna.Gnollama.desktop.in:2
 msgid "gnollama"
@@ -92,11 +92,37 @@ msgstr "jackrabbithanna"
 msgid "Ollama chat with code highlighting"
 msgstr "Чат Ollama з підсвічуванням коду"
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:53
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:54 src/shortcuts-dialog.ui:26
+#: src/widgets/comparison_view.py:54 src/window.ui:128
+msgid "New Comparison"
+msgstr "Нове порівняння"
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:55 src/window.py:80
+msgid "Drafts"
+msgstr "Чернетки"
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:56 src/window.py:72
+msgid "Search conversations"
+msgstr "Пошук розмов"
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:57 src/window.py:408
+msgid "Export Markdown"
+msgstr "Експортувати Markdown"
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:58 src/window.py:409
+msgid "Export JSON"
+msgstr "Експортувати JSON"
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:59 src/tab.py:106
+#: src/widgets/comparison_view.py:284
+msgid "Context estimate"
+msgstr "Оцінка контексту"
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:65
 msgid "Connect directly to Ollama Cloud from Chat and Response tabs."
 msgstr "Підключайтеся безпосередньо до Ollama Cloud із вкладок чату та відповіді."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:54
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:66
 msgid ""
 "Store each host's API key in the desktop keyring, with session-only use when the "
 "keyring is unavailable."
@@ -104,7 +130,7 @@ msgstr ""
 "Зберігайте ключ API кожного сервера у в’язці ключів стільниці та використовуйте його "
 "лише протягом сеансу, якщо в’язка ключів недоступна."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:55
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:67
 msgid ""
 "Browse cloud models with controls adapted to the service, and use local knowledge "
 "sources in cloud chats."
@@ -112,7 +138,7 @@ msgstr ""
 "Переглядайте хмарні моделі з елементами керування, адаптованими до служби, і "
 "використовуйте локальні джерела знань у хмарних чатах."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:60
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:72
 msgid ""
 "Add a Knowledge Library for text and PDF imports, local embedding indexes, and "
 "source-grounded chats."
@@ -120,7 +146,7 @@ msgstr ""
 "Додано бібліотеку знань для імпорту тексту й PDF, локальних векторних індексів і "
 "чатів з опорою на джерела."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:62
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:74
 msgid ""
 "Start with knowledge collections and add text, files, or URLs with explicit "
 "destinations and guided previews."
@@ -128,7 +154,7 @@ msgstr ""
 "Починайте з колекцій знань і додавайте текст, файли чи URL-адреси, явно обираючи "
 "місце призначення та користуючись попереднім переглядом із підказками."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:63
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:75
 msgid ""
 "Choose collections before search settings, and use adaptive chat settings with "
 "clearer controls and feedback."
@@ -136,13 +162,13 @@ msgstr ""
 "Обирайте колекції перед налаштуванням пошуку та користуйтеся адаптивними "
 "налаштуваннями чату зі зрозумілішими елементами керування й повідомленнями."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:64
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:76
 msgid "Create and compare embeddings, inspect chunks and vectors, and test semantic searches."
 msgstr ""
 "Створюйте й порівнюйте векторні подання, переглядайте фрагменти та вектори, "
 "випробовуйте семантичний пошук."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:65
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:77
 msgid ""
 "Select documents or chunks for chats, with independent embedding hosts and saved "
 "source passages."
@@ -150,7 +176,7 @@ msgstr ""
 "Обирайте документи чи фрагменти для чатів, використовуючи окремі сервери векторних "
 "подань і збережені уривки джерел."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:66
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:78
 msgid ""
 "Warn about stored embeddings when deleting models, with optional vector cleanup that "
 "retains source text."
@@ -158,7 +184,7 @@ msgstr ""
 "Додано попередження про збережені векторні подання під час видалення моделей і "
 "можливість видалити вектори, зберігши вихідний текст."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:67
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:79
 msgid ""
 "Search with sqlite-vec, automatically migrate existing vectors with a database "
 "backup, and use the Qwen3 retrieval preset."
@@ -166,7 +192,7 @@ msgstr ""
 "Шукайте за допомогою sqlite-vec, автоматично переносьте наявні вектори зі створенням "
 "резервної копії бази даних і користуйтеся профілем пошуку Qwen3."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:68
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:80
 msgid ""
 "Organize documents into collections with shared embedding settings, automatic builds,"
 " and live collection selection in chats."
@@ -174,7 +200,7 @@ msgstr ""
 "Упорядковуйте документи в колекції зі спільними налаштуваннями векторних подань, "
 "автоматичною побудовою та вибором колекцій безпосередньо в чатах."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:69
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:81
 msgid ""
 "Choose collections as chat sources and compare cosine similarity, Euclidean distance,"
 " or Manhattan distance with appropriate search cutoffs."
@@ -182,7 +208,7 @@ msgstr ""
 "Обирайте колекції як джерела для чату й порівнюйте косинусну подібність, евклідову "
 "або мангеттенську відстань із відповідними порогами пошуку."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:70
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:82
 msgid ""
 "Hide embedding-only models from Chat and Response model selection while keeping them "
 "available in Knowledge and Manage Models."
@@ -190,7 +216,7 @@ msgstr ""
 "Моделі лише для векторних подань приховано у виборі моделей для чату й відповіді; "
 "вони й надалі доступні в розділах «Знання» та «Керування моделями»."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:71
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:83
 msgid ""
 "Import batches of URLs into collections with main-content extraction, CSS selectors, "
 "editable previews, and source links in chats."
@@ -198,7 +224,7 @@ msgstr ""
 "Імпортуйте пакети URL-адрес у колекції з видобуванням основного вмісту, "
 "CSS-селекторами, редагованим попереднім переглядом і посиланнями на джерела в чатах."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:72
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:84
 msgid ""
 "Review changed web documents before replacing their text and rebuilding all affected "
 "embedding indexes."
@@ -214,73 +240,81 @@ msgstr "Подробиці виклику API"
 msgid "Thinking..."
 msgstr "Міркування..."
 
-#: src/bubbles.py:105
+#: src/bubbles.py:71
+msgid "Copy Answer"
+msgstr "Копіювати відповідь"
+
+#: src/bubbles.py:119
 msgid "Response Statistics"
 msgstr "Статистика відповіді"
 
-#: src/bubbles.py:120
+#: src/bubbles.py:136
 msgid "Earlier images were omitted from the text-only request."
 msgstr "Попередні зображення не включено до суто текстового запиту."
 
-#: src/bubbles.py:125 src/knowledge.py:301
+#: src/bubbles.py:141 src/knowledge.py:296
 msgid "Stopped"
 msgstr "Зупинено"
 
-#: src/bubbles.py:125 src/knowledge.py:301
+#: src/bubbles.py:141 src/knowledge.py:296
 msgid "Failed"
 msgstr "Помилка"
 
-#. Create expander for logprobs
-#: src/bubbles.py:137
+#: src/bubbles.py:149
+#, python-brace-format
+msgid "Elapsed: {0}s"
+msgstr "Минуло: {0}с"
+
+#: src/bubbles.py:156
 msgid "Logprobs"
 msgstr "Логарифми ймовірностей"
 
-#: src/bubbles.py:183 src/model_manager.py:22 src/model_manager.py:24
-#: src/model_manager.py:28 src/model_manager.py:312
+#: src/bubbles.py:202 src/model_manager.py:17 src/model_manager.py:19
+#: src/model_manager.py:23 src/model_manager.py:308
 msgid "Unavailable"
 msgstr "Недоступно"
 
-#: src/bubbles.py:197
+#: src/bubbles.py:216
 #, python-brace-format
 msgid "Total: {0}"
 msgstr "Загалом: {0}"
 
-#: src/bubbles.py:198
+#: src/bubbles.py:217
 #, python-brace-format
 msgid "Load: {0}"
 msgstr "Завантаження: {0}"
 
-#: src/bubbles.py:199
+#: src/bubbles.py:218
 #, python-brace-format
 msgid "Prompt: {0} tokens"
 msgstr "Токени запиту: {0}"
 
-#: src/bubbles.py:200
+#: src/bubbles.py:219
 #, python-brace-format
 msgid "Cached: {0} tokens"
 msgstr "Кешовані токени: {0}"
 
-#: src/bubbles.py:201
+#: src/bubbles.py:220
 #, python-brace-format
 msgid "Prompt evaluation: {0}"
 msgstr "Обробка запиту: {0}"
 
-#: src/bubbles.py:202
+#: src/bubbles.py:221
 #, python-brace-format
 msgid "Generated: {0} tokens"
 msgstr "Згенеровані токени: {0}"
 
-#: src/bubbles.py:203
+#: src/bubbles.py:222
 #, python-brace-format
 msgid "Generation: {0}"
 msgstr "Генерування: {0}"
 
-#: src/bubbles.py:204
+#: src/bubbles.py:223
 #, python-brace-format
 msgid "Tokens/s: {0}"
 msgstr "Токенів/с: {0}"
 
-#: src/bubbles.py:207
+#: src/bubbles.py:226
 #, python-brace-format
 msgid "Finish: {0}"
 msgstr "Завершення: {0}"
@@ -289,19 +323,19 @@ msgstr "Завершення: {0}"
 msgid "A document was deleted. Choose documents again."
 msgstr "Документ видалено. Оберіть документи знову."
 
-#: src/collections_store.py:107 src/knowledge.py:358
+#: src/collections_store.py:107 src/knowledge.py:353
 msgid "Enter a collection name."
 msgstr "Введіть назву колекції."
 
-#: src/collections_store.py:118 src/widgets/knowledge_view.py:1140
+#: src/collections_store.py:118 src/widgets/knowledge_view.py:361
 msgid "Choose a model with the collection’s original digest."
 msgstr "Оберіть модель із початковою контрольною сумою колекції."
 
-#: src/collections_store.py:141 src/knowledge.py:391
+#: src/collections_store.py:141 src/knowledge.py:386
 msgid "The collection was deleted."
 msgstr "Колекцію видалено."
 
-#: src/collections_store.py:202 src/widgets/knowledge_view.py:801
+#: src/collections_store.py:202 src/widgets/source_views.py:417
 msgid "A selected collection was deleted. Choose sources again."
 msgstr "Вибрану колекцію видалено. Оберіть джерела знову."
 
@@ -322,6 +356,81 @@ msgstr ""
 "Колекція «{0}» не готова. Створіть відсутні векторні подання або повторіть обробку "
 "документів із помилками: {1}"
 
+#: src/comparison.py:27
+msgid "Choose two to four targets."
+msgstr "Виберіть від двох до чотирьох цілей."
+
+#: src/comparison.py:30
+msgid "Each target must use a different host and model pair."
+msgstr "Кожна ціль має використовувати іншу пару сервера та моделі."
+
+#: src/comparison.py:37 src/tab.py:362
+msgid "Select an available model before sending."
+msgstr "Оберіть доступну модель перед надсиланням."
+
+#: src/comparison.py:41
+msgid "Selected model is no longer available."
+msgstr "Вибрана модель більше недоступна."
+
+#: src/comparison.py:46
+msgid "Embedding models cannot generate comparisons."
+msgstr "Моделі вбудовувань не можуть генерувати порівняння."
+
+#: src/comparison.py:48
+msgid "Every target must support the shared images."
+msgstr "Усі цілі мають підтримувати спільні зображення."
+
+#: src/comparison.py:50
+msgid "Every target must support the selected thinking option."
+msgstr "Усі цілі мають підтримувати вибрану опцію міркування."
+
+#: src/comparison.py:52
+msgid "Cloud targets do not support shared structured output or model retention."
+msgstr "Хмарні цілі не підтримують спільний структурований вивід або утримання моделі."
+
+#: src/comparison.py:55
+msgid "The selected thinking level is incompatible with a target."
+msgstr "Вибраний рівень міркування несумісний з однією з цілей."
+
+#: src/context.py:29
+#, python-brace-format
+msgid "Estimated text tokens: {0} (UTF-8 bytes ÷ 4)"
+msgstr "Оцінка токенів тексту: {0} (байти UTF-8 ÷ 4)"
+
+#: src/context.py:30
+#, python-brace-format
+msgid ""
+"History: {history}; prompt: {prompt}; system: {system}; tools/schema: {tools_schema};"
+" sources: {retrieval}"
+msgstr ""
+"Історія: {history}; запит: {prompt}; система: {system}; інструменти/схема: "
+"{tools_schema}; джерела: {retrieval}"
+
+#: src/context.py:31
+#, python-brace-format
+msgid "Output allowance: {0}"
+msgstr "Резерв виводу: {0}"
+
+#: src/context.py:32
+#, python-brace-format
+msgid "Explicit context: {0}"
+msgstr "Явний контекст: {0}"
+
+#: src/context.py:33
+msgid "Context size uses the server default; model capacity may differ."
+msgstr ""
+"Розмір контексту використовує типове значення сервера; місткість моделі може "
+"відрізнятися."
+
+#: src/context.py:34
+msgid "Image and chat-template overhead are unknown. This is an advisory estimate."
+msgstr "Додаткові витрати на зображення й шаблон чату невідомі. Ця оцінка орієнтовна."
+
+#: src/context.py:36
+#, python-brace-format
+msgid "Estimated input and output allowance reach {percent} of the configured context."
+msgstr "Оцінка вводу та резерв виводу досягають {percent} налаштованого контексту."
+
 #: src/credentials.py:27
 msgid "Enter a valid API key."
 msgstr "Введіть дійсний ключ API."
@@ -332,7 +441,7 @@ msgstr ""
 "Не вдалося отримати доступ до в’язки ключів. Відредагуйте цей сервер, щоб повторити "
 "спробу або ввести ключ лише для цього сеансу."
 
-#: src/credentials.py:53 src/storage.py:134
+#: src/credentials.py:53 src/storage.py:144
 msgid "An API key is required. Edit this host to enter one."
 msgstr "Потрібен ключ API. Відредагуйте цей сервер, щоб ввести його."
 
@@ -346,34 +455,46 @@ msgstr ""
 msgid "Could not remove the saved API key. Unlock the keyring and retry."
 msgstr "Не вдалося видалити збережений ключ API. Розблокуйте в’язку ключів і повторіть спробу."
 
-#: src/database.py:80
+#: src/database.py:83
 msgid "This database was created by a newer Gnollama version. Update Gnollama to open it."
 msgstr "Цю базу даних створено в новішій версії Gnollama. Оновіть Gnollama, щоб відкрити її."
 
-#: src/database.py:87
+#: src/database.py:90
 msgid "Backing up the database…"
 msgstr "Створення резервної копії бази даних…"
 
-#: src/database.py:196
+#: src/database.py:200
 msgid "This database requires a newer Gnollama version."
 msgstr "Ця база даних потребує новішої версії Gnollama."
 
-#: src/database.py:215
+#: src/database.py:219
 #, python-brace-format
 msgid "Upgrading the database to version {0}…"
 msgstr "Оновлення бази даних до версії {0}…"
 
-#: src/host_edit_dialog.ui:14 src/host_manager.py:266 src/model_manager.py:394
-#: src/pull_model_dialog.ui:17 src/widgets/knowledge_view.py:1111
-#: src/widgets/knowledge_view.py:1121 src/widgets/knowledge_view.py:1250
-#: src/widgets/knowledge_view.py:1293 src/widgets/knowledge_view.py:1337
-#: src/widgets/knowledge_view.py:1358 src/widgets/url_import.py:246
-#: src/widgets/url_import.py:335 src/window.py:187 src/window.py:349
+#: src/export.py:46
+msgid "Export Conversation"
+msgstr "Експортувати розмову"
+
+#: src/export.py:58
+msgid "Conversation no longer exists."
+msgstr "Розмова більше не існує."
+
+#: src/export.py:61
+msgid "Conversation exported"
+msgstr "Розмову експортовано"
+
+#: src/host_edit_dialog.ui:14 src/host_manager.py:266 src/model_manager.py:390
+#: src/pull_model_dialog.ui:17 src/widgets/knowledge_view.py:332
+#: src/widgets/knowledge_view.py:342 src/widgets/knowledge_view.py:471
+#: src/widgets/knowledge_view.py:514 src/widgets/knowledge_view.py:558
+#: src/widgets/knowledge_view.py:579 src/widgets/url_import.py:246
+#: src/widgets/url_import.py:335 src/window.py:223 src/window.py:505 src/window.py:523
 msgid "Cancel"
 msgstr "Скасувати"
 
-#: src/host_edit_dialog.ui:19 src/widgets/knowledge_view.py:1112
-#: src/widgets/knowledge_view.py:1145 src/widgets/knowledge_view.py:1338 src/window.py:350
+#: src/host_edit_dialog.ui:19 src/widgets/knowledge_view.py:333
+#: src/widgets/knowledge_view.py:366 src/widgets/knowledge_view.py:559 src/window.py:506
 msgid "Save"
 msgstr "Зберегти"
 
@@ -409,7 +530,7 @@ msgstr "Додати сервер"
 msgid "Ollama Server"
 msgstr "Сервер Ollama"
 
-#: src/host_manager.py:30 src/host_manager.py:72 src/model_manager.py:312
+#: src/host_manager.py:30 src/host_manager.py:72 src/model_manager.py:308
 msgid "Ollama Cloud"
 msgstr "Ollama Cloud"
 
@@ -433,7 +554,7 @@ msgstr "Створити ключ API"
 msgid "Use for This Session"
 msgstr "Використовувати для цього сеансу"
 
-#: src/host_manager.py:98 src/storage.py:124
+#: src/host_manager.py:98 src/storage.py:134
 msgid "Enter a name for this server."
 msgstr "Введіть назву цього сервера."
 
@@ -457,10 +578,10 @@ msgstr "Видалити сервер"
 msgid "Checking connection…"
 msgstr "Перевірка з’єднання…"
 
-#: src/host_manager.py:185 src/host_manager.py:277 src/main.py:63 src/model_manager.py:368
+#: src/host_manager.py:185 src/host_manager.py:277 src/main.py:64 src/model_manager.py:364
 #: src/model_manager.py:629 src/startup.py:23 src/widgets/json_view.py:230
-#: src/widgets/knowledge_import.py:51 src/widgets/knowledge_view.py:756
-#: src/widgets/knowledge_view.py:909 src/widgets/knowledge_view.py:1271
+#: src/widgets/knowledge_import.py:51 src/widgets/knowledge_view.py:103
+#: src/widgets/knowledge_view.py:492 src/widgets/source_views.py:372
 msgid "Close"
 msgstr "Закрити"
 
@@ -491,16 +612,17 @@ msgstr ""
 "Не вдалося з’єднатися\n"
 "{0}"
 
-#: src/host_manager.py:264 src/model_manager.py:380
+#: src/host_manager.py:264 src/model_manager.py:376
 #, python-brace-format
 msgid "Are you sure you want to delete {0}?"
 msgstr "Справді видалити {0}?"
 
-#: src/host_manager.py:267 src/model_manager.py:395 src/widgets/knowledge_view.py:1359
+#: src/host_manager.py:267 src/model_manager.py:391 src/widgets/knowledge_view.py:580
+#: src/window.py:524
 msgid "Delete"
 msgstr "Видалити"
 
-#: src/host_manager.py:276 src/model_manager.py:418
+#: src/host_manager.py:276 src/model_manager.py:415
 msgid "Delete Failed"
 msgstr "Не вдалося видалити"
 
@@ -538,7 +660,8 @@ msgstr ""
 msgid "Untitled"
 msgstr "Без назви"
 
-#: src/knowledge.py:55 src/widgets/knowledge_import.py:174
+#: src/knowledge.py:55 src/widgets/chat_input.py:297 src/widgets/chat_input.py:323
+#: src/widgets/knowledge_import.py:174
 msgid "Files must be no larger than 50 MiB."
 msgstr "Розмір файлів не має перевищувати 50 МіБ."
 
@@ -621,114 +744,110 @@ msgstr "Кількість уривків має бути від 1 до 20."
 msgid "Source budget must be between 256 and 64,000 characters."
 msgstr "Ліміт обсягу джерел має бути від 256 до 64 000 символів."
 
-#: src/knowledge.py:229
-msgid "Wait for the model operation to finish."
-msgstr "Дочекайтеся завершення операції з моделлю."
+#: src/knowledge.py:224 src/knowledge.py:268
+msgid "The Knowledge Library is closing."
+msgstr "Бібліотека знань закривається."
 
-#: src/knowledge.py:263
+#: src/knowledge.py:258
 msgid "The embedding host was removed. Choose a configured host before continuing."
 msgstr "Сервер векторних подань видалено. Оберіть налаштований сервер, перш ніж продовжити."
 
-#: src/knowledge.py:269 src/widgets/knowledge_import.py:146 src/widgets/url_import.py:100
+#: src/knowledge.py:264 src/widgets/knowledge_import.py:146 src/widgets/url_import.py:100
 #: src/widgets/url_import.py:113
 msgid "Queued"
 msgstr "У черзі"
 
-#: src/knowledge.py:273
-msgid "The Knowledge Library is closing."
-msgstr "Бібліотека знань закривається."
-
-#: src/knowledge.py:279
+#: src/knowledge.py:274
 msgid "This document is being replaced. Retry the build when replacement finishes."
 msgstr "Цей документ замінюється. Повторіть побудову після завершення заміни."
 
-#: src/knowledge.py:301
+#: src/knowledge.py:296
 msgid "Complete"
 msgstr "Завершено"
 
-#: src/knowledge.py:318
+#: src/knowledge.py:313
 msgid "Wait for this document’s embedding builds to finish before replacing it."
 msgstr ""
 "Дочекайтеся завершення побудови векторних подань цього документа, перш ніж замінювати"
 " його."
 
-#: src/knowledge.py:321
+#: src/knowledge.py:316
 msgid "Saving the web document…"
 msgstr "Збереження вебдокумента…"
 
-#: src/knowledge.py:349
+#: src/knowledge.py:344
 msgid "Save web document"
 msgstr "Зберегти вебдокумент"
 
-#: src/knowledge.py:370
+#: src/knowledge.py:365
 msgid "Create collection"
 msgstr "Створити колекцію"
 
-#: src/knowledge.py:385
+#: src/knowledge.py:380
 #, python-brace-format
 msgid "Add document: {0}"
 msgstr "Додати документ: {0}"
 
-#: src/knowledge.py:393
+#: src/knowledge.py:388
 #, python-brace-format
 msgid "Prepare collection: {0}"
 msgstr "Підготувати колекцію: {0}"
 
-#: src/knowledge.py:400
+#: src/knowledge.py:395
 msgid "Reusing embeddings and preparing missing documents…"
 msgstr "Повторне використання векторних подань і підготовка відсутніх документів…"
 
-#: src/knowledge.py:417
+#: src/knowledge.py:412
 #, python-brace-format
 msgid "Create embeddings: {0}"
 msgstr "Створити векторні подання: {0}"
 
-#: src/knowledge.py:422
+#: src/knowledge.py:417
 msgid "Build was stopped before it started."
 msgstr "Побудову зупинено до початку."
 
-#: src/knowledge.py:439
+#: src/knowledge.py:434
 msgid "The source document was deleted."
 msgstr "Вихідний документ видалено."
 
-#: src/knowledge.py:444
+#: src/knowledge.py:439
 msgid "This index would exceed 100,000 chunks. Increase the chunk size or reduce overlap."
 msgstr ""
 "Цей індекс міститиме понад 100 000 фрагментів. Збільште розмір фрагмента або зменште "
 "перекриття."
 
-#: src/knowledge.py:460
+#: src/knowledge.py:455
 #, python-brace-format
 msgid "Embedding chunks: {0} complete, {1} remaining"
 msgstr "Векторизація фрагментів: завершено — {0}, залишилося — {1}"
 
-#: src/knowledge.py:484
+#: src/knowledge.py:479
 msgid "The embedding input cannot fit. Shorten the document prefix or choose another model."
 msgstr ""
 "Вхідні дані для векторизації не вміщуються. Скоротіть префікс документа або оберіть "
 "іншу модель."
 
-#: src/knowledge.py:494
+#: src/knowledge.py:489
 msgid "The model returned a different vector dimension. Create a new configuration."
 msgstr "Модель повернула вектор іншої розмірності. Створіть нову конфігурацію."
 
-#: src/knowledge.py:509
+#: src/knowledge.py:504
 msgid "Create embeddings"
 msgstr "Створити векторні подання"
 
-#: src/knowledge.py:519
+#: src/knowledge.py:514
 msgid "This embedding configuration has no completed vectors."
 msgstr "Ця конфігурація векторних подань не має готових векторів."
 
-#: src/knowledge.py:521 src/widgets/knowledge_view.py:659
+#: src/knowledge.py:516 src/widgets/source_views.py:264
 msgid "Enter a search query."
 msgstr "Введіть пошуковий запит."
 
-#: src/knowledge.py:531 src/knowledge_store.py:265
+#: src/knowledge.py:526 src/knowledge_store.py:285
 msgid "Query dimensions differ from the stored vectors. Rebuild the index."
 msgstr "Розмірність запиту відрізняється від збережених векторів. Перебудуйте індекс."
 
-#: src/knowledge.py:538
+#: src/knowledge.py:533
 msgid "No passages met the search criteria. Adjust the query, sources, or minimum similarity."
 msgstr ""
 "Жоден уривок не відповідає критеріям пошуку. Змініть запит, джерела або мінімальну "
@@ -738,80 +857,78 @@ msgstr ""
 msgid "The destination collection was deleted."
 msgstr "Колекцію призначення видалено."
 
-#: src/knowledge_store.py:136
+#: src/knowledge_store.py:156
 msgid "The reserved embedding index was deleted."
 msgstr "Зарезервований векторний індекс видалено."
 
-#: src/knowledge_store.py:138
+#: src/knowledge_store.py:158
 msgid "An index cannot change its document or embedding configuration."
 msgstr "Індекс не може змінювати свій документ або конфігурацію векторних подань."
 
-#: src/knowledge_store.py:153
+#: src/knowledge_store.py:173
 msgid "Embedding dimensions do not match the batch."
 msgstr "Розмірність векторних подань не відповідає пакету."
 
-#: src/knowledge_store.py:160
+#: src/knowledge_store.py:180
 msgid "Embedding configuration does not match the index."
 msgstr "Конфігурація векторних подань не відповідає індексу."
 
-#: src/knowledge_store.py:163
+#: src/knowledge_store.py:183
 msgid "Embedding dimensions changed during indexing"
 msgstr "Розмірність векторних подань змінилася під час індексування"
 
-#: src/knowledge_store.py:169
+#: src/knowledge_store.py:189
 msgid "A chunk cannot move between indexes."
 msgstr "Фрагмент не можна переміщувати між індексами."
 
-#: src/knowledge_store.py:241
+#: src/knowledge_store.py:261
 msgid "Select at least one indexed document or chunk."
 msgstr "Оберіть принаймні один проіндексований документ або фрагмент."
 
-#: src/knowledge_store.py:244
+#: src/knowledge_store.py:264
 msgid "Invalid search limits."
 msgstr "Некоректні обмеження пошуку."
 
-#: src/knowledge_store.py:272
+#: src/knowledge_store.py:292
 msgid "A selected index is missing, incomplete, or incompatible. Choose sources again."
 msgstr "Вибраний індекс відсутній, незавершений або несумісний. Оберіть джерела знову."
 
-#: src/knowledge_store.py:277 src/knowledge_store.py:286
+#: src/knowledge_store.py:297 src/knowledge_store.py:306
 msgid "Selected chunks are missing. Choose sources again."
 msgstr "Вибрані фрагменти відсутні. Оберіть джерела знову."
 
-#: src/knowledge_store.py:282
+#: src/knowledge_store.py:302
 msgid "A selected document has no selected chunks."
 msgstr "У вибраному документі не вибрано жодного фрагмента."
 
-#: src/knowledge_store.py:289 src/knowledge_store.py:307 src/vectors.py:108
+#: src/knowledge_store.py:309 src/knowledge_store.py:327 src/vectors.py:108
 #: src/vectors.py:116
 msgid "Stored vectors are missing. Rebuild this index."
 msgstr "Збережені вектори відсутні. Перебудуйте цей індекс."
 
-#: src/knowledge_store.py:309 src/vectors.py:129
+#: src/knowledge_store.py:329 src/vectors.py:129
 msgid "Stored vectors are damaged. Rebuild this index."
 msgstr "Збережені вектори пошкоджено. Перебудуйте цей індекс."
 
-#: src/knowledge_store.py:327 src/vectors.py:124
+#: src/knowledge_store.py:347 src/vectors.py:124
 msgid "Stored vectors do not match their source. Rebuild this index."
 msgstr "Збережені вектори не відповідають своєму джерелу. Перебудуйте цей індекс."
 
-#: src/knowledge_store.py:349
+#: src/knowledge_store.py:369
 #, python-brace-format
 msgid "Knowledge search failed: {0}"
 msgstr "Не вдалося виконати пошук у знаннях: {0}"
 
-#. Translators: Translate "ltr" as "rtl" for right-to-left languages.
-#. Use the app's language even when GTK's language pack is not installed.
-#: src/main.py:33
+#: src/main.py:34
 msgctxt "text direction"
 msgid "ltr"
 msgstr "ltr"
 
-#: src/main.py:61
+#: src/main.py:62
 msgid "Database Upgraded"
 msgstr "Базу даних оновлено"
 
-#: src/main.py:62
+#: src/main.py:63
 #, python-brace-format
 msgid ""
 "Your data is ready. A backup of the previous database was saved at:\n"
@@ -820,17 +937,23 @@ msgstr ""
 "Ваші дані готові. Резервну копію попередньої бази даних збережено тут:\n"
 "{0}"
 
-#. Translators: Replace "translator-credits" with your name/username, and optionally an
-#. email or URL.
-#: src/main.py:75
+#: src/main.py:76
 msgid "translator-credits"
 msgstr "Переклад за допомогою штучного інтелекту, 2026."
 
-#: src/model_details_view.ui:6 src/model_manager.py:42 src/model_manager.py:318
+#: src/markdown_view.py:413
+msgid "Copy Code"
+msgstr "Копіювати код"
+
+#: src/markdown_view.py:422
+msgid "Preview Markdown"
+msgstr "Перегляд Markdown"
+
+#: src/model_details_view.ui:6 src/model_manager.py:37 src/model_manager.py:314
 msgid "Model Details"
 msgstr "Відомості про модель"
 
-#: src/model_manager.py:29
+#: src/model_manager.py:24
 #, python-brace-format
 msgid ""
 "Memory: {0} · VRAM: {1}\n"
@@ -839,78 +962,78 @@ msgstr ""
 "Пам’ять: {0} · Відеопам’ять: {1}\n"
 "Контекст: {2} · Термін дії: {3}"
 
-#: src/model_manager.py:168 src/tab.py:163
+#: src/model_manager.py:164 src/tab.py:358
 msgid "No host configured."
 msgstr "Сервер не налаштовано."
 
-#: src/model_manager.py:173
+#: src/model_manager.py:169
 msgid "Loading running models…"
 msgstr "Завантаження списку активних моделей…"
 
-#: src/model_manager.py:177
+#: src/model_manager.py:173
 #, python-brace-format
 msgid "Could not refresh running models: {0}"
 msgstr "Не вдалося оновити список активних моделей: {0}"
 
-#: src/model_manager.py:193
+#: src/model_manager.py:189
 msgid "No models are loaded in memory."
 msgstr "У пам’яті немає завантажених моделей."
 
-#: src/model_manager.py:199 src/model_manager.py:212
+#: src/model_manager.py:195 src/model_manager.py:208
 msgid "Unload"
 msgstr "Вивантажити"
 
-#: src/model_manager.py:200 src/model_manager.py:214
+#: src/model_manager.py:196 src/model_manager.py:210
 msgid "Release this model from memory; keep its downloaded files."
 msgstr "Звільнити пам’ять цієї моделі, зберігши її завантажені файли."
 
-#: src/model_manager.py:212
+#: src/model_manager.py:208
 msgid "Unloading…"
 msgstr "Вивантаження…"
 
-#: src/model_manager.py:213
+#: src/model_manager.py:209
 msgid "A chat or embedding job is using this model in Gnollama."
 msgstr "Ця модель використовується в чаті або завданні векторизації у Gnollama."
 
-#: src/model_manager.py:232
+#: src/model_manager.py:228
 msgid "Could not unload model"
 msgstr "Не вдалося вивантажити модель"
 
-#: src/model_manager.py:273 src/model_manager.ui:90
+#: src/model_manager.py:269 src/model_manager.ui:90
 msgid "Available Models"
 msgstr "Доступні моделі"
 
-#: src/model_manager.py:273 src/model_manager.ui:80
+#: src/model_manager.py:269 src/model_manager.ui:80
 msgid "Installed"
 msgstr "Встановлені"
 
-#: src/model_manager.py:286
+#: src/model_manager.py:282
 msgid "Connection Error"
 msgstr "Помилка з’єднання"
 
-#: src/model_manager.py:325
+#: src/model_manager.py:321
 msgid "Delete Model"
 msgstr "Видалити модель"
 
-#: src/model_manager.py:357
+#: src/model_manager.py:353
 msgid "Failed to fetch details"
 msgstr "Не вдалося отримати відомості"
 
-#: src/model_manager.py:377 src/model_manager.py:402 src/model_manager.py:405
+#: src/model_manager.py:373 src/model_manager.py:398 src/model_manager.py:401
 msgid "Model Is Busy"
 msgstr "Модель зайнята"
 
-#: src/model_manager.py:377 src/model_manager.py:405
+#: src/model_manager.py:373 src/model_manager.py:401
 msgid "Wait for active chats and embedding jobs before deleting this model."
 msgstr ""
 "Дочекайтеся завершення активних чатів і завдань векторизації, перш ніж видаляти цю "
 "модель."
 
-#: src/model_manager.py:381
+#: src/model_manager.py:377
 msgid "Also delete matching vectors; keep source text"
 msgstr "Також видалити відповідні вектори, зберігши вихідний текст"
 
-#: src/model_manager.py:383
+#: src/model_manager.py:379
 #, python-brace-format
 msgid ""
 "Stored data using this model: {0} documents, {1} indexes, {2} vectors. Kept vectors "
@@ -920,7 +1043,7 @@ msgstr ""
 "векторів — {2}. Збережені вектори можна знову використовувати з моделлю з тією самою "
 "контрольною сумою на сумісному сервері."
 
-#: src/model_manager.py:385
+#: src/model_manager.py:381
 #, python-brace-format
 msgid ""
 "Collections using this configuration: {0}. Deleting vectors keeps their documents and"
@@ -930,34 +1053,34 @@ msgstr ""
 "документи та належність до колекцій, але перед пошуком потрібно буде перебудувати "
 "векторні подання."
 
-#: src/model_manager.py:388
+#: src/model_manager.py:384
 msgid "Delete Model?"
 msgstr "Видалити модель?"
 
-#: src/model_manager.py:402
+#: src/model_manager.py:398
 msgid "Wait for all indexing jobs using this model before deleting its vectors."
 msgstr ""
 "Дочекайтеся завершення всіх завдань індексування з цією моделлю, перш ніж видаляти її"
 " вектори."
 
-#: src/model_manager.py:573
+#: src/model_manager.py:572
 msgid "Starting download…"
 msgstr "Початок завантаження…"
 
-#: src/model_manager.py:598
+#: src/model_manager.py:597
 msgid "Error"
 msgstr "Помилка"
 
-#: src/model_manager.py:599
+#: src/model_manager.py:598
 msgid "Error occurred."
 msgstr "Сталася помилка."
 
-#: src/model_manager.py:618
+#: src/model_manager.py:617
 #, python-brace-format
 msgid "{0:.0f}%"
 msgstr "{0:.0f}%"
 
-#: src/model_manager.py:621
+#: src/model_manager.py:620
 msgid "Download complete"
 msgstr "Завантаження завершено"
 
@@ -1053,7 +1176,7 @@ msgstr "Активні"
 msgid "Models in Memory"
 msgstr "Моделі в пам’яті"
 
-#: src/ollama.py:71 src/storage.py:127
+#: src/ollama.py:71 src/storage.py:137
 msgid "Ollama Cloud requires https://ollama.com."
 msgstr "Ollama Cloud потребує https://ollama.com."
 
@@ -1089,43 +1212,43 @@ msgstr "Отримано некоректний JSON від Ollama"
 msgid "Expected a JSON object from Ollama"
 msgstr "Очікувався об’єкт JSON від Ollama"
 
-#: src/ollama.py:221
+#: src/ollama.py:222
 msgid "Enter nonempty text to embed."
 msgstr "Введіть непорожній текст для векторизації."
 
-#: src/ollama.py:225
+#: src/ollama.py:226
 msgid "Embedding dimensions must be a positive integer."
 msgstr "Розмірність векторних подань має бути додатним цілим числом."
 
-#: src/ollama.py:232
+#: src/ollama.py:233
 msgid "The server returned an incorrect number of embeddings."
 msgstr "Сервер повернув неправильну кількість векторних подань."
 
-#: src/ollama.py:237
+#: src/ollama.py:238
 msgid "The server returned an invalid embedding vector."
 msgstr "Сервер повернув некоректний вектор."
 
-#: src/ollama.py:240
+#: src/ollama.py:241
 msgid "Embedding dimensions do not match, or a vector is zero."
 msgstr "Розмірності векторних подань не збігаються або вектор нульовий."
 
-#: src/ollama.py:269
+#: src/ollama.py:270
 msgid "Model pull ended before completion"
 msgstr "Завантаження моделі обірвалося до завершення"
 
-#: src/ollama.py:275
+#: src/ollama.py:276
 msgid "Invalid output format"
 msgstr "Некоректний формат виведення"
 
-#: src/ollama.py:279
+#: src/ollama.py:280
 msgid "Keep-alive must be a duration in seconds, 0, or -1"
 msgstr "Час утримання має бути тривалістю в секундах, 0 або -1"
 
-#: src/ollama.py:283
+#: src/ollama.py:284
 msgid "Invalid thinking setting"
 msgstr "Некоректне налаштування міркування"
 
-#: src/ollama.py:289
+#: src/ollama.py:290
 msgid "Top logprobs must be between 0 and 20"
 msgstr "Кількість найімовірніших токенів має бути від 0 до 20"
 
@@ -1153,11 +1276,19 @@ msgstr "Дозволити завантаження через незахище�
 msgid "Download Details"
 msgstr "Подробиці завантаження"
 
-#: src/session.py:16 src/tab.py:38 src/window.ui:61 src/window.ui:88
+#: src/request_runner.py:58
+msgid "Response ended before completion."
+msgstr "Відповідь обірвалася до завершення."
+
+#: src/services.py:74
+msgid "Wait for the model operation to finish."
+msgstr "Дочекайтеся завершення операції з моделлю."
+
+#: src/session.py:17 src/tab.py:39 src/window.ui:61 src/window.ui:88
 msgid "New Chat"
 msgstr "Новий чат"
 
-#: src/session.py:169
+#: src/session.py:148
 msgid "There are no pending tool calls."
 msgstr "Немає викликів інструментів, що очікують на виконання."
 
@@ -1180,57 +1311,57 @@ msgctxt "shortcut window"
 msgid "New Chat Tab"
 msgstr "Нова вкладка чату"
 
-#: src/shortcuts-dialog.ui:26
+#: src/shortcuts-dialog.ui:32
 msgctxt "shortcut window"
 msgid "Close Tab"
 msgstr "Закрити вкладку"
 
-#: src/shortcuts-dialog.ui:32
+#: src/shortcuts-dialog.ui:38
 msgctxt "shortcut window"
 msgid "Next Tab"
 msgstr "Наступна вкладка"
 
-#: src/shortcuts-dialog.ui:38
+#: src/shortcuts-dialog.ui:44
 msgctxt "shortcut window"
 msgid "Previous Tab"
 msgstr "Попередня вкладка"
 
-#: src/shortcuts-dialog.ui:44
+#: src/shortcuts-dialog.ui:50
 msgctxt "shortcut window"
 msgid "Toggle Sidebar"
 msgstr "Показати або сховати бічну панель"
 
-#: src/startup.py:16 src/startup.py:53
+#: src/startup.py:16 src/startup.py:54
 msgid "Opening Gnollama"
 msgstr "Відкриття Gnollama"
 
-#: src/startup.py:20 src/tab.py:247 src/widgets/knowledge_import.py:88
-#: src/widgets/knowledge_view.py:1220 src/widgets/url_import.py:232 src/window.py:139
+#: src/startup.py:20 src/tab.py:440 src/widgets/knowledge_import.py:88
+#: src/widgets/knowledge_view.py:441 src/widgets/url_import.py:232 src/window.py:174
 msgid "Retry"
 msgstr "Повторити"
 
-#: src/startup.py:42
+#: src/startup.py:43
 msgid "Finishing the database operation before closing…"
 msgstr "Завершення операції з базою даних перед закриттям…"
 
-#: src/startup.py:54
+#: src/startup.py:55
 msgid "Checking the database…"
 msgstr "Перевірка бази даних…"
 
-#: src/startup.py:90
+#: src/startup.py:91
 msgid "Could Not Open the Database"
 msgstr "Не вдалося відкрити базу даних"
 
-#: src/startup.py:94
+#: src/startup.py:95
 #, python-brace-format
 msgid "Database backup: {0}"
 msgstr "Резервна копія бази даних: {0}"
 
-#: src/storage.py:117
+#: src/storage.py:127
 msgid "This host was removed."
 msgstr "Цей сервер видалено."
 
-#: src/storage.py:122
+#: src/storage.py:132
 msgid "Invalid host type."
 msgstr "Недійсний тип сервера."
 
@@ -1278,53 +1409,65 @@ msgstr "Вставте або імпортуйте схему JSON, а поті�
 msgid "Invalid schema JSON: {0}"
 msgstr "Некоректний JSON схеми: {0}"
 
-#: src/tab.py:38
+#: src/tab.py:39
 msgid "New Response"
 msgstr "Нова відповідь"
 
-#: src/tab.py:87
+#: src/tab.py:102
+msgid "Load Older Messages"
+msgstr "Завантажити старіші повідомлення"
+
+#: src/tab.py:110
+msgid "Discard Draft"
+msgstr "Відкинути чернетку"
+
+#: src/tab.py:131 src/tab.py:142
+msgid "Options"
+msgstr "Параметри"
+
+#: src/tab.py:139 src/widgets/options_panel.ui:21
+msgid "Tool Calling"
+msgstr "Виклики інструментів"
+
+#: src/tab.py:141 src/widgets/chat_input.ui:46
+msgid "Thinking"
+msgstr "Міркування"
+
+#: src/tab.py:280
 msgid "Chat"
 msgstr "Чат"
 
-#: src/tab.py:167
-msgid "Select an available model before sending."
-msgstr "Оберіть доступну модель перед надсиланням."
-
-#: src/tab.py:170
+#: src/tab.py:366
 msgid "Wait for this model to finish unloading before sending."
 msgstr "Дочекайтеся завершення вивантаження цієї моделі перед надсиланням."
 
-#: src/tab.py:175
+#: src/tab.py:371
 msgid "Wait for image support to be checked before sending."
 msgstr "Дочекайтеся перевірки підтримки зображень перед надсиланням."
 
-#: src/tab.py:177 src/widgets/chat_input.py:112
+#: src/tab.py:373 src/widgets/chat_input.py:121
 msgid "Remove draft images or select a vision model to send."
 msgstr "Видаліть зображення з чернетки або оберіть модель із підтримкою зору для надсилання."
 
-#: src/tab.py:220
+#: src/tab.py:413
 msgid "Retrieving sources…"
 msgstr "Пошук джерел…"
 
-#: src/tab.py:245
+#: src/tab.py:438
 msgid "Could Not Retrieve Sources"
 msgstr "Не вдалося отримати джерела"
 
-#: src/tab.py:246
+#: src/tab.py:439
 msgid "Adjust Sources"
 msgstr "Налаштувати джерела"
 
-#: src/tab.py:248
+#: src/tab.py:441
 msgid "Send Without Knowledge"
 msgstr "Надіслати без знань"
 
-#: src/tab.py:249
+#: src/tab.py:442
 msgid "Keep Draft"
 msgstr "Зберегти чернетку"
-
-#: src/tab.py:311
-msgid "Response ended before completion."
-msgstr "Відповідь обірвалася до завершення."
 
 #: src/tool_calling.py:104
 msgid "Paste, import, or load the example tools, then click Apply."
@@ -1383,7 +1526,7 @@ msgstr "Збережіть результат кожного виклику ін
 msgid "Tool result not provided: tool round cancelled by user."
 msgstr "Результат інструмента не надано: користувач скасував раунд інструментів."
 
-#: src/vectors.py:16 src/widgets/knowledge_view.py:563
+#: src/vectors.py:16 src/widgets/source_views.py:168
 msgid "Choose a supported similarity measure."
 msgstr "Оберіть підтримувану міру подібності."
 
@@ -1552,90 +1695,94 @@ msgstr ""
 msgid "Source content changed. Rebuild required."
 msgstr "Вміст джерела змінився. Потрібна перебудова."
 
-#: src/widgets/chat_input.py:61 src/widgets/chat_input.py:66 src/widgets/chat_input.py:68
-#: src/widgets/knowledge_view.py:247
+#: src/widgets/chat_input.py:34
+msgid "Type a message..."
+msgstr "Введіть повідомлення..."
+
+#: src/widgets/chat_input.py:68 src/widgets/chat_input.py:73 src/widgets/chat_input.py:75
+#: src/widgets/knowledge_common.py:248
 msgid "Model default"
 msgstr "Типове для моделі"
 
-#: src/widgets/chat_input.py:61
+#: src/widgets/chat_input.py:68
 msgid "Off"
 msgstr "Вимкнено"
 
-#: src/widgets/chat_input.py:61
+#: src/widgets/chat_input.py:68
 msgid "On"
 msgstr "Увімкнено"
 
-#: src/widgets/chat_input.py:61 src/widgets/chat_input.py:66
+#: src/widgets/chat_input.py:68 src/widgets/chat_input.py:73
 msgid "Low"
 msgstr "Низький"
 
-#: src/widgets/chat_input.py:61 src/widgets/chat_input.py:66
+#: src/widgets/chat_input.py:68 src/widgets/chat_input.py:73
 msgid "Medium"
 msgstr "Середній"
 
-#: src/widgets/chat_input.py:61 src/widgets/chat_input.py:66
+#: src/widgets/chat_input.py:68 src/widgets/chat_input.py:73
 msgid "High"
 msgstr "Високий"
 
-#: src/widgets/chat_input.py:61
+#: src/widgets/chat_input.py:68
 msgid "Max"
 msgstr "Максимальний"
 
-#: src/widgets/chat_input.py:87
+#: src/widgets/chat_input.py:96 src/widgets/comparison_view.py:272
 msgid "Stop response"
 msgstr "Зупинити відповідь"
 
-#: src/widgets/chat_input.py:87 src/widgets/chat_input.ui:73
+#: src/widgets/chat_input.py:96 src/widgets/chat_input.ui:72
 msgid "Send Message"
 msgstr "Надіслати повідомлення"
 
-#: src/widgets/chat_input.py:108
+#: src/widgets/chat_input.py:117
 msgid "Checking image support…"
 msgstr "Перевірка підтримки зображень…"
 
-#: src/widgets/chat_input.py:110
+#: src/widgets/chat_input.py:119
 msgid "This model does not support images."
 msgstr "Ця модель не підтримує зображення."
 
-#: src/widgets/chat_input.py:114
+#: src/widgets/chat_input.py:123
 msgid "Earlier images remain saved; only text history will be sent."
 msgstr "Попередні зображення залишаються збереженими; буде надіслано лише текстову історію."
 
-#: src/widgets/chat_input.py:116
+#: src/widgets/chat_input.py:125
 msgid "Image support unknown."
 msgstr "Підтримка зображень невідома."
 
-#: src/widgets/chat_input.py:128
+#: src/widgets/chat_input.py:137
 msgid "Select a chat model"
 msgstr "Оберіть модель для чату"
 
-#: src/widgets/chat_input.py:163
+#: src/widgets/chat_input.py:172
 msgid "Checking chat models…"
 msgstr "Перевірка моделей для чату…"
 
-#: src/widgets/chat_input.py:176
+#: src/widgets/chat_input.py:185
 msgid "No cloud models are available. Try refreshing later."
 msgstr "Немає доступних хмарних моделей. Спробуйте оновити пізніше."
 
-#: src/widgets/chat_input.py:177
+#: src/widgets/chat_input.py:186
 msgid "No chat models found. Pull one in Manage Models, then refresh."
 msgstr ""
 "Моделей для чату не знайдено. Завантажте модель у розділі «Керування моделями», а "
 "потім оновіть список."
 
-#: src/widgets/chat_input.py:247
+#: src/widgets/chat_input.py:264
 msgid "Select Images"
 msgstr "Обрати зображення"
 
-#: src/widgets/chat_input.py:251
+#: src/widgets/chat_input.py:268
 msgid "Images"
 msgstr "Зображення"
 
-#: src/widgets/chat_input.py:284 src/widgets/chat_input.ui:116
+#: src/widgets/chat_input.py:348 src/widgets/chat_input.ui:115
 msgid "No image selected"
 msgstr "Зображення не вибрано"
 
-#: src/widgets/chat_input.py:290
+#: src/widgets/chat_input.py:355
 #, python-brace-format
 msgid "{0} image selected"
 msgid_plural "{0} images selected"
@@ -1643,29 +1790,107 @@ msgstr[0] "Вибрано {0} зображення"
 msgstr[1] "Вибрано {0} зображення"
 msgstr[2] "Вибрано {0} зображень"
 
+#: src/widgets/chat_input.py:390 src/widgets/chat_input.ui:124
+msgid "Clear Image"
+msgstr "Прибрати зображення"
+
+#: src/widgets/chat_input.py:396
+msgid "Could not restore an image. Remove it before sending."
+msgstr "Не вдалося відновити зображення. Видаліть його перед надсиланням."
+
 #: src/widgets/chat_input.ui:35
 msgid "Select Model"
 msgstr "Обрати модель"
-
-#: src/widgets/chat_input.ui:46
-msgid "Thinking"
-msgstr "Міркування"
 
 #: src/widgets/chat_input.ui:54
 msgid "Thinking Level"
 msgstr "Рівень міркування"
 
-#: src/widgets/chat_input.ui:67
-msgid "Type a message..."
-msgstr "Введіть повідомлення..."
-
-#: src/widgets/chat_input.ui:111
+#: src/widgets/chat_input.ui:110
 msgid "Attach Image"
 msgstr "Додати зображення"
 
-#: src/widgets/chat_input.ui:125
-msgid "Clear Image"
-msgstr "Прибрати зображення"
+#: src/widgets/collection_views.py:20
+msgid ""
+"An embedding model makes documents searchable. It can differ from the model used for "
+"chat."
+msgstr ""
+"Модель векторних подань робить документи доступними для пошуку. Вона може "
+"відрізнятися від моделі для чату."
+
+#: src/widgets/collection_views.py:21
+msgid "Copy Collection with New Settings"
+msgstr "Копіювати колекцію з новими налаштуваннями"
+
+#: src/widgets/collection_views.py:21
+msgid "Create Collection"
+msgstr "Створити колекцію"
+
+#: src/widgets/collection_views.py:22 src/widgets/collection_views.py:25
+msgid "Collection name"
+msgstr "Назва колекції"
+
+#: src/widgets/collection_views.py:23
+#, python-brace-format
+msgid "{0} (copy)"
+msgstr "{0} (копія)"
+
+#: src/widgets/collection_views.py:52
+msgid "Destination collection"
+msgstr "Колекція призначення"
+
+#: src/widgets/collection_views.py:53 src/widgets/knowledge_view.py:40
+msgid "New Collection…"
+msgstr "Нова колекція…"
+
+#: src/widgets/collection_views.py:60
+msgid "Choose a collection"
+msgstr "Обрати колекцію"
+
+#: src/widgets/collection_views.py:71
+msgid "Choose a destination collection, or create a new one."
+msgstr "Оберіть колекцію призначення або створіть нову."
+
+#: src/widgets/collection_views.py:81
+msgid "Add Existing Documents"
+msgstr "Додати наявні документи"
+
+#: src/widgets/collection_views.py:87 src/widgets/knowledge_view.py:47
+#: src/widgets/knowledge_view.py:160
+msgid "Search documents"
+msgstr "Шукати документи"
+
+#: src/widgets/collection_views.py:92 src/widgets/knowledge_view.py:458
+msgid "Add"
+msgstr "Додати"
+
+#: src/widgets/collection_views.py:95 src/widgets/knowledge_view.py:54 src/window.py:75
+msgid "Load More"
+msgstr "Завантажити ще"
+
+#: src/widgets/collection_views.py:134
+msgid "All library documents are already in this collection."
+msgstr "Усі документи бібліотеки вже є в цій колекції."
+
+#: src/widgets/comparison_view.py:81
+msgid "Add Target"
+msgstr "Додати ціль"
+
+#: src/widgets/comparison_view.py:83
+msgid "Remove Target"
+msgstr "Видалити ціль"
+
+#: src/widgets/comparison_view.py:93
+msgid "Run Again"
+msgstr "Запустити знову"
+
+#: src/widgets/comparison_view.py:199
+msgid "Stop All"
+msgstr "Зупинити всі"
+
+#: src/widgets/feedback.py:15
+msgid "Copied"
+msgstr "Скопійовано"
 
 #: src/widgets/json_view.py:50
 msgid "JSON files"
@@ -1675,8 +1900,8 @@ msgstr "Файли JSON"
 msgid "Import…"
 msgstr "Імпортувати…"
 
-#: src/widgets/json_view.py:73 src/widgets/knowledge_view.py:507
-#: src/widgets/knowledge_view.py:690
+#: src/widgets/json_view.py:73 src/widgets/source_views.py:112
+#: src/widgets/source_views.py:295
 msgid "Apply"
 msgstr "Застосувати"
 
@@ -1684,7 +1909,7 @@ msgstr "Застосувати"
 msgid "Content"
 msgstr "Вміст"
 
-#: src/widgets/json_view.py:160 src/widgets/options_panel.py:42
+#: src/widgets/json_view.py:160 src/widgets/options_panel.py:43
 msgid "JSON Schema"
 msgstr "Схема JSON"
 
@@ -1752,6 +1977,125 @@ msgstr "Зберегти JSON"
 msgid "JSON could not be saved"
 msgstr "Не вдалося зберегти JSON"
 
+#: src/widgets/knowledge_common.py:65
+msgid "Ready"
+msgstr "Готово"
+
+#: src/widgets/knowledge_common.py:67 src/widgets/knowledge_import.py:148
+msgid "Needs Attention"
+msgstr "Потребує уваги"
+
+#: src/widgets/knowledge_common.py:69
+msgid "Preparing"
+msgstr "Підготовка"
+
+#: src/widgets/knowledge_common.py:70
+msgid "Needs Preparation"
+msgstr "Потребує підготовки"
+
+#: src/widgets/knowledge_common.py:75
+msgid "Native dimensions"
+msgstr "Початкова розмірність"
+
+#: src/widgets/knowledge_common.py:81
+#, python-brace-format
+msgid "Page {0}"
+msgstr "Сторінка {0}"
+
+#: src/widgets/knowledge_common.py:149
+msgid "Embedding server"
+msgstr "Сервер векторних подань"
+
+#: src/widgets/knowledge_common.py:150
+msgid "Embedding model"
+msgstr "Модель векторних подань"
+
+#: src/widgets/knowledge_common.py:152
+msgid "Manage Models…"
+msgstr "Керування моделями…"
+
+#: src/widgets/knowledge_common.py:153
+msgid "Refresh"
+msgstr "Оновити"
+
+#: src/widgets/knowledge_common.py:197
+msgid "Checking embedding models…"
+msgstr "Перевірка моделей векторних подань…"
+
+#: src/widgets/knowledge_common.py:224
+msgid "No embedding models found. Download one in Manage Models, then refresh."
+msgstr ""
+"Моделей векторних подань не знайдено. Завантажте модель у розділі «Керування "
+"моделями», а потім оновіть список."
+
+#: src/widgets/knowledge_common.py:233 src/widgets/knowledge_view.py:423
+msgid "Create Embeddings"
+msgstr "Створити векторні подання"
+
+#: src/widgets/knowledge_common.py:241
+msgid "Plain"
+msgstr "Без префіксів"
+
+#: src/widgets/knowledge_common.py:241
+msgid "EmbeddingGemma retrieval"
+msgstr "Пошук EmbeddingGemma"
+
+#: src/widgets/knowledge_common.py:241
+msgid "Nomic retrieval"
+msgstr "Пошук Nomic"
+
+#: src/widgets/knowledge_common.py:241
+msgid "Qwen3 retrieval"
+msgstr "Пошук Qwen3"
+
+#: src/widgets/knowledge_common.py:241
+msgid "Custom prefixes"
+msgstr "Власні префікси"
+
+#: src/widgets/knowledge_common.py:242
+msgid "Advanced Embedding Settings"
+msgstr "Розширені налаштування векторних подань"
+
+#: src/widgets/knowledge_common.py:243
+msgid "Embedding format"
+msgstr "Формат векторних подань"
+
+#: src/widgets/knowledge_common.py:246
+msgid "Document prefix"
+msgstr "Префікс документа"
+
+#: src/widgets/knowledge_common.py:247
+msgid "Query prefix"
+msgstr "Префікс запиту"
+
+#: src/widgets/knowledge_common.py:253
+msgid "Dimensions"
+msgstr "Розмірність"
+
+#: src/widgets/knowledge_common.py:253
+msgid "Chunk size (characters)"
+msgstr "Розмір фрагмента (символи)"
+
+#: src/widgets/knowledge_common.py:254
+msgid "Overlap (characters)"
+msgstr "Перекриття (символи)"
+
+#: src/widgets/knowledge_common.py:258
+msgid "Create"
+msgstr "Створити"
+
+#: src/widgets/knowledge_common.py:298
+msgid "Select an embedding model."
+msgstr "Оберіть модель векторних подань."
+
+#: src/widgets/knowledge_common.py:300
+msgid "The host did not provide a model digest."
+msgstr "Сервер не надав контрольної суми моделі."
+
+#: src/widgets/knowledge_common.py:306
+msgid "Overlap must be smaller than the chunk size."
+msgstr "Перекриття має бути меншим за розмір фрагмента."
+
 #: src/widgets/knowledge_import.py:12
 msgid "Add Text"
 msgstr "Додати текст"
@@ -1761,7 +2105,7 @@ msgid "Paste text, choose a collection, and review it before adding."
 msgstr "Вставте текст, оберіть колекцію та перегляньте його перед додаванням."
 
 #: src/widgets/knowledge_import.py:14 src/widgets/knowledge_import.py:85
-#: src/widgets/knowledge_view.py:1225 src/widgets/url_import.py:66
+#: src/widgets/knowledge_view.py:446 src/widgets/url_import.py:66
 #: src/widgets/url_import.py:231
 msgid "Add to Collection"
 msgstr "Додати до колекції"
@@ -1829,10 +2173,6 @@ msgstr "Додавання до колекції"
 msgid "Added to Collection — Preparing"
 msgstr "Додано до колекції — підготовка"
 
-#: src/widgets/knowledge_import.py:148 src/widgets/knowledge_view.py:67
-msgid "Needs Attention"
-msgstr "Потребує уваги"
-
 #: src/widgets/knowledge_import.py:148 src/widgets/url_import.py:115
 msgid "Skipped"
 msgstr "Пропущено"
@@ -1858,512 +2198,46 @@ msgstr "Імпортувати файл: {0}"
 msgid "Ready to Search"
 msgstr "Готово до пошуку"
 
-#: src/widgets/knowledge_view.py:65
-msgid "Ready"
-msgstr "Готово"
-
-#: src/widgets/knowledge_view.py:69
-msgid "Preparing"
-msgstr "Підготовка"
-
-#: src/widgets/knowledge_view.py:70
-msgid "Needs Preparation"
-msgstr "Потребує підготовки"
-
-#: src/widgets/knowledge_view.py:75
-msgid "Native dimensions"
-msgstr "Початкова розмірність"
-
-#: src/widgets/knowledge_view.py:81
-#, python-brace-format
-msgid "Page {0}"
-msgstr "Сторінка {0}"
-
-#: src/widgets/knowledge_view.py:148
-msgid "Embedding server"
-msgstr "Сервер векторних подань"
-
-#: src/widgets/knowledge_view.py:149
-msgid "Embedding model"
-msgstr "Модель векторних подань"
-
-#: src/widgets/knowledge_view.py:151
-msgid "Manage Models…"
-msgstr "Керування моделями…"
-
-#: src/widgets/knowledge_view.py:152
-msgid "Refresh"
-msgstr "Оновити"
-
-#: src/widgets/knowledge_view.py:196
-msgid "Checking embedding models…"
-msgstr "Перевірка моделей векторних подань…"
-
-#: src/widgets/knowledge_view.py:223
-msgid "No embedding models found. Download one in Manage Models, then refresh."
-msgstr ""
-"Моделей векторних подань не знайдено. Завантажте модель у розділі «Керування "
-"моделями», а потім оновіть список."
-
-#: src/widgets/knowledge_view.py:232 src/widgets/knowledge_view.py:1202
-msgid "Create Embeddings"
-msgstr "Створити векторні подання"
-
-#: src/widgets/knowledge_view.py:240
-msgid "Plain"
-msgstr "Без префіксів"
-
-#: src/widgets/knowledge_view.py:240
-msgid "EmbeddingGemma retrieval"
-msgstr "Пошук EmbeddingGemma"
-
-#: src/widgets/knowledge_view.py:240
-msgid "Nomic retrieval"
-msgstr "Пошук Nomic"
-
-#: src/widgets/knowledge_view.py:240
-msgid "Qwen3 retrieval"
-msgstr "Пошук Qwen3"
-
-#: src/widgets/knowledge_view.py:240
-msgid "Custom prefixes"
-msgstr "Власні префікси"
-
-#: src/widgets/knowledge_view.py:241
-msgid "Advanced Embedding Settings"
-msgstr "Розширені налаштування векторних подань"
-
-#: src/widgets/knowledge_view.py:242
-msgid "Embedding format"
-msgstr "Формат векторних подань"
-
-#: src/widgets/knowledge_view.py:245
-msgid "Document prefix"
-msgstr "Префікс документа"
-
-#: src/widgets/knowledge_view.py:246
-msgid "Query prefix"
-msgstr "Префікс запиту"
-
-#: src/widgets/knowledge_view.py:252
-msgid "Dimensions"
-msgstr "Розмірність"
-
-#: src/widgets/knowledge_view.py:252
-msgid "Chunk size (characters)"
-msgstr "Розмір фрагмента (символи)"
-
-#: src/widgets/knowledge_view.py:253
-msgid "Overlap (characters)"
-msgstr "Перекриття (символи)"
-
-#: src/widgets/knowledge_view.py:257
-msgid "Create"
-msgstr "Створити"
-
-#: src/widgets/knowledge_view.py:297
-msgid "Select an embedding model."
-msgstr "Оберіть модель векторних подань."
-
-#: src/widgets/knowledge_view.py:299
-msgid "The host did not provide a model digest."
-msgstr "Сервер не надав контрольної суми моделі."
-
-#: src/widgets/knowledge_view.py:305
-msgid "Overlap must be smaller than the chunk size."
-msgstr "Перекриття має бути меншим за розмір фрагмента."
-
-#: src/widgets/knowledge_view.py:311
-msgid ""
-"An embedding model makes documents searchable. It can differ from the model used for "
-"chat."
-msgstr ""
-"Модель векторних подань робить документи доступними для пошуку. Вона може "
-"відрізнятися від моделі для чату."
-
-#: src/widgets/knowledge_view.py:312
-msgid "Copy Collection with New Settings"
-msgstr "Копіювати колекцію з новими налаштуваннями"
-
-#: src/widgets/knowledge_view.py:312
-msgid "Create Collection"
-msgstr "Створити колекцію"
-
-#: src/widgets/knowledge_view.py:313 src/widgets/knowledge_view.py:316
-msgid "Collection name"
-msgstr "Назва колекції"
-
-#: src/widgets/knowledge_view.py:314
-#, python-brace-format
-msgid "{0} (copy)"
-msgstr "{0} (копія)"
-
-#: src/widgets/knowledge_view.py:343
-msgid "Destination collection"
-msgstr "Колекція призначення"
-
-#: src/widgets/knowledge_view.py:344 src/widgets/knowledge_view.py:852
-msgid "New Collection…"
-msgstr "Нова колекція…"
-
-#: src/widgets/knowledge_view.py:351
-msgid "Choose a collection"
-msgstr "Обрати колекцію"
-
-#: src/widgets/knowledge_view.py:362
-msgid "Choose a destination collection, or create a new one."
-msgstr "Оберіть колекцію призначення або створіть нову."
-
-#: src/widgets/knowledge_view.py:372
-msgid "Add Existing Documents"
-msgstr "Додати наявні документи"
-
-#: src/widgets/knowledge_view.py:377 src/widgets/knowledge_view.py:859
-#: src/widgets/knowledge_view.py:956
-msgid "Search documents"
-msgstr "Шукати документи"
-
-#: src/widgets/knowledge_view.py:382 src/widgets/knowledge_view.py:1237
-msgid "Add"
-msgstr "Додати"
-
-#: src/widgets/knowledge_view.py:397
-msgid "All library documents are already in this collection."
-msgstr "Усі документи бібліотеки вже є в цій колекції."
-
-#: src/widgets/knowledge_view.py:415
-#, python-brace-format
-msgid "Sources used ({0})"
-msgstr "Використані джерела ({0})"
-
-#: src/widgets/knowledge_view.py:418
-#, python-brace-format
-msgid "Search query: {0}"
-msgstr "Пошуковий запит: {0}"
-
-#: src/widgets/knowledge_view.py:422
-msgid "Cosine similarity · Higher is closer"
-msgstr "Косинусна подібність · Більше — ближче"
-
-#: src/widgets/knowledge_view.py:423
-msgid "Euclidean distance (L2) · Lower is closer"
-msgstr "Евклідова відстань (L2) · Менше — ближче"
-
-#: src/widgets/knowledge_view.py:424
-msgid "Manhattan distance (L1) · Lower is closer"
-msgstr "Мангеттенська відстань (L1) · Менше — ближче"
-
-#: src/widgets/knowledge_view.py:425
-msgid "Unknown similarity measure"
-msgstr "Невідома міра подібності"
-
-#: src/widgets/knowledge_view.py:427 src/widgets/knowledge_view.py:1198
-#: src/widgets/url_import.py:334
-#, python-brace-format
-msgid "Collections: {0}"
-msgstr "Колекції: {0}"
-
-#: src/widgets/knowledge_view.py:430
-#, python-brace-format
-msgid "Similarity: {0:.4f}"
-msgstr "Подібність: {0:.4f}"
-
-#: src/widgets/knowledge_view.py:430
-#, python-brace-format
-msgid "Distance: {0:.4f}"
-msgstr "Відстань: {0:.4f}"
-
-#: src/widgets/knowledge_view.py:433
-#, python-brace-format
-msgid "Pages: {0}"
-msgstr "Сторінки: {0}"
-
-#: src/widgets/knowledge_view.py:438 src/widgets/knowledge_view.py:1193
-msgid "Open Source URL"
-msgstr "Відкрити URL-адресу джерела"
-
-#: src/widgets/knowledge_view.py:440 src/widgets/knowledge_view.py:1195
-#, python-brace-format
-msgid "Fetched: {0}"
-msgstr "Отримано: {0}"
-
-#: src/widgets/knowledge_view.py:441
-msgid "Shortened to fit the source budget."
-msgstr "Скорочено, щоб укластися в ліміт обсягу джерел."
-
-#: src/widgets/knowledge_view.py:444
-msgid "Scores compare embeddings; they are not confidence estimates."
-msgstr "Оцінки порівнюють векторні подання; вони не є оцінками впевненості."
-
-#: src/widgets/knowledge_view.py:449
-msgid "Knowledge Sources"
-msgstr "Джерела знань"
-
-#: src/widgets/knowledge_view.py:449 src/widgets/knowledge_view.py:499
-#: src/widgets/knowledge_view.py:502
-msgid "Test Search"
-msgstr "Випробувати пошук"
-
-#: src/widgets/knowledge_view.py:456 src/widgets/knowledge_view.py:956
-msgid "Search collections"
-msgstr "Шукати колекції"
-
-#: src/widgets/knowledge_view.py:461
-msgid "Search Settings"
-msgstr "Налаштування пошуку"
-
-#: src/widgets/knowledge_view.py:464
-msgid "Embedding configuration (from selected collections)"
-msgstr "Конфігурація векторних подань (із вибраних колекцій)"
-
-#: src/widgets/knowledge_view.py:474
-msgid ""
-"The query must use the same embedding configuration as the selected collections. A "
-"compatible server can be chosen here."
-msgstr ""
-"Запит має використовувати ту саму конфігурацію векторних подань, що й вибрані "
-"колекції. Тут можна обрати сумісний сервер."
-
-#: src/widgets/knowledge_view.py:476
-msgid ""
-"This chat has older individual sources. Applying a collection selection replaces "
-"them. Closing this dialog keeps them unchanged."
-msgstr ""
-"Цей чат має старі окремі джерела. Застосування вибору колекцій замінить їх. Якщо "
-"закрити це вікно, вони залишаться без змін."
-
-#: src/widgets/knowledge_view.py:481
-msgid "Maximum passages"
-msgstr "Максимальна кількість уривків"
-
-#: src/widgets/knowledge_view.py:481
-msgid "Source budget (characters)"
-msgstr "Ліміт обсягу джерел (символи)"
-
-#: src/widgets/knowledge_view.py:484
-msgid "Similarity measure"
-msgstr "Міра подібності"
-
-#: src/widgets/knowledge_view.py:485
-msgid "Cosine similarity"
-msgstr "Косинусна подібність"
-
-#: src/widgets/knowledge_view.py:485
-msgid "Euclidean distance (L2)"
-msgstr "Евклідова відстань (L2)"
-
-#: src/widgets/knowledge_view.py:485
-msgid "Manhattan distance (L1)"
-msgstr "Мангеттенська відстань (L1)"
-
-#: src/widgets/knowledge_view.py:500
-msgid "Enter a search query"
-msgstr "Введіть пошуковий запит"
-
-#: src/widgets/knowledge_view.py:554
-msgid "Minimum cosine similarity"
-msgstr "Мінімальна косинусна подібність"
-
-#: src/widgets/knowledge_view.py:554
-msgid "Maximum distance"
-msgstr "Максимальна відстань"
-
-#: src/widgets/knowledge_view.py:555
-msgid "No minimum"
-msgstr "Без мінімуму"
-
-#: src/widgets/knowledge_view.py:555
-msgid "No maximum"
-msgstr "Без максимуму"
-
-#: src/widgets/knowledge_view.py:560
-msgid "Higher is closer (−1 to 1). This is the default for semantic search."
-msgstr "Більше — ближче (від −1 до 1). Типовий варіант для семантичного пошуку."
-
-#: src/widgets/knowledge_view.py:561
-msgid ""
-"Lower is closer. With normalized embeddings, Euclidean and cosine usually rank "
-"results alike."
-msgstr ""
-"Менше — ближче. Для нормалізованих векторних подань евклідова відстань і косинусна "
-"подібність зазвичай упорядковують результати однаково."
-
-#: src/widgets/knowledge_view.py:562
-msgid ""
-"Lower is closer. Adds absolute differences between vector components and can rank "
-"results differently from cosine."
-msgstr ""
-"Менше — ближче. Додає абсолютні різниці між компонентами векторів і може "
-"впорядковувати результати інакше, ніж косинусна подібність."
-
-#: src/widgets/knowledge_view.py:570 src/widgets/knowledge_view.py:855
-#: src/widgets/knowledge_view.py:949
+#: src/widgets/knowledge_view.py:43 src/widgets/knowledge_view.py:146
+#: src/widgets/source_views.py:175
 msgid "Collections"
 msgstr "Колекції"
 
-#: src/widgets/knowledge_view.py:571
-msgid ""
-"Choose collections to search. New documents added to them are included automatically."
-" All documents must be ready."
-msgstr ""
-"Оберіть колекції для пошуку. Нові документи, додані до них, включаються автоматично. "
-"Усі документи мають бути готовими."
-
-#: src/widgets/knowledge_view.py:575
-msgid "Some selected collections were deleted. Choose sources again."
-msgstr "Деякі вибрані колекції видалено. Оберіть джерела знову."
-
-#: src/widgets/knowledge_view.py:576
-msgid "Clear missing collections"
-msgstr "Прибрати відсутні колекції"
-
-#: src/widgets/knowledge_view.py:581 src/widgets/knowledge_view.py:626
-#, python-brace-format
-msgid "{0} · {1}/{2} documents ready"
-msgstr "{0} · Готові документи: {1}/{2}"
-
-#: src/widgets/knowledge_view.py:583
-#, python-brace-format
-msgid "Different embedding configuration: {0}"
-msgstr "Інша конфігурація векторних подань: {0}"
-
-#: src/widgets/knowledge_view.py:590
-msgid "No matching collections"
-msgstr "Немає відповідних колекцій"
-
-#: src/widgets/knowledge_view.py:592
-msgid "Create a collection and add text, files, or URLs in the Knowledge Library."
-msgstr "Створіть колекцію та додайте текст, файли або URL-адреси в бібліотеці знань."
-
-#: src/widgets/knowledge_view.py:593
-msgid "Open Knowledge Library"
-msgstr "Відкрити бібліотеку знань"
-
-#: src/widgets/knowledge_view.py:628
-msgid ""
-"Uses different embedding settings. Clear the current selection to choose this "
-"collection."
-msgstr ""
-"Використовує інші налаштування векторних подань. Очистьте поточний вибір, щоб обрати "
-"цю колекцію."
-
-#: src/widgets/knowledge_view.py:639
-msgid "Select at least one collection. Create collections in Knowledge first if needed."
-msgstr ""
-"Оберіть принаймні одну колекцію. За потреби спочатку створіть колекції в розділі "
-"«Знання»."
-
-#: src/widgets/knowledge_view.py:644
-msgid "This model digest does not match the selected embedding configuration."
-msgstr "Контрольна сума цієї моделі не відповідає вибраній конфігурації векторних подань."
-
-#: src/widgets/knowledge_view.py:679
-msgid "Document Chunks"
-msgstr "Фрагменти документа"
-
-#: src/widgets/knowledge_view.py:688
-msgid "Select all"
-msgstr "Вибрати все"
-
-#: src/widgets/knowledge_view.py:689
-msgid "Select none"
-msgstr "Зняти вибір"
-
-#: src/widgets/knowledge_view.py:693
-msgid "Load more chunks"
-msgstr "Завантажити більше фрагментів"
-
-#: src/widgets/knowledge_view.py:730
-#, python-brace-format
-msgid "Chunk {0}"
-msgstr "Фрагмент {0}"
-
-#: src/widgets/knowledge_view.py:736
-#, python-brace-format
-msgid "Characters {0}–{1}"
-msgstr "Символи {0}–{1}"
-
-#: src/widgets/knowledge_view.py:739
-msgid "Inspect vector"
-msgstr "Переглянути вектор"
-
-#: src/widgets/knowledge_view.py:753
-msgid "This vector was deleted."
-msgstr "Цей вектор видалено."
-
-#: src/widgets/knowledge_view.py:756
-msgid "Embedding Vector"
-msgstr "Векторне подання"
-
-#: src/widgets/knowledge_view.py:756
-msgid "Stored normalized vector. Changes are not saved."
-msgstr "Збережений нормалізований вектор. Зміни не зберігаються."
-
-#: src/widgets/knowledge_view.py:769
-msgid "Use Knowledge"
-msgstr "Використовувати знання"
-
-#: src/widgets/knowledge_view.py:770
-msgid "Choose sources…"
-msgstr "Обрати джерела…"
-
-#: src/widgets/knowledge_view.py:774
-msgid "Search query override for the next turn (optional)"
-msgstr "Інший пошуковий запит для наступного повідомлення (необов’язково)"
-
-#: src/widgets/knowledge_view.py:775
-msgid "Use a different search query for the next message"
-msgstr "Використати інший пошуковий запит для наступного повідомлення"
-
-#: src/widgets/knowledge_view.py:776
-msgid "Search Query Override"
-msgstr "Заміна пошукового запиту"
-
-#: src/widgets/knowledge_view.py:795
-msgid "Choose collections to search."
-msgstr "Оберіть колекції для пошуку."
-
-#: src/widgets/knowledge_view.py:797
-#, python-brace-format
-msgid "Older individual sources: {0}. Choose collections to replace them."
-msgstr "Старі окремі джерела: {0}. Оберіть колекції, щоб замінити їх."
-
-#: src/widgets/knowledge_view.py:799
-#, python-brace-format
-msgid "{0}: {1}/{2} ready"
-msgstr "{0}: готово {1}/{2}"
-
-#: src/widgets/knowledge_view.py:855 src/widgets/knowledge_view.py:949
+#: src/widgets/knowledge_view.py:43 src/widgets/knowledge_view.py:146
 msgid "All Documents"
 msgstr "Усі документи"
 
-#: src/widgets/knowledge_view.py:855 src/widgets/knowledge_view.py:949
+#: src/widgets/knowledge_view.py:43 src/widgets/knowledge_view.py:146
 msgid "Ungrouped Documents"
 msgstr "Документи поза колекціями"
 
-#: src/widgets/knowledge_view.py:857
+#: src/widgets/knowledge_view.py:45
 msgid "Library"
 msgstr "Бібліотека"
 
-#: src/widgets/knowledge_view.py:864 src/widgets/knowledge_view.py:908
-#: src/widgets/knowledge_view.py:1031
+#: src/widgets/knowledge_view.py:58 src/widgets/knowledge_view.py:102
+#: src/widgets/knowledge_view.py:252
 msgid "Knowledge Library"
 msgstr "Бібліотека знань"
 
-#: src/widgets/knowledge_view.py:870
+#: src/widgets/knowledge_view.py:64
 msgid "Document"
 msgstr "Документ"
 
-#: src/widgets/knowledge_view.py:879
+#: src/widgets/knowledge_view.py:73
 msgid "Background Tasks"
 msgstr "Фонові завдання"
 
-#: src/widgets/knowledge_view.py:963 src/widgets/knowledge_view.py:1042
+#: src/widgets/knowledge_view.py:160 src/widgets/source_views.py:61
+msgid "Search collections"
+msgstr "Шукати колекції"
+
+#: src/widgets/knowledge_view.py:171 src/widgets/knowledge_view.py:263
 #, python-brace-format
 msgid "{0}/{1} documents ready"
 msgstr "Готові документи: {0}/{1}"
 
-#: src/widgets/knowledge_view.py:973
+#: src/widgets/knowledge_view.py:187
 #, python-brace-format
 msgid "{0} character"
 msgid_plural "{0} characters"
@@ -2371,23 +2245,23 @@ msgstr[0] "{0} символ"
 msgstr[1] "{0} символи"
 msgstr[2] "{0} символів"
 
-#: src/widgets/knowledge_view.py:979
+#: src/widgets/knowledge_view.py:197
 msgid "No matches"
 msgstr "Збігів немає"
 
-#: src/widgets/knowledge_view.py:980
+#: src/widgets/knowledge_view.py:198
 msgid "Create a collection to organize text, files, and URLs."
 msgstr "Створіть колекцію для впорядкування тексту, файлів і URL-адрес."
 
-#: src/widgets/knowledge_view.py:981
+#: src/widgets/knowledge_view.py:199
 msgid "Add text, files, or URLs to a collection."
 msgstr "Додайте текст, файли або URL-адреси до колекції."
 
-#: src/widgets/knowledge_view.py:1033
+#: src/widgets/knowledge_view.py:254
 msgid "Knowledge Collections"
 msgstr "Колекції знань"
 
-#: src/widgets/knowledge_view.py:1034
+#: src/widgets/knowledge_view.py:255
 msgid ""
 "Group documents into collections, then select a collection in chat to ask questions "
 "about its content."
@@ -2395,17 +2269,17 @@ msgstr ""
 "Об’єднайте документи в колекції, а потім оберіть колекцію в чаті, щоб ставити "
 "запитання про її вміст."
 
-#: src/widgets/knowledge_view.py:1035
+#: src/widgets/knowledge_view.py:256
 msgid "Create Collection…"
 msgstr "Створити колекцію…"
 
-#: src/widgets/knowledge_view.py:1038
+#: src/widgets/knowledge_view.py:259
 msgid "Select a document to inspect it. New imports always ask for a destination collection."
 msgstr ""
 "Оберіть документ для перегляду. Під час нового імпорту завжди запитується колекція "
 "призначення."
 
-#: src/widgets/knowledge_view.py:1043
+#: src/widgets/knowledge_view.py:264
 msgid ""
 "Add text, files, or URLs to this collection. Gnollama prepares the documents "
 "automatically so chats can search them."
@@ -2413,72 +2287,72 @@ msgstr ""
 "Додайте текст, файли або URL-адреси до цієї колекції. Gnollama автоматично підготує "
 "документи для пошуку в чатах."
 
-#: src/widgets/knowledge_view.py:1045
+#: src/widgets/knowledge_view.py:266
 msgid "Add Existing Documents…"
 msgstr "Додати наявні документи…"
 
-#: src/widgets/knowledge_view.py:1047
+#: src/widgets/knowledge_view.py:268
 msgid "Use in New Chat"
 msgstr "Використати в новому чаті"
 
-#: src/widgets/knowledge_view.py:1051
+#: src/widgets/knowledge_view.py:272
 msgid "Prepare Documents"
 msgstr "Підготувати документи"
 
-#: src/widgets/knowledge_view.py:1052
+#: src/widgets/knowledge_view.py:273
 msgid "Embedding Details"
 msgstr "Відомості про векторні подання"
 
-#: src/widgets/knowledge_view.py:1054
+#: src/widgets/knowledge_view.py:275
 #, python-brace-format
 msgid "Chunk size: {0} characters · Overlap: {1} characters"
 msgstr "Розмір фрагмента в символах: {0} · Перекриття в символах: {1}"
 
-#: src/widgets/knowledge_view.py:1059 src/widgets/knowledge_view.py:1203
+#: src/widgets/knowledge_view.py:280 src/widgets/knowledge_view.py:424
 msgid "Rename"
 msgstr "Перейменувати"
 
-#: src/widgets/knowledge_view.py:1060
+#: src/widgets/knowledge_view.py:281
 msgid "Copy with New Settings"
 msgstr "Копіювати з новими налаштуваннями"
 
-#: src/widgets/knowledge_view.py:1061 src/widgets/knowledge_view.py:1132
+#: src/widgets/knowledge_view.py:282 src/widgets/knowledge_view.py:353
 msgid "Change Embedding Model"
 msgstr "Змінити модель векторних подань"
 
-#: src/widgets/knowledge_view.py:1062 src/widgets/knowledge_view.py:1122
+#: src/widgets/knowledge_view.py:283 src/widgets/knowledge_view.py:343
 msgid "Delete Collection"
 msgstr "Видалити колекцію"
 
-#: src/widgets/knowledge_view.py:1067
+#: src/widgets/knowledge_view.py:288
 msgid "Collection Options"
 msgstr "Параметри колекції"
 
-#: src/widgets/knowledge_view.py:1080
+#: src/widgets/knowledge_view.py:301
 msgid "Remove from Collection"
 msgstr "Вилучити з колекції"
 
-#: src/widgets/knowledge_view.py:1088
+#: src/widgets/knowledge_view.py:309
 msgid "Add Text…"
 msgstr "Додати текст…"
 
-#: src/widgets/knowledge_view.py:1088
+#: src/widgets/knowledge_view.py:309
 msgid "Add Files…"
 msgstr "Додати файли…"
 
-#: src/widgets/knowledge_view.py:1089
+#: src/widgets/knowledge_view.py:310
 msgid "Add URLs…"
 msgstr "Додати URL-адреси…"
 
-#: src/widgets/knowledge_view.py:1108
+#: src/widgets/knowledge_view.py:329
 msgid "Rename Collection"
 msgstr "Перейменувати колекцію"
 
-#: src/widgets/knowledge_view.py:1120
+#: src/widgets/knowledge_view.py:341
 msgid "Delete Collection?"
 msgstr "Видалити колекцію?"
 
-#: src/widgets/knowledge_view.py:1120
+#: src/widgets/knowledge_view.py:341
 #, python-brace-format
 msgid ""
 "Delete “{0}”? Its documents and embeddings stay in the library. Chats selecting this "
@@ -2488,7 +2362,7 @@ msgstr ""
 "використовують цю колекцію, потребуватимуть нових джерел; збережені відповіді "
 "збережуть свої початкові уривки."
 
-#: src/widgets/knowledge_view.py:1135
+#: src/widgets/knowledge_view.py:356
 msgid ""
 "Choose a host and embedding model matching the collection’s original model digest. "
 "Embedding settings stay the same."
@@ -2496,11 +2370,11 @@ msgstr ""
 "Оберіть сервер і модель векторних подань із початковою контрольною сумою моделі "
 "колекції. Налаштування векторних подань залишаться незмінними."
 
-#: src/widgets/knowledge_view.py:1163
+#: src/widgets/knowledge_view.py:384
 msgid "Original model available"
 msgstr "Початкова модель доступна"
 
-#: src/widgets/knowledge_view.py:1164
+#: src/widgets/knowledge_view.py:385
 msgid ""
 "Unavailable — the original model changed or was removed. Choose a compatible server "
 "for searches."
@@ -2508,74 +2382,89 @@ msgstr ""
 "Недоступно — початкова модель змінилася або була видалена. Оберіть сумісний сервер "
 "для пошуку."
 
-#: src/widgets/knowledge_view.py:1166
+#: src/widgets/knowledge_view.py:387
 #, python-brace-format
 msgid "Unavailable: {0}"
 msgstr "Недоступно: {0}"
 
-#: src/widgets/knowledge_view.py:1187
+#: src/widgets/knowledge_view.py:408
 msgid "Select a document to inspect its text and embeddings."
 msgstr "Оберіть документ, щоб переглянути його текст і векторні подання."
 
-#: src/widgets/knowledge_view.py:1196
+#: src/widgets/knowledge_view.py:414 src/widgets/source_views.py:43
+msgid "Open Source URL"
+msgstr "Відкрити URL-адресу джерела"
+
+#: src/widgets/knowledge_view.py:416 src/widgets/source_views.py:45
+#, python-brace-format
+msgid "Fetched: {0}"
+msgstr "Отримано: {0}"
+
+#: src/widgets/knowledge_view.py:417
 msgid "Fetch Again…"
 msgstr "Отримати знову…"
 
-#: src/widgets/knowledge_view.py:1200
+#: src/widgets/knowledge_view.py:419 src/widgets/source_views.py:32
+#: src/widgets/url_import.py:334
+#, python-brace-format
+msgid "Collections: {0}"
+msgstr "Колекції: {0}"
+
+#: src/widgets/knowledge_view.py:421
 msgid "Back to Collection"
 msgstr "Назад до колекції"
 
-#: src/widgets/knowledge_view.py:1201
+#: src/widgets/knowledge_view.py:422
 msgid "Preview Text"
 msgstr "Переглянути текст"
 
-#: src/widgets/knowledge_view.py:1204
+#: src/widgets/knowledge_view.py:425
 msgid "Delete Document"
 msgstr "Видалити документ"
 
-#: src/widgets/knowledge_view.py:1205
+#: src/widgets/knowledge_view.py:426
 msgid "Add to Collection…"
 msgstr "Додати до колекції…"
 
-#: src/widgets/knowledge_view.py:1210
+#: src/widgets/knowledge_view.py:431
 msgid "Checking model availability…"
 msgstr "Перевірка доступності моделі…"
 
-#: src/widgets/knowledge_view.py:1213
+#: src/widgets/knowledge_view.py:434
 #, python-brace-format
 msgid "Chunks: {0}"
 msgstr "Фрагменти: {0}"
 
-#: src/widgets/knowledge_view.py:1216
+#: src/widgets/knowledge_view.py:437
 msgid "Inspect Chunks"
 msgstr "Переглянути фрагменти"
 
-#: src/widgets/knowledge_view.py:1217
+#: src/widgets/knowledge_view.py:438
 msgid "Check Model"
 msgstr "Перевірити модель"
 
-#: src/widgets/knowledge_view.py:1218
+#: src/widgets/knowledge_view.py:439
 msgid "Delete Index"
 msgstr "Видалити індекс"
 
-#: src/widgets/knowledge_view.py:1245
+#: src/widgets/knowledge_view.py:466
 #, python-brace-format
 msgid "Background Tasks · {0} running"
 msgstr "Фонові завдання · Виконується: {0}"
 
-#: src/widgets/knowledge_view.py:1245
+#: src/widgets/knowledge_view.py:466
 msgid "Recent Background Tasks"
 msgstr "Нещодавні фонові завдання"
 
-#: src/widgets/knowledge_view.py:1252
+#: src/widgets/knowledge_view.py:473
 msgid "Details"
 msgstr "Подробиці"
 
-#: src/widgets/knowledge_view.py:1260
+#: src/widgets/knowledge_view.py:481
 msgid "Stop Shared Embedding Build?"
 msgstr "Зупинити спільну побудову векторних подань?"
 
-#: src/widgets/knowledge_view.py:1261
+#: src/widgets/knowledge_view.py:482
 #, python-brace-format
 msgid ""
 "These collections use this build: {0}. They will need a retry before chat search can "
@@ -2584,53 +2473,53 @@ msgstr ""
 "Ці колекції використовують результати цієї побудови: {0}. Потрібно буде повторити її,"
 " перш ніж пошук у чаті зможе їх використовувати."
 
-#: src/widgets/knowledge_view.py:1263
+#: src/widgets/knowledge_view.py:484
 msgid "Keep Building"
 msgstr "Продовжити побудову"
 
-#: src/widgets/knowledge_view.py:1264
+#: src/widgets/knowledge_view.py:485
 msgid "Stop Build"
 msgstr "Зупинити побудову"
 
-#: src/widgets/knowledge_view.py:1271
+#: src/widgets/knowledge_view.py:492
 msgid "Saved source text. Use Fetch Again to update this URL document."
 msgstr ""
 "Збережений вихідний текст. Скористайтеся «Отримати знову», щоб оновити цей документ "
 "із URL-адреси."
 
-#: src/widgets/knowledge_view.py:1271
+#: src/widgets/knowledge_view.py:492
 msgid "Saved source text. Import revised content as a new document."
 msgstr "Збережений вихідний текст. Імпортуйте змінений вміст як новий документ."
 
-#: src/widgets/knowledge_view.py:1292
+#: src/widgets/knowledge_view.py:513
 msgid "This Text Is Already Saved"
 msgstr "Цей текст уже збережено"
 
-#: src/widgets/knowledge_view.py:1294
+#: src/widgets/knowledge_view.py:515
 msgid "Open Existing"
 msgstr "Відкрити наявний"
 
-#: src/widgets/knowledge_view.py:1296
+#: src/widgets/knowledge_view.py:517
 msgid "Add Existing to Collection"
 msgstr "Додати наявний до колекції"
 
-#: src/widgets/knowledge_view.py:1334
+#: src/widgets/knowledge_view.py:555
 msgid "Rename Document"
 msgstr "Перейменувати документ"
 
-#: src/widgets/knowledge_view.py:1348
+#: src/widgets/knowledge_view.py:569
 msgid "Cancel this document’s indexing job before deleting it."
 msgstr "Скасуйте завдання індексування цього документа, перш ніж видаляти його."
 
-#: src/widgets/knowledge_view.py:1350
+#: src/widgets/knowledge_view.py:571
 msgid "Delete Document?"
 msgstr "Видалити документ?"
 
-#: src/widgets/knowledge_view.py:1350
+#: src/widgets/knowledge_view.py:571
 msgid "Delete Embedding Index?"
 msgstr "Видалити векторний індекс?"
 
-#: src/widgets/knowledge_view.py:1351
+#: src/widgets/knowledge_view.py:572
 msgid ""
 "Chats selecting this data will need new sources. Passages already saved with answers "
 "remain in chat history."
@@ -2638,44 +2527,44 @@ msgstr ""
 "Чати, що використовують ці дані, потребуватимуть нових джерел. Уривки, уже збережені "
 "з відповідями, залишаться в історії чату."
 
-#: src/widgets/knowledge_view.py:1352
+#: src/widgets/knowledge_view.py:573
 msgid "The saved source text and all its indexes will be deleted."
 msgstr "Збережений вихідний текст і всі його індекси буде видалено."
 
-#: src/widgets/knowledge_view.py:1352
+#: src/widgets/knowledge_view.py:573
 msgid "The saved source text will be kept."
 msgstr "Збережений вихідний текст залишиться."
 
-#: src/widgets/knowledge_view.py:1355
+#: src/widgets/knowledge_view.py:576
 #, python-brace-format
 msgid "Affected collections: {0}."
 msgstr "Пов’язані колекції: {0}."
 
-#: src/widgets/knowledge_view.py:1356
+#: src/widgets/knowledge_view.py:577
 msgid "This document will be removed from their membership."
 msgstr "Цей документ буде вилучено з цих колекцій."
 
-#: src/widgets/knowledge_view.py:1357
+#: src/widgets/knowledge_view.py:578
 msgid "Their documents will need embeddings rebuilt."
 msgstr "Векторні подання їхніх документів потрібно буде перебудувати."
 
-#: src/widgets/knowledge_view.py:1376
+#: src/widgets/knowledge_view.py:597
 msgid "Embedding Model Availability"
 msgstr "Доступність моделі векторних подань"
 
-#: src/widgets/knowledge_view.py:1377
+#: src/widgets/knowledge_view.py:598
 msgid "Checking…"
 msgstr "Перевірка…"
 
-#: src/widgets/knowledge_view.py:1380
+#: src/widgets/knowledge_view.py:601
 msgid "The original model is available on this host."
 msgstr "Початкова модель доступна на цьому сервері."
 
-#: src/widgets/message_list.py:18
+#: src/widgets/message_list.py:21
 msgid "Start a Conversation"
 msgstr "Почніть розмову"
 
-#: src/widgets/message_list.py:19
+#: src/widgets/message_list.py:22
 msgid ""
 "Choose a model and enter a message. Select knowledge collections to ask questions "
 "about your documents."
@@ -2683,238 +2572,238 @@ msgstr ""
 "Оберіть модель і введіть повідомлення. Оберіть колекції знань, щоб ставити запитання "
 "про свої документи."
 
-#: src/widgets/options_panel.py:42
+#: src/widgets/message_list.py:27
+msgid "Jump to latest"
+msgstr "До найновішого повідомлення"
+
+#: src/widgets/options_panel.py:43
 msgid "Text"
 msgstr "Текст"
 
-#: src/widgets/options_panel.py:42
+#: src/widgets/options_panel.py:43
 msgid "JSON"
 msgstr "JSON"
 
-#: src/widgets/options_panel.py:44 src/widgets/options_panel.py:83
+#: src/widgets/options_panel.py:45 src/widgets/options_panel.py:117
 msgid "Server default"
 msgstr "Типове для сервера"
 
-#: src/widgets/options_panel.py:44
+#: src/widgets/options_panel.py:45
 msgid "Unload after reply"
 msgstr "Вивантажити після відповіді"
 
-#: src/widgets/options_panel.py:44
+#: src/widgets/options_panel.py:45
 msgid "Five minutes"
 msgstr "П’ять хвилин"
 
-#: src/widgets/options_panel.py:45
+#: src/widgets/options_panel.py:46
 msgid "Thirty minutes"
 msgstr "Тридцять хвилин"
 
-#: src/widgets/options_panel.py:45
+#: src/widgets/options_panel.py:46
 msgid "Indefinitely"
 msgstr "Необмежено"
 
-#: src/widgets/options_panel.py:45
+#: src/widgets/options_panel.py:46
 msgid "Custom seconds"
 msgstr "Власна тривалість у секундах"
 
-#: src/widgets/options_panel.py:53
+#: src/widgets/options_panel.py:54
 msgid "Ollama Cloud uses text output and manages model retention automatically."
 msgstr ""
 "Ollama Cloud використовує текстовий вивід і автоматично керує утриманням моделей у "
 "пам’яті."
 
-#: src/widgets/options_panel.py:74
+#: src/widgets/options_panel.py:105
 msgid "Server"
 msgstr "Сервер"
 
-#: src/widgets/options_panel.py:100
+#: src/widgets/options_panel.py:134
 msgid "System Instructions"
 msgstr "Системні вказівки"
 
-#: src/widgets/options_panel.py:101
+#: src/widgets/options_panel.py:135
 msgid "System prompt"
 msgstr "Системний запит"
 
-#: src/widgets/options_panel.py:101
+#: src/widgets/options_panel.py:135
 msgid "Optional instructions applied to this conversation."
 msgstr "Необов’язкові вказівки для цієї розмови."
 
-#: src/widgets/options_panel.py:102
+#: src/widgets/options_panel.py:136
 msgid "Optional instructions"
 msgstr "Необов’язкові вказівки"
 
-#: src/widgets/options_panel.py:103
+#: src/widgets/options_panel.py:137
 msgid "Generation Limits"
 msgstr "Обмеження генерування"
 
-#: src/widgets/options_panel.py:103
+#: src/widgets/options_panel.py:137
 msgid "Blank fields use the server’s defaults."
 msgstr "Порожні поля використовують типові значення сервера."
 
-#: src/widgets/options_panel.py:104
+#: src/widgets/options_panel.py:138
 msgid "Context size (tokens)"
 msgstr "Розмір контексту (токени)"
 
-#: src/widgets/options_panel.py:104
+#: src/widgets/options_panel.py:138
 msgid "Maximum context available to the model; larger values need more memory."
 msgstr "Максимальний контекст, доступний моделі; більші значення потребують більше пам’яті."
 
-#: src/widgets/options_panel.py:105
+#: src/widgets/options_panel.py:139
 msgid "Maximum output tokens"
 msgstr "Максимальна кількість токенів виведення"
 
-#: src/widgets/options_panel.py:105
+#: src/widgets/options_panel.py:139
 msgid "Use −1 for unlimited output or −2 to fill the context."
 msgstr "Використовуйте −1 для необмеженого виведення або −2 для заповнення контексту."
 
-#: src/widgets/options_panel.py:106
+#: src/widgets/options_panel.py:140
 msgid "Stop sequences"
 msgstr "Послідовності зупинки"
 
-#: src/widgets/options_panel.py:106
+#: src/widgets/options_panel.py:140
 msgid "Separate sequences with commas. Generation stops when one is produced."
 msgstr "Відокремлюйте послідовності комами. Генерування зупиниться, коли з’явиться одна з них."
 
-#: src/widgets/options_panel.py:107
+#: src/widgets/options_panel.py:141
 msgid "Sampling"
 msgstr "Семплювання"
 
-#: src/widgets/options_panel.py:109
+#: src/widgets/options_panel.py:143
 msgid "Temperature"
 msgstr "Температура"
 
-#: src/widgets/options_panel.py:109
+#: src/widgets/options_panel.py:143
 msgid "Higher values increase variation; zero is more predictable."
 msgstr "Більші значення збільшують різноманітність; нуль дає передбачуваніші результати."
 
-#: src/widgets/options_panel.py:110
+#: src/widgets/options_panel.py:144
 msgid "Seed"
 msgstr "Початкове число"
 
-#: src/widgets/options_panel.py:110
+#: src/widgets/options_panel.py:144
 msgid "An integer used to initialize random sampling."
 msgstr "Ціле число для ініціалізації випадкового семплювання."
 
-#: src/widgets/options_panel.py:111
+#: src/widgets/options_panel.py:145
 msgid "Top K"
 msgstr "Top K"
 
-#: src/widgets/options_panel.py:111
+#: src/widgets/options_panel.py:145
 msgid "Number of candidate tokens to consider."
 msgstr "Кількість токенів-кандидатів для розгляду."
 
-#: src/widgets/options_panel.py:112
+#: src/widgets/options_panel.py:146
 msgid "Top P"
 msgstr "Top P"
 
-#: src/widgets/options_panel.py:112
+#: src/widgets/options_panel.py:146
 msgid "Cumulative probability cutoff, between 0 and 1."
 msgstr "Поріг сукупної ймовірності, від 0 до 1."
 
-#: src/widgets/options_panel.py:113
+#: src/widgets/options_panel.py:147
 msgid "Min P"
 msgstr "Min P"
 
-#: src/widgets/options_panel.py:113
+#: src/widgets/options_panel.py:147
 msgid "Minimum relative token probability, between 0 and 1."
 msgstr "Мінімальна відносна ймовірність токена, від 0 до 1."
 
-#: src/widgets/options_panel.py:115
+#: src/widgets/options_panel.py:149
 msgid "Model Retention"
 msgstr "Утримання моделі в пам’яті"
 
-#: src/widgets/options_panel.py:120
+#: src/widgets/options_panel.py:154
 msgid "Keep model loaded"
 msgstr "Залишати модель у пам’яті"
 
-#: src/widgets/options_panel.py:124
+#: src/widgets/options_panel.py:158
 msgid "Custom duration (seconds)"
 msgstr "Власна тривалість (секунди)"
 
-#: src/widgets/options_panel.py:124 src/widgets/options_panel.py:187
+#: src/widgets/options_panel.py:158 src/widgets/options_panel.py:221
 msgid "Enter a positive whole number of seconds."
 msgstr "Введіть додатну цілу кількість секунд."
 
-#: src/widgets/options_panel.py:126
+#: src/widgets/options_panel.py:160
 msgid "Diagnostics"
 msgstr "Діагностика"
 
-#: src/widgets/options_panel.py:128
+#: src/widgets/options_panel.py:162
 msgid "Show response statistics"
 msgstr "Показувати статистику відповідей"
 
-#: src/widgets/options_panel.py:131
+#: src/widgets/options_panel.py:165
 msgid "Return token probabilities (logprobs)"
 msgstr "Повертати ймовірності токенів (logprobs)"
 
-#: src/widgets/options_panel.py:135
+#: src/widgets/options_panel.py:169
 msgid "Top logprobs"
 msgstr "Найімовірніші токени"
 
-#: src/widgets/options_panel.py:135
+#: src/widgets/options_panel.py:169
 msgid "Number of alternative token probabilities, from 0 to 20."
 msgstr "Кількість імовірностей альтернативних токенів, від 0 до 20."
 
-#: src/widgets/options_panel.py:152
+#: src/widgets/options_panel.py:186
 msgid "Chat Settings"
 msgstr "Налаштування чату"
 
-#: src/widgets/options_panel.py:155
+#: src/widgets/options_panel.py:189
 msgid "Done"
 msgstr "Готово"
 
-#: src/widgets/options_panel.py:199
+#: src/widgets/options_panel.py:233
 msgid "Top logprobs must be between 0 and 20."
 msgstr "Кількість найімовірніших токенів має бути від 0 до 20."
 
-#: src/widgets/options_panel.py:221
+#: src/widgets/options_panel.py:255
 #, python-brace-format
 msgid "Enabled tools: {0}. Results are supplied manually."
 msgstr "Увімкнені інструменти: {0}. Результати надаються вручну."
 
-#: src/widgets/options_panel.py:221
+#: src/widgets/options_panel.py:255
 msgid "Tool calling is off."
 msgstr "Виклики інструментів вимкнено."
 
-#: src/widgets/options_panel.py:224
+#: src/widgets/options_panel.py:258
 msgid "Checking tool support…"
 msgstr "Перевірка підтримки інструментів…"
 
-#: src/widgets/options_panel.py:226
+#: src/widgets/options_panel.py:260
 msgid "This model reports no tool support; you can still test the API."
 msgstr ""
 "Ця модель повідомляє про відсутність підтримки інструментів; ви все одно можете "
 "випробувати API."
 
-#: src/widgets/options_panel.py:228
+#: src/widgets/options_panel.py:262
 msgid "Tool support is unknown."
 msgstr "Підтримка інструментів невідома."
 
-#: src/widgets/options_panel.py:297
+#: src/widgets/options_panel.py:331
 msgid "No hosts configured"
 msgstr "Немає налаштованих серверів"
 
-#: src/widgets/options_panel.py:335 src/widgets/options_panel.py:337
+#: src/widgets/options_panel.py:369 src/widgets/options_panel.py:371
 msgid "Enter a valid number."
 msgstr "Введіть коректне число."
 
-#: src/widgets/options_panel.py:355
+#: src/widgets/options_panel.py:389
 msgid "Value must not be negative."
 msgstr "Значення не має бути від’ємним."
 
-#: src/widgets/options_panel.py:358
+#: src/widgets/options_panel.py:392
 msgid "Value must be between 0 and 1."
 msgstr "Значення має бути від 0 до 1."
 
-#: src/widgets/options_panel.py:360
+#: src/widgets/options_panel.py:394
 msgid "Context size must be positive."
 msgstr "Розмір контексту має бути додатним."
 
-#: src/widgets/options_panel.py:362
+#: src/widgets/options_panel.py:396
 msgid "Max tokens must be -2, -1, or a nonnegative integer."
 msgstr "Максимальна кількість токенів має бути -2, -1 або невід’ємним цілим числом."
-
-#: src/widgets/options_panel.ui:21
-msgid "Tool Calling"
-msgstr "Виклики інструментів"
 
 #: src/widgets/options_panel.ui:27
 msgid "Edit Tools…"
@@ -2935,6 +2824,284 @@ msgstr "Налаштування чату…"
 #: src/widgets/options_panel.ui:67
 msgid "Generation, Model Retention, and Diagnostics"
 msgstr "Генерування, утримання моделі в пам’яті та діагностика"
+
+#: src/widgets/source_views.py:20
+#, python-brace-format
+msgid "Sources used ({0})"
+msgstr "Використані джерела ({0})"
+
+#: src/widgets/source_views.py:23
+#, python-brace-format
+msgid "Search query: {0}"
+msgstr "Пошуковий запит: {0}"
+
+#: src/widgets/source_views.py:27
+msgid "Cosine similarity · Higher is closer"
+msgstr "Косинусна подібність · Більше — ближче"
+
+#: src/widgets/source_views.py:28
+msgid "Euclidean distance (L2) · Lower is closer"
+msgstr "Евклідова відстань (L2) · Менше — ближче"
+
+#: src/widgets/source_views.py:29
+msgid "Manhattan distance (L1) · Lower is closer"
+msgstr "Мангеттенська відстань (L1) · Менше — ближче"
+
+#: src/widgets/source_views.py:30
+msgid "Unknown similarity measure"
+msgstr "Невідома міра подібності"
+
+#: src/widgets/source_views.py:35
+#, python-brace-format
+msgid "Similarity: {0:.4f}"
+msgstr "Подібність: {0:.4f}"
+
+#: src/widgets/source_views.py:35
+#, python-brace-format
+msgid "Distance: {0:.4f}"
+msgstr "Відстань: {0:.4f}"
+
+#: src/widgets/source_views.py:38
+#, python-brace-format
+msgid "Pages: {0}"
+msgstr "Сторінки: {0}"
+
+#: src/widgets/source_views.py:46
+msgid "Shortened to fit the source budget."
+msgstr "Скорочено, щоб укластися в ліміт обсягу джерел."
+
+#: src/widgets/source_views.py:49
+msgid "Scores compare embeddings; they are not confidence estimates."
+msgstr "Оцінки порівнюють векторні подання; вони не є оцінками впевненості."
+
+#: src/widgets/source_views.py:54
+msgid "Knowledge Sources"
+msgstr "Джерела знань"
+
+#: src/widgets/source_views.py:54 src/widgets/source_views.py:104
+#: src/widgets/source_views.py:107
+msgid "Test Search"
+msgstr "Випробувати пошук"
+
+#: src/widgets/source_views.py:66
+msgid "Search Settings"
+msgstr "Налаштування пошуку"
+
+#: src/widgets/source_views.py:69
+msgid "Embedding configuration (from selected collections)"
+msgstr "Конфігурація векторних подань (із вибраних колекцій)"
+
+#: src/widgets/source_views.py:79
+msgid ""
+"The query must use the same embedding configuration as the selected collections. A "
+"compatible server can be chosen here."
+msgstr ""
+"Запит має використовувати ту саму конфігурацію векторних подань, що й вибрані "
+"колекції. Тут можна обрати сумісний сервер."
+
+#: src/widgets/source_views.py:81
+msgid ""
+"This chat has older individual sources. Applying a collection selection replaces "
+"them. Closing this dialog keeps them unchanged."
+msgstr ""
+"Цей чат має старі окремі джерела. Застосування вибору колекцій замінить їх. Якщо "
+"закрити це вікно, вони залишаться без змін."
+
+#: src/widgets/source_views.py:86
+msgid "Maximum passages"
+msgstr "Максимальна кількість уривків"
+
+#: src/widgets/source_views.py:86
+msgid "Source budget (characters)"
+msgstr "Ліміт обсягу джерел (символи)"
+
+#: src/widgets/source_views.py:89
+msgid "Similarity measure"
+msgstr "Міра подібності"
+
+#: src/widgets/source_views.py:90
+msgid "Cosine similarity"
+msgstr "Косинусна подібність"
+
+#: src/widgets/source_views.py:90
+msgid "Euclidean distance (L2)"
+msgstr "Евклідова відстань (L2)"
+
+#: src/widgets/source_views.py:90
+msgid "Manhattan distance (L1)"
+msgstr "Мангеттенська відстань (L1)"
+
+#: src/widgets/source_views.py:105
+msgid "Enter a search query"
+msgstr "Введіть пошуковий запит"
+
+#: src/widgets/source_views.py:159
+msgid "Minimum cosine similarity"
+msgstr "Мінімальна косинусна подібність"
+
+#: src/widgets/source_views.py:159
+msgid "Maximum distance"
+msgstr "Максимальна відстань"
+
+#: src/widgets/source_views.py:160
+msgid "No minimum"
+msgstr "Без мінімуму"
+
+#: src/widgets/source_views.py:160
+msgid "No maximum"
+msgstr "Без максимуму"
+
+#: src/widgets/source_views.py:165
+msgid "Higher is closer (−1 to 1). This is the default for semantic search."
+msgstr "Більше — ближче (від −1 до 1). Типовий варіант для семантичного пошуку."
+
+#: src/widgets/source_views.py:166
+msgid ""
+"Lower is closer. With normalized embeddings, Euclidean and cosine usually rank "
+"results alike."
+msgstr ""
+"Менше — ближче. Для нормалізованих векторних подань евклідова відстань і косинусна "
+"подібність зазвичай упорядковують результати однаково."
+
+#: src/widgets/source_views.py:167
+msgid ""
+"Lower is closer. Adds absolute differences between vector components and can rank "
+"results differently from cosine."
+msgstr ""
+"Менше — ближче. Додає абсолютні різниці між компонентами векторів і може "
+"впорядковувати результати інакше, ніж косинусна подібність."
+
+#: src/widgets/source_views.py:176
+msgid ""
+"Choose collections to search. New documents added to them are included automatically."
+" All documents must be ready."
+msgstr ""
+"Оберіть колекції для пошуку. Нові документи, додані до них, включаються автоматично. "
+"Усі документи мають бути готовими."
+
+#: src/widgets/source_views.py:180
+msgid "Some selected collections were deleted. Choose sources again."
+msgstr "Деякі вибрані колекції видалено. Оберіть джерела знову."
+
+#: src/widgets/source_views.py:181
+msgid "Clear missing collections"
+msgstr "Прибрати відсутні колекції"
+
+#: src/widgets/source_views.py:186 src/widgets/source_views.py:231
+#, python-brace-format
+msgid "{0} · {1}/{2} documents ready"
+msgstr "{0} · Готові документи: {1}/{2}"
+
+#: src/widgets/source_views.py:188
+#, python-brace-format
+msgid "Different embedding configuration: {0}"
+msgstr "Інша конфігурація векторних подань: {0}"
+
+#: src/widgets/source_views.py:195
+msgid "No matching collections"
+msgstr "Немає відповідних колекцій"
+
+#: src/widgets/source_views.py:197
+msgid "Create a collection and add text, files, or URLs in the Knowledge Library."
+msgstr "Створіть колекцію та додайте текст, файли або URL-адреси в бібліотеці знань."
+
+#: src/widgets/source_views.py:198
+msgid "Open Knowledge Library"
+msgstr "Відкрити бібліотеку знань"
+
+#: src/widgets/source_views.py:233
+msgid ""
+"Uses different embedding settings. Clear the current selection to choose this "
+"collection."
+msgstr ""
+"Використовує інші налаштування векторних подань. Очистьте поточний вибір, щоб обрати "
+"цю колекцію."
+
+#: src/widgets/source_views.py:244
+msgid "Select at least one collection. Create collections in Knowledge first if needed."
+msgstr ""
+"Оберіть принаймні одну колекцію. За потреби спочатку створіть колекції в розділі "
+"«Знання»."
+
+#: src/widgets/source_views.py:249
+msgid "This model digest does not match the selected embedding configuration."
+msgstr "Контрольна сума цієї моделі не відповідає вибраній конфігурації векторних подань."
+
+#: src/widgets/source_views.py:284
+msgid "Document Chunks"
+msgstr "Фрагменти документа"
+
+#: src/widgets/source_views.py:293
+msgid "Select all"
+msgstr "Вибрати все"
+
+#: src/widgets/source_views.py:294
+msgid "Select none"
+msgstr "Зняти вибір"
+
+#: src/widgets/source_views.py:298
+msgid "Load more chunks"
+msgstr "Завантажити більше фрагментів"
+
+#: src/widgets/source_views.py:344
+#, python-brace-format
+msgid "Chunk {0}"
+msgstr "Фрагмент {0}"
+
+#: src/widgets/source_views.py:350
+#, python-brace-format
+msgid "Characters {0}–{1}"
+msgstr "Символи {0}–{1}"
+
+#: src/widgets/source_views.py:353
+msgid "Inspect vector"
+msgstr "Переглянути вектор"
+
+#: src/widgets/source_views.py:369
+msgid "This vector was deleted."
+msgstr "Цей вектор видалено."
+
+#: src/widgets/source_views.py:372
+msgid "Embedding Vector"
+msgstr "Векторне подання"
+
+#: src/widgets/source_views.py:372
+msgid "Stored normalized vector. Changes are not saved."
+msgstr "Збережений нормалізований вектор. Зміни не зберігаються."
+
+#: src/widgets/source_views.py:385
+msgid "Use Knowledge"
+msgstr "Використовувати знання"
+
+#: src/widgets/source_views.py:386
+msgid "Choose sources…"
+msgstr "Обрати джерела…"
+
+#: src/widgets/source_views.py:390
+msgid "Search query override for the next turn (optional)"
+msgstr "Інший пошуковий запит для наступного повідомлення (необов’язково)"
+
+#: src/widgets/source_views.py:391
+msgid "Use a different search query for the next message"
+msgstr "Використати інший пошуковий запит для наступного повідомлення"
+
+#: src/widgets/source_views.py:392
+msgid "Search Query Override"
+msgstr "Заміна пошукового запиту"
+
+#: src/widgets/source_views.py:411
+msgid "Choose collections to search."
+msgstr "Оберіть колекції для пошуку."
+
+#: src/widgets/source_views.py:413
+#, python-brace-format
+msgid "Older individual sources: {0}. Choose collections to replace them."
+msgstr "Старі окремі джерела: {0}. Оберіть колекції, щоб замінити їх."
+
+#: src/widgets/source_views.py:415
+#, python-brace-format
+msgid "{0}: {1}/{2} ready"
+msgstr "{0}: готово {1}/{2}"
 
 #: src/widgets/tool_view.py:10
 msgid "Tool Definitions"
@@ -3171,65 +3338,78 @@ msgstr "Немає"
 msgid "Replace and Rebuild"
 msgstr "Замінити й перебудувати"
 
-#: src/window.py:47
+#: src/window.py:52
 msgid "Knowledge"
 msgstr "Знання"
 
-#: src/window.py:135
-msgid "Changes could not be saved"
-msgstr "Не вдалося зберегти зміни"
-
-#: src/window.py:136
-msgid "Your unsaved changes are kept in memory. Retry saving before quitting."
-msgstr "Незбережені зміни зберігаються в пам’яті. Повторіть збереження перед виходом."
-
-#: src/window.py:138
-msgid "Keep Open"
-msgstr "Залишити відкритим"
-
-#: src/window.py:186 src/window.ui:138
-msgid "Clear chat history"
-msgstr "Очистити історію чатів"
-
-#: src/window.py:186
-msgid "Are you sure you want to delete all chat history?"
-msgstr "Справді видалити всю історію чатів?"
-
-#: src/window.py:188
-msgid "Delete history"
-msgstr "Видалити історію"
-
-#: src/window.py:274
+#: src/window.py:78
 msgid "Pinned"
 msgstr "Закріплені"
 
-#: src/window.py:275
-msgid "Recent"
-msgstr "Нещодавні"
+#: src/window.py:170
+msgid "Changes could not be saved"
+msgstr "Не вдалося зберегти зміни"
 
-#: src/window.py:284
+#: src/window.py:171
+msgid "Your unsaved changes are kept in memory. Retry saving before quitting."
+msgstr "Незбережені зміни зберігаються в пам’яті. Повторіть збереження перед виходом."
+
+#: src/window.py:173
+msgid "Keep Open"
+msgstr "Залишити відкритим"
+
+#: src/window.py:222 src/window.ui:142
+msgid "Clear chat history"
+msgstr "Очистити історію чатів"
+
+#: src/window.py:222
+msgid "Are you sure you want to delete all chat history?"
+msgstr "Справді видалити всю історію чатів?"
+
+#: src/window.py:224
+msgid "Delete history"
+msgstr "Видалити історію"
+
+#: src/window.py:398
+msgid "Draft"
+msgstr "Чернетка"
+
+#: src/window.py:407
 msgid "Unpin Chat"
 msgstr "Відкріпити чат"
 
-#: src/window.py:284
+#: src/window.py:407
 msgid "Pin Chat"
 msgstr "Закріпити чат"
 
-#: src/window.py:285 src/window.py:346
+#: src/window.py:408 src/window.py:502
 msgid "Rename Chat"
 msgstr "Перейменувати чат"
 
-#: src/window.py:285
+#: src/window.py:409
 msgid "Delete Chat"
 msgstr "Видалити чат"
 
-#: src/window.py:301
+#: src/window.py:426
 msgid "Chat actions"
 msgstr "Дії з чатом"
 
-#: src/window.py:346
+#: src/window.py:502
 msgid "Enter a new title for this chat."
 msgstr "Введіть нову назву цього чату."
+
+#: src/window.py:521
+msgid "Delete Conversation?"
+msgstr "Видалити розмову?"
+
+#: src/window.py:522
+#, python-brace-format
+msgid "Permanently delete “{0}” and its messages?"
+msgstr "Назавжди видалити «{0}» та її повідомлення?"
+
+#: src/window.py:522
+msgid "Conversation"
+msgstr "Розмова"
 
 #: src/window.ui:30
 msgid "Main Menu"
@@ -3259,21 +3439,26 @@ msgstr "_Новий чат"
 msgid "_New Response"
 msgstr "Нова _відповідь"
 
-#: src/window.ui:130
+#: src/window.ui:134
 msgid "_Manage hosts"
 msgstr "Керування _серверами"
 
-#: src/window.ui:134
+#: src/window.ui:138
 msgid "_Manage models"
 msgstr "Керування _моделями"
 
-#: src/window.ui:142
+#: src/window.ui:146
 msgid "_Keyboard Shortcuts"
 msgstr "_Клавіатурні скорочення"
 
-#: src/window.ui:146
+#: src/window.ui:150
 msgid "_About Gnollama"
 msgstr "_Про Gnollama"
 
-#~ msgid "Fetching version..."
-#~ msgstr "Отримання версії..."
+#: src/window.py:78
+msgid "Recent chats"
+msgstr "Нещодавні чати"
+
+#: src/window.py:79
+msgid "Recent comparisons"
+msgstr "Нещодавні порівняння"

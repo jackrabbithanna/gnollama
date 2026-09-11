@@ -62,9 +62,8 @@
           <object class="GtkBox">
             <property name="spacing">6</property>
             <child>
-              <object class="GtkEntry" id="entry">
+              <object class="GnollamaComposer" id="entry">
                 <property name="hexpand">True</property>
-                <property name="placeholder-text" translatable="yes">Type a message...</property>
               </object>
             </child>
             <child>

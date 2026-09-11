@@ -8,12 +8,7 @@ import json
 from datetime import datetime
 
 
-def model_key(host, model):
-    return (ollama.validate_host(host), model.removesuffix(':latest'))
-
-
-# In-flight unloads also guard requests started from another tab or manager.
-unloading_models = set()
+from .services import model_key
 
 
 def running_model_subtitle(model):
@@ -115,6 +110,7 @@ class ModelManagerDialog(Adw.Window):
         self.refresh_running()
 
     def on_refresh_clicked(self, btn: Gtk.Button) -> None:
+        self.storage.services.catalog.invalidate()
         """Callback for the 'Refresh' button."""
         if self.model_stack.get_visible_child_name() == 'running':
             self.refresh_running()
@@ -184,7 +180,7 @@ class ModelManagerDialog(Adw.Window):
             except ollama.OllamaError as exc:
                 self.requests.deliver(completed, [], str(exc), cancellable=cancel)
         from .session import worker
-        worker.submit(fetch)
+        self.storage.services.control.submit(fetch)
 
     def update_running_models(self, hostname, models):
         for row, _host, _model, _button in self._running_rows:
@@ -207,7 +203,7 @@ class ModelManagerDialog(Adw.Window):
     def update_unload_buttons(self):
         for _row, host, model, button in self._running_rows:
             busy = self.is_model_busy(host, model)
-            unloading = model_key(host, model) in unloading_models
+            unloading = model_key(host, model) in self.storage.services.models.reserved
             button.set_sensitive(not busy and not unloading)
             button.set_label(_('Unloading…') if unloading else _('Unload'))
             button.set_tooltip_text(_('A chat or embedding job is using this model in Gnollama.') if busy else
@@ -222,7 +218,7 @@ class ModelManagerDialog(Adw.Window):
         self.update_unload_buttons()
         cancel = self.requests.new_cancel()
         def completed(error):
-            unloading_models.discard(key)
+            self.storage.services.models.reserved.discard(key)
             if self.requests.closed:
                 return False
             self.update_unload_buttons()
@@ -244,7 +240,7 @@ class ModelManagerDialog(Adw.Window):
             finally:
                 GLib.idle_add(completed, error)
         from .session import worker
-        worker.submit(unload)
+        self.storage.services.control.submit(unload)
 
     def on_pull_clicked(self, btn: Gtk.Button) -> None:
         """Callback for the 'Pull' button."""
@@ -286,7 +282,7 @@ class ModelManagerDialog(Adw.Window):
                 self.requests.deliver(self.show_error, _("Connection Error"), str(e), cancellable=cancel)
             
         from .session import worker
-        worker.submit(thread_func)
+        self.storage.services.control.submit(thread_func)
 
     def update_models_list(self, models: List[Dict[str, Any]]) -> None:
         """Updates the UI with a new list of models."""
@@ -357,7 +353,7 @@ class ModelManagerDialog(Adw.Window):
                 self.requests.deliver(self.show_error, _("Failed to fetch details"), str(e), cancellable=cancel)
                 
         from .session import worker
-        worker.submit(thread_func)
+        self.storage.services.control.submit(thread_func)
 
     def show_error(self, title: str, msg: str) -> None:
         """Displays an error message dialog."""
@@ -373,7 +369,7 @@ class ModelManagerDialog(Adw.Window):
         host = self.get_selected_host()
         if not host or ollama.is_cloud(host):
             return
-        if self.is_model_busy(host['hostname'], model['name']) or model_key(host['hostname'], model['name']) in unloading_models:
+        if self.is_model_busy(host['hostname'], model['name']) or model_key(host['hostname'], model['name']) in self.storage.services.models.reserved:
             self.show_error(_('Model Is Busy'), _('Wait for active chats and embedding jobs before deleting this model.'))
             return
         usage = self.storage.db.model_embedding_usage(model.get('digest', ''))
@@ -408,6 +404,7 @@ class ModelManagerDialog(Adw.Window):
                 cancel = self.requests.new_cancel()
                 def thread_func() -> None:
                     try:
+                        self.storage.services.catalog.invalidate()
                         ollama.delete_model(host['hostname'], model['name'], cancellable=cancel)
                         if delete_vectors:
                             self.storage._submit(self.storage.db.delete_model_embeddings, model['digest'],
@@ -417,9 +414,9 @@ class ModelManagerDialog(Adw.Window):
                     except ollama.OllamaError as e:
                         self.requests.deliver(self.show_error, _("Delete Failed"), str(e), cancellable=cancel)
                     finally:
-                        unloading_models.discard(key)
+                        self.storage.services.models.reserved.discard(key)
                 from .session import worker
-                worker.submit(thread_func)
+                self.storage.services.control.submit(thread_func)
             d.close()
             
         dialog.connect("response", on_response)
@@ -541,6 +538,8 @@ class PullModelDialog(Adw.Window):
         super().__init__(**kwargs)
         self.requests = ViewRequests(self)
         self.set_transient_for(transient_for)
+        from .services import Services
+        self.services = transient_for.storage.services if hasattr(transient_for, 'storage') else Services()
         self.hostname: str = hostname
         self.pulling: bool = False
         self.pull_future: Optional[Any] = None
@@ -573,7 +572,7 @@ class PullModelDialog(Adw.Window):
         self.status_label.set_text(_("Starting download…"))
         
         from .session import worker
-        self.pull_future = worker.submit(self.pull_task, model_name, self.insecure_check.get_active())
+        self.pull_future = self.services.transfer.submit(self.pull_task, model_name, self.insecure_check.get_active())
 
     def pull_task(self, model_name: str, insecure: bool) -> None:
         """Thread worker to stream pull status."""
@@ -624,6 +623,7 @@ class PullModelDialog(Adw.Window):
             self.progress_bar.set_text(status)
 
     def pull_finished(self) -> None:
+        self.services.catalog.invalidate()
         """Cleans up after the pull process ends."""
         self.pulling = False
         self.cancel_btn.set_label(_("Close"))

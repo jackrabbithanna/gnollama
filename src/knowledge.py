@@ -208,13 +208,8 @@ class KnowledgeService:
 
     def reserve_model(self, host, model, is_busy):
         """Serialize destructive model operations against newly starting embedding calls."""
-        from .model_manager import model_key, unloading_models
-        with self._lock:
-            key = model_key(host, model)
-            if self.busy(host, model) or is_busy(host, model) or key in unloading_models:
-                return False
-            unloading_models.add(key)
-            return True
+        return self.storage.services.models.reserve(host, model,
+            lambda h, m: self.busy(h, m) or is_busy(h, m))
 
     def indexing_digest(self, digest):
         with self._lock:
@@ -222,22 +217,22 @@ class KnowledgeService:
 
     @contextmanager
     def using(self, host, model, cancel):
-        from .model_manager import model_key, unloading_models
         key = (host.rstrip('/'), canonical_model(model))
-        with self._lock:
-            if self.closed or model_key(host, model) in unloading_models:
-                raise ValueError(_('Wait for the model operation to finish.'))
-            check_cancel(cancel)
-            self._active[key] = self._active.get(key, 0) + 1
-        self.changed()
-        try:
-            yield
-        finally:
+        with self.storage.services.models.using(host, model):
             with self._lock:
-                self._active[key] -= 1
-                if not self._active[key]:
-                    del self._active[key]
+                if self.closed:
+                    raise ValueError(_('The Knowledge Library is closing.'))
+                check_cancel(cancel)
+                self._active[key] = self._active.get(key, 0) + 1
             self.changed()
+            try:
+                yield
+            finally:
+                with self._lock:
+                    self._active[key] -= 1
+                    if not self._active[key]:
+                        del self._active[key]
+                self.changed()
 
     def _write(self, fn, *args, cancel=None):
         done = threading.Event()

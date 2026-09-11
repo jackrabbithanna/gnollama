@@ -35,6 +35,7 @@ class StartupWindow(Adw.ApplicationWindow):
         storage.knowledge.cancel_all()
         storage.knowledge.shutdown()
         storage.writer.shutdown()
+        storage.services.shutdown(wait=False)
 
     def _close_requested(self, *args):
         if self.busy:

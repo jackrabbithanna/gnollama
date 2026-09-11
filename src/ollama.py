@@ -197,8 +197,9 @@ def _stream_response(host, endpoint, data, timeout=300, cancellable=None):
                     yield decode(line)
 
 
-def fetch_models(host, timeout=10, cancellable=None):
-    return [model['name'] for model in fetch_model_details(host, timeout, cancellable)]
+def fetch_models(host, timeout=10, cancellable=None, *, details=False):
+    models = fetch_model_details(host, timeout, cancellable)
+    return models if details else [model['name'] for model in models]
 
 
 def fetch_model_details(host, timeout=10, cancellable=None):

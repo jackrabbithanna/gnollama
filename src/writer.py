@@ -51,6 +51,11 @@ class OrderedWriter:
             future.set_result(result)
 
     @property
+    def closed(self):
+        with self._lock:
+            return self._closed
+
+    @property
     def idle(self):
         with self._lock:
             return not self._jobs and not self._running

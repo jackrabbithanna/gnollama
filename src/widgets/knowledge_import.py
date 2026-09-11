@@ -236,7 +236,7 @@ class FileImportDialog(WorkDialog):
     def update_saved(self):
         if self.closed or not hasattr(self, 'collection_id'):
             return
-        members = {m['id']: m for m in self.storage.db.collection_documents(self.collection_id)}
+        members = {m['id']: m for m in self.storage.library.collection_documents(self.collection_id)}
         for item in self.items:
             if item['status'] != 'saved':
                 continue

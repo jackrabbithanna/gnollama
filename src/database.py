@@ -12,6 +12,8 @@ from .knowledge_store import KnowledgeDatabase, MIGRATION as KNOWLEDGE_MIGRATION
 from .vectors import load_extension, migrate_vectors, preflight_legacy_vectors
 from .collections_store import MIGRATION as COLLECTIONS_MIGRATION
 from .web_store import MIGRATION as WEB_MIGRATION
+from .records import has_saved_work
+from .workspace_store import WorkspaceDatabase, migrate_workspace
 
 # Sequential migrations list
 # Add SQL scripts or functions accepting (conn, progress=None) to run sequentially.
@@ -43,6 +45,7 @@ MIGRATIONS = [
     ALTER TABLE hosts ADD COLUMN provider TEXT NOT NULL DEFAULT 'ollama';
     ALTER TABLE hosts ADD COLUMN credential_id TEXT;
     """,
+    migrate_workspace,
 ]
 
 
@@ -52,9 +55,9 @@ class DatabaseUpgradeError(RuntimeError):
         self.backup_path = backup_path
 
 
-class DatabaseManager(KnowledgeDatabase):
+class DatabaseManager(KnowledgeDatabase, WorkspaceDatabase):
     """Manages SQLite database initialization and operations."""
-    
+
     def __init__(self, db_path: str, progress=None) -> None:
         self.db_path: str = db_path
         self.backup_path = None
@@ -115,6 +118,7 @@ class DatabaseManager(KnowledgeDatabase):
             conn.execute("PRAGMA journal_mode = WAL;")
             conn.execute("PRAGMA synchronous = NORMAL;")
             conn.row_factory = sqlite3.Row
+            conn.create_function('casefold', 1, lambda value: (value or '').casefold(), deterministic=True)
             yield conn
         except Exception:
             conn.rollback()
@@ -134,7 +138,7 @@ class DatabaseManager(KnowledgeDatabase):
                     is_default INTEGER NOT NULL DEFAULT 0
                 )
             """)
-            
+
             # Create chats table
             conn.execute("""
                 CREATE TABLE IF NOT EXISTS chats (
@@ -149,7 +153,7 @@ class DatabaseManager(KnowledgeDatabase):
                     FOREIGN KEY(host_id) REFERENCES hosts(id) ON DELETE SET NULL
                 )
             """)
-            
+
             # Create messages table
             conn.execute("""
                 CREATE TABLE IF NOT EXISTS messages (
@@ -164,7 +168,7 @@ class DatabaseManager(KnowledgeDatabase):
                     FOREIGN KEY(chat_id) REFERENCES chats(id) ON DELETE CASCADE
                 )
             """)
-            
+
             # Create message_images table
             conn.execute("""
                 CREATE TABLE IF NOT EXISTS message_images (
@@ -188,33 +192,33 @@ class DatabaseManager(KnowledgeDatabase):
     def _run_migrations(self) -> None:
         """Sequential migration runner using SQLite PRAGMA user_version."""
         target_version = len(MIGRATIONS) + 1  # Base schema is Version 1
-        
+
         with self._get_conn() as conn:
             current_version = self._get_version(conn)
-            
+
             if current_version > target_version:
                 raise ValueError(_('This database requires a newer Gnollama version.'))
             if current_version == target_version:
                 return  # Database is up-to-date
-            
+
             print(f"Database migration needed: current version {current_version}, target version {target_version}")
-            
+
             # Base case: Fresh database starts at 0. We set it to 1 immediately
             # because _init_db() has already created the baseline schema.
             if current_version == 0:
                 self._set_version(conn, 1)
                 current_version = 1
-                
+
             # Apply missing migrations sequentially
             for ver in range(current_version, target_version):
                 migration_idx = ver - 1  # 0-indexed MIGRATIONS list
                 migration_sql = MIGRATIONS[migration_idx]
-                
+
                 try:
                     print(f"Applying database migration to Version {ver + 1}...")
                     self.progress(_('Upgrading the database to version {0}…').format(ver + 1))
                     conn.execute("BEGIN IMMEDIATE;")
-                    
+
                     if isinstance(migration_sql, str):
                         statement = ''
                         for fragment in migration_sql.split(';'):
@@ -226,7 +230,7 @@ class DatabaseManager(KnowledgeDatabase):
                             raise ValueError('Incomplete migration statement')
                     else:
                         migration_sql(conn, progress=self.progress)
-                    
+
                     self._set_version(conn, ver + 1)
                     conn.commit()
                     print(f"Migration to Version {ver + 1} succeeded.")
@@ -311,8 +315,8 @@ class DatabaseManager(KnowledgeDatabase):
         """Returns all chats sorted by update time descending, excluding their full messages."""
         with self._get_conn() as conn:
             cursor = conn.execute("""
-                SELECT id, title, created_at, updated_at, model, system_prompt, host_id, options, is_pinned 
-                FROM chats 
+                SELECT id, title, created_at, updated_at, model, system_prompt, host_id, options, is_pinned, kind
+                FROM chats
                 ORDER BY is_pinned DESC, updated_at DESC
             """)
             chats = []
@@ -333,6 +337,7 @@ class DatabaseManager(KnowledgeDatabase):
                     "host": row["host_id"],
                     "options": options_dict,
                     "is_pinned": bool(row["is_pinned"]),
+                    "kind": row["kind"],
                     "messages": []  # Empty array by default for list queries
                 })
             return chats
@@ -341,22 +346,22 @@ class DatabaseManager(KnowledgeDatabase):
         """Returns a specific chat along with all its parsed and ordered messages."""
         with self._get_conn() as conn:
             cursor = conn.execute("""
-                SELECT id, title, created_at, updated_at, model, system_prompt, host_id, options, is_pinned 
+                SELECT id, title, created_at, updated_at, model, system_prompt, host_id, options, is_pinned, kind
                 FROM chats WHERE id = ?
             """, (chat_id,))
             row = cursor.fetchone()
             if not row:
                 return None
-            
+
             options_dict = {}
             if row["options"]:
                 try:
                     options_dict = json.loads(row["options"])
                 except Exception:
                     pass
-                    
+
             messages = self.get_messages(chat_id)
-            
+
             return {
                 "id": row["id"],
                 "title": row["title"],
@@ -367,6 +372,7 @@ class DatabaseManager(KnowledgeDatabase):
                 "host": row["host_id"],
                 "options": options_dict,
                 "is_pinned": bool(row["is_pinned"]),
+                    "kind": row["kind"],
                 "messages": messages
             }
 
@@ -379,13 +385,13 @@ class DatabaseManager(KnowledgeDatabase):
             """, (chat_id, title, created_at, updated_at, model))
             conn.commit()
 
-    def update_chat(self, chat_id: str, model: Optional[str], options: Optional[Dict[str, Any]], 
+    def update_chat(self, chat_id: str, model: Optional[str], options: Optional[Dict[str, Any]],
                     system_prompt: Optional[str], host_id: Optional[str], updated_at: float) -> None:
         """Updates chat settings and metadata fields."""
         options_json = json.dumps(options) if options else None
         with self._get_conn() as conn:
             conn.execute("""
-                UPDATE chats 
+                UPDATE chats
                 SET model = ?, options = ?, system_prompt = ?, host_id = ?, updated_at = ?
                 WHERE id = ?
             """, (model, options_json, system_prompt, host_id, updated_at, chat_id))
@@ -409,13 +415,17 @@ class DatabaseManager(KnowledgeDatabase):
             conn.execute("DELETE FROM chats WHERE id = ?", (chat_id,))
             conn.commit()
 
-    def cleanup_empty_chats(self) -> None:
+    def cleanup_empty_chats(self, chat_id=None) -> None:
         """Discard unused tabs, preserving applied playground definitions."""
         with self._get_conn() as conn:
-            rows = conn.execute('SELECT id, options FROM chats WHERE id NOT IN (SELECT chat_id FROM messages)').fetchall()
+            query = 'SELECT id, title, is_pinned, system_prompt, options FROM chats WHERE id NOT IN (SELECT chat_id FROM messages)'
+            rows = conn.execute(query + (' AND id = ?' if chat_id is not None else ''),
+                                (chat_id,) if chat_id is not None else ()).fetchall()
             for row in rows:
                 options = json.loads(row['options'] or '{}')
-                if not options.get('tools_text', '').strip() and not options.get('knowledge', {}).get('selection'):
+                draft_row = conn.execute('SELECT id FROM drafts WHERE chat_id=?', (row['id'],)).fetchone()
+                draft = self.get_draft(draft_row['id']) if draft_row else None
+                if not has_saved_work(draft=draft, options=options, title=row['title'], pinned=row['is_pinned'], system=row['system_prompt']):
                     conn.execute('DELETE FROM chats WHERE id = ?', (row['id'],))
             conn.commit()
 
@@ -428,73 +438,111 @@ class DatabaseManager(KnowledgeDatabase):
 
     # --- Message CRUD Operations ---
 
-    def get_messages(self, chat_id: str) -> List[Dict[str, Any]]:
+    def get_messages(self, chat_id: str, limit=None, offset=0, include_ids=False) -> List[Dict[str, Any]]:
         """Returns all messages belonging to a chat, with images decoded back to base64."""
-        messages = []
         with self._get_conn() as conn:
-            cursor = conn.execute("""
-                SELECT id, role, content, model, thinking_content, api_details, response_metadata,
-                       tool_calls, tool_name, tool_call_id
-                FROM messages 
-                WHERE chat_id = ? 
-                ORDER BY order_index ASC
-            """, (chat_id,))
-            rows = cursor.fetchall()
-            for row in rows:
-                msg_id = row["id"]
-                msg = {
-                    "role": row["role"],
-                    "content": row["content"]
-                }
-                if row["model"] is not None:
-                    msg["model"] = row["model"]
-                if row["thinking_content"] is not None:
-                    msg["thinking_content"] = row["thinking_content"]
-                if row["api_details"] is not None:
-                    try:
-                        msg["api_details"] = json.loads(row["api_details"])
-                    except Exception:
-                        pass
-                
-                if row["response_metadata"]:
-                    msg["response_metadata"] = json.loads(row["response_metadata"])
-                if row['tool_calls'] is not None:
-                    msg['tool_calls'] = json.loads(row['tool_calls'])
-                for key in ('tool_name', 'tool_call_id'):
-                    if row[key] is not None:
-                        msg[key] = row[key]
+            return self._read_messages(conn, chat_id, limit, offset, include_ids)
 
-                # Fetch attached images
-                img_cursor = conn.execute("SELECT image_data FROM message_images WHERE message_id = ?", (msg_id,))
-                img_rows = img_cursor.fetchall()
-                if img_rows:
-                    images_b64 = []
-                    for img_row in img_rows:
-                        img_bin = img_row["image_data"]
-                        img_b64 = base64.b64encode(img_bin).decode("utf-8")
-                        images_b64.append(img_b64)
-                    msg["images"] = images_b64
-                    
-                messages.append(msg)
+    def _read_messages(self, conn, chat_id, limit=None, offset=0, include_ids=False):
+        messages = []
+        cursor = conn.execute("""
+            SELECT id, role, content, model, thinking_content, api_details, response_metadata,
+                   tool_calls, tool_name, tool_call_id, uid, extra
+            FROM messages
+            WHERE chat_id = ?
+            ORDER BY order_index ASC LIMIT ? OFFSET ?
+        """, (chat_id, -1 if limit is None else limit, offset))
+        rows = cursor.fetchall()
+        for row in rows:
+            msg_id = row["id"]
+            msg = {
+                "role": row["role"],
+                "content": row["content"]
+            }
+            if row["model"] is not None:
+                msg["model"] = row["model"]
+            if row["thinking_content"] is not None:
+                msg["thinking_content"] = row["thinking_content"]
+            if row["api_details"] is not None:
+                try:
+                    msg["api_details"] = json.loads(row["api_details"])
+                except Exception:
+                    pass
+
+            if row["response_metadata"]:
+                msg["response_metadata"] = json.loads(row["response_metadata"])
+            if row['tool_calls'] is not None:
+                msg['tool_calls'] = json.loads(row['tool_calls'])
+            for key in ('tool_name', 'tool_call_id'):
+                if row[key] is not None:
+                    msg[key] = row[key]
+
+            # Fetch attached images
+            img_cursor = conn.execute("SELECT image_data FROM message_images WHERE message_id = ?", (msg_id,))
+            img_rows = img_cursor.fetchall()
+            if img_rows:
+                images_b64 = []
+                for img_row in img_rows:
+                    img_bin = img_row["image_data"]
+                    img_b64 = base64.b64encode(img_bin).decode("utf-8")
+                    images_b64.append(img_b64)
+                msg["images"] = images_b64
+
+            msg.update(json.loads(row['extra'] or '{}'))
+            if include_ids:
+                msg['uid'] = row['uid']
+            messages.append(msg)
         return messages
 
+    def _append_messages(self, conn, chat_id, messages, start):
+        import uuid
+        fields = ('role', 'content', 'model', 'thinking_content', 'api_details',
+                  'response_metadata', 'tool_calls', 'tool_name', 'tool_call_id', 'extra')
+        json_fields = ('api_details', 'response_metadata', 'tool_calls')
+        known = set(fields) | {'images', 'uid'}
+        for index, message in enumerate(messages, start):
+            uid = message.get('uid')
+            old = conn.execute('SELECT * FROM messages WHERE chat_id=? AND (uid=? OR order_index=?)',
+                               (chat_id, uid, index)).fetchone()
+            values = {k: message.get(k) for k in fields}
+            values['content'] = message.get('content', '')
+            values['extra'] = json.dumps({k: v for k, v in message.items() if k not in known})
+            for key in json_fields:
+                values[key] = json.dumps(message[key]) if key in message and message[key] is not None else None
+            if old is None:
+                cursor = conn.execute('INSERT INTO messages(chat_id,uid,order_index,' + ','.join(fields)
+                    + ') VALUES (' + ','.join('?' for _ in range(len(fields)+3)) + ')',
+                    (chat_id, uid or str(uuid.uuid4()), index, *(values[k] for k in fields)))
+                id = cursor.lastrowid
+            else:
+                id = old['id']
+                if any(old[k] != values[k] for k in fields):
+                    conn.execute('UPDATE messages SET ' + ','.join(k+'=?' for k in fields) + ' WHERE id=?',
+                                 (*(values[k] for k in fields), id))
+            images = [base64.b64decode(image.split(',', 1)[-1], validate=True) for image in message.get('images', [])]
+            previous = [r[0] for r in conn.execute('SELECT image_data FROM message_images WHERE message_id=? ORDER BY id', (id,))] if old else []
+            if images != previous:
+                conn.execute('DELETE FROM message_images WHERE message_id=?', (id,))
+                conn.executemany('INSERT INTO message_images(message_id,image_data) VALUES (?,?)', [(id, raw) for raw in images])
+
     def _save_messages(self, conn, chat_id, messages):
-        conn.execute("DELETE FROM messages WHERE chat_id = ?", (chat_id,))
-        for idx, msg in enumerate(messages):
-            cursor = conn.execute("""
-                INSERT INTO messages (chat_id, role, content, model, thinking_content,
-                                      api_details, response_metadata, tool_calls, tool_name, tool_call_id, order_index)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """, (chat_id, msg['role'], msg.get('content', ''), msg.get('model'),
-                  msg.get('thinking_content'),
-                  json.dumps(msg['api_details']) if msg.get('api_details') else None,
-                  json.dumps(msg['response_metadata']) if msg.get('response_metadata') else None,
-                  json.dumps(msg['tool_calls']) if 'tool_calls' in msg else None,
-                  msg.get('tool_name'), msg.get('tool_call_id'), idx))
-            for image in msg.get('images', []):
-                raw = base64.b64decode(image.split(',', 1)[-1], validate=True)
-                conn.execute('INSERT INTO message_images (message_id, image_data) VALUES (?, ?)',
-                             (cursor.lastrowid, sqlite3.Binary(raw)))
+        self._append_messages(conn, chat_id, messages, 0)
+        conn.execute('DELETE FROM messages WHERE chat_id=? AND order_index>=?', (chat_id, len(messages)))
+
+    def append_messages(self, chat_id, messages, start=0):
+        with self._get_conn() as conn:
+            conn.execute('BEGIN IMMEDIATE')
+            if conn.execute('SELECT 1 FROM chats WHERE id=?', (chat_id,)).fetchone():
+                self._append_messages(conn, chat_id, messages, start)
+            conn.commit()
+
+    def update_message(self, chat_id, uid, message):
+        with self._get_conn() as conn:
+            conn.execute('BEGIN IMMEDIATE')
+            row = conn.execute('SELECT order_index FROM messages WHERE chat_id=? AND uid=?', (chat_id, uid)).fetchone()
+            if row:
+                self._append_messages(conn, chat_id, [dict(message, uid=uid)], row['order_index'])
+            conn.commit()
 
     def save_messages(self, chat_id, messages):
         with self._get_conn() as conn:
@@ -516,7 +564,7 @@ class DatabaseManager(KnowledgeDatabase):
                          (json.dumps(saved), time.time(), chat_id))
             conn.commit()
 
-    def save_chat(self, chat_id, messages, model=None, options=None, system=None, host=None):
+    def save_chat(self, chat_id, messages, model=None, options=None, system=None, host=None, *, start=None, draft_id=None, draft_revision=None):
         """Atomically update an existing chat; never recreate a deleted chat."""
         with self._get_conn() as conn:
             conn.execute('BEGIN IMMEDIATE')
@@ -534,5 +582,9 @@ class DatabaseManager(KnowledgeDatabase):
             conn.execute("""UPDATE chats SET title = ?, model = ?, options = ?,
                          system_prompt = ?, host_id = ?, updated_at = ? WHERE id = ?""",
                          (title, model, json.dumps(options or {}), system, host, time.time(), chat_id))
-            self._save_messages(conn, chat_id, messages)
+            if start is None:
+                self._save_messages(conn, chat_id, messages)
+            else:
+                self._append_messages(conn, chat_id, messages, start)
+            self._consume_draft(conn, draft_id, draft_revision)
             conn.commit()

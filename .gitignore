@@ -1,4 +1,13 @@
 .flatpak-builder
 /src/__pycache__/
 src/widgets/__pycache__/
+tests/__pycache__/
 /src/gnollama.gresource
+
+__pycache__/
+_build/
+_flatpak/
+validation-screenshots/
+/workspace-benchmark.json
+/retrieval-evaluation.json
+/.venv/

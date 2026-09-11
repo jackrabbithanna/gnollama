@@ -4,10 +4,10 @@
 # AI-assisted translation; native-speaker review is welcome.
 msgid ""
 msgstr ""
-"Project-Id-Version: gnollama 0.14.0\n"
+"Project-Id-Version: gnollama 0.15.0\n"
 "Report-Msgid-Bugs-To: https://github.com/jackrabbithanna/gnollama/issues\n"
-"POT-Creation-Date: 2026-09-10 20:09-0600\n"
-"PO-Revision-Date: 2026-09-10 00:00+0000\n"
+"POT-Creation-Date: 2026-09-11 12:07-0600\n"
+"PO-Revision-Date: 2026-09-11 00:00+0000\n"
 "Last-Translator: AI-assisted translation\n"
 "Language: ar\n"
 "Language-Team: Arabic\n"
@@ -16,7 +16,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 
 #: data/io.github.jackrabbithanna.Gnollama.desktop.in:2
 msgid "gnollama"
@@ -89,11 +89,37 @@ msgstr "jackrabbithanna"
 msgid "Ollama chat with code highlighting"
 msgstr "دردشة Ollama مع تمييز الشيفرة"
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:53
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:54 src/shortcuts-dialog.ui:26
+#: src/widgets/comparison_view.py:54 src/window.ui:128
+msgid "New Comparison"
+msgstr "مقارنة جديدة"
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:55 src/window.py:80
+msgid "Drafts"
+msgstr "المسودات"
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:56 src/window.py:72
+msgid "Search conversations"
+msgstr "البحث في المحادثات"
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:57 src/window.py:408
+msgid "Export Markdown"
+msgstr "تصدير Markdown"
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:58 src/window.py:409
+msgid "Export JSON"
+msgstr "تصدير JSON"
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:59 src/tab.py:106
+#: src/widgets/comparison_view.py:284
+msgid "Context estimate"
+msgstr "تقدير السياق"
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:65
 msgid "Connect directly to Ollama Cloud from Chat and Response tabs."
 msgstr "اتصل مباشرةً بـ Ollama Cloud من علامتي تبويب المحادثة والرد."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:54
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:66
 msgid ""
 "Store each host's API key in the desktop keyring, with session-only use when the "
 "keyring is unavailable."
@@ -101,7 +127,7 @@ msgstr ""
 "احفظ مفتاح API لكل خادم في حلقة مفاتيح سطح المكتب، مع إمكانية استخدامه للجلسة فقط "
 "عندما تكون حلقة المفاتيح غير متاحة."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:55
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:67
 msgid ""
 "Browse cloud models with controls adapted to the service, and use local knowledge "
 "sources in cloud chats."
@@ -109,7 +135,7 @@ msgstr ""
 "تصفّح النماذج السحابية بعناصر تحكم ملائمة للخدمة، واستخدم مصادر المعرفة المحلية في "
 "المحادثات السحابية."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:60
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:72
 msgid ""
 "Add a Knowledge Library for text and PDF imports, local embedding indexes, and "
 "source-grounded chats."
@@ -117,7 +143,7 @@ msgstr ""
 "إضافة مكتبة معرفة لاستيراد النصوص وملفات PDF، وفهارس التضمين المحلية، والدردشة "
 "المستندة إلى المصادر."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:62
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:74
 msgid ""
 "Start with knowledge collections and add text, files, or URLs with explicit "
 "destinations and guided previews."
@@ -125,7 +151,7 @@ msgstr ""
 "ابدأ بمجموعات المعرفة وأضف نصوصًا أو ملفات أو عناوين URL مع وجهات واضحة ومعاينات "
 "إرشادية."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:63
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:75
 msgid ""
 "Choose collections before search settings, and use adaptive chat settings with "
 "clearer controls and feedback."
@@ -133,17 +159,17 @@ msgstr ""
 "اختر المجموعات قبل إعدادات البحث، واستخدم إعدادات دردشة متكيفة بعناصر تحكم وملاحظات "
 "أوضح."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:64
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:76
 msgid "Create and compare embeddings, inspect chunks and vectors, and test semantic searches."
 msgstr "أنشئ التضمينات وقارنها، وافحص المقاطع والمتجهات، واختبر البحث الدلالي."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:65
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:77
 msgid ""
 "Select documents or chunks for chats, with independent embedding hosts and saved "
 "source passages."
 msgstr "اختر مستندات أو مقاطع للدردشة، مع مضيفين مستقلين للتضمين ومقاطع مصادر محفوظة."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:66
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:78
 msgid ""
 "Warn about stored embeddings when deleting models, with optional vector cleanup that "
 "retains source text."
@@ -151,7 +177,7 @@ msgstr ""
 "التنبيه إلى التضمينات المخزنة عند حذف النماذج، مع خيار تنظيف المتجهات والإبقاء على نص"
 " المصدر."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:67
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:79
 msgid ""
 "Search with sqlite-vec, automatically migrate existing vectors with a database "
 "backup, and use the Qwen3 retrieval preset."
@@ -159,7 +185,7 @@ msgstr ""
 "ابحث باستخدام sqlite-vec، وانقل المتجهات الموجودة تلقائيًا مع نسخة احتياطية لقاعدة "
 "البيانات، واستخدم إعداد الاسترجاع المسبق لـ Qwen3."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:68
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:80
 msgid ""
 "Organize documents into collections with shared embedding settings, automatic builds,"
 " and live collection selection in chats."
@@ -167,7 +193,7 @@ msgstr ""
 "نظم المستندات في مجموعات بإعدادات تضمين مشتركة وبناء تلقائي واختيار مباشر للمجموعات "
 "في الدردشة."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:69
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:81
 msgid ""
 "Choose collections as chat sources and compare cosine similarity, Euclidean distance,"
 " or Manhattan distance with appropriate search cutoffs."
@@ -175,7 +201,7 @@ msgstr ""
 "اختر المجموعات كمصادر للدردشة وقارن تشابه جيب التمام أو المسافة الإقليدية أو مسافة "
 "مانهاتن بحدود بحث مناسبة."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:70
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:82
 msgid ""
 "Hide embedding-only models from Chat and Response model selection while keeping them "
 "available in Knowledge and Manage Models."
@@ -183,7 +209,7 @@ msgstr ""
 "إخفاء النماذج المخصصة للتضمين فقط من اختيار نماذج الدردشة والرد، مع إبقائها متاحة في "
 "المعرفة وإدارة النماذج."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:71
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:83
 msgid ""
 "Import batches of URLs into collections with main-content extraction, CSS selectors, "
 "editable previews, and source links in chats."
@@ -191,7 +217,7 @@ msgstr ""
 "استورد دفعات من عناوين URL إلى المجموعات مع استخراج المحتوى الرئيسي ومحددات CSS "
 "ومعاينات قابلة للتحرير وروابط المصادر في الدردشة."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:72
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:84
 msgid ""
 "Review changed web documents before replacing their text and rebuilding all affected "
 "embedding indexes."
@@ -207,73 +233,81 @@ msgstr "تفاصيل استدعاء API"
 msgid "Thinking..."
 msgstr "جارٍ التفكير…"
 
-#: src/bubbles.py:105
+#: src/bubbles.py:71
+msgid "Copy Answer"
+msgstr "نسخ الإجابة"
+
+#: src/bubbles.py:119
 msgid "Response Statistics"
 msgstr "إحصاءات الرد"
 
-#: src/bubbles.py:120
+#: src/bubbles.py:136
 msgid "Earlier images were omitted from the text-only request."
 msgstr "لم تُضمّن الصور السابقة في الطلب النصي فقط."
 
-#: src/bubbles.py:125 src/knowledge.py:301
+#: src/bubbles.py:141 src/knowledge.py:296
 msgid "Stopped"
 msgstr "متوقف"
 
-#: src/bubbles.py:125 src/knowledge.py:301
+#: src/bubbles.py:141 src/knowledge.py:296
 msgid "Failed"
 msgstr "فشل"
 
-#. Create expander for logprobs
-#: src/bubbles.py:137
+#: src/bubbles.py:149
+#, python-brace-format
+msgid "Elapsed: {0}s"
+msgstr "الوقت المنقضي: {0}ث"
+
+#: src/bubbles.py:156
 msgid "Logprobs"
 msgstr "الاحتمالات اللوغاريتمية"
 
-#: src/bubbles.py:183 src/model_manager.py:22 src/model_manager.py:24
-#: src/model_manager.py:28 src/model_manager.py:312
+#: src/bubbles.py:202 src/model_manager.py:17 src/model_manager.py:19
+#: src/model_manager.py:23 src/model_manager.py:308
 msgid "Unavailable"
 msgstr "غير متاح"
 
-#: src/bubbles.py:197
+#: src/bubbles.py:216
 #, python-brace-format
 msgid "Total: {0}"
 msgstr "الإجمالي: {0}"
 
-#: src/bubbles.py:198
+#: src/bubbles.py:217
 #, python-brace-format
 msgid "Load: {0}"
 msgstr "التحميل: {0}"
 
-#: src/bubbles.py:199
+#: src/bubbles.py:218
 #, python-brace-format
 msgid "Prompt: {0} tokens"
 msgstr "وحدات نص المطالبة: {0}"
 
-#: src/bubbles.py:200
+#: src/bubbles.py:219
 #, python-brace-format
 msgid "Cached: {0} tokens"
 msgstr "وحدات النص المخزنة مؤقتًا: {0}"
 
-#: src/bubbles.py:201
+#: src/bubbles.py:220
 #, python-brace-format
 msgid "Prompt evaluation: {0}"
 msgstr "معالجة المطالبة: {0}"
 
-#: src/bubbles.py:202
+#: src/bubbles.py:221
 #, python-brace-format
 msgid "Generated: {0} tokens"
 msgstr "وحدات النص المولّدة: {0}"
 
-#: src/bubbles.py:203
+#: src/bubbles.py:222
 #, python-brace-format
 msgid "Generation: {0}"
 msgstr "التوليد: {0}"
 
-#: src/bubbles.py:204
+#: src/bubbles.py:223
 #, python-brace-format
 msgid "Tokens/s: {0}"
 msgstr "وحدات النص/ثانية: {0}"
 
-#: src/bubbles.py:207
+#: src/bubbles.py:226
 #, python-brace-format
 msgid "Finish: {0}"
 msgstr "سبب الانتهاء: {0}"
@@ -282,19 +316,19 @@ msgstr "سبب الانتهاء: {0}"
 msgid "A document was deleted. Choose documents again."
 msgstr "حُذف أحد المستندات. اختر المستندات مجددًا."
 
-#: src/collections_store.py:107 src/knowledge.py:358
+#: src/collections_store.py:107 src/knowledge.py:353
 msgid "Enter a collection name."
 msgstr "أدخل اسم المجموعة."
 
-#: src/collections_store.py:118 src/widgets/knowledge_view.py:1140
+#: src/collections_store.py:118 src/widgets/knowledge_view.py:361
 msgid "Choose a model with the collection’s original digest."
 msgstr "اختر نموذجًا بالبصمة الأصلية للمجموعة."
 
-#: src/collections_store.py:141 src/knowledge.py:391
+#: src/collections_store.py:141 src/knowledge.py:386
 msgid "The collection was deleted."
 msgstr "حُذفت المجموعة."
 
-#: src/collections_store.py:202 src/widgets/knowledge_view.py:801
+#: src/collections_store.py:202 src/widgets/source_views.py:417
 msgid "A selected collection was deleted. Choose sources again."
 msgstr "حُذفت إحدى المجموعات المحددة. اختر المصادر مجددًا."
 
@@ -315,6 +349,79 @@ msgstr ""
 "المجموعة «{0}» غير جاهزة. ابنِ التضمينات الناقصة أو أعد محاولة المستندات التي فشلت: "
 "{1}"
 
+#: src/comparison.py:27
+msgid "Choose two to four targets."
+msgstr "اختر من هدفين إلى أربعة أهداف."
+
+#: src/comparison.py:30
+msgid "Each target must use a different host and model pair."
+msgstr "يجب أن يستخدم كل هدف زوجًا مختلفًا من الخادم والنموذج."
+
+#: src/comparison.py:37 src/tab.py:362
+msgid "Select an available model before sending."
+msgstr "اختر نموذجًا متاحًا قبل الإرسال."
+
+#: src/comparison.py:41
+msgid "Selected model is no longer available."
+msgstr "لم يعد النموذج المحدد متاحًا."
+
+#: src/comparison.py:46
+msgid "Embedding models cannot generate comparisons."
+msgstr "لا تستطيع نماذج التضمين إنشاء إجابات للمقارنة."
+
+#: src/comparison.py:48
+msgid "Every target must support the shared images."
+msgstr "يجب أن تدعم جميع الأهداف الصور المشتركة."
+
+#: src/comparison.py:50
+msgid "Every target must support the selected thinking option."
+msgstr "يجب أن تدعم جميع الأهداف خيار التفكير المحدد."
+
+#: src/comparison.py:52
+msgid "Cloud targets do not support shared structured output or model retention."
+msgstr "لا تدعم الأهداف السحابية الإخراج المنظم المشترك أو الاحتفاظ بالنموذج."
+
+#: src/comparison.py:55
+msgid "The selected thinking level is incompatible with a target."
+msgstr "مستوى التفكير المحدد غير متوافق مع أحد الأهداف."
+
+#: src/context.py:29
+#, python-brace-format
+msgid "Estimated text tokens: {0} (UTF-8 bytes ÷ 4)"
+msgstr "رموز النص المقدرة: {0} (بايتات UTF-8 ÷ 4)"
+
+#: src/context.py:30
+#, python-brace-format
+msgid ""
+"History: {history}; prompt: {prompt}; system: {system}; tools/schema: {tools_schema};"
+" sources: {retrieval}"
+msgstr ""
+"السجل: {history}؛ الطلب: {prompt}؛ النظام: {system}؛ الأدوات/المخطط: {tools_schema}؛ "
+"المصادر: {retrieval}"
+
+#: src/context.py:31
+#, python-brace-format
+msgid "Output allowance: {0}"
+msgstr "المساحة المحجوزة للإخراج: {0}"
+
+#: src/context.py:32
+#, python-brace-format
+msgid "Explicit context: {0}"
+msgstr "السياق المحدد صراحةً: {0}"
+
+#: src/context.py:33
+msgid "Context size uses the server default; model capacity may differ."
+msgstr "يستخدم حجم السياق القيمة الافتراضية للخادم؛ وقد تختلف سعة النموذج."
+
+#: src/context.py:34
+msgid "Image and chat-template overhead are unknown. This is an advisory estimate."
+msgstr "التكلفة الإضافية للصور وقالب المحادثة غير معروفة. هذا تقدير إرشادي."
+
+#: src/context.py:36
+#, python-brace-format
+msgid "Estimated input and output allowance reach {percent} of the configured context."
+msgstr "يبلغ الإدخال المقدر والمساحة المحجوزة للإخراج {percent} من السياق المضبوط."
+
 #: src/credentials.py:27
 msgid "Enter a valid API key."
 msgstr "أدخل مفتاح API صالحًا."
@@ -325,7 +432,7 @@ msgstr ""
 "تعذّر الوصول إلى حلقة المفاتيح. عدّل هذا الخادم لإعادة المحاولة أو لإدخال مفتاح لهذه "
 "الجلسة فقط."
 
-#: src/credentials.py:53 src/storage.py:134
+#: src/credentials.py:53 src/storage.py:144
 msgid "An API key is required. Edit this host to enter one."
 msgstr "مفتاح API مطلوب. عدّل هذا الخادم لإدخال مفتاح."
 
@@ -337,34 +444,46 @@ msgstr "تعذّر حفظ مفتاح API في حلقة المفاتيح. أعد 
 msgid "Could not remove the saved API key. Unlock the keyring and retry."
 msgstr "تعذّرت إزالة مفتاح API المحفوظ. افتح قفل حلقة المفاتيح وأعد المحاولة."
 
-#: src/database.py:80
+#: src/database.py:83
 msgid "This database was created by a newer Gnollama version. Update Gnollama to open it."
 msgstr "أُنشئت قاعدة البيانات بإصدار أحدث من Gnollama. حدّث Gnollama لفتحها."
 
-#: src/database.py:87
+#: src/database.py:90
 msgid "Backing up the database…"
 msgstr "جارٍ نسخ قاعدة البيانات احتياطيًا…"
 
-#: src/database.py:196
+#: src/database.py:200
 msgid "This database requires a newer Gnollama version."
 msgstr "تتطلب قاعدة البيانات إصدارًا أحدث من Gnollama."
 
-#: src/database.py:215
+#: src/database.py:219
 #, python-brace-format
 msgid "Upgrading the database to version {0}…"
 msgstr "جارٍ ترقية قاعدة البيانات إلى الإصدار {0}…"
 
-#: src/host_edit_dialog.ui:14 src/host_manager.py:266 src/model_manager.py:394
-#: src/pull_model_dialog.ui:17 src/widgets/knowledge_view.py:1111
-#: src/widgets/knowledge_view.py:1121 src/widgets/knowledge_view.py:1250
-#: src/widgets/knowledge_view.py:1293 src/widgets/knowledge_view.py:1337
-#: src/widgets/knowledge_view.py:1358 src/widgets/url_import.py:246
-#: src/widgets/url_import.py:335 src/window.py:187 src/window.py:349
+#: src/export.py:46
+msgid "Export Conversation"
+msgstr "تصدير المحادثة"
+
+#: src/export.py:58
+msgid "Conversation no longer exists."
+msgstr "لم تعد المحادثة موجودة."
+
+#: src/export.py:61
+msgid "Conversation exported"
+msgstr "تم تصدير المحادثة"
+
+#: src/host_edit_dialog.ui:14 src/host_manager.py:266 src/model_manager.py:390
+#: src/pull_model_dialog.ui:17 src/widgets/knowledge_view.py:332
+#: src/widgets/knowledge_view.py:342 src/widgets/knowledge_view.py:471
+#: src/widgets/knowledge_view.py:514 src/widgets/knowledge_view.py:558
+#: src/widgets/knowledge_view.py:579 src/widgets/url_import.py:246
+#: src/widgets/url_import.py:335 src/window.py:223 src/window.py:505 src/window.py:523
 msgid "Cancel"
 msgstr "إلغاء"
 
-#: src/host_edit_dialog.ui:19 src/widgets/knowledge_view.py:1112
-#: src/widgets/knowledge_view.py:1145 src/widgets/knowledge_view.py:1338 src/window.py:350
+#: src/host_edit_dialog.ui:19 src/widgets/knowledge_view.py:333
+#: src/widgets/knowledge_view.py:366 src/widgets/knowledge_view.py:559 src/window.py:506
 msgid "Save"
 msgstr "حفظ"
 
@@ -400,7 +519,7 @@ msgstr "إضافة مضيف"
 msgid "Ollama Server"
 msgstr "خادم Ollama"
 
-#: src/host_manager.py:30 src/host_manager.py:72 src/model_manager.py:312
+#: src/host_manager.py:30 src/host_manager.py:72 src/model_manager.py:308
 msgid "Ollama Cloud"
 msgstr "Ollama Cloud"
 
@@ -424,7 +543,7 @@ msgstr "إنشاء مفتاح API"
 msgid "Use for This Session"
 msgstr "استخدام لهذه الجلسة"
 
-#: src/host_manager.py:98 src/storage.py:124
+#: src/host_manager.py:98 src/storage.py:134
 msgid "Enter a name for this server."
 msgstr "أدخل اسمًا لهذا الخادم."
 
@@ -448,10 +567,10 @@ msgstr "حذف المضيف"
 msgid "Checking connection…"
 msgstr "جارٍ التحقق من الاتصال…"
 
-#: src/host_manager.py:185 src/host_manager.py:277 src/main.py:63 src/model_manager.py:368
+#: src/host_manager.py:185 src/host_manager.py:277 src/main.py:64 src/model_manager.py:364
 #: src/model_manager.py:629 src/startup.py:23 src/widgets/json_view.py:230
-#: src/widgets/knowledge_import.py:51 src/widgets/knowledge_view.py:756
-#: src/widgets/knowledge_view.py:909 src/widgets/knowledge_view.py:1271
+#: src/widgets/knowledge_import.py:51 src/widgets/knowledge_view.py:103
+#: src/widgets/knowledge_view.py:492 src/widgets/source_views.py:372
 msgid "Close"
 msgstr "إغلاق"
 
@@ -482,16 +601,17 @@ msgstr ""
 "فشل الاتصال\n"
 "{0}"
 
-#: src/host_manager.py:264 src/model_manager.py:380
+#: src/host_manager.py:264 src/model_manager.py:376
 #, python-brace-format
 msgid "Are you sure you want to delete {0}?"
 msgstr "هل تريد بالتأكيد حذف {0}؟"
 
-#: src/host_manager.py:267 src/model_manager.py:395 src/widgets/knowledge_view.py:1359
+#: src/host_manager.py:267 src/model_manager.py:391 src/widgets/knowledge_view.py:580
+#: src/window.py:524
 msgid "Delete"
 msgstr "حذف"
 
-#: src/host_manager.py:276 src/model_manager.py:418
+#: src/host_manager.py:276 src/model_manager.py:415
 msgid "Delete Failed"
 msgstr "فشل الحذف"
 
@@ -527,7 +647,8 @@ msgstr "يتجاوز هذا المستند حد خمسة ملايين محرف �
 msgid "Untitled"
 msgstr "بلا عنوان"
 
-#: src/knowledge.py:55 src/widgets/knowledge_import.py:174
+#: src/knowledge.py:55 src/widgets/chat_input.py:297 src/widgets/chat_input.py:323
+#: src/widgets/knowledge_import.py:174
 msgid "Files must be no larger than 50 MiB."
 msgstr "يجب ألا يتجاوز حجم الملفات 50 MiB."
 
@@ -604,108 +725,104 @@ msgstr "يجب أن يكون عدد المقاطع بين 1 و20."
 msgid "Source budget must be between 256 and 64,000 characters."
 msgstr "يجب أن يكون الحد المخصص للمصادر بين 256 و64,000 محرف."
 
-#: src/knowledge.py:229
-msgid "Wait for the model operation to finish."
-msgstr "انتظر حتى تنتهي عملية النموذج."
+#: src/knowledge.py:224 src/knowledge.py:268
+msgid "The Knowledge Library is closing."
+msgstr "يجري إغلاق مكتبة المعرفة."
 
-#: src/knowledge.py:263
+#: src/knowledge.py:258
 msgid "The embedding host was removed. Choose a configured host before continuing."
 msgstr "أُزيل مضيف التضمين. اختر مضيفًا مهيأً قبل المتابعة."
 
-#: src/knowledge.py:269 src/widgets/knowledge_import.py:146 src/widgets/url_import.py:100
+#: src/knowledge.py:264 src/widgets/knowledge_import.py:146 src/widgets/url_import.py:100
 #: src/widgets/url_import.py:113
 msgid "Queued"
 msgstr "في قائمة الانتظار"
 
-#: src/knowledge.py:273
-msgid "The Knowledge Library is closing."
-msgstr "يجري إغلاق مكتبة المعرفة."
-
-#: src/knowledge.py:279
+#: src/knowledge.py:274
 msgid "This document is being replaced. Retry the build when replacement finishes."
 msgstr "يجري استبدال هذا المستند. أعد محاولة البناء بعد انتهاء الاستبدال."
 
-#: src/knowledge.py:301
+#: src/knowledge.py:296
 msgid "Complete"
 msgstr "مكتمل"
 
-#: src/knowledge.py:318
+#: src/knowledge.py:313
 msgid "Wait for this document’s embedding builds to finish before replacing it."
 msgstr "انتظر حتى ينتهي بناء تضمينات هذا المستند قبل استبداله."
 
-#: src/knowledge.py:321
+#: src/knowledge.py:316
 msgid "Saving the web document…"
 msgstr "جارٍ حفظ مستند الويب…"
 
-#: src/knowledge.py:349
+#: src/knowledge.py:344
 msgid "Save web document"
 msgstr "حفظ مستند الويب"
 
-#: src/knowledge.py:370
+#: src/knowledge.py:365
 msgid "Create collection"
 msgstr "إنشاء مجموعة"
 
-#: src/knowledge.py:385
+#: src/knowledge.py:380
 #, python-brace-format
 msgid "Add document: {0}"
 msgstr "إضافة مستند: {0}"
 
-#: src/knowledge.py:393
+#: src/knowledge.py:388
 #, python-brace-format
 msgid "Prepare collection: {0}"
 msgstr "تجهيز المجموعة: {0}"
 
-#: src/knowledge.py:400
+#: src/knowledge.py:395
 msgid "Reusing embeddings and preparing missing documents…"
 msgstr "جارٍ إعادة استخدام التضمينات وتجهيز المستندات الناقصة…"
 
-#: src/knowledge.py:417
+#: src/knowledge.py:412
 #, python-brace-format
 msgid "Create embeddings: {0}"
 msgstr "إنشاء تضمينات: {0}"
 
-#: src/knowledge.py:422
+#: src/knowledge.py:417
 msgid "Build was stopped before it started."
 msgstr "أُوقف البناء قبل أن يبدأ."
 
-#: src/knowledge.py:439
+#: src/knowledge.py:434
 msgid "The source document was deleted."
 msgstr "حُذف المستند المصدر."
 
-#: src/knowledge.py:444
+#: src/knowledge.py:439
 msgid "This index would exceed 100,000 chunks. Increase the chunk size or reduce overlap."
 msgstr "سيتجاوز هذا الفهرس 100,000 مقطع. زِد حجم المقطع أو قلل التداخل."
 
-#: src/knowledge.py:460
+#: src/knowledge.py:455
 #, python-brace-format
 msgid "Embedding chunks: {0} complete, {1} remaining"
 msgstr "جارٍ تضمين المقاطع: المكتمل {0}، والمتبقي {1}"
 
-#: src/knowledge.py:484
+#: src/knowledge.py:479
 msgid "The embedding input cannot fit. Shorten the document prefix or choose another model."
 msgstr "يتجاوز مدخل التضمين السعة المتاحة. قصّر بادئة المستند أو اختر نموذجًا آخر."
 
-#: src/knowledge.py:494
+#: src/knowledge.py:489
 msgid "The model returned a different vector dimension. Create a new configuration."
 msgstr "أعاد النموذج متجهًا بأبعاد مختلفة. أنشئ إعدادًا جديدًا."
 
-#: src/knowledge.py:509
+#: src/knowledge.py:504
 msgid "Create embeddings"
 msgstr "إنشاء تضمينات"
 
-#: src/knowledge.py:519
+#: src/knowledge.py:514
 msgid "This embedding configuration has no completed vectors."
 msgstr "لا يحتوي إعداد التضمين هذا على متجهات مكتملة."
 
-#: src/knowledge.py:521 src/widgets/knowledge_view.py:659
+#: src/knowledge.py:516 src/widgets/source_views.py:264
 msgid "Enter a search query."
 msgstr "أدخل عبارة بحث."
 
-#: src/knowledge.py:531 src/knowledge_store.py:265
+#: src/knowledge.py:526 src/knowledge_store.py:285
 msgid "Query dimensions differ from the stored vectors. Rebuild the index."
 msgstr "تختلف أبعاد الاستعلام عن المتجهات المخزنة. أعد بناء الفهرس."
 
-#: src/knowledge.py:538
+#: src/knowledge.py:533
 msgid "No passages met the search criteria. Adjust the query, sources, or minimum similarity."
 msgstr "لم تستوفِ أي مقاطع معايير البحث. عدّل الاستعلام أو المصادر أو الحد الأدنى للتشابه."
 
@@ -713,80 +830,78 @@ msgstr "لم تستوفِ أي مقاطع معايير البحث. عدّل ال
 msgid "The destination collection was deleted."
 msgstr "حُذفت المجموعة الوجهة."
 
-#: src/knowledge_store.py:136
+#: src/knowledge_store.py:156
 msgid "The reserved embedding index was deleted."
 msgstr "حُذف فهرس التضمين المحجوز."
 
-#: src/knowledge_store.py:138
+#: src/knowledge_store.py:158
 msgid "An index cannot change its document or embedding configuration."
 msgstr "لا يمكن تغيير مستند الفهرس أو إعداد تضمينه."
 
-#: src/knowledge_store.py:153
+#: src/knowledge_store.py:173
 msgid "Embedding dimensions do not match the batch."
 msgstr "لا تتطابق أبعاد التضمين مع الدفعة."
 
-#: src/knowledge_store.py:160
+#: src/knowledge_store.py:180
 msgid "Embedding configuration does not match the index."
 msgstr "لا يتطابق إعداد التضمين مع الفهرس."
 
-#: src/knowledge_store.py:163
+#: src/knowledge_store.py:183
 msgid "Embedding dimensions changed during indexing"
 msgstr "تغيرت أبعاد التضمين أثناء الفهرسة"
 
-#: src/knowledge_store.py:169
+#: src/knowledge_store.py:189
 msgid "A chunk cannot move between indexes."
 msgstr "لا يمكن نقل مقطع بين الفهارس."
 
-#: src/knowledge_store.py:241
+#: src/knowledge_store.py:261
 msgid "Select at least one indexed document or chunk."
 msgstr "اختر مستندًا أو مقطعًا مفهرسًا واحدًا على الأقل."
 
-#: src/knowledge_store.py:244
+#: src/knowledge_store.py:264
 msgid "Invalid search limits."
 msgstr "حدود البحث غير صالحة."
 
-#: src/knowledge_store.py:272
+#: src/knowledge_store.py:292
 msgid "A selected index is missing, incomplete, or incompatible. Choose sources again."
 msgstr "أحد الفهارس المحددة مفقود أو غير مكتمل أو غير متوافق. اختر المصادر مجددًا."
 
-#: src/knowledge_store.py:277 src/knowledge_store.py:286
+#: src/knowledge_store.py:297 src/knowledge_store.py:306
 msgid "Selected chunks are missing. Choose sources again."
 msgstr "المقاطع المحددة مفقودة. اختر المصادر مجددًا."
 
-#: src/knowledge_store.py:282
+#: src/knowledge_store.py:302
 msgid "A selected document has no selected chunks."
 msgstr "لا توجد مقاطع محددة في أحد المستندات المختارة."
 
-#: src/knowledge_store.py:289 src/knowledge_store.py:307 src/vectors.py:108
+#: src/knowledge_store.py:309 src/knowledge_store.py:327 src/vectors.py:108
 #: src/vectors.py:116
 msgid "Stored vectors are missing. Rebuild this index."
 msgstr "المتجهات المخزنة مفقودة. أعد بناء هذا الفهرس."
 
-#: src/knowledge_store.py:309 src/vectors.py:129
+#: src/knowledge_store.py:329 src/vectors.py:129
 msgid "Stored vectors are damaged. Rebuild this index."
 msgstr "المتجهات المخزنة تالفة. أعد بناء هذا الفهرس."
 
-#: src/knowledge_store.py:327 src/vectors.py:124
+#: src/knowledge_store.py:347 src/vectors.py:124
 msgid "Stored vectors do not match their source. Rebuild this index."
 msgstr "لا تتطابق المتجهات المخزنة مع مصدرها. أعد بناء هذا الفهرس."
 
-#: src/knowledge_store.py:349
+#: src/knowledge_store.py:369
 #, python-brace-format
 msgid "Knowledge search failed: {0}"
 msgstr "فشل البحث في المعرفة: {0}"
 
-#. Translators: Translate "ltr" as "rtl" for right-to-left languages.
-#. Use the app's language even when GTK's language pack is not installed.
-#: src/main.py:33
+#: src/main.py:34
 msgctxt "text direction"
 msgid "ltr"
 msgstr "rtl"
 
-#: src/main.py:61
+#: src/main.py:62
 msgid "Database Upgraded"
 msgstr "تمت ترقية قاعدة البيانات"
 
-#: src/main.py:62
+#: src/main.py:63
 #, python-brace-format
 msgid ""
 "Your data is ready. A backup of the previous database was saved at:\n"
@@ -795,17 +910,23 @@ msgstr ""
 "بياناتك جاهزة. حُفظت نسخة احتياطية من قاعدة البيانات السابقة في:\n"
 "{0}"
 
-#. Translators: Replace "translator-credits" with your name/username, and optionally an
-#. email or URL.
-#: src/main.py:75
+#: src/main.py:76
 msgid "translator-credits"
 msgstr "ترجمة بمساعدة الذكاء الاصطناعي"
 
-#: src/model_details_view.ui:6 src/model_manager.py:42 src/model_manager.py:318
+#: src/markdown_view.py:413
+msgid "Copy Code"
+msgstr "نسخ الشيفرة"
+
+#: src/markdown_view.py:422
+msgid "Preview Markdown"
+msgstr "معاينة Markdown"
+
+#: src/model_details_view.ui:6 src/model_manager.py:37 src/model_manager.py:314
 msgid "Model Details"
 msgstr "تفاصيل النموذج"
 
-#: src/model_manager.py:29
+#: src/model_manager.py:24
 #, python-brace-format
 msgid ""
 "Memory: {0} · VRAM: {1}\n"
@@ -814,76 +935,76 @@ msgstr ""
 "الذاكرة: {0} · ذاكرة الرسوميات: {1}\n"
 "السياق: {2} · انتهاء الصلاحية: {3}"
 
-#: src/model_manager.py:168 src/tab.py:163
+#: src/model_manager.py:164 src/tab.py:358
 msgid "No host configured."
 msgstr "لم يُهيأ أي مضيف."
 
-#: src/model_manager.py:173
+#: src/model_manager.py:169
 msgid "Loading running models…"
 msgstr "جارٍ تحميل النماذج العاملة…"
 
-#: src/model_manager.py:177
+#: src/model_manager.py:173
 #, python-brace-format
 msgid "Could not refresh running models: {0}"
 msgstr "تعذر تحديث النماذج العاملة: {0}"
 
-#: src/model_manager.py:193
+#: src/model_manager.py:189
 msgid "No models are loaded in memory."
 msgstr "لا توجد نماذج محملة في الذاكرة."
 
-#: src/model_manager.py:199 src/model_manager.py:212
+#: src/model_manager.py:195 src/model_manager.py:208
 msgid "Unload"
 msgstr "إفراغ من الذاكرة"
 
-#: src/model_manager.py:200 src/model_manager.py:214
+#: src/model_manager.py:196 src/model_manager.py:210
 msgid "Release this model from memory; keep its downloaded files."
 msgstr "حرر هذا النموذج من الذاكرة مع الاحتفاظ بملفاته المنزلة."
 
-#: src/model_manager.py:212
+#: src/model_manager.py:208
 msgid "Unloading…"
 msgstr "جارٍ الإفراغ من الذاكرة…"
 
-#: src/model_manager.py:213
+#: src/model_manager.py:209
 msgid "A chat or embedding job is using this model in Gnollama."
 msgstr "تستخدم دردشة أو مهمة تضمين هذا النموذج في Gnollama."
 
-#: src/model_manager.py:232
+#: src/model_manager.py:228
 msgid "Could not unload model"
 msgstr "تعذر إفراغ النموذج من الذاكرة"
 
-#: src/model_manager.py:273 src/model_manager.ui:90
+#: src/model_manager.py:269 src/model_manager.ui:90
 msgid "Available Models"
 msgstr "النماذج المتاحة"
 
-#: src/model_manager.py:273 src/model_manager.ui:80
+#: src/model_manager.py:269 src/model_manager.ui:80
 msgid "Installed"
 msgstr "المثبتة"
 
-#: src/model_manager.py:286
+#: src/model_manager.py:282
 msgid "Connection Error"
 msgstr "خطأ في الاتصال"
 
-#: src/model_manager.py:325
+#: src/model_manager.py:321
 msgid "Delete Model"
 msgstr "حذف النموذج"
 
-#: src/model_manager.py:357
+#: src/model_manager.py:353
 msgid "Failed to fetch details"
 msgstr "فشل جلب التفاصيل"
 
-#: src/model_manager.py:377 src/model_manager.py:402 src/model_manager.py:405
+#: src/model_manager.py:373 src/model_manager.py:398 src/model_manager.py:401
 msgid "Model Is Busy"
 msgstr "النموذج مشغول"
 
-#: src/model_manager.py:377 src/model_manager.py:405
+#: src/model_manager.py:373 src/model_manager.py:401
 msgid "Wait for active chats and embedding jobs before deleting this model."
 msgstr "انتظر انتهاء الدردشات ومهام التضمين النشطة قبل حذف هذا النموذج."
 
-#: src/model_manager.py:381
+#: src/model_manager.py:377
 msgid "Also delete matching vectors; keep source text"
 msgstr "حذف المتجهات المطابقة أيضًا مع الاحتفاظ بنص المصدر"
 
-#: src/model_manager.py:383
+#: src/model_manager.py:379
 #, python-brace-format
 msgid ""
 "Stored data using this model: {0} documents, {1} indexes, {2} vectors. Kept vectors "
@@ -892,7 +1013,7 @@ msgstr ""
 "البيانات المخزنة التي تستخدم هذا النموذج: المستندات {0}، والفهارس {1}، والمتجهات {2}."
 " يمكن إعادة استخدام المتجهات المحتفظ بها مع بصمة النموذج نفسها على مضيف متوافق."
 
-#: src/model_manager.py:385
+#: src/model_manager.py:381
 #, python-brace-format
 msgid ""
 "Collections using this configuration: {0}. Deleting vectors keeps their documents and"
@@ -901,32 +1022,32 @@ msgstr ""
 "المجموعات التي تستخدم هذا الإعداد: {0}. يحافظ حذف المتجهات على المستندات وعضويتها، "
 "لكن يلزم إعادة بناء تضميناتها قبل البحث."
 
-#: src/model_manager.py:388
+#: src/model_manager.py:384
 msgid "Delete Model?"
 msgstr "حذف النموذج؟"
 
-#: src/model_manager.py:402
+#: src/model_manager.py:398
 msgid "Wait for all indexing jobs using this model before deleting its vectors."
 msgstr "انتظر انتهاء جميع مهام الفهرسة التي تستخدم هذا النموذج قبل حذف متجهاته."
 
-#: src/model_manager.py:573
+#: src/model_manager.py:572
 msgid "Starting download…"
 msgstr "جارٍ بدء التنزيل…"
 
-#: src/model_manager.py:598
+#: src/model_manager.py:597
 msgid "Error"
 msgstr "خطأ"
 
-#: src/model_manager.py:599
+#: src/model_manager.py:598
 msgid "Error occurred."
 msgstr "حدث خطأ."
 
-#: src/model_manager.py:618
+#: src/model_manager.py:617
 #, python-brace-format
 msgid "{0:.0f}%"
 msgstr "{0:.0f}٪"
 
-#: src/model_manager.py:621
+#: src/model_manager.py:620
 msgid "Download complete"
 msgstr "اكتمل التنزيل"
 
@@ -1022,7 +1143,7 @@ msgstr "العاملة"
 msgid "Models in Memory"
 msgstr "النماذج في الذاكرة"
 
-#: src/ollama.py:71 src/storage.py:127
+#: src/ollama.py:71 src/storage.py:137
 msgid "Ollama Cloud requires https://ollama.com."
 msgstr "يتطلب Ollama Cloud العنوان https://ollama.com."
 
@@ -1058,43 +1179,43 @@ msgstr "ورد JSON غير صالح من Ollama"
 msgid "Expected a JSON object from Ollama"
 msgstr "كان المتوقع كائن JSON من Ollama"
 
-#: src/ollama.py:221
+#: src/ollama.py:222
 msgid "Enter nonempty text to embed."
 msgstr "أدخل نصًا غير فارغ لتضمينه."
 
-#: src/ollama.py:225
+#: src/ollama.py:226
 msgid "Embedding dimensions must be a positive integer."
 msgstr "يجب أن تكون أبعاد التضمين عددًا صحيحًا موجبًا."
 
-#: src/ollama.py:232
+#: src/ollama.py:233
 msgid "The server returned an incorrect number of embeddings."
 msgstr "أعاد الخادم عددًا غير صحيح من التضمينات."
 
-#: src/ollama.py:237
+#: src/ollama.py:238
 msgid "The server returned an invalid embedding vector."
 msgstr "أعاد الخادم متجه تضمين غير صالح."
 
-#: src/ollama.py:240
+#: src/ollama.py:241
 msgid "Embedding dimensions do not match, or a vector is zero."
 msgstr "لا تتطابق أبعاد التضمين، أو أن أحد المتجهات صفري."
 
-#: src/ollama.py:269
+#: src/ollama.py:270
 msgid "Model pull ended before completion"
 msgstr "انتهى تنزيل النموذج قبل اكتماله"
 
-#: src/ollama.py:275
+#: src/ollama.py:276
 msgid "Invalid output format"
 msgstr "تنسيق إخراج غير صالح"
 
-#: src/ollama.py:279
+#: src/ollama.py:280
 msgid "Keep-alive must be a duration in seconds, 0, or -1"
 msgstr "يجب أن تكون مدة إبقاء النموذج بالثواني أو 0 أو -1"
 
-#: src/ollama.py:283
+#: src/ollama.py:284
 msgid "Invalid thinking setting"
 msgstr "إعداد تفكير غير صالح"
 
-#: src/ollama.py:289
+#: src/ollama.py:290
 msgid "Top logprobs must be between 0 and 20"
 msgstr "يجب أن يكون عدد أعلى الاحتمالات اللوغاريتمية بين 0 و20"
 
@@ -1122,11 +1243,19 @@ msgstr "السماح بالتنزيل عبر اتصالات غير آمنة"
 msgid "Download Details"
 msgstr "تفاصيل التنزيل"
 
-#: src/session.py:16 src/tab.py:38 src/window.ui:61 src/window.ui:88
+#: src/request_runner.py:58
+msgid "Response ended before completion."
+msgstr "انتهى الرد قبل اكتماله."
+
+#: src/services.py:74
+msgid "Wait for the model operation to finish."
+msgstr "انتظر حتى تنتهي عملية النموذج."
+
+#: src/session.py:17 src/tab.py:39 src/window.ui:61 src/window.ui:88
 msgid "New Chat"
 msgstr "دردشة جديدة"
 
-#: src/session.py:169
+#: src/session.py:148
 msgid "There are no pending tool calls."
 msgstr "لا توجد استدعاءات أدوات معلقة."
 
@@ -1149,57 +1278,57 @@ msgctxt "shortcut window"
 msgid "New Chat Tab"
 msgstr "لسان دردشة جديد"
 
-#: src/shortcuts-dialog.ui:26
+#: src/shortcuts-dialog.ui:32
 msgctxt "shortcut window"
 msgid "Close Tab"
 msgstr "إغلاق اللسان"
 
-#: src/shortcuts-dialog.ui:32
+#: src/shortcuts-dialog.ui:38
 msgctxt "shortcut window"
 msgid "Next Tab"
 msgstr "اللسان التالي"
 
-#: src/shortcuts-dialog.ui:38
+#: src/shortcuts-dialog.ui:44
 msgctxt "shortcut window"
 msgid "Previous Tab"
 msgstr "اللسان السابق"
 
-#: src/shortcuts-dialog.ui:44
+#: src/shortcuts-dialog.ui:50
 msgctxt "shortcut window"
 msgid "Toggle Sidebar"
 msgstr "تبديل الشريط الجانبي"
 
-#: src/startup.py:16 src/startup.py:53
+#: src/startup.py:16 src/startup.py:54
 msgid "Opening Gnollama"
 msgstr "جارٍ فتح Gnollama"
 
-#: src/startup.py:20 src/tab.py:247 src/widgets/knowledge_import.py:88
-#: src/widgets/knowledge_view.py:1220 src/widgets/url_import.py:232 src/window.py:139
+#: src/startup.py:20 src/tab.py:440 src/widgets/knowledge_import.py:88
+#: src/widgets/knowledge_view.py:441 src/widgets/url_import.py:232 src/window.py:174
 msgid "Retry"
 msgstr "إعادة المحاولة"
 
-#: src/startup.py:42
+#: src/startup.py:43
 msgid "Finishing the database operation before closing…"
 msgstr "جارٍ إكمال عملية قاعدة البيانات قبل الإغلاق…"
 
-#: src/startup.py:54
+#: src/startup.py:55
 msgid "Checking the database…"
 msgstr "جارٍ فحص قاعدة البيانات…"
 
-#: src/startup.py:90
+#: src/startup.py:91
 msgid "Could Not Open the Database"
 msgstr "تعذر فتح قاعدة البيانات"
 
-#: src/startup.py:94
+#: src/startup.py:95
 #, python-brace-format
 msgid "Database backup: {0}"
 msgstr "نسخة قاعدة البيانات الاحتياطية: {0}"
 
-#: src/storage.py:117
+#: src/storage.py:127
 msgid "This host was removed."
 msgstr "أُزيل هذا الخادم."
 
-#: src/storage.py:122
+#: src/storage.py:132
 msgid "Invalid host type."
 msgstr "نوع الخادم غير صالح."
 
@@ -1247,53 +1376,65 @@ msgstr "الصق مخطط JSON أو استورده، ثم انقر «تطبيق�
 msgid "Invalid schema JSON: {0}"
 msgstr "JSON المخطط غير صالح: {0}"
 
-#: src/tab.py:38
+#: src/tab.py:39
 msgid "New Response"
 msgstr "رد جديد"
 
-#: src/tab.py:87
+#: src/tab.py:102
+msgid "Load Older Messages"
+msgstr "تحميل الرسائل الأقدم"
+
+#: src/tab.py:110
+msgid "Discard Draft"
+msgstr "تجاهل المسودة"
+
+#: src/tab.py:131 src/tab.py:142
+msgid "Options"
+msgstr "الخيارات"
+
+#: src/tab.py:139 src/widgets/options_panel.ui:21
+msgid "Tool Calling"
+msgstr "استدعاء الأدوات"
+
+#: src/tab.py:141 src/widgets/chat_input.ui:46
+msgid "Thinking"
+msgstr "التفكير"
+
+#: src/tab.py:280
 msgid "Chat"
 msgstr "دردشة"
 
-#: src/tab.py:167
-msgid "Select an available model before sending."
-msgstr "اختر نموذجًا متاحًا قبل الإرسال."
-
-#: src/tab.py:170
+#: src/tab.py:366
 msgid "Wait for this model to finish unloading before sending."
 msgstr "انتظر إفراغ هذا النموذج من الذاكرة قبل الإرسال."
 
-#: src/tab.py:175
+#: src/tab.py:371
 msgid "Wait for image support to be checked before sending."
 msgstr "انتظر اكتمال التحقق من دعم الصور قبل الإرسال."
 
-#: src/tab.py:177 src/widgets/chat_input.py:112
+#: src/tab.py:373 src/widgets/chat_input.py:121
 msgid "Remove draft images or select a vision model to send."
 msgstr "أزل صور المسودة أو اختر نموذجًا يدعم الرؤية للإرسال."
 
-#: src/tab.py:220
+#: src/tab.py:413
 msgid "Retrieving sources…"
 msgstr "جارٍ استرجاع المصادر…"
 
-#: src/tab.py:245
+#: src/tab.py:438
 msgid "Could Not Retrieve Sources"
 msgstr "تعذر استرجاع المصادر"
 
-#: src/tab.py:246
+#: src/tab.py:439
 msgid "Adjust Sources"
 msgstr "تعديل المصادر"
 
-#: src/tab.py:248
+#: src/tab.py:441
 msgid "Send Without Knowledge"
 msgstr "إرسال دون المعرفة"
 
-#: src/tab.py:249
+#: src/tab.py:442
 msgid "Keep Draft"
 msgstr "الاحتفاظ بالمسودة"
-
-#: src/tab.py:311
-msgid "Response ended before completion."
-msgstr "انتهى الرد قبل اكتماله."
 
 #: src/tool_calling.py:104
 msgid "Paste, import, or load the example tools, then click Apply."
@@ -1350,7 +1491,7 @@ msgstr "احفظ نتيجة لكل استدعاء أداة قبل المتابع
 msgid "Tool result not provided: tool round cancelled by user."
 msgstr "لم تُقدّم نتيجة الأداة: ألغى المستخدم جولة الأدوات."
 
-#: src/vectors.py:16 src/widgets/knowledge_view.py:563
+#: src/vectors.py:16 src/widgets/source_views.py:168
 msgid "Choose a supported similarity measure."
 msgstr "اختر مقياس تشابه مدعومًا."
 
@@ -1503,88 +1644,92 @@ msgstr "تغير هذا المستند منذ فتح المعاينة. اجلب�
 msgid "Source content changed. Rebuild required."
 msgstr "تغير محتوى المصدر. يلزم إعادة البناء."
 
-#: src/widgets/chat_input.py:61 src/widgets/chat_input.py:66 src/widgets/chat_input.py:68
-#: src/widgets/knowledge_view.py:247
+#: src/widgets/chat_input.py:34
+msgid "Type a message..."
+msgstr "اكتب رسالة…"
+
+#: src/widgets/chat_input.py:68 src/widgets/chat_input.py:73 src/widgets/chat_input.py:75
+#: src/widgets/knowledge_common.py:248
 msgid "Model default"
 msgstr "افتراضي النموذج"
 
-#: src/widgets/chat_input.py:61
+#: src/widgets/chat_input.py:68
 msgid "Off"
 msgstr "معطل"
 
-#: src/widgets/chat_input.py:61
+#: src/widgets/chat_input.py:68
 msgid "On"
 msgstr "مفعّل"
 
-#: src/widgets/chat_input.py:61 src/widgets/chat_input.py:66
+#: src/widgets/chat_input.py:68 src/widgets/chat_input.py:73
 msgid "Low"
 msgstr "منخفض"
 
-#: src/widgets/chat_input.py:61 src/widgets/chat_input.py:66
+#: src/widgets/chat_input.py:68 src/widgets/chat_input.py:73
 msgid "Medium"
 msgstr "متوسط"
 
-#: src/widgets/chat_input.py:61 src/widgets/chat_input.py:66
+#: src/widgets/chat_input.py:68 src/widgets/chat_input.py:73
 msgid "High"
 msgstr "مرتفع"
 
-#: src/widgets/chat_input.py:61
+#: src/widgets/chat_input.py:68
 msgid "Max"
 msgstr "الأقصى"
 
-#: src/widgets/chat_input.py:87
+#: src/widgets/chat_input.py:96 src/widgets/comparison_view.py:272
 msgid "Stop response"
 msgstr "إيقاف الرد"
 
-#: src/widgets/chat_input.py:87 src/widgets/chat_input.ui:73
+#: src/widgets/chat_input.py:96 src/widgets/chat_input.ui:72
 msgid "Send Message"
 msgstr "إرسال رسالة"
 
-#: src/widgets/chat_input.py:108
+#: src/widgets/chat_input.py:117
 msgid "Checking image support…"
 msgstr "جارٍ التحقق من دعم الصور…"
 
-#: src/widgets/chat_input.py:110
+#: src/widgets/chat_input.py:119
 msgid "This model does not support images."
 msgstr "لا يدعم هذا النموذج الصور."
 
-#: src/widgets/chat_input.py:114
+#: src/widgets/chat_input.py:123
 msgid "Earlier images remain saved; only text history will be sent."
 msgstr "تبقى الصور السابقة محفوظة؛ سيُرسل السجل النصي فقط."
 
-#: src/widgets/chat_input.py:116
+#: src/widgets/chat_input.py:125
 msgid "Image support unknown."
 msgstr "دعم الصور غير معروف."
 
-#: src/widgets/chat_input.py:128
+#: src/widgets/chat_input.py:137
 msgid "Select a chat model"
 msgstr "اختر نموذج دردشة"
 
-#: src/widgets/chat_input.py:163
+#: src/widgets/chat_input.py:172
 msgid "Checking chat models…"
 msgstr "جارٍ التحقق من نماذج الدردشة…"
 
-#: src/widgets/chat_input.py:176
+#: src/widgets/chat_input.py:185
 msgid "No cloud models are available. Try refreshing later."
 msgstr "لا تتوفر نماذج سحابية. حاول التحديث لاحقًا."
 
-#: src/widgets/chat_input.py:177
+#: src/widgets/chat_input.py:186
 msgid "No chat models found. Pull one in Manage Models, then refresh."
 msgstr "لم يُعثر على نماذج دردشة. نزّل نموذجًا من «إدارة النماذج» ثم حدّث القائمة."
 
-#: src/widgets/chat_input.py:247
+#: src/widgets/chat_input.py:264
 msgid "Select Images"
 msgstr "اختيار صور"
 
-#: src/widgets/chat_input.py:251
+#: src/widgets/chat_input.py:268
 msgid "Images"
 msgstr "الصور"
 
-#: src/widgets/chat_input.py:284 src/widgets/chat_input.ui:116
+#: src/widgets/chat_input.py:348 src/widgets/chat_input.ui:115
 msgid "No image selected"
 msgstr "لم تُحدد أي صورة"
 
-#: src/widgets/chat_input.py:290
+#: src/widgets/chat_input.py:355
 #, python-brace-format
 msgid "{0} image selected"
 msgid_plural "{0} images selected"
@@ -1595,29 +1740,105 @@ msgstr[3] "حُددت {0} صور"
 msgstr[4] "حُددت {0} صورة"
 msgstr[5] "حُددت {0} صورة"
 
+#: src/widgets/chat_input.py:390 src/widgets/chat_input.ui:124
+msgid "Clear Image"
+msgstr "إزالة الصورة"
+
+#: src/widgets/chat_input.py:396
+msgid "Could not restore an image. Remove it before sending."
+msgstr "تعذرت استعادة صورة. أزلها قبل الإرسال."
+
 #: src/widgets/chat_input.ui:35
 msgid "Select Model"
 msgstr "اختيار نموذج"
-
-#: src/widgets/chat_input.ui:46
-msgid "Thinking"
-msgstr "التفكير"
 
 #: src/widgets/chat_input.ui:54
 msgid "Thinking Level"
 msgstr "مستوى التفكير"
 
-#: src/widgets/chat_input.ui:67
-msgid "Type a message..."
-msgstr "اكتب رسالة…"
-
-#: src/widgets/chat_input.ui:111
+#: src/widgets/chat_input.ui:110
 msgid "Attach Image"
 msgstr "إرفاق صورة"
 
-#: src/widgets/chat_input.ui:125
-msgid "Clear Image"
-msgstr "إزالة الصورة"
+#: src/widgets/collection_views.py:20
+msgid ""
+"An embedding model makes documents searchable. It can differ from the model used for "
+"chat."
+msgstr "يجعل نموذج التضمين المستندات قابلة للبحث. ويمكن أن يختلف عن النموذج المستخدم للدردشة."
+
+#: src/widgets/collection_views.py:21
+msgid "Copy Collection with New Settings"
+msgstr "نسخ المجموعة بإعدادات جديدة"
+
+#: src/widgets/collection_views.py:21
+msgid "Create Collection"
+msgstr "إنشاء مجموعة"
+
+#: src/widgets/collection_views.py:22 src/widgets/collection_views.py:25
+msgid "Collection name"
+msgstr "اسم المجموعة"
+
+#: src/widgets/collection_views.py:23
+#, python-brace-format
+msgid "{0} (copy)"
+msgstr "{0} (نسخة)"
+
+#: src/widgets/collection_views.py:52
+msgid "Destination collection"
+msgstr "المجموعة الوجهة"
+
+#: src/widgets/collection_views.py:53 src/widgets/knowledge_view.py:40
+msgid "New Collection…"
+msgstr "مجموعة جديدة…"
+
+#: src/widgets/collection_views.py:60
+msgid "Choose a collection"
+msgstr "اختر مجموعة"
+
+#: src/widgets/collection_views.py:71
+msgid "Choose a destination collection, or create a new one."
+msgstr "اختر مجموعة وجهة أو أنشئ مجموعة جديدة."
+
+#: src/widgets/collection_views.py:81
+msgid "Add Existing Documents"
+msgstr "إضافة مستندات موجودة"
+
+#: src/widgets/collection_views.py:87 src/widgets/knowledge_view.py:47
+#: src/widgets/knowledge_view.py:160
+msgid "Search documents"
+msgstr "البحث في المستندات"
+
+#: src/widgets/collection_views.py:92 src/widgets/knowledge_view.py:458
+msgid "Add"
+msgstr "إضافة"
+
+#: src/widgets/collection_views.py:95 src/widgets/knowledge_view.py:54 src/window.py:75
+msgid "Load More"
+msgstr "تحميل المزيد"
+
+#: src/widgets/collection_views.py:134
+msgid "All library documents are already in this collection."
+msgstr "جميع مستندات المكتبة موجودة بالفعل في هذه المجموعة."
+
+#: src/widgets/comparison_view.py:81
+msgid "Add Target"
+msgstr "إضافة هدف"
+
+#: src/widgets/comparison_view.py:83
+msgid "Remove Target"
+msgstr "إزالة هدف"
+
+#: src/widgets/comparison_view.py:93
+msgid "Run Again"
+msgstr "تشغيل مجددًا"
+
+#: src/widgets/comparison_view.py:199
+msgid "Stop All"
+msgstr "إيقاف الكل"
+
+#: src/widgets/feedback.py:15
+msgid "Copied"
+msgstr "تم النسخ"
 
 #: src/widgets/json_view.py:50
 msgid "JSON files"
@@ -1627,8 +1848,8 @@ msgstr "ملفات JSON"
 msgid "Import…"
 msgstr "استيراد…"
 
-#: src/widgets/json_view.py:73 src/widgets/knowledge_view.py:507
-#: src/widgets/knowledge_view.py:690
+#: src/widgets/json_view.py:73 src/widgets/source_views.py:112
+#: src/widgets/source_views.py:295
 msgid "Apply"
 msgstr "تطبيق"
 
@@ -1636,7 +1857,7 @@ msgstr "تطبيق"
 msgid "Content"
 msgstr "المحتوى"
 
-#: src/widgets/json_view.py:160 src/widgets/options_panel.py:42
+#: src/widgets/json_view.py:160 src/widgets/options_panel.py:43
 msgid "JSON Schema"
 msgstr "مخطط JSON"
 
@@ -1702,6 +1923,123 @@ msgstr "حفظ JSON"
 msgid "JSON could not be saved"
 msgstr "تعذر حفظ JSON"
 
+#: src/widgets/knowledge_common.py:65
+msgid "Ready"
+msgstr "جاهز"
+
+#: src/widgets/knowledge_common.py:67 src/widgets/knowledge_import.py:148
+msgid "Needs Attention"
+msgstr "بحاجة إلى معالجة"
+
+#: src/widgets/knowledge_common.py:69
+msgid "Preparing"
+msgstr "جارٍ التجهيز"
+
+#: src/widgets/knowledge_common.py:70
+msgid "Needs Preparation"
+msgstr "بحاجة إلى تجهيز"
+
+#: src/widgets/knowledge_common.py:75
+msgid "Native dimensions"
+msgstr "الأبعاد الأصلية"
+
+#: src/widgets/knowledge_common.py:81
+#, python-brace-format
+msgid "Page {0}"
+msgstr "الصفحة {0}"
+
+#: src/widgets/knowledge_common.py:149
+msgid "Embedding server"
+msgstr "خادم التضمين"
+
+#: src/widgets/knowledge_common.py:150
+msgid "Embedding model"
+msgstr "نموذج التضمين"
+
+#: src/widgets/knowledge_common.py:152
+msgid "Manage Models…"
+msgstr "إدارة النماذج…"
+
+#: src/widgets/knowledge_common.py:153
+msgid "Refresh"
+msgstr "تحديث"
+
+#: src/widgets/knowledge_common.py:197
+msgid "Checking embedding models…"
+msgstr "جارٍ التحقق من نماذج التضمين…"
+
+#: src/widgets/knowledge_common.py:224
+msgid "No embedding models found. Download one in Manage Models, then refresh."
+msgstr "لم يُعثر على نماذج تضمين. نزّل نموذجًا من «إدارة النماذج» ثم حدّث القائمة."
+
+#: src/widgets/knowledge_common.py:233 src/widgets/knowledge_view.py:423
+msgid "Create Embeddings"
+msgstr "إنشاء تضمينات"
+
+#: src/widgets/knowledge_common.py:241
+msgid "Plain"
+msgstr "دون بادئة"
+
+#: src/widgets/knowledge_common.py:241
+msgid "EmbeddingGemma retrieval"
+msgstr "استرجاع EmbeddingGemma"
+
+#: src/widgets/knowledge_common.py:241
+msgid "Nomic retrieval"
+msgstr "استرجاع Nomic"
+
+#: src/widgets/knowledge_common.py:241
+msgid "Qwen3 retrieval"
+msgstr "استرجاع Qwen3"
+
+#: src/widgets/knowledge_common.py:241
+msgid "Custom prefixes"
+msgstr "بادئات مخصصة"
+
+#: src/widgets/knowledge_common.py:242
+msgid "Advanced Embedding Settings"
+msgstr "إعدادات التضمين المتقدمة"
+
+#: src/widgets/knowledge_common.py:243
+msgid "Embedding format"
+msgstr "تنسيق التضمين"
+
+#: src/widgets/knowledge_common.py:246
+msgid "Document prefix"
+msgstr "بادئة المستند"
+
+#: src/widgets/knowledge_common.py:247
+msgid "Query prefix"
+msgstr "بادئة الاستعلام"
+
+#: src/widgets/knowledge_common.py:253
+msgid "Dimensions"
+msgstr "الأبعاد"
+
+#: src/widgets/knowledge_common.py:253
+msgid "Chunk size (characters)"
+msgstr "حجم المقطع (بالمحارف)"
+
+#: src/widgets/knowledge_common.py:254
+msgid "Overlap (characters)"
+msgstr "التداخل (بالمحارف)"
+
+#: src/widgets/knowledge_common.py:258
+msgid "Create"
+msgstr "إنشاء"
+
+#: src/widgets/knowledge_common.py:298
+msgid "Select an embedding model."
+msgstr "اختر نموذج تضمين."
+
+#: src/widgets/knowledge_common.py:300
+msgid "The host did not provide a model digest."
+msgstr "لم يوفر المضيف بصمة النموذج."
+
+#: src/widgets/knowledge_common.py:306
+msgid "Overlap must be smaller than the chunk size."
+msgstr "يجب أن يكون التداخل أصغر من حجم المقطع."
+
 #: src/widgets/knowledge_import.py:12
 msgid "Add Text"
 msgstr "إضافة نص"
@@ -1711,7 +2049,7 @@ msgid "Paste text, choose a collection, and review it before adding."
 msgstr "الصق النص واختر مجموعة وراجعه قبل الإضافة."
 
 #: src/widgets/knowledge_import.py:14 src/widgets/knowledge_import.py:85
-#: src/widgets/knowledge_view.py:1225 src/widgets/url_import.py:66
+#: src/widgets/knowledge_view.py:446 src/widgets/url_import.py:66
 #: src/widgets/url_import.py:231
 msgid "Add to Collection"
 msgstr "إضافة إلى مجموعة"
@@ -1779,10 +2117,6 @@ msgstr "جارٍ الإضافة إلى المجموعة"
 msgid "Added to Collection — Preparing"
 msgstr "أُضيف إلى المجموعة — جارٍ التجهيز"
 
-#: src/widgets/knowledge_import.py:148 src/widgets/knowledge_view.py:67
-msgid "Needs Attention"
-msgstr "بحاجة إلى معالجة"
-
 #: src/widgets/knowledge_import.py:148 src/widgets/url_import.py:115
 msgid "Skipped"
 msgstr "تم التخطي"
@@ -1806,504 +2140,46 @@ msgstr "استيراد ملف: {0}"
 msgid "Ready to Search"
 msgstr "جاهز للبحث"
 
-#: src/widgets/knowledge_view.py:65
-msgid "Ready"
-msgstr "جاهز"
-
-#: src/widgets/knowledge_view.py:69
-msgid "Preparing"
-msgstr "جارٍ التجهيز"
-
-#: src/widgets/knowledge_view.py:70
-msgid "Needs Preparation"
-msgstr "بحاجة إلى تجهيز"
-
-#: src/widgets/knowledge_view.py:75
-msgid "Native dimensions"
-msgstr "الأبعاد الأصلية"
-
-#: src/widgets/knowledge_view.py:81
-#, python-brace-format
-msgid "Page {0}"
-msgstr "الصفحة {0}"
-
-#: src/widgets/knowledge_view.py:148
-msgid "Embedding server"
-msgstr "خادم التضمين"
-
-#: src/widgets/knowledge_view.py:149
-msgid "Embedding model"
-msgstr "نموذج التضمين"
-
-#: src/widgets/knowledge_view.py:151
-msgid "Manage Models…"
-msgstr "إدارة النماذج…"
-
-#: src/widgets/knowledge_view.py:152
-msgid "Refresh"
-msgstr "تحديث"
-
-#: src/widgets/knowledge_view.py:196
-msgid "Checking embedding models…"
-msgstr "جارٍ التحقق من نماذج التضمين…"
-
-#: src/widgets/knowledge_view.py:223
-msgid "No embedding models found. Download one in Manage Models, then refresh."
-msgstr "لم يُعثر على نماذج تضمين. نزّل نموذجًا من «إدارة النماذج» ثم حدّث القائمة."
-
-#: src/widgets/knowledge_view.py:232 src/widgets/knowledge_view.py:1202
-msgid "Create Embeddings"
-msgstr "إنشاء تضمينات"
-
-#: src/widgets/knowledge_view.py:240
-msgid "Plain"
-msgstr "دون بادئة"
-
-#: src/widgets/knowledge_view.py:240
-msgid "EmbeddingGemma retrieval"
-msgstr "استرجاع EmbeddingGemma"
-
-#: src/widgets/knowledge_view.py:240
-msgid "Nomic retrieval"
-msgstr "استرجاع Nomic"
-
-#: src/widgets/knowledge_view.py:240
-msgid "Qwen3 retrieval"
-msgstr "استرجاع Qwen3"
-
-#: src/widgets/knowledge_view.py:240
-msgid "Custom prefixes"
-msgstr "بادئات مخصصة"
-
-#: src/widgets/knowledge_view.py:241
-msgid "Advanced Embedding Settings"
-msgstr "إعدادات التضمين المتقدمة"
-
-#: src/widgets/knowledge_view.py:242
-msgid "Embedding format"
-msgstr "تنسيق التضمين"
-
-#: src/widgets/knowledge_view.py:245
-msgid "Document prefix"
-msgstr "بادئة المستند"
-
-#: src/widgets/knowledge_view.py:246
-msgid "Query prefix"
-msgstr "بادئة الاستعلام"
-
-#: src/widgets/knowledge_view.py:252
-msgid "Dimensions"
-msgstr "الأبعاد"
-
-#: src/widgets/knowledge_view.py:252
-msgid "Chunk size (characters)"
-msgstr "حجم المقطع (بالمحارف)"
-
-#: src/widgets/knowledge_view.py:253
-msgid "Overlap (characters)"
-msgstr "التداخل (بالمحارف)"
-
-#: src/widgets/knowledge_view.py:257
-msgid "Create"
-msgstr "إنشاء"
-
-#: src/widgets/knowledge_view.py:297
-msgid "Select an embedding model."
-msgstr "اختر نموذج تضمين."
-
-#: src/widgets/knowledge_view.py:299
-msgid "The host did not provide a model digest."
-msgstr "لم يوفر المضيف بصمة النموذج."
-
-#: src/widgets/knowledge_view.py:305
-msgid "Overlap must be smaller than the chunk size."
-msgstr "يجب أن يكون التداخل أصغر من حجم المقطع."
-
-#: src/widgets/knowledge_view.py:311
-msgid ""
-"An embedding model makes documents searchable. It can differ from the model used for "
-"chat."
-msgstr "يجعل نموذج التضمين المستندات قابلة للبحث. ويمكن أن يختلف عن النموذج المستخدم للدردشة."
-
-#: src/widgets/knowledge_view.py:312
-msgid "Copy Collection with New Settings"
-msgstr "نسخ المجموعة بإعدادات جديدة"
-
-#: src/widgets/knowledge_view.py:312
-msgid "Create Collection"
-msgstr "إنشاء مجموعة"
-
-#: src/widgets/knowledge_view.py:313 src/widgets/knowledge_view.py:316
-msgid "Collection name"
-msgstr "اسم المجموعة"
-
-#: src/widgets/knowledge_view.py:314
-#, python-brace-format
-msgid "{0} (copy)"
-msgstr "{0} (نسخة)"
-
-#: src/widgets/knowledge_view.py:343
-msgid "Destination collection"
-msgstr "المجموعة الوجهة"
-
-#: src/widgets/knowledge_view.py:344 src/widgets/knowledge_view.py:852
-msgid "New Collection…"
-msgstr "مجموعة جديدة…"
-
-#: src/widgets/knowledge_view.py:351
-msgid "Choose a collection"
-msgstr "اختر مجموعة"
-
-#: src/widgets/knowledge_view.py:362
-msgid "Choose a destination collection, or create a new one."
-msgstr "اختر مجموعة وجهة أو أنشئ مجموعة جديدة."
-
-#: src/widgets/knowledge_view.py:372
-msgid "Add Existing Documents"
-msgstr "إضافة مستندات موجودة"
-
-#: src/widgets/knowledge_view.py:377 src/widgets/knowledge_view.py:859
-#: src/widgets/knowledge_view.py:956
-msgid "Search documents"
-msgstr "البحث في المستندات"
-
-#: src/widgets/knowledge_view.py:382 src/widgets/knowledge_view.py:1237
-msgid "Add"
-msgstr "إضافة"
-
-#: src/widgets/knowledge_view.py:397
-msgid "All library documents are already in this collection."
-msgstr "جميع مستندات المكتبة موجودة بالفعل في هذه المجموعة."
-
-#: src/widgets/knowledge_view.py:415
-#, python-brace-format
-msgid "Sources used ({0})"
-msgstr "المصادر المستخدمة ({0})"
-
-#: src/widgets/knowledge_view.py:418
-#, python-brace-format
-msgid "Search query: {0}"
-msgstr "عبارة البحث: {0}"
-
-#: src/widgets/knowledge_view.py:422
-msgid "Cosine similarity · Higher is closer"
-msgstr "تشابه جيب التمام · الأعلى أقرب"
-
-#: src/widgets/knowledge_view.py:423
-msgid "Euclidean distance (L2) · Lower is closer"
-msgstr "المسافة الإقليدية (L2) · الأقل أقرب"
-
-#: src/widgets/knowledge_view.py:424
-msgid "Manhattan distance (L1) · Lower is closer"
-msgstr "مسافة مانهاتن (L1) · الأقل أقرب"
-
-#: src/widgets/knowledge_view.py:425
-msgid "Unknown similarity measure"
-msgstr "مقياس تشابه غير معروف"
-
-#: src/widgets/knowledge_view.py:427 src/widgets/knowledge_view.py:1198
-#: src/widgets/url_import.py:334
-#, python-brace-format
-msgid "Collections: {0}"
-msgstr "المجموعات: {0}"
-
-#: src/widgets/knowledge_view.py:430
-#, python-brace-format
-msgid "Similarity: {0:.4f}"
-msgstr "التشابه: {0:.4f}"
-
-#: src/widgets/knowledge_view.py:430
-#, python-brace-format
-msgid "Distance: {0:.4f}"
-msgstr "المسافة: {0:.4f}"
-
-#: src/widgets/knowledge_view.py:433
-#, python-brace-format
-msgid "Pages: {0}"
-msgstr "الصفحات: {0}"
-
-#: src/widgets/knowledge_view.py:438 src/widgets/knowledge_view.py:1193
-msgid "Open Source URL"
-msgstr "فتح عنوان المصدر"
-
-#: src/widgets/knowledge_view.py:440 src/widgets/knowledge_view.py:1195
-#, python-brace-format
-msgid "Fetched: {0}"
-msgstr "وقت الجلب: {0}"
-
-#: src/widgets/knowledge_view.py:441
-msgid "Shortened to fit the source budget."
-msgstr "قُصّر النص ليناسب الحد المخصص للمصادر."
-
-#: src/widgets/knowledge_view.py:444
-msgid "Scores compare embeddings; they are not confidence estimates."
-msgstr "تقارن الدرجات بين التضمينات؛ وليست تقديرات للثقة."
-
-#: src/widgets/knowledge_view.py:449
-msgid "Knowledge Sources"
-msgstr "مصادر المعرفة"
-
-#: src/widgets/knowledge_view.py:449 src/widgets/knowledge_view.py:499
-#: src/widgets/knowledge_view.py:502
-msgid "Test Search"
-msgstr "اختبار البحث"
-
-#: src/widgets/knowledge_view.py:456 src/widgets/knowledge_view.py:956
-msgid "Search collections"
-msgstr "البحث في المجموعات"
-
-#: src/widgets/knowledge_view.py:461
-msgid "Search Settings"
-msgstr "إعدادات البحث"
-
-#: src/widgets/knowledge_view.py:464
-msgid "Embedding configuration (from selected collections)"
-msgstr "إعداد التضمين (من المجموعات المحددة)"
-
-#: src/widgets/knowledge_view.py:474
-msgid ""
-"The query must use the same embedding configuration as the selected collections. A "
-"compatible server can be chosen here."
-msgstr ""
-"يجب أن يستخدم الاستعلام إعداد التضمين نفسه للمجموعات المحددة. يمكنك اختيار خادم "
-"متوافق هنا."
-
-#: src/widgets/knowledge_view.py:476
-msgid ""
-"This chat has older individual sources. Applying a collection selection replaces "
-"them. Closing this dialog keeps them unchanged."
-msgstr ""
-"تحتوي هذه الدردشة على مصادر فردية قديمة. سيستبدلها تطبيق اختيار المجموعات. إغلاق هذا "
-"الحوار يبقيها دون تغيير."
-
-#: src/widgets/knowledge_view.py:481
-msgid "Maximum passages"
-msgstr "الحد الأقصى للمقاطع"
-
-#: src/widgets/knowledge_view.py:481
-msgid "Source budget (characters)"
-msgstr "الحد المخصص للمصادر (بالمحارف)"
-
-#: src/widgets/knowledge_view.py:484
-msgid "Similarity measure"
-msgstr "مقياس التشابه"
-
-#: src/widgets/knowledge_view.py:485
-msgid "Cosine similarity"
-msgstr "تشابه جيب التمام"
-
-#: src/widgets/knowledge_view.py:485
-msgid "Euclidean distance (L2)"
-msgstr "المسافة الإقليدية (L2)"
-
-#: src/widgets/knowledge_view.py:485
-msgid "Manhattan distance (L1)"
-msgstr "مسافة مانهاتن (L1)"
-
-#: src/widgets/knowledge_view.py:500
-msgid "Enter a search query"
-msgstr "أدخل عبارة بحث"
-
-#: src/widgets/knowledge_view.py:554
-msgid "Minimum cosine similarity"
-msgstr "الحد الأدنى لتشابه جيب التمام"
-
-#: src/widgets/knowledge_view.py:554
-msgid "Maximum distance"
-msgstr "الحد الأقصى للمسافة"
-
-#: src/widgets/knowledge_view.py:555
-msgid "No minimum"
-msgstr "بلا حد أدنى"
-
-#: src/widgets/knowledge_view.py:555
-msgid "No maximum"
-msgstr "بلا حد أقصى"
-
-#: src/widgets/knowledge_view.py:560
-msgid "Higher is closer (−1 to 1). This is the default for semantic search."
-msgstr "الأعلى أقرب (من −1 إلى 1). هذا هو المقياس الافتراضي للبحث الدلالي."
-
-#: src/widgets/knowledge_view.py:561
-msgid ""
-"Lower is closer. With normalized embeddings, Euclidean and cosine usually rank "
-"results alike."
-msgstr ""
-"الأقل أقرب. مع التضمينات المطبّعة، عادةً ما يرتب المقياسان الإقليدي وجيب التمام "
-"النتائج بصورة متشابهة."
-
-#: src/widgets/knowledge_view.py:562
-msgid ""
-"Lower is closer. Adds absolute differences between vector components and can rank "
-"results differently from cosine."
-msgstr ""
-"الأقل أقرب. يجمع الفروق المطلقة بين مكونات المتجهات وقد يرتب النتائج بشكل مختلف عن "
-"جيب التمام."
-
-#: src/widgets/knowledge_view.py:570 src/widgets/knowledge_view.py:855
-#: src/widgets/knowledge_view.py:949
+#: src/widgets/knowledge_view.py:43 src/widgets/knowledge_view.py:146
+#: src/widgets/source_views.py:175
 msgid "Collections"
 msgstr "المجموعات"
 
-#: src/widgets/knowledge_view.py:571
-msgid ""
-"Choose collections to search. New documents added to them are included automatically."
-" All documents must be ready."
-msgstr ""
-"اختر مجموعات للبحث فيها. تُضمّن المستندات الجديدة المضافة إليها تلقائيًا. يجب أن تكون"
-" جميع المستندات جاهزة."
-
-#: src/widgets/knowledge_view.py:575
-msgid "Some selected collections were deleted. Choose sources again."
-msgstr "حُذفت بعض المجموعات المحددة. اختر المصادر مجددًا."
-
-#: src/widgets/knowledge_view.py:576
-msgid "Clear missing collections"
-msgstr "إزالة المجموعات المفقودة من الاختيار"
-
-#: src/widgets/knowledge_view.py:581 src/widgets/knowledge_view.py:626
-#, python-brace-format
-msgid "{0} · {1}/{2} documents ready"
-msgstr "{0} · المستندات الجاهزة: {1}/{2}"
-
-#: src/widgets/knowledge_view.py:583
-#, python-brace-format
-msgid "Different embedding configuration: {0}"
-msgstr "إعداد تضمين مختلف: {0}"
-
-#: src/widgets/knowledge_view.py:590
-msgid "No matching collections"
-msgstr "لا توجد مجموعات مطابقة"
-
-#: src/widgets/knowledge_view.py:592
-msgid "Create a collection and add text, files, or URLs in the Knowledge Library."
-msgstr "أنشئ مجموعة وأضف نصوصًا أو ملفات أو عناوين URL في مكتبة المعرفة."
-
-#: src/widgets/knowledge_view.py:593
-msgid "Open Knowledge Library"
-msgstr "فتح مكتبة المعرفة"
-
-#: src/widgets/knowledge_view.py:628
-msgid ""
-"Uses different embedding settings. Clear the current selection to choose this "
-"collection."
-msgstr "تستخدم إعدادات تضمين مختلفة. امسح الاختيار الحالي لاختيار هذه المجموعة."
-
-#: src/widgets/knowledge_view.py:639
-msgid "Select at least one collection. Create collections in Knowledge first if needed."
-msgstr "اختر مجموعة واحدة على الأقل. أنشئ مجموعات في المعرفة أولًا عند الحاجة."
-
-#: src/widgets/knowledge_view.py:644
-msgid "This model digest does not match the selected embedding configuration."
-msgstr "لا تطابق بصمة هذا النموذج إعداد التضمين المحدد."
-
-#: src/widgets/knowledge_view.py:679
-msgid "Document Chunks"
-msgstr "مقاطع المستند"
-
-#: src/widgets/knowledge_view.py:688
-msgid "Select all"
-msgstr "تحديد الكل"
-
-#: src/widgets/knowledge_view.py:689
-msgid "Select none"
-msgstr "إلغاء تحديد الكل"
-
-#: src/widgets/knowledge_view.py:693
-msgid "Load more chunks"
-msgstr "تحميل المزيد من المقاطع"
-
-#: src/widgets/knowledge_view.py:730
-#, python-brace-format
-msgid "Chunk {0}"
-msgstr "المقطع {0}"
-
-#: src/widgets/knowledge_view.py:736
-#, python-brace-format
-msgid "Characters {0}–{1}"
-msgstr "المحارف {0}–{1}"
-
-#: src/widgets/knowledge_view.py:739
-msgid "Inspect vector"
-msgstr "فحص المتجه"
-
-#: src/widgets/knowledge_view.py:753
-msgid "This vector was deleted."
-msgstr "حُذف هذا المتجه."
-
-#: src/widgets/knowledge_view.py:756
-msgid "Embedding Vector"
-msgstr "متجه التضمين"
-
-#: src/widgets/knowledge_view.py:756
-msgid "Stored normalized vector. Changes are not saved."
-msgstr "متجه مطبّع مخزن. لن تُحفظ التغييرات."
-
-#: src/widgets/knowledge_view.py:769
-msgid "Use Knowledge"
-msgstr "استخدام المعرفة"
-
-#: src/widgets/knowledge_view.py:770
-msgid "Choose sources…"
-msgstr "اختيار مصادر…"
-
-#: src/widgets/knowledge_view.py:774
-msgid "Search query override for the next turn (optional)"
-msgstr "استبدال عبارة البحث للجولة التالية (اختياري)"
-
-#: src/widgets/knowledge_view.py:775
-msgid "Use a different search query for the next message"
-msgstr "استخدام عبارة بحث مختلفة للرسالة التالية"
-
-#: src/widgets/knowledge_view.py:776
-msgid "Search Query Override"
-msgstr "استبدال عبارة البحث"
-
-#: src/widgets/knowledge_view.py:795
-msgid "Choose collections to search."
-msgstr "اختر مجموعات للبحث فيها."
-
-#: src/widgets/knowledge_view.py:797
-#, python-brace-format
-msgid "Older individual sources: {0}. Choose collections to replace them."
-msgstr "المصادر الفردية القديمة: {0}. اختر مجموعات لاستبدالها."
-
-#: src/widgets/knowledge_view.py:799
-#, python-brace-format
-msgid "{0}: {1}/{2} ready"
-msgstr "{0}: الجاهز {1}/{2}"
-
-#: src/widgets/knowledge_view.py:855 src/widgets/knowledge_view.py:949
+#: src/widgets/knowledge_view.py:43 src/widgets/knowledge_view.py:146
 msgid "All Documents"
 msgstr "جميع المستندات"
 
-#: src/widgets/knowledge_view.py:855 src/widgets/knowledge_view.py:949
+#: src/widgets/knowledge_view.py:43 src/widgets/knowledge_view.py:146
 msgid "Ungrouped Documents"
 msgstr "المستندات غير المجمعة"
 
-#: src/widgets/knowledge_view.py:857
+#: src/widgets/knowledge_view.py:45
 msgid "Library"
 msgstr "المكتبة"
 
-#: src/widgets/knowledge_view.py:864 src/widgets/knowledge_view.py:908
-#: src/widgets/knowledge_view.py:1031
+#: src/widgets/knowledge_view.py:58 src/widgets/knowledge_view.py:102
+#: src/widgets/knowledge_view.py:252
 msgid "Knowledge Library"
 msgstr "مكتبة المعرفة"
 
-#: src/widgets/knowledge_view.py:870
+#: src/widgets/knowledge_view.py:64
 msgid "Document"
 msgstr "المستند"
 
-#: src/widgets/knowledge_view.py:879
+#: src/widgets/knowledge_view.py:73
 msgid "Background Tasks"
 msgstr "المهام الخلفية"
 
-#: src/widgets/knowledge_view.py:963 src/widgets/knowledge_view.py:1042
+#: src/widgets/knowledge_view.py:160 src/widgets/source_views.py:61
+msgid "Search collections"
+msgstr "البحث في المجموعات"
+
+#: src/widgets/knowledge_view.py:171 src/widgets/knowledge_view.py:263
 #, python-brace-format
 msgid "{0}/{1} documents ready"
 msgstr "المستندات الجاهزة: {0}/{1}"
 
-#: src/widgets/knowledge_view.py:973
+#: src/widgets/knowledge_view.py:187
 #, python-brace-format
 msgid "{0} character"
 msgid_plural "{0} characters"
@@ -2314,37 +2190,37 @@ msgstr[3] "{0} محارف"
 msgstr[4] "{0} محرفًا"
 msgstr[5] "{0} محرف"
 
-#: src/widgets/knowledge_view.py:979
+#: src/widgets/knowledge_view.py:197
 msgid "No matches"
 msgstr "لا توجد نتائج مطابقة"
 
-#: src/widgets/knowledge_view.py:980
+#: src/widgets/knowledge_view.py:198
 msgid "Create a collection to organize text, files, and URLs."
 msgstr "أنشئ مجموعة لتنظيم النصوص والملفات وعناوين URL."
 
-#: src/widgets/knowledge_view.py:981
+#: src/widgets/knowledge_view.py:199
 msgid "Add text, files, or URLs to a collection."
 msgstr "أضف نصوصًا أو ملفات أو عناوين URL إلى مجموعة."
 
-#: src/widgets/knowledge_view.py:1033
+#: src/widgets/knowledge_view.py:254
 msgid "Knowledge Collections"
 msgstr "مجموعات المعرفة"
 
-#: src/widgets/knowledge_view.py:1034
+#: src/widgets/knowledge_view.py:255
 msgid ""
 "Group documents into collections, then select a collection in chat to ask questions "
 "about its content."
 msgstr "نظم المستندات في مجموعات، ثم اختر مجموعة في الدردشة لطرح أسئلة عن محتواها."
 
-#: src/widgets/knowledge_view.py:1035
+#: src/widgets/knowledge_view.py:256
 msgid "Create Collection…"
 msgstr "إنشاء مجموعة…"
 
-#: src/widgets/knowledge_view.py:1038
+#: src/widgets/knowledge_view.py:259
 msgid "Select a document to inspect it. New imports always ask for a destination collection."
 msgstr "اختر مستندًا لفحصه. تتطلب عمليات الاستيراد الجديدة دائمًا اختيار مجموعة وجهة."
 
-#: src/widgets/knowledge_view.py:1043
+#: src/widgets/knowledge_view.py:264
 msgid ""
 "Add text, files, or URLs to this collection. Gnollama prepares the documents "
 "automatically so chats can search them."
@@ -2352,72 +2228,72 @@ msgstr ""
 "أضف نصوصًا أو ملفات أو عناوين URL إلى هذه المجموعة. يجهز Gnollama المستندات تلقائيًا "
 "لتتمكن الدردشات من البحث فيها."
 
-#: src/widgets/knowledge_view.py:1045
+#: src/widgets/knowledge_view.py:266
 msgid "Add Existing Documents…"
 msgstr "إضافة مستندات موجودة…"
 
-#: src/widgets/knowledge_view.py:1047
+#: src/widgets/knowledge_view.py:268
 msgid "Use in New Chat"
 msgstr "الاستخدام في دردشة جديدة"
 
-#: src/widgets/knowledge_view.py:1051
+#: src/widgets/knowledge_view.py:272
 msgid "Prepare Documents"
 msgstr "تجهيز المستندات"
 
-#: src/widgets/knowledge_view.py:1052
+#: src/widgets/knowledge_view.py:273
 msgid "Embedding Details"
 msgstr "تفاصيل التضمين"
 
-#: src/widgets/knowledge_view.py:1054
+#: src/widgets/knowledge_view.py:275
 #, python-brace-format
 msgid "Chunk size: {0} characters · Overlap: {1} characters"
 msgstr "حجم المقطع بالمحارف: {0} · التداخل بالمحارف: {1}"
 
-#: src/widgets/knowledge_view.py:1059 src/widgets/knowledge_view.py:1203
+#: src/widgets/knowledge_view.py:280 src/widgets/knowledge_view.py:424
 msgid "Rename"
 msgstr "إعادة التسمية"
 
-#: src/widgets/knowledge_view.py:1060
+#: src/widgets/knowledge_view.py:281
 msgid "Copy with New Settings"
 msgstr "نسخ بإعدادات جديدة"
 
-#: src/widgets/knowledge_view.py:1061 src/widgets/knowledge_view.py:1132
+#: src/widgets/knowledge_view.py:282 src/widgets/knowledge_view.py:353
 msgid "Change Embedding Model"
 msgstr "تغيير نموذج التضمين"
 
-#: src/widgets/knowledge_view.py:1062 src/widgets/knowledge_view.py:1122
+#: src/widgets/knowledge_view.py:283 src/widgets/knowledge_view.py:343
 msgid "Delete Collection"
 msgstr "حذف المجموعة"
 
-#: src/widgets/knowledge_view.py:1067
+#: src/widgets/knowledge_view.py:288
 msgid "Collection Options"
 msgstr "خيارات المجموعة"
 
-#: src/widgets/knowledge_view.py:1080
+#: src/widgets/knowledge_view.py:301
 msgid "Remove from Collection"
 msgstr "إزالة من المجموعة"
 
-#: src/widgets/knowledge_view.py:1088
+#: src/widgets/knowledge_view.py:309
 msgid "Add Text…"
 msgstr "إضافة نص…"
 
-#: src/widgets/knowledge_view.py:1088
+#: src/widgets/knowledge_view.py:309
 msgid "Add Files…"
 msgstr "إضافة ملفات…"
 
-#: src/widgets/knowledge_view.py:1089
+#: src/widgets/knowledge_view.py:310
 msgid "Add URLs…"
 msgstr "إضافة عناوين URL…"
 
-#: src/widgets/knowledge_view.py:1108
+#: src/widgets/knowledge_view.py:329
 msgid "Rename Collection"
 msgstr "إعادة تسمية المجموعة"
 
-#: src/widgets/knowledge_view.py:1120
+#: src/widgets/knowledge_view.py:341
 msgid "Delete Collection?"
 msgstr "حذف المجموعة؟"
 
-#: src/widgets/knowledge_view.py:1120
+#: src/widgets/knowledge_view.py:341
 #, python-brace-format
 msgid ""
 "Delete “{0}”? Its documents and embeddings stay in the library. Chats selecting this "
@@ -2426,7 +2302,7 @@ msgstr ""
 "حذف «{0}»؟ ستبقى مستنداتها وتضميناتها في المكتبة. ستحتاج الدردشات التي تختار هذه "
 "المجموعة إلى مصادر جديدة؛ وتحتفظ الردود المحفوظة بمقاطعها الأصلية."
 
-#: src/widgets/knowledge_view.py:1135
+#: src/widgets/knowledge_view.py:356
 msgid ""
 "Choose a host and embedding model matching the collection’s original model digest. "
 "Embedding settings stay the same."
@@ -2434,84 +2310,99 @@ msgstr ""
 "اختر مضيفًا ونموذج تضمين يطابقان بصمة النموذج الأصلية للمجموعة. تبقى إعدادات التضمين "
 "كما هي."
 
-#: src/widgets/knowledge_view.py:1163
+#: src/widgets/knowledge_view.py:384
 msgid "Original model available"
 msgstr "النموذج الأصلي متاح"
 
-#: src/widgets/knowledge_view.py:1164
+#: src/widgets/knowledge_view.py:385
 msgid ""
 "Unavailable — the original model changed or was removed. Choose a compatible server "
 "for searches."
 msgstr "غير متاح — تغير النموذج الأصلي أو أُزيل. اختر خادمًا متوافقًا للبحث."
 
-#: src/widgets/knowledge_view.py:1166
+#: src/widgets/knowledge_view.py:387
 #, python-brace-format
 msgid "Unavailable: {0}"
 msgstr "غير متاح: {0}"
 
-#: src/widgets/knowledge_view.py:1187
+#: src/widgets/knowledge_view.py:408
 msgid "Select a document to inspect its text and embeddings."
 msgstr "اختر مستندًا لفحص نصه وتضميناته."
 
-#: src/widgets/knowledge_view.py:1196
+#: src/widgets/knowledge_view.py:414 src/widgets/source_views.py:43
+msgid "Open Source URL"
+msgstr "فتح عنوان المصدر"
+
+#: src/widgets/knowledge_view.py:416 src/widgets/source_views.py:45
+#, python-brace-format
+msgid "Fetched: {0}"
+msgstr "وقت الجلب: {0}"
+
+#: src/widgets/knowledge_view.py:417
 msgid "Fetch Again…"
 msgstr "جلب مجددًا…"
 
-#: src/widgets/knowledge_view.py:1200
+#: src/widgets/knowledge_view.py:419 src/widgets/source_views.py:32
+#: src/widgets/url_import.py:334
+#, python-brace-format
+msgid "Collections: {0}"
+msgstr "المجموعات: {0}"
+
+#: src/widgets/knowledge_view.py:421
 msgid "Back to Collection"
 msgstr "العودة إلى المجموعة"
 
-#: src/widgets/knowledge_view.py:1201
+#: src/widgets/knowledge_view.py:422
 msgid "Preview Text"
 msgstr "معاينة النص"
 
-#: src/widgets/knowledge_view.py:1204
+#: src/widgets/knowledge_view.py:425
 msgid "Delete Document"
 msgstr "حذف المستند"
 
-#: src/widgets/knowledge_view.py:1205
+#: src/widgets/knowledge_view.py:426
 msgid "Add to Collection…"
 msgstr "إضافة إلى مجموعة…"
 
-#: src/widgets/knowledge_view.py:1210
+#: src/widgets/knowledge_view.py:431
 msgid "Checking model availability…"
 msgstr "جارٍ التحقق من توفر النموذج…"
 
-#: src/widgets/knowledge_view.py:1213
+#: src/widgets/knowledge_view.py:434
 #, python-brace-format
 msgid "Chunks: {0}"
 msgstr "المقاطع: {0}"
 
-#: src/widgets/knowledge_view.py:1216
+#: src/widgets/knowledge_view.py:437
 msgid "Inspect Chunks"
 msgstr "فحص المقاطع"
 
-#: src/widgets/knowledge_view.py:1217
+#: src/widgets/knowledge_view.py:438
 msgid "Check Model"
 msgstr "فحص النموذج"
 
-#: src/widgets/knowledge_view.py:1218
+#: src/widgets/knowledge_view.py:439
 msgid "Delete Index"
 msgstr "حذف الفهرس"
 
-#: src/widgets/knowledge_view.py:1245
+#: src/widgets/knowledge_view.py:466
 #, python-brace-format
 msgid "Background Tasks · {0} running"
 msgstr "المهام الخلفية · قيد التشغيل: {0}"
 
-#: src/widgets/knowledge_view.py:1245
+#: src/widgets/knowledge_view.py:466
 msgid "Recent Background Tasks"
 msgstr "المهام الخلفية الأخيرة"
 
-#: src/widgets/knowledge_view.py:1252
+#: src/widgets/knowledge_view.py:473
 msgid "Details"
 msgstr "التفاصيل"
 
-#: src/widgets/knowledge_view.py:1260
+#: src/widgets/knowledge_view.py:481
 msgid "Stop Shared Embedding Build?"
 msgstr "إيقاف بناء التضمين المشترك؟"
 
-#: src/widgets/knowledge_view.py:1261
+#: src/widgets/knowledge_view.py:482
 #, python-brace-format
 msgid ""
 "These collections use this build: {0}. They will need a retry before chat search can "
@@ -2520,51 +2411,51 @@ msgstr ""
 "تستخدم هذه المجموعات هذا البناء: {0}. ستحتاج إلى إعادة المحاولة قبل استخدامها في بحث "
 "الدردشة."
 
-#: src/widgets/knowledge_view.py:1263
+#: src/widgets/knowledge_view.py:484
 msgid "Keep Building"
 msgstr "متابعة البناء"
 
-#: src/widgets/knowledge_view.py:1264
+#: src/widgets/knowledge_view.py:485
 msgid "Stop Build"
 msgstr "إيقاف البناء"
 
-#: src/widgets/knowledge_view.py:1271
+#: src/widgets/knowledge_view.py:492
 msgid "Saved source text. Use Fetch Again to update this URL document."
 msgstr "نص المصدر المحفوظ. استخدم «جلب مجددًا» لتحديث مستند URL هذا."
 
-#: src/widgets/knowledge_view.py:1271
+#: src/widgets/knowledge_view.py:492
 msgid "Saved source text. Import revised content as a new document."
 msgstr "نص المصدر المحفوظ. استورد المحتوى المعدل كمستند جديد."
 
-#: src/widgets/knowledge_view.py:1292
+#: src/widgets/knowledge_view.py:513
 msgid "This Text Is Already Saved"
 msgstr "هذا النص محفوظ بالفعل"
 
-#: src/widgets/knowledge_view.py:1294
+#: src/widgets/knowledge_view.py:515
 msgid "Open Existing"
 msgstr "فتح الموجود"
 
-#: src/widgets/knowledge_view.py:1296
+#: src/widgets/knowledge_view.py:517
 msgid "Add Existing to Collection"
 msgstr "إضافة الموجود إلى المجموعة"
 
-#: src/widgets/knowledge_view.py:1334
+#: src/widgets/knowledge_view.py:555
 msgid "Rename Document"
 msgstr "إعادة تسمية المستند"
 
-#: src/widgets/knowledge_view.py:1348
+#: src/widgets/knowledge_view.py:569
 msgid "Cancel this document’s indexing job before deleting it."
 msgstr "ألغِ مهمة فهرسة هذا المستند قبل حذفه."
 
-#: src/widgets/knowledge_view.py:1350
+#: src/widgets/knowledge_view.py:571
 msgid "Delete Document?"
 msgstr "حذف المستند؟"
 
-#: src/widgets/knowledge_view.py:1350
+#: src/widgets/knowledge_view.py:571
 msgid "Delete Embedding Index?"
 msgstr "حذف فهرس التضمين؟"
 
-#: src/widgets/knowledge_view.py:1351
+#: src/widgets/knowledge_view.py:572
 msgid ""
 "Chats selecting this data will need new sources. Passages already saved with answers "
 "remain in chat history."
@@ -2572,277 +2463,277 @@ msgstr ""
 "ستحتاج الدردشات التي تختار هذه البيانات إلى مصادر جديدة. تبقى المقاطع المحفوظة مع "
 "الردود في سجل الدردشة."
 
-#: src/widgets/knowledge_view.py:1352
+#: src/widgets/knowledge_view.py:573
 msgid "The saved source text and all its indexes will be deleted."
 msgstr "سيُحذف نص المصدر المحفوظ وجميع فهارسه."
 
-#: src/widgets/knowledge_view.py:1352
+#: src/widgets/knowledge_view.py:573
 msgid "The saved source text will be kept."
 msgstr "سيُحتفظ بنص المصدر المحفوظ."
 
-#: src/widgets/knowledge_view.py:1355
+#: src/widgets/knowledge_view.py:576
 #, python-brace-format
 msgid "Affected collections: {0}."
 msgstr "المجموعات المتأثرة: {0}."
 
-#: src/widgets/knowledge_view.py:1356
+#: src/widgets/knowledge_view.py:577
 msgid "This document will be removed from their membership."
 msgstr "سيُزال هذا المستند من عضويتها."
 
-#: src/widgets/knowledge_view.py:1357
+#: src/widgets/knowledge_view.py:578
 msgid "Their documents will need embeddings rebuilt."
 msgstr "ستحتاج مستنداتها إلى إعادة بناء التضمينات."
 
-#: src/widgets/knowledge_view.py:1376
+#: src/widgets/knowledge_view.py:597
 msgid "Embedding Model Availability"
 msgstr "توفر نموذج التضمين"
 
-#: src/widgets/knowledge_view.py:1377
+#: src/widgets/knowledge_view.py:598
 msgid "Checking…"
 msgstr "جارٍ التحقق…"
 
-#: src/widgets/knowledge_view.py:1380
+#: src/widgets/knowledge_view.py:601
 msgid "The original model is available on this host."
 msgstr "النموذج الأصلي متاح على هذا المضيف."
 
-#: src/widgets/message_list.py:18
+#: src/widgets/message_list.py:21
 msgid "Start a Conversation"
 msgstr "ابدأ محادثة"
 
-#: src/widgets/message_list.py:19
+#: src/widgets/message_list.py:22
 msgid ""
 "Choose a model and enter a message. Select knowledge collections to ask questions "
 "about your documents."
 msgstr "اختر نموذجًا وأدخل رسالة. حدد مجموعات المعرفة لطرح أسئلة عن مستنداتك."
 
-#: src/widgets/options_panel.py:42
+#: src/widgets/message_list.py:27
+msgid "Jump to latest"
+msgstr "الانتقال إلى الأحدث"
+
+#: src/widgets/options_panel.py:43
 msgid "Text"
 msgstr "نص"
 
-#: src/widgets/options_panel.py:42
+#: src/widgets/options_panel.py:43
 msgid "JSON"
 msgstr "JSON"
 
-#: src/widgets/options_panel.py:44 src/widgets/options_panel.py:83
+#: src/widgets/options_panel.py:45 src/widgets/options_panel.py:117
 msgid "Server default"
 msgstr "افتراضي الخادم"
 
-#: src/widgets/options_panel.py:44
+#: src/widgets/options_panel.py:45
 msgid "Unload after reply"
 msgstr "الإفراغ من الذاكرة بعد الرد"
 
-#: src/widgets/options_panel.py:44
+#: src/widgets/options_panel.py:45
 msgid "Five minutes"
 msgstr "خمس دقائق"
 
-#: src/widgets/options_panel.py:45
+#: src/widgets/options_panel.py:46
 msgid "Thirty minutes"
 msgstr "ثلاثون دقيقة"
 
-#: src/widgets/options_panel.py:45
+#: src/widgets/options_panel.py:46
 msgid "Indefinitely"
 msgstr "دون حد زمني"
 
-#: src/widgets/options_panel.py:45
+#: src/widgets/options_panel.py:46
 msgid "Custom seconds"
 msgstr "ثوانٍ مخصصة"
 
-#: src/widgets/options_panel.py:53
+#: src/widgets/options_panel.py:54
 msgid "Ollama Cloud uses text output and manages model retention automatically."
 msgstr "يستخدم Ollama Cloud مخرجات نصية ويدير الاحتفاظ بالنماذج في الذاكرة تلقائيًا."
 
-#: src/widgets/options_panel.py:74
+#: src/widgets/options_panel.py:105
 msgid "Server"
 msgstr "الخادم"
 
-#: src/widgets/options_panel.py:100
+#: src/widgets/options_panel.py:134
 msgid "System Instructions"
 msgstr "تعليمات النظام"
 
-#: src/widgets/options_panel.py:101
+#: src/widgets/options_panel.py:135
 msgid "System prompt"
 msgstr "مطالبة النظام"
 
-#: src/widgets/options_panel.py:101
+#: src/widgets/options_panel.py:135
 msgid "Optional instructions applied to this conversation."
 msgstr "تعليمات اختيارية تُطبق على هذه المحادثة."
 
-#: src/widgets/options_panel.py:102
+#: src/widgets/options_panel.py:136
 msgid "Optional instructions"
 msgstr "تعليمات اختيارية"
 
-#: src/widgets/options_panel.py:103
+#: src/widgets/options_panel.py:137
 msgid "Generation Limits"
 msgstr "حدود التوليد"
 
-#: src/widgets/options_panel.py:103
+#: src/widgets/options_panel.py:137
 msgid "Blank fields use the server’s defaults."
 msgstr "تستخدم الحقول الفارغة القيم الافتراضية للخادم."
 
-#: src/widgets/options_panel.py:104
+#: src/widgets/options_panel.py:138
 msgid "Context size (tokens)"
 msgstr "حجم السياق (بوحدات النص)"
 
-#: src/widgets/options_panel.py:104
+#: src/widgets/options_panel.py:138
 msgid "Maximum context available to the model; larger values need more memory."
 msgstr "الحد الأقصى للسياق المتاح للنموذج؛ تتطلب القيم الأكبر ذاكرة أكثر."
 
-#: src/widgets/options_panel.py:105
+#: src/widgets/options_panel.py:139
 msgid "Maximum output tokens"
 msgstr "الحد الأقصى لوحدات نص الإخراج"
 
-#: src/widgets/options_panel.py:105
+#: src/widgets/options_panel.py:139
 msgid "Use −1 for unlimited output or −2 to fill the context."
 msgstr "استخدم −1 لإخراج غير محدود أو −2 لملء السياق."
 
-#: src/widgets/options_panel.py:106
+#: src/widgets/options_panel.py:140
 msgid "Stop sequences"
 msgstr "تسلسلات الإيقاف"
 
-#: src/widgets/options_panel.py:106
+#: src/widgets/options_panel.py:140
 msgid "Separate sequences with commas. Generation stops when one is produced."
 msgstr "افصل التسلسلات بفواصل. يتوقف التوليد عند إنتاج أحدها."
 
-#: src/widgets/options_panel.py:107
+#: src/widgets/options_panel.py:141
 msgid "Sampling"
 msgstr "أخذ العينات"
 
-#: src/widgets/options_panel.py:109
+#: src/widgets/options_panel.py:143
 msgid "Temperature"
 msgstr "درجة الحرارة"
 
-#: src/widgets/options_panel.py:109
+#: src/widgets/options_panel.py:143
 msgid "Higher values increase variation; zero is more predictable."
 msgstr "تزيد القيم الأعلى التنوع؛ وتكون النتائج أكثر قابلية للتوقع عند الصفر."
 
-#: src/widgets/options_panel.py:110
+#: src/widgets/options_panel.py:144
 msgid "Seed"
 msgstr "البذرة"
 
-#: src/widgets/options_panel.py:110
+#: src/widgets/options_panel.py:144
 msgid "An integer used to initialize random sampling."
 msgstr "عدد صحيح يُستخدم لتهيئة أخذ العينات العشوائي."
 
-#: src/widgets/options_panel.py:111
+#: src/widgets/options_panel.py:145
 msgid "Top K"
 msgstr "Top K"
 
-#: src/widgets/options_panel.py:111
+#: src/widgets/options_panel.py:145
 msgid "Number of candidate tokens to consider."
 msgstr "عدد وحدات النص المرشحة التي تؤخذ في الحسبان."
 
-#: src/widgets/options_panel.py:112
+#: src/widgets/options_panel.py:146
 msgid "Top P"
 msgstr "Top P"
 
-#: src/widgets/options_panel.py:112
+#: src/widgets/options_panel.py:146
 msgid "Cumulative probability cutoff, between 0 and 1."
 msgstr "حد الاحتمال التراكمي، بين 0 و1."
 
-#: src/widgets/options_panel.py:113
+#: src/widgets/options_panel.py:147
 msgid "Min P"
 msgstr "Min P"
 
-#: src/widgets/options_panel.py:113
+#: src/widgets/options_panel.py:147
 msgid "Minimum relative token probability, between 0 and 1."
 msgstr "الحد الأدنى للاحتمال النسبي لوحدة النص، بين 0 و1."
 
-#: src/widgets/options_panel.py:115
+#: src/widgets/options_panel.py:149
 msgid "Model Retention"
 msgstr "إبقاء النموذج في الذاكرة"
 
-#: src/widgets/options_panel.py:120
+#: src/widgets/options_panel.py:154
 msgid "Keep model loaded"
 msgstr "إبقاء النموذج محملًا"
 
-#: src/widgets/options_panel.py:124
+#: src/widgets/options_panel.py:158
 msgid "Custom duration (seconds)"
 msgstr "مدة مخصصة (بالثواني)"
 
-#: src/widgets/options_panel.py:124 src/widgets/options_panel.py:187
+#: src/widgets/options_panel.py:158 src/widgets/options_panel.py:221
 msgid "Enter a positive whole number of seconds."
 msgstr "أدخل عددًا صحيحًا موجبًا من الثواني."
 
-#: src/widgets/options_panel.py:126
+#: src/widgets/options_panel.py:160
 msgid "Diagnostics"
 msgstr "التشخيص"
 
-#: src/widgets/options_panel.py:128
+#: src/widgets/options_panel.py:162
 msgid "Show response statistics"
 msgstr "إظهار إحصاءات الرد"
 
-#: src/widgets/options_panel.py:131
+#: src/widgets/options_panel.py:165
 msgid "Return token probabilities (logprobs)"
 msgstr "إرجاع احتمالات وحدات النص (الاحتمالات اللوغاريتمية)"
 
-#: src/widgets/options_panel.py:135
+#: src/widgets/options_panel.py:169
 msgid "Top logprobs"
 msgstr "أعلى الاحتمالات اللوغاريتمية"
 
-#: src/widgets/options_panel.py:135
+#: src/widgets/options_panel.py:169
 msgid "Number of alternative token probabilities, from 0 to 20."
 msgstr "عدد احتمالات وحدات النص البديلة، من 0 إلى 20."
 
-#: src/widgets/options_panel.py:152
+#: src/widgets/options_panel.py:186
 msgid "Chat Settings"
 msgstr "إعدادات الدردشة"
 
-#: src/widgets/options_panel.py:155
+#: src/widgets/options_panel.py:189
 msgid "Done"
 msgstr "تم"
 
-#: src/widgets/options_panel.py:199
+#: src/widgets/options_panel.py:233
 msgid "Top logprobs must be between 0 and 20."
 msgstr "يجب أن يكون عدد أعلى الاحتمالات اللوغاريتمية بين 0 و20."
 
-#: src/widgets/options_panel.py:221
+#: src/widgets/options_panel.py:255
 #, python-brace-format
 msgid "Enabled tools: {0}. Results are supplied manually."
 msgstr "الأدوات المفعلة: {0}. تُقدّم النتائج يدويًا."
 
-#: src/widgets/options_panel.py:221
+#: src/widgets/options_panel.py:255
 msgid "Tool calling is off."
 msgstr "استدعاء الأدوات معطل."
 
-#: src/widgets/options_panel.py:224
+#: src/widgets/options_panel.py:258
 msgid "Checking tool support…"
 msgstr "جارٍ التحقق من دعم الأدوات…"
 
-#: src/widgets/options_panel.py:226
+#: src/widgets/options_panel.py:260
 msgid "This model reports no tool support; you can still test the API."
 msgstr "يفيد هذا النموذج بأنه لا يدعم الأدوات؛ لا يزال بإمكانك اختبار API."
 
-#: src/widgets/options_panel.py:228
+#: src/widgets/options_panel.py:262
 msgid "Tool support is unknown."
 msgstr "دعم الأدوات غير معروف."
 
-#: src/widgets/options_panel.py:297
+#: src/widgets/options_panel.py:331
 msgid "No hosts configured"
 msgstr "لم يُهيأ أي مضيف"
 
-#: src/widgets/options_panel.py:335 src/widgets/options_panel.py:337
+#: src/widgets/options_panel.py:369 src/widgets/options_panel.py:371
 msgid "Enter a valid number."
 msgstr "أدخل عددًا صالحًا."
 
-#: src/widgets/options_panel.py:355
+#: src/widgets/options_panel.py:389
 msgid "Value must not be negative."
 msgstr "يجب ألا تكون القيمة سالبة."
 
-#: src/widgets/options_panel.py:358
+#: src/widgets/options_panel.py:392
 msgid "Value must be between 0 and 1."
 msgstr "يجب أن تكون القيمة بين 0 و1."
 
-#: src/widgets/options_panel.py:360
+#: src/widgets/options_panel.py:394
 msgid "Context size must be positive."
 msgstr "يجب أن يكون حجم السياق موجبًا."
 
-#: src/widgets/options_panel.py:362
+#: src/widgets/options_panel.py:396
 msgid "Max tokens must be -2, -1, or a nonnegative integer."
 msgstr "يجب أن يكون الحد الأقصى لوحدات النص -2 أو -1 أو عددًا صحيحًا غير سالب."
-
-#: src/widgets/options_panel.ui:21
-msgid "Tool Calling"
-msgstr "استدعاء الأدوات"
 
 #: src/widgets/options_panel.ui:27
 msgid "Edit Tools…"
@@ -2863,6 +2754,280 @@ msgstr "إعدادات الدردشة…"
 #: src/widgets/options_panel.ui:67
 msgid "Generation, Model Retention, and Diagnostics"
 msgstr "التوليد وإبقاء النموذج في الذاكرة والتشخيص"
+
+#: src/widgets/source_views.py:20
+#, python-brace-format
+msgid "Sources used ({0})"
+msgstr "المصادر المستخدمة ({0})"
+
+#: src/widgets/source_views.py:23
+#, python-brace-format
+msgid "Search query: {0}"
+msgstr "عبارة البحث: {0}"
+
+#: src/widgets/source_views.py:27
+msgid "Cosine similarity · Higher is closer"
+msgstr "تشابه جيب التمام · الأعلى أقرب"
+
+#: src/widgets/source_views.py:28
+msgid "Euclidean distance (L2) · Lower is closer"
+msgstr "المسافة الإقليدية (L2) · الأقل أقرب"
+
+#: src/widgets/source_views.py:29
+msgid "Manhattan distance (L1) · Lower is closer"
+msgstr "مسافة مانهاتن (L1) · الأقل أقرب"
+
+#: src/widgets/source_views.py:30
+msgid "Unknown similarity measure"
+msgstr "مقياس تشابه غير معروف"
+
+#: src/widgets/source_views.py:35
+#, python-brace-format
+msgid "Similarity: {0:.4f}"
+msgstr "التشابه: {0:.4f}"
+
+#: src/widgets/source_views.py:35
+#, python-brace-format
+msgid "Distance: {0:.4f}"
+msgstr "المسافة: {0:.4f}"
+
+#: src/widgets/source_views.py:38
+#, python-brace-format
+msgid "Pages: {0}"
+msgstr "الصفحات: {0}"
+
+#: src/widgets/source_views.py:46
+msgid "Shortened to fit the source budget."
+msgstr "قُصّر النص ليناسب الحد المخصص للمصادر."
+
+#: src/widgets/source_views.py:49
+msgid "Scores compare embeddings; they are not confidence estimates."
+msgstr "تقارن الدرجات بين التضمينات؛ وليست تقديرات للثقة."
+
+#: src/widgets/source_views.py:54
+msgid "Knowledge Sources"
+msgstr "مصادر المعرفة"
+
+#: src/widgets/source_views.py:54 src/widgets/source_views.py:104
+#: src/widgets/source_views.py:107
+msgid "Test Search"
+msgstr "اختبار البحث"
+
+#: src/widgets/source_views.py:66
+msgid "Search Settings"
+msgstr "إعدادات البحث"
+
+#: src/widgets/source_views.py:69
+msgid "Embedding configuration (from selected collections)"
+msgstr "إعداد التضمين (من المجموعات المحددة)"
+
+#: src/widgets/source_views.py:79
+msgid ""
+"The query must use the same embedding configuration as the selected collections. A "
+"compatible server can be chosen here."
+msgstr ""
+"يجب أن يستخدم الاستعلام إعداد التضمين نفسه للمجموعات المحددة. يمكنك اختيار خادم "
+"متوافق هنا."
+
+#: src/widgets/source_views.py:81
+msgid ""
+"This chat has older individual sources. Applying a collection selection replaces "
+"them. Closing this dialog keeps them unchanged."
+msgstr ""
+"تحتوي هذه الدردشة على مصادر فردية قديمة. سيستبدلها تطبيق اختيار المجموعات. إغلاق هذا "
+"الحوار يبقيها دون تغيير."
+
+#: src/widgets/source_views.py:86
+msgid "Maximum passages"
+msgstr "الحد الأقصى للمقاطع"
+
+#: src/widgets/source_views.py:86
+msgid "Source budget (characters)"
+msgstr "الحد المخصص للمصادر (بالمحارف)"
+
+#: src/widgets/source_views.py:89
+msgid "Similarity measure"
+msgstr "مقياس التشابه"
+
+#: src/widgets/source_views.py:90
+msgid "Cosine similarity"
+msgstr "تشابه جيب التمام"
+
+#: src/widgets/source_views.py:90
+msgid "Euclidean distance (L2)"
+msgstr "المسافة الإقليدية (L2)"
+
+#: src/widgets/source_views.py:90
+msgid "Manhattan distance (L1)"
+msgstr "مسافة مانهاتن (L1)"
+
+#: src/widgets/source_views.py:105
+msgid "Enter a search query"
+msgstr "أدخل عبارة بحث"
+
+#: src/widgets/source_views.py:159
+msgid "Minimum cosine similarity"
+msgstr "الحد الأدنى لتشابه جيب التمام"
+
+#: src/widgets/source_views.py:159
+msgid "Maximum distance"
+msgstr "الحد الأقصى للمسافة"
+
+#: src/widgets/source_views.py:160
+msgid "No minimum"
+msgstr "بلا حد أدنى"
+
+#: src/widgets/source_views.py:160
+msgid "No maximum"
+msgstr "بلا حد أقصى"
+
+#: src/widgets/source_views.py:165
+msgid "Higher is closer (−1 to 1). This is the default for semantic search."
+msgstr "الأعلى أقرب (من −1 إلى 1). هذا هو المقياس الافتراضي للبحث الدلالي."
+
+#: src/widgets/source_views.py:166
+msgid ""
+"Lower is closer. With normalized embeddings, Euclidean and cosine usually rank "
+"results alike."
+msgstr ""
+"الأقل أقرب. مع التضمينات المطبّعة، عادةً ما يرتب المقياسان الإقليدي وجيب التمام "
+"النتائج بصورة متشابهة."
+
+#: src/widgets/source_views.py:167
+msgid ""
+"Lower is closer. Adds absolute differences between vector components and can rank "
+"results differently from cosine."
+msgstr ""
+"الأقل أقرب. يجمع الفروق المطلقة بين مكونات المتجهات وقد يرتب النتائج بشكل مختلف عن "
+"جيب التمام."
+
+#: src/widgets/source_views.py:176
+msgid ""
+"Choose collections to search. New documents added to them are included automatically."
+" All documents must be ready."
+msgstr ""
+"اختر مجموعات للبحث فيها. تُضمّن المستندات الجديدة المضافة إليها تلقائيًا. يجب أن تكون"
+" جميع المستندات جاهزة."
+
+#: src/widgets/source_views.py:180
+msgid "Some selected collections were deleted. Choose sources again."
+msgstr "حُذفت بعض المجموعات المحددة. اختر المصادر مجددًا."
+
+#: src/widgets/source_views.py:181
+msgid "Clear missing collections"
+msgstr "إزالة المجموعات المفقودة من الاختيار"
+
+#: src/widgets/source_views.py:186 src/widgets/source_views.py:231
+#, python-brace-format
+msgid "{0} · {1}/{2} documents ready"
+msgstr "{0} · المستندات الجاهزة: {1}/{2}"
+
+#: src/widgets/source_views.py:188
+#, python-brace-format
+msgid "Different embedding configuration: {0}"
+msgstr "إعداد تضمين مختلف: {0}"
+
+#: src/widgets/source_views.py:195
+msgid "No matching collections"
+msgstr "لا توجد مجموعات مطابقة"
+
+#: src/widgets/source_views.py:197
+msgid "Create a collection and add text, files, or URLs in the Knowledge Library."
+msgstr "أنشئ مجموعة وأضف نصوصًا أو ملفات أو عناوين URL في مكتبة المعرفة."
+
+#: src/widgets/source_views.py:198
+msgid "Open Knowledge Library"
+msgstr "فتح مكتبة المعرفة"
+
+#: src/widgets/source_views.py:233
+msgid ""
+"Uses different embedding settings. Clear the current selection to choose this "
+"collection."
+msgstr "تستخدم إعدادات تضمين مختلفة. امسح الاختيار الحالي لاختيار هذه المجموعة."
+
+#: src/widgets/source_views.py:244
+msgid "Select at least one collection. Create collections in Knowledge first if needed."
+msgstr "اختر مجموعة واحدة على الأقل. أنشئ مجموعات في المعرفة أولًا عند الحاجة."
+
+#: src/widgets/source_views.py:249
+msgid "This model digest does not match the selected embedding configuration."
+msgstr "لا تطابق بصمة هذا النموذج إعداد التضمين المحدد."
+
+#: src/widgets/source_views.py:284
+msgid "Document Chunks"
+msgstr "مقاطع المستند"
+
+#: src/widgets/source_views.py:293
+msgid "Select all"
+msgstr "تحديد الكل"
+
+#: src/widgets/source_views.py:294
+msgid "Select none"
+msgstr "إلغاء تحديد الكل"
+
+#: src/widgets/source_views.py:298
+msgid "Load more chunks"
+msgstr "تحميل المزيد من المقاطع"
+
+#: src/widgets/source_views.py:344
+#, python-brace-format
+msgid "Chunk {0}"
+msgstr "المقطع {0}"
+
+#: src/widgets/source_views.py:350
+#, python-brace-format
+msgid "Characters {0}–{1}"
+msgstr "المحارف {0}–{1}"
+
+#: src/widgets/source_views.py:353
+msgid "Inspect vector"
+msgstr "فحص المتجه"
+
+#: src/widgets/source_views.py:369
+msgid "This vector was deleted."
+msgstr "حُذف هذا المتجه."
+
+#: src/widgets/source_views.py:372
+msgid "Embedding Vector"
+msgstr "متجه التضمين"
+
+#: src/widgets/source_views.py:372
+msgid "Stored normalized vector. Changes are not saved."
+msgstr "متجه مطبّع مخزن. لن تُحفظ التغييرات."
+
+#: src/widgets/source_views.py:385
+msgid "Use Knowledge"
+msgstr "استخدام المعرفة"
+
+#: src/widgets/source_views.py:386
+msgid "Choose sources…"
+msgstr "اختيار مصادر…"
+
+#: src/widgets/source_views.py:390
+msgid "Search query override for the next turn (optional)"
+msgstr "استبدال عبارة البحث للجولة التالية (اختياري)"
+
+#: src/widgets/source_views.py:391
+msgid "Use a different search query for the next message"
+msgstr "استخدام عبارة بحث مختلفة للرسالة التالية"
+
+#: src/widgets/source_views.py:392
+msgid "Search Query Override"
+msgstr "استبدال عبارة البحث"
+
+#: src/widgets/source_views.py:411
+msgid "Choose collections to search."
+msgstr "اختر مجموعات للبحث فيها."
+
+#: src/widgets/source_views.py:413
+#, python-brace-format
+msgid "Older individual sources: {0}. Choose collections to replace them."
+msgstr "المصادر الفردية القديمة: {0}. اختر مجموعات لاستبدالها."
+
+#: src/widgets/source_views.py:415
+#, python-brace-format
+msgid "{0}: {1}/{2} ready"
+msgstr "{0}: الجاهز {1}/{2}"
 
 #: src/widgets/tool_view.py:10
 msgid "Tool Definitions"
@@ -3094,65 +3259,78 @@ msgstr "لا شيء"
 msgid "Replace and Rebuild"
 msgstr "استبدال وإعادة بناء"
 
-#: src/window.py:47
+#: src/window.py:52
 msgid "Knowledge"
 msgstr "المعرفة"
 
-#: src/window.py:135
-msgid "Changes could not be saved"
-msgstr "تعذر حفظ التغييرات"
-
-#: src/window.py:136
-msgid "Your unsaved changes are kept in memory. Retry saving before quitting."
-msgstr "تُحفظ التغييرات غير المحفوظة في الذاكرة. أعد محاولة الحفظ قبل الإنهاء."
-
-#: src/window.py:138
-msgid "Keep Open"
-msgstr "الإبقاء مفتوحًا"
-
-#: src/window.py:186 src/window.ui:138
-msgid "Clear chat history"
-msgstr "مسح سجل الدردشة"
-
-#: src/window.py:186
-msgid "Are you sure you want to delete all chat history?"
-msgstr "هل تريد بالتأكيد حذف سجل الدردشة بالكامل؟"
-
-#: src/window.py:188
-msgid "Delete history"
-msgstr "حذف السجل"
-
-#: src/window.py:274
+#: src/window.py:78
 msgid "Pinned"
 msgstr "المثبتة"
 
-#: src/window.py:275
-msgid "Recent"
-msgstr "الأخيرة"
+#: src/window.py:170
+msgid "Changes could not be saved"
+msgstr "تعذر حفظ التغييرات"
 
-#: src/window.py:284
+#: src/window.py:171
+msgid "Your unsaved changes are kept in memory. Retry saving before quitting."
+msgstr "تُحفظ التغييرات غير المحفوظة في الذاكرة. أعد محاولة الحفظ قبل الإنهاء."
+
+#: src/window.py:173
+msgid "Keep Open"
+msgstr "الإبقاء مفتوحًا"
+
+#: src/window.py:222 src/window.ui:142
+msgid "Clear chat history"
+msgstr "مسح سجل الدردشة"
+
+#: src/window.py:222
+msgid "Are you sure you want to delete all chat history?"
+msgstr "هل تريد بالتأكيد حذف سجل الدردشة بالكامل؟"
+
+#: src/window.py:224
+msgid "Delete history"
+msgstr "حذف السجل"
+
+#: src/window.py:398
+msgid "Draft"
+msgstr "مسودة"
+
+#: src/window.py:407
 msgid "Unpin Chat"
 msgstr "إلغاء تثبيت الدردشة"
 
-#: src/window.py:284
+#: src/window.py:407
 msgid "Pin Chat"
 msgstr "تثبيت الدردشة"
 
-#: src/window.py:285 src/window.py:346
+#: src/window.py:408 src/window.py:502
 msgid "Rename Chat"
 msgstr "إعادة تسمية الدردشة"
 
-#: src/window.py:285
+#: src/window.py:409
 msgid "Delete Chat"
 msgstr "حذف الدردشة"
 
-#: src/window.py:301
+#: src/window.py:426
 msgid "Chat actions"
 msgstr "إجراءات الدردشة"
 
-#: src/window.py:346
+#: src/window.py:502
 msgid "Enter a new title for this chat."
 msgstr "أدخل عنوانًا جديدًا لهذه الدردشة."
+
+#: src/window.py:521
+msgid "Delete Conversation?"
+msgstr "حذف المحادثة؟"
+
+#: src/window.py:522
+#, python-brace-format
+msgid "Permanently delete “{0}” and its messages?"
+msgstr "هل تريد حذف «{0}» ورسائلها نهائيًا؟"
+
+#: src/window.py:522
+msgid "Conversation"
+msgstr "محادثة"
 
 #: src/window.ui:30
 msgid "Main Menu"
@@ -3182,21 +3360,26 @@ msgstr "دردشة _جديدة"
 msgid "_New Response"
 msgstr "_رد جديد"
 
-#: src/window.ui:130
+#: src/window.ui:134
 msgid "_Manage hosts"
 msgstr "إدارة ال_مضيفين"
 
-#: src/window.ui:134
+#: src/window.ui:138
 msgid "_Manage models"
 msgstr "إدارة ال_نماذج"
 
-#: src/window.ui:142
+#: src/window.ui:146
 msgid "_Keyboard Shortcuts"
 msgstr "ا_ختصارات لوحة المفاتيح"
 
-#: src/window.ui:146
+#: src/window.ui:150
 msgid "_About Gnollama"
 msgstr "_عن Gnollama"
 
-#~ msgid "Fetching version..."
-#~ msgstr "جارٍ جلب الإصدار…"
+#: src/window.py:78
+msgid "Recent chats"
+msgstr "المحادثات الأخيرة"
+
+#: src/window.py:79
+msgid "Recent comparisons"
+msgstr "المقارنات الأخيرة"

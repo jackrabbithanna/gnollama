@@ -18,5 +18,6 @@
     <file>icons/scalable/actions/pin-active-symbolic.svg</file>
     <file>icons/scalable/actions/gnollama-sidebar-symbolic.svg</file>
     <file>icons/scalable/actions/gnollama-chats-symbolic.svg</file>
+    <file>icons/scalable/actions/gnollama-draft-symbolic.svg</file>
   </gresource>
 </gresources>

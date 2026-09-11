@@ -219,6 +219,7 @@ class UsabilityTests(unittest.TestCase):
         tab = GenerationTab(mode='chat', storage=self.storage)
         self.tabs.append(tab)
         self.window.set_content(tab)
+        tab.advanced.set_expanded(True)
         panel = tab.options_panel
         pump_until(lambda: panel.get_mapped() and session.worker.idle and not tab.chat_input.capabilities_loading)
         end = time.monotonic() + .15

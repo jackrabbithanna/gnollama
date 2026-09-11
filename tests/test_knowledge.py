@@ -221,6 +221,8 @@ class KnowledgeTests(unittest.TestCase):
                 conn.execute('DROP TABLE ' + table)
             conn.execute('ALTER TABLE hosts DROP COLUMN provider')
             conn.execute('ALTER TABLE hosts DROP COLUMN credential_id')
+            from legacy_schema import remove_workspace
+            remove_workspace(conn)
             conn.execute('PRAGMA user_version=5')
             conn.commit()
         migrated = DatabaseManager(path)

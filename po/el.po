@@ -1,0 +1,3172 @@
+# Greek translations for gnollama.
+# Copyright (C) 2026 Jackrabbithanna
+# Distributed under the same license as gnollama.
+# Translated and reviewed with AI assistance, 2026.
+msgid ""
+msgstr ""
+"Project-Id-Version: gnollama 0.13.0\n"
+"Report-Msgid-Bugs-To: https://github.com/jackrabbithanna/gnollama/issues\n"
+"POT-Creation-Date: 2026-09-10 17:08-0600\n"
+"PO-Revision-Date: 2026-09-10 00:00+0000\n"
+"Last-Translator: AI-assisted translation\n"
+"Language: el\n"
+"Language-Team: el\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: data/io.github.jackrabbithanna.Gnollama.desktop.in:2
+msgid "gnollama"
+msgstr "gnollama"
+
+#: data/io.github.jackrabbithanna.Gnollama.desktop.in:8
+msgid "GTK;"
+msgstr "GTK;"
+
+#: data/io.github.jackrabbithanna.Gnollama.gschema.xml:7
+msgid "Default Ollama Host"
+msgstr "Προεπιλεγμένος διακομιστής Ollama"
+
+#: data/io.github.jackrabbithanna.Gnollama.gschema.xml:8
+msgid "The default URL for the Ollama API server."
+msgstr "Η προεπιλεγμένη διεύθυνση URL του διακομιστή API του Ollama."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:7 src/startup.py:10
+#: src/window.ui:5
+msgid "Gnollama"
+msgstr "Gnollama"
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:8
+msgid "Chat with Ollama models"
+msgstr "Συνομιλήστε με μοντέλα Ollama"
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:10
+msgid ""
+"Chat with Ollama models running on your computer or a remote server using a native "
+"GNOME interface."
+msgstr ""
+"Συνομιλήστε με μοντέλα Ollama που εκτελούνται στον υπολογιστή σας ή σε απομακρυσμένο "
+"διακομιστή, μέσα από μια εγγενή διεπαφή GNOME."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:11
+msgid ""
+"Keep conversations in separate tabs, attach images to vision models, and read "
+"responses with Markdown and highlighted code."
+msgstr ""
+"Διατηρήστε τις συνομιλίες σε ξεχωριστές καρτέλες, επισυνάψτε εικόνες σε μοντέλα "
+"όρασης και διαβάστε απαντήσεις με Markdown και επισήμανση κώδικα."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:12
+msgid ""
+"Manage hosts and models, customize generation and thinking settings, and inspect "
+"response statistics including cached prompt tokens."
+msgstr ""
+"Διαχειριστείτε διακομιστές και μοντέλα, προσαρμόστε τις ρυθμίσεις παραγωγής και "
+"συλλογισμού και εξετάστε στατιστικά απαντήσεων, μαζί με τα token προτροπής στην κρυφή"
+" μνήμη."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:13
+msgid ""
+"Generate and validate structured JSON, import JSON schemas, and export responses. "
+"Inspect loaded models and release their memory when finished."
+msgstr ""
+"Παράγετε και επικυρώστε δομημένο JSON, εισαγάγετε σχήματα JSON και εξαγάγετε "
+"απαντήσεις. Εξετάστε τα φορτωμένα μοντέλα και αποδεσμεύστε τη μνήμη τους όταν "
+"τελειώσετε."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:14
+msgid ""
+"Save and organize conversations with pinning and editable titles. Stop a response at "
+"any time and keep its partial answer in your history."
+msgstr ""
+"Αποθηκεύστε και οργανώστε συνομιλίες με καρφίτσωμα και επεξεργασία τίτλων. Διακόψτε "
+"μια απάντηση οποιαδήποτε στιγμή και διατηρήστε το ήδη παραγόμενο μέρος στο ιστορικό."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:18
+msgid "jackrabbithanna"
+msgstr "jackrabbithanna"
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:46
+msgid "Ollama chat with code highlighting"
+msgstr "Συνομιλία Ollama με επισήμανση κώδικα"
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:53
+msgid ""
+"Add a Knowledge Library for text and PDF imports, local embedding indexes, and "
+"source-grounded chats."
+msgstr ""
+"Προσθήκη βιβλιοθήκης γνώσεων για εισαγωγή κειμένου και PDF, τοπικά ευρετήρια "
+"ενσωματώσεων και συνομιλίες βασισμένες σε πηγές."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:55
+msgid ""
+"Start with knowledge collections and add text, files, or URLs with explicit "
+"destinations and guided previews."
+msgstr ""
+"Ξεκινήστε με συλλογές γνώσεων και προσθέστε κείμενο, αρχεία ή URL με σαφείς "
+"προορισμούς και καθοδηγούμενες προεπισκοπήσεις."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:56
+msgid ""
+"Choose collections before search settings, and use adaptive chat settings with "
+"clearer controls and feedback."
+msgstr ""
+"Επιλέξτε συλλογές πριν από τις ρυθμίσεις αναζήτησης και χρησιμοποιήστε "
+"προσαρμοζόμενες ρυθμίσεις συνομιλίας με σαφέστερα στοιχεία ελέγχου και μηνύματα."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:57
+msgid "Create and compare embeddings, inspect chunks and vectors, and test semantic searches."
+msgstr ""
+"Δημιουργήστε και συγκρίνετε ενσωματώσεις, εξετάστε τμήματα και διανύσματα και "
+"δοκιμάστε σημασιολογικές αναζητήσεις."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:58
+msgid ""
+"Select documents or chunks for chats, with independent embedding hosts and saved "
+"source passages."
+msgstr ""
+"Επιλέξτε έγγραφα ή τμήματα για συνομιλίες, με ανεξάρτητους διακομιστές ενσωματώσεων "
+"και αποθηκευμένα αποσπάσματα πηγών."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:59
+msgid ""
+"Warn about stored embeddings when deleting models, with optional vector cleanup that "
+"retains source text."
+msgstr ""
+"Προειδοποίηση για αποθηκευμένες ενσωματώσεις κατά τη διαγραφή μοντέλων, με "
+"προαιρετική εκκαθάριση διανυσμάτων που διατηρεί το αρχικό κείμενο."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:60
+msgid ""
+"Search with sqlite-vec, automatically migrate existing vectors with a database "
+"backup, and use the Qwen3 retrieval preset."
+msgstr ""
+"Αναζητήστε με sqlite-vec, μεταφέρετε αυτόματα τα υπάρχοντα διανύσματα με αντίγραφο "
+"ασφαλείας της βάσης δεδομένων και χρησιμοποιήστε την προρύθμιση ανάκτησης Qwen3."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:61
+msgid ""
+"Organize documents into collections with shared embedding settings, automatic builds,"
+" and live collection selection in chats."
+msgstr ""
+"Οργανώστε έγγραφα σε συλλογές με κοινές ρυθμίσεις ενσωματώσεων, αυτόματη δημιουργία "
+"και άμεση επιλογή συλλογών στις συνομιλίες."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:62
+msgid ""
+"Choose collections as chat sources and compare cosine similarity, Euclidean distance,"
+" or Manhattan distance with appropriate search cutoffs."
+msgstr ""
+"Επιλέξτε συλλογές ως πηγές συνομιλίας και συγκρίνετε ομοιότητα συνημιτόνου, "
+"ευκλείδεια απόσταση ή απόσταση Μανχάταν με κατάλληλα όρια αναζήτησης."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:63
+msgid ""
+"Hide embedding-only models from Chat and Response model selection while keeping them "
+"available in Knowledge and Manage Models."
+msgstr ""
+"Απόκρυψη μοντέλων μόνο για ενσωματώσεις από την επιλογή μοντέλων συνομιλίας και "
+"απάντησης, διατηρώντας τα διαθέσιμα στις Γνώσεις και στη Διαχείριση μοντέλων."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:64
+msgid ""
+"Import batches of URLs into collections with main-content extraction, CSS selectors, "
+"editable previews, and source links in chats."
+msgstr ""
+"Εισαγάγετε ομάδες URL σε συλλογές με εξαγωγή κύριου περιεχομένου, επιλογείς CSS, "
+"επεξεργάσιμες προεπισκοπήσεις και συνδέσμους πηγών στις συνομιλίες."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:65
+msgid ""
+"Review changed web documents before replacing their text and rebuilding all affected "
+"embedding indexes."
+msgstr ""
+"Ελέγξτε τα αλλαγμένα έγγραφα ιστού πριν αντικαταστήσετε το κείμενό τους και "
+"αναδημιουργήσετε όλα τα επηρεαζόμενα ευρετήρια ενσωματώσεων."
+
+#: src/ai_bubble.ui:35 src/bubbles.ui:74
+msgid "API Call Details"
+msgstr "Λεπτομέρειες κλήσης API"
+
+#: src/ai_bubble.ui:41 src/bubbles.ui:80
+msgid "Thinking..."
+msgstr "Συλλογισμός..."
+
+#: src/bubbles.py:105
+msgid "Response Statistics"
+msgstr "Στατιστικά απάντησης"
+
+#: src/bubbles.py:120
+msgid "Earlier images were omitted from the text-only request."
+msgstr "Οι προηγούμενες εικόνες παραλείφθηκαν από το αίτημα μόνο κειμένου."
+
+#: src/bubbles.py:125 src/knowledge.py:300
+msgid "Stopped"
+msgstr "Διακόπηκε"
+
+#: src/bubbles.py:125 src/knowledge.py:300
+msgid "Failed"
+msgstr "Απέτυχε"
+
+#. Create expander for logprobs
+#: src/bubbles.py:137
+msgid "Logprobs"
+msgstr "Λογαριθμικές πιθανότητες"
+
+#: src/bubbles.py:183 src/model_manager.py:22 src/model_manager.py:24
+#: src/model_manager.py:28
+msgid "Unavailable"
+msgstr "Μη διαθέσιμο"
+
+#: src/bubbles.py:197
+#, python-brace-format
+msgid "Total: {0}"
+msgstr "Σύνολο: {0}"
+
+#: src/bubbles.py:198
+#, python-brace-format
+msgid "Load: {0}"
+msgstr "Φόρτωση: {0}"
+
+#: src/bubbles.py:199
+#, python-brace-format
+msgid "Prompt: {0} tokens"
+msgstr "Token προτροπής: {0}"
+
+#: src/bubbles.py:200
+#, python-brace-format
+msgid "Cached: {0} tokens"
+msgstr "Token στην κρυφή μνήμη: {0}"
+
+#: src/bubbles.py:201
+#, python-brace-format
+msgid "Prompt evaluation: {0}"
+msgstr "Αξιολόγηση προτροπής: {0}"
+
+#: src/bubbles.py:202
+#, python-brace-format
+msgid "Generated: {0} tokens"
+msgstr "Παραγόμενα token: {0}"
+
+#: src/bubbles.py:203
+#, python-brace-format
+msgid "Generation: {0}"
+msgstr "Παραγωγή: {0}"
+
+#: src/bubbles.py:204
+#, python-brace-format
+msgid "Tokens/s: {0}"
+msgstr "Token/δευτ.: {0}"
+
+#: src/bubbles.py:207
+#, python-brace-format
+msgid "Finish: {0}"
+msgstr "Αιτία τερματισμού: {0}"
+
+#: src/collections_store.py:96 src/collections_store.py:144
+msgid "A document was deleted. Choose documents again."
+msgstr "Ένα έγγραφο διαγράφηκε. Επιλέξτε ξανά έγγραφα."
+
+#: src/collections_store.py:107 src/knowledge.py:357
+msgid "Enter a collection name."
+msgstr "Εισαγάγετε όνομα συλλογής."
+
+#: src/collections_store.py:118 src/widgets/knowledge_view.py:1140
+msgid "Choose a model with the collection’s original digest."
+msgstr "Επιλέξτε μοντέλο με το αρχικό ψηφιακό αποτύπωμα της συλλογής."
+
+#: src/collections_store.py:141 src/knowledge.py:390
+msgid "The collection was deleted."
+msgstr "Η συλλογή διαγράφηκε."
+
+#: src/collections_store.py:202 src/widgets/knowledge_view.py:801
+msgid "A selected collection was deleted. Choose sources again."
+msgstr "Μια επιλεγμένη συλλογή διαγράφηκε. Επιλέξτε ξανά πηγές."
+
+#: src/collections_store.py:204
+#, python-brace-format
+msgid "Collection “{0}” uses a different embedding configuration."
+msgstr "Η συλλογή «{0}» χρησιμοποιεί διαφορετική διαμόρφωση ενσωματώσεων."
+
+#: src/collections_store.py:207
+#, python-brace-format
+msgid "Collection “{0}” is empty. Add documents or adjust sources."
+msgstr "Η συλλογή «{0}» είναι κενή. Προσθέστε έγγραφα ή προσαρμόστε τις πηγές."
+
+#: src/collections_store.py:210
+#, python-brace-format
+msgid "Collection “{0}” is not ready. Build missing embeddings or retry failed documents: {1}"
+msgstr ""
+"Η συλλογή «{0}» δεν είναι έτοιμη. Δημιουργήστε τις ενσωματώσεις που λείπουν ή "
+"δοκιμάστε ξανά τα έγγραφα που απέτυχαν: {1}"
+
+#: src/database.py:75
+msgid "This database was created by a newer Gnollama version. Update Gnollama to open it."
+msgstr ""
+"Αυτή η βάση δεδομένων δημιουργήθηκε από νεότερη έκδοση του Gnollama. Ενημερώστε το "
+"Gnollama για να την ανοίξετε."
+
+#: src/database.py:82
+msgid "Backing up the database…"
+msgstr "Δημιουργία αντιγράφου ασφαλείας της βάσης δεδομένων…"
+
+#: src/database.py:191
+msgid "This database requires a newer Gnollama version."
+msgstr "Αυτή η βάση δεδομένων απαιτεί νεότερη έκδοση του Gnollama."
+
+#: src/database.py:210
+#, python-brace-format
+msgid "Upgrading the database to version {0}…"
+msgstr "Αναβάθμιση της βάσης δεδομένων στην έκδοση {0}…"
+
+#: src/host_edit_dialog.ui:6 src/host_manager.py:171 src/model_manager.py:366
+#: src/pull_model_dialog.ui:17 src/widgets/knowledge_view.py:1111
+#: src/widgets/knowledge_view.py:1121 src/widgets/knowledge_view.py:1250
+#: src/widgets/knowledge_view.py:1293 src/widgets/knowledge_view.py:1337
+#: src/widgets/knowledge_view.py:1358 src/widgets/url_import.py:246
+#: src/widgets/url_import.py:335 src/window.py:187 src/window.py:349
+msgid "Cancel"
+msgstr "Ακύρωση"
+
+#: src/host_edit_dialog.ui:7 src/widgets/knowledge_view.py:1112
+#: src/widgets/knowledge_view.py:1145 src/widgets/knowledge_view.py:1338 src/window.py:350
+msgid "Save"
+msgstr "Αποθήκευση"
+
+#: src/host_edit_dialog.ui:21 src/model_manager.py:610
+msgid "Name"
+msgstr "Όνομα"
+
+#: src/host_edit_dialog.ui:28
+msgid "For example: Local Ollama"
+msgstr "Για παράδειγμα: Τοπικό Ollama"
+
+#: src/host_edit_dialog.ui:33
+msgid "Server address"
+msgstr "Διεύθυνση διακομιστή"
+
+#: src/host_edit_dialog.ui:45
+msgid "Set as default host"
+msgstr "Ορισμός ως προεπιλεγμένου διακομιστή"
+
+#: src/host_manager.py:19
+msgid "Edit Host"
+msgstr "Επεξεργασία διακομιστή"
+
+#: src/host_manager.py:19 src/host_manager.ui:23
+msgid "Add Host"
+msgstr "Προσθήκη διακομιστή"
+
+#: src/host_manager.py:35
+msgid "Enter a name for this server."
+msgstr "Εισαγάγετε όνομα για αυτόν τον διακομιστή."
+
+#: src/host_manager.py:78
+msgid "Default"
+msgstr "Προεπιλογή"
+
+#: src/host_manager.py:83 src/host_manager.py:87
+msgid "Test Connection"
+msgstr "Έλεγχος σύνδεσης"
+
+#: src/host_manager.py:92
+msgid "Edit Server"
+msgstr "Επεξεργασία διακομιστή"
+
+#: src/host_manager.py:98 src/host_manager.py:168
+msgid "Delete Host"
+msgstr "Διαγραφή διακομιστή"
+
+#: src/host_manager.py:112
+msgid "Fetching version..."
+msgstr "Ανάκτηση έκδοσης..."
+
+#: src/host_manager.py:114 src/main.py:63 src/model_manager.py:340 src/model_manager.py:601
+#: src/startup.py:23 src/widgets/json_view.py:230 src/widgets/knowledge_import.py:51
+#: src/widgets/knowledge_view.py:756 src/widgets/knowledge_view.py:909
+#: src/widgets/knowledge_view.py:1271
+msgid "Close"
+msgstr "Κλείσιμο"
+
+#: src/host_manager.py:124
+#, python-brace-format
+msgid ""
+"Connected\n"
+"Ollama Version: {0}"
+msgstr ""
+"Συνδέθηκε\n"
+"Έκδοση Ollama: {0}"
+
+#: src/host_manager.py:126
+#, python-brace-format
+msgid ""
+"Connection failed\n"
+"{0}"
+msgstr ""
+"Αποτυχία σύνδεσης\n"
+"{0}"
+
+#: src/host_manager.py:169 src/model_manager.py:352
+#, python-brace-format
+msgid "Are you sure you want to delete {0}?"
+msgstr "Θέλετε σίγουρα να διαγράψετε το {0};"
+
+#: src/host_manager.py:172 src/model_manager.py:367 src/widgets/knowledge_view.py:1359
+msgid "Delete"
+msgstr "Διαγραφή"
+
+#: src/host_manager.ui:6 src/host_manager.ui:17
+msgid "Manage Hosts"
+msgstr "Διαχείριση διακομιστών"
+
+#: src/host_manager.ui:35
+msgid "Ollama Servers"
+msgstr "Διακομιστές Ollama"
+
+#: src/host_manager.ui:36
+msgid "Select a server to edit its name or address."
+msgstr "Επιλέξτε διακομιστή για να επεξεργαστείτε το όνομα ή τη διεύθυνσή του."
+
+#: src/knowledge.py:39
+msgid "Operation stopped"
+msgstr "Η λειτουργία διακόπηκε"
+
+#: src/knowledge.py:44
+msgid "No text was found. Scanned documents require OCR before import."
+msgstr ""
+"Δεν βρέθηκε κείμενο. Τα σαρωμένα έγγραφα απαιτούν οπτική αναγνώριση χαρακτήρων (OCR) "
+"πριν από την εισαγωγή."
+
+#: src/knowledge.py:46
+msgid ""
+"This document exceeds the limit of 5 million extracted characters. Split it into "
+"smaller files."
+msgstr ""
+"Αυτό το έγγραφο υπερβαίνει το όριο των 5 εκατομμυρίων εξαγόμενων χαρακτήρων. Χωρίστε "
+"το σε μικρότερα αρχεία."
+
+#: src/knowledge.py:47
+msgid "Untitled"
+msgstr "Χωρίς τίτλο"
+
+#: src/knowledge.py:55 src/widgets/knowledge_import.py:174
+msgid "Files must be no larger than 50 MiB."
+msgstr "Τα αρχεία δεν πρέπει να υπερβαίνουν τα 50 MiB."
+
+#: src/knowledge.py:61
+msgid "Password-protected PDFs are not supported. Import an unencrypted copy."
+msgstr "Δεν υποστηρίζονται PDF με κωδικό πρόσβασης. Εισαγάγετε μη κρυπτογραφημένο αντίγραφο."
+
+#: src/knowledge.py:64
+msgid "PDFs must contain no more than 2,000 pages."
+msgstr "Τα PDF δεν πρέπει να περιέχουν περισσότερες από 2.000 σελίδες."
+
+#: src/knowledge.py:70
+msgid "A PDF page is too complex to extract. Import its text instead."
+msgstr "Μια σελίδα PDF είναι πολύ περίπλοκη για εξαγωγή. Εισαγάγετε το κείμενό της."
+
+#: src/knowledge.py:73
+#, python-brace-format
+msgid "Page {0} has no extractable text."
+msgstr "Η σελίδα {0} δεν περιέχει εξαγώγιμο κείμενο."
+
+#: src/knowledge.py:78
+msgid "The PDF contains too much text. Split it into smaller files."
+msgstr "Το PDF περιέχει υπερβολικά πολύ κείμενο. Χωρίστε το σε μικρότερα αρχεία."
+
+#: src/knowledge.py:84
+msgid "Import a UTF-8 text file or a PDF containing text."
+msgstr "Εισαγάγετε αρχείο κειμένου UTF-8 ή PDF που περιέχει κείμενο."
+
+#: src/knowledge.py:86
+msgid "This appears to be a binary file, not a text document."
+msgstr "Αυτό φαίνεται να είναι δυαδικό αρχείο και όχι έγγραφο κειμένου."
+
+#: src/knowledge.py:93
+msgid "Chunk size must be 64–32,000 characters; overlap must be smaller than the chunk."
+msgstr ""
+"Το μέγεθος τμήματος πρέπει να είναι 64–32.000 χαρακτήρες· η επικάλυψη πρέπει να είναι"
+" μικρότερη από το τμήμα."
+
+#: src/knowledge.py:119
+msgid ""
+"The embedding model is unavailable or its digest is missing. Choose a compatible host"
+" and model."
+msgstr ""
+"Το μοντέλο ενσωματώσεων δεν είναι διαθέσιμο ή λείπει το ψηφιακό αποτύπωμά του. "
+"Επιλέξτε συμβατό διακομιστή και μοντέλο."
+
+#: src/knowledge.py:121
+msgid ""
+"The embedding model has changed. Select a model with the original digest or build a "
+"new index."
+msgstr ""
+"Το μοντέλο ενσωματώσεων άλλαξε. Επιλέξτε μοντέλο με το αρχικό ψηφιακό αποτύπωμα ή "
+"δημιουργήστε νέο ευρετήριο."
+
+#: src/knowledge.py:127
+msgid "Unknown embedding format."
+msgstr "Άγνωστη μορφή ενσωματώσεων."
+
+#: src/knowledge.py:133
+msgid "Embedding prefixes must be no longer than 4,000 characters."
+msgstr "Τα προθέματα ενσωματώσεων δεν πρέπει να υπερβαίνουν τους 4.000 χαρακτήρες."
+
+#: src/knowledge.py:142
+msgid "Choose an embedding configuration and at least one source."
+msgstr "Επιλέξτε διαμόρφωση ενσωματώσεων και τουλάχιστον μία πηγή."
+
+#: src/knowledge.py:145
+msgid "Invalid collection selection. Choose sources again."
+msgstr "Μη έγκυρη επιλογή συλλογών. Επιλέξτε ξανά πηγές."
+
+#: src/knowledge.py:148
+msgid "Select the embedding model on the chosen host."
+msgstr "Επιλέξτε το μοντέλο ενσωματώσεων στον επιλεγμένο διακομιστή."
+
+#: src/knowledge.py:150
+msgid "Passage count must be between 1 and 20."
+msgstr "Το πλήθος αποσπασμάτων πρέπει να είναι από 1 έως 20."
+
+#: src/knowledge.py:152
+msgid "Source budget must be between 256 and 64,000 characters."
+msgstr "Το όριο πηγών πρέπει να είναι από 256 έως 64.000 χαρακτήρες."
+
+#: src/knowledge.py:229
+msgid "Wait for the model operation to finish."
+msgstr "Περιμένετε να ολοκληρωθεί η λειτουργία του μοντέλου."
+
+#: src/knowledge.py:262
+msgid "The embedding host was removed. Choose a configured host before continuing."
+msgstr "Ο διακομιστής ενσωματώσεων αφαιρέθηκε. Επιλέξτε ρυθμισμένο διακομιστή πριν συνεχίσετε."
+
+#: src/knowledge.py:268 src/widgets/knowledge_import.py:146 src/widgets/url_import.py:100
+#: src/widgets/url_import.py:113
+msgid "Queued"
+msgstr "Σε αναμονή"
+
+#: src/knowledge.py:272
+msgid "The Knowledge Library is closing."
+msgstr "Η βιβλιοθήκη γνώσεων κλείνει."
+
+#: src/knowledge.py:278
+msgid "This document is being replaced. Retry the build when replacement finishes."
+msgstr ""
+"Αυτό το έγγραφο αντικαθίσταται. Δοκιμάστε ξανά τη δημιουργία όταν ολοκληρωθεί η "
+"αντικατάσταση."
+
+#: src/knowledge.py:300
+msgid "Complete"
+msgstr "Ολοκληρώθηκε"
+
+#: src/knowledge.py:317
+msgid "Wait for this document’s embedding builds to finish before replacing it."
+msgstr ""
+"Περιμένετε να ολοκληρωθεί η δημιουργία ενσωματώσεων αυτού του εγγράφου πριν το "
+"αντικαταστήσετε."
+
+#: src/knowledge.py:320
+msgid "Saving the web document…"
+msgstr "Αποθήκευση του εγγράφου ιστού…"
+
+#: src/knowledge.py:348
+msgid "Save web document"
+msgstr "Αποθήκευση εγγράφου ιστού"
+
+#: src/knowledge.py:369
+msgid "Create collection"
+msgstr "Δημιουργία συλλογής"
+
+#: src/knowledge.py:384
+#, python-brace-format
+msgid "Add document: {0}"
+msgstr "Προσθήκη εγγράφου: {0}"
+
+#: src/knowledge.py:392
+#, python-brace-format
+msgid "Prepare collection: {0}"
+msgstr "Προετοιμασία συλλογής: {0}"
+
+#: src/knowledge.py:399
+msgid "Reusing embeddings and preparing missing documents…"
+msgstr "Επαναχρησιμοποίηση ενσωματώσεων και προετοιμασία εγγράφων που λείπουν…"
+
+#: src/knowledge.py:416
+#, python-brace-format
+msgid "Create embeddings: {0}"
+msgstr "Δημιουργία ενσωματώσεων: {0}"
+
+#: src/knowledge.py:421
+msgid "Build was stopped before it started."
+msgstr "Η δημιουργία διακόπηκε πριν ξεκινήσει."
+
+#: src/knowledge.py:438
+msgid "The source document was deleted."
+msgstr "Το αρχικό έγγραφο διαγράφηκε."
+
+#: src/knowledge.py:443
+msgid "This index would exceed 100,000 chunks. Increase the chunk size or reduce overlap."
+msgstr ""
+"Αυτό το ευρετήριο θα υπερέβαινε τα 100.000 τμήματα. Αυξήστε το μέγεθος τμήματος ή "
+"μειώστε την επικάλυψη."
+
+#: src/knowledge.py:459
+#, python-brace-format
+msgid "Embedding chunks: {0} complete, {1} remaining"
+msgstr "Ενσωματώσεις τμημάτων: ολοκληρωμένα {0}, απομένουν {1}"
+
+#: src/knowledge.py:483
+msgid "The embedding input cannot fit. Shorten the document prefix or choose another model."
+msgstr ""
+"Το κείμενο εισόδου ενσωματώσεων δεν χωρά. Συντομεύστε το πρόθεμα εγγράφου ή επιλέξτε "
+"άλλο μοντέλο."
+
+#: src/knowledge.py:493
+msgid "The model returned a different vector dimension. Create a new configuration."
+msgstr "Το μοντέλο επέστρεψε διαφορετική διάσταση διανύσματος. Δημιουργήστε νέα διαμόρφωση."
+
+#: src/knowledge.py:508
+msgid "Create embeddings"
+msgstr "Δημιουργία ενσωματώσεων"
+
+#: src/knowledge.py:518
+msgid "This embedding configuration has no completed vectors."
+msgstr "Αυτή η διαμόρφωση ενσωματώσεων δεν περιέχει ολοκληρωμένα διανύσματα."
+
+#: src/knowledge.py:520 src/widgets/knowledge_view.py:659
+msgid "Enter a search query."
+msgstr "Εισαγάγετε ερώτημα αναζήτησης."
+
+#: src/knowledge.py:530 src/knowledge_store.py:265
+msgid "Query dimensions differ from the stored vectors. Rebuild the index."
+msgstr ""
+"Οι διαστάσεις του ερωτήματος διαφέρουν από τα αποθηκευμένα διανύσματα. "
+"Αναδημιουργήστε το ευρετήριο."
+
+#: src/knowledge.py:537
+msgid "No passages met the search criteria. Adjust the query, sources, or minimum similarity."
+msgstr ""
+"Κανένα απόσπασμα δεν πληροί τα κριτήρια αναζήτησης. Προσαρμόστε το ερώτημα, τις πηγές"
+" ή την ελάχιστη ομοιότητα."
+
+#: src/knowledge_store.py:49
+msgid "The destination collection was deleted."
+msgstr "Η συλλογή προορισμού διαγράφηκε."
+
+#: src/knowledge_store.py:136
+msgid "The reserved embedding index was deleted."
+msgstr "Το δεσμευμένο ευρετήριο ενσωματώσεων διαγράφηκε."
+
+#: src/knowledge_store.py:138
+msgid "An index cannot change its document or embedding configuration."
+msgstr "Ένα ευρετήριο δεν μπορεί να αλλάξει έγγραφο ή διαμόρφωση ενσωματώσεων."
+
+#: src/knowledge_store.py:153
+msgid "Embedding dimensions do not match the batch."
+msgstr "Οι διαστάσεις ενσωματώσεων δεν ταιριάζουν με την παρτίδα."
+
+#: src/knowledge_store.py:160
+msgid "Embedding configuration does not match the index."
+msgstr "Η διαμόρφωση ενσωματώσεων δεν ταιριάζει με το ευρετήριο."
+
+#: src/knowledge_store.py:163
+msgid "Embedding dimensions changed during indexing"
+msgstr "Οι διαστάσεις ενσωματώσεων άλλαξαν κατά τη δημιουργία ευρετηρίου"
+
+#: src/knowledge_store.py:169
+msgid "A chunk cannot move between indexes."
+msgstr "Ένα τμήμα δεν μπορεί να μετακινηθεί μεταξύ ευρετηρίων."
+
+#: src/knowledge_store.py:241
+msgid "Select at least one indexed document or chunk."
+msgstr "Επιλέξτε τουλάχιστον ένα έγγραφο ή τμήμα με ευρετήριο."
+
+#: src/knowledge_store.py:244
+msgid "Invalid search limits."
+msgstr "Μη έγκυρα όρια αναζήτησης."
+
+#: src/knowledge_store.py:272
+msgid "A selected index is missing, incomplete, or incompatible. Choose sources again."
+msgstr "Ένα επιλεγμένο ευρετήριο λείπει, είναι ημιτελές ή ασύμβατο. Επιλέξτε ξανά πηγές."
+
+#: src/knowledge_store.py:277 src/knowledge_store.py:286
+msgid "Selected chunks are missing. Choose sources again."
+msgstr "Λείπουν επιλεγμένα τμήματα. Επιλέξτε ξανά πηγές."
+
+#: src/knowledge_store.py:282
+msgid "A selected document has no selected chunks."
+msgstr "Ένα επιλεγμένο έγγραφο δεν έχει επιλεγμένα τμήματα."
+
+#: src/knowledge_store.py:289 src/knowledge_store.py:307 src/vectors.py:108
+#: src/vectors.py:116
+msgid "Stored vectors are missing. Rebuild this index."
+msgstr "Λείπουν αποθηκευμένα διανύσματα. Αναδημιουργήστε αυτό το ευρετήριο."
+
+#: src/knowledge_store.py:309 src/vectors.py:129
+msgid "Stored vectors are damaged. Rebuild this index."
+msgstr "Τα αποθηκευμένα διανύσματα είναι κατεστραμμένα. Αναδημιουργήστε αυτό το ευρετήριο."
+
+#: src/knowledge_store.py:327 src/vectors.py:124
+msgid "Stored vectors do not match their source. Rebuild this index."
+msgstr ""
+"Τα αποθηκευμένα διανύσματα δεν ταιριάζουν με την πηγή τους. Αναδημιουργήστε αυτό το "
+"ευρετήριο."
+
+#: src/knowledge_store.py:349
+#, python-brace-format
+msgid "Knowledge search failed: {0}"
+msgstr "Η αναζήτηση γνώσεων απέτυχε: {0}"
+
+#. Translators: Translate "ltr" as "rtl" for right-to-left languages.
+#. Use the app's language even when GTK's language pack is not installed.
+#: src/main.py:33
+msgctxt "text direction"
+msgid "ltr"
+msgstr "ltr"
+
+#: src/main.py:61
+msgid "Database Upgraded"
+msgstr "Η βάση δεδομένων αναβαθμίστηκε"
+
+#: src/main.py:62
+#, python-brace-format
+msgid ""
+"Your data is ready. A backup of the previous database was saved at:\n"
+"{0}"
+msgstr ""
+"Τα δεδομένα σας είναι έτοιμα. Αποθηκεύτηκε αντίγραφο ασφαλείας της προηγούμενης βάσης"
+" δεδομένων στο:\n"
+"{0}"
+
+#. Translators: Replace "translator-credits" with your name/username, and optionally an
+#. email or URL.
+#: src/main.py:75
+msgid "translator-credits"
+msgstr "Μετάφραση με τη βοήθεια τεχνητής νοημοσύνης"
+
+#: src/model_details_view.ui:6 src/model_manager.py:42 src/model_manager.py:291
+msgid "Model Details"
+msgstr "Λεπτομέρειες μοντέλου"
+
+#: src/model_manager.py:29
+#, python-brace-format
+msgid ""
+"Memory: {0} · VRAM: {1}\n"
+"Context: {2} · Expires: {3}"
+msgstr ""
+"Μνήμη: {0} · VRAM: {1}\n"
+"Συμφραζόμενα: {2} · Λήξη: {3}"
+
+#: src/model_manager.py:163 src/tab.py:162
+msgid "No host configured."
+msgstr "Δεν έχει ρυθμιστεί διακομιστής."
+
+#: src/model_manager.py:168
+msgid "Loading running models…"
+msgstr "Φόρτωση μοντέλων σε εκτέλεση…"
+
+#: src/model_manager.py:172
+#, python-brace-format
+msgid "Could not refresh running models: {0}"
+msgstr "Αδυναμία ανανέωσης μοντέλων σε εκτέλεση: {0}"
+
+#: src/model_manager.py:188
+msgid "No models are loaded in memory."
+msgstr "Δεν υπάρχουν μοντέλα φορτωμένα στη μνήμη."
+
+#: src/model_manager.py:194 src/model_manager.py:207
+msgid "Unload"
+msgstr "Αποφόρτωση"
+
+#: src/model_manager.py:195 src/model_manager.py:209
+msgid "Release this model from memory; keep its downloaded files."
+msgstr "Αποδεσμεύστε αυτό το μοντέλο από τη μνήμη, διατηρώντας τα ληφθέντα αρχεία του."
+
+#: src/model_manager.py:207
+msgid "Unloading…"
+msgstr "Αποφόρτωση…"
+
+#: src/model_manager.py:208
+msgid "A chat or embedding job is using this model in Gnollama."
+msgstr "Μια συνομιλία ή εργασία ενσωματώσεων χρησιμοποιεί αυτό το μοντέλο στο Gnollama."
+
+#: src/model_manager.py:225
+msgid "Could not unload model"
+msgstr "Αδυναμία αποφόρτωσης μοντέλου"
+
+#: src/model_manager.py:265
+msgid "Connection Error"
+msgstr "Σφάλμα σύνδεσης"
+
+#: src/model_manager.py:298
+msgid "Delete Model"
+msgstr "Διαγραφή μοντέλου"
+
+#: src/model_manager.py:329
+msgid "Failed to fetch details"
+msgstr "Αποτυχία ανάκτησης λεπτομερειών"
+
+#: src/model_manager.py:349 src/model_manager.py:374 src/model_manager.py:377
+msgid "Model Is Busy"
+msgstr "Το μοντέλο είναι απασχολημένο"
+
+#: src/model_manager.py:349 src/model_manager.py:377
+msgid "Wait for active chats and embedding jobs before deleting this model."
+msgstr ""
+"Περιμένετε τις ενεργές συνομιλίες και εργασίες ενσωματώσεων πριν διαγράψετε αυτό το "
+"μοντέλο."
+
+#: src/model_manager.py:353
+msgid "Also delete matching vectors; keep source text"
+msgstr "Διαγραφή και των αντίστοιχων διανυσμάτων· διατήρηση αρχικού κειμένου"
+
+#: src/model_manager.py:355
+#, python-brace-format
+msgid ""
+"Stored data using this model: {0} documents, {1} indexes, {2} vectors. Kept vectors "
+"can be used again with the same model digest on a compatible host."
+msgstr ""
+"Αποθηκευμένα δεδομένα που χρησιμοποιούν αυτό το μοντέλο: έγγραφα {0}, ευρετήρια {1}, "
+"διανύσματα {2}. Τα διανύσματα που διατηρούνται μπορούν να επαναχρησιμοποιηθούν με το "
+"ίδιο ψηφιακό αποτύπωμα μοντέλου σε συμβατό διακομιστή."
+
+#: src/model_manager.py:357
+#, python-brace-format
+msgid ""
+"Collections using this configuration: {0}. Deleting vectors keeps their documents and"
+" membership, but they will need embeddings rebuilt before searching."
+msgstr ""
+"Συλλογές που χρησιμοποιούν αυτή τη διαμόρφωση: {0}. Η διαγραφή διανυσμάτων διατηρεί "
+"τα έγγραφα και τη συμμετοχή τους στις συλλογές, αλλά οι ενσωματώσεις τους πρέπει να "
+"αναδημιουργηθούν πριν από την αναζήτηση."
+
+#: src/model_manager.py:360
+msgid "Delete Model?"
+msgstr "Διαγραφή μοντέλου;"
+
+#: src/model_manager.py:374
+msgid "Wait for all indexing jobs using this model before deleting its vectors."
+msgstr ""
+"Περιμένετε όλες τις εργασίες ευρετηρίου που χρησιμοποιούν αυτό το μοντέλο πριν "
+"διαγράψετε τα διανύσματά του."
+
+#: src/model_manager.py:390
+msgid "Delete Failed"
+msgstr "Αποτυχία διαγραφής"
+
+#: src/model_manager.py:545
+msgid "Starting download…"
+msgstr "Έναρξη λήψης…"
+
+#: src/model_manager.py:570
+msgid "Error"
+msgstr "Σφάλμα"
+
+#: src/model_manager.py:571
+msgid "Error occurred."
+msgstr "Παρουσιάστηκε σφάλμα."
+
+#: src/model_manager.py:590
+#, python-brace-format
+msgid "{0:.0f}%"
+msgstr "{0:.0f}%"
+
+#: src/model_manager.py:593
+msgid "Download complete"
+msgstr "Η λήψη ολοκληρώθηκε"
+
+#: src/model_manager.py:611 src/widgets/chat_input.ui:27
+msgid "Model"
+msgstr "Μοντέλο"
+
+#: src/model_manager.py:612
+msgid "Remote Model"
+msgstr "Απομακρυσμένο μοντέλο"
+
+#: src/model_manager.py:613
+msgid "Remote Host"
+msgstr "Απομακρυσμένος διακομιστής"
+
+#: src/model_manager.py:614
+msgid "Modified At"
+msgstr "Τελευταία τροποποίηση"
+
+#: src/model_manager.py:615
+msgid "Size"
+msgstr "Μέγεθος"
+
+#: src/model_manager.py:616
+msgid "Digest"
+msgstr "Ψηφιακό αποτύπωμα"
+
+#: src/model_manager.py:617
+msgid "Detail: Format"
+msgstr "Λεπτομέρεια: Μορφή"
+
+#: src/model_manager.py:618
+msgid "Detail: Family"
+msgstr "Λεπτομέρεια: Οικογένεια"
+
+#: src/model_manager.py:619
+msgid "Detail: Families"
+msgstr "Λεπτομέρεια: Οικογένειες"
+
+#: src/model_manager.py:620
+msgid "Detail: Parameter Size"
+msgstr "Λεπτομέρεια: Πλήθος παραμέτρων"
+
+#: src/model_manager.py:621
+msgid "Detail: Quantization Level"
+msgstr "Λεπτομέρεια: Επίπεδο κβαντισμού"
+
+#: src/model_manager.py:622
+msgid "Parameters"
+msgstr "Παράμετροι"
+
+#: src/model_manager.py:623
+msgid "Capabilities"
+msgstr "Δυνατότητες"
+
+#: src/model_manager.py:624
+msgid "Template"
+msgstr "Πρότυπο προτροπής"
+
+#: src/model_manager.py:625
+msgid "License"
+msgstr "Άδεια χρήσης"
+
+#: src/model_manager.py:626
+msgid "Modelfile"
+msgstr "Modelfile"
+
+#: src/model_manager.py:627
+msgid "Model Info"
+msgstr "Πληροφορίες μοντέλου"
+
+#: src/model_manager.ui:5 src/model_manager.ui:16
+msgid "Manage Models"
+msgstr "Διαχείριση μοντέλων"
+
+#: src/model_manager.ui:34
+msgid "Host:"
+msgstr "Διακομιστής:"
+
+#: src/model_manager.ui:45
+msgid "Refresh models list"
+msgstr "Ανανέωση λίστας μοντέλων"
+
+#: src/model_manager.ui:61 src/pull_model_dialog.ui:22
+msgid "Download Model…"
+msgstr "Λήψη μοντέλου…"
+
+#: src/model_manager.ui:80
+msgid "Installed"
+msgstr "Εγκατεστημένα"
+
+#: src/model_manager.ui:90
+msgid "Available Models"
+msgstr "Διαθέσιμα μοντέλα"
+
+#: src/model_manager.ui:102
+msgid "Running"
+msgstr "Σε εκτέλεση"
+
+#: src/model_manager.ui:121
+msgid "Models in Memory"
+msgstr "Μοντέλα στη μνήμη"
+
+#: src/ollama.py:52
+msgid "Enter a valid http:// or https:// Ollama host URL."
+msgstr "Εισαγάγετε έγκυρο URL διακομιστή Ollama με http:// ή https://."
+
+#: src/ollama.py:61 src/ollama.py:84
+msgid "Request stopped"
+msgstr "Το αίτημα διακόπηκε"
+
+#: src/ollama.py:110
+msgid "Invalid JSON received from Ollama"
+msgstr "Λήφθηκε μη έγκυρο JSON από το Ollama"
+
+#: src/ollama.py:112
+msgid "Expected a JSON object from Ollama"
+msgstr "Αναμενόταν αντικείμενο JSON από το Ollama"
+
+#: src/ollama.py:162
+msgid "Enter nonempty text to embed."
+msgstr "Εισαγάγετε μη κενό κείμενο για ενσωμάτωση."
+
+#: src/ollama.py:166
+msgid "Embedding dimensions must be a positive integer."
+msgstr "Το πλήθος διαστάσεων ενσωματώσεων πρέπει να είναι θετικός ακέραιος."
+
+#: src/ollama.py:173
+msgid "The server returned an incorrect number of embeddings."
+msgstr "Ο διακομιστής επέστρεψε λανθασμένο πλήθος ενσωματώσεων."
+
+#: src/ollama.py:178
+msgid "The server returned an invalid embedding vector."
+msgstr "Ο διακομιστής επέστρεψε μη έγκυρο διάνυσμα ενσωμάτωσης."
+
+#: src/ollama.py:181
+msgid "Embedding dimensions do not match, or a vector is zero."
+msgstr "Οι διαστάσεις ενσωματώσεων δεν ταιριάζουν ή κάποιο διάνυσμα είναι μηδενικό."
+
+#: src/ollama.py:210
+msgid "Model pull ended before completion"
+msgstr "Η λήψη μοντέλου τερματίστηκε πριν ολοκληρωθεί"
+
+#: src/ollama.py:216
+msgid "Invalid output format"
+msgstr "Μη έγκυρη μορφή εξόδου"
+
+#: src/ollama.py:220
+msgid "Keep-alive must be a duration in seconds, 0, or -1"
+msgstr "Η διάρκεια παραμονής στη μνήμη πρέπει να είναι χρόνος σε δευτερόλεπτα, 0 ή -1"
+
+#: src/ollama.py:224
+msgid "Invalid thinking setting"
+msgstr "Μη έγκυρη ρύθμιση συλλογισμού"
+
+#: src/ollama.py:230
+msgid "Top logprobs must be between 0 and 20"
+msgstr "Το πλήθος κορυφαίων λογαριθμικών πιθανοτήτων πρέπει να είναι από 0 έως 20"
+
+#: src/pull_model_dialog.ui:5
+msgid "Download Model"
+msgstr "Λήψη μοντέλου"
+
+#: src/pull_model_dialog.ui:44
+msgid "Model name"
+msgstr "Όνομα μοντέλου"
+
+#: src/pull_model_dialog.ui:50
+msgid "For example: qwen3:4b"
+msgstr "Για παράδειγμα: qwen3:4b"
+
+#: src/pull_model_dialog.ui:60
+msgid "Insecure"
+msgstr "Μη ασφαλής"
+
+#: src/pull_model_dialog.ui:65
+msgid "Allow downloading over insecure connections"
+msgstr "Να επιτρέπεται η λήψη μέσω μη ασφαλών συνδέσεων"
+
+#: src/pull_model_dialog.ui:88
+msgid "Download Details"
+msgstr "Λεπτομέρειες λήψης"
+
+#: src/session.py:16 src/tab.py:38 src/window.ui:61 src/window.ui:88
+msgid "New Chat"
+msgstr "Νέα συνομιλία"
+
+#: src/session.py:167
+msgid "There are no pending tool calls."
+msgstr "Δεν υπάρχουν εκκρεμείς κλήσεις εργαλείων."
+
+#: src/shortcuts-dialog.ui:5
+msgid "Shortcuts"
+msgstr "Συντομεύσεις"
+
+#: src/shortcuts-dialog.ui:8
+msgctxt "shortcut window"
+msgid "Show Shortcuts"
+msgstr "Εμφάνιση συντομεύσεων"
+
+#: src/shortcuts-dialog.ui:14
+msgctxt "shortcut window"
+msgid "Quit"
+msgstr "Έξοδος"
+
+#: src/shortcuts-dialog.ui:20
+msgctxt "shortcut window"
+msgid "New Chat Tab"
+msgstr "Νέα καρτέλα συνομιλίας"
+
+#: src/shortcuts-dialog.ui:26
+msgctxt "shortcut window"
+msgid "Close Tab"
+msgstr "Κλείσιμο καρτέλας"
+
+#: src/shortcuts-dialog.ui:32
+msgctxt "shortcut window"
+msgid "Next Tab"
+msgstr "Επόμενη καρτέλα"
+
+#: src/shortcuts-dialog.ui:38
+msgctxt "shortcut window"
+msgid "Previous Tab"
+msgstr "Προηγούμενη καρτέλα"
+
+#: src/shortcuts-dialog.ui:44
+msgctxt "shortcut window"
+msgid "Toggle Sidebar"
+msgstr "Εναλλαγή πλευρικής στήλης"
+
+#: src/startup.py:16 src/startup.py:53
+msgid "Opening Gnollama"
+msgstr "Άνοιγμα του Gnollama"
+
+#: src/startup.py:20 src/tab.py:245 src/widgets/knowledge_import.py:88
+#: src/widgets/knowledge_view.py:1220 src/widgets/url_import.py:232 src/window.py:139
+msgid "Retry"
+msgstr "Επανάληψη"
+
+#: src/startup.py:42
+msgid "Finishing the database operation before closing…"
+msgstr "Ολοκλήρωση της λειτουργίας βάσης δεδομένων πριν από το κλείσιμο…"
+
+#: src/startup.py:54
+msgid "Checking the database…"
+msgstr "Έλεγχος της βάσης δεδομένων…"
+
+#: src/startup.py:90
+msgid "Could Not Open the Database"
+msgstr "Αδυναμία ανοίγματος της βάσης δεδομένων"
+
+#: src/startup.py:94
+#, python-brace-format
+msgid "Database backup: {0}"
+msgstr "Αντίγραφο ασφαλείας βάσης δεδομένων: {0}"
+
+#: src/structured.py:18
+msgid "Non-finite numbers are not valid JSON."
+msgstr "Οι μη πεπερασμένοι αριθμοί δεν είναι έγκυροι σε JSON."
+
+#: src/structured.py:23
+msgid "JSON number is too large to format."
+msgstr "Ο αριθμός JSON είναι πολύ μεγάλος για μορφοποίηση."
+
+#: src/structured.py:30
+#, python-brace-format
+msgid "Duplicate JSON key: {0}"
+msgstr "Διπλότυπο κλειδί JSON: {0}"
+
+#: src/structured.py:39
+msgid "The schema must be a JSON object."
+msgstr "Το σχήμα πρέπει να είναι αντικείμενο JSON."
+
+#: src/structured.py:42
+msgid "Unsupported JSON Schema version."
+msgstr "Μη υποστηριζόμενη έκδοση JSON Schema."
+
+#: src/structured.py:60
+#, python-brace-format
+msgid "Invalid schema: {0}"
+msgstr "Μη έγκυρο σχήμα: {0}"
+
+#: src/structured.py:62
+#, python-brace-format
+msgid "Unresolved schema reference: {0}. Import a self-contained schema."
+msgstr "Μη επιλυμένη αναφορά σχήματος: {0}. Εισαγάγετε αυτοτελές σχήμα."
+
+#: src/structured.py:71
+msgid "Unknown output format."
+msgstr "Άγνωστη μορφή εξόδου."
+
+#: src/structured.py:73
+msgid "Paste or import a JSON schema, then click Apply before sending."
+msgstr "Επικολλήστε ή εισαγάγετε σχήμα JSON και πατήστε Εφαρμογή πριν από την αποστολή."
+
+#: src/structured.py:77
+#, python-brace-format
+msgid "Invalid schema JSON: {0}"
+msgstr "Μη έγκυρο JSON σχήματος: {0}"
+
+#: src/tab.py:38
+msgid "New Response"
+msgstr "Νέα απάντηση"
+
+#: src/tab.py:87
+msgid "Chat"
+msgstr "Συνομιλία"
+
+#: src/tab.py:166
+msgid "Select an available model before sending."
+msgstr "Επιλέξτε διαθέσιμο μοντέλο πριν από την αποστολή."
+
+#: src/tab.py:169
+msgid "Wait for this model to finish unloading before sending."
+msgstr "Περιμένετε να ολοκληρωθεί η αποφόρτωση αυτού του μοντέλου πριν από την αποστολή."
+
+#: src/tab.py:174
+msgid "Wait for image support to be checked before sending."
+msgstr "Περιμένετε να ελεγχθεί η υποστήριξη εικόνων πριν από την αποστολή."
+
+#: src/tab.py:176 src/widgets/chat_input.py:112
+msgid "Remove draft images or select a vision model to send."
+msgstr "Αφαιρέστε τις εικόνες από το πρόχειρο ή επιλέξτε μοντέλο όρασης για αποστολή."
+
+#: src/tab.py:218
+msgid "Retrieving sources…"
+msgstr "Ανάκτηση πηγών…"
+
+#: src/tab.py:243
+msgid "Could Not Retrieve Sources"
+msgstr "Αδυναμία ανάκτησης πηγών"
+
+#: src/tab.py:244
+msgid "Adjust Sources"
+msgstr "Προσαρμογή πηγών"
+
+#: src/tab.py:246
+msgid "Send Without Knowledge"
+msgstr "Αποστολή χωρίς γνώσεις"
+
+#: src/tab.py:247
+msgid "Keep Draft"
+msgstr "Διατήρηση προχείρου"
+
+#: src/tab.py:309
+msgid "Response ended before completion."
+msgstr "Η απάντηση τερματίστηκε πριν ολοκληρωθεί."
+
+#: src/tool_calling.py:104
+msgid "Paste, import, or load the example tools, then click Apply."
+msgstr "Επικολλήστε ή εισαγάγετε εργαλεία, ή φορτώστε τα παραδείγματα, και πατήστε Εφαρμογή."
+
+#: src/tool_calling.py:107
+msgid "Provide a nonempty JSON array of function tools."
+msgstr "Δώστε μη κενό πίνακα JSON με εργαλεία τύπου συνάρτησης."
+
+#: src/tool_calling.py:111
+#, python-brace-format
+msgid "Tool {0} must have type \"function\"."
+msgstr "Το εργαλείο {0} πρέπει να έχει τύπο \"function\"."
+
+#: src/tool_calling.py:114
+#, python-brace-format
+msgid "Tool {0} needs a function object."
+msgstr "Το εργαλείο {0} χρειάζεται αντικείμενο function."
+
+#: src/tool_calling.py:117
+msgid "Function names must be nonempty and unique."
+msgstr "Τα ονόματα συναρτήσεων πρέπει να είναι μη κενά και μοναδικά."
+
+#: src/tool_calling.py:120
+msgid "Function descriptions must be strings."
+msgstr "Οι περιγραφές συναρτήσεων πρέπει να είναι συμβολοσειρές."
+
+#: src/tool_calling.py:123
+#, python-brace-format
+msgid "Parameters for {0} must be an object schema."
+msgstr "Οι παράμετροι για το {0} πρέπει να είναι σχήμα αντικειμένου."
+
+#: src/tool_calling.py:149
+msgid "Malformed tool call; continuation is unavailable."
+msgstr "Κακοσχηματισμένη κλήση εργαλείου· η συνέχεια δεν είναι διαθέσιμη."
+
+#: src/tool_calling.py:153
+msgid "Unknown function; a mock result can still be supplied."
+msgstr "Άγνωστη συνάρτηση· μπορείτε ακόμη να δώσετε προσομοιωμένο αποτέλεσμα."
+
+#: src/tool_calling.py:158
+msgid "Arguments match the parameter schema."
+msgstr "Τα ορίσματα ταιριάζουν με το σχήμα παραμέτρων."
+
+#: src/tool_calling.py:184
+msgid "This tool round has already been submitted."
+msgstr "Αυτός ο κύκλος εργαλείων έχει ήδη υποβληθεί."
+
+#: src/tool_calling.py:187
+msgid "Save a result for every tool call before continuing."
+msgstr "Αποθηκεύστε αποτέλεσμα για κάθε κλήση εργαλείου πριν συνεχίσετε."
+
+#: src/tool_calling.py:193
+msgid "Tool result not provided: tool round cancelled by user."
+msgstr "Δεν δόθηκε αποτέλεσμα εργαλείου: ο κύκλος εργαλείων ακυρώθηκε από τον χρήστη."
+
+#: src/vectors.py:16 src/widgets/knowledge_view.py:563
+msgid "Choose a supported similarity measure."
+msgstr "Επιλέξτε υποστηριζόμενο μέτρο ομοιότητας."
+
+#: src/vectors.py:19
+msgid "Cosine similarity uses a minimum similarity, not a maximum distance."
+msgstr "Η ομοιότητα συνημιτόνου χρησιμοποιεί ελάχιστη ομοιότητα, όχι μέγιστη απόσταση."
+
+#: src/vectors.py:21
+msgid "Minimum cosine similarity must be between -1 and 1, or blank."
+msgstr "Η ελάχιστη ομοιότητα συνημιτόνου πρέπει να είναι από -1 έως 1 ή κενή."
+
+#: src/vectors.py:24
+msgid "Distance measures use a maximum distance. Clear the minimum similarity."
+msgstr "Τα μέτρα απόστασης χρησιμοποιούν μέγιστη απόσταση. Καθαρίστε την ελάχιστη ομοιότητα."
+
+#: src/vectors.py:26
+msgid "Maximum distance must be a finite, nonnegative number, or blank."
+msgstr "Η μέγιστη απόσταση πρέπει να είναι πεπερασμένος μη αρνητικός αριθμός ή κενή."
+
+#: src/vectors.py:31
+msgid ""
+"Vector dimensions must be between 1 and 8,192. Choose a supported dimension or "
+"embedding model."
+msgstr ""
+"Οι διαστάσεις διανυσμάτων πρέπει να είναι από 1 έως 8.192. Επιλέξτε υποστηριζόμενη "
+"διάσταση ή μοντέλο ενσωματώσεων."
+
+#: src/vectors.py:36
+msgid "Stored vector data is damaged. Rebuild this index."
+msgstr ""
+"Τα αποθηκευμένα διανυσματικά δεδομένα είναι κατεστραμμένα. Αναδημιουργήστε αυτό το "
+"ευρετήριο."
+
+#: src/vectors.py:39
+msgid "Stored vectors must be finite and nonzero. Rebuild this index."
+msgstr ""
+"Τα αποθηκευμένα διανύσματα πρέπει να είναι πεπερασμένα και μη μηδενικά. "
+"Αναδημιουργήστε αυτό το ευρετήριο."
+
+#: src/vectors.py:54
+msgid "Invalid embedding vector; expected 1–8,192 finite, nonzero dimensions."
+msgstr ""
+"Μη έγκυρο διάνυσμα ενσωμάτωσης· απαιτείται πεπερασμένο μη μηδενικό διάνυσμα με "
+"1–8.192 διαστάσεις."
+
+#: src/vectors.py:66
+msgid "Could not load sqlite-vec. Reinstall Gnollama or install its sqlite-vec dependency."
+msgstr ""
+"Αδυναμία φόρτωσης του sqlite-vec. Επανεγκαταστήστε το Gnollama ή εγκαταστήστε την "
+"εξάρτηση sqlite-vec."
+
+#: src/vectors.py:120
+msgid "Stored vector blocks are damaged. Rebuild this index."
+msgstr ""
+"Τα αποθηκευμένα μπλοκ διανυσμάτων είναι κατεστραμμένα. Αναδημιουργήστε αυτό το "
+"ευρετήριο."
+
+#: src/vectors.py:165
+msgid "The database contains broken references. Restore a database backup before upgrading."
+msgstr ""
+"Η βάση δεδομένων περιέχει κατεστραμμένες αναφορές. Επαναφέρετε αντίγραφο ασφαλείας "
+"πριν από την αναβάθμιση."
+
+#: src/vectors.py:176
+msgid ""
+"Stored vector dimensions do not match their configuration. Rebuild the index before "
+"upgrading."
+msgstr ""
+"Οι διαστάσεις των αποθηκευμένων διανυσμάτων δεν ταιριάζουν με τη διαμόρφωσή τους. "
+"Αναδημιουργήστε το ευρετήριο πριν από την αναβάθμιση."
+
+#: src/vectors.py:181
+#, python-brace-format
+msgid "Migrating vectors: {0} of {1}"
+msgstr "Μεταφορά διανυσμάτων: {0} από {1}"
+
+#: src/vectors.py:183
+msgid "Verifying migrated vectors…"
+msgstr "Επαλήθευση μεταφερμένων διανυσμάτων…"
+
+#: src/vectors.py:185 src/vectors.py:192
+msgid "Vector migration verification failed."
+msgstr "Η επαλήθευση μεταφοράς διανυσμάτων απέτυχε."
+
+#: src/vectors.py:193
+msgid "Finishing the database upgrade…"
+msgstr "Ολοκλήρωση αναβάθμισης της βάσης δεδομένων…"
+
+#: src/web_import.py:48
+msgid "Enter an HTTP or HTTPS URL without embedded login credentials."
+msgstr "Εισαγάγετε URL HTTP ή HTTPS χωρίς ενσωματωμένα στοιχεία σύνδεσης."
+
+#: src/web_import.py:54
+msgid "Enter between 1 and 20 URLs, one per line."
+msgstr "Εισαγάγετε από 1 έως 20 URL, ένα ανά γραμμή."
+
+#: src/web_import.py:86
+#, python-brace-format
+msgid "Downloading {0}"
+msgstr "Λήψη του {0}"
+
+#: src/web_import.py:89
+msgid "This URL could not be opened."
+msgstr "Δεν ήταν δυνατό το άνοιγμα αυτού του URL."
+
+#: src/web_import.py:97
+msgid "The URL has an invalid redirect or exceeds five redirects."
+msgstr "Το URL έχει μη έγκυρη ανακατεύθυνση ή υπερβαίνει τις πέντε ανακατευθύνσεις."
+
+#: src/web_import.py:103
+#, python-brace-format
+msgid "Download failed: HTTP {0} {1}"
+msgstr "Η λήψη απέτυχε: HTTP {0} {1}"
+
+#: src/web_import.py:105 src/web_import.py:117
+msgid "Downloads must be no larger than 50 MiB."
+msgstr "Οι λήψεις δεν πρέπει να υπερβαίνουν τα 50 MiB."
+
+#: src/web_import.py:128
+msgid "The download timed out. Retry this URL."
+msgstr "Έληξε το χρονικό όριο λήψης. Δοκιμάστε ξανά αυτό το URL."
+
+#: src/web_import.py:129
+#, python-brace-format
+msgid "The URL could not be downloaded: {0}"
+msgstr "Αδυναμία λήψης του URL: {0}"
+
+#: src/web_import.py:212
+msgid "The page does not contain readable HTML."
+msgstr "Η σελίδα δεν περιέχει αναγνώσιμο HTML."
+
+#: src/web_import.py:222
+#, python-brace-format
+msgid "Invalid CSS selector: {0}"
+msgstr "Μη έγκυρος επιλογέας CSS: {0}"
+
+#: src/web_import.py:226
+msgid "The CSS selector did not match any elements. Try main, article, or a content class."
+msgstr ""
+"Ο επιλογέας CSS δεν αντιστοιχεί σε κανένα στοιχείο. Δοκιμάστε main, article ή μια "
+"κλάση περιεχομένου."
+
+#: src/web_import.py:243
+msgid "No main content was found. Try a CSS selector, or paste the page text using Add Text."
+msgstr ""
+"Δεν βρέθηκε κύριο περιεχόμενο. Δοκιμάστε επιλογέα CSS ή επικολλήστε το κείμενο της "
+"σελίδας με την Προσθήκη κειμένου."
+
+#: src/web_import.py:251
+msgid "No text was found in the selected content. Try another CSS selector."
+msgstr "Δεν βρέθηκε κείμενο στο επιλεγμένο περιεχόμενο. Δοκιμάστε άλλο επιλογέα CSS."
+
+#: src/web_import.py:259
+msgid "Web document"
+msgstr "Έγγραφο ιστού"
+
+#: src/web_import.py:274
+msgid "This URL must provide an HTML page, PDF, or UTF-8 text document."
+msgstr "Αυτό το URL πρέπει να παρέχει σελίδα HTML, PDF ή έγγραφο κειμένου UTF-8."
+
+#: src/web_store.py:38
+msgid "The destination collection was deleted. Choose a collection again."
+msgstr "Η συλλογή προορισμού διαγράφηκε. Επιλέξτε ξανά συλλογή."
+
+#: src/web_store.py:43
+msgid "This document changed since the preview was opened. Fetch it again before saving."
+msgstr ""
+"Αυτό το έγγραφο άλλαξε από τότε που ανοίχτηκε η προεπισκόπηση. Ανακτήστε το ξανά πριν"
+" από την αποθήκευση."
+
+#: src/web_store.py:53
+msgid "Source content changed. Rebuild required."
+msgstr "Το αρχικό περιεχόμενο άλλαξε. Απαιτείται αναδημιουργία."
+
+#: src/widgets/chat_input.py:61 src/widgets/chat_input.py:66 src/widgets/chat_input.py:68
+#: src/widgets/knowledge_view.py:247
+msgid "Model default"
+msgstr "Προεπιλογή μοντέλου"
+
+#: src/widgets/chat_input.py:61
+msgid "Off"
+msgstr "Ανενεργό"
+
+#: src/widgets/chat_input.py:61
+msgid "On"
+msgstr "Ενεργό"
+
+#: src/widgets/chat_input.py:61 src/widgets/chat_input.py:66
+msgid "Low"
+msgstr "Χαμηλό"
+
+#: src/widgets/chat_input.py:61 src/widgets/chat_input.py:66
+msgid "Medium"
+msgstr "Μεσαίο"
+
+#: src/widgets/chat_input.py:61 src/widgets/chat_input.py:66
+msgid "High"
+msgstr "Υψηλό"
+
+#: src/widgets/chat_input.py:61
+msgid "Max"
+msgstr "Μέγιστο"
+
+#: src/widgets/chat_input.py:87
+msgid "Stop response"
+msgstr "Διακοπή απάντησης"
+
+#: src/widgets/chat_input.py:87 src/widgets/chat_input.ui:73
+msgid "Send Message"
+msgstr "Αποστολή μηνύματος"
+
+#: src/widgets/chat_input.py:108
+msgid "Checking image support…"
+msgstr "Έλεγχος υποστήριξης εικόνων…"
+
+#: src/widgets/chat_input.py:110
+msgid "This model does not support images."
+msgstr "Αυτό το μοντέλο δεν υποστηρίζει εικόνες."
+
+#: src/widgets/chat_input.py:114
+msgid "Earlier images remain saved; only text history will be sent."
+msgstr "Οι προηγούμενες εικόνες παραμένουν αποθηκευμένες· θα σταλεί μόνο το ιστορικό κειμένου."
+
+#: src/widgets/chat_input.py:116
+msgid "Image support unknown."
+msgstr "Άγνωστη υποστήριξη εικόνων."
+
+#: src/widgets/chat_input.py:128
+msgid "Select a chat model"
+msgstr "Επιλέξτε μοντέλο συνομιλίας"
+
+#: src/widgets/chat_input.py:163
+msgid "Checking chat models…"
+msgstr "Έλεγχος μοντέλων συνομιλίας…"
+
+#: src/widgets/chat_input.py:176
+msgid "No chat models found. Pull one in Manage Models, then refresh."
+msgstr ""
+"Δεν βρέθηκαν μοντέλα συνομιλίας. Κατεβάστε ένα από τη Διαχείριση μοντέλων και "
+"ανανεώστε."
+
+#: src/widgets/chat_input.py:246
+msgid "Select Images"
+msgstr "Επιλογή εικόνων"
+
+#: src/widgets/chat_input.py:250
+msgid "Images"
+msgstr "Εικόνες"
+
+#: src/widgets/chat_input.py:283 src/widgets/chat_input.ui:116
+msgid "No image selected"
+msgstr "Δεν επιλέχθηκε εικόνα"
+
+#: src/widgets/chat_input.py:289
+#, python-brace-format
+msgid "{0} image selected"
+msgid_plural "{0} images selected"
+msgstr[0] "Επιλέχθηκε {0} εικόνα"
+msgstr[1] "Επιλέχθηκαν {0} εικόνες"
+
+#: src/widgets/chat_input.ui:35
+msgid "Select Model"
+msgstr "Επιλογή μοντέλου"
+
+#: src/widgets/chat_input.ui:46
+msgid "Thinking"
+msgstr "Συλλογισμός"
+
+#: src/widgets/chat_input.ui:54
+msgid "Thinking Level"
+msgstr "Επίπεδο συλλογισμού"
+
+#: src/widgets/chat_input.ui:67
+msgid "Type a message..."
+msgstr "Γράψτε ένα μήνυμα..."
+
+#: src/widgets/chat_input.ui:111
+msgid "Attach Image"
+msgstr "Επισύναψη εικόνας"
+
+#: src/widgets/chat_input.ui:125
+msgid "Clear Image"
+msgstr "Αφαίρεση εικόνας"
+
+#: src/widgets/json_view.py:50
+msgid "JSON files"
+msgstr "Αρχεία JSON"
+
+#: src/widgets/json_view.py:70
+msgid "Import…"
+msgstr "Εισαγωγή…"
+
+#: src/widgets/json_view.py:73 src/widgets/knowledge_view.py:507
+#: src/widgets/knowledge_view.py:690
+msgid "Apply"
+msgstr "Εφαρμογή"
+
+#: src/widgets/json_view.py:87
+msgid "Content"
+msgstr "Περιεχόμενο"
+
+#: src/widgets/json_view.py:160 src/widgets/options_panel.py:41
+msgid "JSON Schema"
+msgstr "Σχήμα JSON"
+
+#: src/widgets/json_view.py:161
+msgid ""
+"Paste or import a self-contained JSON Schema. Describe the expected JSON in your "
+"prompt."
+msgstr ""
+"Επικολλήστε ή εισαγάγετε αυτοτελές σχήμα JSON. Περιγράψτε το αναμενόμενο JSON στην "
+"προτροπή σας."
+
+#: src/widgets/json_view.py:162
+msgid "Import JSON Schema"
+msgstr "Εισαγωγή σχήματος JSON"
+
+#: src/widgets/json_view.py:182
+msgid "Raw"
+msgstr "Ακατέργαστο"
+
+#: src/widgets/json_view.py:184
+msgid "Copy JSON"
+msgstr "Αντιγραφή JSON"
+
+#: src/widgets/json_view.py:186
+msgid "Save JSON…"
+msgstr "Αποθήκευση JSON…"
+
+#: src/widgets/json_view.py:188
+msgid "Copy Raw"
+msgstr "Αντιγραφή ακατέργαστου κειμένου"
+
+#: src/widgets/json_view.py:204
+msgid "Matches JSON Schema"
+msgstr "Συμφωνεί με το σχήμα JSON"
+
+#: src/widgets/json_view.py:204
+msgid "Valid JSON"
+msgstr "Έγκυρο JSON"
+
+#: src/widgets/json_view.py:205
+msgid "Incomplete JSON response"
+msgstr "Ημιτελής απάντηση JSON"
+
+#: src/widgets/json_view.py:206
+msgid "Invalid JSON"
+msgstr "Μη έγκυρο JSON"
+
+#: src/widgets/json_view.py:206
+msgid "JSON does not match the schema"
+msgstr "Το JSON δεν συμφωνεί με το σχήμα"
+
+#: src/widgets/json_view.py:207
+msgid "Schema validation could not finish"
+msgstr "Η επικύρωση σχήματος δεν ολοκληρώθηκε"
+
+#: src/widgets/json_view.py:208
+msgid "JSON response"
+msgstr "Απάντηση JSON"
+
+#: src/widgets/json_view.py:226
+msgid "Save JSON"
+msgstr "Αποθήκευση JSON"
+
+#: src/widgets/json_view.py:229
+msgid "JSON could not be saved"
+msgstr "Δεν ήταν δυνατή η αποθήκευση JSON"
+
+#: src/widgets/knowledge_import.py:12
+msgid "Add Text"
+msgstr "Προσθήκη κειμένου"
+
+#: src/widgets/knowledge_import.py:13
+msgid "Paste text, choose a collection, and review it before adding."
+msgstr "Επικολλήστε κείμενο, επιλέξτε συλλογή και ελέγξτε το πριν το προσθέσετε."
+
+#: src/widgets/knowledge_import.py:14 src/widgets/knowledge_import.py:85
+#: src/widgets/knowledge_view.py:1225 src/widgets/url_import.py:66
+#: src/widgets/url_import.py:231
+msgid "Add to Collection"
+msgstr "Προσθήκη στη συλλογή"
+
+#: src/widgets/knowledge_import.py:22 src/widgets/knowledge_import.py:79
+#: src/widgets/url_import.py:53
+msgid "Document title"
+msgstr "Τίτλος εγγράφου"
+
+#: src/widgets/knowledge_import.py:50 src/widgets/knowledge_import.py:214
+#: src/widgets/knowledge_import.py:246 src/widgets/url_import.py:353
+msgid "Added to Collection — Needs Attention"
+msgstr "Προστέθηκε στη συλλογή — Χρειάζεται προσοχή"
+
+#: src/widgets/knowledge_import.py:60
+msgid "Add Files"
+msgstr "Προσθήκη αρχείων"
+
+#: src/widgets/knowledge_import.py:67
+msgid ""
+"Import PDF or UTF-8 text files, including Markdown and source code. Maximum size: 50 "
+"MiB per file. Review one file at a time before adding."
+msgstr ""
+"Εισαγάγετε PDF ή αρχεία κειμένου UTF-8, όπως Markdown και πηγαίο κώδικα. Μέγιστο "
+"μέγεθος: 50 MiB ανά αρχείο. Ελέγξτε κάθε αρχείο ξεχωριστά πριν το προσθέσετε."
+
+#: src/widgets/knowledge_import.py:68
+msgid "Choose Files…"
+msgstr "Επιλογή αρχείων…"
+
+#: src/widgets/knowledge_import.py:81
+msgid "Extracted content (read-only)"
+msgstr "Εξαγόμενο περιεχόμενο (μόνο για ανάγνωση)"
+
+#: src/widgets/knowledge_import.py:87 src/widgets/url_import.py:69
+msgid "Skip"
+msgstr "Παράλειψη"
+
+#: src/widgets/knowledge_import.py:103
+msgid "Text and PDF files"
+msgstr "Αρχεία κειμένου και PDF"
+
+#: src/widgets/knowledge_import.py:108
+msgid "All files"
+msgstr "Όλα τα αρχεία"
+
+#: src/widgets/knowledge_import.py:113
+msgid "Choose Text or PDF Files"
+msgstr "Επιλογή αρχείων κειμένου ή PDF"
+
+#: src/widgets/knowledge_import.py:146
+msgid "Extracting"
+msgstr "Εξαγωγή σε εξέλιξη"
+
+#: src/widgets/knowledge_import.py:146
+msgid "Ready to Review"
+msgstr "Έτοιμο για έλεγχο"
+
+#: src/widgets/knowledge_import.py:147
+msgid "Adding to Collection"
+msgstr "Προσθήκη στη συλλογή σε εξέλιξη"
+
+#: src/widgets/knowledge_import.py:147 src/widgets/knowledge_import.py:246
+#: src/widgets/url_import.py:115 src/widgets/url_import.py:353
+msgid "Added to Collection — Preparing"
+msgstr "Προστέθηκε στη συλλογή — Προετοιμασία"
+
+#: src/widgets/knowledge_import.py:148 src/widgets/knowledge_view.py:67
+msgid "Needs Attention"
+msgstr "Χρειάζεται προσοχή"
+
+#: src/widgets/knowledge_import.py:148 src/widgets/url_import.py:115
+msgid "Skipped"
+msgstr "Παραλείφθηκε"
+
+#: src/widgets/knowledge_import.py:158
+msgid ""
+"Review complete. Added documents prepare in the background; their status is shown in "
+"the collection."
+msgstr ""
+"Ο έλεγχος ολοκληρώθηκε. Τα προστιθέμενα έγγραφα προετοιμάζονται στο παρασκήνιο· η "
+"κατάστασή τους εμφανίζεται στη συλλογή."
+
+#: src/widgets/knowledge_import.py:166
+msgid "Extracting text…"
+msgstr "Εξαγωγή κειμένου…"
+
+#: src/widgets/knowledge_import.py:193
+#, python-brace-format
+msgid "Import file: {0}"
+msgstr "Εισαγωγή αρχείου: {0}"
+
+#: src/widgets/knowledge_import.py:246 src/widgets/url_import.py:353
+msgid "Ready to Search"
+msgstr "Έτοιμο για αναζήτηση"
+
+#: src/widgets/knowledge_view.py:65
+msgid "Ready"
+msgstr "Έτοιμο"
+
+#: src/widgets/knowledge_view.py:69
+msgid "Preparing"
+msgstr "Προετοιμασία"
+
+#: src/widgets/knowledge_view.py:70
+msgid "Needs Preparation"
+msgstr "Χρειάζεται προετοιμασία"
+
+#: src/widgets/knowledge_view.py:75
+msgid "Native dimensions"
+msgstr "Εγγενείς διαστάσεις"
+
+#: src/widgets/knowledge_view.py:81
+#, python-brace-format
+msgid "Page {0}"
+msgstr "Σελίδα {0}"
+
+#: src/widgets/knowledge_view.py:148
+msgid "Embedding server"
+msgstr "Διακομιστής ενσωματώσεων"
+
+#: src/widgets/knowledge_view.py:149
+msgid "Embedding model"
+msgstr "Μοντέλο ενσωματώσεων"
+
+#: src/widgets/knowledge_view.py:151
+msgid "Manage Models…"
+msgstr "Διαχείριση μοντέλων…"
+
+#: src/widgets/knowledge_view.py:152
+msgid "Refresh"
+msgstr "Ανανέωση"
+
+#: src/widgets/knowledge_view.py:196
+msgid "Checking embedding models…"
+msgstr "Έλεγχος μοντέλων ενσωματώσεων…"
+
+#: src/widgets/knowledge_view.py:223
+msgid "No embedding models found. Download one in Manage Models, then refresh."
+msgstr ""
+"Δεν βρέθηκαν μοντέλα ενσωματώσεων. Κατεβάστε ένα από τη Διαχείριση μοντέλων και "
+"ανανεώστε."
+
+#: src/widgets/knowledge_view.py:232 src/widgets/knowledge_view.py:1202
+msgid "Create Embeddings"
+msgstr "Δημιουργία ενσωματώσεων"
+
+#: src/widgets/knowledge_view.py:240
+msgid "Plain"
+msgstr "Χωρίς πρόθεμα"
+
+#: src/widgets/knowledge_view.py:240
+msgid "EmbeddingGemma retrieval"
+msgstr "Ανάκτηση EmbeddingGemma"
+
+#: src/widgets/knowledge_view.py:240
+msgid "Nomic retrieval"
+msgstr "Ανάκτηση Nomic"
+
+#: src/widgets/knowledge_view.py:240
+msgid "Qwen3 retrieval"
+msgstr "Ανάκτηση Qwen3"
+
+#: src/widgets/knowledge_view.py:240
+msgid "Custom prefixes"
+msgstr "Προσαρμοσμένα προθέματα"
+
+#: src/widgets/knowledge_view.py:241
+msgid "Advanced Embedding Settings"
+msgstr "Σύνθετες ρυθμίσεις ενσωματώσεων"
+
+#: src/widgets/knowledge_view.py:242
+msgid "Embedding format"
+msgstr "Μορφή ενσωματώσεων"
+
+#: src/widgets/knowledge_view.py:245
+msgid "Document prefix"
+msgstr "Πρόθεμα εγγράφου"
+
+#: src/widgets/knowledge_view.py:246
+msgid "Query prefix"
+msgstr "Πρόθεμα ερωτήματος"
+
+#: src/widgets/knowledge_view.py:252
+msgid "Dimensions"
+msgstr "Διαστάσεις"
+
+#: src/widgets/knowledge_view.py:252
+msgid "Chunk size (characters)"
+msgstr "Μέγεθος τμήματος (χαρακτήρες)"
+
+#: src/widgets/knowledge_view.py:253
+msgid "Overlap (characters)"
+msgstr "Επικάλυψη (χαρακτήρες)"
+
+#: src/widgets/knowledge_view.py:257
+msgid "Create"
+msgstr "Δημιουργία"
+
+#: src/widgets/knowledge_view.py:297
+msgid "Select an embedding model."
+msgstr "Επιλέξτε μοντέλο ενσωματώσεων."
+
+#: src/widgets/knowledge_view.py:299
+msgid "The host did not provide a model digest."
+msgstr "Ο διακομιστής δεν έδωσε ψηφιακό αποτύπωμα μοντέλου."
+
+#: src/widgets/knowledge_view.py:305
+msgid "Overlap must be smaller than the chunk size."
+msgstr "Η επικάλυψη πρέπει να είναι μικρότερη από το μέγεθος τμήματος."
+
+#: src/widgets/knowledge_view.py:311
+msgid ""
+"An embedding model makes documents searchable. It can differ from the model used for "
+"chat."
+msgstr ""
+"Ένα μοντέλο ενσωματώσεων επιτρέπει την αναζήτηση στα έγγραφα. Μπορεί να διαφέρει από "
+"το μοντέλο συνομιλίας."
+
+#: src/widgets/knowledge_view.py:312
+msgid "Copy Collection with New Settings"
+msgstr "Αντιγραφή συλλογής με νέες ρυθμίσεις"
+
+#: src/widgets/knowledge_view.py:312
+msgid "Create Collection"
+msgstr "Δημιουργία συλλογής"
+
+#: src/widgets/knowledge_view.py:313 src/widgets/knowledge_view.py:316
+msgid "Collection name"
+msgstr "Όνομα συλλογής"
+
+#: src/widgets/knowledge_view.py:314
+#, python-brace-format
+msgid "{0} (copy)"
+msgstr "{0} (αντίγραφο)"
+
+#: src/widgets/knowledge_view.py:343
+msgid "Destination collection"
+msgstr "Συλλογή προορισμού"
+
+#: src/widgets/knowledge_view.py:344 src/widgets/knowledge_view.py:852
+msgid "New Collection…"
+msgstr "Νέα συλλογή…"
+
+#: src/widgets/knowledge_view.py:351
+msgid "Choose a collection"
+msgstr "Επιλέξτε συλλογή"
+
+#: src/widgets/knowledge_view.py:362
+msgid "Choose a destination collection, or create a new one."
+msgstr "Επιλέξτε συλλογή προορισμού ή δημιουργήστε νέα."
+
+#: src/widgets/knowledge_view.py:372
+msgid "Add Existing Documents"
+msgstr "Προσθήκη υπαρχόντων εγγράφων"
+
+#: src/widgets/knowledge_view.py:377 src/widgets/knowledge_view.py:859
+#: src/widgets/knowledge_view.py:956
+msgid "Search documents"
+msgstr "Αναζήτηση εγγράφων"
+
+#: src/widgets/knowledge_view.py:382 src/widgets/knowledge_view.py:1237
+msgid "Add"
+msgstr "Προσθήκη"
+
+#: src/widgets/knowledge_view.py:397
+msgid "All library documents are already in this collection."
+msgstr "Όλα τα έγγραφα της βιβλιοθήκης βρίσκονται ήδη σε αυτή τη συλλογή."
+
+#: src/widgets/knowledge_view.py:415
+#, python-brace-format
+msgid "Sources used ({0})"
+msgstr "Πηγές που χρησιμοποιήθηκαν ({0})"
+
+#: src/widgets/knowledge_view.py:418
+#, python-brace-format
+msgid "Search query: {0}"
+msgstr "Ερώτημα αναζήτησης: {0}"
+
+#: src/widgets/knowledge_view.py:422
+msgid "Cosine similarity · Higher is closer"
+msgstr "Ομοιότητα συνημιτόνου · Υψηλότερη τιμή σημαίνει μεγαλύτερη εγγύτητα"
+
+#: src/widgets/knowledge_view.py:423
+msgid "Euclidean distance (L2) · Lower is closer"
+msgstr "Ευκλείδεια απόσταση (L2) · Χαμηλότερη τιμή σημαίνει μεγαλύτερη εγγύτητα"
+
+#: src/widgets/knowledge_view.py:424
+msgid "Manhattan distance (L1) · Lower is closer"
+msgstr "Απόσταση Μανχάταν (L1) · Χαμηλότερη τιμή σημαίνει μεγαλύτερη εγγύτητα"
+
+#: src/widgets/knowledge_view.py:425
+msgid "Unknown similarity measure"
+msgstr "Άγνωστο μέτρο ομοιότητας"
+
+#: src/widgets/knowledge_view.py:427 src/widgets/knowledge_view.py:1198
+#: src/widgets/url_import.py:334
+#, python-brace-format
+msgid "Collections: {0}"
+msgstr "Συλλογές: {0}"
+
+#: src/widgets/knowledge_view.py:430
+#, python-brace-format
+msgid "Similarity: {0:.4f}"
+msgstr "Ομοιότητα: {0:.4f}"
+
+#: src/widgets/knowledge_view.py:430
+#, python-brace-format
+msgid "Distance: {0:.4f}"
+msgstr "Απόσταση: {0:.4f}"
+
+#: src/widgets/knowledge_view.py:433
+#, python-brace-format
+msgid "Pages: {0}"
+msgstr "Σελίδες: {0}"
+
+#: src/widgets/knowledge_view.py:438 src/widgets/knowledge_view.py:1193
+msgid "Open Source URL"
+msgstr "Άνοιγμα URL πηγής"
+
+#: src/widgets/knowledge_view.py:440 src/widgets/knowledge_view.py:1195
+#, python-brace-format
+msgid "Fetched: {0}"
+msgstr "Ανακτήθηκε: {0}"
+
+#: src/widgets/knowledge_view.py:441
+msgid "Shortened to fit the source budget."
+msgstr "Συντομεύτηκε για να τηρηθεί το όριο πηγών."
+
+#: src/widgets/knowledge_view.py:444
+msgid "Scores compare embeddings; they are not confidence estimates."
+msgstr "Οι βαθμολογίες συγκρίνουν ενσωματώσεις· δεν είναι εκτιμήσεις βεβαιότητας."
+
+#: src/widgets/knowledge_view.py:449
+msgid "Knowledge Sources"
+msgstr "Πηγές γνώσεων"
+
+#: src/widgets/knowledge_view.py:449 src/widgets/knowledge_view.py:499
+#: src/widgets/knowledge_view.py:502
+msgid "Test Search"
+msgstr "Δοκιμή αναζήτησης"
+
+#: src/widgets/knowledge_view.py:456 src/widgets/knowledge_view.py:956
+msgid "Search collections"
+msgstr "Αναζήτηση συλλογών"
+
+#: src/widgets/knowledge_view.py:461
+msgid "Search Settings"
+msgstr "Ρυθμίσεις αναζήτησης"
+
+#: src/widgets/knowledge_view.py:464
+msgid "Embedding configuration (from selected collections)"
+msgstr "Διαμόρφωση ενσωματώσεων (από επιλεγμένες συλλογές)"
+
+#: src/widgets/knowledge_view.py:474
+msgid ""
+"The query must use the same embedding configuration as the selected collections. A "
+"compatible server can be chosen here."
+msgstr ""
+"Το ερώτημα πρέπει να χρησιμοποιεί την ίδια διαμόρφωση ενσωματώσεων με τις επιλεγμένες"
+" συλλογές. Εδώ μπορείτε να επιλέξετε συμβατό διακομιστή."
+
+#: src/widgets/knowledge_view.py:476
+msgid ""
+"This chat has older individual sources. Applying a collection selection replaces "
+"them. Closing this dialog keeps them unchanged."
+msgstr ""
+"Αυτή η συνομιλία έχει παλαιότερες μεμονωμένες πηγές. Η εφαρμογή επιλογής συλλογών τις"
+" αντικαθιστά. Το κλείσιμο αυτού του διαλόγου τις διατηρεί αμετάβλητες."
+
+#: src/widgets/knowledge_view.py:481
+msgid "Maximum passages"
+msgstr "Μέγιστο πλήθος αποσπασμάτων"
+
+#: src/widgets/knowledge_view.py:481
+msgid "Source budget (characters)"
+msgstr "Όριο πηγών (χαρακτήρες)"
+
+#: src/widgets/knowledge_view.py:484
+msgid "Similarity measure"
+msgstr "Μέτρο ομοιότητας"
+
+#: src/widgets/knowledge_view.py:485
+msgid "Cosine similarity"
+msgstr "Ομοιότητα συνημιτόνου"
+
+#: src/widgets/knowledge_view.py:485
+msgid "Euclidean distance (L2)"
+msgstr "Ευκλείδεια απόσταση (L2)"
+
+#: src/widgets/knowledge_view.py:485
+msgid "Manhattan distance (L1)"
+msgstr "Απόσταση Μανχάταν (L1)"
+
+#: src/widgets/knowledge_view.py:500
+msgid "Enter a search query"
+msgstr "Εισαγάγετε ερώτημα αναζήτησης"
+
+#: src/widgets/knowledge_view.py:554
+msgid "Minimum cosine similarity"
+msgstr "Ελάχιστη ομοιότητα συνημιτόνου"
+
+#: src/widgets/knowledge_view.py:554
+msgid "Maximum distance"
+msgstr "Μέγιστη απόσταση"
+
+#: src/widgets/knowledge_view.py:555
+msgid "No minimum"
+msgstr "Χωρίς ελάχιστο"
+
+#: src/widgets/knowledge_view.py:555
+msgid "No maximum"
+msgstr "Χωρίς μέγιστο"
+
+#: src/widgets/knowledge_view.py:560
+msgid "Higher is closer (−1 to 1). This is the default for semantic search."
+msgstr ""
+"Υψηλότερη τιμή σημαίνει μεγαλύτερη εγγύτητα (−1 έως 1). Είναι η προεπιλογή για "
+"σημασιολογική αναζήτηση."
+
+#: src/widgets/knowledge_view.py:561
+msgid ""
+"Lower is closer. With normalized embeddings, Euclidean and cosine usually rank "
+"results alike."
+msgstr ""
+"Χαμηλότερη τιμή σημαίνει μεγαλύτερη εγγύτητα. Με κανονικοποιημένες ενσωματώσεις, η "
+"ευκλείδεια απόσταση και η ομοιότητα συνημιτόνου συνήθως κατατάσσουν τα αποτελέσματα "
+"με τον ίδιο τρόπο."
+
+#: src/widgets/knowledge_view.py:562
+msgid ""
+"Lower is closer. Adds absolute differences between vector components and can rank "
+"results differently from cosine."
+msgstr ""
+"Χαμηλότερη τιμή σημαίνει μεγαλύτερη εγγύτητα. Αθροίζει τις απόλυτες διαφορές των "
+"συνιστωσών διανυσμάτων και μπορεί να κατατάσσει τα αποτελέσματα διαφορετικά από το "
+"συνημίτονο."
+
+#: src/widgets/knowledge_view.py:570 src/widgets/knowledge_view.py:855
+#: src/widgets/knowledge_view.py:949
+msgid "Collections"
+msgstr "Συλλογές"
+
+#: src/widgets/knowledge_view.py:571
+msgid ""
+"Choose collections to search. New documents added to them are included automatically."
+" All documents must be ready."
+msgstr ""
+"Επιλέξτε συλλογές για αναζήτηση. Τα νέα έγγραφα που προστίθενται περιλαμβάνονται "
+"αυτόματα. Όλα τα έγγραφα πρέπει να είναι έτοιμα."
+
+#: src/widgets/knowledge_view.py:575
+msgid "Some selected collections were deleted. Choose sources again."
+msgstr "Ορισμένες επιλεγμένες συλλογές διαγράφηκαν. Επιλέξτε ξανά πηγές."
+
+#: src/widgets/knowledge_view.py:576
+msgid "Clear missing collections"
+msgstr "Αφαίρεση συλλογών που λείπουν"
+
+#: src/widgets/knowledge_view.py:581 src/widgets/knowledge_view.py:626
+#, python-brace-format
+msgid "{0} · {1}/{2} documents ready"
+msgstr "{0} · Έτοιμα έγγραφα: {1}/{2}"
+
+#: src/widgets/knowledge_view.py:583
+#, python-brace-format
+msgid "Different embedding configuration: {0}"
+msgstr "Διαφορετική διαμόρφωση ενσωματώσεων: {0}"
+
+#: src/widgets/knowledge_view.py:590
+msgid "No matching collections"
+msgstr "Δεν βρέθηκαν αντίστοιχες συλλογές"
+
+#: src/widgets/knowledge_view.py:592
+msgid "Create a collection and add text, files, or URLs in the Knowledge Library."
+msgstr "Δημιουργήστε συλλογή και προσθέστε κείμενο, αρχεία ή URL στη βιβλιοθήκη γνώσεων."
+
+#: src/widgets/knowledge_view.py:593
+msgid "Open Knowledge Library"
+msgstr "Άνοιγμα βιβλιοθήκης γνώσεων"
+
+#: src/widgets/knowledge_view.py:628
+msgid ""
+"Uses different embedding settings. Clear the current selection to choose this "
+"collection."
+msgstr ""
+"Χρησιμοποιεί διαφορετικές ρυθμίσεις ενσωματώσεων. Καθαρίστε την τρέχουσα επιλογή για "
+"να επιλέξετε αυτή τη συλλογή."
+
+#: src/widgets/knowledge_view.py:639
+msgid "Select at least one collection. Create collections in Knowledge first if needed."
+msgstr ""
+"Επιλέξτε τουλάχιστον μία συλλογή. Αν χρειάζεται, δημιουργήστε πρώτα συλλογές στις "
+"Γνώσεις."
+
+#: src/widgets/knowledge_view.py:644
+msgid "This model digest does not match the selected embedding configuration."
+msgstr ""
+"Αυτό το ψηφιακό αποτύπωμα μοντέλου δεν ταιριάζει με την επιλεγμένη διαμόρφωση "
+"ενσωματώσεων."
+
+#: src/widgets/knowledge_view.py:679
+msgid "Document Chunks"
+msgstr "Τμήματα εγγράφου"
+
+#: src/widgets/knowledge_view.py:688
+msgid "Select all"
+msgstr "Επιλογή όλων"
+
+#: src/widgets/knowledge_view.py:689
+msgid "Select none"
+msgstr "Αποεπιλογή όλων"
+
+#: src/widgets/knowledge_view.py:693
+msgid "Load more chunks"
+msgstr "Φόρτωση περισσότερων τμημάτων"
+
+#: src/widgets/knowledge_view.py:730
+#, python-brace-format
+msgid "Chunk {0}"
+msgstr "Τμήμα {0}"
+
+#: src/widgets/knowledge_view.py:736
+#, python-brace-format
+msgid "Characters {0}–{1}"
+msgstr "Χαρακτήρες {0}–{1}"
+
+#: src/widgets/knowledge_view.py:739
+msgid "Inspect vector"
+msgstr "Εξέταση διανύσματος"
+
+#: src/widgets/knowledge_view.py:753
+msgid "This vector was deleted."
+msgstr "Αυτό το διάνυσμα διαγράφηκε."
+
+#: src/widgets/knowledge_view.py:756
+msgid "Embedding Vector"
+msgstr "Διάνυσμα ενσωμάτωσης"
+
+#: src/widgets/knowledge_view.py:756
+msgid "Stored normalized vector. Changes are not saved."
+msgstr "Αποθηκευμένο κανονικοποιημένο διάνυσμα. Οι αλλαγές δεν αποθηκεύονται."
+
+#: src/widgets/knowledge_view.py:769
+msgid "Use Knowledge"
+msgstr "Χρήση γνώσεων"
+
+#: src/widgets/knowledge_view.py:770
+msgid "Choose sources…"
+msgstr "Επιλογή πηγών…"
+
+#: src/widgets/knowledge_view.py:774
+msgid "Search query override for the next turn (optional)"
+msgstr "Αντικατάσταση ερωτήματος αναζήτησης για τον επόμενο γύρο (προαιρετικό)"
+
+#: src/widgets/knowledge_view.py:775
+msgid "Use a different search query for the next message"
+msgstr "Χρήση διαφορετικού ερωτήματος αναζήτησης για το επόμενο μήνυμα"
+
+#: src/widgets/knowledge_view.py:776
+msgid "Search Query Override"
+msgstr "Αντικατάσταση ερωτήματος αναζήτησης"
+
+#: src/widgets/knowledge_view.py:795
+msgid "Choose collections to search."
+msgstr "Επιλέξτε συλλογές για αναζήτηση."
+
+#: src/widgets/knowledge_view.py:797
+#, python-brace-format
+msgid "Older individual sources: {0}. Choose collections to replace them."
+msgstr "Παλαιότερες μεμονωμένες πηγές: {0}. Επιλέξτε συλλογές για να τις αντικαταστήσετε."
+
+#: src/widgets/knowledge_view.py:799
+#, python-brace-format
+msgid "{0}: {1}/{2} ready"
+msgstr "{0}: έτοιμα {1}/{2}"
+
+#: src/widgets/knowledge_view.py:855 src/widgets/knowledge_view.py:949
+msgid "All Documents"
+msgstr "Όλα τα έγγραφα"
+
+#: src/widgets/knowledge_view.py:855 src/widgets/knowledge_view.py:949
+msgid "Ungrouped Documents"
+msgstr "Μη ομαδοποιημένα έγγραφα"
+
+#: src/widgets/knowledge_view.py:857
+msgid "Library"
+msgstr "Βιβλιοθήκη"
+
+#: src/widgets/knowledge_view.py:864 src/widgets/knowledge_view.py:908
+#: src/widgets/knowledge_view.py:1031
+msgid "Knowledge Library"
+msgstr "Βιβλιοθήκη γνώσεων"
+
+#: src/widgets/knowledge_view.py:870
+msgid "Document"
+msgstr "Έγγραφο"
+
+#: src/widgets/knowledge_view.py:879
+msgid "Background Tasks"
+msgstr "Εργασίες παρασκηνίου"
+
+#: src/widgets/knowledge_view.py:963 src/widgets/knowledge_view.py:1042
+#, python-brace-format
+msgid "{0}/{1} documents ready"
+msgstr "Έτοιμα έγγραφα: {0}/{1}"
+
+#: src/widgets/knowledge_view.py:973
+#, python-brace-format
+msgid "{0} character"
+msgid_plural "{0} characters"
+msgstr[0] "{0} χαρακτήρας"
+msgstr[1] "{0} χαρακτήρες"
+
+#: src/widgets/knowledge_view.py:979
+msgid "No matches"
+msgstr "Δεν βρέθηκαν αποτελέσματα"
+
+#: src/widgets/knowledge_view.py:980
+msgid "Create a collection to organize text, files, and URLs."
+msgstr "Δημιουργήστε συλλογή για να οργανώσετε κείμενο, αρχεία και URL."
+
+#: src/widgets/knowledge_view.py:981
+msgid "Add text, files, or URLs to a collection."
+msgstr "Προσθέστε κείμενο, αρχεία ή URL σε μια συλλογή."
+
+#: src/widgets/knowledge_view.py:1033
+msgid "Knowledge Collections"
+msgstr "Συλλογές γνώσεων"
+
+#: src/widgets/knowledge_view.py:1034
+msgid ""
+"Group documents into collections, then select a collection in chat to ask questions "
+"about its content."
+msgstr ""
+"Ομαδοποιήστε έγγραφα σε συλλογές και επιλέξτε μια συλλογή στη συνομιλία για να κάνετε"
+" ερωτήσεις για το περιεχόμενό της."
+
+#: src/widgets/knowledge_view.py:1035
+msgid "Create Collection…"
+msgstr "Δημιουργία συλλογής…"
+
+#: src/widgets/knowledge_view.py:1038
+msgid "Select a document to inspect it. New imports always ask for a destination collection."
+msgstr "Επιλέξτε έγγραφο για εξέταση. Οι νέες εισαγωγές ζητούν πάντα συλλογή προορισμού."
+
+#: src/widgets/knowledge_view.py:1043
+msgid ""
+"Add text, files, or URLs to this collection. Gnollama prepares the documents "
+"automatically so chats can search them."
+msgstr ""
+"Προσθέστε κείμενο, αρχεία ή URL σε αυτή τη συλλογή. Το Gnollama προετοιμάζει αυτόματα"
+" τα έγγραφα για αναζήτηση στις συνομιλίες."
+
+#: src/widgets/knowledge_view.py:1045
+msgid "Add Existing Documents…"
+msgstr "Προσθήκη υπαρχόντων εγγράφων…"
+
+#: src/widgets/knowledge_view.py:1047
+msgid "Use in New Chat"
+msgstr "Χρήση σε νέα συνομιλία"
+
+#: src/widgets/knowledge_view.py:1051
+msgid "Prepare Documents"
+msgstr "Προετοιμασία εγγράφων"
+
+#: src/widgets/knowledge_view.py:1052
+msgid "Embedding Details"
+msgstr "Λεπτομέρειες ενσωματώσεων"
+
+#: src/widgets/knowledge_view.py:1054
+#, python-brace-format
+msgid "Chunk size: {0} characters · Overlap: {1} characters"
+msgstr "Μέγεθος τμήματος σε χαρακτήρες: {0} · Επικάλυψη σε χαρακτήρες: {1}"
+
+#: src/widgets/knowledge_view.py:1059 src/widgets/knowledge_view.py:1203
+msgid "Rename"
+msgstr "Μετονομασία"
+
+#: src/widgets/knowledge_view.py:1060
+msgid "Copy with New Settings"
+msgstr "Αντιγραφή με νέες ρυθμίσεις"
+
+#: src/widgets/knowledge_view.py:1061 src/widgets/knowledge_view.py:1132
+msgid "Change Embedding Model"
+msgstr "Αλλαγή μοντέλου ενσωματώσεων"
+
+#: src/widgets/knowledge_view.py:1062 src/widgets/knowledge_view.py:1122
+msgid "Delete Collection"
+msgstr "Διαγραφή συλλογής"
+
+#: src/widgets/knowledge_view.py:1067
+msgid "Collection Options"
+msgstr "Επιλογές συλλογής"
+
+#: src/widgets/knowledge_view.py:1080
+msgid "Remove from Collection"
+msgstr "Αφαίρεση από τη συλλογή"
+
+#: src/widgets/knowledge_view.py:1088
+msgid "Add Text…"
+msgstr "Προσθήκη κειμένου…"
+
+#: src/widgets/knowledge_view.py:1088
+msgid "Add Files…"
+msgstr "Προσθήκη αρχείων…"
+
+#: src/widgets/knowledge_view.py:1089
+msgid "Add URLs…"
+msgstr "Προσθήκη URL…"
+
+#: src/widgets/knowledge_view.py:1108
+msgid "Rename Collection"
+msgstr "Μετονομασία συλλογής"
+
+#: src/widgets/knowledge_view.py:1120
+msgid "Delete Collection?"
+msgstr "Διαγραφή συλλογής;"
+
+#: src/widgets/knowledge_view.py:1120
+#, python-brace-format
+msgid ""
+"Delete “{0}”? Its documents and embeddings stay in the library. Chats selecting this "
+"collection will need new sources; saved answers keep their original passages."
+msgstr ""
+"Να διαγραφεί η συλλογή «{0}»; Τα έγγραφα και οι ενσωματώσεις της παραμένουν στη "
+"βιβλιοθήκη. Οι συνομιλίες που την επιλέγουν θα χρειαστούν νέες πηγές· οι "
+"αποθηκευμένες απαντήσεις διατηρούν τα αρχικά αποσπάσματα."
+
+#: src/widgets/knowledge_view.py:1135
+msgid ""
+"Choose a host and embedding model matching the collection’s original model digest. "
+"Embedding settings stay the same."
+msgstr ""
+"Επιλέξτε διακομιστή και μοντέλο ενσωματώσεων που ταιριάζουν με το αρχικό ψηφιακό "
+"αποτύπωμα μοντέλου της συλλογής. Οι ρυθμίσεις ενσωματώσεων παραμένουν ίδιες."
+
+#: src/widgets/knowledge_view.py:1163
+msgid "Original model available"
+msgstr "Το αρχικό μοντέλο είναι διαθέσιμο"
+
+#: src/widgets/knowledge_view.py:1164
+msgid ""
+"Unavailable — the original model changed or was removed. Choose a compatible server "
+"for searches."
+msgstr ""
+"Μη διαθέσιμο — το αρχικό μοντέλο άλλαξε ή αφαιρέθηκε. Επιλέξτε συμβατό διακομιστή για"
+" αναζητήσεις."
+
+#: src/widgets/knowledge_view.py:1166
+#, python-brace-format
+msgid "Unavailable: {0}"
+msgstr "Μη διαθέσιμο: {0}"
+
+#: src/widgets/knowledge_view.py:1187
+msgid "Select a document to inspect its text and embeddings."
+msgstr "Επιλέξτε έγγραφο για να εξετάσετε το κείμενο και τις ενσωματώσεις του."
+
+#: src/widgets/knowledge_view.py:1196
+msgid "Fetch Again…"
+msgstr "Ανάκτηση ξανά…"
+
+#: src/widgets/knowledge_view.py:1200
+msgid "Back to Collection"
+msgstr "Επιστροφή στη συλλογή"
+
+#: src/widgets/knowledge_view.py:1201
+msgid "Preview Text"
+msgstr "Προεπισκόπηση κειμένου"
+
+#: src/widgets/knowledge_view.py:1204
+msgid "Delete Document"
+msgstr "Διαγραφή εγγράφου"
+
+#: src/widgets/knowledge_view.py:1205
+msgid "Add to Collection…"
+msgstr "Προσθήκη στη συλλογή…"
+
+#: src/widgets/knowledge_view.py:1210
+msgid "Checking model availability…"
+msgstr "Έλεγχος διαθεσιμότητας μοντέλου…"
+
+#: src/widgets/knowledge_view.py:1213
+#, python-brace-format
+msgid "Chunks: {0}"
+msgstr "Τμήματα: {0}"
+
+#: src/widgets/knowledge_view.py:1216
+msgid "Inspect Chunks"
+msgstr "Εξέταση τμημάτων"
+
+#: src/widgets/knowledge_view.py:1217
+msgid "Check Model"
+msgstr "Έλεγχος μοντέλου"
+
+#: src/widgets/knowledge_view.py:1218
+msgid "Delete Index"
+msgstr "Διαγραφή ευρετηρίου"
+
+#: src/widgets/knowledge_view.py:1245
+#, python-brace-format
+msgid "Background Tasks · {0} running"
+msgstr "Εργασίες παρασκηνίου · Σε εκτέλεση: {0}"
+
+#: src/widgets/knowledge_view.py:1245
+msgid "Recent Background Tasks"
+msgstr "Πρόσφατες εργασίες παρασκηνίου"
+
+#: src/widgets/knowledge_view.py:1252
+msgid "Details"
+msgstr "Λεπτομέρειες"
+
+#: src/widgets/knowledge_view.py:1260
+msgid "Stop Shared Embedding Build?"
+msgstr "Διακοπή κοινής δημιουργίας ενσωματώσεων;"
+
+#: src/widgets/knowledge_view.py:1261
+#, python-brace-format
+msgid ""
+"These collections use this build: {0}. They will need a retry before chat search can "
+"use them."
+msgstr ""
+"Αυτές οι συλλογές χρησιμοποιούν αυτή τη δημιουργία: {0}. Θα χρειαστεί νέα προσπάθεια "
+"πριν χρησιμοποιηθούν στην αναζήτηση συνομιλίας."
+
+#: src/widgets/knowledge_view.py:1263
+msgid "Keep Building"
+msgstr "Συνέχιση δημιουργίας"
+
+#: src/widgets/knowledge_view.py:1264
+msgid "Stop Build"
+msgstr "Διακοπή δημιουργίας"
+
+#: src/widgets/knowledge_view.py:1271
+msgid "Saved source text. Use Fetch Again to update this URL document."
+msgstr ""
+"Αποθηκευμένο αρχικό κείμενο. Χρησιμοποιήστε Ανάκτηση ξανά για να ενημερώσετε αυτό το "
+"έγγραφο URL."
+
+#: src/widgets/knowledge_view.py:1271
+msgid "Saved source text. Import revised content as a new document."
+msgstr "Αποθηκευμένο αρχικό κείμενο. Εισαγάγετε αναθεωρημένο περιεχόμενο ως νέο έγγραφο."
+
+#: src/widgets/knowledge_view.py:1292
+msgid "This Text Is Already Saved"
+msgstr "Αυτό το κείμενο είναι ήδη αποθηκευμένο"
+
+#: src/widgets/knowledge_view.py:1294
+msgid "Open Existing"
+msgstr "Άνοιγμα υπάρχοντος"
+
+#: src/widgets/knowledge_view.py:1296
+msgid "Add Existing to Collection"
+msgstr "Προσθήκη υπάρχοντος στη συλλογή"
+
+#: src/widgets/knowledge_view.py:1334
+msgid "Rename Document"
+msgstr "Μετονομασία εγγράφου"
+
+#: src/widgets/knowledge_view.py:1348
+msgid "Cancel this document’s indexing job before deleting it."
+msgstr "Ακυρώστε την εργασία ευρετηρίου αυτού του εγγράφου πριν το διαγράψετε."
+
+#: src/widgets/knowledge_view.py:1350
+msgid "Delete Document?"
+msgstr "Διαγραφή εγγράφου;"
+
+#: src/widgets/knowledge_view.py:1350
+msgid "Delete Embedding Index?"
+msgstr "Διαγραφή ευρετηρίου ενσωματώσεων;"
+
+#: src/widgets/knowledge_view.py:1351
+msgid ""
+"Chats selecting this data will need new sources. Passages already saved with answers "
+"remain in chat history."
+msgstr ""
+"Οι συνομιλίες που επιλέγουν αυτά τα δεδομένα θα χρειαστούν νέες πηγές. Τα αποσπάσματα"
+" που έχουν ήδη αποθηκευτεί με απαντήσεις παραμένουν στο ιστορικό συνομιλίας."
+
+#: src/widgets/knowledge_view.py:1352
+msgid "The saved source text and all its indexes will be deleted."
+msgstr "Το αποθηκευμένο αρχικό κείμενο και όλα τα ευρετήριά του θα διαγραφούν."
+
+#: src/widgets/knowledge_view.py:1352
+msgid "The saved source text will be kept."
+msgstr "Το αποθηκευμένο αρχικό κείμενο θα διατηρηθεί."
+
+#: src/widgets/knowledge_view.py:1355
+#, python-brace-format
+msgid "Affected collections: {0}."
+msgstr "Επηρεαζόμενες συλλογές: {0}."
+
+#: src/widgets/knowledge_view.py:1356
+msgid "This document will be removed from their membership."
+msgstr "Αυτό το έγγραφο θα αφαιρεθεί από αυτές τις συλλογές."
+
+#: src/widgets/knowledge_view.py:1357
+msgid "Their documents will need embeddings rebuilt."
+msgstr "Οι ενσωματώσεις των εγγράφων τους θα πρέπει να αναδημιουργηθούν."
+
+#: src/widgets/knowledge_view.py:1376
+msgid "Embedding Model Availability"
+msgstr "Διαθεσιμότητα μοντέλου ενσωματώσεων"
+
+#: src/widgets/knowledge_view.py:1377
+msgid "Checking…"
+msgstr "Έλεγχος…"
+
+#: src/widgets/knowledge_view.py:1380
+msgid "The original model is available on this host."
+msgstr "Το αρχικό μοντέλο είναι διαθέσιμο σε αυτόν τον διακομιστή."
+
+#: src/widgets/message_list.py:18
+msgid "Start a Conversation"
+msgstr "Έναρξη συνομιλίας"
+
+#: src/widgets/message_list.py:19
+msgid ""
+"Choose a model and enter a message. Select knowledge collections to ask questions "
+"about your documents."
+msgstr ""
+"Επιλέξτε μοντέλο και εισαγάγετε μήνυμα. Επιλέξτε συλλογές γνώσεων για να κάνετε "
+"ερωτήσεις για τα έγγραφά σας."
+
+#: src/widgets/options_panel.py:41
+msgid "Text"
+msgstr "Κείμενο"
+
+#: src/widgets/options_panel.py:41
+msgid "JSON"
+msgstr "JSON"
+
+#: src/widgets/options_panel.py:43 src/widgets/options_panel.py:72
+msgid "Server default"
+msgstr "Προεπιλογή διακομιστή"
+
+#: src/widgets/options_panel.py:43
+msgid "Unload after reply"
+msgstr "Αποφόρτωση μετά την απάντηση"
+
+#: src/widgets/options_panel.py:43
+msgid "Five minutes"
+msgstr "Πέντε λεπτά"
+
+#: src/widgets/options_panel.py:44
+msgid "Thirty minutes"
+msgstr "Τριάντα λεπτά"
+
+#: src/widgets/options_panel.py:44
+msgid "Indefinitely"
+msgstr "Επ’ αόριστον"
+
+#: src/widgets/options_panel.py:44
+msgid "Custom seconds"
+msgstr "Προσαρμοσμένα δευτερόλεπτα"
+
+#: src/widgets/options_panel.py:63
+msgid "Server"
+msgstr "Διακομιστής"
+
+#: src/widgets/options_panel.py:88
+msgid "System Instructions"
+msgstr "Οδηγίες συστήματος"
+
+#: src/widgets/options_panel.py:89
+msgid "System prompt"
+msgstr "Προτροπή συστήματος"
+
+#: src/widgets/options_panel.py:89
+msgid "Optional instructions applied to this conversation."
+msgstr "Προαιρετικές οδηγίες που εφαρμόζονται σε αυτή τη συνομιλία."
+
+#: src/widgets/options_panel.py:90
+msgid "Optional instructions"
+msgstr "Προαιρετικές οδηγίες"
+
+#: src/widgets/options_panel.py:91
+msgid "Generation Limits"
+msgstr "Όρια παραγωγής"
+
+#: src/widgets/options_panel.py:91
+msgid "Blank fields use the server’s defaults."
+msgstr "Τα κενά πεδία χρησιμοποιούν τις προεπιλογές του διακομιστή."
+
+#: src/widgets/options_panel.py:92
+msgid "Context size (tokens)"
+msgstr "Μέγεθος συμφραζομένων (token)"
+
+#: src/widgets/options_panel.py:92
+msgid "Maximum context available to the model; larger values need more memory."
+msgstr ""
+"Μέγιστο διαθέσιμο μέγεθος συμφραζομένων για το μοντέλο· υψηλότερες τιμές απαιτούν "
+"περισσότερη μνήμη."
+
+#: src/widgets/options_panel.py:93
+msgid "Maximum output tokens"
+msgstr "Μέγιστο πλήθος token εξόδου"
+
+#: src/widgets/options_panel.py:93
+msgid "Use −1 for unlimited output or −2 to fill the context."
+msgstr "Χρησιμοποιήστε −1 για απεριόριστη έξοδο ή −2 για να γεμίσετε τα συμφραζόμενα."
+
+#: src/widgets/options_panel.py:94
+msgid "Stop sequences"
+msgstr "Ακολουθίες διακοπής"
+
+#: src/widgets/options_panel.py:94
+msgid "Separate sequences with commas. Generation stops when one is produced."
+msgstr "Διαχωρίστε τις ακολουθίες με κόμματα. Η παραγωγή σταματά όταν παραχθεί μία από αυτές."
+
+#: src/widgets/options_panel.py:95
+msgid "Sampling"
+msgstr "Δειγματοληψία"
+
+#: src/widgets/options_panel.py:97
+msgid "Temperature"
+msgstr "Θερμοκρασία"
+
+#: src/widgets/options_panel.py:97
+msgid "Higher values increase variation; zero is more predictable."
+msgstr "Υψηλότερες τιμές αυξάνουν την ποικιλία· το μηδέν δίνει πιο προβλέψιμα αποτελέσματα."
+
+#: src/widgets/options_panel.py:98
+msgid "Seed"
+msgstr "Σπόρος"
+
+#: src/widgets/options_panel.py:98
+msgid "An integer used to initialize random sampling."
+msgstr "Ακέραιος που χρησιμοποιείται για την αρχικοποίηση της τυχαίας δειγματοληψίας."
+
+#: src/widgets/options_panel.py:99
+msgid "Top K"
+msgstr "Top K"
+
+#: src/widgets/options_panel.py:99
+msgid "Number of candidate tokens to consider."
+msgstr "Πλήθος υποψήφιων token που εξετάζονται."
+
+#: src/widgets/options_panel.py:100
+msgid "Top P"
+msgstr "Top P"
+
+#: src/widgets/options_panel.py:100
+msgid "Cumulative probability cutoff, between 0 and 1."
+msgstr "Όριο αθροιστικής πιθανότητας, από 0 έως 1."
+
+#: src/widgets/options_panel.py:101
+msgid "Min P"
+msgstr "Min P"
+
+#: src/widgets/options_panel.py:101
+msgid "Minimum relative token probability, between 0 and 1."
+msgstr "Ελάχιστη σχετική πιθανότητα token, από 0 έως 1."
+
+#: src/widgets/options_panel.py:103
+msgid "Model Retention"
+msgstr "Παραμονή μοντέλου στη μνήμη"
+
+#: src/widgets/options_panel.py:105
+msgid "Keep model loaded"
+msgstr "Διατήρηση μοντέλου φορτωμένου"
+
+#: src/widgets/options_panel.py:108
+msgid "Custom duration (seconds)"
+msgstr "Προσαρμοσμένη διάρκεια (δευτερόλεπτα)"
+
+#: src/widgets/options_panel.py:108 src/widgets/options_panel.py:165
+msgid "Enter a positive whole number of seconds."
+msgstr "Εισαγάγετε θετικό ακέραιο αριθμό δευτερολέπτων."
+
+#: src/widgets/options_panel.py:110
+msgid "Diagnostics"
+msgstr "Διαγνωστικά"
+
+#: src/widgets/options_panel.py:111
+msgid "Show response statistics"
+msgstr "Εμφάνιση στατιστικών απαντήσεων"
+
+#: src/widgets/options_panel.py:112
+msgid "Return token probabilities (logprobs)"
+msgstr "Επιστροφή πιθανοτήτων token (logprobs)"
+
+#: src/widgets/options_panel.py:115
+msgid "Top logprobs"
+msgstr "Κορυφαίες λογαριθμικές πιθανότητες"
+
+#: src/widgets/options_panel.py:115
+msgid "Number of alternative token probabilities, from 0 to 20."
+msgstr "Πλήθος πιθανοτήτων εναλλακτικών token, από 0 έως 20."
+
+#: src/widgets/options_panel.py:132
+msgid "Chat Settings"
+msgstr "Ρυθμίσεις συνομιλίας"
+
+#: src/widgets/options_panel.py:135
+msgid "Done"
+msgstr "Τέλος"
+
+#: src/widgets/options_panel.py:177
+msgid "Top logprobs must be between 0 and 20."
+msgstr "Το πλήθος κορυφαίων λογαριθμικών πιθανοτήτων πρέπει να είναι από 0 έως 20."
+
+#: src/widgets/options_panel.py:199
+#, python-brace-format
+msgid "Enabled tools: {0}. Results are supplied manually."
+msgstr "Ενεργά εργαλεία: {0}. Τα αποτελέσματα δίνονται χειροκίνητα."
+
+#: src/widgets/options_panel.py:199
+msgid "Tool calling is off."
+msgstr "Οι κλήσεις εργαλείων είναι ανενεργές."
+
+#: src/widgets/options_panel.py:202
+msgid "Checking tool support…"
+msgstr "Έλεγχος υποστήριξης εργαλείων…"
+
+#: src/widgets/options_panel.py:204
+msgid "This model reports no tool support; you can still test the API."
+msgstr ""
+"Αυτό το μοντέλο δηλώνει ότι δεν υποστηρίζει εργαλεία· μπορείτε ακόμη να δοκιμάσετε το"
+" API."
+
+#: src/widgets/options_panel.py:206
+msgid "Tool support is unknown."
+msgstr "Η υποστήριξη εργαλείων είναι άγνωστη."
+
+#: src/widgets/options_panel.py:275
+msgid "No hosts configured"
+msgstr "Δεν έχουν ρυθμιστεί διακομιστές"
+
+#: src/widgets/options_panel.py:313 src/widgets/options_panel.py:315
+msgid "Enter a valid number."
+msgstr "Εισαγάγετε έγκυρο αριθμό."
+
+#: src/widgets/options_panel.py:333
+msgid "Value must not be negative."
+msgstr "Η τιμή δεν πρέπει να είναι αρνητική."
+
+#: src/widgets/options_panel.py:336
+msgid "Value must be between 0 and 1."
+msgstr "Η τιμή πρέπει να είναι από 0 έως 1."
+
+#: src/widgets/options_panel.py:338
+msgid "Context size must be positive."
+msgstr "Το μέγεθος συμφραζομένων πρέπει να είναι θετικό."
+
+#: src/widgets/options_panel.py:340
+msgid "Max tokens must be -2, -1, or a nonnegative integer."
+msgstr "Το μέγιστο πλήθος token πρέπει να είναι -2, -1 ή μη αρνητικός ακέραιος."
+
+#: src/widgets/options_panel.ui:20
+msgid "Tool Calling"
+msgstr "Κλήσεις εργαλείων"
+
+#: src/widgets/options_panel.ui:26
+msgid "Edit Tools…"
+msgstr "Επεξεργασία εργαλείων…"
+
+#: src/widgets/options_panel.ui:44
+msgid "Output:"
+msgstr "Έξοδος:"
+
+#: src/widgets/options_panel.ui:56
+msgid "Edit Schema…"
+msgstr "Επεξεργασία σχήματος…"
+
+#: src/widgets/options_panel.ui:63
+msgid "Chat Settings…"
+msgstr "Ρυθμίσεις συνομιλίας…"
+
+#: src/widgets/options_panel.ui:65
+msgid "Generation, Model Retention, and Diagnostics"
+msgstr "Παραγωγή, παραμονή μοντέλου στη μνήμη και διαγνωστικά"
+
+#: src/widgets/tool_view.py:10
+msgid "Tool Definitions"
+msgstr "Ορισμοί εργαλείων"
+
+#: src/widgets/tool_view.py:11
+msgid "Import Tools"
+msgstr "Εισαγωγή εργαλείων"
+
+#: src/widgets/tool_view.py:12
+msgid ""
+"Define an Ollama tools array. Results are supplied manually. Example prompt: Read "
+"calculator.py, fix add so it adds instead of subtracting, then run python3 -m "
+"unittest -v."
+msgstr ""
+"Ορίστε έναν πίνακα tools του Ollama. Τα αποτελέσματα δίνονται χειροκίνητα. Παράδειγμα"
+" προτροπής: Διάβασε το calculator.py, διόρθωσε την add ώστε να προσθέτει αντί να "
+"αφαιρεί και εκτέλεσε python3 -m unittest -v."
+
+#: src/widgets/tool_view.py:13
+msgid "Example"
+msgstr "Παράδειγμα"
+
+#: src/widgets/tool_view.py:15
+msgid "Export…"
+msgstr "Εξαγωγή…"
+
+#: src/widgets/tool_view.py:16
+msgid "Export Tools"
+msgstr "Εξαγωγή εργαλείων"
+
+#: src/widgets/tool_view.py:44
+msgid "Malformed tool call"
+msgstr "Κακοσχηματισμένη κλήση εργαλείου"
+
+#: src/widgets/tool_view.py:45
+#, python-brace-format
+msgid "Tool {0}: {1}"
+msgstr "Εργαλείο {0}: {1}"
+
+#: src/widgets/tool_view.py:52
+msgid "Copy Call"
+msgstr "Αντιγραφή κλήσης"
+
+#: src/widgets/tool_view.py:55 src/widgets/tool_view.py:95
+msgid "Enter Result…"
+msgstr "Εισαγωγή αποτελέσματος…"
+
+#: src/widgets/tool_view.py:70
+msgid "Continue"
+msgstr "Συνέχεια"
+
+#: src/widgets/tool_view.py:73
+msgid "Cancel Tool Round"
+msgstr "Ακύρωση κύκλου εργαλείων"
+
+#: src/widgets/tool_view.py:83
+msgid "Awaiting manual tool results"
+msgstr "Αναμονή για χειροκίνητα αποτελέσματα εργαλείων"
+
+#: src/widgets/tool_view.py:83
+msgid "Tool results submitted"
+msgstr "Υποβλήθηκαν αποτελέσματα εργαλείων"
+
+#: src/widgets/tool_view.py:84
+msgid "Tool round cancelled"
+msgstr "Ο κύκλος εργαλείων ακυρώθηκε"
+
+#: src/widgets/tool_view.py:84
+msgid "Incomplete tool calls"
+msgstr "Ημιτελείς κλήσεις εργαλείων"
+
+#: src/widgets/tool_view.py:85
+msgid "Malformed tool calls cannot be continued"
+msgstr "Δεν είναι δυνατή η συνέχεια κακοσχηματισμένων κλήσεων εργαλείων"
+
+#: src/widgets/tool_view.py:95
+msgid "Edit Result…"
+msgstr "Επεξεργασία αποτελέσματος…"
+
+#: src/widgets/tool_view.py:96
+#, python-brace-format
+msgid "Saved mock result: {0}"
+msgstr "Αποθηκευμένο προσομοιωμένο αποτέλεσμα: {0}"
+
+#: src/widgets/tool_view.py:96
+msgid "(empty)"
+msgstr "(κενό)"
+
+#: src/widgets/tool_view.py:104
+msgid "Mock Tool Result"
+msgstr "Προσομοιωμένο αποτέλεσμα εργαλείου"
+
+#: src/widgets/tool_view.py:105
+msgid ""
+"Enter the result to send to the model. Text, JSON, and empty results are accepted. No"
+" tool is executed."
+msgstr ""
+"Εισαγάγετε το αποτέλεσμα για αποστολή στο μοντέλο. Γίνονται δεκτά κείμενο, JSON και "
+"κενά αποτελέσματα. Δεν εκτελείται κανένα εργαλείο."
+
+#: src/widgets/tool_view.py:106
+msgid "Save Result"
+msgstr "Αποθήκευση αποτελέσματος"
+
+#: src/widgets/url_import.py:14
+msgid "Add URLs"
+msgstr "Προσθήκη URL"
+
+#: src/widgets/url_import.py:28
+msgid "Paste up to 20 URLs, one per line. Review each page before saving."
+msgstr "Επικολλήστε έως 20 URL, ένα ανά γραμμή. Ελέγξτε κάθε σελίδα πριν την αποθηκεύσετε."
+
+#: src/widgets/url_import.py:36
+msgid "Fetch URLs"
+msgstr "Ανάκτηση URL"
+
+#: src/widgets/url_import.py:54
+msgid "Refine Extraction"
+msgstr "Βελτίωση εξαγωγής"
+
+#: src/widgets/url_import.py:55
+msgid ""
+"If the preview includes navigation or misses the article, select the page region to "
+"extract using a CSS selector."
+msgstr ""
+"Αν η προεπισκόπηση περιλαμβάνει στοιχεία πλοήγησης ή παραλείπει το άρθρο, επιλέξτε "
+"την περιοχή της σελίδας για εξαγωγή με έναν επιλογέα CSS."
+
+#: src/widgets/url_import.py:56
+msgid "CSS selector (optional)"
+msgstr "Επιλογέας CSS (προαιρετικό)"
+
+#: src/widgets/url_import.py:57
+msgid "For example: main, article, or .article-body"
+msgstr "Για παράδειγμα: main, article ή .article-body"
+
+#: src/widgets/url_import.py:59
+msgid "Re-extract"
+msgstr "Εξαγωγή ξανά"
+
+#: src/widgets/url_import.py:62
+msgid "Extracted content (editable)"
+msgstr "Εξαγόμενο περιεχόμενο (επεξεργάσιμο)"
+
+#: src/widgets/url_import.py:68 src/widgets/url_import.py:232
+msgid "Fetch Again"
+msgstr "Ανάκτηση ξανά"
+
+#: src/widgets/url_import.py:93
+#, python-brace-format
+msgid "Collection: {0}"
+msgstr "Συλλογή: {0}"
+
+#: src/widgets/url_import.py:113
+msgid "Downloading…"
+msgstr "Λήψη…"
+
+#: src/widgets/url_import.py:113
+msgid "Extracting…"
+msgstr "Εξαγωγή σε εξέλιξη…"
+
+#: src/widgets/url_import.py:114
+msgid "Ready to review"
+msgstr "Έτοιμο για έλεγχο"
+
+#: src/widgets/url_import.py:114
+msgid "Needs attention"
+msgstr "Χρειάζεται προσοχή"
+
+#: src/widgets/url_import.py:114
+msgid "Saving…"
+msgstr "Αποθήκευση…"
+
+#: src/widgets/url_import.py:128
+msgid "Save or skip reviewed pages to make room for queued downloads."
+msgstr ""
+"Αποθηκεύστε ή παραλείψτε τις ελεγμένες σελίδες για να ελευθερώσετε χώρο για τις "
+"λήψεις σε αναμονή."
+
+#: src/widgets/url_import.py:129
+msgid "Saved documents build embeddings in the background. Closing discards unsaved previews."
+msgstr ""
+"Οι ενσωματώσεις των αποθηκευμένων εγγράφων δημιουργούνται στο παρασκήνιο. Το κλείσιμο"
+" απορρίπτει τις μη αποθηκευμένες προεπισκοπήσεις."
+
+#: src/widgets/url_import.py:153
+msgid "Extracting content…"
+msgstr "Εξαγωγή περιεχομένου…"
+
+#: src/widgets/url_import.py:192
+#, python-brace-format
+msgid "Import URL: {0}"
+msgstr "Εισαγωγή URL: {0}"
+
+#: src/widgets/url_import.py:231
+msgid "Replace Document…"
+msgstr "Αντικατάσταση εγγράφου…"
+
+#: src/widgets/url_import.py:244
+msgid "Discard Preview Edits?"
+msgstr "Απόρριψη αλλαγών προεπισκόπησης;"
+
+#: src/widgets/url_import.py:245
+msgid "Extracting again replaces your edited text with the page content."
+msgstr "Η νέα εξαγωγή αντικαθιστά το επεξεργασμένο κείμενό σας με το περιεχόμενο της σελίδας."
+
+#: src/widgets/url_import.py:247
+msgid "Discard Edits"
+msgstr "Απόρριψη αλλαγών"
+
+#: src/widgets/url_import.py:332
+msgid "Replace Document and Rebuild?"
+msgstr "Αντικατάσταση εγγράφου και αναδημιουργία;"
+
+#: src/widgets/url_import.py:333
+#, python-brace-format
+msgid ""
+"Replace “{0}” and rebuild {1} embedding indexes? Saved chat answers keep their "
+"original passages. Affected collections cannot search this content until rebuilding "
+"succeeds."
+msgstr ""
+"Να αντικατασταθεί το «{0}» και να αναδημιουργηθούν τα ευρετήρια ενσωματώσεων ({1}); "
+"Οι αποθηκευμένες απαντήσεις διατηρούν τα αρχικά αποσπάσματα. Οι επηρεαζόμενες "
+"συλλογές δεν θα μπορούν να αναζητήσουν αυτό το περιεχόμενο μέχρι να ολοκληρωθεί "
+"επιτυχώς η αναδημιουργία."
+
+#: src/widgets/url_import.py:334
+msgid "None"
+msgstr "Κανένα"
+
+#: src/widgets/url_import.py:336
+msgid "Replace and Rebuild"
+msgstr "Αντικατάσταση και αναδημιουργία"
+
+#: src/window.py:47
+msgid "Knowledge"
+msgstr "Γνώσεις"
+
+#: src/window.py:135
+msgid "Changes could not be saved"
+msgstr "Δεν ήταν δυνατή η αποθήκευση αλλαγών"
+
+#: src/window.py:136
+msgid "Your unsaved changes are kept in memory. Retry saving before quitting."
+msgstr ""
+"Οι μη αποθηκευμένες αλλαγές διατηρούνται στη μνήμη. Δοκιμάστε ξανά την αποθήκευση "
+"πριν από την έξοδο."
+
+#: src/window.py:138
+msgid "Keep Open"
+msgstr "Διατήρηση ανοιχτού"
+
+#: src/window.py:186 src/window.ui:138
+msgid "Clear chat history"
+msgstr "Εκκαθάριση ιστορικού συνομιλιών"
+
+#: src/window.py:186
+msgid "Are you sure you want to delete all chat history?"
+msgstr "Θέλετε σίγουρα να διαγράψετε όλο το ιστορικό συνομιλιών;"
+
+#: src/window.py:188
+msgid "Delete history"
+msgstr "Διαγραφή ιστορικού"
+
+#: src/window.py:274
+msgid "Pinned"
+msgstr "Καρφιτσωμένες"
+
+#: src/window.py:275
+msgid "Recent"
+msgstr "Πρόσφατες"
+
+#: src/window.py:284
+msgid "Unpin Chat"
+msgstr "Ξεκαρφίτσωμα συνομιλίας"
+
+#: src/window.py:284
+msgid "Pin Chat"
+msgstr "Καρφίτσωμα συνομιλίας"
+
+#: src/window.py:285 src/window.py:346
+msgid "Rename Chat"
+msgstr "Μετονομασία συνομιλίας"
+
+#: src/window.py:285
+msgid "Delete Chat"
+msgstr "Διαγραφή συνομιλίας"
+
+#: src/window.py:301
+msgid "Chat actions"
+msgstr "Ενέργειες συνομιλίας"
+
+#: src/window.py:346
+msgid "Enter a new title for this chat."
+msgstr "Εισαγάγετε νέο τίτλο για αυτή τη συνομιλία."
+
+#: src/window.ui:30
+msgid "Main Menu"
+msgstr "Κύριο μενού"
+
+#: src/window.ui:41
+msgid "Chats"
+msgstr "Συνομιλίες"
+
+#: src/window.ui:55
+msgid "Saved Chats"
+msgstr "Αποθηκευμένες συνομιλίες"
+
+#: src/window.ui:71
+msgid "No Saved Chats"
+msgstr "Δεν υπάρχουν αποθηκευμένες συνομιλίες"
+
+#: src/window.ui:98
+msgid "Toggle Sidebar"
+msgstr "Εναλλαγή πλευρικής στήλης"
+
+#: src/window.ui:120
+msgid "_New Chat"
+msgstr "_Νέα συνομιλία"
+
+#: src/window.ui:124
+msgid "_New Response"
+msgstr "Νέα _απάντηση"
+
+#: src/window.ui:130
+msgid "_Manage hosts"
+msgstr "Διαχείριση _διακομιστών"
+
+#: src/window.ui:134
+msgid "_Manage models"
+msgstr "Διαχείριση _μοντέλων"
+
+#: src/window.ui:142
+msgid "_Keyboard Shortcuts"
+msgstr "Συντομεύσεις _πληκτρολογίου"
+
+#: src/window.ui:146
+msgid "_About Gnollama"
+msgstr "_Σχετικά με το Gnollama"
+

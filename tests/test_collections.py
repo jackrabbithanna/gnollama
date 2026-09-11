@@ -463,7 +463,7 @@ class CollectionMigrationTests(unittest.TestCase):
             self.assertEqual(upgraded.ungrouped_document_ids(), {doc['id']})
             with sqlite3.connect(upgraded.backup_path) as conn:
                 self.assertEqual(conn.execute('PRAGMA user_version').fetchone()[0], 7)
-            self.assertIn('.pre-v9-', upgraded.backup_path)
+            self.assertIn('.pre-v10-', upgraded.backup_path)
             self.assertIsNone(DatabaseManager(str(path)).backup_path)
 
     def test_collection_migration_failure_rolls_back_and_retries(self):

@@ -23,6 +23,7 @@ class OptionsPanel(Gtk.Box):
 
     def __init__(self, **kwargs: Any) -> None:
         super().__init__(**kwargs)
+        self.cloud = False
         self._settings_dialog = None
         self._build_settings()
         self.settings_button.connect('clicked', self.open_settings)
@@ -49,6 +50,16 @@ class OptionsPanel(Gtk.Box):
         self.tools_button.connect('clicked', self.edit_tools)
         self._format_changed()
         self._keep_alive_changed()
+        self.cloud_notice = Gtk.Label(label=_('Ollama Cloud uses text output and manages model retention automatically.'),
+                                      xalign=0, wrap=True, visible=False)
+        self.append(self.cloud_notice)
+
+    def set_cloud(self, cloud):
+        self.cloud = cloud
+        self.output_dropdown.set_sensitive(not cloud)
+        self.memory_group.set_sensitive(not cloud)
+        self.cloud_notice.set_visible(cloud)
+        self._format_changed()
 
     def _build_settings(self):
         self.settings_content = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=24,
@@ -101,7 +112,7 @@ class OptionsPanel(Gtk.Box):
             ('top_p_entry', _('Top P'), _('Cumulative probability cutoff, between 0 and 1.')),
             ('min_p_entry', _('Min P'), _('Minimum relative token probability, between 0 and 1.'))]:
             field(sampling, name, title, hint)
-        memory = group(_('Model Retention'))
+        memory = self.memory_group = group(_('Model Retention'))
         self.keep_alive_dropdown = Gtk.DropDown(hexpand=True)
         self.keep_alive_dropdown.set_factory(factory)
         row = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6,
@@ -164,6 +175,8 @@ class OptionsPanel(Gtk.Box):
         self._settings_dialog.close()
 
     def get_keep_alive(self):
+        if self.cloud:
+            return None
         value = self.keep_alive_values[self.keep_alive_dropdown.get_selected()]
         if value == 'custom':
             try:
@@ -233,7 +246,7 @@ class OptionsPanel(Gtk.Box):
         return {'tools_enabled': self.tools_available and self.tools_check.get_active(), 'tools_text': self.tools_text}
 
     def _format_changed(self, *args):
-        schema_mode = self.output_dropdown.get_selected() == 2
+        schema_mode = not self.cloud and self.output_dropdown.get_selected() == 2
         self.schema_button.set_visible(schema_mode)
         if (args and schema_mode and not self.schema_text.strip()
                 and not self._restoring_options and self.get_mapped()):
@@ -241,7 +254,7 @@ class OptionsPanel(Gtk.Box):
             GLib.idle_add(self._open_missing_schema)
 
     def _open_missing_schema(self):
-        if (self.get_mapped() and self.output_dropdown.get_selected() == 2
+        if (not self.cloud and self.get_mapped() and self.output_dropdown.get_selected() == 2
                 and not self.schema_text.strip() and self._schema_dialog is None):
             self.edit_schema()
         return False
@@ -262,7 +275,7 @@ class OptionsPanel(Gtk.Box):
         self._schema_dialog.present(self)
 
     def get_request_settings(self):
-        mode = self.output_modes[self.output_dropdown.get_selected()]
+        mode = 'text' if self.cloud else self.output_modes[self.output_dropdown.get_selected()]
         output_format = request_format(mode, self.schema_text)
         keep_alive = self.get_keep_alive()
         tools_options = self.get_tools_options()

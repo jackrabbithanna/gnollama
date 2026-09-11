@@ -63,6 +63,7 @@ class RequestState:
     continuation: bool = False
     saved_message: dict = None
     retrieval: dict = None
+    connection: object = field(default=None, repr=False)
 
     def __post_init__(self):
         self.settings = copy.deepcopy(self.settings)
@@ -138,6 +139,7 @@ class GenerationStrategy:
         args = {k: state.settings[k] for k in
                 ('host', 'model', 'options', 'thinking', 'logprobs', 'top_logprobs')}
         args.update(format=state.settings.get('format'), keep_alive=state.settings.get('keep_alive'))
+        args['host'] = state.connection or args['host']
         return ollama.generate(**args, prompt=state.prompt, system=state.settings['system'],
                                images=state.images, cancellable=state.cancellable)
 
@@ -193,6 +195,7 @@ class ChatStrategy(GenerationStrategy):
         args = {k: state.settings[k] for k in
                 ('host', 'model', 'options', 'thinking', 'logprobs', 'top_logprobs')}
         args.update(format=state.settings.get('format'), keep_alive=state.settings.get('keep_alive'))
+        args['host'] = state.connection or args['host']
         return ollama.chat(**args, messages=state.messages, cancellable=state.cancellable,
                            tools=state.settings.get('tools'))
 

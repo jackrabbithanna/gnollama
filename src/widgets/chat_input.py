@@ -83,7 +83,7 @@ class ChatInput(Gtk.Box):
 
     def set_running(self, running):
         self._running = running
-        self.send_button.set_icon_name('media-playback-stop-symbolic' if running else 'mail-send-symbolic')
+        self.send_button.set_icon_name('media-playback-stop-symbolic' if running else 'system-search-symbolic')
         self.send_button.set_tooltip_text(_('Stop response') if running else _('Send Message'))
         blocked = ((self.image_support is False and bool(self.selected_image_paths)) or
                    (self.capabilities_loading and (bool(self.selected_image_paths) or self.has_history_images)))
@@ -173,7 +173,8 @@ class ChatInput(Gtk.Box):
             if request_id == self._fetch_id:
                 self._model_details = details
                 self._model_list_notice = error or ('' if models else
-                    _('No chat models found. Pull one in Manage Models, then refresh.'))
+                    (_('No cloud models are available. Try refreshing later.') if ollama.is_cloud(host) else
+                     _('No chat models found. Pull one in Manage Models, then refresh.')))
                 self.set_models(models)
                 self.update_capability_controls()
             return False

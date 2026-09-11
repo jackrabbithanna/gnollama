@@ -4,18 +4,18 @@
 # AI-assisted translation; native-speaker review is welcome.
 msgid ""
 msgstr ""
-"Project-Id-Version: gnollama 0.13.0\n"
+"Project-Id-Version: gnollama 0.14.0\n"
 "Report-Msgid-Bugs-To: https://github.com/jackrabbithanna/gnollama/issues\n"
-"POT-Creation-Date: 2026-09-10 17:08-0600\n"
+"POT-Creation-Date: 2026-09-10 20:09-0600\n"
 "PO-Revision-Date: 2026-09-10 00:00+0000\n"
 "Last-Translator: AI-assisted translation\n"
-"Language-Team: Arabic\n"
 "Language: ar\n"
+"Language-Team: Arabic\n"
+"Plural-Forms: nplurals=6; plural=(n == 0 ? 0 : n == 1 ? 1 : n == 2 ? 2 : n % 100 >= 3"
+" && n % 100 <= 10 ? 3 : n % 100 >= 11 && n % 100 <= 99 ? 4 : 5);\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=6; plural=(n == 0 ? 0 : n == 1 ? 1 : n == 2 ? 2 : n % "
-"100 >= 3 && n % 100 <= 10 ? 3 : n % 100 >= 11 && n % 100 <= 99 ? 4 : 5);\n"
 "Generated-By: Babel 2.17.0\n"
 
 #: data/io.github.jackrabbithanna.Gnollama.desktop.in:2
@@ -45,43 +45,41 @@ msgstr "دردش مع نماذج Ollama"
 
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:10
 msgid ""
-"Chat with Ollama models running on your computer or a remote server using a "
-"native GNOME interface."
-msgstr ""
-"دردش مع نماذج Ollama التي تعمل على حاسوبك أو خادم بعيد باستخدام واجهة GNOME "
-"أصلية."
+"Chat with Ollama models running on your computer or a remote server using a native "
+"GNOME interface."
+msgstr "دردش مع نماذج Ollama التي تعمل على حاسوبك أو خادم بعيد باستخدام واجهة GNOME أصلية."
 
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:11
 msgid ""
-"Keep conversations in separate tabs, attach images to vision models, and "
-"read responses with Markdown and highlighted code."
+"Keep conversations in separate tabs, attach images to vision models, and read "
+"responses with Markdown and highlighted code."
 msgstr ""
-"احتفظ بالمحادثات في ألسنة منفصلة، وأرفق صورًا بالنماذج التي تدعم الرؤية، "
-"واقرأ الردود بتنسيق Markdown مع تمييز الشيفرة."
+"احتفظ بالمحادثات في ألسنة منفصلة، وأرفق صورًا بالنماذج التي تدعم الرؤية، واقرأ الردود"
+" بتنسيق Markdown مع تمييز الشيفرة."
 
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:12
 msgid ""
-"Manage hosts and models, customize generation and thinking settings, and "
-"inspect response statistics including cached prompt tokens."
+"Manage hosts and models, customize generation and thinking settings, and inspect "
+"response statistics including cached prompt tokens."
 msgstr ""
-"أدر المضيفين والنماذج، وخصص إعدادات التوليد والتفكير، وافحص إحصاءات الرد بما "
-"فيها وحدات نص المطالبة المخزنة مؤقتًا."
+"أدر المضيفين والنماذج، وخصص إعدادات التوليد والتفكير، وافحص إحصاءات الرد بما فيها "
+"وحدات نص المطالبة المخزنة مؤقتًا."
 
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:13
 msgid ""
-"Generate and validate structured JSON, import JSON schemas, and export "
-"responses. Inspect loaded models and release their memory when finished."
+"Generate and validate structured JSON, import JSON schemas, and export responses. "
+"Inspect loaded models and release their memory when finished."
 msgstr ""
-"ولّد JSON منظمًا وتحقق منه، واستورد مخططات JSON وصدّر الردود. افحص النماذج "
-"المحملة وحرر ذاكرتها عند الانتهاء."
+"ولّد JSON منظمًا وتحقق منه، واستورد مخططات JSON وصدّر الردود. افحص النماذج المحملة "
+"وحرر ذاكرتها عند الانتهاء."
 
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:14
 msgid ""
-"Save and organize conversations with pinning and editable titles. Stop a "
-"response at any time and keep its partial answer in your history."
+"Save and organize conversations with pinning and editable titles. Stop a response at "
+"any time and keep its partial answer in your history."
 msgstr ""
-"احفظ المحادثات ونظمها بالتثبيت وتعديل العناوين. أوقف الرد في أي وقت واحتفظ "
-"بالجزء المكتمل منه في السجل."
+"احفظ المحادثات ونظمها بالتثبيت وتعديل العناوين. أوقف الرد في أي وقت واحتفظ بالجزء "
+"المكتمل منه في السجل."
 
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:18
 msgid "jackrabbithanna"
@@ -92,97 +90,114 @@ msgid "Ollama chat with code highlighting"
 msgstr "دردشة Ollama مع تمييز الشيفرة"
 
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:53
+msgid "Connect directly to Ollama Cloud from Chat and Response tabs."
+msgstr "اتصل مباشرةً بـ Ollama Cloud من علامتي تبويب المحادثة والرد."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:54
 msgid ""
-"Add a Knowledge Library for text and PDF imports, local embedding indexes, "
-"and source-grounded chats."
+"Store each host's API key in the desktop keyring, with session-only use when the "
+"keyring is unavailable."
 msgstr ""
-"إضافة مكتبة معرفة لاستيراد النصوص وملفات PDF، وفهارس التضمين المحلية، "
-"والدردشة المستندة إلى المصادر."
+"احفظ مفتاح API لكل خادم في حلقة مفاتيح سطح المكتب، مع إمكانية استخدامه للجلسة فقط "
+"عندما تكون حلقة المفاتيح غير متاحة."
 
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:55
+msgid ""
+"Browse cloud models with controls adapted to the service, and use local knowledge "
+"sources in cloud chats."
+msgstr ""
+"تصفّح النماذج السحابية بعناصر تحكم ملائمة للخدمة، واستخدم مصادر المعرفة المحلية في "
+"المحادثات السحابية."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:60
+msgid ""
+"Add a Knowledge Library for text and PDF imports, local embedding indexes, and "
+"source-grounded chats."
+msgstr ""
+"إضافة مكتبة معرفة لاستيراد النصوص وملفات PDF، وفهارس التضمين المحلية، والدردشة "
+"المستندة إلى المصادر."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:62
 msgid ""
 "Start with knowledge collections and add text, files, or URLs with explicit "
 "destinations and guided previews."
 msgstr ""
-"ابدأ بمجموعات المعرفة وأضف نصوصًا أو ملفات أو عناوين URL مع وجهات واضحة "
-"ومعاينات إرشادية."
-
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:56
-msgid ""
-"Choose collections before search settings, and use adaptive chat settings "
-"with clearer controls and feedback."
-msgstr ""
-"اختر المجموعات قبل إعدادات البحث، واستخدم إعدادات دردشة متكيفة بعناصر تحكم "
-"وملاحظات أوضح."
-
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:57
-msgid ""
-"Create and compare embeddings, inspect chunks and vectors, and test semantic "
-"searches."
-msgstr "أنشئ التضمينات وقارنها، وافحص المقاطع والمتجهات، واختبر البحث الدلالي."
-
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:58
-msgid ""
-"Select documents or chunks for chats, with independent embedding hosts and "
-"saved source passages."
-msgstr ""
-"اختر مستندات أو مقاطع للدردشة، مع مضيفين مستقلين للتضمين ومقاطع مصادر محفوظة."
-
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:59
-msgid ""
-"Warn about stored embeddings when deleting models, with optional vector "
-"cleanup that retains source text."
-msgstr ""
-"التنبيه إلى التضمينات المخزنة عند حذف النماذج، مع خيار تنظيف المتجهات "
-"والإبقاء على نص المصدر."
-
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:60
-msgid ""
-"Search with sqlite-vec, automatically migrate existing vectors with a "
-"database backup, and use the Qwen3 retrieval preset."
-msgstr ""
-"ابحث باستخدام sqlite-vec، وانقل المتجهات الموجودة تلقائيًا مع نسخة احتياطية "
-"لقاعدة البيانات، واستخدم إعداد الاسترجاع المسبق لـ Qwen3."
-
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:61
-msgid ""
-"Organize documents into collections with shared embedding settings, "
-"automatic builds, and live collection selection in chats."
-msgstr ""
-"نظم المستندات في مجموعات بإعدادات تضمين مشتركة وبناء تلقائي واختيار مباشر "
-"للمجموعات في الدردشة."
-
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:62
-msgid ""
-"Choose collections as chat sources and compare cosine similarity, Euclidean "
-"distance, or Manhattan distance with appropriate search cutoffs."
-msgstr ""
-"اختر المجموعات كمصادر للدردشة وقارن تشابه جيب التمام أو المسافة الإقليدية أو "
-"مسافة مانهاتن بحدود بحث مناسبة."
+"ابدأ بمجموعات المعرفة وأضف نصوصًا أو ملفات أو عناوين URL مع وجهات واضحة ومعاينات "
+"إرشادية."
 
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:63
 msgid ""
-"Hide embedding-only models from Chat and Response model selection while "
-"keeping them available in Knowledge and Manage Models."
+"Choose collections before search settings, and use adaptive chat settings with "
+"clearer controls and feedback."
 msgstr ""
-"إخفاء النماذج المخصصة للتضمين فقط من اختيار نماذج الدردشة والرد، مع إبقائها "
-"متاحة في المعرفة وإدارة النماذج."
+"اختر المجموعات قبل إعدادات البحث، واستخدم إعدادات دردشة متكيفة بعناصر تحكم وملاحظات "
+"أوضح."
 
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:64
-msgid ""
-"Import batches of URLs into collections with main-content extraction, CSS "
-"selectors, editable previews, and source links in chats."
-msgstr ""
-"استورد دفعات من عناوين URL إلى المجموعات مع استخراج المحتوى الرئيسي ومحددات "
-"CSS ومعاينات قابلة للتحرير وروابط المصادر في الدردشة."
+msgid "Create and compare embeddings, inspect chunks and vectors, and test semantic searches."
+msgstr "أنشئ التضمينات وقارنها، وافحص المقاطع والمتجهات، واختبر البحث الدلالي."
 
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:65
 msgid ""
-"Review changed web documents before replacing their text and rebuilding all "
-"affected embedding indexes."
+"Select documents or chunks for chats, with independent embedding hosts and saved "
+"source passages."
+msgstr "اختر مستندات أو مقاطع للدردشة، مع مضيفين مستقلين للتضمين ومقاطع مصادر محفوظة."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:66
+msgid ""
+"Warn about stored embeddings when deleting models, with optional vector cleanup that "
+"retains source text."
 msgstr ""
-"راجع مستندات الويب المتغيرة قبل استبدال نصوصها وإعادة بناء جميع فهارس "
-"التضمين المتأثرة."
+"التنبيه إلى التضمينات المخزنة عند حذف النماذج، مع خيار تنظيف المتجهات والإبقاء على نص"
+" المصدر."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:67
+msgid ""
+"Search with sqlite-vec, automatically migrate existing vectors with a database "
+"backup, and use the Qwen3 retrieval preset."
+msgstr ""
+"ابحث باستخدام sqlite-vec، وانقل المتجهات الموجودة تلقائيًا مع نسخة احتياطية لقاعدة "
+"البيانات، واستخدم إعداد الاسترجاع المسبق لـ Qwen3."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:68
+msgid ""
+"Organize documents into collections with shared embedding settings, automatic builds,"
+" and live collection selection in chats."
+msgstr ""
+"نظم المستندات في مجموعات بإعدادات تضمين مشتركة وبناء تلقائي واختيار مباشر للمجموعات "
+"في الدردشة."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:69
+msgid ""
+"Choose collections as chat sources and compare cosine similarity, Euclidean distance,"
+" or Manhattan distance with appropriate search cutoffs."
+msgstr ""
+"اختر المجموعات كمصادر للدردشة وقارن تشابه جيب التمام أو المسافة الإقليدية أو مسافة "
+"مانهاتن بحدود بحث مناسبة."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:70
+msgid ""
+"Hide embedding-only models from Chat and Response model selection while keeping them "
+"available in Knowledge and Manage Models."
+msgstr ""
+"إخفاء النماذج المخصصة للتضمين فقط من اختيار نماذج الدردشة والرد، مع إبقائها متاحة في "
+"المعرفة وإدارة النماذج."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:71
+msgid ""
+"Import batches of URLs into collections with main-content extraction, CSS selectors, "
+"editable previews, and source links in chats."
+msgstr ""
+"استورد دفعات من عناوين URL إلى المجموعات مع استخراج المحتوى الرئيسي ومحددات CSS "
+"ومعاينات قابلة للتحرير وروابط المصادر في الدردشة."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:72
+msgid ""
+"Review changed web documents before replacing their text and rebuilding all affected "
+"embedding indexes."
+msgstr ""
+"راجع مستندات الويب المتغيرة قبل استبدال نصوصها وإعادة بناء جميع فهارس التضمين "
+"المتأثرة."
 
 #: src/ai_bubble.ui:35 src/bubbles.ui:74
 msgid "API Call Details"
@@ -200,11 +215,11 @@ msgstr "إحصاءات الرد"
 msgid "Earlier images were omitted from the text-only request."
 msgstr "لم تُضمّن الصور السابقة في الطلب النصي فقط."
 
-#: src/bubbles.py:125 src/knowledge.py:300
+#: src/bubbles.py:125 src/knowledge.py:301
 msgid "Stopped"
 msgstr "متوقف"
 
-#: src/bubbles.py:125 src/knowledge.py:300
+#: src/bubbles.py:125 src/knowledge.py:301
 msgid "Failed"
 msgstr "فشل"
 
@@ -214,7 +229,7 @@ msgid "Logprobs"
 msgstr "الاحتمالات اللوغاريتمية"
 
 #: src/bubbles.py:183 src/model_manager.py:22 src/model_manager.py:24
-#: src/model_manager.py:28
+#: src/model_manager.py:28 src/model_manager.py:312
 msgid "Unavailable"
 msgstr "غير متاح"
 
@@ -267,7 +282,7 @@ msgstr "سبب الانتهاء: {0}"
 msgid "A document was deleted. Choose documents again."
 msgstr "حُذف أحد المستندات. اختر المستندات مجددًا."
 
-#: src/collections_store.py:107 src/knowledge.py:357
+#: src/collections_store.py:107 src/knowledge.py:358
 msgid "Enter a collection name."
 msgstr "أدخل اسم المجموعة."
 
@@ -275,7 +290,7 @@ msgstr "أدخل اسم المجموعة."
 msgid "Choose a model with the collection’s original digest."
 msgstr "اختر نموذجًا بالبصمة الأصلية للمجموعة."
 
-#: src/collections_store.py:141 src/knowledge.py:390
+#: src/collections_store.py:141 src/knowledge.py:391
 msgid "The collection was deleted."
 msgstr "حُذفت المجموعة."
 
@@ -295,33 +310,51 @@ msgstr "المجموعة «{0}» فارغة. أضف مستندات أو عدّل
 
 #: src/collections_store.py:210
 #, python-brace-format
-msgid ""
-"Collection “{0}” is not ready. Build missing embeddings or retry failed "
-"documents: {1}"
+msgid "Collection “{0}” is not ready. Build missing embeddings or retry failed documents: {1}"
 msgstr ""
-"المجموعة «{0}» غير جاهزة. ابنِ التضمينات الناقصة أو أعد محاولة المستندات التي "
-"فشلت: {1}"
+"المجموعة «{0}» غير جاهزة. ابنِ التضمينات الناقصة أو أعد محاولة المستندات التي فشلت: "
+"{1}"
 
-#: src/database.py:75
-msgid ""
-"This database was created by a newer Gnollama version. Update Gnollama to "
-"open it."
+#: src/credentials.py:27
+msgid "Enter a valid API key."
+msgstr "أدخل مفتاح API صالحًا."
+
+#: src/credentials.py:51
+msgid "Could not access the keyring. Edit this host to retry or enter a session-only key."
+msgstr ""
+"تعذّر الوصول إلى حلقة المفاتيح. عدّل هذا الخادم لإعادة المحاولة أو لإدخال مفتاح لهذه "
+"الجلسة فقط."
+
+#: src/credentials.py:53 src/storage.py:134
+msgid "An API key is required. Edit this host to enter one."
+msgstr "مفتاح API مطلوب. عدّل هذا الخادم لإدخال مفتاح."
+
+#: src/credentials.py:66
+msgid "Could not save the API key in the keyring. Retry or use it for this session."
+msgstr "تعذّر حفظ مفتاح API في حلقة المفاتيح. أعد المحاولة أو استخدمه لهذه الجلسة فقط."
+
+#: src/credentials.py:78 src/credentials.py:80
+msgid "Could not remove the saved API key. Unlock the keyring and retry."
+msgstr "تعذّرت إزالة مفتاح API المحفوظ. افتح قفل حلقة المفاتيح وأعد المحاولة."
+
+#: src/database.py:80
+msgid "This database was created by a newer Gnollama version. Update Gnollama to open it."
 msgstr "أُنشئت قاعدة البيانات بإصدار أحدث من Gnollama. حدّث Gnollama لفتحها."
 
-#: src/database.py:82
+#: src/database.py:87
 msgid "Backing up the database…"
 msgstr "جارٍ نسخ قاعدة البيانات احتياطيًا…"
 
-#: src/database.py:191
+#: src/database.py:196
 msgid "This database requires a newer Gnollama version."
 msgstr "تتطلب قاعدة البيانات إصدارًا أحدث من Gnollama."
 
-#: src/database.py:210
+#: src/database.py:215
 #, python-brace-format
 msgid "Upgrading the database to version {0}…"
 msgstr "جارٍ ترقية قاعدة البيانات إلى الإصدار {0}…"
 
-#: src/host_edit_dialog.ui:6 src/host_manager.py:171 src/model_manager.py:366
+#: src/host_edit_dialog.ui:14 src/host_manager.py:266 src/model_manager.py:394
 #: src/pull_model_dialog.ui:17 src/widgets/knowledge_view.py:1111
 #: src/widgets/knowledge_view.py:1121 src/widgets/knowledge_view.py:1250
 #: src/widgets/knowledge_view.py:1293 src/widgets/knowledge_view.py:1337
@@ -330,68 +363,108 @@ msgstr "جارٍ ترقية قاعدة البيانات إلى الإصدار {0
 msgid "Cancel"
 msgstr "إلغاء"
 
-#: src/host_edit_dialog.ui:7 src/widgets/knowledge_view.py:1112
-#: src/widgets/knowledge_view.py:1145 src/widgets/knowledge_view.py:1338
-#: src/window.py:350
+#: src/host_edit_dialog.ui:19 src/widgets/knowledge_view.py:1112
+#: src/widgets/knowledge_view.py:1145 src/widgets/knowledge_view.py:1338 src/window.py:350
 msgid "Save"
 msgstr "حفظ"
 
-#: src/host_edit_dialog.ui:21 src/model_manager.py:610
+#: src/host_edit_dialog.ui:39
+msgid "Host type"
+msgstr "نوع الخادم"
+
+#: src/host_edit_dialog.ui:47 src/model_manager.py:638
 msgid "Name"
 msgstr "الاسم"
 
-#: src/host_edit_dialog.ui:28
+#: src/host_edit_dialog.ui:54
 msgid "For example: Local Ollama"
 msgstr "مثال: Ollama المحلي"
 
-#: src/host_edit_dialog.ui:33
+#: src/host_edit_dialog.ui:59
 msgid "Server address"
 msgstr "عنوان الخادم"
 
-#: src/host_edit_dialog.ui:45
+#: src/host_edit_dialog.ui:71
 msgid "Set as default host"
 msgstr "تعيين كمضيف افتراضي"
 
-#: src/host_manager.py:19
+#: src/host_manager.py:24
 msgid "Edit Host"
 msgstr "تحرير المضيف"
 
-#: src/host_manager.py:19 src/host_manager.ui:23
+#: src/host_manager.py:24 src/host_manager.ui:23
 msgid "Add Host"
 msgstr "إضافة مضيف"
 
-#: src/host_manager.py:35
+#: src/host_manager.py:30
+msgid "Ollama Server"
+msgstr "خادم Ollama"
+
+#: src/host_manager.py:30 src/host_manager.py:72 src/model_manager.py:312
+msgid "Ollama Cloud"
+msgstr "Ollama Cloud"
+
+#: src/host_manager.py:34
+msgid "API key"
+msgstr "مفتاح API"
+
+#: src/host_manager.py:36
+msgid "Leave blank to keep the existing key."
+msgstr "اتركه فارغًا للاحتفاظ بالمفتاح الحالي."
+
+#: src/host_manager.py:37
+msgid "Stored securely in your desktop keyring."
+msgstr "يُحفظ بأمان في حلقة مفاتيح سطح المكتب."
+
+#: src/host_manager.py:38
+msgid "Create an API key"
+msgstr "إنشاء مفتاح API"
+
+#: src/host_manager.py:44
+msgid "Use for This Session"
+msgstr "استخدام لهذه الجلسة"
+
+#: src/host_manager.py:98 src/storage.py:124
 msgid "Enter a name for this server."
 msgstr "أدخل اسمًا لهذا الخادم."
 
-#: src/host_manager.py:78
+#: src/host_manager.py:149
 msgid "Default"
 msgstr "الافتراضي"
 
-#: src/host_manager.py:83 src/host_manager.py:87
+#: src/host_manager.py:154 src/host_manager.py:158
 msgid "Test Connection"
 msgstr "اختبار الاتصال"
 
-#: src/host_manager.py:92
+#: src/host_manager.py:163
 msgid "Edit Server"
 msgstr "تحرير الخادم"
 
-#: src/host_manager.py:98 src/host_manager.py:168
+#: src/host_manager.py:169 src/host_manager.py:263
 msgid "Delete Host"
 msgstr "حذف المضيف"
 
-#: src/host_manager.py:112
-msgid "Fetching version..."
-msgstr "جارٍ جلب الإصدار…"
+#: src/host_manager.py:183
+msgid "Checking connection…"
+msgstr "جارٍ التحقق من الاتصال…"
 
-#: src/host_manager.py:114 src/main.py:63 src/model_manager.py:340
-#: src/model_manager.py:601 src/startup.py:23 src/widgets/json_view.py:230
+#: src/host_manager.py:185 src/host_manager.py:277 src/main.py:63 src/model_manager.py:368
+#: src/model_manager.py:629 src/startup.py:23 src/widgets/json_view.py:230
 #: src/widgets/knowledge_import.py:51 src/widgets/knowledge_view.py:756
 #: src/widgets/knowledge_view.py:909 src/widgets/knowledge_view.py:1271
 msgid "Close"
 msgstr "إغلاق"
 
-#: src/host_manager.py:124
+#: src/host_manager.py:196
+#, python-brace-format
+msgid ""
+"Ollama Cloud is reachable. Available models: {0}\n"
+"Your API key will be checked when you generate a response."
+msgstr ""
+"يمكن الوصول إلى Ollama Cloud. النماذج المتاحة: {0}\n"
+"سيُتحقق من مفتاح API عند توليد رد."
+
+#: src/host_manager.py:199
 #, python-brace-format
 msgid ""
 "Connected\n"
@@ -400,7 +473,7 @@ msgstr ""
 "متصل\n"
 "إصدار Ollama: {0}"
 
-#: src/host_manager.py:126
+#: src/host_manager.py:201
 #, python-brace-format
 msgid ""
 "Connection failed\n"
@@ -409,15 +482,18 @@ msgstr ""
 "فشل الاتصال\n"
 "{0}"
 
-#: src/host_manager.py:169 src/model_manager.py:352
+#: src/host_manager.py:264 src/model_manager.py:380
 #, python-brace-format
 msgid "Are you sure you want to delete {0}?"
 msgstr "هل تريد بالتأكيد حذف {0}؟"
 
-#: src/host_manager.py:172 src/model_manager.py:367
-#: src/widgets/knowledge_view.py:1359
+#: src/host_manager.py:267 src/model_manager.py:395 src/widgets/knowledge_view.py:1359
 msgid "Delete"
 msgstr "حذف"
+
+#: src/host_manager.py:276 src/model_manager.py:418
+msgid "Delete Failed"
+msgstr "فشل الحذف"
 
 #: src/host_manager.ui:6 src/host_manager.ui:17
 msgid "Manage Hosts"
@@ -438,13 +514,13 @@ msgstr "أُوقفت العملية"
 #: src/knowledge.py:44
 msgid "No text was found. Scanned documents require OCR before import."
 msgstr ""
-"لم يُعثر على نص. تتطلب المستندات الممسوحة ضوئيًا التعرف البصري على المحارف "
-"(OCR) قبل الاستيراد."
+"لم يُعثر على نص. تتطلب المستندات الممسوحة ضوئيًا التعرف البصري على المحارف (OCR) قبل "
+"الاستيراد."
 
 #: src/knowledge.py:46
 msgid ""
-"This document exceeds the limit of 5 million extracted characters. Split it "
-"into smaller files."
+"This document exceeds the limit of 5 million extracted characters. Split it into "
+"smaller files."
 msgstr "يتجاوز هذا المستند حد خمسة ملايين محرف مستخرج. قسّمه إلى ملفات أصغر."
 
 #: src/knowledge.py:47
@@ -485,22 +561,19 @@ msgid "This appears to be a binary file, not a text document."
 msgstr "يبدو أن هذا ملف ثنائي وليس مستندًا نصيًا."
 
 #: src/knowledge.py:93
-msgid ""
-"Chunk size must be 64–32,000 characters; overlap must be smaller than the "
-"chunk."
-msgstr ""
-"يجب أن يكون حجم المقطع بين 64 و32,000 محرف، وأن يكون التداخل أصغر من المقطع."
+msgid "Chunk size must be 64–32,000 characters; overlap must be smaller than the chunk."
+msgstr "يجب أن يكون حجم المقطع بين 64 و32,000 محرف، وأن يكون التداخل أصغر من المقطع."
 
 #: src/knowledge.py:119
 msgid ""
-"The embedding model is unavailable or its digest is missing. Choose a "
-"compatible host and model."
+"The embedding model is unavailable or its digest is missing. Choose a compatible host"
+" and model."
 msgstr "نموذج التضمين غير متاح أو بصمته مفقودة. اختر مضيفًا ونموذجًا متوافقين."
 
 #: src/knowledge.py:121
 msgid ""
-"The embedding model has changed. Select a model with the original digest or "
-"build a new index."
+"The embedding model has changed. Select a model with the original digest or build a "
+"new index."
 msgstr "تغير نموذج التضمين. اختر نموذجًا بالبصمة الأصلية أو ابنِ فهرسًا جديدًا."
 
 #: src/knowledge.py:127
@@ -535,119 +608,106 @@ msgstr "يجب أن يكون الحد المخصص للمصادر بين 256 و6
 msgid "Wait for the model operation to finish."
 msgstr "انتظر حتى تنتهي عملية النموذج."
 
-#: src/knowledge.py:262
-msgid ""
-"The embedding host was removed. Choose a configured host before continuing."
+#: src/knowledge.py:263
+msgid "The embedding host was removed. Choose a configured host before continuing."
 msgstr "أُزيل مضيف التضمين. اختر مضيفًا مهيأً قبل المتابعة."
 
-#: src/knowledge.py:268 src/widgets/knowledge_import.py:146
-#: src/widgets/url_import.py:100 src/widgets/url_import.py:113
+#: src/knowledge.py:269 src/widgets/knowledge_import.py:146 src/widgets/url_import.py:100
+#: src/widgets/url_import.py:113
 msgid "Queued"
 msgstr "في قائمة الانتظار"
 
-#: src/knowledge.py:272
+#: src/knowledge.py:273
 msgid "The Knowledge Library is closing."
 msgstr "يجري إغلاق مكتبة المعرفة."
 
-#: src/knowledge.py:278
-msgid ""
-"This document is being replaced. Retry the build when replacement finishes."
+#: src/knowledge.py:279
+msgid "This document is being replaced. Retry the build when replacement finishes."
 msgstr "يجري استبدال هذا المستند. أعد محاولة البناء بعد انتهاء الاستبدال."
 
-#: src/knowledge.py:300
+#: src/knowledge.py:301
 msgid "Complete"
 msgstr "مكتمل"
 
-#: src/knowledge.py:317
-msgid ""
-"Wait for this document’s embedding builds to finish before replacing it."
+#: src/knowledge.py:318
+msgid "Wait for this document’s embedding builds to finish before replacing it."
 msgstr "انتظر حتى ينتهي بناء تضمينات هذا المستند قبل استبداله."
 
-#: src/knowledge.py:320
+#: src/knowledge.py:321
 msgid "Saving the web document…"
 msgstr "جارٍ حفظ مستند الويب…"
 
-#: src/knowledge.py:348
+#: src/knowledge.py:349
 msgid "Save web document"
 msgstr "حفظ مستند الويب"
 
-#: src/knowledge.py:369
+#: src/knowledge.py:370
 msgid "Create collection"
 msgstr "إنشاء مجموعة"
 
-#: src/knowledge.py:384
+#: src/knowledge.py:385
 #, python-brace-format
 msgid "Add document: {0}"
 msgstr "إضافة مستند: {0}"
 
-#: src/knowledge.py:392
+#: src/knowledge.py:393
 #, python-brace-format
 msgid "Prepare collection: {0}"
 msgstr "تجهيز المجموعة: {0}"
 
-#: src/knowledge.py:399
+#: src/knowledge.py:400
 msgid "Reusing embeddings and preparing missing documents…"
 msgstr "جارٍ إعادة استخدام التضمينات وتجهيز المستندات الناقصة…"
 
-#: src/knowledge.py:416
+#: src/knowledge.py:417
 #, python-brace-format
 msgid "Create embeddings: {0}"
 msgstr "إنشاء تضمينات: {0}"
 
-#: src/knowledge.py:421
+#: src/knowledge.py:422
 msgid "Build was stopped before it started."
 msgstr "أُوقف البناء قبل أن يبدأ."
 
-#: src/knowledge.py:438
+#: src/knowledge.py:439
 msgid "The source document was deleted."
 msgstr "حُذف المستند المصدر."
 
-#: src/knowledge.py:443
-msgid ""
-"This index would exceed 100,000 chunks. Increase the chunk size or reduce "
-"overlap."
+#: src/knowledge.py:444
+msgid "This index would exceed 100,000 chunks. Increase the chunk size or reduce overlap."
 msgstr "سيتجاوز هذا الفهرس 100,000 مقطع. زِد حجم المقطع أو قلل التداخل."
 
-#: src/knowledge.py:459
+#: src/knowledge.py:460
 #, python-brace-format
 msgid "Embedding chunks: {0} complete, {1} remaining"
 msgstr "جارٍ تضمين المقاطع: المكتمل {0}، والمتبقي {1}"
 
-#: src/knowledge.py:483
-msgid ""
-"The embedding input cannot fit. Shorten the document prefix or choose "
-"another model."
-msgstr ""
-"يتجاوز مدخل التضمين السعة المتاحة. قصّر بادئة المستند أو اختر نموذجًا آخر."
+#: src/knowledge.py:484
+msgid "The embedding input cannot fit. Shorten the document prefix or choose another model."
+msgstr "يتجاوز مدخل التضمين السعة المتاحة. قصّر بادئة المستند أو اختر نموذجًا آخر."
 
-#: src/knowledge.py:493
-msgid ""
-"The model returned a different vector dimension. Create a new configuration."
+#: src/knowledge.py:494
+msgid "The model returned a different vector dimension. Create a new configuration."
 msgstr "أعاد النموذج متجهًا بأبعاد مختلفة. أنشئ إعدادًا جديدًا."
 
-#: src/knowledge.py:508
+#: src/knowledge.py:509
 msgid "Create embeddings"
 msgstr "إنشاء تضمينات"
 
-#: src/knowledge.py:518
+#: src/knowledge.py:519
 msgid "This embedding configuration has no completed vectors."
 msgstr "لا يحتوي إعداد التضمين هذا على متجهات مكتملة."
 
-#: src/knowledge.py:520 src/widgets/knowledge_view.py:659
+#: src/knowledge.py:521 src/widgets/knowledge_view.py:659
 msgid "Enter a search query."
 msgstr "أدخل عبارة بحث."
 
-#: src/knowledge.py:530 src/knowledge_store.py:265
+#: src/knowledge.py:531 src/knowledge_store.py:265
 msgid "Query dimensions differ from the stored vectors. Rebuild the index."
 msgstr "تختلف أبعاد الاستعلام عن المتجهات المخزنة. أعد بناء الفهرس."
 
-#: src/knowledge.py:537
-msgid ""
-"No passages met the search criteria. Adjust the query, sources, or minimum "
-"similarity."
-msgstr ""
-"لم تستوفِ أي مقاطع معايير البحث. عدّل الاستعلام أو المصادر أو الحد الأدنى "
-"للتشابه."
+#: src/knowledge.py:538
+msgid "No passages met the search criteria. Adjust the query, sources, or minimum similarity."
+msgstr "لم تستوفِ أي مقاطع معايير البحث. عدّل الاستعلام أو المصادر أو الحد الأدنى للتشابه."
 
 #: src/knowledge_store.py:49
 msgid "The destination collection was deleted."
@@ -686,11 +746,8 @@ msgid "Invalid search limits."
 msgstr "حدود البحث غير صالحة."
 
 #: src/knowledge_store.py:272
-msgid ""
-"A selected index is missing, incomplete, or incompatible. Choose sources "
-"again."
-msgstr ""
-"أحد الفهارس المحددة مفقود أو غير مكتمل أو غير متوافق. اختر المصادر مجددًا."
+msgid "A selected index is missing, incomplete, or incompatible. Choose sources again."
+msgstr "أحد الفهارس المحددة مفقود أو غير مكتمل أو غير متوافق. اختر المصادر مجددًا."
 
 #: src/knowledge_store.py:277 src/knowledge_store.py:286
 msgid "Selected chunks are missing. Choose sources again."
@@ -738,12 +795,13 @@ msgstr ""
 "بياناتك جاهزة. حُفظت نسخة احتياطية من قاعدة البيانات السابقة في:\n"
 "{0}"
 
-#. Translators: Replace "translator-credits" with your name/username, and optionally an email or URL.
+#. Translators: Replace "translator-credits" with your name/username, and optionally an
+#. email or URL.
 #: src/main.py:75
 msgid "translator-credits"
 msgstr "ترجمة بمساعدة الذكاء الاصطناعي"
 
-#: src/model_details_view.ui:6 src/model_manager.py:42 src/model_manager.py:291
+#: src/model_details_view.ui:6 src/model_manager.py:42 src/model_manager.py:318
 msgid "Model Details"
 msgstr "تفاصيل النموذج"
 
@@ -756,187 +814,187 @@ msgstr ""
 "الذاكرة: {0} · ذاكرة الرسوميات: {1}\n"
 "السياق: {2} · انتهاء الصلاحية: {3}"
 
-#: src/model_manager.py:163 src/tab.py:162
+#: src/model_manager.py:168 src/tab.py:163
 msgid "No host configured."
 msgstr "لم يُهيأ أي مضيف."
 
-#: src/model_manager.py:168
+#: src/model_manager.py:173
 msgid "Loading running models…"
 msgstr "جارٍ تحميل النماذج العاملة…"
 
-#: src/model_manager.py:172
+#: src/model_manager.py:177
 #, python-brace-format
 msgid "Could not refresh running models: {0}"
 msgstr "تعذر تحديث النماذج العاملة: {0}"
 
-#: src/model_manager.py:188
+#: src/model_manager.py:193
 msgid "No models are loaded in memory."
 msgstr "لا توجد نماذج محملة في الذاكرة."
 
-#: src/model_manager.py:194 src/model_manager.py:207
+#: src/model_manager.py:199 src/model_manager.py:212
 msgid "Unload"
 msgstr "إفراغ من الذاكرة"
 
-#: src/model_manager.py:195 src/model_manager.py:209
+#: src/model_manager.py:200 src/model_manager.py:214
 msgid "Release this model from memory; keep its downloaded files."
 msgstr "حرر هذا النموذج من الذاكرة مع الاحتفاظ بملفاته المنزلة."
 
-#: src/model_manager.py:207
+#: src/model_manager.py:212
 msgid "Unloading…"
 msgstr "جارٍ الإفراغ من الذاكرة…"
 
-#: src/model_manager.py:208
+#: src/model_manager.py:213
 msgid "A chat or embedding job is using this model in Gnollama."
 msgstr "تستخدم دردشة أو مهمة تضمين هذا النموذج في Gnollama."
 
-#: src/model_manager.py:225
+#: src/model_manager.py:232
 msgid "Could not unload model"
 msgstr "تعذر إفراغ النموذج من الذاكرة"
 
-#: src/model_manager.py:265
+#: src/model_manager.py:273 src/model_manager.ui:90
+msgid "Available Models"
+msgstr "النماذج المتاحة"
+
+#: src/model_manager.py:273 src/model_manager.ui:80
+msgid "Installed"
+msgstr "المثبتة"
+
+#: src/model_manager.py:286
 msgid "Connection Error"
 msgstr "خطأ في الاتصال"
 
-#: src/model_manager.py:298
+#: src/model_manager.py:325
 msgid "Delete Model"
 msgstr "حذف النموذج"
 
-#: src/model_manager.py:329
+#: src/model_manager.py:357
 msgid "Failed to fetch details"
 msgstr "فشل جلب التفاصيل"
 
-#: src/model_manager.py:349 src/model_manager.py:374 src/model_manager.py:377
+#: src/model_manager.py:377 src/model_manager.py:402 src/model_manager.py:405
 msgid "Model Is Busy"
 msgstr "النموذج مشغول"
 
-#: src/model_manager.py:349 src/model_manager.py:377
+#: src/model_manager.py:377 src/model_manager.py:405
 msgid "Wait for active chats and embedding jobs before deleting this model."
 msgstr "انتظر انتهاء الدردشات ومهام التضمين النشطة قبل حذف هذا النموذج."
 
-#: src/model_manager.py:353
+#: src/model_manager.py:381
 msgid "Also delete matching vectors; keep source text"
 msgstr "حذف المتجهات المطابقة أيضًا مع الاحتفاظ بنص المصدر"
 
-#: src/model_manager.py:355
+#: src/model_manager.py:383
 #, python-brace-format
 msgid ""
-"Stored data using this model: {0} documents, {1} indexes, {2} vectors. Kept "
-"vectors can be used again with the same model digest on a compatible host."
+"Stored data using this model: {0} documents, {1} indexes, {2} vectors. Kept vectors "
+"can be used again with the same model digest on a compatible host."
 msgstr ""
-"البيانات المخزنة التي تستخدم هذا النموذج: المستندات {0}، والفهارس {1}، "
-"والمتجهات {2}. يمكن إعادة استخدام المتجهات المحتفظ بها مع بصمة النموذج نفسها "
-"على مضيف متوافق."
+"البيانات المخزنة التي تستخدم هذا النموذج: المستندات {0}، والفهارس {1}، والمتجهات {2}."
+" يمكن إعادة استخدام المتجهات المحتفظ بها مع بصمة النموذج نفسها على مضيف متوافق."
 
-#: src/model_manager.py:357
+#: src/model_manager.py:385
 #, python-brace-format
 msgid ""
-"Collections using this configuration: {0}. Deleting vectors keeps their "
-"documents and membership, but they will need embeddings rebuilt before "
-"searching."
+"Collections using this configuration: {0}. Deleting vectors keeps their documents and"
+" membership, but they will need embeddings rebuilt before searching."
 msgstr ""
-"المجموعات التي تستخدم هذا الإعداد: {0}. يحافظ حذف المتجهات على المستندات "
-"وعضويتها، لكن يلزم إعادة بناء تضميناتها قبل البحث."
+"المجموعات التي تستخدم هذا الإعداد: {0}. يحافظ حذف المتجهات على المستندات وعضويتها، "
+"لكن يلزم إعادة بناء تضميناتها قبل البحث."
 
-#: src/model_manager.py:360
+#: src/model_manager.py:388
 msgid "Delete Model?"
 msgstr "حذف النموذج؟"
 
-#: src/model_manager.py:374
-msgid ""
-"Wait for all indexing jobs using this model before deleting its vectors."
-msgstr ""
-"انتظر انتهاء جميع مهام الفهرسة التي تستخدم هذا النموذج قبل حذف متجهاته."
+#: src/model_manager.py:402
+msgid "Wait for all indexing jobs using this model before deleting its vectors."
+msgstr "انتظر انتهاء جميع مهام الفهرسة التي تستخدم هذا النموذج قبل حذف متجهاته."
 
-#: src/model_manager.py:390
-msgid "Delete Failed"
-msgstr "فشل الحذف"
-
-#: src/model_manager.py:545
+#: src/model_manager.py:573
 msgid "Starting download…"
 msgstr "جارٍ بدء التنزيل…"
 
-#: src/model_manager.py:570
+#: src/model_manager.py:598
 msgid "Error"
 msgstr "خطأ"
 
-#: src/model_manager.py:571
+#: src/model_manager.py:599
 msgid "Error occurred."
 msgstr "حدث خطأ."
 
-#: src/model_manager.py:590
+#: src/model_manager.py:618
 #, python-brace-format
 msgid "{0:.0f}%"
 msgstr "{0:.0f}٪"
 
-#: src/model_manager.py:593
+#: src/model_manager.py:621
 msgid "Download complete"
 msgstr "اكتمل التنزيل"
 
-#: src/model_manager.py:611 src/widgets/chat_input.ui:27
+#: src/model_manager.py:639 src/widgets/chat_input.ui:27
 msgid "Model"
 msgstr "النموذج"
 
-#: src/model_manager.py:612
+#: src/model_manager.py:640
 msgid "Remote Model"
 msgstr "النموذج البعيد"
 
-#: src/model_manager.py:613
+#: src/model_manager.py:641
 msgid "Remote Host"
 msgstr "المضيف البعيد"
 
-#: src/model_manager.py:614
+#: src/model_manager.py:642
 msgid "Modified At"
 msgstr "وقت التعديل"
 
-#: src/model_manager.py:615
+#: src/model_manager.py:643
 msgid "Size"
 msgstr "الحجم"
 
-#: src/model_manager.py:616
+#: src/model_manager.py:644
 msgid "Digest"
 msgstr "البصمة"
 
-#: src/model_manager.py:617
+#: src/model_manager.py:645
 msgid "Detail: Format"
 msgstr "التفاصيل: التنسيق"
 
-#: src/model_manager.py:618
+#: src/model_manager.py:646
 msgid "Detail: Family"
 msgstr "التفاصيل: العائلة"
 
-#: src/model_manager.py:619
+#: src/model_manager.py:647
 msgid "Detail: Families"
 msgstr "التفاصيل: العائلات"
 
-#: src/model_manager.py:620
+#: src/model_manager.py:648
 msgid "Detail: Parameter Size"
 msgstr "التفاصيل: عدد المعاملات"
 
-#: src/model_manager.py:621
+#: src/model_manager.py:649
 msgid "Detail: Quantization Level"
 msgstr "التفاصيل: مستوى التكميم"
 
-#: src/model_manager.py:622
+#: src/model_manager.py:650
 msgid "Parameters"
 msgstr "المعاملات"
 
-#: src/model_manager.py:623
+#: src/model_manager.py:651
 msgid "Capabilities"
 msgstr "الإمكانات"
 
-#: src/model_manager.py:624
+#: src/model_manager.py:652
 msgid "Template"
 msgstr "القالب"
 
-#: src/model_manager.py:625
+#: src/model_manager.py:653
 msgid "License"
 msgstr "الترخيص"
 
-#: src/model_manager.py:626
+#: src/model_manager.py:654
 msgid "Modelfile"
 msgstr "Modelfile"
 
-#: src/model_manager.py:627
+#: src/model_manager.py:655
 msgid "Model Info"
 msgstr "معلومات النموذج"
 
@@ -956,14 +1014,6 @@ msgstr "تحديث قائمة النماذج"
 msgid "Download Model…"
 msgstr "تنزيل نموذج…"
 
-#: src/model_manager.ui:80
-msgid "Installed"
-msgstr "المثبتة"
-
-#: src/model_manager.ui:90
-msgid "Available Models"
-msgstr "النماذج المتاحة"
-
 #: src/model_manager.ui:102
 msgid "Running"
 msgstr "العاملة"
@@ -972,59 +1022,79 @@ msgstr "العاملة"
 msgid "Models in Memory"
 msgstr "النماذج في الذاكرة"
 
-#: src/ollama.py:52
+#: src/ollama.py:71 src/storage.py:127
+msgid "Ollama Cloud requires https://ollama.com."
+msgstr "يتطلب Ollama Cloud العنوان https://ollama.com."
+
+#: src/ollama.py:80
 msgid "Enter a valid http:// or https:// Ollama host URL."
 msgstr "أدخل عنوان URL صالحًا لمضيف Ollama يبدأ بـ http:// أو https://."
 
-#: src/ollama.py:61 src/ollama.py:84
+#: src/ollama.py:89 src/ollama.py:104 src/ollama.py:137
 msgid "Request stopped"
 msgstr "أُوقف الطلب"
 
-#: src/ollama.py:110
+#: src/ollama.py:98
+msgid "This operation is unavailable for Ollama Cloud."
+msgstr "هذه العملية غير متاحة لـ Ollama Cloud."
+
+#: src/ollama.py:124
+msgid ""
+"Ollama Cloud rejected the API key or account access. Edit this host to check its API "
+"key."
+msgstr ""
+"رفض Ollama Cloud مفتاح API أو الوصول إلى الحساب. عدّل هذا الخادم للتحقق من مفتاح API "
+"الخاص به."
+
+#: src/ollama.py:126
+msgid "Ollama Cloud usage or rate limit reached. Try again later."
+msgstr "تم بلوغ حد الاستخدام أو معدل الطلبات في Ollama Cloud. حاول مجددًا لاحقًا."
+
+#: src/ollama.py:163
 msgid "Invalid JSON received from Ollama"
 msgstr "ورد JSON غير صالح من Ollama"
 
-#: src/ollama.py:112
+#: src/ollama.py:165
 msgid "Expected a JSON object from Ollama"
 msgstr "كان المتوقع كائن JSON من Ollama"
 
-#: src/ollama.py:162
+#: src/ollama.py:221
 msgid "Enter nonempty text to embed."
 msgstr "أدخل نصًا غير فارغ لتضمينه."
 
-#: src/ollama.py:166
+#: src/ollama.py:225
 msgid "Embedding dimensions must be a positive integer."
 msgstr "يجب أن تكون أبعاد التضمين عددًا صحيحًا موجبًا."
 
-#: src/ollama.py:173
+#: src/ollama.py:232
 msgid "The server returned an incorrect number of embeddings."
 msgstr "أعاد الخادم عددًا غير صحيح من التضمينات."
 
-#: src/ollama.py:178
+#: src/ollama.py:237
 msgid "The server returned an invalid embedding vector."
 msgstr "أعاد الخادم متجه تضمين غير صالح."
 
-#: src/ollama.py:181
+#: src/ollama.py:240
 msgid "Embedding dimensions do not match, or a vector is zero."
 msgstr "لا تتطابق أبعاد التضمين، أو أن أحد المتجهات صفري."
 
-#: src/ollama.py:210
+#: src/ollama.py:269
 msgid "Model pull ended before completion"
 msgstr "انتهى تنزيل النموذج قبل اكتماله"
 
-#: src/ollama.py:216
+#: src/ollama.py:275
 msgid "Invalid output format"
 msgstr "تنسيق إخراج غير صالح"
 
-#: src/ollama.py:220
+#: src/ollama.py:279
 msgid "Keep-alive must be a duration in seconds, 0, or -1"
 msgstr "يجب أن تكون مدة إبقاء النموذج بالثواني أو 0 أو -1"
 
-#: src/ollama.py:224
+#: src/ollama.py:283
 msgid "Invalid thinking setting"
 msgstr "إعداد تفكير غير صالح"
 
-#: src/ollama.py:230
+#: src/ollama.py:289
 msgid "Top logprobs must be between 0 and 20"
 msgstr "يجب أن يكون عدد أعلى الاحتمالات اللوغاريتمية بين 0 و20"
 
@@ -1056,7 +1126,7 @@ msgstr "تفاصيل التنزيل"
 msgid "New Chat"
 msgstr "دردشة جديدة"
 
-#: src/session.py:167
+#: src/session.py:169
 msgid "There are no pending tool calls."
 msgstr "لا توجد استدعاءات أدوات معلقة."
 
@@ -1103,9 +1173,8 @@ msgstr "تبديل الشريط الجانبي"
 msgid "Opening Gnollama"
 msgstr "جارٍ فتح Gnollama"
 
-#: src/startup.py:20 src/tab.py:245 src/widgets/knowledge_import.py:88
-#: src/widgets/knowledge_view.py:1220 src/widgets/url_import.py:232
-#: src/window.py:139
+#: src/startup.py:20 src/tab.py:247 src/widgets/knowledge_import.py:88
+#: src/widgets/knowledge_view.py:1220 src/widgets/url_import.py:232 src/window.py:139
 msgid "Retry"
 msgstr "إعادة المحاولة"
 
@@ -1125,6 +1194,14 @@ msgstr "تعذر فتح قاعدة البيانات"
 #, python-brace-format
 msgid "Database backup: {0}"
 msgstr "نسخة قاعدة البيانات الاحتياطية: {0}"
+
+#: src/storage.py:117
+msgid "This host was removed."
+msgstr "أُزيل هذا الخادم."
+
+#: src/storage.py:122
+msgid "Invalid host type."
+msgstr "نوع الخادم غير صالح."
 
 #: src/structured.py:18
 msgid "Non-finite numbers are not valid JSON."
@@ -1178,43 +1255,43 @@ msgstr "رد جديد"
 msgid "Chat"
 msgstr "دردشة"
 
-#: src/tab.py:166
+#: src/tab.py:167
 msgid "Select an available model before sending."
 msgstr "اختر نموذجًا متاحًا قبل الإرسال."
 
-#: src/tab.py:169
+#: src/tab.py:170
 msgid "Wait for this model to finish unloading before sending."
 msgstr "انتظر إفراغ هذا النموذج من الذاكرة قبل الإرسال."
 
-#: src/tab.py:174
+#: src/tab.py:175
 msgid "Wait for image support to be checked before sending."
 msgstr "انتظر اكتمال التحقق من دعم الصور قبل الإرسال."
 
-#: src/tab.py:176 src/widgets/chat_input.py:112
+#: src/tab.py:177 src/widgets/chat_input.py:112
 msgid "Remove draft images or select a vision model to send."
 msgstr "أزل صور المسودة أو اختر نموذجًا يدعم الرؤية للإرسال."
 
-#: src/tab.py:218
+#: src/tab.py:220
 msgid "Retrieving sources…"
 msgstr "جارٍ استرجاع المصادر…"
 
-#: src/tab.py:243
+#: src/tab.py:245
 msgid "Could Not Retrieve Sources"
 msgstr "تعذر استرجاع المصادر"
 
-#: src/tab.py:244
+#: src/tab.py:246
 msgid "Adjust Sources"
 msgstr "تعديل المصادر"
 
-#: src/tab.py:246
+#: src/tab.py:248
 msgid "Send Without Knowledge"
 msgstr "إرسال دون المعرفة"
 
-#: src/tab.py:247
+#: src/tab.py:249
 msgid "Keep Draft"
 msgstr "الاحتفاظ بالمسودة"
 
-#: src/tab.py:309
+#: src/tab.py:311
 msgid "Response ended before completion."
 msgstr "انتهى الرد قبل اكتماله."
 
@@ -1295,10 +1372,9 @@ msgstr "يجب أن يكون الحد الأقصى للمسافة عددًا م�
 
 #: src/vectors.py:31
 msgid ""
-"Vector dimensions must be between 1 and 8,192. Choose a supported dimension "
-"or embedding model."
-msgstr ""
-"يجب أن تكون أبعاد المتجه بين 1 و8,192. اختر أبعادًا أو نموذج تضمين مدعومًا."
+"Vector dimensions must be between 1 and 8,192. Choose a supported dimension or "
+"embedding model."
+msgstr "يجب أن تكون أبعاد المتجه بين 1 و8,192. اختر أبعادًا أو نموذج تضمين مدعومًا."
 
 #: src/vectors.py:36
 msgid "Stored vector data is damaged. Rebuild this index."
@@ -1313,9 +1389,7 @@ msgid "Invalid embedding vector; expected 1–8,192 finite, nonzero dimensions."
 msgstr "متجه تضمين غير صالح؛ يلزم متجه منتهٍ غير صفري من 1 إلى 8,192 بُعدًا."
 
 #: src/vectors.py:66
-msgid ""
-"Could not load sqlite-vec. Reinstall Gnollama or install its sqlite-vec "
-"dependency."
+msgid "Could not load sqlite-vec. Reinstall Gnollama or install its sqlite-vec dependency."
 msgstr "تعذر تحميل sqlite-vec. أعد تثبيت Gnollama أو ثبّت اعتمادية sqlite-vec."
 
 #: src/vectors.py:120
@@ -1323,17 +1397,14 @@ msgid "Stored vector blocks are damaged. Rebuild this index."
 msgstr "كتل المتجهات المخزنة تالفة. أعد بناء هذا الفهرس."
 
 #: src/vectors.py:165
-msgid ""
-"The database contains broken references. Restore a database backup before "
-"upgrading."
+msgid "The database contains broken references. Restore a database backup before upgrading."
 msgstr "تحتوي قاعدة البيانات على مراجع معطلة. استعد نسخة احتياطية قبل الترقية."
 
 #: src/vectors.py:176
 msgid ""
-"Stored vector dimensions do not match their configuration. Rebuild the index "
-"before upgrading."
-msgstr ""
-"لا تتطابق أبعاد المتجهات المخزنة مع إعدادها. أعد بناء الفهرس قبل الترقية."
+"Stored vector dimensions do not match their configuration. Rebuild the index before "
+"upgrading."
+msgstr "لا تتطابق أبعاد المتجهات المخزنة مع إعدادها. أعد بناء الفهرس قبل الترقية."
 
 #: src/vectors.py:181
 #, python-brace-format
@@ -1371,8 +1442,7 @@ msgstr "تعذر فتح عنوان URL هذا."
 
 #: src/web_import.py:97
 msgid "The URL has an invalid redirect or exceeds five redirects."
-msgstr ""
-"يحتوي عنوان URL على إعادة توجيه غير صالحة أو يتجاوز خمس عمليات إعادة توجيه."
+msgstr "يحتوي عنوان URL على إعادة توجيه غير صالحة أو يتجاوز خمس عمليات إعادة توجيه."
 
 #: src/web_import.py:103
 #, python-brace-format
@@ -1402,17 +1472,12 @@ msgid "Invalid CSS selector: {0}"
 msgstr "محدد CSS غير صالح: {0}"
 
 #: src/web_import.py:226
-msgid ""
-"The CSS selector did not match any elements. Try main, article, or a content "
-"class."
+msgid "The CSS selector did not match any elements. Try main, article, or a content class."
 msgstr "لم يطابق محدد CSS أي عناصر. جرّب main أو article أو فئة للمحتوى."
 
 #: src/web_import.py:243
-msgid ""
-"No main content was found. Try a CSS selector, or paste the page text using "
-"Add Text."
-msgstr ""
-"لم يُعثر على محتوى رئيسي. جرّب محدد CSS أو الصق نص الصفحة باستخدام «إضافة نص»."
+msgid "No main content was found. Try a CSS selector, or paste the page text using Add Text."
+msgstr "لم يُعثر على محتوى رئيسي. جرّب محدد CSS أو الصق نص الصفحة باستخدام «إضافة نص»."
 
 #: src/web_import.py:251
 msgid "No text was found in the selected content. Try another CSS selector."
@@ -1424,25 +1489,22 @@ msgstr "مستند ويب"
 
 #: src/web_import.py:274
 msgid "This URL must provide an HTML page, PDF, or UTF-8 text document."
-msgstr ""
-"يجب أن يوفر هذا العنوان صفحة HTML أو ملف PDF أو مستندًا نصيًا بترميز UTF-8."
+msgstr "يجب أن يوفر هذا العنوان صفحة HTML أو ملف PDF أو مستندًا نصيًا بترميز UTF-8."
 
 #: src/web_store.py:38
 msgid "The destination collection was deleted. Choose a collection again."
 msgstr "حُذفت المجموعة الوجهة. اختر مجموعة مجددًا."
 
 #: src/web_store.py:43
-msgid ""
-"This document changed since the preview was opened. Fetch it again before "
-"saving."
+msgid "This document changed since the preview was opened. Fetch it again before saving."
 msgstr "تغير هذا المستند منذ فتح المعاينة. اجلبه مجددًا قبل الحفظ."
 
 #: src/web_store.py:53
 msgid "Source content changed. Rebuild required."
 msgstr "تغير محتوى المصدر. يلزم إعادة البناء."
 
-#: src/widgets/chat_input.py:61 src/widgets/chat_input.py:66
-#: src/widgets/chat_input.py:68 src/widgets/knowledge_view.py:247
+#: src/widgets/chat_input.py:61 src/widgets/chat_input.py:66 src/widgets/chat_input.py:68
+#: src/widgets/knowledge_view.py:247
 msgid "Model default"
 msgstr "افتراضي النموذج"
 
@@ -1503,22 +1565,26 @@ msgid "Checking chat models…"
 msgstr "جارٍ التحقق من نماذج الدردشة…"
 
 #: src/widgets/chat_input.py:176
+msgid "No cloud models are available. Try refreshing later."
+msgstr "لا تتوفر نماذج سحابية. حاول التحديث لاحقًا."
+
+#: src/widgets/chat_input.py:177
 msgid "No chat models found. Pull one in Manage Models, then refresh."
 msgstr "لم يُعثر على نماذج دردشة. نزّل نموذجًا من «إدارة النماذج» ثم حدّث القائمة."
 
-#: src/widgets/chat_input.py:246
+#: src/widgets/chat_input.py:247
 msgid "Select Images"
 msgstr "اختيار صور"
 
-#: src/widgets/chat_input.py:250
+#: src/widgets/chat_input.py:251
 msgid "Images"
 msgstr "الصور"
 
-#: src/widgets/chat_input.py:283 src/widgets/chat_input.ui:116
+#: src/widgets/chat_input.py:284 src/widgets/chat_input.ui:116
 msgid "No image selected"
 msgstr "لم تُحدد أي صورة"
 
-#: src/widgets/chat_input.py:289
+#: src/widgets/chat_input.py:290
 #, python-brace-format
 msgid "{0} image selected"
 msgid_plural "{0} images selected"
@@ -1570,14 +1636,14 @@ msgstr "تطبيق"
 msgid "Content"
 msgstr "المحتوى"
 
-#: src/widgets/json_view.py:160 src/widgets/options_panel.py:41
+#: src/widgets/json_view.py:160 src/widgets/options_panel.py:42
 msgid "JSON Schema"
 msgstr "مخطط JSON"
 
 #: src/widgets/json_view.py:161
 msgid ""
-"Paste or import a self-contained JSON Schema. Describe the expected JSON in "
-"your prompt."
+"Paste or import a self-contained JSON Schema. Describe the expected JSON in your "
+"prompt."
 msgstr "الصق مخطط JSON مكتفيًا بذاته أو استورده. صف JSON المتوقع في مطالبتك."
 
 #: src/widgets/json_view.py:162
@@ -1666,12 +1732,11 @@ msgstr "إضافة ملفات"
 
 #: src/widgets/knowledge_import.py:67
 msgid ""
-"Import PDF or UTF-8 text files, including Markdown and source code. Maximum "
-"size: 50 MiB per file. Review one file at a time before adding."
+"Import PDF or UTF-8 text files, including Markdown and source code. Maximum size: 50 "
+"MiB per file. Review one file at a time before adding."
 msgstr ""
-"استورد ملفات PDF أو ملفات نصية بترميز UTF-8، بما فيها Markdown والشيفرة "
-"المصدرية. الحد الأقصى للحجم: 50 MiB لكل ملف. راجع ملفًا واحدًا في كل مرة قبل "
-"الإضافة."
+"استورد ملفات PDF أو ملفات نصية بترميز UTF-8، بما فيها Markdown والشيفرة المصدرية. "
+"الحد الأقصى للحجم: 50 MiB لكل ملف. راجع ملفًا واحدًا في كل مرة قبل الإضافة."
 
 #: src/widgets/knowledge_import.py:68
 msgid "Choose Files…"
@@ -1724,10 +1789,9 @@ msgstr "تم التخطي"
 
 #: src/widgets/knowledge_import.py:158
 msgid ""
-"Review complete. Added documents prepare in the background; their status is "
-"shown in the collection."
-msgstr ""
-"اكتملت المراجعة. تُجهز المستندات المضافة في الخلفية؛ وتُعرض حالتها في المجموعة."
+"Review complete. Added documents prepare in the background; their status is shown in "
+"the collection."
+msgstr "اكتملت المراجعة. تُجهز المستندات المضافة في الخلفية؛ وتُعرض حالتها في المجموعة."
 
 #: src/widgets/knowledge_import.py:166
 msgid "Extracting text…"
@@ -1857,11 +1921,9 @@ msgstr "يجب أن يكون التداخل أصغر من حجم المقطع."
 
 #: src/widgets/knowledge_view.py:311
 msgid ""
-"An embedding model makes documents searchable. It can differ from the model "
-"used for chat."
-msgstr ""
-"يجعل نموذج التضمين المستندات قابلة للبحث. ويمكن أن يختلف عن النموذج المستخدم "
-"للدردشة."
+"An embedding model makes documents searchable. It can differ from the model used for "
+"chat."
+msgstr "يجعل نموذج التضمين المستندات قابلة للبحث. ويمكن أن يختلف عن النموذج المستخدم للدردشة."
 
 #: src/widgets/knowledge_view.py:312
 msgid "Copy Collection with New Settings"
@@ -2000,19 +2062,19 @@ msgstr "إعداد التضمين (من المجموعات المحددة)"
 
 #: src/widgets/knowledge_view.py:474
 msgid ""
-"The query must use the same embedding configuration as the selected "
-"collections. A compatible server can be chosen here."
+"The query must use the same embedding configuration as the selected collections. A "
+"compatible server can be chosen here."
 msgstr ""
-"يجب أن يستخدم الاستعلام إعداد التضمين نفسه للمجموعات المحددة. يمكنك اختيار "
-"خادم متوافق هنا."
+"يجب أن يستخدم الاستعلام إعداد التضمين نفسه للمجموعات المحددة. يمكنك اختيار خادم "
+"متوافق هنا."
 
 #: src/widgets/knowledge_view.py:476
 msgid ""
-"This chat has older individual sources. Applying a collection selection "
-"replaces them. Closing this dialog keeps them unchanged."
+"This chat has older individual sources. Applying a collection selection replaces "
+"them. Closing this dialog keeps them unchanged."
 msgstr ""
-"تحتوي هذه الدردشة على مصادر فردية قديمة. سيستبدلها تطبيق اختيار المجموعات. "
-"إغلاق هذا الحوار يبقيها دون تغيير."
+"تحتوي هذه الدردشة على مصادر فردية قديمة. سيستبدلها تطبيق اختيار المجموعات. إغلاق هذا "
+"الحوار يبقيها دون تغيير."
 
 #: src/widgets/knowledge_view.py:481
 msgid "Maximum passages"
@@ -2064,19 +2126,19 @@ msgstr "الأعلى أقرب (من −1 إلى 1). هذا هو المقياس �
 
 #: src/widgets/knowledge_view.py:561
 msgid ""
-"Lower is closer. With normalized embeddings, Euclidean and cosine usually "
-"rank results alike."
+"Lower is closer. With normalized embeddings, Euclidean and cosine usually rank "
+"results alike."
 msgstr ""
-"الأقل أقرب. مع التضمينات المطبّعة، عادةً ما يرتب المقياسان الإقليدي وجيب "
-"التمام النتائج بصورة متشابهة."
+"الأقل أقرب. مع التضمينات المطبّعة، عادةً ما يرتب المقياسان الإقليدي وجيب التمام "
+"النتائج بصورة متشابهة."
 
 #: src/widgets/knowledge_view.py:562
 msgid ""
-"Lower is closer. Adds absolute differences between vector components and can "
-"rank results differently from cosine."
+"Lower is closer. Adds absolute differences between vector components and can rank "
+"results differently from cosine."
 msgstr ""
-"الأقل أقرب. يجمع الفروق المطلقة بين مكونات المتجهات وقد يرتب النتائج بشكل "
-"مختلف عن جيب التمام."
+"الأقل أقرب. يجمع الفروق المطلقة بين مكونات المتجهات وقد يرتب النتائج بشكل مختلف عن "
+"جيب التمام."
 
 #: src/widgets/knowledge_view.py:570 src/widgets/knowledge_view.py:855
 #: src/widgets/knowledge_view.py:949
@@ -2085,11 +2147,11 @@ msgstr "المجموعات"
 
 #: src/widgets/knowledge_view.py:571
 msgid ""
-"Choose collections to search. New documents added to them are included "
-"automatically. All documents must be ready."
+"Choose collections to search. New documents added to them are included automatically."
+" All documents must be ready."
 msgstr ""
-"اختر مجموعات للبحث فيها. تُضمّن المستندات الجديدة المضافة إليها تلقائيًا. يجب "
-"أن تكون جميع المستندات جاهزة."
+"اختر مجموعات للبحث فيها. تُضمّن المستندات الجديدة المضافة إليها تلقائيًا. يجب أن تكون"
+" جميع المستندات جاهزة."
 
 #: src/widgets/knowledge_view.py:575
 msgid "Some selected collections were deleted. Choose sources again."
@@ -2114,8 +2176,7 @@ msgid "No matching collections"
 msgstr "لا توجد مجموعات مطابقة"
 
 #: src/widgets/knowledge_view.py:592
-msgid ""
-"Create a collection and add text, files, or URLs in the Knowledge Library."
+msgid "Create a collection and add text, files, or URLs in the Knowledge Library."
 msgstr "أنشئ مجموعة وأضف نصوصًا أو ملفات أو عناوين URL في مكتبة المعرفة."
 
 #: src/widgets/knowledge_view.py:593
@@ -2124,15 +2185,12 @@ msgstr "فتح مكتبة المعرفة"
 
 #: src/widgets/knowledge_view.py:628
 msgid ""
-"Uses different embedding settings. Clear the current selection to choose "
-"this collection."
-msgstr ""
-"تستخدم إعدادات تضمين مختلفة. امسح الاختيار الحالي لاختيار هذه المجموعة."
+"Uses different embedding settings. Clear the current selection to choose this "
+"collection."
+msgstr "تستخدم إعدادات تضمين مختلفة. امسح الاختيار الحالي لاختيار هذه المجموعة."
 
 #: src/widgets/knowledge_view.py:639
-msgid ""
-"Select at least one collection. Create collections in Knowledge first if "
-"needed."
+msgid "Select at least one collection. Create collections in Knowledge first if needed."
 msgstr "اختر مجموعة واحدة على الأقل. أنشئ مجموعات في المعرفة أولًا عند الحاجة."
 
 #: src/widgets/knowledge_view.py:644
@@ -2274,29 +2332,25 @@ msgstr "مجموعات المعرفة"
 
 #: src/widgets/knowledge_view.py:1034
 msgid ""
-"Group documents into collections, then select a collection in chat to ask "
-"questions about its content."
-msgstr ""
-"نظم المستندات في مجموعات، ثم اختر مجموعة في الدردشة لطرح أسئلة عن محتواها."
+"Group documents into collections, then select a collection in chat to ask questions "
+"about its content."
+msgstr "نظم المستندات في مجموعات، ثم اختر مجموعة في الدردشة لطرح أسئلة عن محتواها."
 
 #: src/widgets/knowledge_view.py:1035
 msgid "Create Collection…"
 msgstr "إنشاء مجموعة…"
 
 #: src/widgets/knowledge_view.py:1038
-msgid ""
-"Select a document to inspect it. New imports always ask for a destination "
-"collection."
-msgstr ""
-"اختر مستندًا لفحصه. تتطلب عمليات الاستيراد الجديدة دائمًا اختيار مجموعة وجهة."
+msgid "Select a document to inspect it. New imports always ask for a destination collection."
+msgstr "اختر مستندًا لفحصه. تتطلب عمليات الاستيراد الجديدة دائمًا اختيار مجموعة وجهة."
 
 #: src/widgets/knowledge_view.py:1043
 msgid ""
 "Add text, files, or URLs to this collection. Gnollama prepares the documents "
 "automatically so chats can search them."
 msgstr ""
-"أضف نصوصًا أو ملفات أو عناوين URL إلى هذه المجموعة. يجهز Gnollama المستندات "
-"تلقائيًا لتتمكن الدردشات من البحث فيها."
+"أضف نصوصًا أو ملفات أو عناوين URL إلى هذه المجموعة. يجهز Gnollama المستندات تلقائيًا "
+"لتتمكن الدردشات من البحث فيها."
 
 #: src/widgets/knowledge_view.py:1045
 msgid "Add Existing Documents…"
@@ -2366,20 +2420,19 @@ msgstr "حذف المجموعة؟"
 #: src/widgets/knowledge_view.py:1120
 #, python-brace-format
 msgid ""
-"Delete “{0}”? Its documents and embeddings stay in the library. Chats "
-"selecting this collection will need new sources; saved answers keep their "
-"original passages."
+"Delete “{0}”? Its documents and embeddings stay in the library. Chats selecting this "
+"collection will need new sources; saved answers keep their original passages."
 msgstr ""
-"حذف «{0}»؟ ستبقى مستنداتها وتضميناتها في المكتبة. ستحتاج الدردشات التي تختار "
-"هذه المجموعة إلى مصادر جديدة؛ وتحتفظ الردود المحفوظة بمقاطعها الأصلية."
+"حذف «{0}»؟ ستبقى مستنداتها وتضميناتها في المكتبة. ستحتاج الدردشات التي تختار هذه "
+"المجموعة إلى مصادر جديدة؛ وتحتفظ الردود المحفوظة بمقاطعها الأصلية."
 
 #: src/widgets/knowledge_view.py:1135
 msgid ""
-"Choose a host and embedding model matching the collection’s original model "
-"digest. Embedding settings stay the same."
+"Choose a host and embedding model matching the collection’s original model digest. "
+"Embedding settings stay the same."
 msgstr ""
-"اختر مضيفًا ونموذج تضمين يطابقان بصمة النموذج الأصلية للمجموعة. تبقى إعدادات "
-"التضمين كما هي."
+"اختر مضيفًا ونموذج تضمين يطابقان بصمة النموذج الأصلية للمجموعة. تبقى إعدادات التضمين "
+"كما هي."
 
 #: src/widgets/knowledge_view.py:1163
 msgid "Original model available"
@@ -2387,8 +2440,8 @@ msgstr "النموذج الأصلي متاح"
 
 #: src/widgets/knowledge_view.py:1164
 msgid ""
-"Unavailable — the original model changed or was removed. Choose a compatible "
-"server for searches."
+"Unavailable — the original model changed or was removed. Choose a compatible server "
+"for searches."
 msgstr "غير متاح — تغير النموذج الأصلي أو أُزيل. اختر خادمًا متوافقًا للبحث."
 
 #: src/widgets/knowledge_view.py:1166
@@ -2461,11 +2514,11 @@ msgstr "إيقاف بناء التضمين المشترك؟"
 #: src/widgets/knowledge_view.py:1261
 #, python-brace-format
 msgid ""
-"These collections use this build: {0}. They will need a retry before chat "
-"search can use them."
+"These collections use this build: {0}. They will need a retry before chat search can "
+"use them."
 msgstr ""
-"تستخدم هذه المجموعات هذا البناء: {0}. ستحتاج إلى إعادة المحاولة قبل "
-"استخدامها في بحث الدردشة."
+"تستخدم هذه المجموعات هذا البناء: {0}. ستحتاج إلى إعادة المحاولة قبل استخدامها في بحث "
+"الدردشة."
 
 #: src/widgets/knowledge_view.py:1263
 msgid "Keep Building"
@@ -2513,11 +2566,11 @@ msgstr "حذف فهرس التضمين؟"
 
 #: src/widgets/knowledge_view.py:1351
 msgid ""
-"Chats selecting this data will need new sources. Passages already saved with "
-"answers remain in chat history."
+"Chats selecting this data will need new sources. Passages already saved with answers "
+"remain in chat history."
 msgstr ""
-"ستحتاج الدردشات التي تختار هذه البيانات إلى مصادر جديدة. تبقى المقاطع "
-"المحفوظة مع الردود في سجل الدردشة."
+"ستحتاج الدردشات التي تختار هذه البيانات إلى مصادر جديدة. تبقى المقاطع المحفوظة مع "
+"الردود في سجل الدردشة."
 
 #: src/widgets/knowledge_view.py:1352
 msgid "The saved source text and all its indexes will be deleted."
@@ -2558,252 +2611,256 @@ msgstr "ابدأ محادثة"
 
 #: src/widgets/message_list.py:19
 msgid ""
-"Choose a model and enter a message. Select knowledge collections to ask "
-"questions about your documents."
+"Choose a model and enter a message. Select knowledge collections to ask questions "
+"about your documents."
 msgstr "اختر نموذجًا وأدخل رسالة. حدد مجموعات المعرفة لطرح أسئلة عن مستنداتك."
 
-#: src/widgets/options_panel.py:41
+#: src/widgets/options_panel.py:42
 msgid "Text"
 msgstr "نص"
 
-#: src/widgets/options_panel.py:41
+#: src/widgets/options_panel.py:42
 msgid "JSON"
 msgstr "JSON"
 
-#: src/widgets/options_panel.py:43 src/widgets/options_panel.py:72
+#: src/widgets/options_panel.py:44 src/widgets/options_panel.py:83
 msgid "Server default"
 msgstr "افتراضي الخادم"
 
-#: src/widgets/options_panel.py:43
+#: src/widgets/options_panel.py:44
 msgid "Unload after reply"
 msgstr "الإفراغ من الذاكرة بعد الرد"
 
-#: src/widgets/options_panel.py:43
+#: src/widgets/options_panel.py:44
 msgid "Five minutes"
 msgstr "خمس دقائق"
 
-#: src/widgets/options_panel.py:44
+#: src/widgets/options_panel.py:45
 msgid "Thirty minutes"
 msgstr "ثلاثون دقيقة"
 
-#: src/widgets/options_panel.py:44
+#: src/widgets/options_panel.py:45
 msgid "Indefinitely"
 msgstr "دون حد زمني"
 
-#: src/widgets/options_panel.py:44
+#: src/widgets/options_panel.py:45
 msgid "Custom seconds"
 msgstr "ثوانٍ مخصصة"
 
-#: src/widgets/options_panel.py:63
+#: src/widgets/options_panel.py:53
+msgid "Ollama Cloud uses text output and manages model retention automatically."
+msgstr "يستخدم Ollama Cloud مخرجات نصية ويدير الاحتفاظ بالنماذج في الذاكرة تلقائيًا."
+
+#: src/widgets/options_panel.py:74
 msgid "Server"
 msgstr "الخادم"
 
-#: src/widgets/options_panel.py:88
+#: src/widgets/options_panel.py:100
 msgid "System Instructions"
 msgstr "تعليمات النظام"
 
-#: src/widgets/options_panel.py:89
+#: src/widgets/options_panel.py:101
 msgid "System prompt"
 msgstr "مطالبة النظام"
 
-#: src/widgets/options_panel.py:89
+#: src/widgets/options_panel.py:101
 msgid "Optional instructions applied to this conversation."
 msgstr "تعليمات اختيارية تُطبق على هذه المحادثة."
 
-#: src/widgets/options_panel.py:90
+#: src/widgets/options_panel.py:102
 msgid "Optional instructions"
 msgstr "تعليمات اختيارية"
 
-#: src/widgets/options_panel.py:91
+#: src/widgets/options_panel.py:103
 msgid "Generation Limits"
 msgstr "حدود التوليد"
 
-#: src/widgets/options_panel.py:91
+#: src/widgets/options_panel.py:103
 msgid "Blank fields use the server’s defaults."
 msgstr "تستخدم الحقول الفارغة القيم الافتراضية للخادم."
 
-#: src/widgets/options_panel.py:92
+#: src/widgets/options_panel.py:104
 msgid "Context size (tokens)"
 msgstr "حجم السياق (بوحدات النص)"
 
-#: src/widgets/options_panel.py:92
+#: src/widgets/options_panel.py:104
 msgid "Maximum context available to the model; larger values need more memory."
 msgstr "الحد الأقصى للسياق المتاح للنموذج؛ تتطلب القيم الأكبر ذاكرة أكثر."
 
-#: src/widgets/options_panel.py:93
+#: src/widgets/options_panel.py:105
 msgid "Maximum output tokens"
 msgstr "الحد الأقصى لوحدات نص الإخراج"
 
-#: src/widgets/options_panel.py:93
+#: src/widgets/options_panel.py:105
 msgid "Use −1 for unlimited output or −2 to fill the context."
 msgstr "استخدم −1 لإخراج غير محدود أو −2 لملء السياق."
 
-#: src/widgets/options_panel.py:94
+#: src/widgets/options_panel.py:106
 msgid "Stop sequences"
 msgstr "تسلسلات الإيقاف"
 
-#: src/widgets/options_panel.py:94
+#: src/widgets/options_panel.py:106
 msgid "Separate sequences with commas. Generation stops when one is produced."
 msgstr "افصل التسلسلات بفواصل. يتوقف التوليد عند إنتاج أحدها."
 
-#: src/widgets/options_panel.py:95
+#: src/widgets/options_panel.py:107
 msgid "Sampling"
 msgstr "أخذ العينات"
 
-#: src/widgets/options_panel.py:97
+#: src/widgets/options_panel.py:109
 msgid "Temperature"
 msgstr "درجة الحرارة"
 
-#: src/widgets/options_panel.py:97
+#: src/widgets/options_panel.py:109
 msgid "Higher values increase variation; zero is more predictable."
 msgstr "تزيد القيم الأعلى التنوع؛ وتكون النتائج أكثر قابلية للتوقع عند الصفر."
 
-#: src/widgets/options_panel.py:98
+#: src/widgets/options_panel.py:110
 msgid "Seed"
 msgstr "البذرة"
 
-#: src/widgets/options_panel.py:98
+#: src/widgets/options_panel.py:110
 msgid "An integer used to initialize random sampling."
 msgstr "عدد صحيح يُستخدم لتهيئة أخذ العينات العشوائي."
 
-#: src/widgets/options_panel.py:99
+#: src/widgets/options_panel.py:111
 msgid "Top K"
 msgstr "Top K"
 
-#: src/widgets/options_panel.py:99
+#: src/widgets/options_panel.py:111
 msgid "Number of candidate tokens to consider."
 msgstr "عدد وحدات النص المرشحة التي تؤخذ في الحسبان."
 
-#: src/widgets/options_panel.py:100
+#: src/widgets/options_panel.py:112
 msgid "Top P"
 msgstr "Top P"
 
-#: src/widgets/options_panel.py:100
+#: src/widgets/options_panel.py:112
 msgid "Cumulative probability cutoff, between 0 and 1."
 msgstr "حد الاحتمال التراكمي، بين 0 و1."
 
-#: src/widgets/options_panel.py:101
+#: src/widgets/options_panel.py:113
 msgid "Min P"
 msgstr "Min P"
 
-#: src/widgets/options_panel.py:101
+#: src/widgets/options_panel.py:113
 msgid "Minimum relative token probability, between 0 and 1."
 msgstr "الحد الأدنى للاحتمال النسبي لوحدة النص، بين 0 و1."
 
-#: src/widgets/options_panel.py:103
+#: src/widgets/options_panel.py:115
 msgid "Model Retention"
 msgstr "إبقاء النموذج في الذاكرة"
 
-#: src/widgets/options_panel.py:105
+#: src/widgets/options_panel.py:120
 msgid "Keep model loaded"
 msgstr "إبقاء النموذج محملًا"
 
-#: src/widgets/options_panel.py:108
+#: src/widgets/options_panel.py:124
 msgid "Custom duration (seconds)"
 msgstr "مدة مخصصة (بالثواني)"
 
-#: src/widgets/options_panel.py:108 src/widgets/options_panel.py:165
+#: src/widgets/options_panel.py:124 src/widgets/options_panel.py:187
 msgid "Enter a positive whole number of seconds."
 msgstr "أدخل عددًا صحيحًا موجبًا من الثواني."
 
-#: src/widgets/options_panel.py:110
+#: src/widgets/options_panel.py:126
 msgid "Diagnostics"
 msgstr "التشخيص"
 
-#: src/widgets/options_panel.py:111
+#: src/widgets/options_panel.py:128
 msgid "Show response statistics"
 msgstr "إظهار إحصاءات الرد"
 
-#: src/widgets/options_panel.py:112
+#: src/widgets/options_panel.py:131
 msgid "Return token probabilities (logprobs)"
 msgstr "إرجاع احتمالات وحدات النص (الاحتمالات اللوغاريتمية)"
 
-#: src/widgets/options_panel.py:115
+#: src/widgets/options_panel.py:135
 msgid "Top logprobs"
 msgstr "أعلى الاحتمالات اللوغاريتمية"
 
-#: src/widgets/options_panel.py:115
+#: src/widgets/options_panel.py:135
 msgid "Number of alternative token probabilities, from 0 to 20."
 msgstr "عدد احتمالات وحدات النص البديلة، من 0 إلى 20."
 
-#: src/widgets/options_panel.py:132
+#: src/widgets/options_panel.py:152
 msgid "Chat Settings"
 msgstr "إعدادات الدردشة"
 
-#: src/widgets/options_panel.py:135
+#: src/widgets/options_panel.py:155
 msgid "Done"
 msgstr "تم"
 
-#: src/widgets/options_panel.py:177
+#: src/widgets/options_panel.py:199
 msgid "Top logprobs must be between 0 and 20."
 msgstr "يجب أن يكون عدد أعلى الاحتمالات اللوغاريتمية بين 0 و20."
 
-#: src/widgets/options_panel.py:199
+#: src/widgets/options_panel.py:221
 #, python-brace-format
 msgid "Enabled tools: {0}. Results are supplied manually."
 msgstr "الأدوات المفعلة: {0}. تُقدّم النتائج يدويًا."
 
-#: src/widgets/options_panel.py:199
+#: src/widgets/options_panel.py:221
 msgid "Tool calling is off."
 msgstr "استدعاء الأدوات معطل."
 
-#: src/widgets/options_panel.py:202
+#: src/widgets/options_panel.py:224
 msgid "Checking tool support…"
 msgstr "جارٍ التحقق من دعم الأدوات…"
 
-#: src/widgets/options_panel.py:204
+#: src/widgets/options_panel.py:226
 msgid "This model reports no tool support; you can still test the API."
 msgstr "يفيد هذا النموذج بأنه لا يدعم الأدوات؛ لا يزال بإمكانك اختبار API."
 
-#: src/widgets/options_panel.py:206
+#: src/widgets/options_panel.py:228
 msgid "Tool support is unknown."
 msgstr "دعم الأدوات غير معروف."
 
-#: src/widgets/options_panel.py:275
+#: src/widgets/options_panel.py:297
 msgid "No hosts configured"
 msgstr "لم يُهيأ أي مضيف"
 
-#: src/widgets/options_panel.py:313 src/widgets/options_panel.py:315
+#: src/widgets/options_panel.py:335 src/widgets/options_panel.py:337
 msgid "Enter a valid number."
 msgstr "أدخل عددًا صالحًا."
 
-#: src/widgets/options_panel.py:333
+#: src/widgets/options_panel.py:355
 msgid "Value must not be negative."
 msgstr "يجب ألا تكون القيمة سالبة."
 
-#: src/widgets/options_panel.py:336
+#: src/widgets/options_panel.py:358
 msgid "Value must be between 0 and 1."
 msgstr "يجب أن تكون القيمة بين 0 و1."
 
-#: src/widgets/options_panel.py:338
+#: src/widgets/options_panel.py:360
 msgid "Context size must be positive."
 msgstr "يجب أن يكون حجم السياق موجبًا."
 
-#: src/widgets/options_panel.py:340
+#: src/widgets/options_panel.py:362
 msgid "Max tokens must be -2, -1, or a nonnegative integer."
 msgstr "يجب أن يكون الحد الأقصى لوحدات النص -2 أو -1 أو عددًا صحيحًا غير سالب."
 
-#: src/widgets/options_panel.ui:20
+#: src/widgets/options_panel.ui:21
 msgid "Tool Calling"
 msgstr "استدعاء الأدوات"
 
-#: src/widgets/options_panel.ui:26
+#: src/widgets/options_panel.ui:27
 msgid "Edit Tools…"
 msgstr "تحرير الأدوات…"
 
-#: src/widgets/options_panel.ui:44
+#: src/widgets/options_panel.ui:46
 msgid "Output:"
 msgstr "الإخراج:"
 
-#: src/widgets/options_panel.ui:56
+#: src/widgets/options_panel.ui:58
 msgid "Edit Schema…"
 msgstr "تحرير المخطط…"
 
-#: src/widgets/options_panel.ui:63
+#: src/widgets/options_panel.ui:65
 msgid "Chat Settings…"
 msgstr "إعدادات الدردشة…"
 
-#: src/widgets/options_panel.ui:65
+#: src/widgets/options_panel.ui:67
 msgid "Generation, Model Retention, and Diagnostics"
 msgstr "التوليد وإبقاء النموذج في الذاكرة والتشخيص"
 
@@ -2817,12 +2874,12 @@ msgstr "استيراد الأدوات"
 
 #: src/widgets/tool_view.py:12
 msgid ""
-"Define an Ollama tools array. Results are supplied manually. Example prompt: "
-"Read calculator.py, fix add so it adds instead of subtracting, then run "
-"python3 -m unittest -v."
+"Define an Ollama tools array. Results are supplied manually. Example prompt: Read "
+"calculator.py, fix add so it adds instead of subtracting, then run python3 -m "
+"unittest -v."
 msgstr ""
-"عرّف مصفوفة أدوات Ollama. تُقدّم النتائج يدويًا. مثال للمطالبة: اقرأ "
-"calculator.py، وأصلح add لتجمع بدلًا من الطرح، ثم شغّل python3 -m unittest -v."
+"عرّف مصفوفة أدوات Ollama. تُقدّم النتائج يدويًا. مثال للمطالبة: اقرأ calculator.py، "
+"وأصلح add لتجمع بدلًا من الطرح، ثم شغّل python3 -m unittest -v."
 
 #: src/widgets/tool_view.py:13
 msgid "Example"
@@ -2900,11 +2957,11 @@ msgstr "نتيجة أداة محاكاة"
 
 #: src/widgets/tool_view.py:105
 msgid ""
-"Enter the result to send to the model. Text, JSON, and empty results are "
-"accepted. No tool is executed."
+"Enter the result to send to the model. Text, JSON, and empty results are accepted. No"
+" tool is executed."
 msgstr ""
-"أدخل النتيجة لإرسالها إلى النموذج. تُقبل النصوص وJSON والنتائج الفارغة. لن "
-"تُنفذ أي أداة."
+"أدخل النتيجة لإرسالها إلى النموذج. تُقبل النصوص وJSON والنتائج الفارغة. لن تُنفذ أي "
+"أداة."
 
 #: src/widgets/tool_view.py:106
 msgid "Save Result"
@@ -2928,11 +2985,11 @@ msgstr "تحسين الاستخراج"
 
 #: src/widgets/url_import.py:55
 msgid ""
-"If the preview includes navigation or misses the article, select the page "
-"region to extract using a CSS selector."
+"If the preview includes navigation or misses the article, select the page region to "
+"extract using a CSS selector."
 msgstr ""
-"إذا تضمنت المعاينة عناصر التنقل أو أغفلت المقالة، فاختر منطقة الصفحة المراد "
-"استخراجها باستخدام محدد CSS."
+"إذا تضمنت المعاينة عناصر التنقل أو أغفلت المقالة، فاختر منطقة الصفحة المراد استخراجها"
+" باستخدام محدد CSS."
 
 #: src/widgets/url_import.py:56
 msgid "CSS selector (optional)"
@@ -2984,12 +3041,10 @@ msgid "Save or skip reviewed pages to make room for queued downloads."
 msgstr "احفظ الصفحات المراجعة أو تخطها لإفساح المجال للتنزيلات المنتظرة."
 
 #: src/widgets/url_import.py:129
-msgid ""
-"Saved documents build embeddings in the background. Closing discards unsaved "
-"previews."
+msgid "Saved documents build embeddings in the background. Closing discards unsaved previews."
 msgstr ""
-"تُبنى تضمينات المستندات المحفوظة في الخلفية. يؤدي الإغلاق إلى تجاهل المعاينات "
-"غير المحفوظة."
+"تُبنى تضمينات المستندات المحفوظة في الخلفية. يؤدي الإغلاق إلى تجاهل المعاينات غير "
+"المحفوظة."
 
 #: src/widgets/url_import.py:153
 msgid "Extracting content…"
@@ -3023,13 +3078,13 @@ msgstr "استبدال المستند وإعادة البناء؟"
 #: src/widgets/url_import.py:333
 #, python-brace-format
 msgid ""
-"Replace “{0}” and rebuild {1} embedding indexes? Saved chat answers keep "
-"their original passages. Affected collections cannot search this content "
-"until rebuilding succeeds."
+"Replace “{0}” and rebuild {1} embedding indexes? Saved chat answers keep their "
+"original passages. Affected collections cannot search this content until rebuilding "
+"succeeds."
 msgstr ""
-"استبدال «{0}» وإعادة بناء فهارس التضمين وعددها {1}؟ تحتفظ ردود الدردشة "
-"المحفوظة بمقاطعها الأصلية. لن تتمكن المجموعات المتأثرة من البحث في هذا "
-"المحتوى حتى تنجح إعادة البناء."
+"استبدال «{0}» وإعادة بناء فهارس التضمين وعددها {1}؟ تحتفظ ردود الدردشة المحفوظة "
+"بمقاطعها الأصلية. لن تتمكن المجموعات المتأثرة من البحث في هذا المحتوى حتى تنجح إعادة "
+"البناء."
 
 #: src/widgets/url_import.py:334
 msgid "None"
@@ -3142,3 +3197,6 @@ msgstr "ا_ختصارات لوحة المفاتيح"
 #: src/window.ui:146
 msgid "_About Gnollama"
 msgstr "_عن Gnollama"
+
+#~ msgid "Fetching version..."
+#~ msgstr "جارٍ جلب الإصدار…"

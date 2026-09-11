@@ -4,9 +4,9 @@
 # Translated and reviewed with AI assistance, 2026.
 msgid ""
 msgstr ""
-"Project-Id-Version: gnollama 0.13.0\n"
+"Project-Id-Version: gnollama 0.14.0\n"
 "Report-Msgid-Bugs-To: https://github.com/jackrabbithanna/gnollama/issues\n"
-"POT-Creation-Date: 2026-09-10 17:08-0600\n"
+"POT-Creation-Date: 2026-09-10 20:09-0600\n"
 "PO-Revision-Date: 2026-09-10 00:00+0000\n"
 "Last-Translator: AI-assisted translation\n"
 "Language: uk\n"
@@ -93,6 +93,26 @@ msgid "Ollama chat with code highlighting"
 msgstr "Чат Ollama з підсвічуванням коду"
 
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:53
+msgid "Connect directly to Ollama Cloud from Chat and Response tabs."
+msgstr "Підключайтеся безпосередньо до Ollama Cloud із вкладок чату та відповіді."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:54
+msgid ""
+"Store each host's API key in the desktop keyring, with session-only use when the "
+"keyring is unavailable."
+msgstr ""
+"Зберігайте ключ API кожного сервера у в’язці ключів стільниці та використовуйте його "
+"лише протягом сеансу, якщо в’язка ключів недоступна."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:55
+msgid ""
+"Browse cloud models with controls adapted to the service, and use local knowledge "
+"sources in cloud chats."
+msgstr ""
+"Переглядайте хмарні моделі з елементами керування, адаптованими до служби, і "
+"використовуйте локальні джерела знань у хмарних чатах."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:60
 msgid ""
 "Add a Knowledge Library for text and PDF imports, local embedding indexes, and "
 "source-grounded chats."
@@ -100,7 +120,7 @@ msgstr ""
 "Додано бібліотеку знань для імпорту тексту й PDF, локальних векторних індексів і "
 "чатів з опорою на джерела."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:55
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:62
 msgid ""
 "Start with knowledge collections and add text, files, or URLs with explicit "
 "destinations and guided previews."
@@ -108,7 +128,7 @@ msgstr ""
 "Починайте з колекцій знань і додавайте текст, файли чи URL-адреси, явно обираючи "
 "місце призначення та користуючись попереднім переглядом із підказками."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:56
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:63
 msgid ""
 "Choose collections before search settings, and use adaptive chat settings with "
 "clearer controls and feedback."
@@ -116,13 +136,13 @@ msgstr ""
 "Обирайте колекції перед налаштуванням пошуку та користуйтеся адаптивними "
 "налаштуваннями чату зі зрозумілішими елементами керування й повідомленнями."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:57
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:64
 msgid "Create and compare embeddings, inspect chunks and vectors, and test semantic searches."
 msgstr ""
 "Створюйте й порівнюйте векторні подання, переглядайте фрагменти та вектори, "
 "випробовуйте семантичний пошук."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:58
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:65
 msgid ""
 "Select documents or chunks for chats, with independent embedding hosts and saved "
 "source passages."
@@ -130,7 +150,7 @@ msgstr ""
 "Обирайте документи чи фрагменти для чатів, використовуючи окремі сервери векторних "
 "подань і збережені уривки джерел."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:59
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:66
 msgid ""
 "Warn about stored embeddings when deleting models, with optional vector cleanup that "
 "retains source text."
@@ -138,7 +158,7 @@ msgstr ""
 "Додано попередження про збережені векторні подання під час видалення моделей і "
 "можливість видалити вектори, зберігши вихідний текст."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:60
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:67
 msgid ""
 "Search with sqlite-vec, automatically migrate existing vectors with a database "
 "backup, and use the Qwen3 retrieval preset."
@@ -146,7 +166,7 @@ msgstr ""
 "Шукайте за допомогою sqlite-vec, автоматично переносьте наявні вектори зі створенням "
 "резервної копії бази даних і користуйтеся профілем пошуку Qwen3."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:61
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:68
 msgid ""
 "Organize documents into collections with shared embedding settings, automatic builds,"
 " and live collection selection in chats."
@@ -154,7 +174,7 @@ msgstr ""
 "Упорядковуйте документи в колекції зі спільними налаштуваннями векторних подань, "
 "автоматичною побудовою та вибором колекцій безпосередньо в чатах."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:62
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:69
 msgid ""
 "Choose collections as chat sources and compare cosine similarity, Euclidean distance,"
 " or Manhattan distance with appropriate search cutoffs."
@@ -162,7 +182,7 @@ msgstr ""
 "Обирайте колекції як джерела для чату й порівнюйте косинусну подібність, евклідову "
 "або мангеттенську відстань із відповідними порогами пошуку."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:63
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:70
 msgid ""
 "Hide embedding-only models from Chat and Response model selection while keeping them "
 "available in Knowledge and Manage Models."
@@ -170,7 +190,7 @@ msgstr ""
 "Моделі лише для векторних подань приховано у виборі моделей для чату й відповіді; "
 "вони й надалі доступні в розділах «Знання» та «Керування моделями»."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:64
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:71
 msgid ""
 "Import batches of URLs into collections with main-content extraction, CSS selectors, "
 "editable previews, and source links in chats."
@@ -178,7 +198,7 @@ msgstr ""
 "Імпортуйте пакети URL-адрес у колекції з видобуванням основного вмісту, "
 "CSS-селекторами, редагованим попереднім переглядом і посиланнями на джерела в чатах."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:65
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:72
 msgid ""
 "Review changed web documents before replacing their text and rebuilding all affected "
 "embedding indexes."
@@ -202,11 +222,11 @@ msgstr "Статистика відповіді"
 msgid "Earlier images were omitted from the text-only request."
 msgstr "Попередні зображення не включено до суто текстового запиту."
 
-#: src/bubbles.py:125 src/knowledge.py:300
+#: src/bubbles.py:125 src/knowledge.py:301
 msgid "Stopped"
 msgstr "Зупинено"
 
-#: src/bubbles.py:125 src/knowledge.py:300
+#: src/bubbles.py:125 src/knowledge.py:301
 msgid "Failed"
 msgstr "Помилка"
 
@@ -216,7 +236,7 @@ msgid "Logprobs"
 msgstr "Логарифми ймовірностей"
 
 #: src/bubbles.py:183 src/model_manager.py:22 src/model_manager.py:24
-#: src/model_manager.py:28
+#: src/model_manager.py:28 src/model_manager.py:312
 msgid "Unavailable"
 msgstr "Недоступно"
 
@@ -269,7 +289,7 @@ msgstr "Завершення: {0}"
 msgid "A document was deleted. Choose documents again."
 msgstr "Документ видалено. Оберіть документи знову."
 
-#: src/collections_store.py:107 src/knowledge.py:357
+#: src/collections_store.py:107 src/knowledge.py:358
 msgid "Enter a collection name."
 msgstr "Введіть назву колекції."
 
@@ -277,7 +297,7 @@ msgstr "Введіть назву колекції."
 msgid "Choose a model with the collection’s original digest."
 msgstr "Оберіть модель із початковою контрольною сумою колекції."
 
-#: src/collections_store.py:141 src/knowledge.py:390
+#: src/collections_store.py:141 src/knowledge.py:391
 msgid "The collection was deleted."
 msgstr "Колекцію видалено."
 
@@ -302,24 +322,48 @@ msgstr ""
 "Колекція «{0}» не готова. Створіть відсутні векторні подання або повторіть обробку "
 "документів із помилками: {1}"
 
-#: src/database.py:75
+#: src/credentials.py:27
+msgid "Enter a valid API key."
+msgstr "Введіть дійсний ключ API."
+
+#: src/credentials.py:51
+msgid "Could not access the keyring. Edit this host to retry or enter a session-only key."
+msgstr ""
+"Не вдалося отримати доступ до в’язки ключів. Відредагуйте цей сервер, щоб повторити "
+"спробу або ввести ключ лише для цього сеансу."
+
+#: src/credentials.py:53 src/storage.py:134
+msgid "An API key is required. Edit this host to enter one."
+msgstr "Потрібен ключ API. Відредагуйте цей сервер, щоб ввести його."
+
+#: src/credentials.py:66
+msgid "Could not save the API key in the keyring. Retry or use it for this session."
+msgstr ""
+"Не вдалося зберегти ключ API у в’язці ключів. Повторіть спробу або використовуйте "
+"його лише протягом цього сеансу."
+
+#: src/credentials.py:78 src/credentials.py:80
+msgid "Could not remove the saved API key. Unlock the keyring and retry."
+msgstr "Не вдалося видалити збережений ключ API. Розблокуйте в’язку ключів і повторіть спробу."
+
+#: src/database.py:80
 msgid "This database was created by a newer Gnollama version. Update Gnollama to open it."
 msgstr "Цю базу даних створено в новішій версії Gnollama. Оновіть Gnollama, щоб відкрити її."
 
-#: src/database.py:82
+#: src/database.py:87
 msgid "Backing up the database…"
 msgstr "Створення резервної копії бази даних…"
 
-#: src/database.py:191
+#: src/database.py:196
 msgid "This database requires a newer Gnollama version."
 msgstr "Ця база даних потребує новішої версії Gnollama."
 
-#: src/database.py:210
+#: src/database.py:215
 #, python-brace-format
 msgid "Upgrading the database to version {0}…"
 msgstr "Оновлення бази даних до версії {0}…"
 
-#: src/host_edit_dialog.ui:6 src/host_manager.py:171 src/model_manager.py:366
+#: src/host_edit_dialog.ui:14 src/host_manager.py:266 src/model_manager.py:394
 #: src/pull_model_dialog.ui:17 src/widgets/knowledge_view.py:1111
 #: src/widgets/knowledge_view.py:1121 src/widgets/knowledge_view.py:1250
 #: src/widgets/knowledge_view.py:1293 src/widgets/knowledge_view.py:1337
@@ -328,67 +372,108 @@ msgstr "Оновлення бази даних до версії {0}…"
 msgid "Cancel"
 msgstr "Скасувати"
 
-#: src/host_edit_dialog.ui:7 src/widgets/knowledge_view.py:1112
+#: src/host_edit_dialog.ui:19 src/widgets/knowledge_view.py:1112
 #: src/widgets/knowledge_view.py:1145 src/widgets/knowledge_view.py:1338 src/window.py:350
 msgid "Save"
 msgstr "Зберегти"
 
-#: src/host_edit_dialog.ui:21 src/model_manager.py:610
+#: src/host_edit_dialog.ui:39
+msgid "Host type"
+msgstr "Тип сервера"
+
+#: src/host_edit_dialog.ui:47 src/model_manager.py:638
 msgid "Name"
 msgstr "Назва"
 
-#: src/host_edit_dialog.ui:28
+#: src/host_edit_dialog.ui:54
 msgid "For example: Local Ollama"
 msgstr "Наприклад: Локальний Ollama"
 
-#: src/host_edit_dialog.ui:33
+#: src/host_edit_dialog.ui:59
 msgid "Server address"
 msgstr "Адреса сервера"
 
-#: src/host_edit_dialog.ui:45
+#: src/host_edit_dialog.ui:71
 msgid "Set as default host"
 msgstr "Зробити типовим сервером"
 
-#: src/host_manager.py:19
+#: src/host_manager.py:24
 msgid "Edit Host"
 msgstr "Редагувати сервер"
 
-#: src/host_manager.py:19 src/host_manager.ui:23
+#: src/host_manager.py:24 src/host_manager.ui:23
 msgid "Add Host"
 msgstr "Додати сервер"
 
-#: src/host_manager.py:35
+#: src/host_manager.py:30
+msgid "Ollama Server"
+msgstr "Сервер Ollama"
+
+#: src/host_manager.py:30 src/host_manager.py:72 src/model_manager.py:312
+msgid "Ollama Cloud"
+msgstr "Ollama Cloud"
+
+#: src/host_manager.py:34
+msgid "API key"
+msgstr "Ключ API"
+
+#: src/host_manager.py:36
+msgid "Leave blank to keep the existing key."
+msgstr "Залиште порожнім, щоб зберегти наявний ключ."
+
+#: src/host_manager.py:37
+msgid "Stored securely in your desktop keyring."
+msgstr "Надійно зберігається у в’язці ключів стільниці."
+
+#: src/host_manager.py:38
+msgid "Create an API key"
+msgstr "Створити ключ API"
+
+#: src/host_manager.py:44
+msgid "Use for This Session"
+msgstr "Використовувати для цього сеансу"
+
+#: src/host_manager.py:98 src/storage.py:124
 msgid "Enter a name for this server."
 msgstr "Введіть назву цього сервера."
 
-#: src/host_manager.py:78
+#: src/host_manager.py:149
 msgid "Default"
 msgstr "Типовий"
 
-#: src/host_manager.py:83 src/host_manager.py:87
+#: src/host_manager.py:154 src/host_manager.py:158
 msgid "Test Connection"
 msgstr "Перевірити з’єднання"
 
-#: src/host_manager.py:92
+#: src/host_manager.py:163
 msgid "Edit Server"
 msgstr "Редагувати сервер"
 
-#: src/host_manager.py:98 src/host_manager.py:168
+#: src/host_manager.py:169 src/host_manager.py:263
 msgid "Delete Host"
 msgstr "Видалити сервер"
 
-#: src/host_manager.py:112
-msgid "Fetching version..."
-msgstr "Отримання версії..."
+#: src/host_manager.py:183
+msgid "Checking connection…"
+msgstr "Перевірка з’єднання…"
 
-#: src/host_manager.py:114 src/main.py:63 src/model_manager.py:340 src/model_manager.py:601
-#: src/startup.py:23 src/widgets/json_view.py:230 src/widgets/knowledge_import.py:51
-#: src/widgets/knowledge_view.py:756 src/widgets/knowledge_view.py:909
-#: src/widgets/knowledge_view.py:1271
+#: src/host_manager.py:185 src/host_manager.py:277 src/main.py:63 src/model_manager.py:368
+#: src/model_manager.py:629 src/startup.py:23 src/widgets/json_view.py:230
+#: src/widgets/knowledge_import.py:51 src/widgets/knowledge_view.py:756
+#: src/widgets/knowledge_view.py:909 src/widgets/knowledge_view.py:1271
 msgid "Close"
 msgstr "Закрити"
 
-#: src/host_manager.py:124
+#: src/host_manager.py:196
+#, python-brace-format
+msgid ""
+"Ollama Cloud is reachable. Available models: {0}\n"
+"Your API key will be checked when you generate a response."
+msgstr ""
+"Ollama Cloud доступний. Доступні моделі: {0}\n"
+"Ваш ключ API буде перевірено під час створення відповіді."
+
+#: src/host_manager.py:199
 #, python-brace-format
 msgid ""
 "Connected\n"
@@ -397,7 +482,7 @@ msgstr ""
 "З’єднано\n"
 "Версія Ollama: {0}"
 
-#: src/host_manager.py:126
+#: src/host_manager.py:201
 #, python-brace-format
 msgid ""
 "Connection failed\n"
@@ -406,14 +491,18 @@ msgstr ""
 "Не вдалося з’єднатися\n"
 "{0}"
 
-#: src/host_manager.py:169 src/model_manager.py:352
+#: src/host_manager.py:264 src/model_manager.py:380
 #, python-brace-format
 msgid "Are you sure you want to delete {0}?"
 msgstr "Справді видалити {0}?"
 
-#: src/host_manager.py:172 src/model_manager.py:367 src/widgets/knowledge_view.py:1359
+#: src/host_manager.py:267 src/model_manager.py:395 src/widgets/knowledge_view.py:1359
 msgid "Delete"
 msgstr "Видалити"
+
+#: src/host_manager.py:276 src/model_manager.py:418
+msgid "Delete Failed"
+msgstr "Не вдалося видалити"
 
 #: src/host_manager.ui:6 src/host_manager.ui:17
 msgid "Manage Hosts"
@@ -536,110 +625,110 @@ msgstr "Ліміт обсягу джерел має бути від 256 до 64 
 msgid "Wait for the model operation to finish."
 msgstr "Дочекайтеся завершення операції з моделлю."
 
-#: src/knowledge.py:262
+#: src/knowledge.py:263
 msgid "The embedding host was removed. Choose a configured host before continuing."
 msgstr "Сервер векторних подань видалено. Оберіть налаштований сервер, перш ніж продовжити."
 
-#: src/knowledge.py:268 src/widgets/knowledge_import.py:146 src/widgets/url_import.py:100
+#: src/knowledge.py:269 src/widgets/knowledge_import.py:146 src/widgets/url_import.py:100
 #: src/widgets/url_import.py:113
 msgid "Queued"
 msgstr "У черзі"
 
-#: src/knowledge.py:272
+#: src/knowledge.py:273
 msgid "The Knowledge Library is closing."
 msgstr "Бібліотека знань закривається."
 
-#: src/knowledge.py:278
+#: src/knowledge.py:279
 msgid "This document is being replaced. Retry the build when replacement finishes."
 msgstr "Цей документ замінюється. Повторіть побудову після завершення заміни."
 
-#: src/knowledge.py:300
+#: src/knowledge.py:301
 msgid "Complete"
 msgstr "Завершено"
 
-#: src/knowledge.py:317
+#: src/knowledge.py:318
 msgid "Wait for this document’s embedding builds to finish before replacing it."
 msgstr ""
 "Дочекайтеся завершення побудови векторних подань цього документа, перш ніж замінювати"
 " його."
 
-#: src/knowledge.py:320
+#: src/knowledge.py:321
 msgid "Saving the web document…"
 msgstr "Збереження вебдокумента…"
 
-#: src/knowledge.py:348
+#: src/knowledge.py:349
 msgid "Save web document"
 msgstr "Зберегти вебдокумент"
 
-#: src/knowledge.py:369
+#: src/knowledge.py:370
 msgid "Create collection"
 msgstr "Створити колекцію"
 
-#: src/knowledge.py:384
+#: src/knowledge.py:385
 #, python-brace-format
 msgid "Add document: {0}"
 msgstr "Додати документ: {0}"
 
-#: src/knowledge.py:392
+#: src/knowledge.py:393
 #, python-brace-format
 msgid "Prepare collection: {0}"
 msgstr "Підготувати колекцію: {0}"
 
-#: src/knowledge.py:399
+#: src/knowledge.py:400
 msgid "Reusing embeddings and preparing missing documents…"
 msgstr "Повторне використання векторних подань і підготовка відсутніх документів…"
 
-#: src/knowledge.py:416
+#: src/knowledge.py:417
 #, python-brace-format
 msgid "Create embeddings: {0}"
 msgstr "Створити векторні подання: {0}"
 
-#: src/knowledge.py:421
+#: src/knowledge.py:422
 msgid "Build was stopped before it started."
 msgstr "Побудову зупинено до початку."
 
-#: src/knowledge.py:438
+#: src/knowledge.py:439
 msgid "The source document was deleted."
 msgstr "Вихідний документ видалено."
 
-#: src/knowledge.py:443
+#: src/knowledge.py:444
 msgid "This index would exceed 100,000 chunks. Increase the chunk size or reduce overlap."
 msgstr ""
 "Цей індекс міститиме понад 100 000 фрагментів. Збільште розмір фрагмента або зменште "
 "перекриття."
 
-#: src/knowledge.py:459
+#: src/knowledge.py:460
 #, python-brace-format
 msgid "Embedding chunks: {0} complete, {1} remaining"
 msgstr "Векторизація фрагментів: завершено — {0}, залишилося — {1}"
 
-#: src/knowledge.py:483
+#: src/knowledge.py:484
 msgid "The embedding input cannot fit. Shorten the document prefix or choose another model."
 msgstr ""
 "Вхідні дані для векторизації не вміщуються. Скоротіть префікс документа або оберіть "
 "іншу модель."
 
-#: src/knowledge.py:493
+#: src/knowledge.py:494
 msgid "The model returned a different vector dimension. Create a new configuration."
 msgstr "Модель повернула вектор іншої розмірності. Створіть нову конфігурацію."
 
-#: src/knowledge.py:508
+#: src/knowledge.py:509
 msgid "Create embeddings"
 msgstr "Створити векторні подання"
 
-#: src/knowledge.py:518
+#: src/knowledge.py:519
 msgid "This embedding configuration has no completed vectors."
 msgstr "Ця конфігурація векторних подань не має готових векторів."
 
-#: src/knowledge.py:520 src/widgets/knowledge_view.py:659
+#: src/knowledge.py:521 src/widgets/knowledge_view.py:659
 msgid "Enter a search query."
 msgstr "Введіть пошуковий запит."
 
-#: src/knowledge.py:530 src/knowledge_store.py:265
+#: src/knowledge.py:531 src/knowledge_store.py:265
 msgid "Query dimensions differ from the stored vectors. Rebuild the index."
 msgstr "Розмірність запиту відрізняється від збережених векторів. Перебудуйте індекс."
 
-#: src/knowledge.py:537
+#: src/knowledge.py:538
 msgid "No passages met the search criteria. Adjust the query, sources, or minimum similarity."
 msgstr ""
 "Жоден уривок не відповідає критеріям пошуку. Змініть запит, джерела або мінімальну "
@@ -737,7 +826,7 @@ msgstr ""
 msgid "translator-credits"
 msgstr "Переклад за допомогою штучного інтелекту, 2026."
 
-#: src/model_details_view.ui:6 src/model_manager.py:42 src/model_manager.py:291
+#: src/model_details_view.ui:6 src/model_manager.py:42 src/model_manager.py:318
 msgid "Model Details"
 msgstr "Відомості про модель"
 
@@ -750,70 +839,78 @@ msgstr ""
 "Пам’ять: {0} · Відеопам’ять: {1}\n"
 "Контекст: {2} · Термін дії: {3}"
 
-#: src/model_manager.py:163 src/tab.py:162
+#: src/model_manager.py:168 src/tab.py:163
 msgid "No host configured."
 msgstr "Сервер не налаштовано."
 
-#: src/model_manager.py:168
+#: src/model_manager.py:173
 msgid "Loading running models…"
 msgstr "Завантаження списку активних моделей…"
 
-#: src/model_manager.py:172
+#: src/model_manager.py:177
 #, python-brace-format
 msgid "Could not refresh running models: {0}"
 msgstr "Не вдалося оновити список активних моделей: {0}"
 
-#: src/model_manager.py:188
+#: src/model_manager.py:193
 msgid "No models are loaded in memory."
 msgstr "У пам’яті немає завантажених моделей."
 
-#: src/model_manager.py:194 src/model_manager.py:207
+#: src/model_manager.py:199 src/model_manager.py:212
 msgid "Unload"
 msgstr "Вивантажити"
 
-#: src/model_manager.py:195 src/model_manager.py:209
+#: src/model_manager.py:200 src/model_manager.py:214
 msgid "Release this model from memory; keep its downloaded files."
 msgstr "Звільнити пам’ять цієї моделі, зберігши її завантажені файли."
 
-#: src/model_manager.py:207
+#: src/model_manager.py:212
 msgid "Unloading…"
 msgstr "Вивантаження…"
 
-#: src/model_manager.py:208
+#: src/model_manager.py:213
 msgid "A chat or embedding job is using this model in Gnollama."
 msgstr "Ця модель використовується в чаті або завданні векторизації у Gnollama."
 
-#: src/model_manager.py:225
+#: src/model_manager.py:232
 msgid "Could not unload model"
 msgstr "Не вдалося вивантажити модель"
 
-#: src/model_manager.py:265
+#: src/model_manager.py:273 src/model_manager.ui:90
+msgid "Available Models"
+msgstr "Доступні моделі"
+
+#: src/model_manager.py:273 src/model_manager.ui:80
+msgid "Installed"
+msgstr "Встановлені"
+
+#: src/model_manager.py:286
 msgid "Connection Error"
 msgstr "Помилка з’єднання"
 
-#: src/model_manager.py:298
+#: src/model_manager.py:325
 msgid "Delete Model"
 msgstr "Видалити модель"
 
-#: src/model_manager.py:329
+#: src/model_manager.py:357
 msgid "Failed to fetch details"
 msgstr "Не вдалося отримати відомості"
 
-#: src/model_manager.py:349 src/model_manager.py:374 src/model_manager.py:377
+#: src/model_manager.py:377 src/model_manager.py:402 src/model_manager.py:405
 msgid "Model Is Busy"
 msgstr "Модель зайнята"
 
-#: src/model_manager.py:349 src/model_manager.py:377
+#: src/model_manager.py:377 src/model_manager.py:405
 msgid "Wait for active chats and embedding jobs before deleting this model."
 msgstr ""
 "Дочекайтеся завершення активних чатів і завдань векторизації, перш ніж видаляти цю "
 "модель."
 
-#: src/model_manager.py:353
+#: src/model_manager.py:381
 msgid "Also delete matching vectors; keep source text"
 msgstr "Також видалити відповідні вектори, зберігши вихідний текст"
 
-#: src/model_manager.py:355
+#: src/model_manager.py:383
 #, python-brace-format
 msgid ""
 "Stored data using this model: {0} documents, {1} indexes, {2} vectors. Kept vectors "
@@ -823,7 +920,7 @@ msgstr ""
 "векторів — {2}. Збережені вектори можна знову використовувати з моделлю з тією самою "
 "контрольною сумою на сумісному сервері."
 
-#: src/model_manager.py:357
+#: src/model_manager.py:385
 #, python-brace-format
 msgid ""
 "Collections using this configuration: {0}. Deleting vectors keeps their documents and"
@@ -833,106 +930,102 @@ msgstr ""
 "документи та належність до колекцій, але перед пошуком потрібно буде перебудувати "
 "векторні подання."
 
-#: src/model_manager.py:360
+#: src/model_manager.py:388
 msgid "Delete Model?"
 msgstr "Видалити модель?"
 
-#: src/model_manager.py:374
+#: src/model_manager.py:402
 msgid "Wait for all indexing jobs using this model before deleting its vectors."
 msgstr ""
 "Дочекайтеся завершення всіх завдань індексування з цією моделлю, перш ніж видаляти її"
 " вектори."
 
-#: src/model_manager.py:390
-msgid "Delete Failed"
-msgstr "Не вдалося видалити"
-
-#: src/model_manager.py:545
+#: src/model_manager.py:573
 msgid "Starting download…"
 msgstr "Початок завантаження…"
 
-#: src/model_manager.py:570
+#: src/model_manager.py:598
 msgid "Error"
 msgstr "Помилка"
 
-#: src/model_manager.py:571
+#: src/model_manager.py:599
 msgid "Error occurred."
 msgstr "Сталася помилка."
 
-#: src/model_manager.py:590
+#: src/model_manager.py:618
 #, python-brace-format
 msgid "{0:.0f}%"
 msgstr "{0:.0f}%"
 
-#: src/model_manager.py:593
+#: src/model_manager.py:621
 msgid "Download complete"
 msgstr "Завантаження завершено"
 
-#: src/model_manager.py:611 src/widgets/chat_input.ui:27
+#: src/model_manager.py:639 src/widgets/chat_input.ui:27
 msgid "Model"
 msgstr "Модель"
 
-#: src/model_manager.py:612
+#: src/model_manager.py:640
 msgid "Remote Model"
 msgstr "Віддалена модель"
 
-#: src/model_manager.py:613
+#: src/model_manager.py:641
 msgid "Remote Host"
 msgstr "Віддалений сервер"
 
-#: src/model_manager.py:614
+#: src/model_manager.py:642
 msgid "Modified At"
 msgstr "Дата зміни"
 
-#: src/model_manager.py:615
+#: src/model_manager.py:643
 msgid "Size"
 msgstr "Розмір"
 
-#: src/model_manager.py:616
+#: src/model_manager.py:644
 msgid "Digest"
 msgstr "Контрольна сума"
 
-#: src/model_manager.py:617
+#: src/model_manager.py:645
 msgid "Detail: Format"
 msgstr "Відомості: формат"
 
-#: src/model_manager.py:618
+#: src/model_manager.py:646
 msgid "Detail: Family"
 msgstr "Відомості: сімейство"
 
-#: src/model_manager.py:619
+#: src/model_manager.py:647
 msgid "Detail: Families"
 msgstr "Відомості: сімейства"
 
-#: src/model_manager.py:620
+#: src/model_manager.py:648
 msgid "Detail: Parameter Size"
 msgstr "Відомості: кількість параметрів"
 
-#: src/model_manager.py:621
+#: src/model_manager.py:649
 msgid "Detail: Quantization Level"
 msgstr "Відомості: рівень квантування"
 
-#: src/model_manager.py:622
+#: src/model_manager.py:650
 msgid "Parameters"
 msgstr "Параметри"
 
-#: src/model_manager.py:623
+#: src/model_manager.py:651
 msgid "Capabilities"
 msgstr "Можливості"
 
-#: src/model_manager.py:624
+#: src/model_manager.py:652
 msgid "Template"
 msgstr "Шаблон"
 
-#: src/model_manager.py:625
+#: src/model_manager.py:653
 msgid "License"
 msgstr "Ліцензія"
 
-#: src/model_manager.py:626
+#: src/model_manager.py:654
 msgid "Modelfile"
 msgstr "Modelfile"
 
-#: src/model_manager.py:627
+#: src/model_manager.py:655
 msgid "Model Info"
 msgstr "Інформація про модель"
 
@@ -952,14 +1045,6 @@ msgstr "Оновити список моделей"
 msgid "Download Model…"
 msgstr "Завантажити модель…"
 
-#: src/model_manager.ui:80
-msgid "Installed"
-msgstr "Встановлені"
-
-#: src/model_manager.ui:90
-msgid "Available Models"
-msgstr "Доступні моделі"
-
 #: src/model_manager.ui:102
 msgid "Running"
 msgstr "Активні"
@@ -968,59 +1053,79 @@ msgstr "Активні"
 msgid "Models in Memory"
 msgstr "Моделі в пам’яті"
 
-#: src/ollama.py:52
+#: src/ollama.py:71 src/storage.py:127
+msgid "Ollama Cloud requires https://ollama.com."
+msgstr "Ollama Cloud потребує https://ollama.com."
+
+#: src/ollama.py:80
 msgid "Enter a valid http:// or https:// Ollama host URL."
 msgstr "Введіть коректну URL-адресу сервера Ollama з http:// або https://."
 
-#: src/ollama.py:61 src/ollama.py:84
+#: src/ollama.py:89 src/ollama.py:104 src/ollama.py:137
 msgid "Request stopped"
 msgstr "Запит зупинено"
 
-#: src/ollama.py:110
+#: src/ollama.py:98
+msgid "This operation is unavailable for Ollama Cloud."
+msgstr "Ця операція недоступна для Ollama Cloud."
+
+#: src/ollama.py:124
+msgid ""
+"Ollama Cloud rejected the API key or account access. Edit this host to check its API "
+"key."
+msgstr ""
+"Ollama Cloud відхилив ключ API або доступ до облікового запису. Відредагуйте цей "
+"сервер, щоб перевірити його ключ API."
+
+#: src/ollama.py:126
+msgid "Ollama Cloud usage or rate limit reached. Try again later."
+msgstr "Досягнуто ліміту використання або запитів Ollama Cloud. Спробуйте пізніше."
+
+#: src/ollama.py:163
 msgid "Invalid JSON received from Ollama"
 msgstr "Отримано некоректний JSON від Ollama"
 
-#: src/ollama.py:112
+#: src/ollama.py:165
 msgid "Expected a JSON object from Ollama"
 msgstr "Очікувався об’єкт JSON від Ollama"
 
-#: src/ollama.py:162
+#: src/ollama.py:221
 msgid "Enter nonempty text to embed."
 msgstr "Введіть непорожній текст для векторизації."
 
-#: src/ollama.py:166
+#: src/ollama.py:225
 msgid "Embedding dimensions must be a positive integer."
 msgstr "Розмірність векторних подань має бути додатним цілим числом."
 
-#: src/ollama.py:173
+#: src/ollama.py:232
 msgid "The server returned an incorrect number of embeddings."
 msgstr "Сервер повернув неправильну кількість векторних подань."
 
-#: src/ollama.py:178
+#: src/ollama.py:237
 msgid "The server returned an invalid embedding vector."
 msgstr "Сервер повернув некоректний вектор."
 
-#: src/ollama.py:181
+#: src/ollama.py:240
 msgid "Embedding dimensions do not match, or a vector is zero."
 msgstr "Розмірності векторних подань не збігаються або вектор нульовий."
 
-#: src/ollama.py:210
+#: src/ollama.py:269
 msgid "Model pull ended before completion"
 msgstr "Завантаження моделі обірвалося до завершення"
 
-#: src/ollama.py:216
+#: src/ollama.py:275
 msgid "Invalid output format"
 msgstr "Некоректний формат виведення"
 
-#: src/ollama.py:220
+#: src/ollama.py:279
 msgid "Keep-alive must be a duration in seconds, 0, or -1"
 msgstr "Час утримання має бути тривалістю в секундах, 0 або -1"
 
-#: src/ollama.py:224
+#: src/ollama.py:283
 msgid "Invalid thinking setting"
 msgstr "Некоректне налаштування міркування"
 
-#: src/ollama.py:230
+#: src/ollama.py:289
 msgid "Top logprobs must be between 0 and 20"
 msgstr "Кількість найімовірніших токенів має бути від 0 до 20"
 
@@ -1052,7 +1157,7 @@ msgstr "Подробиці завантаження"
 msgid "New Chat"
 msgstr "Новий чат"
 
-#: src/session.py:167
+#: src/session.py:169
 msgid "There are no pending tool calls."
 msgstr "Немає викликів інструментів, що очікують на виконання."
 
@@ -1099,7 +1204,7 @@ msgstr "Показати або сховати бічну панель"
 msgid "Opening Gnollama"
 msgstr "Відкриття Gnollama"
 
-#: src/startup.py:20 src/tab.py:245 src/widgets/knowledge_import.py:88
+#: src/startup.py:20 src/tab.py:247 src/widgets/knowledge_import.py:88
 #: src/widgets/knowledge_view.py:1220 src/widgets/url_import.py:232 src/window.py:139
 msgid "Retry"
 msgstr "Повторити"
@@ -1120,6 +1225,14 @@ msgstr "Не вдалося відкрити базу даних"
 #, python-brace-format
 msgid "Database backup: {0}"
 msgstr "Резервна копія бази даних: {0}"
+
+#: src/storage.py:117
+msgid "This host was removed."
+msgstr "Цей сервер видалено."
+
+#: src/storage.py:122
+msgid "Invalid host type."
+msgstr "Недійсний тип сервера."
 
 #: src/structured.py:18
 msgid "Non-finite numbers are not valid JSON."
@@ -1173,43 +1286,43 @@ msgstr "Нова відповідь"
 msgid "Chat"
 msgstr "Чат"
 
-#: src/tab.py:166
+#: src/tab.py:167
 msgid "Select an available model before sending."
 msgstr "Оберіть доступну модель перед надсиланням."
 
-#: src/tab.py:169
+#: src/tab.py:170
 msgid "Wait for this model to finish unloading before sending."
 msgstr "Дочекайтеся завершення вивантаження цієї моделі перед надсиланням."
 
-#: src/tab.py:174
+#: src/tab.py:175
 msgid "Wait for image support to be checked before sending."
 msgstr "Дочекайтеся перевірки підтримки зображень перед надсиланням."
 
-#: src/tab.py:176 src/widgets/chat_input.py:112
+#: src/tab.py:177 src/widgets/chat_input.py:112
 msgid "Remove draft images or select a vision model to send."
 msgstr "Видаліть зображення з чернетки або оберіть модель із підтримкою зору для надсилання."
 
-#: src/tab.py:218
+#: src/tab.py:220
 msgid "Retrieving sources…"
 msgstr "Пошук джерел…"
 
-#: src/tab.py:243
+#: src/tab.py:245
 msgid "Could Not Retrieve Sources"
 msgstr "Не вдалося отримати джерела"
 
-#: src/tab.py:244
+#: src/tab.py:246
 msgid "Adjust Sources"
 msgstr "Налаштувати джерела"
 
-#: src/tab.py:246
+#: src/tab.py:248
 msgid "Send Without Knowledge"
 msgstr "Надіслати без знань"
 
-#: src/tab.py:247
+#: src/tab.py:249
 msgid "Keep Draft"
 msgstr "Зберегти чернетку"
 
-#: src/tab.py:309
+#: src/tab.py:311
 msgid "Response ended before completion."
 msgstr "Відповідь обірвалася до завершення."
 
@@ -1501,24 +1614,28 @@ msgid "Checking chat models…"
 msgstr "Перевірка моделей для чату…"
 
 #: src/widgets/chat_input.py:176
+msgid "No cloud models are available. Try refreshing later."
+msgstr "Немає доступних хмарних моделей. Спробуйте оновити пізніше."
+
+#: src/widgets/chat_input.py:177
 msgid "No chat models found. Pull one in Manage Models, then refresh."
 msgstr ""
 "Моделей для чату не знайдено. Завантажте модель у розділі «Керування моделями», а "
 "потім оновіть список."
 
-#: src/widgets/chat_input.py:246
+#: src/widgets/chat_input.py:247
 msgid "Select Images"
 msgstr "Обрати зображення"
 
-#: src/widgets/chat_input.py:250
+#: src/widgets/chat_input.py:251
 msgid "Images"
 msgstr "Зображення"
 
-#: src/widgets/chat_input.py:283 src/widgets/chat_input.ui:116
+#: src/widgets/chat_input.py:284 src/widgets/chat_input.ui:116
 msgid "No image selected"
 msgstr "Зображення не вибрано"
 
-#: src/widgets/chat_input.py:289
+#: src/widgets/chat_input.py:290
 #, python-brace-format
 msgid "{0} image selected"
 msgid_plural "{0} images selected"
@@ -1567,7 +1684,7 @@ msgstr "Застосувати"
 msgid "Content"
 msgstr "Вміст"
 
-#: src/widgets/json_view.py:160 src/widgets/options_panel.py:41
+#: src/widgets/json_view.py:160 src/widgets/options_panel.py:42
 msgid "JSON Schema"
 msgstr "Схема JSON"
 
@@ -2566,250 +2683,256 @@ msgstr ""
 "Оберіть модель і введіть повідомлення. Оберіть колекції знань, щоб ставити запитання "
 "про свої документи."
 
-#: src/widgets/options_panel.py:41
+#: src/widgets/options_panel.py:42
 msgid "Text"
 msgstr "Текст"
 
-#: src/widgets/options_panel.py:41
+#: src/widgets/options_panel.py:42
 msgid "JSON"
 msgstr "JSON"
 
-#: src/widgets/options_panel.py:43 src/widgets/options_panel.py:72
+#: src/widgets/options_panel.py:44 src/widgets/options_panel.py:83
 msgid "Server default"
 msgstr "Типове для сервера"
 
-#: src/widgets/options_panel.py:43
+#: src/widgets/options_panel.py:44
 msgid "Unload after reply"
 msgstr "Вивантажити після відповіді"
 
-#: src/widgets/options_panel.py:43
+#: src/widgets/options_panel.py:44
 msgid "Five minutes"
 msgstr "П’ять хвилин"
 
-#: src/widgets/options_panel.py:44
+#: src/widgets/options_panel.py:45
 msgid "Thirty minutes"
 msgstr "Тридцять хвилин"
 
-#: src/widgets/options_panel.py:44
+#: src/widgets/options_panel.py:45
 msgid "Indefinitely"
 msgstr "Необмежено"
 
-#: src/widgets/options_panel.py:44
+#: src/widgets/options_panel.py:45
 msgid "Custom seconds"
 msgstr "Власна тривалість у секундах"
 
-#: src/widgets/options_panel.py:63
+#: src/widgets/options_panel.py:53
+msgid "Ollama Cloud uses text output and manages model retention automatically."
+msgstr ""
+"Ollama Cloud використовує текстовий вивід і автоматично керує утриманням моделей у "
+"пам’яті."
+
+#: src/widgets/options_panel.py:74
 msgid "Server"
 msgstr "Сервер"
 
-#: src/widgets/options_panel.py:88
+#: src/widgets/options_panel.py:100
 msgid "System Instructions"
 msgstr "Системні вказівки"
 
-#: src/widgets/options_panel.py:89
+#: src/widgets/options_panel.py:101
 msgid "System prompt"
 msgstr "Системний запит"
 
-#: src/widgets/options_panel.py:89
+#: src/widgets/options_panel.py:101
 msgid "Optional instructions applied to this conversation."
 msgstr "Необов’язкові вказівки для цієї розмови."
 
-#: src/widgets/options_panel.py:90
+#: src/widgets/options_panel.py:102
 msgid "Optional instructions"
 msgstr "Необов’язкові вказівки"
 
-#: src/widgets/options_panel.py:91
+#: src/widgets/options_panel.py:103
 msgid "Generation Limits"
 msgstr "Обмеження генерування"
 
-#: src/widgets/options_panel.py:91
+#: src/widgets/options_panel.py:103
 msgid "Blank fields use the server’s defaults."
 msgstr "Порожні поля використовують типові значення сервера."
 
-#: src/widgets/options_panel.py:92
+#: src/widgets/options_panel.py:104
 msgid "Context size (tokens)"
 msgstr "Розмір контексту (токени)"
 
-#: src/widgets/options_panel.py:92
+#: src/widgets/options_panel.py:104
 msgid "Maximum context available to the model; larger values need more memory."
 msgstr "Максимальний контекст, доступний моделі; більші значення потребують більше пам’яті."
 
-#: src/widgets/options_panel.py:93
+#: src/widgets/options_panel.py:105
 msgid "Maximum output tokens"
 msgstr "Максимальна кількість токенів виведення"
 
-#: src/widgets/options_panel.py:93
+#: src/widgets/options_panel.py:105
 msgid "Use −1 for unlimited output or −2 to fill the context."
 msgstr "Використовуйте −1 для необмеженого виведення або −2 для заповнення контексту."
 
-#: src/widgets/options_panel.py:94
+#: src/widgets/options_panel.py:106
 msgid "Stop sequences"
 msgstr "Послідовності зупинки"
 
-#: src/widgets/options_panel.py:94
+#: src/widgets/options_panel.py:106
 msgid "Separate sequences with commas. Generation stops when one is produced."
 msgstr "Відокремлюйте послідовності комами. Генерування зупиниться, коли з’явиться одна з них."
 
-#: src/widgets/options_panel.py:95
+#: src/widgets/options_panel.py:107
 msgid "Sampling"
 msgstr "Семплювання"
 
-#: src/widgets/options_panel.py:97
+#: src/widgets/options_panel.py:109
 msgid "Temperature"
 msgstr "Температура"
 
-#: src/widgets/options_panel.py:97
+#: src/widgets/options_panel.py:109
 msgid "Higher values increase variation; zero is more predictable."
 msgstr "Більші значення збільшують різноманітність; нуль дає передбачуваніші результати."
 
-#: src/widgets/options_panel.py:98
+#: src/widgets/options_panel.py:110
 msgid "Seed"
 msgstr "Початкове число"
 
-#: src/widgets/options_panel.py:98
+#: src/widgets/options_panel.py:110
 msgid "An integer used to initialize random sampling."
 msgstr "Ціле число для ініціалізації випадкового семплювання."
 
-#: src/widgets/options_panel.py:99
+#: src/widgets/options_panel.py:111
 msgid "Top K"
 msgstr "Top K"
 
-#: src/widgets/options_panel.py:99
+#: src/widgets/options_panel.py:111
 msgid "Number of candidate tokens to consider."
 msgstr "Кількість токенів-кандидатів для розгляду."
 
-#: src/widgets/options_panel.py:100
+#: src/widgets/options_panel.py:112
 msgid "Top P"
 msgstr "Top P"
 
-#: src/widgets/options_panel.py:100
+#: src/widgets/options_panel.py:112
 msgid "Cumulative probability cutoff, between 0 and 1."
 msgstr "Поріг сукупної ймовірності, від 0 до 1."
 
-#: src/widgets/options_panel.py:101
+#: src/widgets/options_panel.py:113
 msgid "Min P"
 msgstr "Min P"
 
-#: src/widgets/options_panel.py:101
+#: src/widgets/options_panel.py:113
 msgid "Minimum relative token probability, between 0 and 1."
 msgstr "Мінімальна відносна ймовірність токена, від 0 до 1."
 
-#: src/widgets/options_panel.py:103
+#: src/widgets/options_panel.py:115
 msgid "Model Retention"
 msgstr "Утримання моделі в пам’яті"
 
-#: src/widgets/options_panel.py:105
+#: src/widgets/options_panel.py:120
 msgid "Keep model loaded"
 msgstr "Залишати модель у пам’яті"
 
-#: src/widgets/options_panel.py:108
+#: src/widgets/options_panel.py:124
 msgid "Custom duration (seconds)"
 msgstr "Власна тривалість (секунди)"
 
-#: src/widgets/options_panel.py:108 src/widgets/options_panel.py:165
+#: src/widgets/options_panel.py:124 src/widgets/options_panel.py:187
 msgid "Enter a positive whole number of seconds."
 msgstr "Введіть додатну цілу кількість секунд."
 
-#: src/widgets/options_panel.py:110
+#: src/widgets/options_panel.py:126
 msgid "Diagnostics"
 msgstr "Діагностика"
 
-#: src/widgets/options_panel.py:111
+#: src/widgets/options_panel.py:128
 msgid "Show response statistics"
 msgstr "Показувати статистику відповідей"
 
-#: src/widgets/options_panel.py:112
+#: src/widgets/options_panel.py:131
 msgid "Return token probabilities (logprobs)"
 msgstr "Повертати ймовірності токенів (logprobs)"
 
-#: src/widgets/options_panel.py:115
+#: src/widgets/options_panel.py:135
 msgid "Top logprobs"
 msgstr "Найімовірніші токени"
 
-#: src/widgets/options_panel.py:115
+#: src/widgets/options_panel.py:135
 msgid "Number of alternative token probabilities, from 0 to 20."
 msgstr "Кількість імовірностей альтернативних токенів, від 0 до 20."
 
-#: src/widgets/options_panel.py:132
+#: src/widgets/options_panel.py:152
 msgid "Chat Settings"
 msgstr "Налаштування чату"
 
-#: src/widgets/options_panel.py:135
+#: src/widgets/options_panel.py:155
 msgid "Done"
 msgstr "Готово"
 
-#: src/widgets/options_panel.py:177
+#: src/widgets/options_panel.py:199
 msgid "Top logprobs must be between 0 and 20."
 msgstr "Кількість найімовірніших токенів має бути від 0 до 20."
 
-#: src/widgets/options_panel.py:199
+#: src/widgets/options_panel.py:221
 #, python-brace-format
 msgid "Enabled tools: {0}. Results are supplied manually."
 msgstr "Увімкнені інструменти: {0}. Результати надаються вручну."
 
-#: src/widgets/options_panel.py:199
+#: src/widgets/options_panel.py:221
 msgid "Tool calling is off."
 msgstr "Виклики інструментів вимкнено."
 
-#: src/widgets/options_panel.py:202
+#: src/widgets/options_panel.py:224
 msgid "Checking tool support…"
 msgstr "Перевірка підтримки інструментів…"
 
-#: src/widgets/options_panel.py:204
+#: src/widgets/options_panel.py:226
 msgid "This model reports no tool support; you can still test the API."
 msgstr ""
 "Ця модель повідомляє про відсутність підтримки інструментів; ви все одно можете "
 "випробувати API."
 
-#: src/widgets/options_panel.py:206
+#: src/widgets/options_panel.py:228
 msgid "Tool support is unknown."
 msgstr "Підтримка інструментів невідома."
 
-#: src/widgets/options_panel.py:275
+#: src/widgets/options_panel.py:297
 msgid "No hosts configured"
 msgstr "Немає налаштованих серверів"
 
-#: src/widgets/options_panel.py:313 src/widgets/options_panel.py:315
+#: src/widgets/options_panel.py:335 src/widgets/options_panel.py:337
 msgid "Enter a valid number."
 msgstr "Введіть коректне число."
 
-#: src/widgets/options_panel.py:333
+#: src/widgets/options_panel.py:355
 msgid "Value must not be negative."
 msgstr "Значення не має бути від’ємним."
 
-#: src/widgets/options_panel.py:336
+#: src/widgets/options_panel.py:358
 msgid "Value must be between 0 and 1."
 msgstr "Значення має бути від 0 до 1."
 
-#: src/widgets/options_panel.py:338
+#: src/widgets/options_panel.py:360
 msgid "Context size must be positive."
 msgstr "Розмір контексту має бути додатним."
 
-#: src/widgets/options_panel.py:340
+#: src/widgets/options_panel.py:362
 msgid "Max tokens must be -2, -1, or a nonnegative integer."
 msgstr "Максимальна кількість токенів має бути -2, -1 або невід’ємним цілим числом."
 
-#: src/widgets/options_panel.ui:20
+#: src/widgets/options_panel.ui:21
 msgid "Tool Calling"
 msgstr "Виклики інструментів"
 
-#: src/widgets/options_panel.ui:26
+#: src/widgets/options_panel.ui:27
 msgid "Edit Tools…"
 msgstr "Редагувати інструменти…"
 
-#: src/widgets/options_panel.ui:44
+#: src/widgets/options_panel.ui:46
 msgid "Output:"
 msgstr "Виведення:"
 
-#: src/widgets/options_panel.ui:56
+#: src/widgets/options_panel.ui:58
 msgid "Edit Schema…"
 msgstr "Редагувати схему…"
 
-#: src/widgets/options_panel.ui:63
+#: src/widgets/options_panel.ui:65
 msgid "Chat Settings…"
 msgstr "Налаштування чату…"
 
-#: src/widgets/options_panel.ui:65
+#: src/widgets/options_panel.ui:67
 msgid "Generation, Model Retention, and Diagnostics"
 msgstr "Генерування, утримання моделі в пам’яті та діагностика"
 
@@ -3152,3 +3275,5 @@ msgstr "_Клавіатурні скорочення"
 msgid "_About Gnollama"
 msgstr "_Про Gnollama"
 
+#~ msgid "Fetching version..."
+#~ msgstr "Отримання версії..."

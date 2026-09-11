@@ -15,7 +15,7 @@ Whether you are developing, experimenting, or chatting with local models, Gnolla
 
 ## Features
 
-* **Multi-Host Management**: Easily connect to different Ollama servers. Add, edit, or delete configurations, verify host status, and define a default host.
+* **Multi-Host Management**: Connect to local Ollama servers, remote servers, or Ollama Cloud. Add, edit, or delete configurations, verify host status, and define a default host.
 * **Dual Tab Workflows**:
   * **New Chat (`/api/chat`)**: Multi-turn sessions that preserve conversation context.
   * **New Response (`/api/generate`)**: Single-turn completions ideal for prompt engineering and testing.
@@ -43,6 +43,16 @@ Whether you are developing, experimenting, or chatting with local models, Gnolla
   * Display generation stats (including cached prompt tokens, finish reason, and tokens/second) and logprobs.
 * **Stop Responses**: Stop generation while keeping partial answers in chat history. Pending history writes finish before the application quits.
 * **Adaptive GNOME Navigation**: Native tabs support reordering and loading indicators. The Pinned and Recent sidebar collapses on narrow windows. Use Ctrl+W to close a tab, Ctrl+Page Up/Down to switch tabs, and F9 to toggle the sidebar.
+
+### Ollama Cloud
+
+In **Manage Hosts**, add a host and choose **Ollama Cloud**. Create an API key at [Ollama's API-key settings](https://ollama.com/settings/keys), paste it into the masked field, and save. The service address is filled in automatically. Select this host in either a Chat or Response tab; no local Ollama installation or model download is needed.
+
+Keys are stored through libsecret in the desktop keyring (using its portal backend in Flatpak), separately from the host database and conversation history. Leave the key field blank when editing to retain the existing key. If the keyring is unavailable, **Use for This Session** keeps the entered key in memory until Gnollama exits. After restarting, enter it again unless a previously saved key is available. Removing a host also removes its saved key; a keyring failure leaves the host available for retry.
+
+**Test Connection** checks the public model catalog, so it confirms reachability rather than API-key validity. Authentication is checked when generating a response. Cloud model names come directly from the service. Available tools, vision, and thinking controls follow each model's reported capabilities.
+
+Cloud hosts show available models without download, deletion, running-model, or unload controls. Structured output and model retention are unavailable for cloud requests; their settings remain available when switching back to another server. Knowledge embeddings use a separate non-cloud host and can provide source passages to cloud chats.
 
 ### Knowledge Library and RAG
 
@@ -97,7 +107,7 @@ For the pinned sqlite-vec 0.1.9 layout, distance searches reuse read-only vector
 
 A GNOME 50 aarch64 benchmark of 50,000 vectors at 1,024 dimensions returned identical top-six results to the preceding batched NumPy ranking. Whole-library retrieval took 0.15–0.19 seconds, selecting one 25,000-vector document took 0.17–0.18 seconds, and selecting 25,000 individual chunks took 0.42–0.44 seconds. These are local retrieval timings, excluding Ollama inference. The one-time migration and backup took about 68 seconds; startup displays migration progress and waits for the database operation to finish if closed.
 
-Database upgrades run automatically on startup, with progress and a recoverable error screen. Schema version 7 migrates existing vectors without contacting Ollama: it copies and verifies their IDs, dimensions, and bytes before removing the old vector column. Version 8 adds collections and membership without copying or rebuilding vectors; existing documents appear under **Ungrouped Documents**, and existing chat selections are preserved. Version 9 adds web-source provenance without reindexing existing documents. Before upgrading an existing database, Gnollama saves a consistent, timestamped `gnollama.db.pre-v9-*.bak` beside the database and reports its location. Keep that file until you have verified the upgrade; it can then be archived or removed. Failed migrations roll back, and incompatible or damaged vectors are never silently discarded. Databases from newer app versions are refused. Older app versions must not be used with the upgraded database. SQLite can reuse pages freed by migration; the database file need not immediately shrink.
+Database upgrades run automatically on startup, with progress and a recoverable error screen. Schema version 7 migrates existing vectors without contacting Ollama: it copies and verifies their IDs, dimensions, and bytes before removing the old vector column. Version 8 adds collections and membership without copying or rebuilding vectors; existing documents appear under **Ungrouped Documents**, and existing chat selections are preserved. Version 9 adds web-source provenance without reindexing existing documents. Version 10 adds cloud host types and keyring references without storing API keys in the database. Before upgrading an existing database, Gnollama saves a consistent, timestamped `gnollama.db.pre-v10-*.bak` beside the database and reports its location. Keep that file until you have verified the upgrade; it can then be archived or removed. Failed migrations roll back, and incompatible or damaged vectors are never silently discarded. Databases from newer app versions are refused. Older app versions must not be used with the upgraded database. SQLite can reuse pages freed by migration; the database file need not immediately shrink.
 
 ### Structured output details
 
@@ -150,7 +160,7 @@ I wanted a GNOME application for Ollama that I could use to test and experiment 
 
 ### Meson
 
-Requires Python 3.10+, PyGObject, GTK 4.18+, libadwaita 1.9+, libsoup 3, jsonschema 4.26+, sqlite-vec 0.1.9, SQLite 3.41+ with extension loading, pypdf, and Markdown. The Flatpak manifest uses GNOME 50 and builds the current checkout. It bundles checksum-pinned dependencies for aarch64 and x86_64, including sqlite-vec 0.1.9 and pypdf 6.18.0.
+Requires Python 3.10+, PyGObject, GTK 4.18+, libadwaita 1.9+, libsoup 3, libsecret 0.20+ with Secret 1 introspection, jsonschema 4.26+, sqlite-vec 0.1.9, SQLite 3.41+ with extension loading, pypdf, and Markdown. The Flatpak manifest uses GNOME 50 and builds the current checkout. It bundles checksum-pinned dependencies for aarch64 and x86_64, including sqlite-vec 0.1.9 and pypdf 6.18.0.
 Code highlighting requires [GTKSourceView](https://wiki.gnome.org/Projects/GtkSourceView) version 5
 
 To install in Ubuntu:

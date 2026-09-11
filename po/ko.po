@@ -4,9 +4,9 @@
 # Translated and reviewed with AI assistance, 2026.
 msgid ""
 msgstr ""
-"Project-Id-Version: gnollama 0.13.0\n"
+"Project-Id-Version: gnollama 0.14.0\n"
 "Report-Msgid-Bugs-To: https://github.com/jackrabbithanna/gnollama/issues\n"
-"POT-Creation-Date: 2026-09-10 17:08-0600\n"
+"POT-Creation-Date: 2026-09-10 20:09-0600\n"
 "PO-Revision-Date: 2026-09-10 00:00+0000\n"
 "Last-Translator: AI-assisted translation\n"
 "Language: ko\n"
@@ -81,70 +81,86 @@ msgid "Ollama chat with code highlighting"
 msgstr "코드 강조 표시를 지원하는 Ollama 채팅"
 
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:53
+msgid "Connect directly to Ollama Cloud from Chat and Response tabs."
+msgstr "채팅 및 응답 탭에서 Ollama Cloud에 직접 연결합니다."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:54
+msgid ""
+"Store each host's API key in the desktop keyring, with session-only use when the "
+"keyring is unavailable."
+msgstr "각 서버의 API 키를 데스크톱 키링에 저장하고, 키링을 사용할 수 없으면 현재 세션에서만 사용합니다."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:55
+msgid ""
+"Browse cloud models with controls adapted to the service, and use local knowledge "
+"sources in cloud chats."
+msgstr "서비스에 맞춘 컨트롤로 클라우드 모델을 탐색하고 클라우드 채팅에서 로컬 지식 소스를 사용합니다."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:60
 msgid ""
 "Add a Knowledge Library for text and PDF imports, local embedding indexes, and "
 "source-grounded chats."
 msgstr "텍스트 및 PDF 가져오기, 로컬 임베딩 인덱스, 출처 기반 채팅을 위한 지식 라이브러리를 추가했습니다."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:55
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:62
 msgid ""
 "Start with knowledge collections and add text, files, or URLs with explicit "
 "destinations and guided previews."
 msgstr "지식 컬렉션을 만들고 명확한 저장 대상과 단계별 미리보기를 통해 텍스트, 파일 또는 URL을 추가하세요."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:56
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:63
 msgid ""
 "Choose collections before search settings, and use adaptive chat settings with "
 "clearer controls and feedback."
 msgstr "검색 설정 전에 컬렉션을 선택하고, 더 명확한 조작 요소와 안내를 제공하는 반응형 채팅 설정을 사용하세요."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:57
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:64
 msgid "Create and compare embeddings, inspect chunks and vectors, and test semantic searches."
 msgstr "임베딩을 생성하고 비교하며, 청크와 벡터를 살펴보고 의미 기반 검색을 테스트하세요."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:58
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:65
 msgid ""
 "Select documents or chunks for chats, with independent embedding hosts and saved "
 "source passages."
 msgstr "채팅에 사용할 문서나 청크를 선택하고, 독립적인 임베딩 호스트와 저장된 출처 구절을 활용하세요."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:59
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:66
 msgid ""
 "Warn about stored embeddings when deleting models, with optional vector cleanup that "
 "retains source text."
 msgstr "모델 삭제 시 저장된 임베딩을 알리고, 원본 텍스트를 보존하면서 벡터를 선택적으로 정리할 수 있습니다."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:60
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:67
 msgid ""
 "Search with sqlite-vec, automatically migrate existing vectors with a database "
 "backup, and use the Qwen3 retrieval preset."
 msgstr "sqlite-vec로 검색하고, 데이터베이스를 백업하면서 기존 벡터를 자동으로 마이그레이션하고, Qwen3 검색 사전 설정을 사용하세요."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:61
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:68
 msgid ""
 "Organize documents into collections with shared embedding settings, automatic builds,"
 " and live collection selection in chats."
 msgstr "공유 임베딩 설정과 자동 생성을 갖춘 컬렉션으로 문서를 정리하고, 채팅에서 최신 컬렉션을 선택하세요."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:62
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:69
 msgid ""
 "Choose collections as chat sources and compare cosine similarity, Euclidean distance,"
 " or Manhattan distance with appropriate search cutoffs."
 msgstr "컬렉션을 채팅 출처로 선택하고 적절한 검색 임계값으로 코사인 유사도, 유클리드 거리 또는 맨해튼 거리를 비교하세요."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:63
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:70
 msgid ""
 "Hide embedding-only models from Chat and Response model selection while keeping them "
 "available in Knowledge and Manage Models."
 msgstr "임베딩 전용 모델을 채팅과 응답의 모델 선택에서 숨기되, 지식과 모델 관리에서는 계속 사용할 수 있습니다."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:64
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:71
 msgid ""
 "Import batches of URLs into collections with main-content extraction, CSS selectors, "
 "editable previews, and source links in chats."
 msgstr "URL을 컬렉션으로 일괄 가져올 수 있으며, 본문 추출, CSS 선택자, 편집 가능한 미리보기와 채팅 내 출처 링크를 지원합니다."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:65
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:72
 msgid ""
 "Review changed web documents before replacing their text and rebuilding all affected "
 "embedding indexes."
@@ -166,11 +182,11 @@ msgstr "응답 통계"
 msgid "Earlier images were omitted from the text-only request."
 msgstr "텍스트 전용 요청에서 이전 이미지를 제외했습니다."
 
-#: src/bubbles.py:125 src/knowledge.py:300
+#: src/bubbles.py:125 src/knowledge.py:301
 msgid "Stopped"
 msgstr "중지됨"
 
-#: src/bubbles.py:125 src/knowledge.py:300
+#: src/bubbles.py:125 src/knowledge.py:301
 msgid "Failed"
 msgstr "실패"
 
@@ -180,7 +196,7 @@ msgid "Logprobs"
 msgstr "로그 확률"
 
 #: src/bubbles.py:183 src/model_manager.py:22 src/model_manager.py:24
-#: src/model_manager.py:28
+#: src/model_manager.py:28 src/model_manager.py:312
 msgid "Unavailable"
 msgstr "사용 불가"
 
@@ -233,7 +249,7 @@ msgstr "종료 사유: {0}"
 msgid "A document was deleted. Choose documents again."
 msgstr "문서가 삭제되었습니다. 문서를 다시 선택하세요."
 
-#: src/collections_store.py:107 src/knowledge.py:357
+#: src/collections_store.py:107 src/knowledge.py:358
 msgid "Enter a collection name."
 msgstr "컬렉션 이름을 입력하세요."
 
@@ -241,7 +257,7 @@ msgstr "컬렉션 이름을 입력하세요."
 msgid "Choose a model with the collection’s original digest."
 msgstr "컬렉션의 원래 다이제스트와 일치하는 모델을 선택하세요."
 
-#: src/collections_store.py:141 src/knowledge.py:390
+#: src/collections_store.py:141 src/knowledge.py:391
 msgid "The collection was deleted."
 msgstr "컬렉션이 삭제되었습니다."
 
@@ -264,24 +280,44 @@ msgstr "“{0}” 컬렉션이 비어 있습니다. 문서를 추가하거나 �
 msgid "Collection “{0}” is not ready. Build missing embeddings or retry failed documents: {1}"
 msgstr "“{0}” 컬렉션이 준비되지 않았습니다. 누락된 임베딩을 생성하거나 실패한 문서를 다시 시도하세요: {1}"
 
-#: src/database.py:75
+#: src/credentials.py:27
+msgid "Enter a valid API key."
+msgstr "유효한 API 키를 입력하세요."
+
+#: src/credentials.py:51
+msgid "Could not access the keyring. Edit this host to retry or enter a session-only key."
+msgstr "키링에 접근할 수 없습니다. 이 서버를 편집하여 다시 시도하거나 현재 세션에서만 사용할 키를 입력하세요."
+
+#: src/credentials.py:53 src/storage.py:134
+msgid "An API key is required. Edit this host to enter one."
+msgstr "API 키가 필요합니다. 이 서버를 편집하여 키를 입력하세요."
+
+#: src/credentials.py:66
+msgid "Could not save the API key in the keyring. Retry or use it for this session."
+msgstr "API 키를 키링에 저장할 수 없습니다. 다시 시도하거나 현재 세션에서만 사용하세요."
+
+#: src/credentials.py:78 src/credentials.py:80
+msgid "Could not remove the saved API key. Unlock the keyring and retry."
+msgstr "저장된 API 키를 제거할 수 없습니다. 키링을 잠금 해제하고 다시 시도하세요."
+
+#: src/database.py:80
 msgid "This database was created by a newer Gnollama version. Update Gnollama to open it."
 msgstr "이 데이터베이스는 더 최신 버전의 Gnollama에서 생성되었습니다. 열려면 Gnollama를 업데이트하세요."
 
-#: src/database.py:82
+#: src/database.py:87
 msgid "Backing up the database…"
 msgstr "데이터베이스 백업 중…"
 
-#: src/database.py:191
+#: src/database.py:196
 msgid "This database requires a newer Gnollama version."
 msgstr "이 데이터베이스에는 더 최신 버전의 Gnollama가 필요합니다."
 
-#: src/database.py:210
+#: src/database.py:215
 #, python-brace-format
 msgid "Upgrading the database to version {0}…"
 msgstr "데이터베이스를 버전 {0}(으)로 업그레이드 중…"
 
-#: src/host_edit_dialog.ui:6 src/host_manager.py:171 src/model_manager.py:366
+#: src/host_edit_dialog.ui:14 src/host_manager.py:266 src/model_manager.py:394
 #: src/pull_model_dialog.ui:17 src/widgets/knowledge_view.py:1111
 #: src/widgets/knowledge_view.py:1121 src/widgets/knowledge_view.py:1250
 #: src/widgets/knowledge_view.py:1293 src/widgets/knowledge_view.py:1337
@@ -290,67 +326,108 @@ msgstr "데이터베이스를 버전 {0}(으)로 업그레이드 중…"
 msgid "Cancel"
 msgstr "취소"
 
-#: src/host_edit_dialog.ui:7 src/widgets/knowledge_view.py:1112
+#: src/host_edit_dialog.ui:19 src/widgets/knowledge_view.py:1112
 #: src/widgets/knowledge_view.py:1145 src/widgets/knowledge_view.py:1338 src/window.py:350
 msgid "Save"
 msgstr "저장"
 
-#: src/host_edit_dialog.ui:21 src/model_manager.py:610
+#: src/host_edit_dialog.ui:39
+msgid "Host type"
+msgstr "서버 유형"
+
+#: src/host_edit_dialog.ui:47 src/model_manager.py:638
 msgid "Name"
 msgstr "이름"
 
-#: src/host_edit_dialog.ui:28
+#: src/host_edit_dialog.ui:54
 msgid "For example: Local Ollama"
 msgstr "예: 로컬 Ollama"
 
-#: src/host_edit_dialog.ui:33
+#: src/host_edit_dialog.ui:59
 msgid "Server address"
 msgstr "서버 주소"
 
-#: src/host_edit_dialog.ui:45
+#: src/host_edit_dialog.ui:71
 msgid "Set as default host"
 msgstr "기본 호스트로 설정"
 
-#: src/host_manager.py:19
+#: src/host_manager.py:24
 msgid "Edit Host"
 msgstr "호스트 편집"
 
-#: src/host_manager.py:19 src/host_manager.ui:23
+#: src/host_manager.py:24 src/host_manager.ui:23
 msgid "Add Host"
 msgstr "호스트 추가"
 
-#: src/host_manager.py:35
+#: src/host_manager.py:30
+msgid "Ollama Server"
+msgstr "Ollama 서버"
+
+#: src/host_manager.py:30 src/host_manager.py:72 src/model_manager.py:312
+msgid "Ollama Cloud"
+msgstr "Ollama Cloud"
+
+#: src/host_manager.py:34
+msgid "API key"
+msgstr "API 키"
+
+#: src/host_manager.py:36
+msgid "Leave blank to keep the existing key."
+msgstr "기존 키를 유지하려면 비워 두세요."
+
+#: src/host_manager.py:37
+msgid "Stored securely in your desktop keyring."
+msgstr "데스크톱 키링에 안전하게 저장됩니다."
+
+#: src/host_manager.py:38
+msgid "Create an API key"
+msgstr "API 키 만들기"
+
+#: src/host_manager.py:44
+msgid "Use for This Session"
+msgstr "현재 세션에서 사용"
+
+#: src/host_manager.py:98 src/storage.py:124
 msgid "Enter a name for this server."
 msgstr "이 서버의 이름을 입력하세요."
 
-#: src/host_manager.py:78
+#: src/host_manager.py:149
 msgid "Default"
 msgstr "기본값"
 
-#: src/host_manager.py:83 src/host_manager.py:87
+#: src/host_manager.py:154 src/host_manager.py:158
 msgid "Test Connection"
 msgstr "연결 테스트"
 
-#: src/host_manager.py:92
+#: src/host_manager.py:163
 msgid "Edit Server"
 msgstr "서버 편집"
 
-#: src/host_manager.py:98 src/host_manager.py:168
+#: src/host_manager.py:169 src/host_manager.py:263
 msgid "Delete Host"
 msgstr "호스트 삭제"
 
-#: src/host_manager.py:112
-msgid "Fetching version..."
-msgstr "버전 가져오는 중..."
+#: src/host_manager.py:183
+msgid "Checking connection…"
+msgstr "연결 확인 중…"
 
-#: src/host_manager.py:114 src/main.py:63 src/model_manager.py:340 src/model_manager.py:601
-#: src/startup.py:23 src/widgets/json_view.py:230 src/widgets/knowledge_import.py:51
-#: src/widgets/knowledge_view.py:756 src/widgets/knowledge_view.py:909
-#: src/widgets/knowledge_view.py:1271
+#: src/host_manager.py:185 src/host_manager.py:277 src/main.py:63 src/model_manager.py:368
+#: src/model_manager.py:629 src/startup.py:23 src/widgets/json_view.py:230
+#: src/widgets/knowledge_import.py:51 src/widgets/knowledge_view.py:756
+#: src/widgets/knowledge_view.py:909 src/widgets/knowledge_view.py:1271
 msgid "Close"
 msgstr "닫기"
 
-#: src/host_manager.py:124
+#: src/host_manager.py:196
+#, python-brace-format
+msgid ""
+"Ollama Cloud is reachable. Available models: {0}\n"
+"Your API key will be checked when you generate a response."
+msgstr ""
+"Ollama Cloud에 연결할 수 있습니다. 사용 가능한 모델: {0}\n"
+"응답을 생성할 때 API 키를 확인합니다."
+
+#: src/host_manager.py:199
 #, python-brace-format
 msgid ""
 "Connected\n"
@@ -359,7 +436,7 @@ msgstr ""
 "연결됨\n"
 "Ollama 버전: {0}"
 
-#: src/host_manager.py:126
+#: src/host_manager.py:201
 #, python-brace-format
 msgid ""
 "Connection failed\n"
@@ -368,14 +445,18 @@ msgstr ""
 "연결 실패\n"
 "{0}"
 
-#: src/host_manager.py:169 src/model_manager.py:352
+#: src/host_manager.py:264 src/model_manager.py:380
 #, python-brace-format
 msgid "Are you sure you want to delete {0}?"
 msgstr "{0} 항목을 삭제하시겠습니까?"
 
-#: src/host_manager.py:172 src/model_manager.py:367 src/widgets/knowledge_view.py:1359
+#: src/host_manager.py:267 src/model_manager.py:395 src/widgets/knowledge_view.py:1359
 msgid "Delete"
 msgstr "삭제"
+
+#: src/host_manager.py:276 src/model_manager.py:418
+msgid "Delete Failed"
+msgstr "삭제 실패"
 
 #: src/host_manager.ui:6 src/host_manager.ui:17
 msgid "Manage Hosts"
@@ -488,104 +569,104 @@ msgstr "출처 문자 수 제한은 256~64,000자여야 합니다."
 msgid "Wait for the model operation to finish."
 msgstr "모델 작업이 끝날 때까지 기다리세요."
 
-#: src/knowledge.py:262
+#: src/knowledge.py:263
 msgid "The embedding host was removed. Choose a configured host before continuing."
 msgstr "임베딩 호스트가 제거되었습니다. 계속하기 전에 구성된 호스트를 선택하세요."
 
-#: src/knowledge.py:268 src/widgets/knowledge_import.py:146 src/widgets/url_import.py:100
+#: src/knowledge.py:269 src/widgets/knowledge_import.py:146 src/widgets/url_import.py:100
 #: src/widgets/url_import.py:113
 msgid "Queued"
 msgstr "대기 중"
 
-#: src/knowledge.py:272
+#: src/knowledge.py:273
 msgid "The Knowledge Library is closing."
 msgstr "지식 라이브러리를 닫는 중입니다."
 
-#: src/knowledge.py:278
+#: src/knowledge.py:279
 msgid "This document is being replaced. Retry the build when replacement finishes."
 msgstr "이 문서는 교체 중입니다. 교체가 끝나면 생성을 다시 시도하세요."
 
-#: src/knowledge.py:300
+#: src/knowledge.py:301
 msgid "Complete"
 msgstr "완료"
 
-#: src/knowledge.py:317
+#: src/knowledge.py:318
 msgid "Wait for this document’s embedding builds to finish before replacing it."
 msgstr "문서를 교체하기 전에 해당 문서의 임베딩 생성이 끝날 때까지 기다리세요."
 
-#: src/knowledge.py:320
+#: src/knowledge.py:321
 msgid "Saving the web document…"
 msgstr "웹 문서 저장 중…"
 
-#: src/knowledge.py:348
+#: src/knowledge.py:349
 msgid "Save web document"
 msgstr "웹 문서 저장"
 
-#: src/knowledge.py:369
+#: src/knowledge.py:370
 msgid "Create collection"
 msgstr "컬렉션 만들기"
 
-#: src/knowledge.py:384
+#: src/knowledge.py:385
 #, python-brace-format
 msgid "Add document: {0}"
 msgstr "문서 추가: {0}"
 
-#: src/knowledge.py:392
+#: src/knowledge.py:393
 #, python-brace-format
 msgid "Prepare collection: {0}"
 msgstr "컬렉션 준비: {0}"
 
-#: src/knowledge.py:399
+#: src/knowledge.py:400
 msgid "Reusing embeddings and preparing missing documents…"
 msgstr "임베딩을 재사용하고 누락된 문서를 준비하는 중…"
 
-#: src/knowledge.py:416
+#: src/knowledge.py:417
 #, python-brace-format
 msgid "Create embeddings: {0}"
 msgstr "임베딩 생성: {0}"
 
-#: src/knowledge.py:421
+#: src/knowledge.py:422
 msgid "Build was stopped before it started."
 msgstr "생성이 시작되기 전에 중지되었습니다."
 
-#: src/knowledge.py:438
+#: src/knowledge.py:439
 msgid "The source document was deleted."
 msgstr "원본 문서가 삭제되었습니다."
 
-#: src/knowledge.py:443
+#: src/knowledge.py:444
 msgid "This index would exceed 100,000 chunks. Increase the chunk size or reduce overlap."
 msgstr "이 인덱스는 100,000개 청크를 초과하게 됩니다. 청크 크기를 늘리거나 중복 길이를 줄이세요."
 
-#: src/knowledge.py:459
+#: src/knowledge.py:460
 #, python-brace-format
 msgid "Embedding chunks: {0} complete, {1} remaining"
 msgstr "청크 임베딩: {0}개 완료, {1}개 남음"
 
-#: src/knowledge.py:483
+#: src/knowledge.py:484
 msgid "The embedding input cannot fit. Shorten the document prefix or choose another model."
 msgstr "임베딩 입력이 허용 범위를 초과합니다. 문서 접두사를 줄이거나 다른 모델을 선택하세요."
 
-#: src/knowledge.py:493
+#: src/knowledge.py:494
 msgid "The model returned a different vector dimension. Create a new configuration."
 msgstr "모델이 다른 차원의 벡터를 반환했습니다. 새 구성을 만드세요."
 
-#: src/knowledge.py:508
+#: src/knowledge.py:509
 msgid "Create embeddings"
 msgstr "임베딩 생성"
 
-#: src/knowledge.py:518
+#: src/knowledge.py:519
 msgid "This embedding configuration has no completed vectors."
 msgstr "이 임베딩 구성에는 생성이 완료된 벡터가 없습니다."
 
-#: src/knowledge.py:520 src/widgets/knowledge_view.py:659
+#: src/knowledge.py:521 src/widgets/knowledge_view.py:659
 msgid "Enter a search query."
 msgstr "검색 쿼리를 입력하세요."
 
-#: src/knowledge.py:530 src/knowledge_store.py:265
+#: src/knowledge.py:531 src/knowledge_store.py:265
 msgid "Query dimensions differ from the stored vectors. Rebuild the index."
 msgstr "쿼리의 차원이 저장된 벡터와 다릅니다. 인덱스를 다시 생성하세요."
 
-#: src/knowledge.py:537
+#: src/knowledge.py:538
 msgid "No passages met the search criteria. Adjust the query, sources, or minimum similarity."
 msgstr "검색 조건을 충족하는 구절이 없습니다. 쿼리, 출처 또는 최소 유사도를 조정하세요."
 
@@ -681,7 +762,7 @@ msgstr ""
 msgid "translator-credits"
 msgstr "AI 도움을 받은 번역"
 
-#: src/model_details_view.ui:6 src/model_manager.py:42 src/model_manager.py:291
+#: src/model_details_view.ui:6 src/model_manager.py:42 src/model_manager.py:318
 msgid "Model Details"
 msgstr "모델 세부 정보"
 
@@ -694,68 +775,76 @@ msgstr ""
 "메모리: {0} · VRAM: {1}\n"
 "컨텍스트: {2} · 만료: {3}"
 
-#: src/model_manager.py:163 src/tab.py:162
+#: src/model_manager.py:168 src/tab.py:163
 msgid "No host configured."
 msgstr "구성된 호스트가 없습니다."
 
-#: src/model_manager.py:168
+#: src/model_manager.py:173
 msgid "Loading running models…"
 msgstr "실행 중인 모델을 불러오는 중…"
 
-#: src/model_manager.py:172
+#: src/model_manager.py:177
 #, python-brace-format
 msgid "Could not refresh running models: {0}"
 msgstr "실행 중인 모델을 새로 고칠 수 없습니다: {0}"
 
-#: src/model_manager.py:188
+#: src/model_manager.py:193
 msgid "No models are loaded in memory."
 msgstr "메모리에 로드된 모델이 없습니다."
 
-#: src/model_manager.py:194 src/model_manager.py:207
+#: src/model_manager.py:199 src/model_manager.py:212
 msgid "Unload"
 msgstr "메모리에서 해제"
 
-#: src/model_manager.py:195 src/model_manager.py:209
+#: src/model_manager.py:200 src/model_manager.py:214
 msgid "Release this model from memory; keep its downloaded files."
 msgstr "다운로드한 파일을 유지하면서 이 모델을 메모리에서 해제합니다."
 
-#: src/model_manager.py:207
+#: src/model_manager.py:212
 msgid "Unloading…"
 msgstr "메모리에서 해제 중…"
 
-#: src/model_manager.py:208
+#: src/model_manager.py:213
 msgid "A chat or embedding job is using this model in Gnollama."
 msgstr "Gnollama의 채팅이나 임베딩 작업에서 이 모델을 사용 중입니다."
 
-#: src/model_manager.py:225
+#: src/model_manager.py:232
 msgid "Could not unload model"
 msgstr "모델을 메모리에서 해제할 수 없습니다"
 
-#: src/model_manager.py:265
+#: src/model_manager.py:273 src/model_manager.ui:90
+msgid "Available Models"
+msgstr "사용 가능한 모델"
+
+#: src/model_manager.py:273 src/model_manager.ui:80
+msgid "Installed"
+msgstr "설치됨"
+
+#: src/model_manager.py:286
 msgid "Connection Error"
 msgstr "연결 오류"
 
-#: src/model_manager.py:298
+#: src/model_manager.py:325
 msgid "Delete Model"
 msgstr "모델 삭제"
 
-#: src/model_manager.py:329
+#: src/model_manager.py:357
 msgid "Failed to fetch details"
 msgstr "세부 정보를 가져오지 못했습니다"
 
-#: src/model_manager.py:349 src/model_manager.py:374 src/model_manager.py:377
+#: src/model_manager.py:377 src/model_manager.py:402 src/model_manager.py:405
 msgid "Model Is Busy"
 msgstr "모델 사용 중"
 
-#: src/model_manager.py:349 src/model_manager.py:377
+#: src/model_manager.py:377 src/model_manager.py:405
 msgid "Wait for active chats and embedding jobs before deleting this model."
 msgstr "이 모델을 삭제하기 전에 진행 중인 채팅과 임베딩 작업이 끝날 때까지 기다리세요."
 
-#: src/model_manager.py:353
+#: src/model_manager.py:381
 msgid "Also delete matching vectors; keep source text"
 msgstr "일치하는 벡터도 삭제하고 원본 텍스트 유지"
 
-#: src/model_manager.py:355
+#: src/model_manager.py:383
 #, python-brace-format
 msgid ""
 "Stored data using this model: {0} documents, {1} indexes, {2} vectors. Kept vectors "
@@ -764,111 +853,107 @@ msgstr ""
 "이 모델을 사용하는 저장된 데이터: 문서 {0}개, 인덱스 {1}개, 벡터 {2}개. 보관한 벡터는 동일한 모델 다이제스트를 가진 호환 호스트에서 다시 "
 "사용할 수 있습니다."
 
-#: src/model_manager.py:357
+#: src/model_manager.py:385
 #, python-brace-format
 msgid ""
 "Collections using this configuration: {0}. Deleting vectors keeps their documents and"
 " membership, but they will need embeddings rebuilt before searching."
 msgstr "이 구성을 사용하는 컬렉션: {0}. 벡터를 삭제해도 문서와 컬렉션 소속은 유지되지만, 검색하려면 임베딩을 다시 생성해야 합니다."
 
-#: src/model_manager.py:360
+#: src/model_manager.py:388
 msgid "Delete Model?"
 msgstr "모델을 삭제하시겠습니까?"
 
-#: src/model_manager.py:374
+#: src/model_manager.py:402
 msgid "Wait for all indexing jobs using this model before deleting its vectors."
 msgstr "벡터를 삭제하기 전에 이 모델을 사용하는 모든 인덱스 생성 작업이 끝날 때까지 기다리세요."
 
-#: src/model_manager.py:390
-msgid "Delete Failed"
-msgstr "삭제 실패"
-
-#: src/model_manager.py:545
+#: src/model_manager.py:573
 msgid "Starting download…"
 msgstr "다운로드 시작 중…"
 
-#: src/model_manager.py:570
+#: src/model_manager.py:598
 msgid "Error"
 msgstr "오류"
 
-#: src/model_manager.py:571
+#: src/model_manager.py:599
 msgid "Error occurred."
 msgstr "오류가 발생했습니다."
 
-#: src/model_manager.py:590
+#: src/model_manager.py:618
 #, python-brace-format
 msgid "{0:.0f}%"
 msgstr "{0:.0f}%"
 
-#: src/model_manager.py:593
+#: src/model_manager.py:621
 msgid "Download complete"
 msgstr "다운로드 완료"
 
-#: src/model_manager.py:611 src/widgets/chat_input.ui:27
+#: src/model_manager.py:639 src/widgets/chat_input.ui:27
 msgid "Model"
 msgstr "모델"
 
-#: src/model_manager.py:612
+#: src/model_manager.py:640
 msgid "Remote Model"
 msgstr "원격 모델"
 
-#: src/model_manager.py:613
+#: src/model_manager.py:641
 msgid "Remote Host"
 msgstr "원격 호스트"
 
-#: src/model_manager.py:614
+#: src/model_manager.py:642
 msgid "Modified At"
 msgstr "수정 일시"
 
-#: src/model_manager.py:615
+#: src/model_manager.py:643
 msgid "Size"
 msgstr "크기"
 
-#: src/model_manager.py:616
+#: src/model_manager.py:644
 msgid "Digest"
 msgstr "다이제스트"
 
-#: src/model_manager.py:617
+#: src/model_manager.py:645
 msgid "Detail: Format"
 msgstr "세부 정보: 형식"
 
-#: src/model_manager.py:618
+#: src/model_manager.py:646
 msgid "Detail: Family"
 msgstr "세부 정보: 계열"
 
-#: src/model_manager.py:619
+#: src/model_manager.py:647
 msgid "Detail: Families"
 msgstr "세부 정보: 계열 목록"
 
-#: src/model_manager.py:620
+#: src/model_manager.py:648
 msgid "Detail: Parameter Size"
 msgstr "세부 정보: 매개변수 수"
 
-#: src/model_manager.py:621
+#: src/model_manager.py:649
 msgid "Detail: Quantization Level"
 msgstr "세부 정보: 양자화 수준"
 
-#: src/model_manager.py:622
+#: src/model_manager.py:650
 msgid "Parameters"
 msgstr "매개변수"
 
-#: src/model_manager.py:623
+#: src/model_manager.py:651
 msgid "Capabilities"
 msgstr "기능"
 
-#: src/model_manager.py:624
+#: src/model_manager.py:652
 msgid "Template"
 msgstr "템플릿"
 
-#: src/model_manager.py:625
+#: src/model_manager.py:653
 msgid "License"
 msgstr "라이선스"
 
-#: src/model_manager.py:626
+#: src/model_manager.py:654
 msgid "Modelfile"
 msgstr "Modelfile"
 
-#: src/model_manager.py:627
+#: src/model_manager.py:655
 msgid "Model Info"
 msgstr "모델 정보"
 
@@ -888,14 +973,6 @@ msgstr "모델 목록 새로 고침"
 msgid "Download Model…"
 msgstr "모델 다운로드…"
 
-#: src/model_manager.ui:80
-msgid "Installed"
-msgstr "설치됨"
-
-#: src/model_manager.ui:90
-msgid "Available Models"
-msgstr "사용 가능한 모델"
-
 #: src/model_manager.ui:102
 msgid "Running"
 msgstr "실행 중"
@@ -904,59 +981,77 @@ msgstr "실행 중"
 msgid "Models in Memory"
 msgstr "메모리에 있는 모델"
 
-#: src/ollama.py:52
+#: src/ollama.py:71 src/storage.py:127
+msgid "Ollama Cloud requires https://ollama.com."
+msgstr "Ollama Cloud에는 https://ollama.com이 필요합니다."
+
+#: src/ollama.py:80
 msgid "Enter a valid http:// or https:// Ollama host URL."
 msgstr "http:// 또는 https://로 시작하는 올바른 Ollama 호스트 URL을 입력하세요."
 
-#: src/ollama.py:61 src/ollama.py:84
+#: src/ollama.py:89 src/ollama.py:104 src/ollama.py:137
 msgid "Request stopped"
 msgstr "요청이 중지됨"
 
-#: src/ollama.py:110
+#: src/ollama.py:98
+msgid "This operation is unavailable for Ollama Cloud."
+msgstr "이 작업은 Ollama Cloud에서 사용할 수 없습니다."
+
+#: src/ollama.py:124
+msgid ""
+"Ollama Cloud rejected the API key or account access. Edit this host to check its API "
+"key."
+msgstr "Ollama Cloud가 API 키 또는 계정 접근을 거부했습니다. 이 서버를 편집하여 API 키를 확인하세요."
+
+#: src/ollama.py:126
+msgid "Ollama Cloud usage or rate limit reached. Try again later."
+msgstr "Ollama Cloud 사용량 또는 요청 빈도 한도에 도달했습니다. 나중에 다시 시도하세요."
+
+#: src/ollama.py:163
 msgid "Invalid JSON received from Ollama"
 msgstr "Ollama에서 올바르지 않은 JSON을 받았습니다"
 
-#: src/ollama.py:112
+#: src/ollama.py:165
 msgid "Expected a JSON object from Ollama"
 msgstr "Ollama에서 JSON 객체가 반환되어야 합니다"
 
-#: src/ollama.py:162
+#: src/ollama.py:221
 msgid "Enter nonempty text to embed."
 msgstr "임베딩할 텍스트를 입력하세요. 비워 둘 수 없습니다."
 
-#: src/ollama.py:166
+#: src/ollama.py:225
 msgid "Embedding dimensions must be a positive integer."
 msgstr "임베딩 차원 수는 양의 정수여야 합니다."
 
-#: src/ollama.py:173
+#: src/ollama.py:232
 msgid "The server returned an incorrect number of embeddings."
 msgstr "서버가 잘못된 개수의 임베딩을 반환했습니다."
 
-#: src/ollama.py:178
+#: src/ollama.py:237
 msgid "The server returned an invalid embedding vector."
 msgstr "서버가 올바르지 않은 임베딩 벡터를 반환했습니다."
 
-#: src/ollama.py:181
+#: src/ollama.py:240
 msgid "Embedding dimensions do not match, or a vector is zero."
 msgstr "임베딩 차원이 일치하지 않거나 영벡터가 있습니다."
 
-#: src/ollama.py:210
+#: src/ollama.py:269
 msgid "Model pull ended before completion"
 msgstr "모델 다운로드가 완료되기 전에 종료되었습니다"
 
-#: src/ollama.py:216
+#: src/ollama.py:275
 msgid "Invalid output format"
 msgstr "올바르지 않은 출력 형식"
 
-#: src/ollama.py:220
+#: src/ollama.py:279
 msgid "Keep-alive must be a duration in seconds, 0, or -1"
 msgstr "메모리 유지 시간은 초 단위 시간, 0 또는 -1이어야 합니다"
 
-#: src/ollama.py:224
+#: src/ollama.py:283
 msgid "Invalid thinking setting"
 msgstr "올바르지 않은 추론 설정"
 
-#: src/ollama.py:230
+#: src/ollama.py:289
 msgid "Top logprobs must be between 0 and 20"
 msgstr "상위 로그 확률 수는 0~20이어야 합니다"
 
@@ -988,7 +1083,7 @@ msgstr "다운로드 세부 정보"
 msgid "New Chat"
 msgstr "새 채팅"
 
-#: src/session.py:167
+#: src/session.py:169
 msgid "There are no pending tool calls."
 msgstr "대기 중인 도구 호출이 없습니다."
 
@@ -1035,7 +1130,7 @@ msgstr "사이드바 표시 전환"
 msgid "Opening Gnollama"
 msgstr "Gnollama 여는 중"
 
-#: src/startup.py:20 src/tab.py:245 src/widgets/knowledge_import.py:88
+#: src/startup.py:20 src/tab.py:247 src/widgets/knowledge_import.py:88
 #: src/widgets/knowledge_view.py:1220 src/widgets/url_import.py:232 src/window.py:139
 msgid "Retry"
 msgstr "다시 시도"
@@ -1056,6 +1151,14 @@ msgstr "데이터베이스를 열 수 없습니다"
 #, python-brace-format
 msgid "Database backup: {0}"
 msgstr "데이터베이스 백업: {0}"
+
+#: src/storage.py:117
+msgid "This host was removed."
+msgstr "이 서버가 제거되었습니다."
+
+#: src/storage.py:122
+msgid "Invalid host type."
+msgstr "잘못된 서버 유형입니다."
 
 #: src/structured.py:18
 msgid "Non-finite numbers are not valid JSON."
@@ -1109,43 +1212,43 @@ msgstr "새 응답"
 msgid "Chat"
 msgstr "채팅"
 
-#: src/tab.py:166
+#: src/tab.py:167
 msgid "Select an available model before sending."
 msgstr "보내기 전에 사용 가능한 모델을 선택하세요."
 
-#: src/tab.py:169
+#: src/tab.py:170
 msgid "Wait for this model to finish unloading before sending."
 msgstr "이 모델이 메모리에서 해제된 뒤에 보내세요."
 
-#: src/tab.py:174
+#: src/tab.py:175
 msgid "Wait for image support to be checked before sending."
 msgstr "이미지 지원 여부를 확인한 뒤에 보내세요."
 
-#: src/tab.py:176 src/widgets/chat_input.py:112
+#: src/tab.py:177 src/widgets/chat_input.py:112
 msgid "Remove draft images or select a vision model to send."
 msgstr "보내려면 초안에서 이미지를 제거하거나 이미지 지원 모델을 선택하세요."
 
-#: src/tab.py:218
+#: src/tab.py:220
 msgid "Retrieving sources…"
 msgstr "출처 검색 중…"
 
-#: src/tab.py:243
+#: src/tab.py:245
 msgid "Could Not Retrieve Sources"
 msgstr "출처를 검색할 수 없습니다"
 
-#: src/tab.py:244
+#: src/tab.py:246
 msgid "Adjust Sources"
 msgstr "출처 조정"
 
-#: src/tab.py:246
+#: src/tab.py:248
 msgid "Send Without Knowledge"
 msgstr "지식 없이 보내기"
 
-#: src/tab.py:247
+#: src/tab.py:249
 msgid "Keep Draft"
 msgstr "초안 유지"
 
-#: src/tab.py:309
+#: src/tab.py:311
 msgid "Response ended before completion."
 msgstr "응답이 완료되기 전에 종료되었습니다."
 
@@ -1419,22 +1522,26 @@ msgid "Checking chat models…"
 msgstr "채팅 모델 확인 중…"
 
 #: src/widgets/chat_input.py:176
+msgid "No cloud models are available. Try refreshing later."
+msgstr "사용 가능한 클라우드 모델이 없습니다. 나중에 새로 고침을 시도하세요."
+
+#: src/widgets/chat_input.py:177
 msgid "No chat models found. Pull one in Manage Models, then refresh."
 msgstr "채팅 모델을 찾지 못했습니다. 모델 관리에서 모델을 다운로드한 뒤 새로 고치세요."
 
-#: src/widgets/chat_input.py:246
+#: src/widgets/chat_input.py:247
 msgid "Select Images"
 msgstr "이미지 선택"
 
-#: src/widgets/chat_input.py:250
+#: src/widgets/chat_input.py:251
 msgid "Images"
 msgstr "이미지"
 
-#: src/widgets/chat_input.py:283 src/widgets/chat_input.ui:116
+#: src/widgets/chat_input.py:284 src/widgets/chat_input.ui:116
 msgid "No image selected"
 msgstr "선택된 이미지 없음"
 
-#: src/widgets/chat_input.py:289
+#: src/widgets/chat_input.py:290
 #, python-brace-format
 msgid "{0} image selected"
 msgid_plural "{0} images selected"
@@ -1481,7 +1588,7 @@ msgstr "적용"
 msgid "Content"
 msgstr "콘텐츠"
 
-#: src/widgets/json_view.py:160 src/widgets/options_panel.py:41
+#: src/widgets/json_view.py:160 src/widgets/options_panel.py:42
 msgid "JSON Schema"
 msgstr "JSON 스키마"
 
@@ -2437,248 +2544,252 @@ msgid ""
 "about your documents."
 msgstr "모델을 선택하고 메시지를 입력하세요. 지식 컬렉션을 선택하면 문서에 대해 질문할 수 있습니다."
 
-#: src/widgets/options_panel.py:41
+#: src/widgets/options_panel.py:42
 msgid "Text"
 msgstr "텍스트"
 
-#: src/widgets/options_panel.py:41
+#: src/widgets/options_panel.py:42
 msgid "JSON"
 msgstr "JSON"
 
-#: src/widgets/options_panel.py:43 src/widgets/options_panel.py:72
+#: src/widgets/options_panel.py:44 src/widgets/options_panel.py:83
 msgid "Server default"
 msgstr "서버 기본값"
 
-#: src/widgets/options_panel.py:43
+#: src/widgets/options_panel.py:44
 msgid "Unload after reply"
 msgstr "응답 후 메모리에서 해제"
 
-#: src/widgets/options_panel.py:43
+#: src/widgets/options_panel.py:44
 msgid "Five minutes"
 msgstr "5분"
 
-#: src/widgets/options_panel.py:44
+#: src/widgets/options_panel.py:45
 msgid "Thirty minutes"
 msgstr "30분"
 
-#: src/widgets/options_panel.py:44
+#: src/widgets/options_panel.py:45
 msgid "Indefinitely"
 msgstr "무기한"
 
-#: src/widgets/options_panel.py:44
+#: src/widgets/options_panel.py:45
 msgid "Custom seconds"
 msgstr "사용자 지정 초"
 
-#: src/widgets/options_panel.py:63
+#: src/widgets/options_panel.py:53
+msgid "Ollama Cloud uses text output and manages model retention automatically."
+msgstr "Ollama Cloud는 텍스트 출력을 사용하며 모델의 메모리 유지 시간을 자동으로 관리합니다."
+
+#: src/widgets/options_panel.py:74
 msgid "Server"
 msgstr "서버"
 
-#: src/widgets/options_panel.py:88
+#: src/widgets/options_panel.py:100
 msgid "System Instructions"
 msgstr "시스템 지침"
 
-#: src/widgets/options_panel.py:89
+#: src/widgets/options_panel.py:101
 msgid "System prompt"
 msgstr "시스템 프롬프트"
 
-#: src/widgets/options_panel.py:89
+#: src/widgets/options_panel.py:101
 msgid "Optional instructions applied to this conversation."
 msgstr "이 대화에 적용할 선택적 지침입니다."
 
-#: src/widgets/options_panel.py:90
+#: src/widgets/options_panel.py:102
 msgid "Optional instructions"
 msgstr "선택적 지침"
 
-#: src/widgets/options_panel.py:91
+#: src/widgets/options_panel.py:103
 msgid "Generation Limits"
 msgstr "생성 제한"
 
-#: src/widgets/options_panel.py:91
+#: src/widgets/options_panel.py:103
 msgid "Blank fields use the server’s defaults."
 msgstr "빈 필드는 서버 기본값을 사용합니다."
 
-#: src/widgets/options_panel.py:92
+#: src/widgets/options_panel.py:104
 msgid "Context size (tokens)"
 msgstr "컨텍스트 크기(토큰)"
 
-#: src/widgets/options_panel.py:92
+#: src/widgets/options_panel.py:104
 msgid "Maximum context available to the model; larger values need more memory."
 msgstr "모델에서 사용할 수 있는 최대 컨텍스트입니다. 값이 클수록 더 많은 메모리가 필요합니다."
 
-#: src/widgets/options_panel.py:93
+#: src/widgets/options_panel.py:105
 msgid "Maximum output tokens"
 msgstr "최대 출력 토큰 수"
 
-#: src/widgets/options_panel.py:93
+#: src/widgets/options_panel.py:105
 msgid "Use −1 for unlimited output or −2 to fill the context."
 msgstr "출력을 무제한으로 하려면 −1, 컨텍스트를 채우려면 −2를 사용하세요."
 
-#: src/widgets/options_panel.py:94
+#: src/widgets/options_panel.py:106
 msgid "Stop sequences"
 msgstr "중지 시퀀스"
 
-#: src/widgets/options_panel.py:94
+#: src/widgets/options_panel.py:106
 msgid "Separate sequences with commas. Generation stops when one is produced."
 msgstr "시퀀스를 쉼표로 구분하세요. 시퀀스 중 하나가 출력되면 생성이 중지됩니다."
 
-#: src/widgets/options_panel.py:95
+#: src/widgets/options_panel.py:107
 msgid "Sampling"
 msgstr "샘플링"
 
-#: src/widgets/options_panel.py:97
+#: src/widgets/options_panel.py:109
 msgid "Temperature"
 msgstr "온도"
 
-#: src/widgets/options_panel.py:97
+#: src/widgets/options_panel.py:109
 msgid "Higher values increase variation; zero is more predictable."
 msgstr "값이 클수록 다양성이 높아집니다. 0이면 결과를 더 예측하기 쉽습니다."
 
-#: src/widgets/options_panel.py:98
+#: src/widgets/options_panel.py:110
 msgid "Seed"
 msgstr "시드"
 
-#: src/widgets/options_panel.py:98
+#: src/widgets/options_panel.py:110
 msgid "An integer used to initialize random sampling."
 msgstr "무작위 샘플링을 초기화하는 데 사용할 정수입니다."
 
-#: src/widgets/options_panel.py:99
+#: src/widgets/options_panel.py:111
 msgid "Top K"
 msgstr "Top K"
 
-#: src/widgets/options_panel.py:99
+#: src/widgets/options_panel.py:111
 msgid "Number of candidate tokens to consider."
 msgstr "고려할 후보 토큰 수입니다."
 
-#: src/widgets/options_panel.py:100
+#: src/widgets/options_panel.py:112
 msgid "Top P"
 msgstr "Top P"
 
-#: src/widgets/options_panel.py:100
+#: src/widgets/options_panel.py:112
 msgid "Cumulative probability cutoff, between 0 and 1."
 msgstr "누적 확률 임계값입니다. 0~1 사이로 설정합니다."
 
-#: src/widgets/options_panel.py:101
+#: src/widgets/options_panel.py:113
 msgid "Min P"
 msgstr "Min P"
 
-#: src/widgets/options_panel.py:101
+#: src/widgets/options_panel.py:113
 msgid "Minimum relative token probability, between 0 and 1."
 msgstr "토큰의 최소 상대 확률입니다. 0~1 사이로 설정합니다."
 
-#: src/widgets/options_panel.py:103
+#: src/widgets/options_panel.py:115
 msgid "Model Retention"
 msgstr "모델 메모리 유지"
 
-#: src/widgets/options_panel.py:105
+#: src/widgets/options_panel.py:120
 msgid "Keep model loaded"
 msgstr "모델을 로드된 상태로 유지"
 
-#: src/widgets/options_panel.py:108
+#: src/widgets/options_panel.py:124
 msgid "Custom duration (seconds)"
 msgstr "사용자 지정 기간(초)"
 
-#: src/widgets/options_panel.py:108 src/widgets/options_panel.py:165
+#: src/widgets/options_panel.py:124 src/widgets/options_panel.py:187
 msgid "Enter a positive whole number of seconds."
 msgstr "초 단위의 양의 정수를 입력하세요."
 
-#: src/widgets/options_panel.py:110
+#: src/widgets/options_panel.py:126
 msgid "Diagnostics"
 msgstr "진단"
 
-#: src/widgets/options_panel.py:111
+#: src/widgets/options_panel.py:128
 msgid "Show response statistics"
 msgstr "응답 통계 표시"
 
-#: src/widgets/options_panel.py:112
+#: src/widgets/options_panel.py:131
 msgid "Return token probabilities (logprobs)"
 msgstr "토큰 확률 반환(logprobs)"
 
-#: src/widgets/options_panel.py:115
+#: src/widgets/options_panel.py:135
 msgid "Top logprobs"
 msgstr "상위 로그 확률"
 
-#: src/widgets/options_panel.py:115
+#: src/widgets/options_panel.py:135
 msgid "Number of alternative token probabilities, from 0 to 20."
 msgstr "대체 토큰 확률의 개수입니다. 0~20 사이로 설정합니다."
 
-#: src/widgets/options_panel.py:132
+#: src/widgets/options_panel.py:152
 msgid "Chat Settings"
 msgstr "채팅 설정"
 
-#: src/widgets/options_panel.py:135
+#: src/widgets/options_panel.py:155
 msgid "Done"
 msgstr "완료"
 
-#: src/widgets/options_panel.py:177
+#: src/widgets/options_panel.py:199
 msgid "Top logprobs must be between 0 and 20."
 msgstr "상위 로그 확률 수는 0~20이어야 합니다."
 
-#: src/widgets/options_panel.py:199
+#: src/widgets/options_panel.py:221
 #, python-brace-format
 msgid "Enabled tools: {0}. Results are supplied manually."
 msgstr "활성화된 도구: {0}. 결과는 수동으로 제공합니다."
 
-#: src/widgets/options_panel.py:199
+#: src/widgets/options_panel.py:221
 msgid "Tool calling is off."
 msgstr "도구 호출이 꺼져 있습니다."
 
-#: src/widgets/options_panel.py:202
+#: src/widgets/options_panel.py:224
 msgid "Checking tool support…"
 msgstr "도구 지원 여부 확인 중…"
 
-#: src/widgets/options_panel.py:204
+#: src/widgets/options_panel.py:226
 msgid "This model reports no tool support; you can still test the API."
 msgstr "이 모델은 도구를 지원하지 않는다고 표시되지만 API를 테스트할 수는 있습니다."
 
-#: src/widgets/options_panel.py:206
+#: src/widgets/options_panel.py:228
 msgid "Tool support is unknown."
 msgstr "도구 지원 여부를 알 수 없습니다."
 
-#: src/widgets/options_panel.py:275
+#: src/widgets/options_panel.py:297
 msgid "No hosts configured"
 msgstr "구성된 호스트 없음"
 
-#: src/widgets/options_panel.py:313 src/widgets/options_panel.py:315
+#: src/widgets/options_panel.py:335 src/widgets/options_panel.py:337
 msgid "Enter a valid number."
 msgstr "올바른 숫자를 입력하세요."
 
-#: src/widgets/options_panel.py:333
+#: src/widgets/options_panel.py:355
 msgid "Value must not be negative."
 msgstr "값은 음수일 수 없습니다."
 
-#: src/widgets/options_panel.py:336
+#: src/widgets/options_panel.py:358
 msgid "Value must be between 0 and 1."
 msgstr "값은 0~1이어야 합니다."
 
-#: src/widgets/options_panel.py:338
+#: src/widgets/options_panel.py:360
 msgid "Context size must be positive."
 msgstr "컨텍스트 크기는 양수여야 합니다."
 
-#: src/widgets/options_panel.py:340
+#: src/widgets/options_panel.py:362
 msgid "Max tokens must be -2, -1, or a nonnegative integer."
 msgstr "최대 토큰 수는 -2, -1 또는 0 이상의 정수여야 합니다."
 
-#: src/widgets/options_panel.ui:20
+#: src/widgets/options_panel.ui:21
 msgid "Tool Calling"
 msgstr "도구 호출"
 
-#: src/widgets/options_panel.ui:26
+#: src/widgets/options_panel.ui:27
 msgid "Edit Tools…"
 msgstr "도구 편집…"
 
-#: src/widgets/options_panel.ui:44
+#: src/widgets/options_panel.ui:46
 msgid "Output:"
 msgstr "출력:"
 
-#: src/widgets/options_panel.ui:56
+#: src/widgets/options_panel.ui:58
 msgid "Edit Schema…"
 msgstr "스키마 편집…"
 
-#: src/widgets/options_panel.ui:63
+#: src/widgets/options_panel.ui:65
 msgid "Chat Settings…"
 msgstr "채팅 설정…"
 
-#: src/widgets/options_panel.ui:65
+#: src/widgets/options_panel.ui:67
 msgid "Generation, Model Retention, and Diagnostics"
 msgstr "생성, 모델 메모리 유지 및 진단"
 
@@ -3009,3 +3120,5 @@ msgstr "키보드 단축키(_K)"
 msgid "_About Gnollama"
 msgstr "Gnollama 정보(_A)"
 
+#~ msgid "Fetching version..."
+#~ msgstr "버전 가져오는 중..."

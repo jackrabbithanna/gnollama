@@ -6,9 +6,9 @@
 # Reviewed and updated with AI assistance, 2026.
 msgid ""
 msgstr ""
-"Project-Id-Version: gnollama 0.13.0\n"
+"Project-Id-Version: gnollama 0.14.0\n"
 "Report-Msgid-Bugs-To: https://github.com/jackrabbithanna/gnollama/issues\n"
-"POT-Creation-Date: 2026-09-10 17:08-0600\n"
+"POT-Creation-Date: 2026-09-10 20:09-0600\n"
 "PO-Revision-Date: 2026-09-10 00:00+0000\n"
 "Last-Translator: \n"
 "Language: pt\n"
@@ -93,6 +93,26 @@ msgid "Ollama chat with code highlighting"
 msgstr "Conversa Ollama com realce de código"
 
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:53
+msgid "Connect directly to Ollama Cloud from Chat and Response tabs."
+msgstr "Ligue-se diretamente ao Ollama Cloud a partir dos separadores Conversa e Resposta."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:54
+msgid ""
+"Store each host's API key in the desktop keyring, with session-only use when the "
+"keyring is unavailable."
+msgstr ""
+"Guarde a chave de API de cada servidor no porta-chaves do ambiente de trabalho, com "
+"utilização apenas durante a sessão quando o porta-chaves não estiver disponível."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:55
+msgid ""
+"Browse cloud models with controls adapted to the service, and use local knowledge "
+"sources in cloud chats."
+msgstr ""
+"Explore modelos na nuvem com controlos adaptados ao serviço e utilize fontes de "
+"conhecimento locais nas conversas na nuvem."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:60
 msgid ""
 "Add a Knowledge Library for text and PDF imports, local embedding indexes, and "
 "source-grounded chats."
@@ -100,7 +120,7 @@ msgstr ""
 "Adicionar uma biblioteca de conhecimento para importar texto e PDF, criar índices "
 "locais de embeddings e conversar com base em fontes."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:55
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:62
 msgid ""
 "Start with knowledge collections and add text, files, or URLs with explicit "
 "destinations and guided previews."
@@ -108,7 +128,7 @@ msgstr ""
 "Comece pelas coleções de conhecimento e adicione texto, ficheiros ou URL com destinos"
 " claros e pré-visualizações guiadas."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:56
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:63
 msgid ""
 "Choose collections before search settings, and use adaptive chat settings with "
 "clearer controls and feedback."
@@ -116,11 +136,11 @@ msgstr ""
 "Escolha as coleções antes das definições de pesquisa e utilize definições de conversa"
 " adaptáveis com controlos e indicações mais claros."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:57
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:64
 msgid "Create and compare embeddings, inspect chunks and vectors, and test semantic searches."
 msgstr "Crie e compare embeddings, examine blocos e vetores e teste pesquisas semânticas."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:58
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:65
 msgid ""
 "Select documents or chunks for chats, with independent embedding hosts and saved "
 "source passages."
@@ -128,7 +148,7 @@ msgstr ""
 "Selecione documentos ou blocos para as conversas, com servidores de embeddings "
 "independentes e passagens das fontes guardadas."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:59
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:66
 msgid ""
 "Warn about stored embeddings when deleting models, with optional vector cleanup that "
 "retains source text."
@@ -136,7 +156,7 @@ msgstr ""
 "Avisar sobre embeddings guardados ao eliminar modelos, com limpeza opcional dos "
 "vetores que preserva o texto de origem."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:60
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:67
 msgid ""
 "Search with sqlite-vec, automatically migrate existing vectors with a database "
 "backup, and use the Qwen3 retrieval preset."
@@ -144,7 +164,7 @@ msgstr ""
 "Pesquise com sqlite-vec, migre automaticamente os vetores existentes com uma cópia de"
 " segurança da base de dados e utilize a predefinição de recuperação Qwen3."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:61
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:68
 msgid ""
 "Organize documents into collections with shared embedding settings, automatic builds,"
 " and live collection selection in chats."
@@ -152,7 +172,7 @@ msgstr ""
 "Organize documentos em coleções com definições de embeddings partilhadas, criação "
 "automática e seleção direta de coleções nas conversas."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:62
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:69
 msgid ""
 "Choose collections as chat sources and compare cosine similarity, Euclidean distance,"
 " or Manhattan distance with appropriate search cutoffs."
@@ -160,7 +180,7 @@ msgstr ""
 "Escolha coleções como fontes da conversa e compare a similaridade do cosseno, a "
 "distância euclidiana ou a distância de Manhattan com limiares de pesquisa adequados."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:63
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:70
 msgid ""
 "Hide embedding-only models from Chat and Response model selection while keeping them "
 "available in Knowledge and Manage Models."
@@ -168,7 +188,7 @@ msgstr ""
 "Oculte os modelos exclusivos de embeddings na seleção de modelos de Conversa e "
 "Resposta, mantendo-os disponíveis em Conhecimento e Gerir modelos."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:64
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:71
 msgid ""
 "Import batches of URLs into collections with main-content extraction, CSS selectors, "
 "editable previews, and source links in chats."
@@ -176,7 +196,7 @@ msgstr ""
 "Importe lotes de URL para coleções com extração do conteúdo principal, seletores CSS,"
 " pré-visualizações editáveis e ligações às fontes nas conversas."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:65
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:72
 msgid ""
 "Review changed web documents before replacing their text and rebuilding all affected "
 "embedding indexes."
@@ -200,11 +220,11 @@ msgstr "Estatísticas da resposta"
 msgid "Earlier images were omitted from the text-only request."
 msgstr "As imagens anteriores foram omitidas do pedido apenas de texto."
 
-#: src/bubbles.py:125 src/knowledge.py:300
+#: src/bubbles.py:125 src/knowledge.py:301
 msgid "Stopped"
 msgstr "Parado"
 
-#: src/bubbles.py:125 src/knowledge.py:300
+#: src/bubbles.py:125 src/knowledge.py:301
 msgid "Failed"
 msgstr "Falhou"
 
@@ -214,7 +234,7 @@ msgid "Logprobs"
 msgstr "Probabilidades logarítmicas"
 
 #: src/bubbles.py:183 src/model_manager.py:22 src/model_manager.py:24
-#: src/model_manager.py:28
+#: src/model_manager.py:28 src/model_manager.py:312
 msgid "Unavailable"
 msgstr "Indisponível"
 
@@ -267,7 +287,7 @@ msgstr "Motivo de conclusão: {0}"
 msgid "A document was deleted. Choose documents again."
 msgstr "Um documento foi eliminado. Selecione novamente os documentos."
 
-#: src/collections_store.py:107 src/knowledge.py:357
+#: src/collections_store.py:107 src/knowledge.py:358
 msgid "Enter a collection name."
 msgstr "Introduza um nome para a coleção."
 
@@ -275,7 +295,7 @@ msgstr "Introduza um nome para a coleção."
 msgid "Choose a model with the collection’s original digest."
 msgstr "Escolha um modelo com o resumo criptográfico original da coleção."
 
-#: src/collections_store.py:141 src/knowledge.py:390
+#: src/collections_store.py:141 src/knowledge.py:391
 msgid "The collection was deleted."
 msgstr "A coleção foi eliminada."
 
@@ -300,26 +320,52 @@ msgstr ""
 "A coleção «{0}» não está pronta. Crie os embeddings em falta ou tente novamente os "
 "documentos que falharam: {1}"
 
-#: src/database.py:75
+#: src/credentials.py:27
+msgid "Enter a valid API key."
+msgstr "Introduza uma chave de API válida."
+
+#: src/credentials.py:51
+msgid "Could not access the keyring. Edit this host to retry or enter a session-only key."
+msgstr ""
+"Não foi possível aceder ao porta-chaves. Edite este servidor para tentar novamente ou"
+" introduzir uma chave apenas para esta sessão."
+
+#: src/credentials.py:53 src/storage.py:134
+msgid "An API key is required. Edit this host to enter one."
+msgstr "É necessária uma chave de API. Edite este servidor para introduzir uma."
+
+#: src/credentials.py:66
+msgid "Could not save the API key in the keyring. Retry or use it for this session."
+msgstr ""
+"Não foi possível guardar a chave de API no porta-chaves. Tente novamente ou utilize-a"
+" apenas nesta sessão."
+
+#: src/credentials.py:78 src/credentials.py:80
+msgid "Could not remove the saved API key. Unlock the keyring and retry."
+msgstr ""
+"Não foi possível remover a chave de API guardada. Desbloqueie o porta-chaves e tente "
+"novamente."
+
+#: src/database.py:80
 msgid "This database was created by a newer Gnollama version. Update Gnollama to open it."
 msgstr ""
 "Esta base de dados foi criada por uma versão mais recente do Gnollama. Atualize o "
 "Gnollama para a abrir."
 
-#: src/database.py:82
+#: src/database.py:87
 msgid "Backing up the database…"
 msgstr "A criar cópia de segurança da base de dados…"
 
-#: src/database.py:191
+#: src/database.py:196
 msgid "This database requires a newer Gnollama version."
 msgstr "Esta base de dados requer uma versão mais recente do Gnollama."
 
-#: src/database.py:210
+#: src/database.py:215
 #, python-brace-format
 msgid "Upgrading the database to version {0}…"
 msgstr "A atualizar a base de dados para a versão {0}…"
 
-#: src/host_edit_dialog.ui:6 src/host_manager.py:171 src/model_manager.py:366
+#: src/host_edit_dialog.ui:14 src/host_manager.py:266 src/model_manager.py:394
 #: src/pull_model_dialog.ui:17 src/widgets/knowledge_view.py:1111
 #: src/widgets/knowledge_view.py:1121 src/widgets/knowledge_view.py:1250
 #: src/widgets/knowledge_view.py:1293 src/widgets/knowledge_view.py:1337
@@ -328,67 +374,108 @@ msgstr "A atualizar a base de dados para a versão {0}…"
 msgid "Cancel"
 msgstr "Cancelar"
 
-#: src/host_edit_dialog.ui:7 src/widgets/knowledge_view.py:1112
+#: src/host_edit_dialog.ui:19 src/widgets/knowledge_view.py:1112
 #: src/widgets/knowledge_view.py:1145 src/widgets/knowledge_view.py:1338 src/window.py:350
 msgid "Save"
 msgstr "Guardar"
 
-#: src/host_edit_dialog.ui:21 src/model_manager.py:610
+#: src/host_edit_dialog.ui:39
+msgid "Host type"
+msgstr "Tipo de servidor"
+
+#: src/host_edit_dialog.ui:47 src/model_manager.py:638
 msgid "Name"
 msgstr "Nome"
 
-#: src/host_edit_dialog.ui:28
+#: src/host_edit_dialog.ui:54
 msgid "For example: Local Ollama"
 msgstr "Por exemplo: Ollama local"
 
-#: src/host_edit_dialog.ui:33
+#: src/host_edit_dialog.ui:59
 msgid "Server address"
 msgstr "Endereço do servidor"
 
-#: src/host_edit_dialog.ui:45
+#: src/host_edit_dialog.ui:71
 msgid "Set as default host"
 msgstr "Definir como servidor predefinido"
 
-#: src/host_manager.py:19
+#: src/host_manager.py:24
 msgid "Edit Host"
 msgstr "Editar servidor"
 
-#: src/host_manager.py:19 src/host_manager.ui:23
+#: src/host_manager.py:24 src/host_manager.ui:23
 msgid "Add Host"
 msgstr "Adicionar servidor"
 
-#: src/host_manager.py:35
+#: src/host_manager.py:30
+msgid "Ollama Server"
+msgstr "Servidor Ollama"
+
+#: src/host_manager.py:30 src/host_manager.py:72 src/model_manager.py:312
+msgid "Ollama Cloud"
+msgstr "Ollama Cloud"
+
+#: src/host_manager.py:34
+msgid "API key"
+msgstr "Chave de API"
+
+#: src/host_manager.py:36
+msgid "Leave blank to keep the existing key."
+msgstr "Deixe em branco para manter a chave existente."
+
+#: src/host_manager.py:37
+msgid "Stored securely in your desktop keyring."
+msgstr "Guardada em segurança no porta-chaves do ambiente de trabalho."
+
+#: src/host_manager.py:38
+msgid "Create an API key"
+msgstr "Criar uma chave de API"
+
+#: src/host_manager.py:44
+msgid "Use for This Session"
+msgstr "Utilizar nesta sessão"
+
+#: src/host_manager.py:98 src/storage.py:124
 msgid "Enter a name for this server."
 msgstr "Introduza um nome para este servidor."
 
-#: src/host_manager.py:78
+#: src/host_manager.py:149
 msgid "Default"
 msgstr "Predefinido"
 
-#: src/host_manager.py:83 src/host_manager.py:87
+#: src/host_manager.py:154 src/host_manager.py:158
 msgid "Test Connection"
 msgstr "Testar ligação"
 
-#: src/host_manager.py:92
+#: src/host_manager.py:163
 msgid "Edit Server"
 msgstr "Editar servidor"
 
-#: src/host_manager.py:98 src/host_manager.py:168
+#: src/host_manager.py:169 src/host_manager.py:263
 msgid "Delete Host"
 msgstr "Eliminar servidor"
 
-#: src/host_manager.py:112
-msgid "Fetching version..."
-msgstr "A obter versão…"
+#: src/host_manager.py:183
+msgid "Checking connection…"
+msgstr "A verificar a ligação…"
 
-#: src/host_manager.py:114 src/main.py:63 src/model_manager.py:340 src/model_manager.py:601
-#: src/startup.py:23 src/widgets/json_view.py:230 src/widgets/knowledge_import.py:51
-#: src/widgets/knowledge_view.py:756 src/widgets/knowledge_view.py:909
-#: src/widgets/knowledge_view.py:1271
+#: src/host_manager.py:185 src/host_manager.py:277 src/main.py:63 src/model_manager.py:368
+#: src/model_manager.py:629 src/startup.py:23 src/widgets/json_view.py:230
+#: src/widgets/knowledge_import.py:51 src/widgets/knowledge_view.py:756
+#: src/widgets/knowledge_view.py:909 src/widgets/knowledge_view.py:1271
 msgid "Close"
 msgstr "Fechar"
 
-#: src/host_manager.py:124
+#: src/host_manager.py:196
+#, python-brace-format
+msgid ""
+"Ollama Cloud is reachable. Available models: {0}\n"
+"Your API key will be checked when you generate a response."
+msgstr ""
+"Ollama Cloud está acessível. Modelos disponíveis: {0}\n"
+"A sua chave de API será verificada ao gerar uma resposta."
+
+#: src/host_manager.py:199
 #, python-brace-format
 msgid ""
 "Connected\n"
@@ -397,7 +484,7 @@ msgstr ""
 "Ligado\n"
 "Versão do Ollama: {0}"
 
-#: src/host_manager.py:126
+#: src/host_manager.py:201
 #, python-brace-format
 msgid ""
 "Connection failed\n"
@@ -406,14 +493,18 @@ msgstr ""
 "Falha na ligação\n"
 "{0}"
 
-#: src/host_manager.py:169 src/model_manager.py:352
+#: src/host_manager.py:264 src/model_manager.py:380
 #, python-brace-format
 msgid "Are you sure you want to delete {0}?"
 msgstr "Tem a certeza de que quer eliminar {0}?"
 
-#: src/host_manager.py:172 src/model_manager.py:367 src/widgets/knowledge_view.py:1359
+#: src/host_manager.py:267 src/model_manager.py:395 src/widgets/knowledge_view.py:1359
 msgid "Delete"
 msgstr "Eliminar"
+
+#: src/host_manager.py:276 src/model_manager.py:418
+msgid "Delete Failed"
+msgstr "Falha ao eliminar"
 
 #: src/host_manager.ui:6 src/host_manager.ui:17
 msgid "Manage Hosts"
@@ -538,112 +629,112 @@ msgstr "O limite das fontes deve estar entre 256 e 64 000 carateres."
 msgid "Wait for the model operation to finish."
 msgstr "Aguarde até a operação do modelo terminar."
 
-#: src/knowledge.py:262
+#: src/knowledge.py:263
 msgid "The embedding host was removed. Choose a configured host before continuing."
 msgstr ""
 "O servidor de embeddings foi removido. Escolha um servidor configurado antes de "
 "continuar."
 
-#: src/knowledge.py:268 src/widgets/knowledge_import.py:146 src/widgets/url_import.py:100
+#: src/knowledge.py:269 src/widgets/knowledge_import.py:146 src/widgets/url_import.py:100
 #: src/widgets/url_import.py:113
 msgid "Queued"
 msgstr "Em fila"
 
-#: src/knowledge.py:272
+#: src/knowledge.py:273
 msgid "The Knowledge Library is closing."
 msgstr "A biblioteca de conhecimento está a fechar."
 
-#: src/knowledge.py:278
+#: src/knowledge.py:279
 msgid "This document is being replaced. Retry the build when replacement finishes."
 msgstr ""
 "Este documento está a ser substituído. Tente a criação novamente quando a "
 "substituição terminar."
 
-#: src/knowledge.py:300
+#: src/knowledge.py:301
 msgid "Complete"
 msgstr "Concluído"
 
-#: src/knowledge.py:317
+#: src/knowledge.py:318
 msgid "Wait for this document’s embedding builds to finish before replacing it."
 msgstr "Aguarde até a criação dos embeddings deste documento terminar antes de o substituir."
 
-#: src/knowledge.py:320
+#: src/knowledge.py:321
 msgid "Saving the web document…"
 msgstr "A guardar documento web…"
 
-#: src/knowledge.py:348
+#: src/knowledge.py:349
 msgid "Save web document"
 msgstr "Guardar documento web"
 
-#: src/knowledge.py:369
+#: src/knowledge.py:370
 msgid "Create collection"
 msgstr "Criar coleção"
 
-#: src/knowledge.py:384
+#: src/knowledge.py:385
 #, python-brace-format
 msgid "Add document: {0}"
 msgstr "Adicionar documento: {0}"
 
-#: src/knowledge.py:392
+#: src/knowledge.py:393
 #, python-brace-format
 msgid "Prepare collection: {0}"
 msgstr "Preparar coleção: {0}"
 
-#: src/knowledge.py:399
+#: src/knowledge.py:400
 msgid "Reusing embeddings and preparing missing documents…"
 msgstr "A reutilizar embeddings e a preparar os documentos em falta…"
 
-#: src/knowledge.py:416
+#: src/knowledge.py:417
 #, python-brace-format
 msgid "Create embeddings: {0}"
 msgstr "Criar embeddings: {0}"
 
-#: src/knowledge.py:421
+#: src/knowledge.py:422
 msgid "Build was stopped before it started."
 msgstr "A criação foi parada antes de começar."
 
-#: src/knowledge.py:438
+#: src/knowledge.py:439
 msgid "The source document was deleted."
 msgstr "O documento de origem foi eliminado."
 
-#: src/knowledge.py:443
+#: src/knowledge.py:444
 msgid "This index would exceed 100,000 chunks. Increase the chunk size or reduce overlap."
 msgstr ""
 "Este índice excederia 100 000 blocos. Aumente o tamanho dos blocos ou reduza a "
 "sobreposição."
 
-#: src/knowledge.py:459
+#: src/knowledge.py:460
 #, python-brace-format
 msgid "Embedding chunks: {0} complete, {1} remaining"
 msgstr "Embeddings dos blocos: {0} concluídos, {1} restantes"
 
-#: src/knowledge.py:483
+#: src/knowledge.py:484
 msgid "The embedding input cannot fit. Shorten the document prefix or choose another model."
 msgstr ""
 "A entrada de embeddings não cabe no espaço disponível. Encurte o prefixo do documento"
 " ou escolha outro modelo."
 
-#: src/knowledge.py:493
+#: src/knowledge.py:494
 msgid "The model returned a different vector dimension. Create a new configuration."
 msgstr "O modelo devolveu uma dimensão vetorial diferente. Crie uma nova configuração."
 
-#: src/knowledge.py:508
+#: src/knowledge.py:509
 msgid "Create embeddings"
 msgstr "Criar embeddings"
 
-#: src/knowledge.py:518
+#: src/knowledge.py:519
 msgid "This embedding configuration has no completed vectors."
 msgstr "Esta configuração de embeddings não tem vetores concluídos."
 
-#: src/knowledge.py:520 src/widgets/knowledge_view.py:659
+#: src/knowledge.py:521 src/widgets/knowledge_view.py:659
 msgid "Enter a search query."
 msgstr "Introduza uma consulta de pesquisa."
 
-#: src/knowledge.py:530 src/knowledge_store.py:265
+#: src/knowledge.py:531 src/knowledge_store.py:265
 msgid "Query dimensions differ from the stored vectors. Rebuild the index."
 msgstr "As dimensões da consulta diferem das dos vetores guardados. Reconstrua o índice."
 
-#: src/knowledge.py:537
+#: src/knowledge.py:538
 msgid "No passages met the search criteria. Adjust the query, sources, or minimum similarity."
 msgstr ""
 "Nenhuma passagem cumpriu os critérios de pesquisa. Ajuste a consulta, as fontes ou a "
@@ -744,7 +835,7 @@ msgstr ""
 msgid "translator-credits"
 msgstr "Jackrabbithanna"
 
-#: src/model_details_view.ui:6 src/model_manager.py:42 src/model_manager.py:291
+#: src/model_details_view.ui:6 src/model_manager.py:42 src/model_manager.py:318
 msgid "Model Details"
 msgstr "Detalhes do modelo"
 
@@ -757,70 +848,78 @@ msgstr ""
 "Memória: {0} · VRAM: {1}\n"
 "Contexto: {2} · Expira: {3}"
 
-#: src/model_manager.py:163 src/tab.py:162
+#: src/model_manager.py:168 src/tab.py:163
 msgid "No host configured."
 msgstr "Nenhum servidor configurado."
 
-#: src/model_manager.py:168
+#: src/model_manager.py:173
 msgid "Loading running models…"
 msgstr "A carregar modelos em execução…"
 
-#: src/model_manager.py:172
+#: src/model_manager.py:177
 #, python-brace-format
 msgid "Could not refresh running models: {0}"
 msgstr "Não foi possível atualizar os modelos em execução: {0}"
 
-#: src/model_manager.py:188
+#: src/model_manager.py:193
 msgid "No models are loaded in memory."
 msgstr "Não há modelos carregados na memória."
 
-#: src/model_manager.py:194 src/model_manager.py:207
+#: src/model_manager.py:199 src/model_manager.py:212
 msgid "Unload"
 msgstr "Descarregar da memória"
 
-#: src/model_manager.py:195 src/model_manager.py:209
+#: src/model_manager.py:200 src/model_manager.py:214
 msgid "Release this model from memory; keep its downloaded files."
 msgstr "Liberte este modelo da memória e mantenha os ficheiros transferidos."
 
-#: src/model_manager.py:207
+#: src/model_manager.py:212
 msgid "Unloading…"
 msgstr "A descarregar da memória…"
 
-#: src/model_manager.py:208
+#: src/model_manager.py:213
 msgid "A chat or embedding job is using this model in Gnollama."
 msgstr "Uma conversa ou tarefa de embeddings está a utilizar este modelo no Gnollama."
 
-#: src/model_manager.py:225
+#: src/model_manager.py:232
 msgid "Could not unload model"
 msgstr "Não foi possível descarregar o modelo da memória"
 
-#: src/model_manager.py:265
+#: src/model_manager.py:273 src/model_manager.ui:90
+msgid "Available Models"
+msgstr "Modelos disponíveis"
+
+#: src/model_manager.py:273 src/model_manager.ui:80
+msgid "Installed"
+msgstr "Instalados"
+
+#: src/model_manager.py:286
 msgid "Connection Error"
 msgstr "Erro de ligação"
 
-#: src/model_manager.py:298
+#: src/model_manager.py:325
 msgid "Delete Model"
 msgstr "Eliminar modelo"
 
-#: src/model_manager.py:329
+#: src/model_manager.py:357
 msgid "Failed to fetch details"
 msgstr "Falha ao obter detalhes"
 
-#: src/model_manager.py:349 src/model_manager.py:374 src/model_manager.py:377
+#: src/model_manager.py:377 src/model_manager.py:402 src/model_manager.py:405
 msgid "Model Is Busy"
 msgstr "O modelo está ocupado"
 
-#: src/model_manager.py:349 src/model_manager.py:377
+#: src/model_manager.py:377 src/model_manager.py:405
 msgid "Wait for active chats and embedding jobs before deleting this model."
 msgstr ""
 "Aguarde até as conversas e tarefas de embeddings ativas terminarem antes de eliminar "
 "este modelo."
 
-#: src/model_manager.py:353
+#: src/model_manager.py:381
 msgid "Also delete matching vectors; keep source text"
 msgstr "Eliminar também os vetores correspondentes; manter o texto de origem"
 
-#: src/model_manager.py:355
+#: src/model_manager.py:383
 #, python-brace-format
 msgid ""
 "Stored data using this model: {0} documents, {1} indexes, {2} vectors. Kept vectors "
@@ -830,7 +929,7 @@ msgstr ""
 "{2}. Os vetores mantidos podem ser reutilizados com o mesmo resumo criptográfico do "
 "modelo num servidor compatível."
 
-#: src/model_manager.py:357
+#: src/model_manager.py:385
 #, python-brace-format
 msgid ""
 "Collections using this configuration: {0}. Deleting vectors keeps their documents and"
@@ -840,106 +939,102 @@ msgstr ""
 "documentos e a respetiva pertença, mas será necessário reconstruir os embeddings "
 "antes de pesquisar."
 
-#: src/model_manager.py:360
+#: src/model_manager.py:388
 msgid "Delete Model?"
 msgstr "Eliminar modelo?"
 
-#: src/model_manager.py:374
+#: src/model_manager.py:402
 msgid "Wait for all indexing jobs using this model before deleting its vectors."
 msgstr ""
 "Aguarde até todas as tarefas de indexação que utilizam este modelo terminarem antes "
 "de eliminar os seus vetores."
 
-#: src/model_manager.py:390
-msgid "Delete Failed"
-msgstr "Falha ao eliminar"
-
-#: src/model_manager.py:545
+#: src/model_manager.py:573
 msgid "Starting download…"
 msgstr "A iniciar transferência…"
 
-#: src/model_manager.py:570
+#: src/model_manager.py:598
 msgid "Error"
 msgstr "Erro"
 
-#: src/model_manager.py:571
+#: src/model_manager.py:599
 msgid "Error occurred."
 msgstr "Ocorreu um erro."
 
-#: src/model_manager.py:590
+#: src/model_manager.py:618
 #, python-brace-format
 msgid "{0:.0f}%"
 msgstr "{0:.0f}%"
 
-#: src/model_manager.py:593
+#: src/model_manager.py:621
 msgid "Download complete"
 msgstr "Transferência concluída"
 
-#: src/model_manager.py:611 src/widgets/chat_input.ui:27
+#: src/model_manager.py:639 src/widgets/chat_input.ui:27
 msgid "Model"
 msgstr "Modelo"
 
-#: src/model_manager.py:612
+#: src/model_manager.py:640
 msgid "Remote Model"
 msgstr "Modelo remoto"
 
-#: src/model_manager.py:613
+#: src/model_manager.py:641
 msgid "Remote Host"
 msgstr "Servidor remoto"
 
-#: src/model_manager.py:614
+#: src/model_manager.py:642
 msgid "Modified At"
 msgstr "Modificado em"
 
-#: src/model_manager.py:615
+#: src/model_manager.py:643
 msgid "Size"
 msgstr "Tamanho"
 
-#: src/model_manager.py:616
+#: src/model_manager.py:644
 msgid "Digest"
 msgstr "Resumo criptográfico"
 
-#: src/model_manager.py:617
+#: src/model_manager.py:645
 msgid "Detail: Format"
 msgstr "Detalhe: Formato"
 
-#: src/model_manager.py:618
+#: src/model_manager.py:646
 msgid "Detail: Family"
 msgstr "Detalhe: Família"
 
-#: src/model_manager.py:619
+#: src/model_manager.py:647
 msgid "Detail: Families"
 msgstr "Detalhe: Famílias"
 
-#: src/model_manager.py:620
+#: src/model_manager.py:648
 msgid "Detail: Parameter Size"
 msgstr "Detalhe: Número de parâmetros"
 
-#: src/model_manager.py:621
+#: src/model_manager.py:649
 msgid "Detail: Quantization Level"
 msgstr "Detalhe: Nível de quantização"
 
-#: src/model_manager.py:622
+#: src/model_manager.py:650
 msgid "Parameters"
 msgstr "Parâmetros"
 
-#: src/model_manager.py:623
+#: src/model_manager.py:651
 msgid "Capabilities"
 msgstr "Capacidades"
 
-#: src/model_manager.py:624
+#: src/model_manager.py:652
 msgid "Template"
 msgstr "Modelo de formatação"
 
-#: src/model_manager.py:625
+#: src/model_manager.py:653
 msgid "License"
 msgstr "Licença"
 
-#: src/model_manager.py:626
+#: src/model_manager.py:654
 msgid "Modelfile"
 msgstr "Modelfile"
 
-#: src/model_manager.py:627
+#: src/model_manager.py:655
 msgid "Model Info"
 msgstr "Informações do modelo"
 
@@ -959,14 +1054,6 @@ msgstr "Atualizar lista de modelos"
 msgid "Download Model…"
 msgstr "Transferir modelo…"
 
-#: src/model_manager.ui:80
-msgid "Installed"
-msgstr "Instalados"
-
-#: src/model_manager.ui:90
-msgid "Available Models"
-msgstr "Modelos disponíveis"
-
 #: src/model_manager.ui:102
 msgid "Running"
 msgstr "Em execução"
@@ -975,59 +1062,81 @@ msgstr "Em execução"
 msgid "Models in Memory"
 msgstr "Modelos na memória"
 
-#: src/ollama.py:52
+#: src/ollama.py:71 src/storage.py:127
+msgid "Ollama Cloud requires https://ollama.com."
+msgstr "Ollama Cloud requer https://ollama.com."
+
+#: src/ollama.py:80
 msgid "Enter a valid http:// or https:// Ollama host URL."
 msgstr "Introduza um URL válido do servidor Ollama que comece por http:// ou https://."
 
-#: src/ollama.py:61 src/ollama.py:84
+#: src/ollama.py:89 src/ollama.py:104 src/ollama.py:137
 msgid "Request stopped"
 msgstr "Pedido parado"
 
-#: src/ollama.py:110
+#: src/ollama.py:98
+msgid "This operation is unavailable for Ollama Cloud."
+msgstr "Esta operação não está disponível para Ollama Cloud."
+
+#: src/ollama.py:124
+msgid ""
+"Ollama Cloud rejected the API key or account access. Edit this host to check its API "
+"key."
+msgstr ""
+"Ollama Cloud rejeitou a chave de API ou o acesso à conta. Edite este servidor para "
+"verificar a chave de API."
+
+#: src/ollama.py:126
+msgid "Ollama Cloud usage or rate limit reached. Try again later."
+msgstr ""
+"Foi atingido o limite de utilização ou de pedidos do Ollama Cloud. Tente novamente "
+"mais tarde."
+
+#: src/ollama.py:163
 msgid "Invalid JSON received from Ollama"
 msgstr "Recebido JSON inválido do Ollama"
 
-#: src/ollama.py:112
+#: src/ollama.py:165
 msgid "Expected a JSON object from Ollama"
 msgstr "Era esperado um objeto JSON do Ollama"
 
-#: src/ollama.py:162
+#: src/ollama.py:221
 msgid "Enter nonempty text to embed."
 msgstr "Introduza texto não vazio para criar o embedding."
 
-#: src/ollama.py:166
+#: src/ollama.py:225
 msgid "Embedding dimensions must be a positive integer."
 msgstr "O número de dimensões dos embeddings deve ser um inteiro positivo."
 
-#: src/ollama.py:173
+#: src/ollama.py:232
 msgid "The server returned an incorrect number of embeddings."
 msgstr "O servidor devolveu um número incorreto de embeddings."
 
-#: src/ollama.py:178
+#: src/ollama.py:237
 msgid "The server returned an invalid embedding vector."
 msgstr "O servidor devolveu um vetor de embedding inválido."
 
-#: src/ollama.py:181
+#: src/ollama.py:240
 msgid "Embedding dimensions do not match, or a vector is zero."
 msgstr "As dimensões dos embeddings não correspondem ou um vetor é nulo."
 
-#: src/ollama.py:210
+#: src/ollama.py:269
 msgid "Model pull ended before completion"
 msgstr "A transferência do modelo terminou antes de estar concluída"
 
-#: src/ollama.py:216
+#: src/ollama.py:275
 msgid "Invalid output format"
 msgstr "Formato de saída inválido"
 
-#: src/ollama.py:220
+#: src/ollama.py:279
 msgid "Keep-alive must be a duration in seconds, 0, or -1"
 msgstr "O tempo de permanência deve ser uma duração em segundos, 0 ou -1"
 
-#: src/ollama.py:224
+#: src/ollama.py:283
 msgid "Invalid thinking setting"
 msgstr "Definição de raciocínio inválida"
 
-#: src/ollama.py:230
+#: src/ollama.py:289
 msgid "Top logprobs must be between 0 and 20"
 msgstr "O número de probabilidades logarítmicas mais elevadas deve estar entre 0 e 20"
 
@@ -1059,7 +1168,7 @@ msgstr "Detalhes da transferência"
 msgid "New Chat"
 msgstr "Nova conversa"
 
-#: src/session.py:167
+#: src/session.py:169
 msgid "There are no pending tool calls."
 msgstr "Não há chamadas de ferramentas pendentes."
 
@@ -1106,7 +1215,7 @@ msgstr "Mostrar ou ocultar barra lateral"
 msgid "Opening Gnollama"
 msgstr "A abrir o Gnollama"
 
-#: src/startup.py:20 src/tab.py:245 src/widgets/knowledge_import.py:88
+#: src/startup.py:20 src/tab.py:247 src/widgets/knowledge_import.py:88
 #: src/widgets/knowledge_view.py:1220 src/widgets/url_import.py:232 src/window.py:139
 msgid "Retry"
 msgstr "Tentar novamente"
@@ -1127,6 +1236,14 @@ msgstr "Não foi possível abrir a base de dados"
 #, python-brace-format
 msgid "Database backup: {0}"
 msgstr "Cópia de segurança da base de dados: {0}"
+
+#: src/storage.py:117
+msgid "This host was removed."
+msgstr "Este servidor foi removido."
+
+#: src/storage.py:122
+msgid "Invalid host type."
+msgstr "Tipo de servidor inválido."
 
 #: src/structured.py:18
 msgid "Non-finite numbers are not valid JSON."
@@ -1180,43 +1297,43 @@ msgstr "Nova resposta"
 msgid "Chat"
 msgstr "Conversa"
 
-#: src/tab.py:166
+#: src/tab.py:167
 msgid "Select an available model before sending."
 msgstr "Selecione um modelo disponível antes de enviar."
 
-#: src/tab.py:169
+#: src/tab.py:170
 msgid "Wait for this model to finish unloading before sending."
 msgstr "Aguarde até este modelo ser descarregado da memória antes de enviar."
 
-#: src/tab.py:174
+#: src/tab.py:175
 msgid "Wait for image support to be checked before sending."
 msgstr "Aguarde pela verificação do suporte a imagens antes de enviar."
 
-#: src/tab.py:176 src/widgets/chat_input.py:112
+#: src/tab.py:177 src/widgets/chat_input.py:112
 msgid "Remove draft images or select a vision model to send."
 msgstr "Remova as imagens do rascunho ou selecione um modelo de visão para enviar."
 
-#: src/tab.py:218
+#: src/tab.py:220
 msgid "Retrieving sources…"
 msgstr "A obter fontes…"
 
-#: src/tab.py:243
+#: src/tab.py:245
 msgid "Could Not Retrieve Sources"
 msgstr "Não foi possível obter as fontes"
 
-#: src/tab.py:244
+#: src/tab.py:246
 msgid "Adjust Sources"
 msgstr "Ajustar fontes"
 
-#: src/tab.py:246
+#: src/tab.py:248
 msgid "Send Without Knowledge"
 msgstr "Enviar sem conhecimento"
 
-#: src/tab.py:247
+#: src/tab.py:249
 msgid "Keep Draft"
 msgstr "Manter rascunho"
 
-#: src/tab.py:309
+#: src/tab.py:311
 msgid "Response ended before completion."
 msgstr "A resposta terminou antes de estar concluída."
 
@@ -1506,24 +1623,28 @@ msgid "Checking chat models…"
 msgstr "A verificar modelos de conversa…"
 
 #: src/widgets/chat_input.py:176
+msgid "No cloud models are available. Try refreshing later."
+msgstr "Não há modelos na nuvem disponíveis. Tente atualizar mais tarde."
+
+#: src/widgets/chat_input.py:177
 msgid "No chat models found. Pull one in Manage Models, then refresh."
 msgstr ""
 "Não foram encontrados modelos de conversa. Transfira um em Gerir modelos e atualize a"
 " lista."
 
-#: src/widgets/chat_input.py:246
+#: src/widgets/chat_input.py:247
 msgid "Select Images"
 msgstr "Selecionar imagens"
 
-#: src/widgets/chat_input.py:250
+#: src/widgets/chat_input.py:251
 msgid "Images"
 msgstr "Imagens"
 
-#: src/widgets/chat_input.py:283 src/widgets/chat_input.ui:116
+#: src/widgets/chat_input.py:284 src/widgets/chat_input.ui:116
 msgid "No image selected"
 msgstr "Nenhuma imagem selecionada"
 
-#: src/widgets/chat_input.py:289
+#: src/widgets/chat_input.py:290
 #, python-brace-format
 msgid "{0} image selected"
 msgid_plural "{0} images selected"
@@ -1571,7 +1692,7 @@ msgstr "Aplicar"
 msgid "Content"
 msgstr "Conteúdo"
 
-#: src/widgets/json_view.py:160 src/widgets/options_panel.py:41
+#: src/widgets/json_view.py:160 src/widgets/options_panel.py:42
 msgid "JSON Schema"
 msgstr "Esquema JSON"
 
@@ -2571,248 +2692,254 @@ msgstr ""
 "Escolha um modelo e introduza uma mensagem. Selecione coleções de conhecimento para "
 "colocar perguntas sobre os seus documentos."
 
-#: src/widgets/options_panel.py:41
+#: src/widgets/options_panel.py:42
 msgid "Text"
 msgstr "Texto"
 
-#: src/widgets/options_panel.py:41
+#: src/widgets/options_panel.py:42
 msgid "JSON"
 msgstr "JSON"
 
-#: src/widgets/options_panel.py:43 src/widgets/options_panel.py:72
+#: src/widgets/options_panel.py:44 src/widgets/options_panel.py:83
 msgid "Server default"
 msgstr "Predefinição do servidor"
 
-#: src/widgets/options_panel.py:43
+#: src/widgets/options_panel.py:44
 msgid "Unload after reply"
 msgstr "Descarregar da memória após responder"
 
-#: src/widgets/options_panel.py:43
+#: src/widgets/options_panel.py:44
 msgid "Five minutes"
 msgstr "Cinco minutos"
 
-#: src/widgets/options_panel.py:44
+#: src/widgets/options_panel.py:45
 msgid "Thirty minutes"
 msgstr "Trinta minutos"
 
-#: src/widgets/options_panel.py:44
+#: src/widgets/options_panel.py:45
 msgid "Indefinitely"
 msgstr "Indefinidamente"
 
-#: src/widgets/options_panel.py:44
+#: src/widgets/options_panel.py:45
 msgid "Custom seconds"
 msgstr "Duração personalizada em segundos"
 
-#: src/widgets/options_panel.py:63
+#: src/widgets/options_panel.py:53
+msgid "Ollama Cloud uses text output and manages model retention automatically."
+msgstr ""
+"Ollama Cloud utiliza saída de texto e gere automaticamente a permanência dos modelos "
+"em memória."
+
+#: src/widgets/options_panel.py:74
 msgid "Server"
 msgstr "Servidor"
 
-#: src/widgets/options_panel.py:88
+#: src/widgets/options_panel.py:100
 msgid "System Instructions"
 msgstr "Instruções do sistema"
 
-#: src/widgets/options_panel.py:89
+#: src/widgets/options_panel.py:101
 msgid "System prompt"
 msgstr "Prompt do sistema"
 
-#: src/widgets/options_panel.py:89
+#: src/widgets/options_panel.py:101
 msgid "Optional instructions applied to this conversation."
 msgstr "Instruções opcionais aplicadas a esta conversa."
 
-#: src/widgets/options_panel.py:90
+#: src/widgets/options_panel.py:102
 msgid "Optional instructions"
 msgstr "Instruções opcionais"
 
-#: src/widgets/options_panel.py:91
+#: src/widgets/options_panel.py:103
 msgid "Generation Limits"
 msgstr "Limites de geração"
 
-#: src/widgets/options_panel.py:91
+#: src/widgets/options_panel.py:103
 msgid "Blank fields use the server’s defaults."
 msgstr "Os campos vazios utilizam os valores predefinidos do servidor."
 
-#: src/widgets/options_panel.py:92
+#: src/widgets/options_panel.py:104
 msgid "Context size (tokens)"
 msgstr "Tamanho do contexto (tokens)"
 
-#: src/widgets/options_panel.py:92
+#: src/widgets/options_panel.py:104
 msgid "Maximum context available to the model; larger values need more memory."
 msgstr "Contexto máximo disponível para o modelo; valores mais elevados requerem mais memória."
 
-#: src/widgets/options_panel.py:93
+#: src/widgets/options_panel.py:105
 msgid "Maximum output tokens"
 msgstr "Número máximo de tokens de saída"
 
-#: src/widgets/options_panel.py:93
+#: src/widgets/options_panel.py:105
 msgid "Use −1 for unlimited output or −2 to fill the context."
 msgstr "Utilize −1 para uma saída ilimitada ou −2 para preencher o contexto."
 
-#: src/widgets/options_panel.py:94
+#: src/widgets/options_panel.py:106
 msgid "Stop sequences"
 msgstr "Sequências de paragem"
 
-#: src/widgets/options_panel.py:94
+#: src/widgets/options_panel.py:106
 msgid "Separate sequences with commas. Generation stops when one is produced."
 msgstr "Separe as sequências por vírgulas. A geração para quando uma delas é produzida."
 
-#: src/widgets/options_panel.py:95
+#: src/widgets/options_panel.py:107
 msgid "Sampling"
 msgstr "Amostragem"
 
-#: src/widgets/options_panel.py:97
+#: src/widgets/options_panel.py:109
 msgid "Temperature"
 msgstr "Temperatura"
 
-#: src/widgets/options_panel.py:97
+#: src/widgets/options_panel.py:109
 msgid "Higher values increase variation; zero is more predictable."
 msgstr "Valores mais elevados aumentam a variação; zero produz resultados mais previsíveis."
 
-#: src/widgets/options_panel.py:98
+#: src/widgets/options_panel.py:110
 msgid "Seed"
 msgstr "Semente"
 
-#: src/widgets/options_panel.py:98
+#: src/widgets/options_panel.py:110
 msgid "An integer used to initialize random sampling."
 msgstr "Um número inteiro utilizado para inicializar a amostragem aleatória."
 
-#: src/widgets/options_panel.py:99
+#: src/widgets/options_panel.py:111
 msgid "Top K"
 msgstr "Top K"
 
-#: src/widgets/options_panel.py:99
+#: src/widgets/options_panel.py:111
 msgid "Number of candidate tokens to consider."
 msgstr "Número de tokens candidatos a considerar."
 
-#: src/widgets/options_panel.py:100
+#: src/widgets/options_panel.py:112
 msgid "Top P"
 msgstr "Top P"
 
-#: src/widgets/options_panel.py:100
+#: src/widgets/options_panel.py:112
 msgid "Cumulative probability cutoff, between 0 and 1."
 msgstr "Limiar de probabilidade acumulada, entre 0 e 1."
 
-#: src/widgets/options_panel.py:101
+#: src/widgets/options_panel.py:113
 msgid "Min P"
 msgstr "Min P"
 
-#: src/widgets/options_panel.py:101
+#: src/widgets/options_panel.py:113
 msgid "Minimum relative token probability, between 0 and 1."
 msgstr "Probabilidade relativa mínima de um token, entre 0 e 1."
 
-#: src/widgets/options_panel.py:103
+#: src/widgets/options_panel.py:115
 msgid "Model Retention"
 msgstr "Permanência do modelo na memória"
 
-#: src/widgets/options_panel.py:105
+#: src/widgets/options_panel.py:120
 msgid "Keep model loaded"
 msgstr "Manter o modelo carregado"
 
-#: src/widgets/options_panel.py:108
+#: src/widgets/options_panel.py:124
 msgid "Custom duration (seconds)"
 msgstr "Duração personalizada (segundos)"
 
-#: src/widgets/options_panel.py:108 src/widgets/options_panel.py:165
+#: src/widgets/options_panel.py:124 src/widgets/options_panel.py:187
 msgid "Enter a positive whole number of seconds."
 msgstr "Introduza um número inteiro positivo de segundos."
 
-#: src/widgets/options_panel.py:110
+#: src/widgets/options_panel.py:126
 msgid "Diagnostics"
 msgstr "Diagnóstico"
 
-#: src/widgets/options_panel.py:111
+#: src/widgets/options_panel.py:128
 msgid "Show response statistics"
 msgstr "Mostrar estatísticas da resposta"
 
-#: src/widgets/options_panel.py:112
+#: src/widgets/options_panel.py:131
 msgid "Return token probabilities (logprobs)"
 msgstr "Devolver probabilidades de tokens (logprobs)"
 
-#: src/widgets/options_panel.py:115
+#: src/widgets/options_panel.py:135
 msgid "Top logprobs"
 msgstr "Logprobs principais"
 
-#: src/widgets/options_panel.py:115
+#: src/widgets/options_panel.py:135
 msgid "Number of alternative token probabilities, from 0 to 20."
 msgstr "Número de probabilidades de tokens alternativos, de 0 a 20."
 
-#: src/widgets/options_panel.py:132
+#: src/widgets/options_panel.py:152
 msgid "Chat Settings"
 msgstr "Definições da conversa"
 
-#: src/widgets/options_panel.py:135
+#: src/widgets/options_panel.py:155
 msgid "Done"
 msgstr "Concluído"
 
-#: src/widgets/options_panel.py:177
+#: src/widgets/options_panel.py:199
 msgid "Top logprobs must be between 0 and 20."
 msgstr "O número de logprobs principais tem de estar entre 0 e 20."
 
-#: src/widgets/options_panel.py:199
+#: src/widgets/options_panel.py:221
 #, python-brace-format
 msgid "Enabled tools: {0}. Results are supplied manually."
 msgstr "Ferramentas ativadas: {0}. Os resultados são fornecidos manualmente."
 
-#: src/widgets/options_panel.py:199
+#: src/widgets/options_panel.py:221
 msgid "Tool calling is off."
 msgstr "As chamadas de ferramentas estão desativadas."
 
-#: src/widgets/options_panel.py:202
+#: src/widgets/options_panel.py:224
 msgid "Checking tool support…"
 msgstr "A verificar o suporte de ferramentas…"
 
-#: src/widgets/options_panel.py:204
+#: src/widgets/options_panel.py:226
 msgid "This model reports no tool support; you can still test the API."
 msgstr "Este modelo indica que não suporta ferramentas; ainda assim, pode testar a API."
 
-#: src/widgets/options_panel.py:206
+#: src/widgets/options_panel.py:228
 msgid "Tool support is unknown."
 msgstr "O suporte de ferramentas é desconhecido."
 
-#: src/widgets/options_panel.py:275
+#: src/widgets/options_panel.py:297
 msgid "No hosts configured"
 msgstr "Nenhum servidor configurado"
 
-#: src/widgets/options_panel.py:313 src/widgets/options_panel.py:315
+#: src/widgets/options_panel.py:335 src/widgets/options_panel.py:337
 msgid "Enter a valid number."
 msgstr "Introduza um número válido."
 
-#: src/widgets/options_panel.py:333
+#: src/widgets/options_panel.py:355
 msgid "Value must not be negative."
 msgstr "O valor não pode ser negativo."
 
-#: src/widgets/options_panel.py:336
+#: src/widgets/options_panel.py:358
 msgid "Value must be between 0 and 1."
 msgstr "O valor tem de estar entre 0 e 1."
 
-#: src/widgets/options_panel.py:338
+#: src/widgets/options_panel.py:360
 msgid "Context size must be positive."
 msgstr "O tamanho do contexto tem de ser positivo."
 
-#: src/widgets/options_panel.py:340
+#: src/widgets/options_panel.py:362
 msgid "Max tokens must be -2, -1, or a nonnegative integer."
 msgstr "O número máximo de tokens tem de ser -2, -1 ou um número inteiro não negativo."
 
-#: src/widgets/options_panel.ui:20
+#: src/widgets/options_panel.ui:21
 msgid "Tool Calling"
 msgstr "Chamadas de ferramentas"
 
-#: src/widgets/options_panel.ui:26
+#: src/widgets/options_panel.ui:27
 msgid "Edit Tools…"
 msgstr "Editar ferramentas…"
 
-#: src/widgets/options_panel.ui:44
+#: src/widgets/options_panel.ui:46
 msgid "Output:"
 msgstr "Saída:"
 
-#: src/widgets/options_panel.ui:56
+#: src/widgets/options_panel.ui:58
 msgid "Edit Schema…"
 msgstr "Editar esquema…"
 
-#: src/widgets/options_panel.ui:63
+#: src/widgets/options_panel.ui:65
 msgid "Chat Settings…"
 msgstr "Definições da conversa…"
 
-#: src/widgets/options_panel.ui:65
+#: src/widgets/options_panel.ui:67
 msgid "Generation, Model Retention, and Diagnostics"
 msgstr "Geração, permanência do modelo na memória e diagnóstico"
 
@@ -3153,3 +3280,5 @@ msgstr "_Atalhos de teclado"
 msgid "_About Gnollama"
 msgstr "S_obre o Gnollama"
 
+#~ msgid "Fetching version..."
+#~ msgstr "A obter versão…"

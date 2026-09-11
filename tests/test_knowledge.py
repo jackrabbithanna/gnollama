@@ -219,6 +219,8 @@ class KnowledgeTests(unittest.TestCase):
         with db._get_conn() as conn:
             for table in ('knowledge_web_sources', 'knowledge_collection_documents', 'knowledge_collections', 'knowledge_chunks', 'knowledge_indexes', 'embedding_configs', 'knowledge_documents'):
                 conn.execute('DROP TABLE ' + table)
+            conn.execute('ALTER TABLE hosts DROP COLUMN provider')
+            conn.execute('ALTER TABLE hosts DROP COLUMN credential_id')
             conn.execute('PRAGMA user_version=5')
             conn.commit()
         migrated = DatabaseManager(path)

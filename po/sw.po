@@ -4,9 +4,9 @@
 # Translated and reviewed with AI assistance, 2026.
 msgid ""
 msgstr ""
-"Project-Id-Version: gnollama 0.13.0\n"
+"Project-Id-Version: gnollama 0.14.0\n"
 "Report-Msgid-Bugs-To: https://github.com/jackrabbithanna/gnollama/issues\n"
-"POT-Creation-Date: 2026-09-10 17:08-0600\n"
+"POT-Creation-Date: 2026-09-10 20:09-0600\n"
 "PO-Revision-Date: 2026-09-10 00:00+0000\n"
 "Last-Translator: AI-assisted translation\n"
 "Language: sw\n"
@@ -91,6 +91,26 @@ msgid "Ollama chat with code highlighting"
 msgstr "Mazungumzo ya Ollama yenye uangaziaji wa msimbo"
 
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:53
+msgid "Connect directly to Ollama Cloud from Chat and Response tabs."
+msgstr "Unganisha moja kwa moja na Ollama Cloud kutoka vichupo vya Gumzo na Jibu."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:54
+msgid ""
+"Store each host's API key in the desktop keyring, with session-only use when the "
+"keyring is unavailable."
+msgstr ""
+"Hifadhi ufunguo wa API wa kila seva kwenye hifadhi ya funguo ya eneo-kazi, au uutumie"
+" kwa kipindi hiki pekee ikiwa hifadhi haipatikani."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:55
+msgid ""
+"Browse cloud models with controls adapted to the service, and use local knowledge "
+"sources in cloud chats."
+msgstr ""
+"Vinjari modeli za wingu kwa vidhibiti vinavyolingana na huduma, na utumie vyanzo vya "
+"maarifa vya ndani kwenye gumzo za wingu."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:60
 msgid ""
 "Add a Knowledge Library for text and PDF imports, local embedding indexes, and "
 "source-grounded chats."
@@ -98,7 +118,7 @@ msgstr ""
 "Imeongeza Maktaba ya Maarifa kwa kuleta maandishi na PDF, faharasa za vekta za ndani,"
 " na mazungumzo yanayotegemea vyanzo."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:55
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:62
 msgid ""
 "Start with knowledge collections and add text, files, or URLs with explicit "
 "destinations and guided previews."
@@ -106,7 +126,7 @@ msgstr ""
 "Anza na mikusanyiko ya maarifa na uongeze maandishi, faili au URL kwa kuchagua wazi "
 "mahali pa kuzihifadhi na kutumia hakiki zenye mwongozo."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:56
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:63
 msgid ""
 "Choose collections before search settings, and use adaptive chat settings with "
 "clearer controls and feedback."
@@ -115,13 +135,13 @@ msgstr ""
 "mazungumzo inayojirekebisha kulingana na nafasi, yenye vidhibiti na mrejesho ulio "
 "wazi zaidi."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:57
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:64
 msgid "Create and compare embeddings, inspect chunks and vectors, and test semantic searches."
 msgstr ""
 "Unda na ulinganishe viwakilishi vya vekta, kagua vipande na vekta, na ujaribu "
 "utafutaji wa kisemantiki."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:58
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:65
 msgid ""
 "Select documents or chunks for chats, with independent embedding hosts and saved "
 "source passages."
@@ -129,7 +149,7 @@ msgstr ""
 "Chagua hati au vipande kwa mazungumzo, ukitumia seva huru za kuunda vekta na vifungu "
 "vya vyanzo vilivyohifadhiwa."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:59
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:66
 msgid ""
 "Warn about stored embeddings when deleting models, with optional vector cleanup that "
 "retains source text."
@@ -137,7 +157,7 @@ msgstr ""
 "Imeongeza onyo kuhusu viwakilishi vya vekta vilivyohifadhiwa unapofuta modeli, pamoja"
 " na chaguo la kufuta vekta huku ukihifadhi maandishi asili."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:60
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:67
 msgid ""
 "Search with sqlite-vec, automatically migrate existing vectors with a database "
 "backup, and use the Qwen3 retrieval preset."
@@ -145,7 +165,7 @@ msgstr ""
 "Tafuta kwa sqlite-vec, hamisha vekta zilizopo kiotomatiki huku ukihifadhi nakala ya "
 "hifadhidata, na utumie wasifu wa utafutaji wa Qwen3."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:61
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:68
 msgid ""
 "Organize documents into collections with shared embedding settings, automatic builds,"
 " and live collection selection in chats."
@@ -154,7 +174,7 @@ msgstr ""
 "faharasa kiotomatiki, na uteuzi wa mikusanyiko unaosasishwa moja kwa moja kwenye "
 "mazungumzo."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:62
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:69
 msgid ""
 "Choose collections as chat sources and compare cosine similarity, Euclidean distance,"
 " or Manhattan distance with appropriate search cutoffs."
@@ -163,7 +183,7 @@ msgstr ""
 "umbali wa Euclid au umbali wa Manhattan kwa kutumia vizingiti vinavyofaa vya "
 "utafutaji."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:63
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:70
 msgid ""
 "Hide embedding-only models from Chat and Response model selection while keeping them "
 "available in Knowledge and Manage Models."
@@ -171,7 +191,7 @@ msgstr ""
 "Modeli za kuunda vekta pekee zimefichwa katika uteuzi wa modeli za Mazungumzo na "
 "Jibu, lakini bado zinapatikana katika Maarifa na Dhibiti Modeli."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:64
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:71
 msgid ""
 "Import batches of URLs into collections with main-content extraction, CSS selectors, "
 "editable previews, and source links in chats."
@@ -179,7 +199,7 @@ msgstr ""
 "Leta makundi ya URL katika mikusanyiko kwa uchimbaji wa maudhui makuu, viteuzi vya "
 "CSS, hakiki zinazoharirika, na viungo vya vyanzo kwenye mazungumzo."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:65
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:72
 msgid ""
 "Review changed web documents before replacing their text and rebuilding all affected "
 "embedding indexes."
@@ -203,11 +223,11 @@ msgstr "Takwimu za jibu"
 msgid "Earlier images were omitted from the text-only request."
 msgstr "Picha za awali hazikujumuishwa katika ombi la maandishi pekee."
 
-#: src/bubbles.py:125 src/knowledge.py:300
+#: src/bubbles.py:125 src/knowledge.py:301
 msgid "Stopped"
 msgstr "Imesimamishwa"
 
-#: src/bubbles.py:125 src/knowledge.py:300
+#: src/bubbles.py:125 src/knowledge.py:301
 msgid "Failed"
 msgstr "Imeshindwa"
 
@@ -217,7 +237,7 @@ msgid "Logprobs"
 msgstr "Logariti za uwezekano"
 
 #: src/bubbles.py:183 src/model_manager.py:22 src/model_manager.py:24
-#: src/model_manager.py:28
+#: src/model_manager.py:28 src/model_manager.py:312
 msgid "Unavailable"
 msgstr "Haipatikani"
 
@@ -270,7 +290,7 @@ msgstr "Mwisho: {0}"
 msgid "A document was deleted. Choose documents again."
 msgstr "Hati imefutwa. Chagua hati tena."
 
-#: src/collections_store.py:107 src/knowledge.py:357
+#: src/collections_store.py:107 src/knowledge.py:358
 msgid "Enter a collection name."
 msgstr "Weka jina la mkusanyiko."
 
@@ -278,7 +298,7 @@ msgstr "Weka jina la mkusanyiko."
 msgid "Choose a model with the collection’s original digest."
 msgstr "Chagua modeli yenye alama asili ya hashi ya mkusanyiko."
 
-#: src/collections_store.py:141 src/knowledge.py:390
+#: src/collections_store.py:141 src/knowledge.py:391
 msgid "The collection was deleted."
 msgstr "Mkusanyiko umefutwa."
 
@@ -303,26 +323,52 @@ msgstr ""
 "Mkusanyiko “{0}” hauko tayari. Unda viwakilishi vya vekta vinavyokosekana au ujaribu "
 "tena hati zilizoshindwa: {1}"
 
-#: src/database.py:75
+#: src/credentials.py:27
+msgid "Enter a valid API key."
+msgstr "Weka ufunguo halali wa API."
+
+#: src/credentials.py:51
+msgid "Could not access the keyring. Edit this host to retry or enter a session-only key."
+msgstr ""
+"Imeshindikana kufikia hifadhi ya funguo. Hariri seva hii ili ujaribu tena au uweke "
+"ufunguo wa kipindi hiki pekee."
+
+#: src/credentials.py:53 src/storage.py:134
+msgid "An API key is required. Edit this host to enter one."
+msgstr "Ufunguo wa API unahitajika. Hariri seva hii ili uweke mmoja."
+
+#: src/credentials.py:66
+msgid "Could not save the API key in the keyring. Retry or use it for this session."
+msgstr ""
+"Imeshindikana kuhifadhi ufunguo wa API kwenye hifadhi ya funguo. Jaribu tena au "
+"uutumie kwa kipindi hiki pekee."
+
+#: src/credentials.py:78 src/credentials.py:80
+msgid "Could not remove the saved API key. Unlock the keyring and retry."
+msgstr ""
+"Imeshindikana kuondoa ufunguo wa API uliohifadhiwa. Fungua hifadhi ya funguo na "
+"ujaribu tena."
+
+#: src/database.py:80
 msgid "This database was created by a newer Gnollama version. Update Gnollama to open it."
 msgstr ""
 "Hifadhidata hii iliundwa na toleo jipya zaidi la Gnollama. Sasisha Gnollama ili "
 "kuifungua."
 
-#: src/database.py:82
+#: src/database.py:87
 msgid "Backing up the database…"
 msgstr "Inahifadhi nakala ya hifadhidata…"
 
-#: src/database.py:191
+#: src/database.py:196
 msgid "This database requires a newer Gnollama version."
 msgstr "Hifadhidata hii inahitaji toleo jipya zaidi la Gnollama."
 
-#: src/database.py:210
+#: src/database.py:215
 #, python-brace-format
 msgid "Upgrading the database to version {0}…"
 msgstr "Inasasisha hifadhidata hadi toleo {0}…"
 
-#: src/host_edit_dialog.ui:6 src/host_manager.py:171 src/model_manager.py:366
+#: src/host_edit_dialog.ui:14 src/host_manager.py:266 src/model_manager.py:394
 #: src/pull_model_dialog.ui:17 src/widgets/knowledge_view.py:1111
 #: src/widgets/knowledge_view.py:1121 src/widgets/knowledge_view.py:1250
 #: src/widgets/knowledge_view.py:1293 src/widgets/knowledge_view.py:1337
@@ -331,67 +377,108 @@ msgstr "Inasasisha hifadhidata hadi toleo {0}…"
 msgid "Cancel"
 msgstr "Ghairi"
 
-#: src/host_edit_dialog.ui:7 src/widgets/knowledge_view.py:1112
+#: src/host_edit_dialog.ui:19 src/widgets/knowledge_view.py:1112
 #: src/widgets/knowledge_view.py:1145 src/widgets/knowledge_view.py:1338 src/window.py:350
 msgid "Save"
 msgstr "Hifadhi"
 
-#: src/host_edit_dialog.ui:21 src/model_manager.py:610
+#: src/host_edit_dialog.ui:39
+msgid "Host type"
+msgstr "Aina ya seva"
+
+#: src/host_edit_dialog.ui:47 src/model_manager.py:638
 msgid "Name"
 msgstr "Jina"
 
-#: src/host_edit_dialog.ui:28
+#: src/host_edit_dialog.ui:54
 msgid "For example: Local Ollama"
 msgstr "Kwa mfano: Ollama ya ndani"
 
-#: src/host_edit_dialog.ui:33
+#: src/host_edit_dialog.ui:59
 msgid "Server address"
 msgstr "Anwani ya seva"
 
-#: src/host_edit_dialog.ui:45
+#: src/host_edit_dialog.ui:71
 msgid "Set as default host"
 msgstr "Weka kama seva chaguomsingi"
 
-#: src/host_manager.py:19
+#: src/host_manager.py:24
 msgid "Edit Host"
 msgstr "Hariri seva"
 
-#: src/host_manager.py:19 src/host_manager.ui:23
+#: src/host_manager.py:24 src/host_manager.ui:23
 msgid "Add Host"
 msgstr "Ongeza seva"
 
-#: src/host_manager.py:35
+#: src/host_manager.py:30
+msgid "Ollama Server"
+msgstr "Seva ya Ollama"
+
+#: src/host_manager.py:30 src/host_manager.py:72 src/model_manager.py:312
+msgid "Ollama Cloud"
+msgstr "Ollama Cloud"
+
+#: src/host_manager.py:34
+msgid "API key"
+msgstr "Ufunguo wa API"
+
+#: src/host_manager.py:36
+msgid "Leave blank to keep the existing key."
+msgstr "Acha tupu ili kuhifadhi ufunguo uliopo."
+
+#: src/host_manager.py:37
+msgid "Stored securely in your desktop keyring."
+msgstr "Unahifadhiwa salama kwenye hifadhi ya funguo ya eneo-kazi lako."
+
+#: src/host_manager.py:38
+msgid "Create an API key"
+msgstr "Unda ufunguo wa API"
+
+#: src/host_manager.py:44
+msgid "Use for This Session"
+msgstr "Tumia kwa Kipindi Hiki"
+
+#: src/host_manager.py:98 src/storage.py:124
 msgid "Enter a name for this server."
 msgstr "Weka jina la seva hii."
 
-#: src/host_manager.py:78
+#: src/host_manager.py:149
 msgid "Default"
 msgstr "Chaguomsingi"
 
-#: src/host_manager.py:83 src/host_manager.py:87
+#: src/host_manager.py:154 src/host_manager.py:158
 msgid "Test Connection"
 msgstr "Jaribu muunganisho"
 
-#: src/host_manager.py:92
+#: src/host_manager.py:163
 msgid "Edit Server"
 msgstr "Hariri seva"
 
-#: src/host_manager.py:98 src/host_manager.py:168
+#: src/host_manager.py:169 src/host_manager.py:263
 msgid "Delete Host"
 msgstr "Futa seva"
 
-#: src/host_manager.py:112
-msgid "Fetching version..."
-msgstr "Inapata toleo..."
+#: src/host_manager.py:183
+msgid "Checking connection…"
+msgstr "Inakagua muunganisho…"
 
-#: src/host_manager.py:114 src/main.py:63 src/model_manager.py:340 src/model_manager.py:601
-#: src/startup.py:23 src/widgets/json_view.py:230 src/widgets/knowledge_import.py:51
-#: src/widgets/knowledge_view.py:756 src/widgets/knowledge_view.py:909
-#: src/widgets/knowledge_view.py:1271
+#: src/host_manager.py:185 src/host_manager.py:277 src/main.py:63 src/model_manager.py:368
+#: src/model_manager.py:629 src/startup.py:23 src/widgets/json_view.py:230
+#: src/widgets/knowledge_import.py:51 src/widgets/knowledge_view.py:756
+#: src/widgets/knowledge_view.py:909 src/widgets/knowledge_view.py:1271
 msgid "Close"
 msgstr "Funga"
 
-#: src/host_manager.py:124
+#: src/host_manager.py:196
+#, python-brace-format
+msgid ""
+"Ollama Cloud is reachable. Available models: {0}\n"
+"Your API key will be checked when you generate a response."
+msgstr ""
+"Ollama Cloud inafikika. Modeli zinazopatikana: {0}\n"
+"Ufunguo wako wa API utakaguliwa unapotengeneza jibu."
+
+#: src/host_manager.py:199
 #, python-brace-format
 msgid ""
 "Connected\n"
@@ -400,7 +487,7 @@ msgstr ""
 "Imeunganishwa\n"
 "Toleo la Ollama: {0}"
 
-#: src/host_manager.py:126
+#: src/host_manager.py:201
 #, python-brace-format
 msgid ""
 "Connection failed\n"
@@ -409,14 +496,18 @@ msgstr ""
 "Muunganisho umeshindwa\n"
 "{0}"
 
-#: src/host_manager.py:169 src/model_manager.py:352
+#: src/host_manager.py:264 src/model_manager.py:380
 #, python-brace-format
 msgid "Are you sure you want to delete {0}?"
 msgstr "Una uhakika unataka kufuta {0}?"
 
-#: src/host_manager.py:172 src/model_manager.py:367 src/widgets/knowledge_view.py:1359
+#: src/host_manager.py:267 src/model_manager.py:395 src/widgets/knowledge_view.py:1359
 msgid "Delete"
 msgstr "Futa"
+
+#: src/host_manager.py:276 src/model_manager.py:418
+msgid "Delete Failed"
+msgstr "Kufuta kumeshindwa"
 
 #: src/host_manager.ui:6 src/host_manager.ui:17
 msgid "Manage Hosts"
@@ -539,108 +630,108 @@ msgstr "Kikomo cha vyanzo lazima kiwe kati ya herufi 256 na 64,000."
 msgid "Wait for the model operation to finish."
 msgstr "Subiri operesheni ya modeli ikamilike."
 
-#: src/knowledge.py:262
+#: src/knowledge.py:263
 msgid "The embedding host was removed. Choose a configured host before continuing."
 msgstr "Seva ya kuunda vekta imeondolewa. Chagua seva iliyosanidiwa kabla ya kuendelea."
 
-#: src/knowledge.py:268 src/widgets/knowledge_import.py:146 src/widgets/url_import.py:100
+#: src/knowledge.py:269 src/widgets/knowledge_import.py:146 src/widgets/url_import.py:100
 #: src/widgets/url_import.py:113
 msgid "Queued"
 msgstr "Kwenye foleni"
 
-#: src/knowledge.py:272
+#: src/knowledge.py:273
 msgid "The Knowledge Library is closing."
 msgstr "Maktaba ya Maarifa inafungwa."
 
-#: src/knowledge.py:278
+#: src/knowledge.py:279
 msgid "This document is being replaced. Retry the build when replacement finishes."
 msgstr "Hati hii inabadilishwa. Jaribu tena ujenzi wa faharasa baada ya mabadiliko kukamilika."
 
-#: src/knowledge.py:300
+#: src/knowledge.py:301
 msgid "Complete"
 msgstr "Imekamilika"
 
-#: src/knowledge.py:317
+#: src/knowledge.py:318
 msgid "Wait for this document’s embedding builds to finish before replacing it."
 msgstr "Subiri uundaji wa vekta za hati hii ukamilike kabla ya kuibadilisha."
 
-#: src/knowledge.py:320
+#: src/knowledge.py:321
 msgid "Saving the web document…"
 msgstr "Inahifadhi hati ya wavuti…"
 
-#: src/knowledge.py:348
+#: src/knowledge.py:349
 msgid "Save web document"
 msgstr "Hifadhi hati ya wavuti"
 
-#: src/knowledge.py:369
+#: src/knowledge.py:370
 msgid "Create collection"
 msgstr "Unda mkusanyiko"
 
-#: src/knowledge.py:384
+#: src/knowledge.py:385
 #, python-brace-format
 msgid "Add document: {0}"
 msgstr "Ongeza hati: {0}"
 
-#: src/knowledge.py:392
+#: src/knowledge.py:393
 #, python-brace-format
 msgid "Prepare collection: {0}"
 msgstr "Andaa mkusanyiko: {0}"
 
-#: src/knowledge.py:399
+#: src/knowledge.py:400
 msgid "Reusing embeddings and preparing missing documents…"
 msgstr "Inatumia tena viwakilishi vya vekta na kuandaa hati zinazokosekana…"
 
-#: src/knowledge.py:416
+#: src/knowledge.py:417
 #, python-brace-format
 msgid "Create embeddings: {0}"
 msgstr "Unda viwakilishi vya vekta: {0}"
 
-#: src/knowledge.py:421
+#: src/knowledge.py:422
 msgid "Build was stopped before it started."
 msgstr "Ujenzi wa faharasa ulisimamishwa kabla haujaanza."
 
-#: src/knowledge.py:438
+#: src/knowledge.py:439
 msgid "The source document was deleted."
 msgstr "Hati asili imefutwa."
 
-#: src/knowledge.py:443
+#: src/knowledge.py:444
 msgid "This index would exceed 100,000 chunks. Increase the chunk size or reduce overlap."
 msgstr ""
 "Faharasa hii itazidi vipande 100,000. Ongeza ukubwa wa kipande au upunguze "
 "mwingiliano."
 
-#: src/knowledge.py:459
+#: src/knowledge.py:460
 #, python-brace-format
 msgid "Embedding chunks: {0} complete, {1} remaining"
 msgstr "Uundaji wa vekta za vipande: vilivyokamilika {0}, vilivyobaki {1}"
 
-#: src/knowledge.py:483
+#: src/knowledge.py:484
 msgid "The embedding input cannot fit. Shorten the document prefix or choose another model."
 msgstr ""
 "Ingizo la kuunda vekta halitoshei. Fupisha kiambishi awali cha hati au uchague modeli"
 " nyingine."
 
-#: src/knowledge.py:493
+#: src/knowledge.py:494
 msgid "The model returned a different vector dimension. Create a new configuration."
 msgstr "Modeli imerudisha vekta yenye idadi tofauti ya vipimo. Unda usanidi mpya."
 
-#: src/knowledge.py:508
+#: src/knowledge.py:509
 msgid "Create embeddings"
 msgstr "Unda viwakilishi vya vekta"
 
-#: src/knowledge.py:518
+#: src/knowledge.py:519
 msgid "This embedding configuration has no completed vectors."
 msgstr "Usanidi huu wa vekta hauna vekta zilizokamilika."
 
-#: src/knowledge.py:520 src/widgets/knowledge_view.py:659
+#: src/knowledge.py:521 src/widgets/knowledge_view.py:659
 msgid "Enter a search query."
 msgstr "Weka hoja ya utafutaji."
 
-#: src/knowledge.py:530 src/knowledge_store.py:265
+#: src/knowledge.py:531 src/knowledge_store.py:265
 msgid "Query dimensions differ from the stored vectors. Rebuild the index."
 msgstr "Idadi ya vipimo vya hoja inatofautiana na vekta zilizohifadhiwa. Jenga upya faharasa."
 
-#: src/knowledge.py:537
+#: src/knowledge.py:538
 msgid "No passages met the search criteria. Adjust the query, sources, or minimum similarity."
 msgstr ""
 "Hakuna vifungu vilivyotimiza vigezo vya utafutaji. Rekebisha hoja, vyanzo au kiwango "
@@ -738,7 +829,7 @@ msgstr ""
 msgid "translator-credits"
 msgstr "Tafsiri kwa usaidizi wa akili bandia, 2026."
 
-#: src/model_details_view.ui:6 src/model_manager.py:42 src/model_manager.py:291
+#: src/model_details_view.ui:6 src/model_manager.py:42 src/model_manager.py:318
 msgid "Model Details"
 msgstr "Maelezo ya modeli"
 
@@ -751,70 +842,78 @@ msgstr ""
 "Kumbukumbu: {0} · VRAM: {1}\n"
 "Muktadha: {2} · Inaisha: {3}"
 
-#: src/model_manager.py:163 src/tab.py:162
+#: src/model_manager.py:168 src/tab.py:163
 msgid "No host configured."
 msgstr "Hakuna seva iliyosanidiwa."
 
-#: src/model_manager.py:168
+#: src/model_manager.py:173
 msgid "Loading running models…"
 msgstr "Inapakia modeli zinazoendeshwa…"
 
-#: src/model_manager.py:172
+#: src/model_manager.py:177
 #, python-brace-format
 msgid "Could not refresh running models: {0}"
 msgstr "Imeshindwa kusasisha modeli zinazoendeshwa: {0}"
 
-#: src/model_manager.py:188
+#: src/model_manager.py:193
 msgid "No models are loaded in memory."
 msgstr "Hakuna modeli zilizopakiwa kwenye kumbukumbu."
 
-#: src/model_manager.py:194 src/model_manager.py:207
+#: src/model_manager.py:199 src/model_manager.py:212
 msgid "Unload"
 msgstr "Ondoa kwenye kumbukumbu"
 
-#: src/model_manager.py:195 src/model_manager.py:209
+#: src/model_manager.py:200 src/model_manager.py:214
 msgid "Release this model from memory; keep its downloaded files."
 msgstr "Ondoa modeli hii kwenye kumbukumbu; hifadhi faili zake zilizopakuliwa."
 
-#: src/model_manager.py:207
+#: src/model_manager.py:212
 msgid "Unloading…"
 msgstr "Inaondoa kwenye kumbukumbu…"
 
-#: src/model_manager.py:208
+#: src/model_manager.py:213
 msgid "A chat or embedding job is using this model in Gnollama."
 msgstr "Mazungumzo au kazi ya kuunda vekta inatumia modeli hii katika Gnollama."
 
-#: src/model_manager.py:225
+#: src/model_manager.py:232
 msgid "Could not unload model"
 msgstr "Imeshindwa kuondoa modeli kwenye kumbukumbu"
 
-#: src/model_manager.py:265
+#: src/model_manager.py:273 src/model_manager.ui:90
+msgid "Available Models"
+msgstr "Modeli zinazopatikana"
+
+#: src/model_manager.py:273 src/model_manager.ui:80
+msgid "Installed"
+msgstr "Zilizosakinishwa"
+
+#: src/model_manager.py:286
 msgid "Connection Error"
 msgstr "Hitilafu ya muunganisho"
 
-#: src/model_manager.py:298
+#: src/model_manager.py:325
 msgid "Delete Model"
 msgstr "Futa modeli"
 
-#: src/model_manager.py:329
+#: src/model_manager.py:357
 msgid "Failed to fetch details"
 msgstr "Imeshindwa kupata maelezo"
 
-#: src/model_manager.py:349 src/model_manager.py:374 src/model_manager.py:377
+#: src/model_manager.py:377 src/model_manager.py:402 src/model_manager.py:405
 msgid "Model Is Busy"
 msgstr "Modeli inatumika"
 
-#: src/model_manager.py:349 src/model_manager.py:377
+#: src/model_manager.py:377 src/model_manager.py:405
 msgid "Wait for active chats and embedding jobs before deleting this model."
 msgstr ""
 "Subiri mazungumzo yanayoendelea na kazi za kuunda vekta zikamilike kabla ya kufuta "
 "modeli hii."
 
-#: src/model_manager.py:353
+#: src/model_manager.py:381
 msgid "Also delete matching vectors; keep source text"
 msgstr "Futa pia vekta zinazolingana; hifadhi maandishi asili"
 
-#: src/model_manager.py:355
+#: src/model_manager.py:383
 #, python-brace-format
 msgid ""
 "Stored data using this model: {0} documents, {1} indexes, {2} vectors. Kept vectors "
@@ -824,7 +923,7 @@ msgstr ""
 "zilizobakizwa zinaweza kutumiwa tena na modeli yenye alama sawa ya hashi kwenye seva "
 "inayooana."
 
-#: src/model_manager.py:357
+#: src/model_manager.py:385
 #, python-brace-format
 msgid ""
 "Collections using this configuration: {0}. Deleting vectors keeps their documents and"
@@ -833,106 +932,102 @@ msgstr ""
 "Mikusanyiko inayotumia usanidi huu: {0}. Kufuta vekta kunahifadhi hati zake na "
 "uanachama wake, lakini vekta zitahitaji kuundwa upya kabla ya kutafuta."
 
-#: src/model_manager.py:360
+#: src/model_manager.py:388
 msgid "Delete Model?"
 msgstr "Ungependa kufuta modeli?"
 
-#: src/model_manager.py:374
+#: src/model_manager.py:402
 msgid "Wait for all indexing jobs using this model before deleting its vectors."
 msgstr ""
 "Subiri kazi zote za kuunda faharasa zinazotumia modeli hii zikamilike kabla ya kufuta"
 " vekta zake."
 
-#: src/model_manager.py:390
-msgid "Delete Failed"
-msgstr "Kufuta kumeshindwa"
-
-#: src/model_manager.py:545
+#: src/model_manager.py:573
 msgid "Starting download…"
 msgstr "Inaanza upakuaji…"
 
-#: src/model_manager.py:570
+#: src/model_manager.py:598
 msgid "Error"
 msgstr "Hitilafu"
 
-#: src/model_manager.py:571
+#: src/model_manager.py:599
 msgid "Error occurred."
 msgstr "Hitilafu imetokea."
 
-#: src/model_manager.py:590
+#: src/model_manager.py:618
 #, python-brace-format
 msgid "{0:.0f}%"
 msgstr "{0:.0f}%"
 
-#: src/model_manager.py:593
+#: src/model_manager.py:621
 msgid "Download complete"
 msgstr "Upakuaji umekamilika"
 
-#: src/model_manager.py:611 src/widgets/chat_input.ui:27
+#: src/model_manager.py:639 src/widgets/chat_input.ui:27
 msgid "Model"
 msgstr "Modeli"
 
-#: src/model_manager.py:612
+#: src/model_manager.py:640
 msgid "Remote Model"
 msgstr "Modeli ya mbali"
 
-#: src/model_manager.py:613
+#: src/model_manager.py:641
 msgid "Remote Host"
 msgstr "Seva ya mbali"
 
-#: src/model_manager.py:614
+#: src/model_manager.py:642
 msgid "Modified At"
 msgstr "Ilibadilishwa"
 
-#: src/model_manager.py:615
+#: src/model_manager.py:643
 msgid "Size"
 msgstr "Ukubwa"
 
-#: src/model_manager.py:616
+#: src/model_manager.py:644
 msgid "Digest"
 msgstr "Alama ya hashi"
 
-#: src/model_manager.py:617
+#: src/model_manager.py:645
 msgid "Detail: Format"
 msgstr "Maelezo: umbizo"
 
-#: src/model_manager.py:618
+#: src/model_manager.py:646
 msgid "Detail: Family"
 msgstr "Maelezo: familia"
 
-#: src/model_manager.py:619
+#: src/model_manager.py:647
 msgid "Detail: Families"
 msgstr "Maelezo: familia"
 
-#: src/model_manager.py:620
+#: src/model_manager.py:648
 msgid "Detail: Parameter Size"
 msgstr "Maelezo: idadi ya vigezo"
 
-#: src/model_manager.py:621
+#: src/model_manager.py:649
 msgid "Detail: Quantization Level"
 msgstr "Maelezo: kiwango cha ukwantishaji"
 
-#: src/model_manager.py:622
+#: src/model_manager.py:650
 msgid "Parameters"
 msgstr "Vigezo"
 
-#: src/model_manager.py:623
+#: src/model_manager.py:651
 msgid "Capabilities"
 msgstr "Uwezo"
 
-#: src/model_manager.py:624
+#: src/model_manager.py:652
 msgid "Template"
 msgstr "Kiolezo"
 
-#: src/model_manager.py:625
+#: src/model_manager.py:653
 msgid "License"
 msgstr "Leseni"
 
-#: src/model_manager.py:626
+#: src/model_manager.py:654
 msgid "Modelfile"
 msgstr "Modelfile"
 
-#: src/model_manager.py:627
+#: src/model_manager.py:655
 msgid "Model Info"
 msgstr "Taarifa za modeli"
 
@@ -952,14 +1047,6 @@ msgstr "Sasisha orodha ya modeli"
 msgid "Download Model…"
 msgstr "Pakua modeli…"
 
-#: src/model_manager.ui:80
-msgid "Installed"
-msgstr "Zilizosakinishwa"
-
-#: src/model_manager.ui:90
-msgid "Available Models"
-msgstr "Modeli zinazopatikana"
-
 #: src/model_manager.ui:102
 msgid "Running"
 msgstr "Zinazoendeshwa"
@@ -968,59 +1055,79 @@ msgstr "Zinazoendeshwa"
 msgid "Models in Memory"
 msgstr "Modeli kwenye kumbukumbu"
 
-#: src/ollama.py:52
+#: src/ollama.py:71 src/storage.py:127
+msgid "Ollama Cloud requires https://ollama.com."
+msgstr "Ollama Cloud inahitaji https://ollama.com."
+
+#: src/ollama.py:80
 msgid "Enter a valid http:// or https:// Ollama host URL."
 msgstr "Weka URL halali ya seva ya Ollama yenye http:// au https://."
 
-#: src/ollama.py:61 src/ollama.py:84
+#: src/ollama.py:89 src/ollama.py:104 src/ollama.py:137
 msgid "Request stopped"
 msgstr "Ombi limesimamishwa"
 
-#: src/ollama.py:110
+#: src/ollama.py:98
+msgid "This operation is unavailable for Ollama Cloud."
+msgstr "Kitendo hiki hakipatikani kwa Ollama Cloud."
+
+#: src/ollama.py:124
+msgid ""
+"Ollama Cloud rejected the API key or account access. Edit this host to check its API "
+"key."
+msgstr ""
+"Ollama Cloud imekataa ufunguo wa API au ufikiaji wa akaunti. Hariri seva hii ili "
+"ukague ufunguo wake wa API."
+
+#: src/ollama.py:126
+msgid "Ollama Cloud usage or rate limit reached. Try again later."
+msgstr "Kikomo cha matumizi au maombi ya Ollama Cloud kimefikiwa. Jaribu tena baadaye."
+
+#: src/ollama.py:163
 msgid "Invalid JSON received from Ollama"
 msgstr "JSON isiyo halali imepokelewa kutoka Ollama"
 
-#: src/ollama.py:112
+#: src/ollama.py:165
 msgid "Expected a JSON object from Ollama"
 msgstr "Ilitarajiwa objekti ya JSON kutoka Ollama"
 
-#: src/ollama.py:162
+#: src/ollama.py:221
 msgid "Enter nonempty text to embed."
 msgstr "Weka maandishi yasiyo tupu ili kuunda vekta."
 
-#: src/ollama.py:166
+#: src/ollama.py:225
 msgid "Embedding dimensions must be a positive integer."
 msgstr "Idadi ya vipimo vya vekta lazima iwe nambari kamili chanya."
 
-#: src/ollama.py:173
+#: src/ollama.py:232
 msgid "The server returned an incorrect number of embeddings."
 msgstr "Seva imerudisha idadi isiyo sahihi ya viwakilishi vya vekta."
 
-#: src/ollama.py:178
+#: src/ollama.py:237
 msgid "The server returned an invalid embedding vector."
 msgstr "Seva imerudisha vekta isiyo halali."
 
-#: src/ollama.py:181
+#: src/ollama.py:240
 msgid "Embedding dimensions do not match, or a vector is zero."
 msgstr "Idadi za vipimo vya vekta hazilingani, au vekta ni sifuri."
 
-#: src/ollama.py:210
+#: src/ollama.py:269
 msgid "Model pull ended before completion"
 msgstr "Upakuaji wa modeli uliisha kabla ya kukamilika"
 
-#: src/ollama.py:216
+#: src/ollama.py:275
 msgid "Invalid output format"
 msgstr "Umbizo la matokeo si halali"
 
-#: src/ollama.py:220
+#: src/ollama.py:279
 msgid "Keep-alive must be a duration in seconds, 0, or -1"
 msgstr "Muda wa kuhifadhi kwenye kumbukumbu lazima uwe sekunde, 0 au -1"
 
-#: src/ollama.py:224
+#: src/ollama.py:283
 msgid "Invalid thinking setting"
 msgstr "Mpangilio wa ufikiri si halali"
 
-#: src/ollama.py:230
+#: src/ollama.py:289
 msgid "Top logprobs must be between 0 and 20"
 msgstr "Idadi ya tokeni zenye uwezekano mkubwa zaidi lazima iwe kati ya 0 na 20"
 
@@ -1052,7 +1159,7 @@ msgstr "Maelezo ya upakuaji"
 msgid "New Chat"
 msgstr "Mazungumzo mapya"
 
-#: src/session.py:167
+#: src/session.py:169
 msgid "There are no pending tool calls."
 msgstr "Hakuna miito ya zana inayosubiri."
 
@@ -1099,7 +1206,7 @@ msgstr "Onyesha au ficha utepe wa pembeni"
 msgid "Opening Gnollama"
 msgstr "Inafungua Gnollama"
 
-#: src/startup.py:20 src/tab.py:245 src/widgets/knowledge_import.py:88
+#: src/startup.py:20 src/tab.py:247 src/widgets/knowledge_import.py:88
 #: src/widgets/knowledge_view.py:1220 src/widgets/url_import.py:232 src/window.py:139
 msgid "Retry"
 msgstr "Jaribu tena"
@@ -1120,6 +1227,14 @@ msgstr "Imeshindwa kufungua hifadhidata"
 #, python-brace-format
 msgid "Database backup: {0}"
 msgstr "Nakala ya hifadhidata: {0}"
+
+#: src/storage.py:117
+msgid "This host was removed."
+msgstr "Seva hii imeondolewa."
+
+#: src/storage.py:122
+msgid "Invalid host type."
+msgstr "Aina ya seva si halali."
 
 #: src/structured.py:18
 msgid "Non-finite numbers are not valid JSON."
@@ -1173,43 +1288,43 @@ msgstr "Jibu jipya"
 msgid "Chat"
 msgstr "Mazungumzo"
 
-#: src/tab.py:166
+#: src/tab.py:167
 msgid "Select an available model before sending."
 msgstr "Chagua modeli inayopatikana kabla ya kutuma."
 
-#: src/tab.py:169
+#: src/tab.py:170
 msgid "Wait for this model to finish unloading before sending."
 msgstr "Subiri modeli hii iondolewe kwenye kumbukumbu kabla ya kutuma."
 
-#: src/tab.py:174
+#: src/tab.py:175
 msgid "Wait for image support to be checked before sending."
 msgstr "Subiri ukaguzi wa uwezo wa kuchakata picha kabla ya kutuma."
 
-#: src/tab.py:176 src/widgets/chat_input.py:112
+#: src/tab.py:177 src/widgets/chat_input.py:112
 msgid "Remove draft images or select a vision model to send."
 msgstr "Ondoa picha za rasimu au uchague modeli inayochakata picha ili kutuma."
 
-#: src/tab.py:218
+#: src/tab.py:220
 msgid "Retrieving sources…"
 msgstr "Inatafuta vyanzo…"
 
-#: src/tab.py:243
+#: src/tab.py:245
 msgid "Could Not Retrieve Sources"
 msgstr "Imeshindwa kupata vyanzo"
 
-#: src/tab.py:244
+#: src/tab.py:246
 msgid "Adjust Sources"
 msgstr "Rekebisha vyanzo"
 
-#: src/tab.py:246
+#: src/tab.py:248
 msgid "Send Without Knowledge"
 msgstr "Tuma bila maarifa"
 
-#: src/tab.py:247
+#: src/tab.py:249
 msgid "Keep Draft"
 msgstr "Hifadhi rasimu"
 
-#: src/tab.py:309
+#: src/tab.py:311
 msgid "Response ended before completion."
 msgstr "Jibu liliisha kabla ya kukamilika."
 
@@ -1501,24 +1616,28 @@ msgid "Checking chat models…"
 msgstr "Inakagua modeli za mazungumzo…"
 
 #: src/widgets/chat_input.py:176
+msgid "No cloud models are available. Try refreshing later."
+msgstr "Hakuna modeli za wingu zinazopatikana. Jaribu kuonyesha upya baadaye."
+
+#: src/widgets/chat_input.py:177
 msgid "No chat models found. Pull one in Manage Models, then refresh."
 msgstr ""
 "Hakuna modeli za mazungumzo zilizopatikana. Pakua moja katika Dhibiti modeli, kisha "
 "usasishe."
 
-#: src/widgets/chat_input.py:246
+#: src/widgets/chat_input.py:247
 msgid "Select Images"
 msgstr "Chagua picha"
 
-#: src/widgets/chat_input.py:250
+#: src/widgets/chat_input.py:251
 msgid "Images"
 msgstr "Picha"
 
-#: src/widgets/chat_input.py:283 src/widgets/chat_input.ui:116
+#: src/widgets/chat_input.py:284 src/widgets/chat_input.ui:116
 msgid "No image selected"
 msgstr "Hakuna picha iliyochaguliwa"
 
-#: src/widgets/chat_input.py:289
+#: src/widgets/chat_input.py:290
 #, python-brace-format
 msgid "{0} image selected"
 msgid_plural "{0} images selected"
@@ -1566,7 +1685,7 @@ msgstr "Tekeleza"
 msgid "Content"
 msgstr "Maudhui"
 
-#: src/widgets/json_view.py:160 src/widgets/options_panel.py:41
+#: src/widgets/json_view.py:160 src/widgets/options_panel.py:42
 msgid "JSON Schema"
 msgstr "Skima ya JSON"
 
@@ -2560,252 +2679,258 @@ msgstr ""
 "Chagua modeli na uandike ujumbe. Chagua mikusanyiko ya maarifa ili kuuliza maswali "
 "kuhusu hati zako."
 
-#: src/widgets/options_panel.py:41
+#: src/widgets/options_panel.py:42
 msgid "Text"
 msgstr "Maandishi"
 
-#: src/widgets/options_panel.py:41
+#: src/widgets/options_panel.py:42
 msgid "JSON"
 msgstr "JSON"
 
-#: src/widgets/options_panel.py:43 src/widgets/options_panel.py:72
+#: src/widgets/options_panel.py:44 src/widgets/options_panel.py:83
 msgid "Server default"
 msgstr "Chaguomsingi la seva"
 
-#: src/widgets/options_panel.py:43
+#: src/widgets/options_panel.py:44
 msgid "Unload after reply"
 msgstr "Ondoa kwenye kumbukumbu baada ya jibu"
 
-#: src/widgets/options_panel.py:43
+#: src/widgets/options_panel.py:44
 msgid "Five minutes"
 msgstr "Dakika tano"
 
-#: src/widgets/options_panel.py:44
+#: src/widgets/options_panel.py:45
 msgid "Thirty minutes"
 msgstr "Dakika thelathini"
 
-#: src/widgets/options_panel.py:44
+#: src/widgets/options_panel.py:45
 msgid "Indefinitely"
 msgstr "Bila kikomo"
 
-#: src/widgets/options_panel.py:44
+#: src/widgets/options_panel.py:45
 msgid "Custom seconds"
 msgstr "Sekunde maalumu"
 
-#: src/widgets/options_panel.py:63
+#: src/widgets/options_panel.py:53
+msgid "Ollama Cloud uses text output and manages model retention automatically."
+msgstr ""
+"Ollama Cloud hutumia matokeo ya maandishi na husimamia kiotomatiki muda wa modeli "
+"kubaki kwenye kumbukumbu."
+
+#: src/widgets/options_panel.py:74
 msgid "Server"
 msgstr "Seva"
 
-#: src/widgets/options_panel.py:88
+#: src/widgets/options_panel.py:100
 msgid "System Instructions"
 msgstr "Maagizo ya mfumo"
 
-#: src/widgets/options_panel.py:89
+#: src/widgets/options_panel.py:101
 msgid "System prompt"
 msgstr "Ingizo la mfumo"
 
-#: src/widgets/options_panel.py:89
+#: src/widgets/options_panel.py:101
 msgid "Optional instructions applied to this conversation."
 msgstr "Maagizo ya hiari yanayotumika katika mazungumzo haya."
 
-#: src/widgets/options_panel.py:90
+#: src/widgets/options_panel.py:102
 msgid "Optional instructions"
 msgstr "Maagizo ya hiari"
 
-#: src/widgets/options_panel.py:91
+#: src/widgets/options_panel.py:103
 msgid "Generation Limits"
 msgstr "Vikomo vya uzalishaji"
 
-#: src/widgets/options_panel.py:91
+#: src/widgets/options_panel.py:103
 msgid "Blank fields use the server’s defaults."
 msgstr "Sehemu tupu hutumia chaguomsingi za seva."
 
-#: src/widgets/options_panel.py:92
+#: src/widgets/options_panel.py:104
 msgid "Context size (tokens)"
 msgstr "Ukubwa wa muktadha (tokeni)"
 
-#: src/widgets/options_panel.py:92
+#: src/widgets/options_panel.py:104
 msgid "Maximum context available to the model; larger values need more memory."
 msgstr ""
 "Muktadha wa juu zaidi unaopatikana kwa modeli; thamani kubwa zaidi zinahitaji "
 "kumbukumbu zaidi."
 
-#: src/widgets/options_panel.py:93
+#: src/widgets/options_panel.py:105
 msgid "Maximum output tokens"
 msgstr "Idadi ya juu zaidi ya tokeni za matokeo"
 
-#: src/widgets/options_panel.py:93
+#: src/widgets/options_panel.py:105
 msgid "Use −1 for unlimited output or −2 to fill the context."
 msgstr "Tumia −1 kwa matokeo yasiyo na kikomo au −2 ili kujaza muktadha."
 
-#: src/widgets/options_panel.py:94
+#: src/widgets/options_panel.py:106
 msgid "Stop sequences"
 msgstr "Mifuatano ya kusimamisha"
 
-#: src/widgets/options_panel.py:94
+#: src/widgets/options_panel.py:106
 msgid "Separate sequences with commas. Generation stops when one is produced."
 msgstr "Tenganisha mifuatano kwa koma. Uzalishaji husimama mmoja wake unapotolewa."
 
-#: src/widgets/options_panel.py:95
+#: src/widgets/options_panel.py:107
 msgid "Sampling"
 msgstr "Usampulishaji"
 
-#: src/widgets/options_panel.py:97
+#: src/widgets/options_panel.py:109
 msgid "Temperature"
 msgstr "Halijoto"
 
-#: src/widgets/options_panel.py:97
+#: src/widgets/options_panel.py:109
 msgid "Higher values increase variation; zero is more predictable."
 msgstr "Thamani kubwa zaidi huongeza utofauti; sifuri hutoa matokeo yanayotabirika zaidi."
 
-#: src/widgets/options_panel.py:98
+#: src/widgets/options_panel.py:110
 msgid "Seed"
 msgstr "Thamani ya kuanzia"
 
-#: src/widgets/options_panel.py:98
+#: src/widgets/options_panel.py:110
 msgid "An integer used to initialize random sampling."
 msgstr "Nambari kamili inayotumiwa kuanzisha usampulishaji nasibu."
 
-#: src/widgets/options_panel.py:99
+#: src/widgets/options_panel.py:111
 msgid "Top K"
 msgstr "Top K"
 
-#: src/widgets/options_panel.py:99
+#: src/widgets/options_panel.py:111
 msgid "Number of candidate tokens to consider."
 msgstr "Idadi ya tokeni zinazoweza kuchaguliwa za kuzingatia."
 
-#: src/widgets/options_panel.py:100
+#: src/widgets/options_panel.py:112
 msgid "Top P"
 msgstr "Top P"
 
-#: src/widgets/options_panel.py:100
+#: src/widgets/options_panel.py:112
 msgid "Cumulative probability cutoff, between 0 and 1."
 msgstr "Kizingiti cha uwezekano limbikizi, kati ya 0 na 1."
 
-#: src/widgets/options_panel.py:101
+#: src/widgets/options_panel.py:113
 msgid "Min P"
 msgstr "Min P"
 
-#: src/widgets/options_panel.py:101
+#: src/widgets/options_panel.py:113
 msgid "Minimum relative token probability, between 0 and 1."
 msgstr ""
 "Uwezekano wa chini zaidi wa tokeni ukilinganishwa na tokeni yenye uwezekano mkubwa "
 "zaidi, kati ya 0 na 1."
 
-#: src/widgets/options_panel.py:103
+#: src/widgets/options_panel.py:115
 msgid "Model Retention"
 msgstr "Uhifadhi wa modeli kwenye kumbukumbu"
 
-#: src/widgets/options_panel.py:105
+#: src/widgets/options_panel.py:120
 msgid "Keep model loaded"
 msgstr "Hifadhi modeli kwenye kumbukumbu"
 
-#: src/widgets/options_panel.py:108
+#: src/widgets/options_panel.py:124
 msgid "Custom duration (seconds)"
 msgstr "Muda maalumu (sekunde)"
 
-#: src/widgets/options_panel.py:108 src/widgets/options_panel.py:165
+#: src/widgets/options_panel.py:124 src/widgets/options_panel.py:187
 msgid "Enter a positive whole number of seconds."
 msgstr "Weka idadi kamili chanya ya sekunde."
 
-#: src/widgets/options_panel.py:110
+#: src/widgets/options_panel.py:126
 msgid "Diagnostics"
 msgstr "Uchunguzi"
 
-#: src/widgets/options_panel.py:111
+#: src/widgets/options_panel.py:128
 msgid "Show response statistics"
 msgstr "Onyesha takwimu za majibu"
 
-#: src/widgets/options_panel.py:112
+#: src/widgets/options_panel.py:131
 msgid "Return token probabilities (logprobs)"
 msgstr "Rudisha uwezekano wa tokeni (logprobs)"
 
-#: src/widgets/options_panel.py:115
+#: src/widgets/options_panel.py:135
 msgid "Top logprobs"
 msgstr "Tokeni zenye uwezekano mkubwa zaidi"
 
-#: src/widgets/options_panel.py:115
+#: src/widgets/options_panel.py:135
 msgid "Number of alternative token probabilities, from 0 to 20."
 msgstr "Idadi ya uwezekano wa tokeni mbadala, kuanzia 0 hadi 20."
 
-#: src/widgets/options_panel.py:132
+#: src/widgets/options_panel.py:152
 msgid "Chat Settings"
 msgstr "Mipangilio ya mazungumzo"
 
-#: src/widgets/options_panel.py:135
+#: src/widgets/options_panel.py:155
 msgid "Done"
 msgstr "Nimemaliza"
 
-#: src/widgets/options_panel.py:177
+#: src/widgets/options_panel.py:199
 msgid "Top logprobs must be between 0 and 20."
 msgstr "Idadi ya tokeni zenye uwezekano mkubwa zaidi lazima iwe kati ya 0 na 20."
 
-#: src/widgets/options_panel.py:199
+#: src/widgets/options_panel.py:221
 #, python-brace-format
 msgid "Enabled tools: {0}. Results are supplied manually."
 msgstr "Zana zilizowashwa: {0}. Matokeo hutolewa mwenyewe."
 
-#: src/widgets/options_panel.py:199
+#: src/widgets/options_panel.py:221
 msgid "Tool calling is off."
 msgstr "Miito ya zana imezimwa."
 
-#: src/widgets/options_panel.py:202
+#: src/widgets/options_panel.py:224
 msgid "Checking tool support…"
 msgstr "Inakagua uwezo wa kutumia zana…"
 
-#: src/widgets/options_panel.py:204
+#: src/widgets/options_panel.py:226
 msgid "This model reports no tool support; you can still test the API."
 msgstr "Modeli hii inaripoti kutokuwa na uwezo wa kutumia zana; bado unaweza kujaribu API."
 
-#: src/widgets/options_panel.py:206
+#: src/widgets/options_panel.py:228
 msgid "Tool support is unknown."
 msgstr "Uwezo wa kutumia zana haujulikani."
 
-#: src/widgets/options_panel.py:275
+#: src/widgets/options_panel.py:297
 msgid "No hosts configured"
 msgstr "Hakuna seva zilizosanidiwa"
 
-#: src/widgets/options_panel.py:313 src/widgets/options_panel.py:315
+#: src/widgets/options_panel.py:335 src/widgets/options_panel.py:337
 msgid "Enter a valid number."
 msgstr "Weka nambari halali."
 
-#: src/widgets/options_panel.py:333
+#: src/widgets/options_panel.py:355
 msgid "Value must not be negative."
 msgstr "Thamani haipaswi kuwa hasi."
 
-#: src/widgets/options_panel.py:336
+#: src/widgets/options_panel.py:358
 msgid "Value must be between 0 and 1."
 msgstr "Thamani lazima iwe kati ya 0 na 1."
 
-#: src/widgets/options_panel.py:338
+#: src/widgets/options_panel.py:360
 msgid "Context size must be positive."
 msgstr "Ukubwa wa muktadha lazima uwe chanya."
 
-#: src/widgets/options_panel.py:340
+#: src/widgets/options_panel.py:362
 msgid "Max tokens must be -2, -1, or a nonnegative integer."
 msgstr "Idadi ya juu zaidi ya tokeni lazima iwe -2, -1 au nambari kamili isiyo hasi."
 
-#: src/widgets/options_panel.ui:20
+#: src/widgets/options_panel.ui:21
 msgid "Tool Calling"
 msgstr "Miito ya zana"
 
-#: src/widgets/options_panel.ui:26
+#: src/widgets/options_panel.ui:27
 msgid "Edit Tools…"
 msgstr "Hariri zana…"
 
-#: src/widgets/options_panel.ui:44
+#: src/widgets/options_panel.ui:46
 msgid "Output:"
 msgstr "Matokeo:"
 
-#: src/widgets/options_panel.ui:56
+#: src/widgets/options_panel.ui:58
 msgid "Edit Schema…"
 msgstr "Hariri skima…"
 
-#: src/widgets/options_panel.ui:63
+#: src/widgets/options_panel.ui:65
 msgid "Chat Settings…"
 msgstr "Mipangilio ya mazungumzo…"
 
-#: src/widgets/options_panel.ui:65
+#: src/widgets/options_panel.ui:67
 msgid "Generation, Model Retention, and Diagnostics"
 msgstr "Uzalishaji, uhifadhi wa modeli kwenye kumbukumbu, na uchunguzi"
 
@@ -3148,3 +3273,5 @@ msgstr "Mikato ya ki_bodi"
 msgid "_About Gnollama"
 msgstr "_Kuhusu Gnollama"
 
+#~ msgid "Fetching version..."
+#~ msgstr "Inapata toleo..."

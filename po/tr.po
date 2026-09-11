@@ -4,9 +4,9 @@
 # Translated and reviewed with AI assistance, 2026.
 msgid ""
 msgstr ""
-"Project-Id-Version: gnollama 0.13.0\n"
+"Project-Id-Version: gnollama 0.14.0\n"
 "Report-Msgid-Bugs-To: https://github.com/jackrabbithanna/gnollama/issues\n"
-"POT-Creation-Date: 2026-09-10 17:08-0600\n"
+"POT-Creation-Date: 2026-09-10 20:09-0600\n"
 "PO-Revision-Date: 2026-09-10 00:00+0000\n"
 "Last-Translator: AI-assisted translation\n"
 "Language: tr\n"
@@ -92,6 +92,26 @@ msgid "Ollama chat with code highlighting"
 msgstr "Kod vurgulamalı Ollama sohbeti"
 
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:53
+msgid "Connect directly to Ollama Cloud from Chat and Response tabs."
+msgstr "Sohbet ve Yanıt sekmelerinden doğrudan Ollama Cloud’a bağlanın."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:54
+msgid ""
+"Store each host's API key in the desktop keyring, with session-only use when the "
+"keyring is unavailable."
+msgstr ""
+"Her sunucunun API anahtarını masaüstü anahtarlığında saklayın; anahtarlık "
+"kullanılamadığında yalnızca oturum boyunca kullanın."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:55
+msgid ""
+"Browse cloud models with controls adapted to the service, and use local knowledge "
+"sources in cloud chats."
+msgstr ""
+"Hizmete uyarlanmış denetimlerle bulut modellerine göz atın ve bulut sohbetlerinde "
+"yerel bilgi kaynaklarını kullanın."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:60
 msgid ""
 "Add a Knowledge Library for text and PDF imports, local embedding indexes, and "
 "source-grounded chats."
@@ -99,7 +119,7 @@ msgstr ""
 "Metin ve PDF içe aktarma, yerel gömme dizinleri ve kaynaklara dayalı sohbetler için "
 "bir Bilgi Kitaplığı eklendi."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:55
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:62
 msgid ""
 "Start with knowledge collections and add text, files, or URLs with explicit "
 "destinations and guided previews."
@@ -107,7 +127,7 @@ msgstr ""
 "Bilgi koleksiyonlarıyla başlayın; açıkça belirtilen hedefler ve yönlendirmeli "
 "önizlemelerle metin, dosya veya URL ekleyin."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:56
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:63
 msgid ""
 "Choose collections before search settings, and use adaptive chat settings with "
 "clearer controls and feedback."
@@ -115,13 +135,13 @@ msgstr ""
 "Arama ayarlarından önce koleksiyonları seçin ve daha anlaşılır denetimler ve geri "
 "bildirimlerle uyarlanabilir sohbet ayarlarını kullanın."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:57
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:64
 msgid "Create and compare embeddings, inspect chunks and vectors, and test semantic searches."
 msgstr ""
 "Gömmeler oluşturup karşılaştırın, parçaları ve vektörleri inceleyin ve anlamsal "
 "aramaları deneyin."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:58
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:65
 msgid ""
 "Select documents or chunks for chats, with independent embedding hosts and saved "
 "source passages."
@@ -129,7 +149,7 @@ msgstr ""
 "Sohbetler için belgeler veya parçalar seçin; bağımsız gömme sunucuları ve kaydedilmiş"
 " kaynak pasajları kullanın."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:59
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:66
 msgid ""
 "Warn about stored embeddings when deleting models, with optional vector cleanup that "
 "retains source text."
@@ -137,7 +157,7 @@ msgstr ""
 "Model silerken kayıtlı gömmeler hakkında uyarı gösterilir; kaynak metni koruyarak "
 "vektörleri isteğe bağlı temizleme olanağı sunulur."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:60
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:67
 msgid ""
 "Search with sqlite-vec, automatically migrate existing vectors with a database "
 "backup, and use the Qwen3 retrieval preset."
@@ -145,7 +165,7 @@ msgstr ""
 "sqlite-vec ile arama yapın, veritabanı yedeği alarak mevcut vektörleri otomatik "
 "taşıyın ve Qwen3 getirme önayarını kullanın."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:61
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:68
 msgid ""
 "Organize documents into collections with shared embedding settings, automatic builds,"
 " and live collection selection in chats."
@@ -153,7 +173,7 @@ msgstr ""
 "Belgeleri ortak gömme ayarları, otomatik oluşturma ve sohbetlerde güncel koleksiyon "
 "seçimi sunan koleksiyonlarda düzenleyin."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:62
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:69
 msgid ""
 "Choose collections as chat sources and compare cosine similarity, Euclidean distance,"
 " or Manhattan distance with appropriate search cutoffs."
@@ -161,7 +181,7 @@ msgstr ""
 "Sohbet kaynağı olarak koleksiyonları seçin ve uygun arama eşikleriyle kosinüs "
 "benzerliği, Öklid uzaklığı veya Manhattan uzaklığını karşılaştırın."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:63
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:70
 msgid ""
 "Hide embedding-only models from Chat and Response model selection while keeping them "
 "available in Knowledge and Manage Models."
@@ -169,7 +189,7 @@ msgstr ""
 "Yalnızca gömme üreten modeller Sohbet ve Yanıt model seçiminden gizlenir; Bilgi ve "
 "Modelleri Yönet bölümlerinde kullanılabilir kalır."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:64
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:71
 msgid ""
 "Import batches of URLs into collections with main-content extraction, CSS selectors, "
 "editable previews, and source links in chats."
@@ -177,7 +197,7 @@ msgstr ""
 "Ana içerik çıkarma, CSS seçicileri, düzenlenebilir önizlemeler ve sohbetlerde kaynak "
 "bağlantılarıyla URL’leri toplu olarak koleksiyonlara aktarın."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:65
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:72
 msgid ""
 "Review changed web documents before replacing their text and rebuilding all affected "
 "embedding indexes."
@@ -201,11 +221,11 @@ msgstr "Yanıt istatistikleri"
 msgid "Earlier images were omitted from the text-only request."
 msgstr "Önceki görüntüler yalnızca metin içeren isteğe dahil edilmedi."
 
-#: src/bubbles.py:125 src/knowledge.py:300
+#: src/bubbles.py:125 src/knowledge.py:301
 msgid "Stopped"
 msgstr "Durduruldu"
 
-#: src/bubbles.py:125 src/knowledge.py:300
+#: src/bubbles.py:125 src/knowledge.py:301
 msgid "Failed"
 msgstr "Başarısız"
 
@@ -215,7 +235,7 @@ msgid "Logprobs"
 msgstr "Logaritmik olasılıklar"
 
 #: src/bubbles.py:183 src/model_manager.py:22 src/model_manager.py:24
-#: src/model_manager.py:28
+#: src/model_manager.py:28 src/model_manager.py:312
 msgid "Unavailable"
 msgstr "Kullanılamıyor"
 
@@ -268,7 +288,7 @@ msgstr "Bitiş nedeni: {0}"
 msgid "A document was deleted. Choose documents again."
 msgstr "Bir belge silindi. Belgeleri yeniden seçin."
 
-#: src/collections_store.py:107 src/knowledge.py:357
+#: src/collections_store.py:107 src/knowledge.py:358
 msgid "Enter a collection name."
 msgstr "Bir koleksiyon adı girin."
 
@@ -276,7 +296,7 @@ msgstr "Bir koleksiyon adı girin."
 msgid "Choose a model with the collection’s original digest."
 msgstr "Koleksiyonun özgün özetiyle eşleşen bir model seçin."
 
-#: src/collections_store.py:141 src/knowledge.py:390
+#: src/collections_store.py:141 src/knowledge.py:391
 msgid "The collection was deleted."
 msgstr "Koleksiyon silindi."
 
@@ -301,26 +321,50 @@ msgstr ""
 "“{0}” koleksiyonu hazır değil. Eksik gömmeleri oluşturun veya başarısız belgeleri "
 "yeniden deneyin: {1}"
 
-#: src/database.py:75
+#: src/credentials.py:27
+msgid "Enter a valid API key."
+msgstr "Geçerli bir API anahtarı girin."
+
+#: src/credentials.py:51
+msgid "Could not access the keyring. Edit this host to retry or enter a session-only key."
+msgstr ""
+"Anahtarlığa erişilemedi. Yeniden denemek veya yalnızca bu oturum için bir anahtar "
+"girmek üzere bu sunucuyu düzenleyin."
+
+#: src/credentials.py:53 src/storage.py:134
+msgid "An API key is required. Edit this host to enter one."
+msgstr "API anahtarı gerekiyor. Bir anahtar girmek için bu sunucuyu düzenleyin."
+
+#: src/credentials.py:66
+msgid "Could not save the API key in the keyring. Retry or use it for this session."
+msgstr ""
+"API anahtarı anahtarlığa kaydedilemedi. Yeniden deneyin veya yalnızca bu oturum için "
+"kullanın."
+
+#: src/credentials.py:78 src/credentials.py:80
+msgid "Could not remove the saved API key. Unlock the keyring and retry."
+msgstr "Kaydedilen API anahtarı kaldırılamadı. Anahtarlığın kilidini açıp yeniden deneyin."
+
+#: src/database.py:80
 msgid "This database was created by a newer Gnollama version. Update Gnollama to open it."
 msgstr ""
 "Bu veritabanı daha yeni bir Gnollama sürümüyle oluşturuldu. Açmak için Gnollama’yı "
 "güncelleyin."
 
-#: src/database.py:82
+#: src/database.py:87
 msgid "Backing up the database…"
 msgstr "Veritabanı yedekleniyor…"
 
-#: src/database.py:191
+#: src/database.py:196
 msgid "This database requires a newer Gnollama version."
 msgstr "Bu veritabanı daha yeni bir Gnollama sürümü gerektiriyor."
 
-#: src/database.py:210
+#: src/database.py:215
 #, python-brace-format
 msgid "Upgrading the database to version {0}…"
 msgstr "Veritabanı {0} sürümüne yükseltiliyor…"
 
-#: src/host_edit_dialog.ui:6 src/host_manager.py:171 src/model_manager.py:366
+#: src/host_edit_dialog.ui:14 src/host_manager.py:266 src/model_manager.py:394
 #: src/pull_model_dialog.ui:17 src/widgets/knowledge_view.py:1111
 #: src/widgets/knowledge_view.py:1121 src/widgets/knowledge_view.py:1250
 #: src/widgets/knowledge_view.py:1293 src/widgets/knowledge_view.py:1337
@@ -329,67 +373,108 @@ msgstr "Veritabanı {0} sürümüne yükseltiliyor…"
 msgid "Cancel"
 msgstr "İptal"
 
-#: src/host_edit_dialog.ui:7 src/widgets/knowledge_view.py:1112
+#: src/host_edit_dialog.ui:19 src/widgets/knowledge_view.py:1112
 #: src/widgets/knowledge_view.py:1145 src/widgets/knowledge_view.py:1338 src/window.py:350
 msgid "Save"
 msgstr "Kaydet"
 
-#: src/host_edit_dialog.ui:21 src/model_manager.py:610
+#: src/host_edit_dialog.ui:39
+msgid "Host type"
+msgstr "Sunucu türü"
+
+#: src/host_edit_dialog.ui:47 src/model_manager.py:638
 msgid "Name"
 msgstr "Ad"
 
-#: src/host_edit_dialog.ui:28
+#: src/host_edit_dialog.ui:54
 msgid "For example: Local Ollama"
 msgstr "Örneğin: Yerel Ollama"
 
-#: src/host_edit_dialog.ui:33
+#: src/host_edit_dialog.ui:59
 msgid "Server address"
 msgstr "Sunucu adresi"
 
-#: src/host_edit_dialog.ui:45
+#: src/host_edit_dialog.ui:71
 msgid "Set as default host"
 msgstr "Varsayılan sunucu olarak ayarla"
 
-#: src/host_manager.py:19
+#: src/host_manager.py:24
 msgid "Edit Host"
 msgstr "Sunucuyu düzenle"
 
-#: src/host_manager.py:19 src/host_manager.ui:23
+#: src/host_manager.py:24 src/host_manager.ui:23
 msgid "Add Host"
 msgstr "Sunucu ekle"
 
-#: src/host_manager.py:35
+#: src/host_manager.py:30
+msgid "Ollama Server"
+msgstr "Ollama Sunucusu"
+
+#: src/host_manager.py:30 src/host_manager.py:72 src/model_manager.py:312
+msgid "Ollama Cloud"
+msgstr "Ollama Cloud"
+
+#: src/host_manager.py:34
+msgid "API key"
+msgstr "API anahtarı"
+
+#: src/host_manager.py:36
+msgid "Leave blank to keep the existing key."
+msgstr "Mevcut anahtarı korumak için boş bırakın."
+
+#: src/host_manager.py:37
+msgid "Stored securely in your desktop keyring."
+msgstr "Masaüstü anahtarlığınızda güvenle saklanır."
+
+#: src/host_manager.py:38
+msgid "Create an API key"
+msgstr "API anahtarı oluştur"
+
+#: src/host_manager.py:44
+msgid "Use for This Session"
+msgstr "Bu Oturum İçin Kullan"
+
+#: src/host_manager.py:98 src/storage.py:124
 msgid "Enter a name for this server."
 msgstr "Bu sunucu için bir ad girin."
 
-#: src/host_manager.py:78
+#: src/host_manager.py:149
 msgid "Default"
 msgstr "Varsayılan"
 
-#: src/host_manager.py:83 src/host_manager.py:87
+#: src/host_manager.py:154 src/host_manager.py:158
 msgid "Test Connection"
 msgstr "Bağlantıyı sına"
 
-#: src/host_manager.py:92
+#: src/host_manager.py:163
 msgid "Edit Server"
 msgstr "Sunucuyu düzenle"
 
-#: src/host_manager.py:98 src/host_manager.py:168
+#: src/host_manager.py:169 src/host_manager.py:263
 msgid "Delete Host"
 msgstr "Sunucuyu sil"
 
-#: src/host_manager.py:112
-msgid "Fetching version..."
-msgstr "Sürüm alınıyor..."
+#: src/host_manager.py:183
+msgid "Checking connection…"
+msgstr "Bağlantı denetleniyor…"
 
-#: src/host_manager.py:114 src/main.py:63 src/model_manager.py:340 src/model_manager.py:601
-#: src/startup.py:23 src/widgets/json_view.py:230 src/widgets/knowledge_import.py:51
-#: src/widgets/knowledge_view.py:756 src/widgets/knowledge_view.py:909
-#: src/widgets/knowledge_view.py:1271
+#: src/host_manager.py:185 src/host_manager.py:277 src/main.py:63 src/model_manager.py:368
+#: src/model_manager.py:629 src/startup.py:23 src/widgets/json_view.py:230
+#: src/widgets/knowledge_import.py:51 src/widgets/knowledge_view.py:756
+#: src/widgets/knowledge_view.py:909 src/widgets/knowledge_view.py:1271
 msgid "Close"
 msgstr "Kapat"
 
-#: src/host_manager.py:124
+#: src/host_manager.py:196
+#, python-brace-format
+msgid ""
+"Ollama Cloud is reachable. Available models: {0}\n"
+"Your API key will be checked when you generate a response."
+msgstr ""
+"Ollama Cloud’a erişilebiliyor. Kullanılabilir modeller: {0}\n"
+"API anahtarınız yanıt oluşturduğunuzda denetlenecek."
+
+#: src/host_manager.py:199
 #, python-brace-format
 msgid ""
 "Connected\n"
@@ -398,7 +483,7 @@ msgstr ""
 "Bağlandı\n"
 "Ollama sürümü: {0}"
 
-#: src/host_manager.py:126
+#: src/host_manager.py:201
 #, python-brace-format
 msgid ""
 "Connection failed\n"
@@ -407,14 +492,18 @@ msgstr ""
 "Bağlantı başarısız\n"
 "{0}"
 
-#: src/host_manager.py:169 src/model_manager.py:352
+#: src/host_manager.py:264 src/model_manager.py:380
 #, python-brace-format
 msgid "Are you sure you want to delete {0}?"
 msgstr "{0} öğesini silmek istediğinizden emin misiniz?"
 
-#: src/host_manager.py:172 src/model_manager.py:367 src/widgets/knowledge_view.py:1359
+#: src/host_manager.py:267 src/model_manager.py:395 src/widgets/knowledge_view.py:1359
 msgid "Delete"
 msgstr "Sil"
+
+#: src/host_manager.py:276 src/model_manager.py:418
+msgid "Delete Failed"
+msgstr "Silme başarısız"
 
 #: src/host_manager.ui:6 src/host_manager.ui:17
 msgid "Manage Hosts"
@@ -531,104 +620,104 @@ msgstr "Kaynak sınırı 256 ile 64.000 karakter arasında olmalıdır."
 msgid "Wait for the model operation to finish."
 msgstr "Model işleminin bitmesini bekleyin."
 
-#: src/knowledge.py:262
+#: src/knowledge.py:263
 msgid "The embedding host was removed. Choose a configured host before continuing."
 msgstr "Gömme sunucusu kaldırıldı. Devam etmeden önce yapılandırılmış bir sunucu seçin."
 
-#: src/knowledge.py:268 src/widgets/knowledge_import.py:146 src/widgets/url_import.py:100
+#: src/knowledge.py:269 src/widgets/knowledge_import.py:146 src/widgets/url_import.py:100
 #: src/widgets/url_import.py:113
 msgid "Queued"
 msgstr "Kuyrukta"
 
-#: src/knowledge.py:272
+#: src/knowledge.py:273
 msgid "The Knowledge Library is closing."
 msgstr "Bilgi Kitaplığı kapatılıyor."
 
-#: src/knowledge.py:278
+#: src/knowledge.py:279
 msgid "This document is being replaced. Retry the build when replacement finishes."
 msgstr "Bu belge değiştiriliyor. Değiştirme tamamlanınca oluşturmayı yeniden deneyin."
 
-#: src/knowledge.py:300
+#: src/knowledge.py:301
 msgid "Complete"
 msgstr "Tamamlandı"
 
-#: src/knowledge.py:317
+#: src/knowledge.py:318
 msgid "Wait for this document’s embedding builds to finish before replacing it."
 msgstr "Belgeyi değiştirmeden önce gömmelerinin oluşturulmasını bekleyin."
 
-#: src/knowledge.py:320
+#: src/knowledge.py:321
 msgid "Saving the web document…"
 msgstr "Web belgesi kaydediliyor…"
 
-#: src/knowledge.py:348
+#: src/knowledge.py:349
 msgid "Save web document"
 msgstr "Web belgesini kaydet"
 
-#: src/knowledge.py:369
+#: src/knowledge.py:370
 msgid "Create collection"
 msgstr "Koleksiyon oluştur"
 
-#: src/knowledge.py:384
+#: src/knowledge.py:385
 #, python-brace-format
 msgid "Add document: {0}"
 msgstr "Belge ekle: {0}"
 
-#: src/knowledge.py:392
+#: src/knowledge.py:393
 #, python-brace-format
 msgid "Prepare collection: {0}"
 msgstr "Koleksiyonu hazırla: {0}"
 
-#: src/knowledge.py:399
+#: src/knowledge.py:400
 msgid "Reusing embeddings and preparing missing documents…"
 msgstr "Gömmeler yeniden kullanılıyor ve eksik belgeler hazırlanıyor…"
 
-#: src/knowledge.py:416
+#: src/knowledge.py:417
 #, python-brace-format
 msgid "Create embeddings: {0}"
 msgstr "Gömmeler oluştur: {0}"
 
-#: src/knowledge.py:421
+#: src/knowledge.py:422
 msgid "Build was stopped before it started."
 msgstr "Oluşturma başlamadan durduruldu."
 
-#: src/knowledge.py:438
+#: src/knowledge.py:439
 msgid "The source document was deleted."
 msgstr "Kaynak belge silindi."
 
-#: src/knowledge.py:443
+#: src/knowledge.py:444
 msgid "This index would exceed 100,000 chunks. Increase the chunk size or reduce overlap."
 msgstr "Bu dizin 100.000 parçayı aşacak. Parça boyutunu artırın veya örtüşmeyi azaltın."
 
-#: src/knowledge.py:459
+#: src/knowledge.py:460
 #, python-brace-format
 msgid "Embedding chunks: {0} complete, {1} remaining"
 msgstr "Parça gömmeleri: tamamlanan {0}, kalan {1}"
 
-#: src/knowledge.py:483
+#: src/knowledge.py:484
 msgid "The embedding input cannot fit. Shorten the document prefix or choose another model."
 msgstr "Gömme girdisi sığmıyor. Belge önekini kısaltın veya başka bir model seçin."
 
-#: src/knowledge.py:493
+#: src/knowledge.py:494
 msgid "The model returned a different vector dimension. Create a new configuration."
 msgstr "Model farklı bir vektör boyutu döndürdü. Yeni bir yapılandırma oluşturun."
 
-#: src/knowledge.py:508
+#: src/knowledge.py:509
 msgid "Create embeddings"
 msgstr "Gömmeler oluştur"
 
-#: src/knowledge.py:518
+#: src/knowledge.py:519
 msgid "This embedding configuration has no completed vectors."
 msgstr "Bu gömme yapılandırmasında tamamlanmış vektör yok."
 
-#: src/knowledge.py:520 src/widgets/knowledge_view.py:659
+#: src/knowledge.py:521 src/widgets/knowledge_view.py:659
 msgid "Enter a search query."
 msgstr "Bir arama sorgusu girin."
 
-#: src/knowledge.py:530 src/knowledge_store.py:265
+#: src/knowledge.py:531 src/knowledge_store.py:265
 msgid "Query dimensions differ from the stored vectors. Rebuild the index."
 msgstr "Sorgu boyutları kayıtlı vektörlerden farklı. Dizini yeniden oluşturun."
 
-#: src/knowledge.py:537
+#: src/knowledge.py:538
 msgid "No passages met the search criteria. Adjust the query, sources, or minimum similarity."
 msgstr ""
 "Arama ölçütlerini karşılayan pasaj yok. Sorguyu, kaynakları veya en düşük benzerliği "
@@ -726,7 +815,7 @@ msgstr ""
 msgid "translator-credits"
 msgstr "Yapay zekâ destekli çeviri"
 
-#: src/model_details_view.ui:6 src/model_manager.py:42 src/model_manager.py:291
+#: src/model_details_view.ui:6 src/model_manager.py:42 src/model_manager.py:318
 msgid "Model Details"
 msgstr "Model ayrıntıları"
 
@@ -739,68 +828,76 @@ msgstr ""
 "Bellek: {0} · VRAM: {1}\n"
 "Bağlam: {2} · Bitiş: {3}"
 
-#: src/model_manager.py:163 src/tab.py:162
+#: src/model_manager.py:168 src/tab.py:163
 msgid "No host configured."
 msgstr "Yapılandırılmış sunucu yok."
 
-#: src/model_manager.py:168
+#: src/model_manager.py:173
 msgid "Loading running models…"
 msgstr "Çalışan modeller yükleniyor…"
 
-#: src/model_manager.py:172
+#: src/model_manager.py:177
 #, python-brace-format
 msgid "Could not refresh running models: {0}"
 msgstr "Çalışan modeller yenilenemedi: {0}"
 
-#: src/model_manager.py:188
+#: src/model_manager.py:193
 msgid "No models are loaded in memory."
 msgstr "Belleğe yüklenmiş model yok."
 
-#: src/model_manager.py:194 src/model_manager.py:207
+#: src/model_manager.py:199 src/model_manager.py:212
 msgid "Unload"
 msgstr "Bellekten kaldır"
 
-#: src/model_manager.py:195 src/model_manager.py:209
+#: src/model_manager.py:200 src/model_manager.py:214
 msgid "Release this model from memory; keep its downloaded files."
 msgstr "İndirilen dosyalarını koruyarak bu modeli bellekten kaldırın."
 
-#: src/model_manager.py:207
+#: src/model_manager.py:212
 msgid "Unloading…"
 msgstr "Bellekten kaldırılıyor…"
 
-#: src/model_manager.py:208
+#: src/model_manager.py:213
 msgid "A chat or embedding job is using this model in Gnollama."
 msgstr "Gnollama’da bir sohbet veya gömme işi bu modeli kullanıyor."
 
-#: src/model_manager.py:225
+#: src/model_manager.py:232
 msgid "Could not unload model"
 msgstr "Model bellekten kaldırılamadı"
 
-#: src/model_manager.py:265
+#: src/model_manager.py:273 src/model_manager.ui:90
+msgid "Available Models"
+msgstr "Kullanılabilir modeller"
+
+#: src/model_manager.py:273 src/model_manager.ui:80
+msgid "Installed"
+msgstr "Kurulu"
+
+#: src/model_manager.py:286
 msgid "Connection Error"
 msgstr "Bağlantı hatası"
 
-#: src/model_manager.py:298
+#: src/model_manager.py:325
 msgid "Delete Model"
 msgstr "Modeli sil"
 
-#: src/model_manager.py:329
+#: src/model_manager.py:357
 msgid "Failed to fetch details"
 msgstr "Ayrıntılar alınamadı"
 
-#: src/model_manager.py:349 src/model_manager.py:374 src/model_manager.py:377
+#: src/model_manager.py:377 src/model_manager.py:402 src/model_manager.py:405
 msgid "Model Is Busy"
 msgstr "Model meşgul"
 
-#: src/model_manager.py:349 src/model_manager.py:377
+#: src/model_manager.py:377 src/model_manager.py:405
 msgid "Wait for active chats and embedding jobs before deleting this model."
 msgstr "Bu modeli silmeden önce etkin sohbetlerin ve gömme işlerinin bitmesini bekleyin."
 
-#: src/model_manager.py:353
+#: src/model_manager.py:381
 msgid "Also delete matching vectors; keep source text"
 msgstr "Eşleşen vektörleri de sil; kaynak metni koru"
 
-#: src/model_manager.py:355
+#: src/model_manager.py:383
 #, python-brace-format
 msgid ""
 "Stored data using this model: {0} documents, {1} indexes, {2} vectors. Kept vectors "
@@ -809,7 +906,7 @@ msgstr ""
 "Bu modeli kullanan kayıtlı veriler: {0} belge, {1} dizin, {2} vektör. Korunan "
 "vektörler, aynı model özetiyle uyumlu bir sunucuda yeniden kullanılabilir."
 
-#: src/model_manager.py:357
+#: src/model_manager.py:385
 #, python-brace-format
 msgid ""
 "Collections using this configuration: {0}. Deleting vectors keeps their documents and"
@@ -819,106 +916,102 @@ msgstr ""
 "koleksiyon üyelikleri korunur, ancak arama için gömmelerin yeniden oluşturulması "
 "gerekir."
 
-#: src/model_manager.py:360
+#: src/model_manager.py:388
 msgid "Delete Model?"
 msgstr "Model silinsin mi?"
 
-#: src/model_manager.py:374
+#: src/model_manager.py:402
 msgid "Wait for all indexing jobs using this model before deleting its vectors."
 msgstr ""
 "Vektörlerini silmeden önce bu modeli kullanan tüm dizin oluşturma işlerinin bitmesini"
 " bekleyin."
 
-#: src/model_manager.py:390
-msgid "Delete Failed"
-msgstr "Silme başarısız"
-
-#: src/model_manager.py:545
+#: src/model_manager.py:573
 msgid "Starting download…"
 msgstr "İndirme başlatılıyor…"
 
-#: src/model_manager.py:570
+#: src/model_manager.py:598
 msgid "Error"
 msgstr "Hata"
 
-#: src/model_manager.py:571
+#: src/model_manager.py:599
 msgid "Error occurred."
 msgstr "Bir hata oluştu."
 
-#: src/model_manager.py:590
+#: src/model_manager.py:618
 #, python-brace-format
 msgid "{0:.0f}%"
 msgstr "%{0:.0f}"
 
-#: src/model_manager.py:593
+#: src/model_manager.py:621
 msgid "Download complete"
 msgstr "İndirme tamamlandı"
 
-#: src/model_manager.py:611 src/widgets/chat_input.ui:27
+#: src/model_manager.py:639 src/widgets/chat_input.ui:27
 msgid "Model"
 msgstr "Model"
 
-#: src/model_manager.py:612
+#: src/model_manager.py:640
 msgid "Remote Model"
 msgstr "Uzak model"
 
-#: src/model_manager.py:613
+#: src/model_manager.py:641
 msgid "Remote Host"
 msgstr "Uzak sunucu"
 
-#: src/model_manager.py:614
+#: src/model_manager.py:642
 msgid "Modified At"
 msgstr "Değiştirilme zamanı"
 
-#: src/model_manager.py:615
+#: src/model_manager.py:643
 msgid "Size"
 msgstr "Boyut"
 
-#: src/model_manager.py:616
+#: src/model_manager.py:644
 msgid "Digest"
 msgstr "Özet"
 
-#: src/model_manager.py:617
+#: src/model_manager.py:645
 msgid "Detail: Format"
 msgstr "Ayrıntı: Biçim"
 
-#: src/model_manager.py:618
+#: src/model_manager.py:646
 msgid "Detail: Family"
 msgstr "Ayrıntı: Aile"
 
-#: src/model_manager.py:619
+#: src/model_manager.py:647
 msgid "Detail: Families"
 msgstr "Ayrıntı: Aileler"
 
-#: src/model_manager.py:620
+#: src/model_manager.py:648
 msgid "Detail: Parameter Size"
 msgstr "Ayrıntı: Parametre sayısı"
 
-#: src/model_manager.py:621
+#: src/model_manager.py:649
 msgid "Detail: Quantization Level"
 msgstr "Ayrıntı: Nicemleme düzeyi"
 
-#: src/model_manager.py:622
+#: src/model_manager.py:650
 msgid "Parameters"
 msgstr "Parametreler"
 
-#: src/model_manager.py:623
+#: src/model_manager.py:651
 msgid "Capabilities"
 msgstr "Yetenekler"
 
-#: src/model_manager.py:624
+#: src/model_manager.py:652
 msgid "Template"
 msgstr "İstem şablonu"
 
-#: src/model_manager.py:625
+#: src/model_manager.py:653
 msgid "License"
 msgstr "Lisans"
 
-#: src/model_manager.py:626
+#: src/model_manager.py:654
 msgid "Modelfile"
 msgstr "Modelfile"
 
-#: src/model_manager.py:627
+#: src/model_manager.py:655
 msgid "Model Info"
 msgstr "Model bilgisi"
 
@@ -938,14 +1031,6 @@ msgstr "Model listesini yenile"
 msgid "Download Model…"
 msgstr "Model indir…"
 
-#: src/model_manager.ui:80
-msgid "Installed"
-msgstr "Kurulu"
-
-#: src/model_manager.ui:90
-msgid "Available Models"
-msgstr "Kullanılabilir modeller"
-
 #: src/model_manager.ui:102
 msgid "Running"
 msgstr "Çalışan"
@@ -954,59 +1039,79 @@ msgstr "Çalışan"
 msgid "Models in Memory"
 msgstr "Bellekteki modeller"
 
-#: src/ollama.py:52
+#: src/ollama.py:71 src/storage.py:127
+msgid "Ollama Cloud requires https://ollama.com."
+msgstr "Ollama Cloud, https://ollama.com adresini gerektirir."
+
+#: src/ollama.py:80
 msgid "Enter a valid http:// or https:// Ollama host URL."
 msgstr "http:// veya https:// ile başlayan geçerli bir Ollama sunucu URL’si girin."
 
-#: src/ollama.py:61 src/ollama.py:84
+#: src/ollama.py:89 src/ollama.py:104 src/ollama.py:137
 msgid "Request stopped"
 msgstr "İstek durduruldu"
 
-#: src/ollama.py:110
+#: src/ollama.py:98
+msgid "This operation is unavailable for Ollama Cloud."
+msgstr "Bu işlem Ollama Cloud için kullanılamaz."
+
+#: src/ollama.py:124
+msgid ""
+"Ollama Cloud rejected the API key or account access. Edit this host to check its API "
+"key."
+msgstr ""
+"Ollama Cloud, API anahtarını veya hesap erişimini reddetti. API anahtarını denetlemek"
+" için bu sunucuyu düzenleyin."
+
+#: src/ollama.py:126
+msgid "Ollama Cloud usage or rate limit reached. Try again later."
+msgstr "Ollama Cloud kullanım veya istek sınırına ulaşıldı. Daha sonra yeniden deneyin."
+
+#: src/ollama.py:163
 msgid "Invalid JSON received from Ollama"
 msgstr "Ollama’dan geçersiz JSON alındı"
 
-#: src/ollama.py:112
+#: src/ollama.py:165
 msgid "Expected a JSON object from Ollama"
 msgstr "Ollama’dan bir JSON nesnesi bekleniyordu"
 
-#: src/ollama.py:162
+#: src/ollama.py:221
 msgid "Enter nonempty text to embed."
 msgstr "Gömme oluşturmak için boş olmayan bir metin girin."
 
-#: src/ollama.py:166
+#: src/ollama.py:225
 msgid "Embedding dimensions must be a positive integer."
 msgstr "Gömme boyut sayısı pozitif bir tam sayı olmalıdır."
 
-#: src/ollama.py:173
+#: src/ollama.py:232
 msgid "The server returned an incorrect number of embeddings."
 msgstr "Sunucu yanlış sayıda gömme döndürdü."
 
-#: src/ollama.py:178
+#: src/ollama.py:237
 msgid "The server returned an invalid embedding vector."
 msgstr "Sunucu geçersiz bir gömme vektörü döndürdü."
 
-#: src/ollama.py:181
+#: src/ollama.py:240
 msgid "Embedding dimensions do not match, or a vector is zero."
 msgstr "Gömme boyutları eşleşmiyor veya bir vektör sıfır."
 
-#: src/ollama.py:210
+#: src/ollama.py:269
 msgid "Model pull ended before completion"
 msgstr "Model indirmesi tamamlanmadan sona erdi"
 
-#: src/ollama.py:216
+#: src/ollama.py:275
 msgid "Invalid output format"
 msgstr "Geçersiz çıktı biçimi"
 
-#: src/ollama.py:220
+#: src/ollama.py:279
 msgid "Keep-alive must be a duration in seconds, 0, or -1"
 msgstr "Bellekte tutma süresi saniye cinsinden bir süre, 0 veya -1 olmalıdır"
 
-#: src/ollama.py:224
+#: src/ollama.py:283
 msgid "Invalid thinking setting"
 msgstr "Geçersiz akıl yürütme ayarı"
 
-#: src/ollama.py:230
+#: src/ollama.py:289
 msgid "Top logprobs must be between 0 and 20"
 msgstr "En yüksek logaritmik olasılık sayısı 0 ile 20 arasında olmalıdır"
 
@@ -1038,7 +1143,7 @@ msgstr "İndirme ayrıntıları"
 msgid "New Chat"
 msgstr "Yeni sohbet"
 
-#: src/session.py:167
+#: src/session.py:169
 msgid "There are no pending tool calls."
 msgstr "Bekleyen araç çağrısı yok."
 
@@ -1085,7 +1190,7 @@ msgstr "Kenar çubuğunu aç/kapat"
 msgid "Opening Gnollama"
 msgstr "Gnollama açılıyor"
 
-#: src/startup.py:20 src/tab.py:245 src/widgets/knowledge_import.py:88
+#: src/startup.py:20 src/tab.py:247 src/widgets/knowledge_import.py:88
 #: src/widgets/knowledge_view.py:1220 src/widgets/url_import.py:232 src/window.py:139
 msgid "Retry"
 msgstr "Yeniden dene"
@@ -1106,6 +1211,14 @@ msgstr "Veritabanı açılamadı"
 #, python-brace-format
 msgid "Database backup: {0}"
 msgstr "Veritabanı yedeği: {0}"
+
+#: src/storage.py:117
+msgid "This host was removed."
+msgstr "Bu sunucu kaldırıldı."
+
+#: src/storage.py:122
+msgid "Invalid host type."
+msgstr "Geçersiz sunucu türü."
 
 #: src/structured.py:18
 msgid "Non-finite numbers are not valid JSON."
@@ -1161,43 +1274,43 @@ msgstr "Yeni yanıt"
 msgid "Chat"
 msgstr "Sohbet"
 
-#: src/tab.py:166
+#: src/tab.py:167
 msgid "Select an available model before sending."
 msgstr "Göndermeden önce kullanılabilir bir model seçin."
 
-#: src/tab.py:169
+#: src/tab.py:170
 msgid "Wait for this model to finish unloading before sending."
 msgstr "Göndermeden önce bu modelin bellekten kaldırılmasını bekleyin."
 
-#: src/tab.py:174
+#: src/tab.py:175
 msgid "Wait for image support to be checked before sending."
 msgstr "Göndermeden önce görüntü desteğinin denetlenmesini bekleyin."
 
-#: src/tab.py:176 src/widgets/chat_input.py:112
+#: src/tab.py:177 src/widgets/chat_input.py:112
 msgid "Remove draft images or select a vision model to send."
 msgstr "Göndermek için taslak görüntüleri kaldırın veya görsel destekli bir model seçin."
 
-#: src/tab.py:218
+#: src/tab.py:220
 msgid "Retrieving sources…"
 msgstr "Kaynaklar getiriliyor…"
 
-#: src/tab.py:243
+#: src/tab.py:245
 msgid "Could Not Retrieve Sources"
 msgstr "Kaynaklar getirilemedi"
 
-#: src/tab.py:244
+#: src/tab.py:246
 msgid "Adjust Sources"
 msgstr "Kaynakları ayarla"
 
-#: src/tab.py:246
+#: src/tab.py:248
 msgid "Send Without Knowledge"
 msgstr "Bilgi olmadan gönder"
 
-#: src/tab.py:247
+#: src/tab.py:249
 msgid "Keep Draft"
 msgstr "Taslağı koru"
 
-#: src/tab.py:309
+#: src/tab.py:311
 msgid "Response ended before completion."
 msgstr "Yanıt tamamlanmadan sona erdi."
 
@@ -1483,22 +1596,26 @@ msgid "Checking chat models…"
 msgstr "Sohbet modelleri denetleniyor…"
 
 #: src/widgets/chat_input.py:176
+msgid "No cloud models are available. Try refreshing later."
+msgstr "Kullanılabilir bulut modeli yok. Daha sonra yenilemeyi deneyin."
+
+#: src/widgets/chat_input.py:177
 msgid "No chat models found. Pull one in Manage Models, then refresh."
 msgstr "Sohbet modeli bulunamadı. Modelleri Yönet bölümünden bir model indirip yenileyin."
 
-#: src/widgets/chat_input.py:246
+#: src/widgets/chat_input.py:247
 msgid "Select Images"
 msgstr "Görüntüleri seç"
 
-#: src/widgets/chat_input.py:250
+#: src/widgets/chat_input.py:251
 msgid "Images"
 msgstr "Görüntüler"
 
-#: src/widgets/chat_input.py:283 src/widgets/chat_input.ui:116
+#: src/widgets/chat_input.py:284 src/widgets/chat_input.ui:116
 msgid "No image selected"
 msgstr "Görüntü seçilmedi"
 
-#: src/widgets/chat_input.py:289
+#: src/widgets/chat_input.py:290
 #, python-brace-format
 msgid "{0} image selected"
 msgid_plural "{0} images selected"
@@ -1546,7 +1663,7 @@ msgstr "Uygula"
 msgid "Content"
 msgstr "İçerik"
 
-#: src/widgets/json_view.py:160 src/widgets/options_panel.py:41
+#: src/widgets/json_view.py:160 src/widgets/options_panel.py:42
 msgid "JSON Schema"
 msgstr "JSON şeması"
 
@@ -2535,248 +2652,254 @@ msgstr ""
 "Bir model seçip ileti yazın. Belgeleriniz hakkında soru sormak için bilgi "
 "koleksiyonlarını seçin."
 
-#: src/widgets/options_panel.py:41
+#: src/widgets/options_panel.py:42
 msgid "Text"
 msgstr "Metin"
 
-#: src/widgets/options_panel.py:41
+#: src/widgets/options_panel.py:42
 msgid "JSON"
 msgstr "JSON"
 
-#: src/widgets/options_panel.py:43 src/widgets/options_panel.py:72
+#: src/widgets/options_panel.py:44 src/widgets/options_panel.py:83
 msgid "Server default"
 msgstr "Sunucu varsayılanı"
 
-#: src/widgets/options_panel.py:43
+#: src/widgets/options_panel.py:44
 msgid "Unload after reply"
 msgstr "Yanıttan sonra bellekten kaldır"
 
-#: src/widgets/options_panel.py:43
+#: src/widgets/options_panel.py:44
 msgid "Five minutes"
 msgstr "Beş dakika"
 
-#: src/widgets/options_panel.py:44
+#: src/widgets/options_panel.py:45
 msgid "Thirty minutes"
 msgstr "Otuz dakika"
 
-#: src/widgets/options_panel.py:44
+#: src/widgets/options_panel.py:45
 msgid "Indefinitely"
 msgstr "Süresiz"
 
-#: src/widgets/options_panel.py:44
+#: src/widgets/options_panel.py:45
 msgid "Custom seconds"
 msgstr "Özel saniye değeri"
 
-#: src/widgets/options_panel.py:63
+#: src/widgets/options_panel.py:53
+msgid "Ollama Cloud uses text output and manages model retention automatically."
+msgstr ""
+"Ollama Cloud metin çıktısı kullanır ve modellerin bellekte tutulmasını otomatik "
+"olarak yönetir."
+
+#: src/widgets/options_panel.py:74
 msgid "Server"
 msgstr "Sunucu"
 
-#: src/widgets/options_panel.py:88
+#: src/widgets/options_panel.py:100
 msgid "System Instructions"
 msgstr "Sistem yönergeleri"
 
-#: src/widgets/options_panel.py:89
+#: src/widgets/options_panel.py:101
 msgid "System prompt"
 msgstr "Sistem istemi"
 
-#: src/widgets/options_panel.py:89
+#: src/widgets/options_panel.py:101
 msgid "Optional instructions applied to this conversation."
 msgstr "Bu konuşmaya uygulanan isteğe bağlı yönergeler."
 
-#: src/widgets/options_panel.py:90
+#: src/widgets/options_panel.py:102
 msgid "Optional instructions"
 msgstr "İsteğe bağlı yönergeler"
 
-#: src/widgets/options_panel.py:91
+#: src/widgets/options_panel.py:103
 msgid "Generation Limits"
 msgstr "Üretim sınırları"
 
-#: src/widgets/options_panel.py:91
+#: src/widgets/options_panel.py:103
 msgid "Blank fields use the server’s defaults."
 msgstr "Boş alanlar sunucunun varsayılanlarını kullanır."
 
-#: src/widgets/options_panel.py:92
+#: src/widgets/options_panel.py:104
 msgid "Context size (tokens)"
 msgstr "Bağlam boyutu (token)"
 
-#: src/widgets/options_panel.py:92
+#: src/widgets/options_panel.py:104
 msgid "Maximum context available to the model; larger values need more memory."
 msgstr "Modelin kullanabileceği en büyük bağlam; yüksek değerler daha fazla bellek gerektirir."
 
-#: src/widgets/options_panel.py:93
+#: src/widgets/options_panel.py:105
 msgid "Maximum output tokens"
 msgstr "En fazla çıktı tokenı"
 
-#: src/widgets/options_panel.py:93
+#: src/widgets/options_panel.py:105
 msgid "Use −1 for unlimited output or −2 to fill the context."
 msgstr "Sınırsız çıktı için −1, bağlamı doldurmak için −2 kullanın."
 
-#: src/widgets/options_panel.py:94
+#: src/widgets/options_panel.py:106
 msgid "Stop sequences"
 msgstr "Durdurma dizileri"
 
-#: src/widgets/options_panel.py:94
+#: src/widgets/options_panel.py:106
 msgid "Separate sequences with commas. Generation stops when one is produced."
 msgstr "Dizileri virgülle ayırın. İçlerinden biri üretildiğinde üretim durur."
 
-#: src/widgets/options_panel.py:95
+#: src/widgets/options_panel.py:107
 msgid "Sampling"
 msgstr "Örnekleme"
 
-#: src/widgets/options_panel.py:97
+#: src/widgets/options_panel.py:109
 msgid "Temperature"
 msgstr "Sıcaklık"
 
-#: src/widgets/options_panel.py:97
+#: src/widgets/options_panel.py:109
 msgid "Higher values increase variation; zero is more predictable."
 msgstr "Yüksek değerler çeşitliliği artırır; sıfır daha öngörülebilirdir."
 
-#: src/widgets/options_panel.py:98
+#: src/widgets/options_panel.py:110
 msgid "Seed"
 msgstr "Tohum"
 
-#: src/widgets/options_panel.py:98
+#: src/widgets/options_panel.py:110
 msgid "An integer used to initialize random sampling."
 msgstr "Rastgele örneklemeyi başlatmak için kullanılan tam sayı."
 
-#: src/widgets/options_panel.py:99
+#: src/widgets/options_panel.py:111
 msgid "Top K"
 msgstr "Top K"
 
-#: src/widgets/options_panel.py:99
+#: src/widgets/options_panel.py:111
 msgid "Number of candidate tokens to consider."
 msgstr "Dikkate alınacak aday token sayısı."
 
-#: src/widgets/options_panel.py:100
+#: src/widgets/options_panel.py:112
 msgid "Top P"
 msgstr "Top P"
 
-#: src/widgets/options_panel.py:100
+#: src/widgets/options_panel.py:112
 msgid "Cumulative probability cutoff, between 0 and 1."
 msgstr "0 ile 1 arasında kümülatif olasılık eşiği."
 
-#: src/widgets/options_panel.py:101
+#: src/widgets/options_panel.py:113
 msgid "Min P"
 msgstr "Min P"
 
-#: src/widgets/options_panel.py:101
+#: src/widgets/options_panel.py:113
 msgid "Minimum relative token probability, between 0 and 1."
 msgstr "0 ile 1 arasında en düşük göreli token olasılığı."
 
-#: src/widgets/options_panel.py:103
+#: src/widgets/options_panel.py:115
 msgid "Model Retention"
 msgstr "Modeli bellekte tutma"
 
-#: src/widgets/options_panel.py:105
+#: src/widgets/options_panel.py:120
 msgid "Keep model loaded"
 msgstr "Modeli yüklü tut"
 
-#: src/widgets/options_panel.py:108
+#: src/widgets/options_panel.py:124
 msgid "Custom duration (seconds)"
 msgstr "Özel süre (saniye)"
 
-#: src/widgets/options_panel.py:108 src/widgets/options_panel.py:165
+#: src/widgets/options_panel.py:124 src/widgets/options_panel.py:187
 msgid "Enter a positive whole number of seconds."
 msgstr "Saniye cinsinden pozitif bir tam sayı girin."
 
-#: src/widgets/options_panel.py:110
+#: src/widgets/options_panel.py:126
 msgid "Diagnostics"
 msgstr "Tanılama"
 
-#: src/widgets/options_panel.py:111
+#: src/widgets/options_panel.py:128
 msgid "Show response statistics"
 msgstr "Yanıt istatistiklerini göster"
 
-#: src/widgets/options_panel.py:112
+#: src/widgets/options_panel.py:131
 msgid "Return token probabilities (logprobs)"
 msgstr "Token olasılıklarını döndür (logprobs)"
 
-#: src/widgets/options_panel.py:115
+#: src/widgets/options_panel.py:135
 msgid "Top logprobs"
 msgstr "En yüksek logaritmik olasılıklar"
 
-#: src/widgets/options_panel.py:115
+#: src/widgets/options_panel.py:135
 msgid "Number of alternative token probabilities, from 0 to 20."
 msgstr "0 ile 20 arasında alternatif token olasılığı sayısı."
 
-#: src/widgets/options_panel.py:132
+#: src/widgets/options_panel.py:152
 msgid "Chat Settings"
 msgstr "Sohbet ayarları"
 
-#: src/widgets/options_panel.py:135
+#: src/widgets/options_panel.py:155
 msgid "Done"
 msgstr "Bitti"
 
-#: src/widgets/options_panel.py:177
+#: src/widgets/options_panel.py:199
 msgid "Top logprobs must be between 0 and 20."
 msgstr "En yüksek logaritmik olasılık sayısı 0 ile 20 arasında olmalıdır."
 
-#: src/widgets/options_panel.py:199
+#: src/widgets/options_panel.py:221
 #, python-brace-format
 msgid "Enabled tools: {0}. Results are supplied manually."
 msgstr "Etkin araçlar: {0}. Sonuçlar elle sağlanır."
 
-#: src/widgets/options_panel.py:199
+#: src/widgets/options_panel.py:221
 msgid "Tool calling is off."
 msgstr "Araç çağırma kapalı."
 
-#: src/widgets/options_panel.py:202
+#: src/widgets/options_panel.py:224
 msgid "Checking tool support…"
 msgstr "Araç desteği denetleniyor…"
 
-#: src/widgets/options_panel.py:204
+#: src/widgets/options_panel.py:226
 msgid "This model reports no tool support; you can still test the API."
 msgstr "Bu model araç desteği olmadığını bildiriyor; yine de API’yi deneyebilirsiniz."
 
-#: src/widgets/options_panel.py:206
+#: src/widgets/options_panel.py:228
 msgid "Tool support is unknown."
 msgstr "Araç desteği bilinmiyor."
 
-#: src/widgets/options_panel.py:275
+#: src/widgets/options_panel.py:297
 msgid "No hosts configured"
 msgstr "Yapılandırılmış sunucu yok"
 
-#: src/widgets/options_panel.py:313 src/widgets/options_panel.py:315
+#: src/widgets/options_panel.py:335 src/widgets/options_panel.py:337
 msgid "Enter a valid number."
 msgstr "Geçerli bir sayı girin."
 
-#: src/widgets/options_panel.py:333
+#: src/widgets/options_panel.py:355
 msgid "Value must not be negative."
 msgstr "Değer negatif olmamalıdır."
 
-#: src/widgets/options_panel.py:336
+#: src/widgets/options_panel.py:358
 msgid "Value must be between 0 and 1."
 msgstr "Değer 0 ile 1 arasında olmalıdır."
 
-#: src/widgets/options_panel.py:338
+#: src/widgets/options_panel.py:360
 msgid "Context size must be positive."
 msgstr "Bağlam boyutu pozitif olmalıdır."
 
-#: src/widgets/options_panel.py:340
+#: src/widgets/options_panel.py:362
 msgid "Max tokens must be -2, -1, or a nonnegative integer."
 msgstr "En fazla token sayısı -2, -1 veya negatif olmayan bir tam sayı olmalıdır."
 
-#: src/widgets/options_panel.ui:20
+#: src/widgets/options_panel.ui:21
 msgid "Tool Calling"
 msgstr "Araç çağırma"
 
-#: src/widgets/options_panel.ui:26
+#: src/widgets/options_panel.ui:27
 msgid "Edit Tools…"
 msgstr "Araçları düzenle…"
 
-#: src/widgets/options_panel.ui:44
+#: src/widgets/options_panel.ui:46
 msgid "Output:"
 msgstr "Çıktı:"
 
-#: src/widgets/options_panel.ui:56
+#: src/widgets/options_panel.ui:58
 msgid "Edit Schema…"
 msgstr "Şemayı düzenle…"
 
-#: src/widgets/options_panel.ui:63
+#: src/widgets/options_panel.ui:65
 msgid "Chat Settings…"
 msgstr "Sohbet ayarları…"
 
-#: src/widgets/options_panel.ui:65
+#: src/widgets/options_panel.ui:67
 msgid "Generation, Model Retention, and Diagnostics"
 msgstr "Üretim, modeli bellekte tutma ve tanılama"
 
@@ -3119,3 +3242,5 @@ msgstr "_Klavye kısayolları"
 msgid "_About Gnollama"
 msgstr "Gnollama _hakkında"
 
+#~ msgid "Fetching version..."
+#~ msgstr "Sürüm alınıyor..."

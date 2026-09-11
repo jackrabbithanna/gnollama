@@ -122,7 +122,7 @@ class ModelManagerDialog(Adw.Window):
             self.fetch_models_for_selected_host()
 
     def _mapped(self, *args):
-        if self._poll_id is None:
+        if self._poll_id is None and not ollama.is_cloud(self.get_selected_host()):
             self._poll_id = GLib.timeout_add_seconds(5, self._poll_running)
         self.refresh_running()
 
@@ -134,7 +134,7 @@ class ModelManagerDialog(Adw.Window):
 
     def _view_changed(self, *args):
         running = self.model_stack.get_visible_child_name() == 'running'
-        self.pull_button.set_visible(not running)
+        self.pull_button.set_visible(not running and not ollama.is_cloud(self.get_selected_host()))
         if running:
             self.refresh_running()
         else:
@@ -150,6 +150,9 @@ class ModelManagerDialog(Adw.Window):
         self.running_status.set_text('')
 
     def _poll_running(self):
+        if ollama.is_cloud(self.get_selected_host()):
+            self._poll_id = None
+            return False
         self.update_unload_buttons()
         self.refresh_running()
         return True
@@ -159,6 +162,8 @@ class ModelManagerDialog(Adw.Window):
                 or self._running_pending):
             return
         host = self.get_selected_host()
+        if ollama.is_cloud(host):
+            return
         if not host:
             self.running_status.set_text(_('No host configured.'))
             return
@@ -209,6 +214,8 @@ class ModelManagerDialog(Adw.Window):
                                     _('Release this model from memory; keep its downloaded files.'))
 
     def on_unload_clicked(self, button, host, model):
+        if ollama.is_cloud(self.get_selected_host()):
+            return
         key = model_key(host, model)
         if self.requests.closed or not self.storage.knowledge.reserve_model(host, model, self.is_model_busy):
             return
@@ -242,7 +249,7 @@ class ModelManagerDialog(Adw.Window):
     def on_pull_clicked(self, btn: Gtk.Button) -> None:
         """Callback for the 'Pull' button."""
         host = self.get_selected_host()
-        if not host:
+        if not host or ollama.is_cloud(host):
             return
         dialog = PullModelDialog(self, host['hostname'])
         dialog.present()
@@ -253,13 +260,27 @@ class ModelManagerDialog(Adw.Window):
             self._fetch_cancel.cancel()
         self.update_models_list([])
         host = self.get_selected_host()
+        cloud = ollama.is_cloud(host)
+        running_page = self.model_stack.get_page(self.model_stack.get_child_by_name('running'))
+        if cloud:
+            self.model_stack.set_visible_child_name('installed')
+            self._reset_running()
+            if self._poll_id is not None:
+                GLib.source_remove(self._poll_id)
+                self._poll_id = None
+        running_page.set_visible(not cloud)
+        self.model_stack.get_page(self.model_stack.get_child_by_name('installed')).set_title(
+            _('Available Models') if cloud else _('Installed'))
+        self._view_changed()
+        if self.get_mapped() and not cloud:
+            self._mapped()
         if not host:
             return
         cancel = self._fetch_cancel = self.requests.new_cancel()
 
         def thread_func() -> None:
             try:
-                models = ollama.fetch_model_details(host['hostname'], cancellable=cancel)
+                models = ollama.fetch_model_details(self.storage.connection(host), cancellable=cancel)
                 self.requests.deliver(self.update_models_list, models, cancellable=cancel)
             except ollama.OllamaError as e:
                 self.requests.deliver(self.show_error, _("Connection Error"), str(e), cancellable=cancel)
@@ -281,8 +302,14 @@ class ModelManagerDialog(Adw.Window):
         row = Adw.ActionRow()
         row.set_title(model['name'])
         
-        size_gb = model['size'] / (1024 * 1024 * 1024)
-        row.set_subtitle(f"{model['details']['parameter_size']} | {size_gb:.2f} GB | {model['details']['format']}")
+        cloud = ollama.is_cloud(self.get_selected_host())
+        details = model.get('details') or {}
+        parts = [details.get('parameter_size'), details.get('format')]
+        size = model.get('size')
+        if not cloud and isinstance(size, (int, float)) and size >= 0:
+            parts.insert(1, GLib.format_size(int(size)))
+        row.set_subtitle(' | '.join(str(part) for part in parts if part) or
+                         (_('Ollama Cloud') if cloud else _('Unavailable')))
         
         info_btn = Gtk.Button.new_from_icon_name("dialog-information-symbolic")
         info_btn.set_valign(Gtk.Align.CENTER)
@@ -296,7 +323,8 @@ class ModelManagerDialog(Adw.Window):
         del_btn.add_css_class("flat")
         del_btn.connect("clicked", self.on_model_delete_clicked, model)
         del_btn.set_tooltip_text(_("Delete Model"))
-        row.add_suffix(del_btn)
+        if not cloud:
+            row.add_suffix(del_btn)
         
         self.models_group.add(row)
         self.model_rows.append(row)
@@ -321,7 +349,7 @@ class ModelManagerDialog(Adw.Window):
 
         def thread_func() -> None:
             try:
-                data = ollama.show_model(host['hostname'], model['name'], cancellable=cancel)
+                data = ollama.show_model(self.storage.connection(host), model['name'], cancellable=cancel)
                 view.requests.deliver(view.main_box.remove, spinner, cancellable=cancel)
                 view.requests.deliver(self.populate_model_details, view, data, model, cancellable=cancel)
             except ollama.OllamaError as e:
@@ -343,7 +371,7 @@ class ModelManagerDialog(Adw.Window):
     def on_model_delete_clicked(self, btn: Gtk.Button, model: Dict[str, Any]) -> None:
         """Handles delete button click to remove a model."""
         host = self.get_selected_host()
-        if not host:
+        if not host or ollama.is_cloud(host):
             return
         if self.is_model_busy(host['hostname'], model['name']) or model_key(host['hostname'], model['name']) in unloading_models:
             self.show_error(_('Model Is Busy'), _('Wait for active chats and embedding jobs before deleting this model.'))
@@ -456,12 +484,12 @@ class ModelManagerDialog(Adw.Window):
             if k in tag_data:
                 label = k.replace("_", " ").title()
                 val = tag_data[k]
-                if k == "size":
+                if k == "size" and isinstance(val, (int, float)):
                     val = f"{val / (1024*1024*1024):.2f} GB ({val} bytes)"
                 add_field(_(label), val)
         
         # Details from tags
-        tag_details = tag_data.get("details", {})
+        tag_details = tag_data.get("details") or {}
         detail_keys = ["format", "family", "families", "parameter_size", "quantization_level"]
         for k in detail_keys:
             if k in tag_details:

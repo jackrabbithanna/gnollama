@@ -1,23 +1,23 @@
 # Translation review and maintenance
 
-Reviewed against Gnollama 0.13.0 on 2026-09-10.
+Reviewed against Gnollama 0.14.0 on 2026-09-10.
 
 | Language | Locale | Translated current messages |
 | --- | --- | --- |
-| Arabic | `ar` | 690 / 690 |
-| German | `de` | 690 / 690 |
-| Greek | `el` | 690 / 690 |
-| Spanish | `es` | 690 / 690 |
-| French | `fr` | 690 / 690 |
-| Hindi | `hi` | 690 / 690 |
-| Italian | `it` | 690 / 690 |
-| Japanese | `ja` | 690 / 690 |
-| Korean | `ko` | 690 / 690 |
-| Portuguese | `pt` | 690 / 690 |
-| Swahili | `sw` | 690 / 690 |
-| Turkish | `tr` | 690 / 690 |
-| Ukrainian | `uk` | 690 / 690 |
-| Simplified Chinese | `zh_CN` | 690 / 690 |
+| Arabic | `ar` | 715 / 715 |
+| German | `de` | 715 / 715 |
+| Greek | `el` | 715 / 715 |
+| Spanish | `es` | 715 / 715 |
+| French | `fr` | 715 / 715 |
+| Hindi | `hi` | 715 / 715 |
+| Italian | `it` | 715 / 715 |
+| Japanese | `ja` | 715 / 715 |
+| Korean | `ko` | 715 / 715 |
+| Portuguese | `pt` | 715 / 715 |
+| Swahili | `sw` | 715 / 715 |
+| Turkish | `tr` | 715 / 715 |
+| Ukrainian | `uk` | 715 / 715 |
+| Simplified Chinese | `zh_CN` | 715 / 715 |
 
 These counts include interface text, application-authored errors, store metadata,
 and current release notes. English is the fallback for untranslated messages.
@@ -28,6 +28,8 @@ Traditional Chinese is not included.
 
 ## Findings and changes
 
+- **Ollama Cloud in 0.14.0.** All fourteen catalogs include cloud-host setup, API-key and keyring errors, session-only fallback, cloud limitations, and release notes. The template and catalog headers identify version 0.14.0.
+
 - **Python translations could silently fall back to English.** The launcher
   configured C gettext and installed `_()` but did not configure Python's
   module-level gettext domain. Modules importing `gettext.gettext` therefore
@@ -36,7 +38,7 @@ Traditional Chinese is not included.
   [gettext configuration and installation APIs](https://docs.python.org/3/library/gettext.html).
 - **Existing catalogs were stale.** Each had only 88 translations matching the
   then-current 688-message template. The catalogs now match current source,
-  preserve reviewed translations, and cover all 690 messages. German, Spanish,
+  preserve reviewed translations, and cover all 715 messages. German, Spanish,
   French, and Portuguese now also translate the knowledge library, collections,
   embeddings, tools, URL imports, settings, validation errors, and release notes.
 - **Extraction omitted visible text.** `widgets/message_list.py` was missing

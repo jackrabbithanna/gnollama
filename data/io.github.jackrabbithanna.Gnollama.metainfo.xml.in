@@ -48,6 +48,13 @@
   </screenshots>
 
   <releases>
+    <release version="0.14.0" date="2026-09-10">
+      <description>
+        <p>Connect directly to Ollama Cloud from Chat and Response tabs.</p>
+        <p>Store each host's API key in the desktop keyring, with session-only use when the keyring is unavailable.</p>
+        <p>Browse cloud models with controls adapted to the service, and use local knowledge sources in cloud chats.</p>
+      </description>
+    </release>
     <release version="0.13.0" date="2026-09-10">
       <description>
         <p>Add a Knowledge Library for text and PDF imports, local embedding indexes, and source-grounded chats.</p>

@@ -258,7 +258,8 @@ class KnowledgeService:
         return value
 
     def require_host(self, host):
-        if not any(h['hostname'].rstrip('/') == host.rstrip('/') for h in self.storage.get_all_hosts()):
+        if not any(h['hostname'].rstrip('/') == host.rstrip('/') and not ollama.is_cloud(h)
+                   for h in self.storage.get_all_hosts()):
             raise ValueError(_('The embedding host was removed. Choose a configured host before continuing.'))
 
     def submit(self, title, function, callback=None, host='', model='', index_id=None, document_id=None,

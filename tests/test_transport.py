@@ -21,11 +21,14 @@ class Handler(BaseHTTPRequestHandler):
     def do_POST(self):
         raw = self.rfile.read(int(self.headers.get('Content-Length', 0)))
         self.server.received.append((self.path, json.loads(raw) if raw else {}))
+        self.server.headers_received.append(dict(self.headers))
         self.server.started.set()
         if self.server.mode == 'headers':
             self.server.release.wait(5)
             return
-        self.send_response(400 if self.server.mode == 'error' else 200)
+        self.send_response(self.server.status or (400 if self.server.mode == 'error' else 200))
+        if self.server.redirect_location:
+            self.send_header('Location', self.server.redirect_location)
         self.end_headers()
         try:
             if self.server.mode == 'error':
@@ -62,6 +65,9 @@ class Server:
         self.server = ThreadingHTTPServer(('127.0.0.1', 0), Handler)
         self.server.mode = mode
         self.server.received = []
+        self.server.headers_received = []
+        self.server.status = None
+        self.server.redirect_location = None
         self.server.started = threading.Event()
         self.server.release = threading.Event()
         self.thread = threading.Thread(target=self.server.serve_forever, daemon=True)

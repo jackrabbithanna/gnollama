@@ -38,6 +38,11 @@ MIGRATIONS = [
     migrate_vectors,
     COLLECTIONS_MIGRATION,
     WEB_MIGRATION,
+    # Version 10: Cloud host configuration; secrets stay in the desktop keyring.
+    """
+    ALTER TABLE hosts ADD COLUMN provider TEXT NOT NULL DEFAULT 'ollama';
+    ALTER TABLE hosts ADD COLUMN credential_id TEXT;
+    """,
 ]
 
 
@@ -235,12 +240,14 @@ class DatabaseManager(KnowledgeDatabase):
     def get_all_hosts(self) -> List[Dict[str, Any]]:
         """Returns all configured hosts from database."""
         with self._get_conn() as conn:
-            cursor = conn.execute("SELECT id, name, hostname, is_default FROM hosts")
+            cursor = conn.execute("SELECT id, name, hostname, is_default, provider, credential_id FROM hosts")
             return [
                 {
                     "id": row["id"],
                     "name": row["name"],
                     "hostname": row["hostname"],
+                    "provider": row["provider"],
+                    "credential_id": row["credential_id"],
                     "default": bool(row["is_default"])
                 }
                 for row in cursor.fetchall()
@@ -249,33 +256,40 @@ class DatabaseManager(KnowledgeDatabase):
     def get_host(self, host_id: str) -> Optional[Dict[str, Any]]:
         """Returns a specific host by its ID."""
         with self._get_conn() as conn:
-            cursor = conn.execute("SELECT id, name, hostname, is_default FROM hosts WHERE id = ?", (host_id,))
+            cursor = conn.execute("SELECT id, name, hostname, is_default, provider, credential_id FROM hosts WHERE id = ?", (host_id,))
             row = cursor.fetchone()
             if row:
                 return {
                     "id": row["id"],
                     "name": row["name"],
                     "hostname": row["hostname"],
+                    "provider": row["provider"],
+                    "credential_id": row["credential_id"],
                     "default": bool(row["is_default"])
                 }
             return None
 
-    def add_host(self, host_id: str, name: str, hostname: str, is_default: bool) -> None:
+    def add_host(self, host_id: str, name: str, hostname: str, is_default: bool,
+                 provider='ollama', credential_id=None) -> None:
         """Adds a host to database."""
         with self._get_conn() as conn:
             conn.execute(
-                "INSERT INTO hosts (id, name, hostname, is_default) VALUES (?, ?, ?, ?)",
-                (host_id, name, hostname, 1 if is_default else 0)
+                "INSERT INTO hosts (id, name, hostname, is_default, provider, credential_id) VALUES (?, ?, ?, ?, ?, ?)",
+                (host_id, name, hostname, 1 if is_default else 0, provider, credential_id)
             )
             conn.commit()
 
-    def update_host(self, host_id: str, name: str, hostname: str, is_default: bool) -> None:
+    def update_host(self, host_id: str, name: str, hostname: str, is_default: bool,
+                    provider=None, credential_id=None) -> None:
         """Updates an existing host configuration."""
         with self._get_conn() as conn:
             conn.execute(
                 "UPDATE hosts SET name = ?, hostname = ?, is_default = ? WHERE id = ?",
                 (name, hostname, 1 if is_default else 0, host_id)
             )
+            if provider is not None:
+                conn.execute('UPDATE hosts SET provider = ?, credential_id = ? WHERE id = ?',
+                             (provider, credential_id, host_id))
             conn.commit()
 
     def set_default_host(self, host_id: str) -> None:

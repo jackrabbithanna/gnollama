@@ -136,7 +136,7 @@ class HostModels(Gtk.Box):
     def __init__(self, storage, host='', model='', on_change=lambda: None):
         super().__init__(orientation=Gtk.Orientation.VERTICAL, spacing=6)
         self.storage, self.on_change = storage, on_change
-        self.hosts = storage.get_all_hosts()
+        self.hosts = [host for host in storage.get_all_hosts() if not ollama.is_cloud(host)]
         self.models = []
         self.cancel = None
         self.generation = 0

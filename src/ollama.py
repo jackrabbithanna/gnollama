@@ -3,6 +3,7 @@ import copy
 import json
 import threading
 from contextlib import contextmanager
+from dataclasses import dataclass, field
 from gettext import gettext as _
 from urllib.parse import urlsplit
 
@@ -10,10 +11,33 @@ import gi
 
 gi.require_version('Soup', '3.0')
 from gi.repository import Gio, GLib, Soup
+from .credentials import CredentialError
+
+CLOUD_URL = 'https://ollama.com'
+
+
+@dataclass(frozen=True)
+class Connection:
+    """A request destination and credential reference, never an API key."""
+    url: str
+    host_id: str
+    credential_id: str | None = None
+    provider: str = 'ollama_cloud'
+    credentials: object = field(default=None, repr=False, compare=False)
+
+
+def is_cloud(host):
+    if isinstance(host, Connection):
+        return host.provider == 'ollama_cloud'
+    return isinstance(host, dict) and host.get('provider') == 'ollama_cloud'
 
 
 class OllamaError(Exception):
     """A server, protocol, or connection error."""
+
+    def __init__(self, message='', status=None):
+        super().__init__(message)
+        self.status = status
 
 
 class RequestCancelled(OllamaError):
@@ -42,6 +66,10 @@ def resume():
 
 
 def validate_host(host):
+    if isinstance(host, Connection):
+        if host.provider != 'ollama_cloud' or host.url != CLOUD_URL:
+            raise OllamaError(_('Ollama Cloud requires https://ollama.com.'))
+        host = host.url
     try:
         url = urlsplit(host)
         valid = url.scheme in ('http', 'https') and url.hostname and not url.query and not url.fragment
@@ -62,8 +90,22 @@ def _response(host, endpoint, data=None, method='POST', timeout=10, cancellable=
         _active.add(cancellable)
     session = Soup.Session(timeout=timeout)
     stream = None
+    key = None
     try:
         message = Soup.Message.new(method, validate_host(host) + endpoint)
+        if is_cloud(host):
+            if endpoint not in ('/api/tags', '/api/show', '/api/chat', '/api/generate'):
+                raise OllamaError(_('This operation is unavailable for Ollama Cloud.'))
+            message.add_flags(Soup.MessageFlags.NO_REDIRECT)
+            try:
+                key = host.credentials.lookup(host.host_id, host.credential_id, cancellable)
+            except CredentialError as exc:
+                if cancellable.is_cancelled():
+                    raise RequestCancelled(_('Request stopped')) from None
+                raise OllamaError(str(exc)) from None
+            message.get_request_headers().replace('Authorization', 'Bearer ' + key)
+            if data is not None:
+                data = {k: v for k, v in data.items() if k not in ('format', 'keep_alive')}
         if data is not None:
             body = json.dumps(data, allow_nan=False).encode('utf-8')
             message.set_request_body_from_bytes('application/json', GLib.Bytes.new(body))
@@ -77,12 +119,23 @@ def _response(host, endpoint, data=None, method='POST', timeout=10, cancellable=
                     detail = decoded.get('error')
             except (ValueError, UnicodeError):
                 pass
-            raise OllamaError(detail or f'HTTP Error {message.get_status()}: {message.get_reason_phrase()}')
+            status = message.get_status()
+            if is_cloud(host) and status in (401, 403):
+                detail = _('Ollama Cloud rejected the API key or account access. Edit this host to check its API key.')
+            elif is_cloud(host) and status == 429:
+                detail = _('Ollama Cloud usage or rate limit reached. Try again later.')
+            raise OllamaError(str(detail or f'HTTP Error {status}: {message.get_reason_phrase()}'), status)
         yield stream, cancellable
+    except RequestCancelled:
+        raise
+    except OllamaError as exc:
+        if key:
+            raise OllamaError(str(exc).replace(key, '[redacted]'), exc.status) from None
+        raise
     except GLib.Error as exc:
         if exc.matches(Gio.io_error_quark(), Gio.IOErrorEnum.CANCELLED):
             raise RequestCancelled(_('Request stopped')) from exc
-        raise OllamaError(str(exc)) from exc
+        raise OllamaError(str(exc).replace(key, '[redacted]') if key else str(exc)) from None
     finally:
         if stream is not None:
             try:
@@ -123,19 +176,25 @@ def _request(host, endpoint, data=None, method='GET', timeout=10, cancellable=No
 
 
 def _stream_response(host, endpoint, data, timeout=300, cancellable=None):
+    def decode(raw):
+        chunk = _json_object(raw)
+        if 'error' in chunk:
+            raise OllamaError(str(chunk['error']))
+        return chunk
+
     with _response(host, endpoint, data, 'POST', timeout, cancellable) as (stream, cancel):
         pending = b''
         while True:
             chunk = stream.read_bytes(8192, cancel).get_data()
             if not chunk:
                 if pending.strip():
-                    yield _json_object(pending)
+                    yield decode(pending)
                 return
             pending += chunk
             while b'\n' in pending:
                 line, pending = pending.split(b'\n', 1)
                 if line.strip():
-                    yield _json_object(line)
+                    yield decode(line)
 
 
 def fetch_models(host, timeout=10, cancellable=None):

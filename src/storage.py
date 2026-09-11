@@ -2,16 +2,22 @@ import os
 import copy
 import uuid
 import time
+from gettext import gettext as _
+from threading import RLock
 from typing import List, Dict, Any, Optional, Callable
 from gi.repository import GLib
 
 from .database import DatabaseManager
 from .writer import OrderedWriter
+from .credentials import CredentialStore, CredentialError
+from . import ollama
 
 class ChatStorage:
     """Handles persistence for chat history and host configurations using SQLite."""
 
-    def __init__(self, storage_dir=None, progress=None) -> None:
+    def __init__(self, storage_dir=None, progress=None, credentials=None) -> None:
+        self.credentials = credentials if credentials is not None else CredentialStore()
+        self._host_lock = RLock()
         self.storage_dir: str = storage_dir or os.path.join(GLib.get_user_data_dir(), "gnollama")
         if not os.path.exists(self.storage_dir):
             os.makedirs(self.storage_dir)
@@ -88,7 +94,63 @@ class ChatStorage:
 
     def delete_host(self, host_id: str) -> None:
         """Deletes a host configuration."""
-        self.db.delete_host(host_id)
+        with self._host_lock:
+            host = self.get_host(host_id)
+            if host:
+                self.credentials.clear(host.get('credential_id'))
+            self.db.delete_host(host_id)
+            self.credentials.forget_session(host_id)
+
+    def connection(self, host):
+        """Snapshot a host's destination without retrieving its secret."""
+        if ollama.is_cloud(host):
+            return ollama.Connection(host['hostname'], host['id'], host.get('credential_id'),
+                                     credentials=self.credentials)
+        return host['hostname']
+
+    def save_host(self, name, hostname, is_default=False, *, host_id=None,
+                  provider='ollama', api_key='', session_only=False):
+        """Save from a worker; a keyring failure leaves the host unchanged."""
+        with self._host_lock:
+            previous = self.get_host(host_id) if host_id else None
+            if host_id and previous is None:
+                raise ValueError(_('This host was removed.'))
+            host_id = host_id or str(uuid.uuid4())
+            reference = previous.get('credential_id') if previous else None
+            hostname = ollama.validate_host(hostname)
+            if provider not in ('ollama', 'ollama_cloud'):
+                raise ValueError(_('Invalid host type.'))
+            if not name.strip():
+                raise ValueError(_('Enter a name for this server.'))
+            if provider == 'ollama_cloud':
+                if hostname != ollama.CLOUD_URL:
+                    raise ValueError(_('Ollama Cloud requires https://ollama.com.'))
+                if api_key:
+                    api_key = self.credentials.validate(api_key)
+                    if not session_only:
+                        reference = reference or str(uuid.uuid4())
+                        self.credentials.save(reference, api_key)
+                elif not reference and not self.credentials.has_session(host_id):
+                    raise CredentialError(_('An API key is required. Edit this host to enter one.'))
+            else:
+                self.credentials.clear(reference)
+                reference = None
+            if previous:
+                self.db.update_host(host_id, name.strip(), hostname, is_default, provider, reference)
+            else:
+                try:
+                    self.db.add_host(host_id, name.strip(), hostname, is_default, provider, reference)
+                except Exception:
+                    if reference:
+                        self.credentials.clear(reference)
+                    raise
+            if provider == 'ollama_cloud' and api_key and session_only:
+                self.credentials.set_session(host_id, api_key)
+            elif provider != 'ollama_cloud' or api_key:
+                self.credentials.forget_session(host_id)
+            if is_default:
+                self.db.set_default_host(host_id)
+            return self.get_host(host_id)
 
     # --- Chats Management ---
 

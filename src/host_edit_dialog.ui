@@ -1,21 +1,47 @@
 <interface domain="gnollama">
   <requires lib="gtk" version="4.0" />
   <requires lib="Adw" version="1.0" />
-  <template class="HostEditDialog" parent="AdwAlertDialog">
-    <responses>
-      <response id="cancel" translatable="yes">Cancel</response>
-      <response id="save" translatable="yes">Save</response>
-    </responses>
-    <property name="default-response">save</property>
-    <property name="close-response">cancel</property>
-    <property name="extra-child">
-      <object class="GtkBox">
+  <template class="HostEditDialog" parent="AdwDialog">
+    <property name="content-width">440</property>
+    <property name="child">
+      <object class="AdwToolbarView">
+        <child type="top">
+          <object class="AdwHeaderBar">
+            <property name="show-start-title-buttons">False</property>
+            <property name="show-end-title-buttons">False</property>
+            <child type="start">
+              <object class="GtkButton" id="cancel_button">
+                <property name="label" translatable="yes">Cancel</property>
+              </object>
+            </child>
+            <child type="end">
+              <object class="GtkButton" id="save_button">
+                <property name="label" translatable="yes">Save</property>
+                <style><class name="suggested-action"/></style>
+              </object>
+            </child>
+          </object>
+        </child>
+        <property name="content">
+          <object class="GtkScrolledWindow">
+            <property name="hscrollbar-policy">never</property>
+            <property name="propagate-natural-height">True</property>
+            <property name="child">
+      <object class="GtkBox" id="fields_box">
         <property name="orientation">vertical</property>
         <property name="spacing">12</property>
         <property name="margin-start">12</property>
         <property name="margin-end">12</property>
         <property name="margin-top">12</property>
         <property name="margin-bottom">12</property>
+        <child>
+          <object class="GtkLabel">
+            <property name="label" translatable="yes">Host type</property>
+            <property name="xalign">0</property>
+            <property name="mnemonic-widget">provider_dropdown</property>
+          </object>
+        </child>
+        <child><object class="GtkDropDown" id="provider_dropdown"/></child>
         <child>
           <object class="GtkLabel">
             <property name="label" translatable="yes">Name</property>
@@ -45,6 +71,10 @@
             <property name="label" translatable="yes">Set as default host</property>
           </object>
         </child>
+      </object>
+            </property>
+          </object>
+        </property>
       </object>
     </property>
   </template>

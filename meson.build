@@ -1,5 +1,5 @@
 project('gnollama',
-          version: '0.13.0',
+          version: '0.14.0',
     meson_version: '>= 1.0.0',
   default_options: [ 'warning_level=2', 'werror=false', ],
 )
@@ -10,6 +10,7 @@ gnome = import('gnome')
 dependency('gtk4', version: '>= 4.18')
 dependency('libadwaita-1', version: '>= 1.9')
 dependency('libsoup-3.0', version: '>= 3.0')
+dependency('libsecret-1', version: '>= 0.20')
 
 subdir('data')
 subdir('src')

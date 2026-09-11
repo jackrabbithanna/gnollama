@@ -239,7 +239,7 @@ class UsabilityTests(unittest.TestCase):
         panel.open_settings()
         self.assertEqual(panel.get_options_from_ui()['temperature'], .4)
         self.assertEqual(panel.get_keep_alive(), 42)
-        self.assertEqual(tab.chat_input.send_button.get_icon_name(), 'mail-send-symbolic')
+        self.assertEqual(tab.chat_input.send_button.get_icon_name(), 'system-search-symbolic')
 
     def test_host_editor_has_persistent_labels_and_disables_invalid_save(self):
         dialog = self.present(HostEditDialog())

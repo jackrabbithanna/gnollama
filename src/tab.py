@@ -132,7 +132,8 @@ class GenerationTab(Gtk.Box):
 
     def on_host_changed(self, *args):
         host = self.options_panel.get_selected_host()
-        self.chat_input.fetch_models(host['hostname'] if host else None)
+        self.options_panel.set_cloud(ollama.is_cloud(host))
+        self.chat_input.fetch_models(self.storage.connection(host) if host else None)
 
     def update_hosts(self):
         self.options_panel.update_hosts()
@@ -206,7 +207,8 @@ class GenerationTab(Gtk.Box):
             self.message_list.add_system_message(str(exc))
             return
 
-        state = RequestState(settings, prompt, images, continuation=continuation)
+        state = RequestState(settings, prompt, images, continuation=continuation,
+                             connection=self.storage.connection(host))
         if continuation:
             self.strategy.commit_results()
         self.request = state

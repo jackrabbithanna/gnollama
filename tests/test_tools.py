@@ -319,6 +319,8 @@ class ToolUITests(unittest.TestCase):
                 conn.execute('ALTER TABLE messages DROP COLUMN ' + column)
             for table in ('knowledge_web_sources', 'knowledge_collection_documents', 'knowledge_collections', 'knowledge_chunks', 'knowledge_indexes', 'embedding_configs', 'knowledge_documents'):
                 conn.execute('DROP TABLE ' + table)
+            conn.execute('ALTER TABLE hosts DROP COLUMN provider')
+            conn.execute('ALTER TABLE hosts DROP COLUMN credential_id')
             conn.execute('PRAGMA user_version = 4')
             conn.commit()
         db = DatabaseManager(path)
@@ -328,7 +330,7 @@ class ToolUITests(unittest.TestCase):
         self.assertEqual(saved['options']['schema_text'], '{}')
         self.assertEqual(saved['messages'][0]['content'], 'answer')
         with db._get_conn() as conn:
-            self.assertEqual(conn.execute('PRAGMA user_version').fetchone()[0], 9)
+            self.assertEqual(conn.execute('PRAGMA user_version').fetchone()[0], 10)
         db.delete_chat('old')
         db.save_tool_state('old', messages=[], options={'tools_text': EXAMPLE_TOOLS})
         self.assertIsNone(db.get_chat('old'))

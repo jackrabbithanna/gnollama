@@ -6,6 +6,7 @@ src/ai_bubble.ui
 src/bubbles.py
 src/bubbles.ui
 src/collections_store.py
+src/credentials.py
 src/database.py
 src/host_edit_dialog.ui
 src/host_manager.py
@@ -21,6 +22,7 @@ src/pull_model_dialog.ui
 src/session.py
 src/shortcuts-dialog.ui
 src/startup.py
+src/storage.py
 src/structured.py
 src/tab.py
 src/tool_calling.py

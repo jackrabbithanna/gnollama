@@ -4,17 +4,17 @@
 # AI-assisted translation; native-speaker review is welcome.
 msgid ""
 msgstr ""
-"Project-Id-Version: gnollama 0.13.0\n"
+"Project-Id-Version: gnollama 0.14.0\n"
 "Report-Msgid-Bugs-To: https://github.com/jackrabbithanna/gnollama/issues\n"
-"POT-Creation-Date: 2026-09-10 17:08-0600\n"
+"POT-Creation-Date: 2026-09-10 20:09-0600\n"
 "PO-Revision-Date: 2026-09-10 00:00+0000\n"
 "Last-Translator: AI-assisted translation\n"
-"Language-Team: Simplified Chinese\n"
 "Language: zh_CN\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
+"Language-Team: Simplified Chinese\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.17.0\n"
 
 #: data/io.github.jackrabbithanna.Gnollama.desktop.in:2
@@ -44,41 +44,33 @@ msgstr "与 Ollama 模型聊天"
 
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:10
 msgid ""
-"Chat with Ollama models running on your computer or a remote server using a "
-"native GNOME interface."
+"Chat with Ollama models running on your computer or a remote server using a native "
+"GNOME interface."
 msgstr "通过原生 GNOME 界面，与在本机或远程服务器上运行的 Ollama 模型聊天。"
 
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:11
 msgid ""
-"Keep conversations in separate tabs, attach images to vision models, and "
-"read responses with Markdown and highlighted code."
-msgstr ""
-"在不同标签页中进行对话，为视觉模型附加图片，并以 Markdown 和代码高亮格式阅读"
-"回复。"
+"Keep conversations in separate tabs, attach images to vision models, and read "
+"responses with Markdown and highlighted code."
+msgstr "在不同标签页中进行对话，为视觉模型附加图片，并以 Markdown 和代码高亮格式阅读回复。"
 
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:12
 msgid ""
-"Manage hosts and models, customize generation and thinking settings, and "
-"inspect response statistics including cached prompt tokens."
-msgstr ""
-"管理主机和模型，自定义生成与思考设置，并查看包括缓存提示词词元在内的回复统计"
-"信息。"
+"Manage hosts and models, customize generation and thinking settings, and inspect "
+"response statistics including cached prompt tokens."
+msgstr "管理主机和模型，自定义生成与思考设置，并查看包括缓存提示词词元在内的回复统计信息。"
 
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:13
 msgid ""
-"Generate and validate structured JSON, import JSON schemas, and export "
-"responses. Inspect loaded models and release their memory when finished."
-msgstr ""
-"生成并验证结构化 JSON，导入 JSON Schema，并导出回复。查看已加载的模型，在使用"
-"完毕后释放其内存。"
+"Generate and validate structured JSON, import JSON schemas, and export responses. "
+"Inspect loaded models and release their memory when finished."
+msgstr "生成并验证结构化 JSON，导入 JSON Schema，并导出回复。查看已加载的模型，在使用完毕后释放其内存。"
 
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:14
 msgid ""
-"Save and organize conversations with pinning and editable titles. Stop a "
-"response at any time and keep its partial answer in your history."
-msgstr ""
-"保存对话，通过置顶和编辑标题来整理对话。随时停止回复，并将已生成的部分保留在"
-"历史记录中。"
+"Save and organize conversations with pinning and editable titles. Stop a response at "
+"any time and keep its partial answer in your history."
+msgstr "保存对话，通过置顶和编辑标题来整理对话。随时停止回复，并将已生成的部分保留在历史记录中。"
 
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:18
 msgid "jackrabbithanna"
@@ -89,85 +81,89 @@ msgid "Ollama chat with code highlighting"
 msgstr "带代码高亮的 Ollama 聊天"
 
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:53
+msgid "Connect directly to Ollama Cloud from Chat and Response tabs."
+msgstr "从聊天和回复标签页直接连接到 Ollama Cloud。"
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:54
 msgid ""
-"Add a Knowledge Library for text and PDF imports, local embedding indexes, "
-"and source-grounded chats."
-msgstr "新增知识库，支持导入文本和 PDF、创建本地嵌入索引以及基于来源的聊天。"
+"Store each host's API key in the desktop keyring, with session-only use when the "
+"keyring is unavailable."
+msgstr "将每个服务器的 API 密钥保存在桌面密钥环中；密钥环不可用时，可仅在当前会话中使用。"
 
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:55
 msgid ""
-"Start with knowledge collections and add text, files, or URLs with explicit "
-"destinations and guided previews."
-msgstr ""
-"从知识集合开始，向明确指定的目标添加文本、文件或 URL，并通过引导式预览检查内"
-"容。"
-
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:56
-msgid ""
-"Choose collections before search settings, and use adaptive chat settings "
-"with clearer controls and feedback."
-msgstr ""
-"先选择集合，再设置搜索选项；使用自适应聊天设置，获得更清晰的控件和反馈。"
-
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:57
-msgid ""
-"Create and compare embeddings, inspect chunks and vectors, and test semantic "
-"searches."
-msgstr "创建和比较嵌入，查看文本块与向量，并测试语义搜索。"
-
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:58
-msgid ""
-"Select documents or chunks for chats, with independent embedding hosts and "
-"saved source passages."
-msgstr "为聊天选择文档或文本块，使用独立的嵌入主机，并保存来源片段。"
-
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:59
-msgid ""
-"Warn about stored embeddings when deleting models, with optional vector "
-"cleanup that retains source text."
-msgstr "删除模型时提醒用户存在已保存的嵌入，并可选择清理向量，同时保留源文本。"
+"Browse cloud models with controls adapted to the service, and use local knowledge "
+"sources in cloud chats."
+msgstr "使用适配服务的控件浏览云端模型，并在云端聊天中使用本地知识来源。"
 
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:60
 msgid ""
-"Search with sqlite-vec, automatically migrate existing vectors with a "
-"database backup, and use the Qwen3 retrieval preset."
-msgstr ""
-"使用 sqlite-vec 搜索，备份数据库并自动迁移现有向量，支持 Qwen3 检索预设。"
-
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:61
-msgid ""
-"Organize documents into collections with shared embedding settings, "
-"automatic builds, and live collection selection in chats."
-msgstr "将文档整理为集合，共享嵌入设置，自动构建索引，并在聊天中即时选择集合。"
+"Add a Knowledge Library for text and PDF imports, local embedding indexes, and "
+"source-grounded chats."
+msgstr "新增知识库，支持导入文本和 PDF、创建本地嵌入索引以及基于来源的聊天。"
 
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:62
 msgid ""
-"Choose collections as chat sources and compare cosine similarity, Euclidean "
-"distance, or Manhattan distance with appropriate search cutoffs."
-msgstr ""
-"选择集合作为聊天来源，并通过合适的搜索阈值比较余弦相似度、欧氏距离或曼哈顿距"
-"离。"
+"Start with knowledge collections and add text, files, or URLs with explicit "
+"destinations and guided previews."
+msgstr "从知识集合开始，向明确指定的目标添加文本、文件或 URL，并通过引导式预览检查内容。"
 
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:63
 msgid ""
-"Hide embedding-only models from Chat and Response model selection while "
-"keeping them available in Knowledge and Manage Models."
-msgstr ""
-"在聊天和回复模型列表中隐藏仅支持嵌入的模型，仍可在知识库和模型管理中使用这些"
-"模型。"
+"Choose collections before search settings, and use adaptive chat settings with "
+"clearer controls and feedback."
+msgstr "先选择集合，再设置搜索选项；使用自适应聊天设置，获得更清晰的控件和反馈。"
 
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:64
-msgid ""
-"Import batches of URLs into collections with main-content extraction, CSS "
-"selectors, editable previews, and source links in chats."
-msgstr ""
-"将多个 URL 批量导入集合，支持正文提取、CSS 选择器、可编辑预览以及聊天中的来源"
-"链接。"
+msgid "Create and compare embeddings, inspect chunks and vectors, and test semantic searches."
+msgstr "创建和比较嵌入，查看文本块与向量，并测试语义搜索。"
 
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:65
 msgid ""
-"Review changed web documents before replacing their text and rebuilding all "
-"affected embedding indexes."
+"Select documents or chunks for chats, with independent embedding hosts and saved "
+"source passages."
+msgstr "为聊天选择文档或文本块，使用独立的嵌入主机，并保存来源片段。"
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:66
+msgid ""
+"Warn about stored embeddings when deleting models, with optional vector cleanup that "
+"retains source text."
+msgstr "删除模型时提醒用户存在已保存的嵌入，并可选择清理向量，同时保留源文本。"
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:67
+msgid ""
+"Search with sqlite-vec, automatically migrate existing vectors with a database "
+"backup, and use the Qwen3 retrieval preset."
+msgstr "使用 sqlite-vec 搜索，备份数据库并自动迁移现有向量，支持 Qwen3 检索预设。"
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:68
+msgid ""
+"Organize documents into collections with shared embedding settings, automatic builds,"
+" and live collection selection in chats."
+msgstr "将文档整理为集合，共享嵌入设置，自动构建索引，并在聊天中即时选择集合。"
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:69
+msgid ""
+"Choose collections as chat sources and compare cosine similarity, Euclidean distance,"
+" or Manhattan distance with appropriate search cutoffs."
+msgstr "选择集合作为聊天来源，并通过合适的搜索阈值比较余弦相似度、欧氏距离或曼哈顿距离。"
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:70
+msgid ""
+"Hide embedding-only models from Chat and Response model selection while keeping them "
+"available in Knowledge and Manage Models."
+msgstr "在聊天和回复模型列表中隐藏仅支持嵌入的模型，仍可在知识库和模型管理中使用这些模型。"
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:71
+msgid ""
+"Import batches of URLs into collections with main-content extraction, CSS selectors, "
+"editable previews, and source links in chats."
+msgstr "将多个 URL 批量导入集合，支持正文提取、CSS 选择器、可编辑预览以及聊天中的来源链接。"
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:72
+msgid ""
+"Review changed web documents before replacing their text and rebuilding all affected "
+"embedding indexes."
 msgstr "在替换网页文档文本并重建所有受影响的嵌入索引之前，检查网页的变化。"
 
 #: src/ai_bubble.ui:35 src/bubbles.ui:74
@@ -186,11 +182,11 @@ msgstr "回复统计信息"
 msgid "Earlier images were omitted from the text-only request."
 msgstr "本次纯文本请求未包含之前的图片。"
 
-#: src/bubbles.py:125 src/knowledge.py:300
+#: src/bubbles.py:125 src/knowledge.py:301
 msgid "Stopped"
 msgstr "已停止"
 
-#: src/bubbles.py:125 src/knowledge.py:300
+#: src/bubbles.py:125 src/knowledge.py:301
 msgid "Failed"
 msgstr "失败"
 
@@ -200,7 +196,7 @@ msgid "Logprobs"
 msgstr "对数概率"
 
 #: src/bubbles.py:183 src/model_manager.py:22 src/model_manager.py:24
-#: src/model_manager.py:28
+#: src/model_manager.py:28 src/model_manager.py:312
 msgid "Unavailable"
 msgstr "不可用"
 
@@ -253,7 +249,7 @@ msgstr "结束原因：{0}"
 msgid "A document was deleted. Choose documents again."
 msgstr "文档已被删除。请重新选择文档。"
 
-#: src/collections_store.py:107 src/knowledge.py:357
+#: src/collections_store.py:107 src/knowledge.py:358
 msgid "Enter a collection name."
 msgstr "请输入集合名称。"
 
@@ -261,7 +257,7 @@ msgstr "请输入集合名称。"
 msgid "Choose a model with the collection’s original digest."
 msgstr "请选择具有集合原始摘要的模型。"
 
-#: src/collections_store.py:141 src/knowledge.py:390
+#: src/collections_store.py:141 src/knowledge.py:391
 msgid "The collection was deleted."
 msgstr "集合已被删除。"
 
@@ -281,31 +277,47 @@ msgstr "集合“{0}”为空。请添加文档或调整来源。"
 
 #: src/collections_store.py:210
 #, python-brace-format
-msgid ""
-"Collection “{0}” is not ready. Build missing embeddings or retry failed "
-"documents: {1}"
+msgid "Collection “{0}” is not ready. Build missing embeddings or retry failed documents: {1}"
 msgstr "集合“{0}”尚未就绪。请构建缺失的嵌入或重试失败的文档：{1}"
 
-#: src/database.py:75
-msgid ""
-"This database was created by a newer Gnollama version. Update Gnollama to "
-"open it."
+#: src/credentials.py:27
+msgid "Enter a valid API key."
+msgstr "请输入有效的 API 密钥。"
+
+#: src/credentials.py:51
+msgid "Could not access the keyring. Edit this host to retry or enter a session-only key."
+msgstr "无法访问密钥环。请编辑此服务器以重试，或输入仅用于当前会话的密钥。"
+
+#: src/credentials.py:53 src/storage.py:134
+msgid "An API key is required. Edit this host to enter one."
+msgstr "需要 API 密钥。请编辑此服务器以输入密钥。"
+
+#: src/credentials.py:66
+msgid "Could not save the API key in the keyring. Retry or use it for this session."
+msgstr "无法将 API 密钥保存到密钥环。请重试，或仅在当前会话中使用。"
+
+#: src/credentials.py:78 src/credentials.py:80
+msgid "Could not remove the saved API key. Unlock the keyring and retry."
+msgstr "无法移除已保存的 API 密钥。请解锁密钥环后重试。"
+
+#: src/database.py:80
+msgid "This database was created by a newer Gnollama version. Update Gnollama to open it."
 msgstr "此数据库由较新版本的 Gnollama 创建。请更新 Gnollama 后再打开。"
 
-#: src/database.py:82
+#: src/database.py:87
 msgid "Backing up the database…"
 msgstr "正在备份数据库…"
 
-#: src/database.py:191
+#: src/database.py:196
 msgid "This database requires a newer Gnollama version."
 msgstr "此数据库需要较新版本的 Gnollama。"
 
-#: src/database.py:210
+#: src/database.py:215
 #, python-brace-format
 msgid "Upgrading the database to version {0}…"
 msgstr "正在将数据库升级到版本 {0}…"
 
-#: src/host_edit_dialog.ui:6 src/host_manager.py:171 src/model_manager.py:366
+#: src/host_edit_dialog.ui:14 src/host_manager.py:266 src/model_manager.py:394
 #: src/pull_model_dialog.ui:17 src/widgets/knowledge_view.py:1111
 #: src/widgets/knowledge_view.py:1121 src/widgets/knowledge_view.py:1250
 #: src/widgets/knowledge_view.py:1293 src/widgets/knowledge_view.py:1337
@@ -314,68 +326,108 @@ msgstr "正在将数据库升级到版本 {0}…"
 msgid "Cancel"
 msgstr "取消"
 
-#: src/host_edit_dialog.ui:7 src/widgets/knowledge_view.py:1112
-#: src/widgets/knowledge_view.py:1145 src/widgets/knowledge_view.py:1338
-#: src/window.py:350
+#: src/host_edit_dialog.ui:19 src/widgets/knowledge_view.py:1112
+#: src/widgets/knowledge_view.py:1145 src/widgets/knowledge_view.py:1338 src/window.py:350
 msgid "Save"
 msgstr "保存"
 
-#: src/host_edit_dialog.ui:21 src/model_manager.py:610
+#: src/host_edit_dialog.ui:39
+msgid "Host type"
+msgstr "服务器类型"
+
+#: src/host_edit_dialog.ui:47 src/model_manager.py:638
 msgid "Name"
 msgstr "名称"
 
-#: src/host_edit_dialog.ui:28
+#: src/host_edit_dialog.ui:54
 msgid "For example: Local Ollama"
 msgstr "例如：本地 Ollama"
 
-#: src/host_edit_dialog.ui:33
+#: src/host_edit_dialog.ui:59
 msgid "Server address"
 msgstr "服务器地址"
 
-#: src/host_edit_dialog.ui:45
+#: src/host_edit_dialog.ui:71
 msgid "Set as default host"
 msgstr "设为默认主机"
 
-#: src/host_manager.py:19
+#: src/host_manager.py:24
 msgid "Edit Host"
 msgstr "编辑主机"
 
-#: src/host_manager.py:19 src/host_manager.ui:23
+#: src/host_manager.py:24 src/host_manager.ui:23
 msgid "Add Host"
 msgstr "添加主机"
 
-#: src/host_manager.py:35
+#: src/host_manager.py:30
+msgid "Ollama Server"
+msgstr "Ollama 服务器"
+
+#: src/host_manager.py:30 src/host_manager.py:72 src/model_manager.py:312
+msgid "Ollama Cloud"
+msgstr "Ollama Cloud"
+
+#: src/host_manager.py:34
+msgid "API key"
+msgstr "API 密钥"
+
+#: src/host_manager.py:36
+msgid "Leave blank to keep the existing key."
+msgstr "留空以保留现有密钥。"
+
+#: src/host_manager.py:37
+msgid "Stored securely in your desktop keyring."
+msgstr "安全保存在桌面密钥环中。"
+
+#: src/host_manager.py:38
+msgid "Create an API key"
+msgstr "创建 API 密钥"
+
+#: src/host_manager.py:44
+msgid "Use for This Session"
+msgstr "仅用于当前会话"
+
+#: src/host_manager.py:98 src/storage.py:124
 msgid "Enter a name for this server."
 msgstr "请输入此服务器的名称。"
 
-#: src/host_manager.py:78
+#: src/host_manager.py:149
 msgid "Default"
 msgstr "默认"
 
-#: src/host_manager.py:83 src/host_manager.py:87
+#: src/host_manager.py:154 src/host_manager.py:158
 msgid "Test Connection"
 msgstr "测试连接"
 
-#: src/host_manager.py:92
+#: src/host_manager.py:163
 msgid "Edit Server"
 msgstr "编辑服务器"
 
-#: src/host_manager.py:98 src/host_manager.py:168
+#: src/host_manager.py:169 src/host_manager.py:263
 msgid "Delete Host"
 msgstr "删除主机"
 
-#: src/host_manager.py:112
-msgid "Fetching version..."
-msgstr "正在获取版本…"
+#: src/host_manager.py:183
+msgid "Checking connection…"
+msgstr "正在检查连接…"
 
-#: src/host_manager.py:114 src/main.py:63 src/model_manager.py:340
-#: src/model_manager.py:601 src/startup.py:23 src/widgets/json_view.py:230
+#: src/host_manager.py:185 src/host_manager.py:277 src/main.py:63 src/model_manager.py:368
+#: src/model_manager.py:629 src/startup.py:23 src/widgets/json_view.py:230
 #: src/widgets/knowledge_import.py:51 src/widgets/knowledge_view.py:756
 #: src/widgets/knowledge_view.py:909 src/widgets/knowledge_view.py:1271
 msgid "Close"
 msgstr "关闭"
 
-#: src/host_manager.py:124
+#: src/host_manager.py:196
+#, python-brace-format
+msgid ""
+"Ollama Cloud is reachable. Available models: {0}\n"
+"Your API key will be checked when you generate a response."
+msgstr ""
+"可以访问 Ollama Cloud。可用模型：{0}\n"
+"生成回复时将验证您的 API 密钥。"
+
+#: src/host_manager.py:199
 #, python-brace-format
 msgid ""
 "Connected\n"
@@ -384,7 +436,7 @@ msgstr ""
 "已连接\n"
 "Ollama 版本：{0}"
 
-#: src/host_manager.py:126
+#: src/host_manager.py:201
 #, python-brace-format
 msgid ""
 "Connection failed\n"
@@ -393,15 +445,18 @@ msgstr ""
 "连接失败\n"
 "{0}"
 
-#: src/host_manager.py:169 src/model_manager.py:352
+#: src/host_manager.py:264 src/model_manager.py:380
 #, python-brace-format
 msgid "Are you sure you want to delete {0}?"
 msgstr "确定要删除 {0} 吗？"
 
-#: src/host_manager.py:172 src/model_manager.py:367
-#: src/widgets/knowledge_view.py:1359
+#: src/host_manager.py:267 src/model_manager.py:395 src/widgets/knowledge_view.py:1359
 msgid "Delete"
 msgstr "删除"
+
+#: src/host_manager.py:276 src/model_manager.py:418
+msgid "Delete Failed"
+msgstr "删除失败"
 
 #: src/host_manager.ui:6 src/host_manager.ui:17
 msgid "Manage Hosts"
@@ -425,8 +480,8 @@ msgstr "未找到文本。扫描文档需要先进行 OCR 识别才能导入。"
 
 #: src/knowledge.py:46
 msgid ""
-"This document exceeds the limit of 5 million extracted characters. Split it "
-"into smaller files."
+"This document exceeds the limit of 5 million extracted characters. Split it into "
+"smaller files."
 msgstr "此文档提取出的字符超过 500 万个。请将其拆分为较小的文件。"
 
 #: src/knowledge.py:47
@@ -467,21 +522,19 @@ msgid "This appears to be a binary file, not a text document."
 msgstr "这似乎是二进制文件，而非文本文档。"
 
 #: src/knowledge.py:93
-msgid ""
-"Chunk size must be 64–32,000 characters; overlap must be smaller than the "
-"chunk."
+msgid "Chunk size must be 64–32,000 characters; overlap must be smaller than the chunk."
 msgstr "文本块大小须为 64–32,000 个字符，重叠长度须小于文本块大小。"
 
 #: src/knowledge.py:119
 msgid ""
-"The embedding model is unavailable or its digest is missing. Choose a "
-"compatible host and model."
+"The embedding model is unavailable or its digest is missing. Choose a compatible host"
+" and model."
 msgstr "嵌入模型不可用或缺少摘要。请选择兼容的主机和模型。"
 
 #: src/knowledge.py:121
 msgid ""
-"The embedding model has changed. Select a model with the original digest or "
-"build a new index."
+"The embedding model has changed. Select a model with the original digest or build a "
+"new index."
 msgstr "嵌入模型已更改。请选择具有原始摘要的模型，或构建新索引。"
 
 #: src/knowledge.py:127
@@ -516,115 +569,105 @@ msgstr "来源字符预算须为 256 到 64,000 个字符。"
 msgid "Wait for the model operation to finish."
 msgstr "请等待模型操作完成。"
 
-#: src/knowledge.py:262
-msgid ""
-"The embedding host was removed. Choose a configured host before continuing."
+#: src/knowledge.py:263
+msgid "The embedding host was removed. Choose a configured host before continuing."
 msgstr "嵌入主机已被移除。请先选择已配置的主机再继续。"
 
-#: src/knowledge.py:268 src/widgets/knowledge_import.py:146
-#: src/widgets/url_import.py:100 src/widgets/url_import.py:113
+#: src/knowledge.py:269 src/widgets/knowledge_import.py:146 src/widgets/url_import.py:100
+#: src/widgets/url_import.py:113
 msgid "Queued"
 msgstr "排队中"
 
-#: src/knowledge.py:272
+#: src/knowledge.py:273
 msgid "The Knowledge Library is closing."
 msgstr "知识库正在关闭。"
 
-#: src/knowledge.py:278
-msgid ""
-"This document is being replaced. Retry the build when replacement finishes."
+#: src/knowledge.py:279
+msgid "This document is being replaced. Retry the build when replacement finishes."
 msgstr "此文档正在替换中。请在替换完成后重试构建。"
 
-#: src/knowledge.py:300
+#: src/knowledge.py:301
 msgid "Complete"
 msgstr "已完成"
 
-#: src/knowledge.py:317
-msgid ""
-"Wait for this document’s embedding builds to finish before replacing it."
+#: src/knowledge.py:318
+msgid "Wait for this document’s embedding builds to finish before replacing it."
 msgstr "请等待此文档的嵌入构建完成后再替换文档。"
 
-#: src/knowledge.py:320
+#: src/knowledge.py:321
 msgid "Saving the web document…"
 msgstr "正在保存网页文档…"
 
-#: src/knowledge.py:348
+#: src/knowledge.py:349
 msgid "Save web document"
 msgstr "保存网页文档"
 
-#: src/knowledge.py:369
+#: src/knowledge.py:370
 msgid "Create collection"
 msgstr "创建集合"
 
-#: src/knowledge.py:384
+#: src/knowledge.py:385
 #, python-brace-format
 msgid "Add document: {0}"
 msgstr "添加文档：{0}"
 
-#: src/knowledge.py:392
+#: src/knowledge.py:393
 #, python-brace-format
 msgid "Prepare collection: {0}"
 msgstr "准备集合：{0}"
 
-#: src/knowledge.py:399
+#: src/knowledge.py:400
 msgid "Reusing embeddings and preparing missing documents…"
 msgstr "正在复用嵌入并准备缺失的文档…"
 
-#: src/knowledge.py:416
+#: src/knowledge.py:417
 #, python-brace-format
 msgid "Create embeddings: {0}"
 msgstr "创建嵌入：{0}"
 
-#: src/knowledge.py:421
+#: src/knowledge.py:422
 msgid "Build was stopped before it started."
 msgstr "构建在开始前已停止。"
 
-#: src/knowledge.py:438
+#: src/knowledge.py:439
 msgid "The source document was deleted."
 msgstr "源文档已被删除。"
 
-#: src/knowledge.py:443
-msgid ""
-"This index would exceed 100,000 chunks. Increase the chunk size or reduce "
-"overlap."
+#: src/knowledge.py:444
+msgid "This index would exceed 100,000 chunks. Increase the chunk size or reduce overlap."
 msgstr "此索引将超过 100,000 个文本块。请增大文本块大小或减小重叠长度。"
 
-#: src/knowledge.py:459
+#: src/knowledge.py:460
 #, python-brace-format
 msgid "Embedding chunks: {0} complete, {1} remaining"
 msgstr "正在生成文本块嵌入：已完成 {0}，剩余 {1}"
 
-#: src/knowledge.py:483
-msgid ""
-"The embedding input cannot fit. Shorten the document prefix or choose "
-"another model."
+#: src/knowledge.py:484
+msgid "The embedding input cannot fit. Shorten the document prefix or choose another model."
 msgstr "嵌入输入超出容量。请缩短文档前缀或选择其他模型。"
 
-#: src/knowledge.py:493
-msgid ""
-"The model returned a different vector dimension. Create a new configuration."
+#: src/knowledge.py:494
+msgid "The model returned a different vector dimension. Create a new configuration."
 msgstr "模型返回的向量维度不同。请创建新配置。"
 
-#: src/knowledge.py:508
+#: src/knowledge.py:509
 msgid "Create embeddings"
 msgstr "创建嵌入"
 
-#: src/knowledge.py:518
+#: src/knowledge.py:519
 msgid "This embedding configuration has no completed vectors."
 msgstr "此嵌入配置没有已完成的向量。"
 
-#: src/knowledge.py:520 src/widgets/knowledge_view.py:659
+#: src/knowledge.py:521 src/widgets/knowledge_view.py:659
 msgid "Enter a search query."
 msgstr "请输入搜索内容。"
 
-#: src/knowledge.py:530 src/knowledge_store.py:265
+#: src/knowledge.py:531 src/knowledge_store.py:265
 msgid "Query dimensions differ from the stored vectors. Rebuild the index."
 msgstr "查询维度与已保存的向量不一致。请重建索引。"
 
-#: src/knowledge.py:537
-msgid ""
-"No passages met the search criteria. Adjust the query, sources, or minimum "
-"similarity."
+#: src/knowledge.py:538
+msgid "No passages met the search criteria. Adjust the query, sources, or minimum similarity."
 msgstr "没有片段符合搜索条件。请调整查询、来源或最低相似度。"
 
 #: src/knowledge_store.py:49
@@ -664,9 +707,7 @@ msgid "Invalid search limits."
 msgstr "搜索限制无效。"
 
 #: src/knowledge_store.py:272
-msgid ""
-"A selected index is missing, incomplete, or incompatible. Choose sources "
-"again."
+msgid "A selected index is missing, incomplete, or incompatible. Choose sources again."
 msgstr "所选索引缺失、未完成或不兼容。请重新选择来源。"
 
 #: src/knowledge_store.py:277 src/knowledge_store.py:286
@@ -715,12 +756,13 @@ msgstr ""
 "数据已就绪。先前数据库的备份已保存至：\n"
 "{0}"
 
-#. Translators: Replace "translator-credits" with your name/username, and optionally an email or URL.
+#. Translators: Replace "translator-credits" with your name/username, and optionally an
+#. email or URL.
 #: src/main.py:75
 msgid "translator-credits"
 msgstr "AI 辅助翻译"
 
-#: src/model_details_view.ui:6 src/model_manager.py:42 src/model_manager.py:291
+#: src/model_details_view.ui:6 src/model_manager.py:42 src/model_manager.py:318
 msgid "Model Details"
 msgstr "模型详情"
 
@@ -733,184 +775,183 @@ msgstr ""
 "内存：{0} · 显存：{1}\n"
 "上下文：{2} · 到期时间：{3}"
 
-#: src/model_manager.py:163 src/tab.py:162
+#: src/model_manager.py:168 src/tab.py:163
 msgid "No host configured."
 msgstr "未配置主机。"
 
-#: src/model_manager.py:168
+#: src/model_manager.py:173
 msgid "Loading running models…"
 msgstr "正在加载运行中的模型…"
 
-#: src/model_manager.py:172
+#: src/model_manager.py:177
 #, python-brace-format
 msgid "Could not refresh running models: {0}"
 msgstr "无法刷新运行中的模型：{0}"
 
-#: src/model_manager.py:188
+#: src/model_manager.py:193
 msgid "No models are loaded in memory."
 msgstr "内存中未加载任何模型。"
 
-#: src/model_manager.py:194 src/model_manager.py:207
+#: src/model_manager.py:199 src/model_manager.py:212
 msgid "Unload"
 msgstr "卸载"
 
-#: src/model_manager.py:195 src/model_manager.py:209
+#: src/model_manager.py:200 src/model_manager.py:214
 msgid "Release this model from memory; keep its downloaded files."
 msgstr "从内存中释放此模型，保留已下载的文件。"
 
-#: src/model_manager.py:207
+#: src/model_manager.py:212
 msgid "Unloading…"
 msgstr "正在卸载…"
 
-#: src/model_manager.py:208
+#: src/model_manager.py:213
 msgid "A chat or embedding job is using this model in Gnollama."
 msgstr "Gnollama 中的聊天或嵌入任务正在使用此模型。"
 
-#: src/model_manager.py:225
+#: src/model_manager.py:232
 msgid "Could not unload model"
 msgstr "无法卸载模型"
 
-#: src/model_manager.py:265
+#: src/model_manager.py:273 src/model_manager.ui:90
+msgid "Available Models"
+msgstr "可用模型"
+
+#: src/model_manager.py:273 src/model_manager.ui:80
+msgid "Installed"
+msgstr "已安装"
+
+#: src/model_manager.py:286
 msgid "Connection Error"
 msgstr "连接错误"
 
-#: src/model_manager.py:298
+#: src/model_manager.py:325
 msgid "Delete Model"
 msgstr "删除模型"
 
-#: src/model_manager.py:329
+#: src/model_manager.py:357
 msgid "Failed to fetch details"
 msgstr "无法获取详情"
 
-#: src/model_manager.py:349 src/model_manager.py:374 src/model_manager.py:377
+#: src/model_manager.py:377 src/model_manager.py:402 src/model_manager.py:405
 msgid "Model Is Busy"
 msgstr "模型忙碌"
 
-#: src/model_manager.py:349 src/model_manager.py:377
+#: src/model_manager.py:377 src/model_manager.py:405
 msgid "Wait for active chats and embedding jobs before deleting this model."
 msgstr "请等待正在进行的聊天和嵌入任务完成后再删除此模型。"
 
-#: src/model_manager.py:353
+#: src/model_manager.py:381
 msgid "Also delete matching vectors; keep source text"
 msgstr "同时删除匹配的向量，保留源文本"
 
-#: src/model_manager.py:355
+#: src/model_manager.py:383
 #, python-brace-format
 msgid ""
-"Stored data using this model: {0} documents, {1} indexes, {2} vectors. Kept "
-"vectors can be used again with the same model digest on a compatible host."
-msgstr ""
-"使用此模型的已保存数据：{0} 个文档、{1} 个索引、{2} 个向量。保留的向量可在兼"
-"容主机上使用具有相同摘要的模型再次使用。"
+"Stored data using this model: {0} documents, {1} indexes, {2} vectors. Kept vectors "
+"can be used again with the same model digest on a compatible host."
+msgstr "使用此模型的已保存数据：{0} 个文档、{1} 个索引、{2} 个向量。保留的向量可在兼容主机上使用具有相同摘要的模型再次使用。"
 
-#: src/model_manager.py:357
+#: src/model_manager.py:385
 #, python-brace-format
 msgid ""
-"Collections using this configuration: {0}. Deleting vectors keeps their "
-"documents and membership, but they will need embeddings rebuilt before "
-"searching."
-msgstr ""
-"使用此配置的集合：{0}。删除向量会保留文档及其集合归属，但搜索前需要重建嵌入。"
+"Collections using this configuration: {0}. Deleting vectors keeps their documents and"
+" membership, but they will need embeddings rebuilt before searching."
+msgstr "使用此配置的集合：{0}。删除向量会保留文档及其集合归属，但搜索前需要重建嵌入。"
 
-#: src/model_manager.py:360
+#: src/model_manager.py:388
 msgid "Delete Model?"
 msgstr "删除模型？"
 
-#: src/model_manager.py:374
-msgid ""
-"Wait for all indexing jobs using this model before deleting its vectors."
+#: src/model_manager.py:402
+msgid "Wait for all indexing jobs using this model before deleting its vectors."
 msgstr "请等待使用此模型的所有索引任务完成后再删除其向量。"
 
-#: src/model_manager.py:390
-msgid "Delete Failed"
-msgstr "删除失败"
-
-#: src/model_manager.py:545
+#: src/model_manager.py:573
 msgid "Starting download…"
 msgstr "正在开始下载…"
 
-#: src/model_manager.py:570
+#: src/model_manager.py:598
 msgid "Error"
 msgstr "错误"
 
-#: src/model_manager.py:571
+#: src/model_manager.py:599
 msgid "Error occurred."
 msgstr "发生错误。"
 
-#: src/model_manager.py:590
+#: src/model_manager.py:618
 #, python-brace-format
 msgid "{0:.0f}%"
 msgstr "{0:.0f}%"
 
-#: src/model_manager.py:593
+#: src/model_manager.py:621
 msgid "Download complete"
 msgstr "下载完成"
 
-#: src/model_manager.py:611 src/widgets/chat_input.ui:27
+#: src/model_manager.py:639 src/widgets/chat_input.ui:27
 msgid "Model"
 msgstr "模型"
 
-#: src/model_manager.py:612
+#: src/model_manager.py:640
 msgid "Remote Model"
 msgstr "远程模型"
 
-#: src/model_manager.py:613
+#: src/model_manager.py:641
 msgid "Remote Host"
 msgstr "远程主机"
 
-#: src/model_manager.py:614
+#: src/model_manager.py:642
 msgid "Modified At"
 msgstr "修改时间"
 
-#: src/model_manager.py:615
+#: src/model_manager.py:643
 msgid "Size"
 msgstr "大小"
 
-#: src/model_manager.py:616
+#: src/model_manager.py:644
 msgid "Digest"
 msgstr "摘要"
 
-#: src/model_manager.py:617
+#: src/model_manager.py:645
 msgid "Detail: Format"
 msgstr "详情：格式"
 
-#: src/model_manager.py:618
+#: src/model_manager.py:646
 msgid "Detail: Family"
 msgstr "详情：模型家族"
 
-#: src/model_manager.py:619
+#: src/model_manager.py:647
 msgid "Detail: Families"
 msgstr "详情：模型家族列表"
 
-#: src/model_manager.py:620
+#: src/model_manager.py:648
 msgid "Detail: Parameter Size"
 msgstr "详情：参数规模"
 
-#: src/model_manager.py:621
+#: src/model_manager.py:649
 msgid "Detail: Quantization Level"
 msgstr "详情：量化级别"
 
-#: src/model_manager.py:622
+#: src/model_manager.py:650
 msgid "Parameters"
 msgstr "参数"
 
-#: src/model_manager.py:623
+#: src/model_manager.py:651
 msgid "Capabilities"
 msgstr "能力"
 
-#: src/model_manager.py:624
+#: src/model_manager.py:652
 msgid "Template"
 msgstr "模板"
 
-#: src/model_manager.py:625
+#: src/model_manager.py:653
 msgid "License"
 msgstr "许可证"
 
-#: src/model_manager.py:626
+#: src/model_manager.py:654
 msgid "Modelfile"
 msgstr "Modelfile"
 
-#: src/model_manager.py:627
+#: src/model_manager.py:655
 msgid "Model Info"
 msgstr "模型信息"
 
@@ -930,14 +971,6 @@ msgstr "刷新模型列表"
 msgid "Download Model…"
 msgstr "下载模型…"
 
-#: src/model_manager.ui:80
-msgid "Installed"
-msgstr "已安装"
-
-#: src/model_manager.ui:90
-msgid "Available Models"
-msgstr "可用模型"
-
 #: src/model_manager.ui:102
 msgid "Running"
 msgstr "运行中"
@@ -946,59 +979,77 @@ msgstr "运行中"
 msgid "Models in Memory"
 msgstr "内存中的模型"
 
-#: src/ollama.py:52
+#: src/ollama.py:71 src/storage.py:127
+msgid "Ollama Cloud requires https://ollama.com."
+msgstr "Ollama Cloud 必须使用 https://ollama.com。"
+
+#: src/ollama.py:80
 msgid "Enter a valid http:// or https:// Ollama host URL."
 msgstr "请输入有效的 http:// 或 https:// Ollama 主机 URL。"
 
-#: src/ollama.py:61 src/ollama.py:84
+#: src/ollama.py:89 src/ollama.py:104 src/ollama.py:137
 msgid "Request stopped"
 msgstr "请求已停止"
 
-#: src/ollama.py:110
+#: src/ollama.py:98
+msgid "This operation is unavailable for Ollama Cloud."
+msgstr "Ollama Cloud 不支持此操作。"
+
+#: src/ollama.py:124
+msgid ""
+"Ollama Cloud rejected the API key or account access. Edit this host to check its API "
+"key."
+msgstr "Ollama Cloud 拒绝了 API 密钥或账户访问。请编辑此服务器以检查其 API 密钥。"
+
+#: src/ollama.py:126
+msgid "Ollama Cloud usage or rate limit reached. Try again later."
+msgstr "已达到 Ollama Cloud 使用量或请求频率限制。请稍后重试。"
+
+#: src/ollama.py:163
 msgid "Invalid JSON received from Ollama"
 msgstr "从 Ollama 收到的 JSON 无效"
 
-#: src/ollama.py:112
+#: src/ollama.py:165
 msgid "Expected a JSON object from Ollama"
 msgstr "预期从 Ollama 收到 JSON 对象"
 
-#: src/ollama.py:162
+#: src/ollama.py:221
 msgid "Enter nonempty text to embed."
 msgstr "请输入非空文本以生成嵌入。"
 
-#: src/ollama.py:166
+#: src/ollama.py:225
 msgid "Embedding dimensions must be a positive integer."
 msgstr "嵌入维度必须为正整数。"
 
-#: src/ollama.py:173
+#: src/ollama.py:232
 msgid "The server returned an incorrect number of embeddings."
 msgstr "服务器返回的嵌入数量不正确。"
 
-#: src/ollama.py:178
+#: src/ollama.py:237
 msgid "The server returned an invalid embedding vector."
 msgstr "服务器返回了无效的嵌入向量。"
 
-#: src/ollama.py:181
+#: src/ollama.py:240
 msgid "Embedding dimensions do not match, or a vector is zero."
 msgstr "嵌入维度不匹配，或存在零向量。"
 
-#: src/ollama.py:210
+#: src/ollama.py:269
 msgid "Model pull ended before completion"
 msgstr "模型下载在完成前结束"
 
-#: src/ollama.py:216
+#: src/ollama.py:275
 msgid "Invalid output format"
 msgstr "输出格式无效"
 
-#: src/ollama.py:220
+#: src/ollama.py:279
 msgid "Keep-alive must be a duration in seconds, 0, or -1"
 msgstr "模型保留时间必须为以秒为单位的时长、0 或 -1"
 
-#: src/ollama.py:224
+#: src/ollama.py:283
 msgid "Invalid thinking setting"
 msgstr "思考设置无效"
 
-#: src/ollama.py:230
+#: src/ollama.py:289
 msgid "Top logprobs must be between 0 and 20"
 msgstr "最高对数概率数量须为 0 到 20"
 
@@ -1030,7 +1081,7 @@ msgstr "下载详情"
 msgid "New Chat"
 msgstr "新建聊天"
 
-#: src/session.py:167
+#: src/session.py:169
 msgid "There are no pending tool calls."
 msgstr "没有待处理的工具调用。"
 
@@ -1077,9 +1128,8 @@ msgstr "切换侧边栏"
 msgid "Opening Gnollama"
 msgstr "正在打开 Gnollama"
 
-#: src/startup.py:20 src/tab.py:245 src/widgets/knowledge_import.py:88
-#: src/widgets/knowledge_view.py:1220 src/widgets/url_import.py:232
-#: src/window.py:139
+#: src/startup.py:20 src/tab.py:247 src/widgets/knowledge_import.py:88
+#: src/widgets/knowledge_view.py:1220 src/widgets/url_import.py:232 src/window.py:139
 msgid "Retry"
 msgstr "重试"
 
@@ -1099,6 +1149,14 @@ msgstr "无法打开数据库"
 #, python-brace-format
 msgid "Database backup: {0}"
 msgstr "数据库备份：{0}"
+
+#: src/storage.py:117
+msgid "This host was removed."
+msgstr "此服务器已移除。"
+
+#: src/storage.py:122
+msgid "Invalid host type."
+msgstr "无效的服务器类型。"
 
 #: src/structured.py:18
 msgid "Non-finite numbers are not valid JSON."
@@ -1152,43 +1210,43 @@ msgstr "新建回复"
 msgid "Chat"
 msgstr "聊天"
 
-#: src/tab.py:166
+#: src/tab.py:167
 msgid "Select an available model before sending."
 msgstr "请先选择可用的模型再发送。"
 
-#: src/tab.py:169
+#: src/tab.py:170
 msgid "Wait for this model to finish unloading before sending."
 msgstr "请等待此模型卸载完成后再发送。"
 
-#: src/tab.py:174
+#: src/tab.py:175
 msgid "Wait for image support to be checked before sending."
 msgstr "请等待图片支持检查完成后再发送。"
 
-#: src/tab.py:176 src/widgets/chat_input.py:112
+#: src/tab.py:177 src/widgets/chat_input.py:112
 msgid "Remove draft images or select a vision model to send."
 msgstr "请移除草稿中的图片或选择视觉模型后再发送。"
 
-#: src/tab.py:218
+#: src/tab.py:220
 msgid "Retrieving sources…"
 msgstr "正在检索来源…"
 
-#: src/tab.py:243
+#: src/tab.py:245
 msgid "Could Not Retrieve Sources"
 msgstr "无法检索来源"
 
-#: src/tab.py:244
+#: src/tab.py:246
 msgid "Adjust Sources"
 msgstr "调整来源"
 
-#: src/tab.py:246
+#: src/tab.py:248
 msgid "Send Without Knowledge"
 msgstr "不使用知识库发送"
 
-#: src/tab.py:247
+#: src/tab.py:249
 msgid "Keep Draft"
 msgstr "保留草稿"
 
-#: src/tab.py:309
+#: src/tab.py:311
 msgid "Response ended before completion."
 msgstr "回复在完成前结束。"
 
@@ -1269,8 +1327,8 @@ msgstr "最大距离必须为有限的非负数，或留空。"
 
 #: src/vectors.py:31
 msgid ""
-"Vector dimensions must be between 1 and 8,192. Choose a supported dimension "
-"or embedding model."
+"Vector dimensions must be between 1 and 8,192. Choose a supported dimension or "
+"embedding model."
 msgstr "向量维度须为 1 到 8,192。请选择支持的维度或嵌入模型。"
 
 #: src/vectors.py:36
@@ -1286,9 +1344,7 @@ msgid "Invalid embedding vector; expected 1–8,192 finite, nonzero dimensions."
 msgstr "嵌入向量无效；需要 1–8,192 维的有限非零向量。"
 
 #: src/vectors.py:66
-msgid ""
-"Could not load sqlite-vec. Reinstall Gnollama or install its sqlite-vec "
-"dependency."
+msgid "Could not load sqlite-vec. Reinstall Gnollama or install its sqlite-vec dependency."
 msgstr "无法加载 sqlite-vec。请重新安装 Gnollama 或安装其 sqlite-vec 依赖。"
 
 #: src/vectors.py:120
@@ -1296,15 +1352,13 @@ msgid "Stored vector blocks are damaged. Rebuild this index."
 msgstr "已保存的向量块已损坏。请重建此索引。"
 
 #: src/vectors.py:165
-msgid ""
-"The database contains broken references. Restore a database backup before "
-"upgrading."
+msgid "The database contains broken references. Restore a database backup before upgrading."
 msgstr "数据库包含失效的引用。请在升级前恢复数据库备份。"
 
 #: src/vectors.py:176
 msgid ""
-"Stored vector dimensions do not match their configuration. Rebuild the index "
-"before upgrading."
+"Stored vector dimensions do not match their configuration. Rebuild the index before "
+"upgrading."
 msgstr "已保存的向量维度与配置不一致。请在升级前重建索引。"
 
 #: src/vectors.py:181
@@ -1373,15 +1427,11 @@ msgid "Invalid CSS selector: {0}"
 msgstr "无效的 CSS 选择器：{0}"
 
 #: src/web_import.py:226
-msgid ""
-"The CSS selector did not match any elements. Try main, article, or a content "
-"class."
+msgid "The CSS selector did not match any elements. Try main, article, or a content class."
 msgstr "CSS 选择器未匹配任何元素。请尝试 main、article 或内容区域的类名。"
 
 #: src/web_import.py:243
-msgid ""
-"No main content was found. Try a CSS selector, or paste the page text using "
-"Add Text."
+msgid "No main content was found. Try a CSS selector, or paste the page text using Add Text."
 msgstr "未找到正文。请尝试 CSS 选择器，或使用“添加文本”粘贴页面文本。"
 
 #: src/web_import.py:251
@@ -1401,17 +1451,15 @@ msgid "The destination collection was deleted. Choose a collection again."
 msgstr "目标集合已被删除。请重新选择集合。"
 
 #: src/web_store.py:43
-msgid ""
-"This document changed since the preview was opened. Fetch it again before "
-"saving."
+msgid "This document changed since the preview was opened. Fetch it again before saving."
 msgstr "此文档在打开预览后已发生变化。请重新获取后再保存。"
 
 #: src/web_store.py:53
 msgid "Source content changed. Rebuild required."
 msgstr "来源内容已更改，需要重建。"
 
-#: src/widgets/chat_input.py:61 src/widgets/chat_input.py:66
-#: src/widgets/chat_input.py:68 src/widgets/knowledge_view.py:247
+#: src/widgets/chat_input.py:61 src/widgets/chat_input.py:66 src/widgets/chat_input.py:68
+#: src/widgets/knowledge_view.py:247
 msgid "Model default"
 msgstr "模型默认值"
 
@@ -1472,22 +1520,26 @@ msgid "Checking chat models…"
 msgstr "正在检查聊天模型…"
 
 #: src/widgets/chat_input.py:176
+msgid "No cloud models are available. Try refreshing later."
+msgstr "没有可用的云端模型。请稍后尝试刷新。"
+
+#: src/widgets/chat_input.py:177
 msgid "No chat models found. Pull one in Manage Models, then refresh."
 msgstr "未找到聊天模型。请在“管理模型”中下载模型，然后刷新。"
 
-#: src/widgets/chat_input.py:246
+#: src/widgets/chat_input.py:247
 msgid "Select Images"
 msgstr "选择图片"
 
-#: src/widgets/chat_input.py:250
+#: src/widgets/chat_input.py:251
 msgid "Images"
 msgstr "图片"
 
-#: src/widgets/chat_input.py:283 src/widgets/chat_input.ui:116
+#: src/widgets/chat_input.py:284 src/widgets/chat_input.ui:116
 msgid "No image selected"
 msgstr "未选择图片"
 
-#: src/widgets/chat_input.py:289
+#: src/widgets/chat_input.py:290
 #, python-brace-format
 msgid "{0} image selected"
 msgid_plural "{0} images selected"
@@ -1534,14 +1586,14 @@ msgstr "应用"
 msgid "Content"
 msgstr "内容"
 
-#: src/widgets/json_view.py:160 src/widgets/options_panel.py:41
+#: src/widgets/json_view.py:160 src/widgets/options_panel.py:42
 msgid "JSON Schema"
 msgstr "JSON Schema"
 
 #: src/widgets/json_view.py:161
 msgid ""
-"Paste or import a self-contained JSON Schema. Describe the expected JSON in "
-"your prompt."
+"Paste or import a self-contained JSON Schema. Describe the expected JSON in your "
+"prompt."
 msgstr "粘贴或导入自包含的 JSON Schema。在提示词中描述预期的 JSON。"
 
 #: src/widgets/json_view.py:162
@@ -1630,11 +1682,9 @@ msgstr "添加文件"
 
 #: src/widgets/knowledge_import.py:67
 msgid ""
-"Import PDF or UTF-8 text files, including Markdown and source code. Maximum "
-"size: 50 MiB per file. Review one file at a time before adding."
-msgstr ""
-"导入 PDF 或 UTF-8 文本文件，包括 Markdown 和源代码。每个文件最大为 50 MiB。添"
-"加前请逐个检查文件。"
+"Import PDF or UTF-8 text files, including Markdown and source code. Maximum size: 50 "
+"MiB per file. Review one file at a time before adding."
+msgstr "导入 PDF 或 UTF-8 文本文件，包括 Markdown 和源代码。每个文件最大为 50 MiB。添加前请逐个检查文件。"
 
 #: src/widgets/knowledge_import.py:68
 msgid "Choose Files…"
@@ -1687,8 +1737,8 @@ msgstr "已跳过"
 
 #: src/widgets/knowledge_import.py:158
 msgid ""
-"Review complete. Added documents prepare in the background; their status is "
-"shown in the collection."
+"Review complete. Added documents prepare in the background; their status is shown in "
+"the collection."
 msgstr "检查完毕。已添加的文档将在后台准备，其状态会显示在集合中。"
 
 #: src/widgets/knowledge_import.py:166
@@ -1819,8 +1869,8 @@ msgstr "重叠长度须小于文本块大小。"
 
 #: src/widgets/knowledge_view.py:311
 msgid ""
-"An embedding model makes documents searchable. It can differ from the model "
-"used for chat."
+"An embedding model makes documents searchable. It can differ from the model used for "
+"chat."
 msgstr "嵌入模型使文档可被搜索。它可以与聊天使用的模型不同。"
 
 #: src/widgets/knowledge_view.py:312
@@ -1960,16 +2010,15 @@ msgstr "嵌入配置（来自所选集合）"
 
 #: src/widgets/knowledge_view.py:474
 msgid ""
-"The query must use the same embedding configuration as the selected "
-"collections. A compatible server can be chosen here."
+"The query must use the same embedding configuration as the selected collections. A "
+"compatible server can be chosen here."
 msgstr "查询必须使用与所选集合相同的嵌入配置。可在此选择兼容的服务器。"
 
 #: src/widgets/knowledge_view.py:476
 msgid ""
-"This chat has older individual sources. Applying a collection selection "
-"replaces them. Closing this dialog keeps them unchanged."
-msgstr ""
-"此聊天包含旧版单独来源。应用集合选择将替换这些来源。关闭此对话框则保留原状。"
+"This chat has older individual sources. Applying a collection selection replaces "
+"them. Closing this dialog keeps them unchanged."
+msgstr "此聊天包含旧版单独来源。应用集合选择将替换这些来源。关闭此对话框则保留原状。"
 
 #: src/widgets/knowledge_view.py:481
 msgid "Maximum passages"
@@ -2021,17 +2070,15 @@ msgstr "越高越接近（−1 到 1）。这是语义搜索的默认度量。"
 
 #: src/widgets/knowledge_view.py:561
 msgid ""
-"Lower is closer. With normalized embeddings, Euclidean and cosine usually "
-"rank results alike."
-msgstr ""
-"越低越接近。对于归一化嵌入，欧氏距离和余弦相似度通常产生相同的结果排序。"
+"Lower is closer. With normalized embeddings, Euclidean and cosine usually rank "
+"results alike."
+msgstr "越低越接近。对于归一化嵌入，欧氏距离和余弦相似度通常产生相同的结果排序。"
 
 #: src/widgets/knowledge_view.py:562
 msgid ""
-"Lower is closer. Adds absolute differences between vector components and can "
-"rank results differently from cosine."
-msgstr ""
-"越低越接近。将向量各分量差值的绝对值相加，结果排序可能与余弦相似度不同。"
+"Lower is closer. Adds absolute differences between vector components and can rank "
+"results differently from cosine."
+msgstr "越低越接近。将向量各分量差值的绝对值相加，结果排序可能与余弦相似度不同。"
 
 #: src/widgets/knowledge_view.py:570 src/widgets/knowledge_view.py:855
 #: src/widgets/knowledge_view.py:949
@@ -2040,10 +2087,9 @@ msgstr "集合"
 
 #: src/widgets/knowledge_view.py:571
 msgid ""
-"Choose collections to search. New documents added to them are included "
-"automatically. All documents must be ready."
-msgstr ""
-"选择要搜索的集合。之后添加的新文档将自动包含在内。所有文档必须准备就绪。"
+"Choose collections to search. New documents added to them are included automatically."
+" All documents must be ready."
+msgstr "选择要搜索的集合。之后添加的新文档将自动包含在内。所有文档必须准备就绪。"
 
 #: src/widgets/knowledge_view.py:575
 msgid "Some selected collections were deleted. Choose sources again."
@@ -2068,8 +2114,7 @@ msgid "No matching collections"
 msgstr "没有匹配的集合"
 
 #: src/widgets/knowledge_view.py:592
-msgid ""
-"Create a collection and add text, files, or URLs in the Knowledge Library."
+msgid "Create a collection and add text, files, or URLs in the Knowledge Library."
 msgstr "请在知识库中创建集合，并添加文本、文件或 URL。"
 
 #: src/widgets/knowledge_view.py:593
@@ -2078,14 +2123,12 @@ msgstr "打开知识库"
 
 #: src/widgets/knowledge_view.py:628
 msgid ""
-"Uses different embedding settings. Clear the current selection to choose "
-"this collection."
+"Uses different embedding settings. Clear the current selection to choose this "
+"collection."
 msgstr "使用了不同的嵌入设置。请清除当前选择后再选择此集合。"
 
 #: src/widgets/knowledge_view.py:639
-msgid ""
-"Select at least one collection. Create collections in Knowledge first if "
-"needed."
+msgid "Select at least one collection. Create collections in Knowledge first if needed."
 msgstr "请至少选择一个集合。如有需要，请先在知识库中创建集合。"
 
 #: src/widgets/knowledge_view.py:644
@@ -2222,8 +2265,8 @@ msgstr "知识集合"
 
 #: src/widgets/knowledge_view.py:1034
 msgid ""
-"Group documents into collections, then select a collection in chat to ask "
-"questions about its content."
+"Group documents into collections, then select a collection in chat to ask questions "
+"about its content."
 msgstr "将文档整理为集合，然后在聊天中选择集合，即可围绕其内容提问。"
 
 #: src/widgets/knowledge_view.py:1035
@@ -2231,17 +2274,14 @@ msgid "Create Collection…"
 msgstr "创建集合…"
 
 #: src/widgets/knowledge_view.py:1038
-msgid ""
-"Select a document to inspect it. New imports always ask for a destination "
-"collection."
+msgid "Select a document to inspect it. New imports always ask for a destination collection."
 msgstr "选择文档以查看详情。新导入始终需要选择目标集合。"
 
 #: src/widgets/knowledge_view.py:1043
 msgid ""
 "Add text, files, or URLs to this collection. Gnollama prepares the documents "
 "automatically so chats can search them."
-msgstr ""
-"向此集合添加文本、文件或 URL。Gnollama 会自动准备文档，以便在聊天中搜索。"
+msgstr "向此集合添加文本、文件或 URL。Gnollama 会自动准备文档，以便在聊天中搜索。"
 
 #: src/widgets/knowledge_view.py:1045
 msgid "Add Existing Documents…"
@@ -2311,17 +2351,14 @@ msgstr "删除集合？"
 #: src/widgets/knowledge_view.py:1120
 #, python-brace-format
 msgid ""
-"Delete “{0}”? Its documents and embeddings stay in the library. Chats "
-"selecting this collection will need new sources; saved answers keep their "
-"original passages."
-msgstr ""
-"删除“{0}”？其中的文档和嵌入将保留在知识库中。选择了此集合的聊天需要新的来源；"
-"已保存的回复会保留原始片段。"
+"Delete “{0}”? Its documents and embeddings stay in the library. Chats selecting this "
+"collection will need new sources; saved answers keep their original passages."
+msgstr "删除“{0}”？其中的文档和嵌入将保留在知识库中。选择了此集合的聊天需要新的来源；已保存的回复会保留原始片段。"
 
 #: src/widgets/knowledge_view.py:1135
 msgid ""
-"Choose a host and embedding model matching the collection’s original model "
-"digest. Embedding settings stay the same."
+"Choose a host and embedding model matching the collection’s original model digest. "
+"Embedding settings stay the same."
 msgstr "请选择与集合原始模型摘要匹配的主机和嵌入模型。嵌入设置将保持不变。"
 
 #: src/widgets/knowledge_view.py:1163
@@ -2330,8 +2367,8 @@ msgstr "原始模型可用"
 
 #: src/widgets/knowledge_view.py:1164
 msgid ""
-"Unavailable — the original model changed or was removed. Choose a compatible "
-"server for searches."
+"Unavailable — the original model changed or was removed. Choose a compatible server "
+"for searches."
 msgstr "不可用——原始模型已更改或移除。请选择兼容的服务器进行搜索。"
 
 #: src/widgets/knowledge_view.py:1166
@@ -2404,8 +2441,8 @@ msgstr "停止共享嵌入构建？"
 #: src/widgets/knowledge_view.py:1261
 #, python-brace-format
 msgid ""
-"These collections use this build: {0}. They will need a retry before chat "
-"search can use them."
+"These collections use this build: {0}. They will need a retry before chat search can "
+"use them."
 msgstr "这些集合使用此构建：{0}。需要重试后才能在聊天搜索中使用。"
 
 #: src/widgets/knowledge_view.py:1263
@@ -2454,10 +2491,9 @@ msgstr "删除嵌入索引？"
 
 #: src/widgets/knowledge_view.py:1351
 msgid ""
-"Chats selecting this data will need new sources. Passages already saved with "
-"answers remain in chat history."
-msgstr ""
-"选择了此数据的聊天需要新的来源。已随回复保存的片段将保留在聊天历史记录中。"
+"Chats selecting this data will need new sources. Passages already saved with answers "
+"remain in chat history."
+msgstr "选择了此数据的聊天需要新的来源。已随回复保存的片段将保留在聊天历史记录中。"
 
 #: src/widgets/knowledge_view.py:1352
 msgid "The saved source text and all its indexes will be deleted."
@@ -2498,252 +2534,256 @@ msgstr "开始对话"
 
 #: src/widgets/message_list.py:19
 msgid ""
-"Choose a model and enter a message. Select knowledge collections to ask "
-"questions about your documents."
+"Choose a model and enter a message. Select knowledge collections to ask questions "
+"about your documents."
 msgstr "选择模型并输入消息。选择知识集合，即可围绕文档内容提问。"
 
-#: src/widgets/options_panel.py:41
+#: src/widgets/options_panel.py:42
 msgid "Text"
 msgstr "文本"
 
-#: src/widgets/options_panel.py:41
+#: src/widgets/options_panel.py:42
 msgid "JSON"
 msgstr "JSON"
 
-#: src/widgets/options_panel.py:43 src/widgets/options_panel.py:72
+#: src/widgets/options_panel.py:44 src/widgets/options_panel.py:83
 msgid "Server default"
 msgstr "服务器默认值"
 
-#: src/widgets/options_panel.py:43
+#: src/widgets/options_panel.py:44
 msgid "Unload after reply"
 msgstr "回复后卸载"
 
-#: src/widgets/options_panel.py:43
+#: src/widgets/options_panel.py:44
 msgid "Five minutes"
 msgstr "五分钟"
 
-#: src/widgets/options_panel.py:44
+#: src/widgets/options_panel.py:45
 msgid "Thirty minutes"
 msgstr "三十分钟"
 
-#: src/widgets/options_panel.py:44
+#: src/widgets/options_panel.py:45
 msgid "Indefinitely"
 msgstr "无限期"
 
-#: src/widgets/options_panel.py:44
+#: src/widgets/options_panel.py:45
 msgid "Custom seconds"
 msgstr "自定义秒数"
 
-#: src/widgets/options_panel.py:63
+#: src/widgets/options_panel.py:53
+msgid "Ollama Cloud uses text output and manages model retention automatically."
+msgstr "Ollama Cloud 使用文本输出，并自动管理模型在内存中的保留时间。"
+
+#: src/widgets/options_panel.py:74
 msgid "Server"
 msgstr "服务器"
 
-#: src/widgets/options_panel.py:88
+#: src/widgets/options_panel.py:100
 msgid "System Instructions"
 msgstr "系统指令"
 
-#: src/widgets/options_panel.py:89
+#: src/widgets/options_panel.py:101
 msgid "System prompt"
 msgstr "系统提示词"
 
-#: src/widgets/options_panel.py:89
+#: src/widgets/options_panel.py:101
 msgid "Optional instructions applied to this conversation."
 msgstr "应用于此对话的可选指令。"
 
-#: src/widgets/options_panel.py:90
+#: src/widgets/options_panel.py:102
 msgid "Optional instructions"
 msgstr "可选指令"
 
-#: src/widgets/options_panel.py:91
+#: src/widgets/options_panel.py:103
 msgid "Generation Limits"
 msgstr "生成限制"
 
-#: src/widgets/options_panel.py:91
+#: src/widgets/options_panel.py:103
 msgid "Blank fields use the server’s defaults."
 msgstr "留空的字段使用服务器默认值。"
 
-#: src/widgets/options_panel.py:92
+#: src/widgets/options_panel.py:104
 msgid "Context size (tokens)"
 msgstr "上下文大小（词元）"
 
-#: src/widgets/options_panel.py:92
+#: src/widgets/options_panel.py:104
 msgid "Maximum context available to the model; larger values need more memory."
 msgstr "模型可用的最大上下文；较大的值需要更多内存。"
 
-#: src/widgets/options_panel.py:93
+#: src/widgets/options_panel.py:105
 msgid "Maximum output tokens"
 msgstr "最大输出词元数"
 
-#: src/widgets/options_panel.py:93
+#: src/widgets/options_panel.py:105
 msgid "Use −1 for unlimited output or −2 to fill the context."
 msgstr "使用 −1 表示无限输出，使用 −2 表示填满上下文。"
 
-#: src/widgets/options_panel.py:94
+#: src/widgets/options_panel.py:106
 msgid "Stop sequences"
 msgstr "停止序列"
 
-#: src/widgets/options_panel.py:94
+#: src/widgets/options_panel.py:106
 msgid "Separate sequences with commas. Generation stops when one is produced."
 msgstr "用逗号分隔序列。生成任一序列时将停止生成。"
 
-#: src/widgets/options_panel.py:95
+#: src/widgets/options_panel.py:107
 msgid "Sampling"
 msgstr "采样"
 
-#: src/widgets/options_panel.py:97
+#: src/widgets/options_panel.py:109
 msgid "Temperature"
 msgstr "温度"
 
-#: src/widgets/options_panel.py:97
+#: src/widgets/options_panel.py:109
 msgid "Higher values increase variation; zero is more predictable."
 msgstr "较大的值会增加变化；零值的结果更可预测。"
 
-#: src/widgets/options_panel.py:98
+#: src/widgets/options_panel.py:110
 msgid "Seed"
 msgstr "随机种子"
 
-#: src/widgets/options_panel.py:98
+#: src/widgets/options_panel.py:110
 msgid "An integer used to initialize random sampling."
 msgstr "用于初始化随机采样的整数。"
 
-#: src/widgets/options_panel.py:99
+#: src/widgets/options_panel.py:111
 msgid "Top K"
 msgstr "Top K"
 
-#: src/widgets/options_panel.py:99
+#: src/widgets/options_panel.py:111
 msgid "Number of candidate tokens to consider."
 msgstr "参与考虑的候选词元数量。"
 
-#: src/widgets/options_panel.py:100
+#: src/widgets/options_panel.py:112
 msgid "Top P"
 msgstr "Top P"
 
-#: src/widgets/options_panel.py:100
+#: src/widgets/options_panel.py:112
 msgid "Cumulative probability cutoff, between 0 and 1."
 msgstr "累积概率阈值，范围为 0 到 1。"
 
-#: src/widgets/options_panel.py:101
+#: src/widgets/options_panel.py:113
 msgid "Min P"
 msgstr "Min P"
 
-#: src/widgets/options_panel.py:101
+#: src/widgets/options_panel.py:113
 msgid "Minimum relative token probability, between 0 and 1."
 msgstr "最低相对词元概率，范围为 0 到 1。"
 
-#: src/widgets/options_panel.py:103
+#: src/widgets/options_panel.py:115
 msgid "Model Retention"
 msgstr "模型保留"
 
-#: src/widgets/options_panel.py:105
+#: src/widgets/options_panel.py:120
 msgid "Keep model loaded"
 msgstr "保持模型加载"
 
-#: src/widgets/options_panel.py:108
+#: src/widgets/options_panel.py:124
 msgid "Custom duration (seconds)"
 msgstr "自定义时长（秒）"
 
-#: src/widgets/options_panel.py:108 src/widgets/options_panel.py:165
+#: src/widgets/options_panel.py:124 src/widgets/options_panel.py:187
 msgid "Enter a positive whole number of seconds."
 msgstr "请输入正整数秒数。"
 
-#: src/widgets/options_panel.py:110
+#: src/widgets/options_panel.py:126
 msgid "Diagnostics"
 msgstr "诊断"
 
-#: src/widgets/options_panel.py:111
+#: src/widgets/options_panel.py:128
 msgid "Show response statistics"
 msgstr "显示回复统计信息"
 
-#: src/widgets/options_panel.py:112
+#: src/widgets/options_panel.py:131
 msgid "Return token probabilities (logprobs)"
 msgstr "返回词元概率（对数概率）"
 
-#: src/widgets/options_panel.py:115
+#: src/widgets/options_panel.py:135
 msgid "Top logprobs"
 msgstr "最高对数概率数量"
 
-#: src/widgets/options_panel.py:115
+#: src/widgets/options_panel.py:135
 msgid "Number of alternative token probabilities, from 0 to 20."
 msgstr "备选词元的概率数量，范围为 0 到 20。"
 
-#: src/widgets/options_panel.py:132
+#: src/widgets/options_panel.py:152
 msgid "Chat Settings"
 msgstr "聊天设置"
 
-#: src/widgets/options_panel.py:135
+#: src/widgets/options_panel.py:155
 msgid "Done"
 msgstr "完成"
 
-#: src/widgets/options_panel.py:177
+#: src/widgets/options_panel.py:199
 msgid "Top logprobs must be between 0 and 20."
 msgstr "最高对数概率数量须为 0 到 20。"
 
-#: src/widgets/options_panel.py:199
+#: src/widgets/options_panel.py:221
 #, python-brace-format
 msgid "Enabled tools: {0}. Results are supplied manually."
 msgstr "已启用的工具：{0}。结果由手动提供。"
 
-#: src/widgets/options_panel.py:199
+#: src/widgets/options_panel.py:221
 msgid "Tool calling is off."
 msgstr "工具调用已关闭。"
 
-#: src/widgets/options_panel.py:202
+#: src/widgets/options_panel.py:224
 msgid "Checking tool support…"
 msgstr "正在检查工具支持…"
 
-#: src/widgets/options_panel.py:204
+#: src/widgets/options_panel.py:226
 msgid "This model reports no tool support; you can still test the API."
 msgstr "此模型报告不支持工具；您仍可测试 API。"
 
-#: src/widgets/options_panel.py:206
+#: src/widgets/options_panel.py:228
 msgid "Tool support is unknown."
 msgstr "工具支持情况未知。"
 
-#: src/widgets/options_panel.py:275
+#: src/widgets/options_panel.py:297
 msgid "No hosts configured"
 msgstr "未配置主机"
 
-#: src/widgets/options_panel.py:313 src/widgets/options_panel.py:315
+#: src/widgets/options_panel.py:335 src/widgets/options_panel.py:337
 msgid "Enter a valid number."
 msgstr "请输入有效数字。"
 
-#: src/widgets/options_panel.py:333
+#: src/widgets/options_panel.py:355
 msgid "Value must not be negative."
 msgstr "值不能为负数。"
 
-#: src/widgets/options_panel.py:336
+#: src/widgets/options_panel.py:358
 msgid "Value must be between 0 and 1."
 msgstr "值须在 0 到 1 之间。"
 
-#: src/widgets/options_panel.py:338
+#: src/widgets/options_panel.py:360
 msgid "Context size must be positive."
 msgstr "上下文大小必须为正数。"
 
-#: src/widgets/options_panel.py:340
+#: src/widgets/options_panel.py:362
 msgid "Max tokens must be -2, -1, or a nonnegative integer."
 msgstr "最大词元数必须为 -2、-1 或非负整数。"
 
-#: src/widgets/options_panel.ui:20
+#: src/widgets/options_panel.ui:21
 msgid "Tool Calling"
 msgstr "工具调用"
 
-#: src/widgets/options_panel.ui:26
+#: src/widgets/options_panel.ui:27
 msgid "Edit Tools…"
 msgstr "编辑工具…"
 
-#: src/widgets/options_panel.ui:44
+#: src/widgets/options_panel.ui:46
 msgid "Output:"
 msgstr "输出："
 
-#: src/widgets/options_panel.ui:56
+#: src/widgets/options_panel.ui:58
 msgid "Edit Schema…"
 msgstr "编辑 Schema…"
 
-#: src/widgets/options_panel.ui:63
+#: src/widgets/options_panel.ui:65
 msgid "Chat Settings…"
 msgstr "聊天设置…"
 
-#: src/widgets/options_panel.ui:65
+#: src/widgets/options_panel.ui:67
 msgid "Generation, Model Retention, and Diagnostics"
 msgstr "生成、模型保留和诊断"
 
@@ -2757,12 +2797,12 @@ msgstr "导入工具"
 
 #: src/widgets/tool_view.py:12
 msgid ""
-"Define an Ollama tools array. Results are supplied manually. Example prompt: "
-"Read calculator.py, fix add so it adds instead of subtracting, then run "
-"python3 -m unittest -v."
+"Define an Ollama tools array. Results are supplied manually. Example prompt: Read "
+"calculator.py, fix add so it adds instead of subtracting, then run python3 -m "
+"unittest -v."
 msgstr ""
-"定义 Ollama 工具数组。结果由手动提供。示例提示词：读取 calculator.py，修复 "
-"add，使其执行加法而非减法，然后运行 python3 -m unittest -v。"
+"定义 Ollama 工具数组。结果由手动提供。示例提示词：读取 calculator.py，修复 add，使其执行加法而非减法，然后运行 python3 -m "
+"unittest -v。"
 
 #: src/widgets/tool_view.py:13
 msgid "Example"
@@ -2840,8 +2880,8 @@ msgstr "模拟工具结果"
 
 #: src/widgets/tool_view.py:105
 msgid ""
-"Enter the result to send to the model. Text, JSON, and empty results are "
-"accepted. No tool is executed."
+"Enter the result to send to the model. Text, JSON, and empty results are accepted. No"
+" tool is executed."
 msgstr "输入要发送给模型的结果。支持文本、JSON 和空结果。不会执行任何工具。"
 
 #: src/widgets/tool_view.py:106
@@ -2866,10 +2906,9 @@ msgstr "优化提取"
 
 #: src/widgets/url_import.py:55
 msgid ""
-"If the preview includes navigation or misses the article, select the page "
-"region to extract using a CSS selector."
-msgstr ""
-"如果预览包含导航内容或缺少正文，请使用 CSS 选择器指定要提取的页面区域。"
+"If the preview includes navigation or misses the article, select the page region to "
+"extract using a CSS selector."
+msgstr "如果预览包含导航内容或缺少正文，请使用 CSS 选择器指定要提取的页面区域。"
 
 #: src/widgets/url_import.py:56
 msgid "CSS selector (optional)"
@@ -2921,9 +2960,7 @@ msgid "Save or skip reviewed pages to make room for queued downloads."
 msgstr "保存或跳过已检查的页面，为排队中的下载腾出空间。"
 
 #: src/widgets/url_import.py:129
-msgid ""
-"Saved documents build embeddings in the background. Closing discards unsaved "
-"previews."
+msgid "Saved documents build embeddings in the background. Closing discards unsaved previews."
 msgstr "已保存文档的嵌入将在后台构建。关闭会丢弃未保存的预览。"
 
 #: src/widgets/url_import.py:153
@@ -2958,12 +2995,10 @@ msgstr "替换文档并重建？"
 #: src/widgets/url_import.py:333
 #, python-brace-format
 msgid ""
-"Replace “{0}” and rebuild {1} embedding indexes? Saved chat answers keep "
-"their original passages. Affected collections cannot search this content "
-"until rebuilding succeeds."
-msgstr ""
-"替换“{0}”并重建 {1} 个嵌入索引？已保存的聊天回复将保留原始片段。在重建成功之"
-"前，受影响的集合无法搜索此内容。"
+"Replace “{0}” and rebuild {1} embedding indexes? Saved chat answers keep their "
+"original passages. Affected collections cannot search this content until rebuilding "
+"succeeds."
+msgstr "替换“{0}”并重建 {1} 个嵌入索引？已保存的聊天回复将保留原始片段。在重建成功之前，受影响的集合无法搜索此内容。"
 
 #: src/widgets/url_import.py:334
 msgid "None"
@@ -3076,3 +3111,6 @@ msgstr "键盘快捷键(_K)"
 #: src/window.ui:146
 msgid "_About Gnollama"
 msgstr "关于 Gnollama(_A)"
+
+#~ msgid "Fetching version..."
+#~ msgstr "正在获取版本…"

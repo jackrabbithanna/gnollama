@@ -4,9 +4,9 @@
 # Translated and reviewed with AI assistance, 2026.
 msgid ""
 msgstr ""
-"Project-Id-Version: gnollama 0.13.0\n"
+"Project-Id-Version: gnollama 0.14.0\n"
 "Report-Msgid-Bugs-To: https://github.com/jackrabbithanna/gnollama/issues\n"
-"POT-Creation-Date: 2026-09-10 17:08-0600\n"
+"POT-Creation-Date: 2026-09-10 20:09-0600\n"
 "PO-Revision-Date: 2026-09-10 00:00+0000\n"
 "Last-Translator: AI-assisted translation\n"
 "Language: el\n"
@@ -93,6 +93,26 @@ msgid "Ollama chat with code highlighting"
 msgstr "Συνομιλία Ollama με επισήμανση κώδικα"
 
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:53
+msgid "Connect directly to Ollama Cloud from Chat and Response tabs."
+msgstr "Συνδεθείτε απευθείας στο Ollama Cloud από τις καρτέλες Συνομιλία και Απόκριση."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:54
+msgid ""
+"Store each host's API key in the desktop keyring, with session-only use when the "
+"keyring is unavailable."
+msgstr ""
+"Αποθηκεύστε το κλειδί API κάθε διακομιστή στην κλειδοθήκη της επιφάνειας εργασίας, με"
+" χρήση μόνο για τη συνεδρία όταν η κλειδοθήκη δεν είναι διαθέσιμη."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:55
+msgid ""
+"Browse cloud models with controls adapted to the service, and use local knowledge "
+"sources in cloud chats."
+msgstr ""
+"Περιηγηθείτε σε μοντέλα νέφους με χειριστήρια προσαρμοσμένα στην υπηρεσία και "
+"χρησιμοποιήστε τοπικές πηγές γνώσης στις συνομιλίες νέφους."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:60
 msgid ""
 "Add a Knowledge Library for text and PDF imports, local embedding indexes, and "
 "source-grounded chats."
@@ -100,7 +120,7 @@ msgstr ""
 "Προσθήκη βιβλιοθήκης γνώσεων για εισαγωγή κειμένου και PDF, τοπικά ευρετήρια "
 "ενσωματώσεων και συνομιλίες βασισμένες σε πηγές."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:55
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:62
 msgid ""
 "Start with knowledge collections and add text, files, or URLs with explicit "
 "destinations and guided previews."
@@ -108,7 +128,7 @@ msgstr ""
 "Ξεκινήστε με συλλογές γνώσεων και προσθέστε κείμενο, αρχεία ή URL με σαφείς "
 "προορισμούς και καθοδηγούμενες προεπισκοπήσεις."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:56
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:63
 msgid ""
 "Choose collections before search settings, and use adaptive chat settings with "
 "clearer controls and feedback."
@@ -116,13 +136,13 @@ msgstr ""
 "Επιλέξτε συλλογές πριν από τις ρυθμίσεις αναζήτησης και χρησιμοποιήστε "
 "προσαρμοζόμενες ρυθμίσεις συνομιλίας με σαφέστερα στοιχεία ελέγχου και μηνύματα."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:57
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:64
 msgid "Create and compare embeddings, inspect chunks and vectors, and test semantic searches."
 msgstr ""
 "Δημιουργήστε και συγκρίνετε ενσωματώσεις, εξετάστε τμήματα και διανύσματα και "
 "δοκιμάστε σημασιολογικές αναζητήσεις."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:58
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:65
 msgid ""
 "Select documents or chunks for chats, with independent embedding hosts and saved "
 "source passages."
@@ -130,7 +150,7 @@ msgstr ""
 "Επιλέξτε έγγραφα ή τμήματα για συνομιλίες, με ανεξάρτητους διακομιστές ενσωματώσεων "
 "και αποθηκευμένα αποσπάσματα πηγών."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:59
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:66
 msgid ""
 "Warn about stored embeddings when deleting models, with optional vector cleanup that "
 "retains source text."
@@ -138,7 +158,7 @@ msgstr ""
 "Προειδοποίηση για αποθηκευμένες ενσωματώσεις κατά τη διαγραφή μοντέλων, με "
 "προαιρετική εκκαθάριση διανυσμάτων που διατηρεί το αρχικό κείμενο."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:60
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:67
 msgid ""
 "Search with sqlite-vec, automatically migrate existing vectors with a database "
 "backup, and use the Qwen3 retrieval preset."
@@ -146,7 +166,7 @@ msgstr ""
 "Αναζητήστε με sqlite-vec, μεταφέρετε αυτόματα τα υπάρχοντα διανύσματα με αντίγραφο "
 "ασφαλείας της βάσης δεδομένων και χρησιμοποιήστε την προρύθμιση ανάκτησης Qwen3."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:61
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:68
 msgid ""
 "Organize documents into collections with shared embedding settings, automatic builds,"
 " and live collection selection in chats."
@@ -154,7 +174,7 @@ msgstr ""
 "Οργανώστε έγγραφα σε συλλογές με κοινές ρυθμίσεις ενσωματώσεων, αυτόματη δημιουργία "
 "και άμεση επιλογή συλλογών στις συνομιλίες."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:62
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:69
 msgid ""
 "Choose collections as chat sources and compare cosine similarity, Euclidean distance,"
 " or Manhattan distance with appropriate search cutoffs."
@@ -162,7 +182,7 @@ msgstr ""
 "Επιλέξτε συλλογές ως πηγές συνομιλίας και συγκρίνετε ομοιότητα συνημιτόνου, "
 "ευκλείδεια απόσταση ή απόσταση Μανχάταν με κατάλληλα όρια αναζήτησης."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:63
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:70
 msgid ""
 "Hide embedding-only models from Chat and Response model selection while keeping them "
 "available in Knowledge and Manage Models."
@@ -170,7 +190,7 @@ msgstr ""
 "Απόκρυψη μοντέλων μόνο για ενσωματώσεις από την επιλογή μοντέλων συνομιλίας και "
 "απάντησης, διατηρώντας τα διαθέσιμα στις Γνώσεις και στη Διαχείριση μοντέλων."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:64
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:71
 msgid ""
 "Import batches of URLs into collections with main-content extraction, CSS selectors, "
 "editable previews, and source links in chats."
@@ -178,7 +198,7 @@ msgstr ""
 "Εισαγάγετε ομάδες URL σε συλλογές με εξαγωγή κύριου περιεχομένου, επιλογείς CSS, "
 "επεξεργάσιμες προεπισκοπήσεις και συνδέσμους πηγών στις συνομιλίες."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:65
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:72
 msgid ""
 "Review changed web documents before replacing their text and rebuilding all affected "
 "embedding indexes."
@@ -202,11 +222,11 @@ msgstr "Στατιστικά απάντησης"
 msgid "Earlier images were omitted from the text-only request."
 msgstr "Οι προηγούμενες εικόνες παραλείφθηκαν από το αίτημα μόνο κειμένου."
 
-#: src/bubbles.py:125 src/knowledge.py:300
+#: src/bubbles.py:125 src/knowledge.py:301
 msgid "Stopped"
 msgstr "Διακόπηκε"
 
-#: src/bubbles.py:125 src/knowledge.py:300
+#: src/bubbles.py:125 src/knowledge.py:301
 msgid "Failed"
 msgstr "Απέτυχε"
 
@@ -216,7 +236,7 @@ msgid "Logprobs"
 msgstr "Λογαριθμικές πιθανότητες"
 
 #: src/bubbles.py:183 src/model_manager.py:22 src/model_manager.py:24
-#: src/model_manager.py:28
+#: src/model_manager.py:28 src/model_manager.py:312
 msgid "Unavailable"
 msgstr "Μη διαθέσιμο"
 
@@ -269,7 +289,7 @@ msgstr "Αιτία τερματισμού: {0}"
 msgid "A document was deleted. Choose documents again."
 msgstr "Ένα έγγραφο διαγράφηκε. Επιλέξτε ξανά έγγραφα."
 
-#: src/collections_store.py:107 src/knowledge.py:357
+#: src/collections_store.py:107 src/knowledge.py:358
 msgid "Enter a collection name."
 msgstr "Εισαγάγετε όνομα συλλογής."
 
@@ -277,7 +297,7 @@ msgstr "Εισαγάγετε όνομα συλλογής."
 msgid "Choose a model with the collection’s original digest."
 msgstr "Επιλέξτε μοντέλο με το αρχικό ψηφιακό αποτύπωμα της συλλογής."
 
-#: src/collections_store.py:141 src/knowledge.py:390
+#: src/collections_store.py:141 src/knowledge.py:391
 msgid "The collection was deleted."
 msgstr "Η συλλογή διαγράφηκε."
 
@@ -302,26 +322,52 @@ msgstr ""
 "Η συλλογή «{0}» δεν είναι έτοιμη. Δημιουργήστε τις ενσωματώσεις που λείπουν ή "
 "δοκιμάστε ξανά τα έγγραφα που απέτυχαν: {1}"
 
-#: src/database.py:75
+#: src/credentials.py:27
+msgid "Enter a valid API key."
+msgstr "Εισαγάγετε ένα έγκυρο κλειδί API."
+
+#: src/credentials.py:51
+msgid "Could not access the keyring. Edit this host to retry or enter a session-only key."
+msgstr ""
+"Δεν ήταν δυνατή η πρόσβαση στην κλειδοθήκη. Επεξεργαστείτε αυτόν τον διακομιστή για "
+"να δοκιμάσετε ξανά ή να εισαγάγετε κλειδί μόνο για αυτήν τη συνεδρία."
+
+#: src/credentials.py:53 src/storage.py:134
+msgid "An API key is required. Edit this host to enter one."
+msgstr "Απαιτείται κλειδί API. Επεξεργαστείτε αυτόν τον διακομιστή για να εισαγάγετε ένα."
+
+#: src/credentials.py:66
+msgid "Could not save the API key in the keyring. Retry or use it for this session."
+msgstr ""
+"Δεν ήταν δυνατή η αποθήκευση του κλειδιού API στην κλειδοθήκη. Δοκιμάστε ξανά ή "
+"χρησιμοποιήστε το μόνο για αυτήν τη συνεδρία."
+
+#: src/credentials.py:78 src/credentials.py:80
+msgid "Could not remove the saved API key. Unlock the keyring and retry."
+msgstr ""
+"Δεν ήταν δυνατή η αφαίρεση του αποθηκευμένου κλειδιού API. Ξεκλειδώστε την κλειδοθήκη"
+" και δοκιμάστε ξανά."
+
+#: src/database.py:80
 msgid "This database was created by a newer Gnollama version. Update Gnollama to open it."
 msgstr ""
 "Αυτή η βάση δεδομένων δημιουργήθηκε από νεότερη έκδοση του Gnollama. Ενημερώστε το "
 "Gnollama για να την ανοίξετε."
 
-#: src/database.py:82
+#: src/database.py:87
 msgid "Backing up the database…"
 msgstr "Δημιουργία αντιγράφου ασφαλείας της βάσης δεδομένων…"
 
-#: src/database.py:191
+#: src/database.py:196
 msgid "This database requires a newer Gnollama version."
 msgstr "Αυτή η βάση δεδομένων απαιτεί νεότερη έκδοση του Gnollama."
 
-#: src/database.py:210
+#: src/database.py:215
 #, python-brace-format
 msgid "Upgrading the database to version {0}…"
 msgstr "Αναβάθμιση της βάσης δεδομένων στην έκδοση {0}…"
 
-#: src/host_edit_dialog.ui:6 src/host_manager.py:171 src/model_manager.py:366
+#: src/host_edit_dialog.ui:14 src/host_manager.py:266 src/model_manager.py:394
 #: src/pull_model_dialog.ui:17 src/widgets/knowledge_view.py:1111
 #: src/widgets/knowledge_view.py:1121 src/widgets/knowledge_view.py:1250
 #: src/widgets/knowledge_view.py:1293 src/widgets/knowledge_view.py:1337
@@ -330,67 +376,108 @@ msgstr "Αναβάθμιση της βάσης δεδομένων στην έκ�
 msgid "Cancel"
 msgstr "Ακύρωση"
 
-#: src/host_edit_dialog.ui:7 src/widgets/knowledge_view.py:1112
+#: src/host_edit_dialog.ui:19 src/widgets/knowledge_view.py:1112
 #: src/widgets/knowledge_view.py:1145 src/widgets/knowledge_view.py:1338 src/window.py:350
 msgid "Save"
 msgstr "Αποθήκευση"
 
-#: src/host_edit_dialog.ui:21 src/model_manager.py:610
+#: src/host_edit_dialog.ui:39
+msgid "Host type"
+msgstr "Τύπος διακομιστή"
+
+#: src/host_edit_dialog.ui:47 src/model_manager.py:638
 msgid "Name"
 msgstr "Όνομα"
 
-#: src/host_edit_dialog.ui:28
+#: src/host_edit_dialog.ui:54
 msgid "For example: Local Ollama"
 msgstr "Για παράδειγμα: Τοπικό Ollama"
 
-#: src/host_edit_dialog.ui:33
+#: src/host_edit_dialog.ui:59
 msgid "Server address"
 msgstr "Διεύθυνση διακομιστή"
 
-#: src/host_edit_dialog.ui:45
+#: src/host_edit_dialog.ui:71
 msgid "Set as default host"
 msgstr "Ορισμός ως προεπιλεγμένου διακομιστή"
 
-#: src/host_manager.py:19
+#: src/host_manager.py:24
 msgid "Edit Host"
 msgstr "Επεξεργασία διακομιστή"
 
-#: src/host_manager.py:19 src/host_manager.ui:23
+#: src/host_manager.py:24 src/host_manager.ui:23
 msgid "Add Host"
 msgstr "Προσθήκη διακομιστή"
 
-#: src/host_manager.py:35
+#: src/host_manager.py:30
+msgid "Ollama Server"
+msgstr "Διακομιστής Ollama"
+
+#: src/host_manager.py:30 src/host_manager.py:72 src/model_manager.py:312
+msgid "Ollama Cloud"
+msgstr "Ollama Cloud"
+
+#: src/host_manager.py:34
+msgid "API key"
+msgstr "Κλειδί API"
+
+#: src/host_manager.py:36
+msgid "Leave blank to keep the existing key."
+msgstr "Αφήστε κενό για να διατηρήσετε το υπάρχον κλειδί."
+
+#: src/host_manager.py:37
+msgid "Stored securely in your desktop keyring."
+msgstr "Αποθηκεύεται με ασφάλεια στην κλειδοθήκη της επιφάνειας εργασίας."
+
+#: src/host_manager.py:38
+msgid "Create an API key"
+msgstr "Δημιουργία κλειδιού API"
+
+#: src/host_manager.py:44
+msgid "Use for This Session"
+msgstr "Χρήση για αυτήν τη συνεδρία"
+
+#: src/host_manager.py:98 src/storage.py:124
 msgid "Enter a name for this server."
 msgstr "Εισαγάγετε όνομα για αυτόν τον διακομιστή."
 
-#: src/host_manager.py:78
+#: src/host_manager.py:149
 msgid "Default"
 msgstr "Προεπιλογή"
 
-#: src/host_manager.py:83 src/host_manager.py:87
+#: src/host_manager.py:154 src/host_manager.py:158
 msgid "Test Connection"
 msgstr "Έλεγχος σύνδεσης"
 
-#: src/host_manager.py:92
+#: src/host_manager.py:163
 msgid "Edit Server"
 msgstr "Επεξεργασία διακομιστή"
 
-#: src/host_manager.py:98 src/host_manager.py:168
+#: src/host_manager.py:169 src/host_manager.py:263
 msgid "Delete Host"
 msgstr "Διαγραφή διακομιστή"
 
-#: src/host_manager.py:112
-msgid "Fetching version..."
-msgstr "Ανάκτηση έκδοσης..."
+#: src/host_manager.py:183
+msgid "Checking connection…"
+msgstr "Έλεγχος σύνδεσης…"
 
-#: src/host_manager.py:114 src/main.py:63 src/model_manager.py:340 src/model_manager.py:601
-#: src/startup.py:23 src/widgets/json_view.py:230 src/widgets/knowledge_import.py:51
-#: src/widgets/knowledge_view.py:756 src/widgets/knowledge_view.py:909
-#: src/widgets/knowledge_view.py:1271
+#: src/host_manager.py:185 src/host_manager.py:277 src/main.py:63 src/model_manager.py:368
+#: src/model_manager.py:629 src/startup.py:23 src/widgets/json_view.py:230
+#: src/widgets/knowledge_import.py:51 src/widgets/knowledge_view.py:756
+#: src/widgets/knowledge_view.py:909 src/widgets/knowledge_view.py:1271
 msgid "Close"
 msgstr "Κλείσιμο"
 
-#: src/host_manager.py:124
+#: src/host_manager.py:196
+#, python-brace-format
+msgid ""
+"Ollama Cloud is reachable. Available models: {0}\n"
+"Your API key will be checked when you generate a response."
+msgstr ""
+"Το Ollama Cloud είναι προσβάσιμο. Διαθέσιμα μοντέλα: {0}\n"
+"Το κλειδί API θα ελεγχθεί όταν δημιουργήσετε μια απόκριση."
+
+#: src/host_manager.py:199
 #, python-brace-format
 msgid ""
 "Connected\n"
@@ -399,7 +486,7 @@ msgstr ""
 "Συνδέθηκε\n"
 "Έκδοση Ollama: {0}"
 
-#: src/host_manager.py:126
+#: src/host_manager.py:201
 #, python-brace-format
 msgid ""
 "Connection failed\n"
@@ -408,14 +495,18 @@ msgstr ""
 "Αποτυχία σύνδεσης\n"
 "{0}"
 
-#: src/host_manager.py:169 src/model_manager.py:352
+#: src/host_manager.py:264 src/model_manager.py:380
 #, python-brace-format
 msgid "Are you sure you want to delete {0}?"
 msgstr "Θέλετε σίγουρα να διαγράψετε το {0};"
 
-#: src/host_manager.py:172 src/model_manager.py:367 src/widgets/knowledge_view.py:1359
+#: src/host_manager.py:267 src/model_manager.py:395 src/widgets/knowledge_view.py:1359
 msgid "Delete"
 msgstr "Διαγραφή"
+
+#: src/host_manager.py:276 src/model_manager.py:418
+msgid "Delete Failed"
+msgstr "Αποτυχία διαγραφής"
 
 #: src/host_manager.ui:6 src/host_manager.ui:17
 msgid "Manage Hosts"
@@ -538,114 +629,114 @@ msgstr "Το όριο πηγών πρέπει να είναι από 256 έως 
 msgid "Wait for the model operation to finish."
 msgstr "Περιμένετε να ολοκληρωθεί η λειτουργία του μοντέλου."
 
-#: src/knowledge.py:262
+#: src/knowledge.py:263
 msgid "The embedding host was removed. Choose a configured host before continuing."
 msgstr "Ο διακομιστής ενσωματώσεων αφαιρέθηκε. Επιλέξτε ρυθμισμένο διακομιστή πριν συνεχίσετε."
 
-#: src/knowledge.py:268 src/widgets/knowledge_import.py:146 src/widgets/url_import.py:100
+#: src/knowledge.py:269 src/widgets/knowledge_import.py:146 src/widgets/url_import.py:100
 #: src/widgets/url_import.py:113
 msgid "Queued"
 msgstr "Σε αναμονή"
 
-#: src/knowledge.py:272
+#: src/knowledge.py:273
 msgid "The Knowledge Library is closing."
 msgstr "Η βιβλιοθήκη γνώσεων κλείνει."
 
-#: src/knowledge.py:278
+#: src/knowledge.py:279
 msgid "This document is being replaced. Retry the build when replacement finishes."
 msgstr ""
 "Αυτό το έγγραφο αντικαθίσταται. Δοκιμάστε ξανά τη δημιουργία όταν ολοκληρωθεί η "
 "αντικατάσταση."
 
-#: src/knowledge.py:300
+#: src/knowledge.py:301
 msgid "Complete"
 msgstr "Ολοκληρώθηκε"
 
-#: src/knowledge.py:317
+#: src/knowledge.py:318
 msgid "Wait for this document’s embedding builds to finish before replacing it."
 msgstr ""
 "Περιμένετε να ολοκληρωθεί η δημιουργία ενσωματώσεων αυτού του εγγράφου πριν το "
 "αντικαταστήσετε."
 
-#: src/knowledge.py:320
+#: src/knowledge.py:321
 msgid "Saving the web document…"
 msgstr "Αποθήκευση του εγγράφου ιστού…"
 
-#: src/knowledge.py:348
+#: src/knowledge.py:349
 msgid "Save web document"
 msgstr "Αποθήκευση εγγράφου ιστού"
 
-#: src/knowledge.py:369
+#: src/knowledge.py:370
 msgid "Create collection"
 msgstr "Δημιουργία συλλογής"
 
-#: src/knowledge.py:384
+#: src/knowledge.py:385
 #, python-brace-format
 msgid "Add document: {0}"
 msgstr "Προσθήκη εγγράφου: {0}"
 
-#: src/knowledge.py:392
+#: src/knowledge.py:393
 #, python-brace-format
 msgid "Prepare collection: {0}"
 msgstr "Προετοιμασία συλλογής: {0}"
 
-#: src/knowledge.py:399
+#: src/knowledge.py:400
 msgid "Reusing embeddings and preparing missing documents…"
 msgstr "Επαναχρησιμοποίηση ενσωματώσεων και προετοιμασία εγγράφων που λείπουν…"
 
-#: src/knowledge.py:416
+#: src/knowledge.py:417
 #, python-brace-format
 msgid "Create embeddings: {0}"
 msgstr "Δημιουργία ενσωματώσεων: {0}"
 
-#: src/knowledge.py:421
+#: src/knowledge.py:422
 msgid "Build was stopped before it started."
 msgstr "Η δημιουργία διακόπηκε πριν ξεκινήσει."
 
-#: src/knowledge.py:438
+#: src/knowledge.py:439
 msgid "The source document was deleted."
 msgstr "Το αρχικό έγγραφο διαγράφηκε."
 
-#: src/knowledge.py:443
+#: src/knowledge.py:444
 msgid "This index would exceed 100,000 chunks. Increase the chunk size or reduce overlap."
 msgstr ""
 "Αυτό το ευρετήριο θα υπερέβαινε τα 100.000 τμήματα. Αυξήστε το μέγεθος τμήματος ή "
 "μειώστε την επικάλυψη."
 
-#: src/knowledge.py:459
+#: src/knowledge.py:460
 #, python-brace-format
 msgid "Embedding chunks: {0} complete, {1} remaining"
 msgstr "Ενσωματώσεις τμημάτων: ολοκληρωμένα {0}, απομένουν {1}"
 
-#: src/knowledge.py:483
+#: src/knowledge.py:484
 msgid "The embedding input cannot fit. Shorten the document prefix or choose another model."
 msgstr ""
 "Το κείμενο εισόδου ενσωματώσεων δεν χωρά. Συντομεύστε το πρόθεμα εγγράφου ή επιλέξτε "
 "άλλο μοντέλο."
 
-#: src/knowledge.py:493
+#: src/knowledge.py:494
 msgid "The model returned a different vector dimension. Create a new configuration."
 msgstr "Το μοντέλο επέστρεψε διαφορετική διάσταση διανύσματος. Δημιουργήστε νέα διαμόρφωση."
 
-#: src/knowledge.py:508
+#: src/knowledge.py:509
 msgid "Create embeddings"
 msgstr "Δημιουργία ενσωματώσεων"
 
-#: src/knowledge.py:518
+#: src/knowledge.py:519
 msgid "This embedding configuration has no completed vectors."
 msgstr "Αυτή η διαμόρφωση ενσωματώσεων δεν περιέχει ολοκληρωμένα διανύσματα."
 
-#: src/knowledge.py:520 src/widgets/knowledge_view.py:659
+#: src/knowledge.py:521 src/widgets/knowledge_view.py:659
 msgid "Enter a search query."
 msgstr "Εισαγάγετε ερώτημα αναζήτησης."
 
-#: src/knowledge.py:530 src/knowledge_store.py:265
+#: src/knowledge.py:531 src/knowledge_store.py:265
 msgid "Query dimensions differ from the stored vectors. Rebuild the index."
 msgstr ""
 "Οι διαστάσεις του ερωτήματος διαφέρουν από τα αποθηκευμένα διανύσματα. "
 "Αναδημιουργήστε το ευρετήριο."
 
-#: src/knowledge.py:537
+#: src/knowledge.py:538
 msgid "No passages met the search criteria. Adjust the query, sources, or minimum similarity."
 msgstr ""
 "Κανένα απόσπασμα δεν πληροί τα κριτήρια αναζήτησης. Προσαρμόστε το ερώτημα, τις πηγές"
@@ -746,7 +837,7 @@ msgstr ""
 msgid "translator-credits"
 msgstr "Μετάφραση με τη βοήθεια τεχνητής νοημοσύνης"
 
-#: src/model_details_view.ui:6 src/model_manager.py:42 src/model_manager.py:291
+#: src/model_details_view.ui:6 src/model_manager.py:42 src/model_manager.py:318
 msgid "Model Details"
 msgstr "Λεπτομέρειες μοντέλου"
 
@@ -759,70 +850,78 @@ msgstr ""
 "Μνήμη: {0} · VRAM: {1}\n"
 "Συμφραζόμενα: {2} · Λήξη: {3}"
 
-#: src/model_manager.py:163 src/tab.py:162
+#: src/model_manager.py:168 src/tab.py:163
 msgid "No host configured."
 msgstr "Δεν έχει ρυθμιστεί διακομιστής."
 
-#: src/model_manager.py:168
+#: src/model_manager.py:173
 msgid "Loading running models…"
 msgstr "Φόρτωση μοντέλων σε εκτέλεση…"
 
-#: src/model_manager.py:172
+#: src/model_manager.py:177
 #, python-brace-format
 msgid "Could not refresh running models: {0}"
 msgstr "Αδυναμία ανανέωσης μοντέλων σε εκτέλεση: {0}"
 
-#: src/model_manager.py:188
+#: src/model_manager.py:193
 msgid "No models are loaded in memory."
 msgstr "Δεν υπάρχουν μοντέλα φορτωμένα στη μνήμη."
 
-#: src/model_manager.py:194 src/model_manager.py:207
+#: src/model_manager.py:199 src/model_manager.py:212
 msgid "Unload"
 msgstr "Αποφόρτωση"
 
-#: src/model_manager.py:195 src/model_manager.py:209
+#: src/model_manager.py:200 src/model_manager.py:214
 msgid "Release this model from memory; keep its downloaded files."
 msgstr "Αποδεσμεύστε αυτό το μοντέλο από τη μνήμη, διατηρώντας τα ληφθέντα αρχεία του."
 
-#: src/model_manager.py:207
+#: src/model_manager.py:212
 msgid "Unloading…"
 msgstr "Αποφόρτωση…"
 
-#: src/model_manager.py:208
+#: src/model_manager.py:213
 msgid "A chat or embedding job is using this model in Gnollama."
 msgstr "Μια συνομιλία ή εργασία ενσωματώσεων χρησιμοποιεί αυτό το μοντέλο στο Gnollama."
 
-#: src/model_manager.py:225
+#: src/model_manager.py:232
 msgid "Could not unload model"
 msgstr "Αδυναμία αποφόρτωσης μοντέλου"
 
-#: src/model_manager.py:265
+#: src/model_manager.py:273 src/model_manager.ui:90
+msgid "Available Models"
+msgstr "Διαθέσιμα μοντέλα"
+
+#: src/model_manager.py:273 src/model_manager.ui:80
+msgid "Installed"
+msgstr "Εγκατεστημένα"
+
+#: src/model_manager.py:286
 msgid "Connection Error"
 msgstr "Σφάλμα σύνδεσης"
 
-#: src/model_manager.py:298
+#: src/model_manager.py:325
 msgid "Delete Model"
 msgstr "Διαγραφή μοντέλου"
 
-#: src/model_manager.py:329
+#: src/model_manager.py:357
 msgid "Failed to fetch details"
 msgstr "Αποτυχία ανάκτησης λεπτομερειών"
 
-#: src/model_manager.py:349 src/model_manager.py:374 src/model_manager.py:377
+#: src/model_manager.py:377 src/model_manager.py:402 src/model_manager.py:405
 msgid "Model Is Busy"
 msgstr "Το μοντέλο είναι απασχολημένο"
 
-#: src/model_manager.py:349 src/model_manager.py:377
+#: src/model_manager.py:377 src/model_manager.py:405
 msgid "Wait for active chats and embedding jobs before deleting this model."
 msgstr ""
 "Περιμένετε τις ενεργές συνομιλίες και εργασίες ενσωματώσεων πριν διαγράψετε αυτό το "
 "μοντέλο."
 
-#: src/model_manager.py:353
+#: src/model_manager.py:381
 msgid "Also delete matching vectors; keep source text"
 msgstr "Διαγραφή και των αντίστοιχων διανυσμάτων· διατήρηση αρχικού κειμένου"
 
-#: src/model_manager.py:355
+#: src/model_manager.py:383
 #, python-brace-format
 msgid ""
 "Stored data using this model: {0} documents, {1} indexes, {2} vectors. Kept vectors "
@@ -832,7 +931,7 @@ msgstr ""
 "διανύσματα {2}. Τα διανύσματα που διατηρούνται μπορούν να επαναχρησιμοποιηθούν με το "
 "ίδιο ψηφιακό αποτύπωμα μοντέλου σε συμβατό διακομιστή."
 
-#: src/model_manager.py:357
+#: src/model_manager.py:385
 #, python-brace-format
 msgid ""
 "Collections using this configuration: {0}. Deleting vectors keeps their documents and"
@@ -842,106 +941,102 @@ msgstr ""
 "τα έγγραφα και τη συμμετοχή τους στις συλλογές, αλλά οι ενσωματώσεις τους πρέπει να "
 "αναδημιουργηθούν πριν από την αναζήτηση."
 
-#: src/model_manager.py:360
+#: src/model_manager.py:388
 msgid "Delete Model?"
 msgstr "Διαγραφή μοντέλου;"
 
-#: src/model_manager.py:374
+#: src/model_manager.py:402
 msgid "Wait for all indexing jobs using this model before deleting its vectors."
 msgstr ""
 "Περιμένετε όλες τις εργασίες ευρετηρίου που χρησιμοποιούν αυτό το μοντέλο πριν "
 "διαγράψετε τα διανύσματά του."
 
-#: src/model_manager.py:390
-msgid "Delete Failed"
-msgstr "Αποτυχία διαγραφής"
-
-#: src/model_manager.py:545
+#: src/model_manager.py:573
 msgid "Starting download…"
 msgstr "Έναρξη λήψης…"
 
-#: src/model_manager.py:570
+#: src/model_manager.py:598
 msgid "Error"
 msgstr "Σφάλμα"
 
-#: src/model_manager.py:571
+#: src/model_manager.py:599
 msgid "Error occurred."
 msgstr "Παρουσιάστηκε σφάλμα."
 
-#: src/model_manager.py:590
+#: src/model_manager.py:618
 #, python-brace-format
 msgid "{0:.0f}%"
 msgstr "{0:.0f}%"
 
-#: src/model_manager.py:593
+#: src/model_manager.py:621
 msgid "Download complete"
 msgstr "Η λήψη ολοκληρώθηκε"
 
-#: src/model_manager.py:611 src/widgets/chat_input.ui:27
+#: src/model_manager.py:639 src/widgets/chat_input.ui:27
 msgid "Model"
 msgstr "Μοντέλο"
 
-#: src/model_manager.py:612
+#: src/model_manager.py:640
 msgid "Remote Model"
 msgstr "Απομακρυσμένο μοντέλο"
 
-#: src/model_manager.py:613
+#: src/model_manager.py:641
 msgid "Remote Host"
 msgstr "Απομακρυσμένος διακομιστής"
 
-#: src/model_manager.py:614
+#: src/model_manager.py:642
 msgid "Modified At"
 msgstr "Τελευταία τροποποίηση"
 
-#: src/model_manager.py:615
+#: src/model_manager.py:643
 msgid "Size"
 msgstr "Μέγεθος"
 
-#: src/model_manager.py:616
+#: src/model_manager.py:644
 msgid "Digest"
 msgstr "Ψηφιακό αποτύπωμα"
 
-#: src/model_manager.py:617
+#: src/model_manager.py:645
 msgid "Detail: Format"
 msgstr "Λεπτομέρεια: Μορφή"
 
-#: src/model_manager.py:618
+#: src/model_manager.py:646
 msgid "Detail: Family"
 msgstr "Λεπτομέρεια: Οικογένεια"
 
-#: src/model_manager.py:619
+#: src/model_manager.py:647
 msgid "Detail: Families"
 msgstr "Λεπτομέρεια: Οικογένειες"
 
-#: src/model_manager.py:620
+#: src/model_manager.py:648
 msgid "Detail: Parameter Size"
 msgstr "Λεπτομέρεια: Πλήθος παραμέτρων"
 
-#: src/model_manager.py:621
+#: src/model_manager.py:649
 msgid "Detail: Quantization Level"
 msgstr "Λεπτομέρεια: Επίπεδο κβαντισμού"
 
-#: src/model_manager.py:622
+#: src/model_manager.py:650
 msgid "Parameters"
 msgstr "Παράμετροι"
 
-#: src/model_manager.py:623
+#: src/model_manager.py:651
 msgid "Capabilities"
 msgstr "Δυνατότητες"
 
-#: src/model_manager.py:624
+#: src/model_manager.py:652
 msgid "Template"
 msgstr "Πρότυπο προτροπής"
 
-#: src/model_manager.py:625
+#: src/model_manager.py:653
 msgid "License"
 msgstr "Άδεια χρήσης"
 
-#: src/model_manager.py:626
+#: src/model_manager.py:654
 msgid "Modelfile"
 msgstr "Modelfile"
 
-#: src/model_manager.py:627
+#: src/model_manager.py:655
 msgid "Model Info"
 msgstr "Πληροφορίες μοντέλου"
 
@@ -961,14 +1056,6 @@ msgstr "Ανανέωση λίστας μοντέλων"
 msgid "Download Model…"
 msgstr "Λήψη μοντέλου…"
 
-#: src/model_manager.ui:80
-msgid "Installed"
-msgstr "Εγκατεστημένα"
-
-#: src/model_manager.ui:90
-msgid "Available Models"
-msgstr "Διαθέσιμα μοντέλα"
-
 #: src/model_manager.ui:102
 msgid "Running"
 msgstr "Σε εκτέλεση"
@@ -977,59 +1064,79 @@ msgstr "Σε εκτέλεση"
 msgid "Models in Memory"
 msgstr "Μοντέλα στη μνήμη"
 
-#: src/ollama.py:52
+#: src/ollama.py:71 src/storage.py:127
+msgid "Ollama Cloud requires https://ollama.com."
+msgstr "Το Ollama Cloud απαιτεί https://ollama.com."
+
+#: src/ollama.py:80
 msgid "Enter a valid http:// or https:// Ollama host URL."
 msgstr "Εισαγάγετε έγκυρο URL διακομιστή Ollama με http:// ή https://."
 
-#: src/ollama.py:61 src/ollama.py:84
+#: src/ollama.py:89 src/ollama.py:104 src/ollama.py:137
 msgid "Request stopped"
 msgstr "Το αίτημα διακόπηκε"
 
-#: src/ollama.py:110
+#: src/ollama.py:98
+msgid "This operation is unavailable for Ollama Cloud."
+msgstr "Αυτή η λειτουργία δεν είναι διαθέσιμη για το Ollama Cloud."
+
+#: src/ollama.py:124
+msgid ""
+"Ollama Cloud rejected the API key or account access. Edit this host to check its API "
+"key."
+msgstr ""
+"Το Ollama Cloud απέρριψε το κλειδί API ή την πρόσβαση στον λογαριασμό. Επεξεργαστείτε"
+" αυτόν τον διακομιστή για να ελέγξετε το κλειδί API του."
+
+#: src/ollama.py:126
+msgid "Ollama Cloud usage or rate limit reached. Try again later."
+msgstr "Συμπληρώθηκε το όριο χρήσης ή αιτημάτων του Ollama Cloud. Δοκιμάστε ξανά αργότερα."
+
+#: src/ollama.py:163
 msgid "Invalid JSON received from Ollama"
 msgstr "Λήφθηκε μη έγκυρο JSON από το Ollama"
 
-#: src/ollama.py:112
+#: src/ollama.py:165
 msgid "Expected a JSON object from Ollama"
 msgstr "Αναμενόταν αντικείμενο JSON από το Ollama"
 
-#: src/ollama.py:162
+#: src/ollama.py:221
 msgid "Enter nonempty text to embed."
 msgstr "Εισαγάγετε μη κενό κείμενο για ενσωμάτωση."
 
-#: src/ollama.py:166
+#: src/ollama.py:225
 msgid "Embedding dimensions must be a positive integer."
 msgstr "Το πλήθος διαστάσεων ενσωματώσεων πρέπει να είναι θετικός ακέραιος."
 
-#: src/ollama.py:173
+#: src/ollama.py:232
 msgid "The server returned an incorrect number of embeddings."
 msgstr "Ο διακομιστής επέστρεψε λανθασμένο πλήθος ενσωματώσεων."
 
-#: src/ollama.py:178
+#: src/ollama.py:237
 msgid "The server returned an invalid embedding vector."
 msgstr "Ο διακομιστής επέστρεψε μη έγκυρο διάνυσμα ενσωμάτωσης."
 
-#: src/ollama.py:181
+#: src/ollama.py:240
 msgid "Embedding dimensions do not match, or a vector is zero."
 msgstr "Οι διαστάσεις ενσωματώσεων δεν ταιριάζουν ή κάποιο διάνυσμα είναι μηδενικό."
 
-#: src/ollama.py:210
+#: src/ollama.py:269
 msgid "Model pull ended before completion"
 msgstr "Η λήψη μοντέλου τερματίστηκε πριν ολοκληρωθεί"
 
-#: src/ollama.py:216
+#: src/ollama.py:275
 msgid "Invalid output format"
 msgstr "Μη έγκυρη μορφή εξόδου"
 
-#: src/ollama.py:220
+#: src/ollama.py:279
 msgid "Keep-alive must be a duration in seconds, 0, or -1"
 msgstr "Η διάρκεια παραμονής στη μνήμη πρέπει να είναι χρόνος σε δευτερόλεπτα, 0 ή -1"
 
-#: src/ollama.py:224
+#: src/ollama.py:283
 msgid "Invalid thinking setting"
 msgstr "Μη έγκυρη ρύθμιση συλλογισμού"
 
-#: src/ollama.py:230
+#: src/ollama.py:289
 msgid "Top logprobs must be between 0 and 20"
 msgstr "Το πλήθος κορυφαίων λογαριθμικών πιθανοτήτων πρέπει να είναι από 0 έως 20"
 
@@ -1061,7 +1168,7 @@ msgstr "Λεπτομέρειες λήψης"
 msgid "New Chat"
 msgstr "Νέα συνομιλία"
 
-#: src/session.py:167
+#: src/session.py:169
 msgid "There are no pending tool calls."
 msgstr "Δεν υπάρχουν εκκρεμείς κλήσεις εργαλείων."
 
@@ -1108,7 +1215,7 @@ msgstr "Εναλλαγή πλευρικής στήλης"
 msgid "Opening Gnollama"
 msgstr "Άνοιγμα του Gnollama"
 
-#: src/startup.py:20 src/tab.py:245 src/widgets/knowledge_import.py:88
+#: src/startup.py:20 src/tab.py:247 src/widgets/knowledge_import.py:88
 #: src/widgets/knowledge_view.py:1220 src/widgets/url_import.py:232 src/window.py:139
 msgid "Retry"
 msgstr "Επανάληψη"
@@ -1129,6 +1236,14 @@ msgstr "Αδυναμία ανοίγματος της βάσης δεδομένω
 #, python-brace-format
 msgid "Database backup: {0}"
 msgstr "Αντίγραφο ασφαλείας βάσης δεδομένων: {0}"
+
+#: src/storage.py:117
+msgid "This host was removed."
+msgstr "Αυτός ο διακομιστής αφαιρέθηκε."
+
+#: src/storage.py:122
+msgid "Invalid host type."
+msgstr "Μη έγκυρος τύπος διακομιστή."
 
 #: src/structured.py:18
 msgid "Non-finite numbers are not valid JSON."
@@ -1182,43 +1297,43 @@ msgstr "Νέα απάντηση"
 msgid "Chat"
 msgstr "Συνομιλία"
 
-#: src/tab.py:166
+#: src/tab.py:167
 msgid "Select an available model before sending."
 msgstr "Επιλέξτε διαθέσιμο μοντέλο πριν από την αποστολή."
 
-#: src/tab.py:169
+#: src/tab.py:170
 msgid "Wait for this model to finish unloading before sending."
 msgstr "Περιμένετε να ολοκληρωθεί η αποφόρτωση αυτού του μοντέλου πριν από την αποστολή."
 
-#: src/tab.py:174
+#: src/tab.py:175
 msgid "Wait for image support to be checked before sending."
 msgstr "Περιμένετε να ελεγχθεί η υποστήριξη εικόνων πριν από την αποστολή."
 
-#: src/tab.py:176 src/widgets/chat_input.py:112
+#: src/tab.py:177 src/widgets/chat_input.py:112
 msgid "Remove draft images or select a vision model to send."
 msgstr "Αφαιρέστε τις εικόνες από το πρόχειρο ή επιλέξτε μοντέλο όρασης για αποστολή."
 
-#: src/tab.py:218
+#: src/tab.py:220
 msgid "Retrieving sources…"
 msgstr "Ανάκτηση πηγών…"
 
-#: src/tab.py:243
+#: src/tab.py:245
 msgid "Could Not Retrieve Sources"
 msgstr "Αδυναμία ανάκτησης πηγών"
 
-#: src/tab.py:244
+#: src/tab.py:246
 msgid "Adjust Sources"
 msgstr "Προσαρμογή πηγών"
 
-#: src/tab.py:246
+#: src/tab.py:248
 msgid "Send Without Knowledge"
 msgstr "Αποστολή χωρίς γνώσεις"
 
-#: src/tab.py:247
+#: src/tab.py:249
 msgid "Keep Draft"
 msgstr "Διατήρηση προχείρου"
 
-#: src/tab.py:309
+#: src/tab.py:311
 msgid "Response ended before completion."
 msgstr "Η απάντηση τερματίστηκε πριν ολοκληρωθεί."
 
@@ -1514,24 +1629,28 @@ msgid "Checking chat models…"
 msgstr "Έλεγχος μοντέλων συνομιλίας…"
 
 #: src/widgets/chat_input.py:176
+msgid "No cloud models are available. Try refreshing later."
+msgstr "Δεν υπάρχουν διαθέσιμα μοντέλα νέφους. Δοκιμάστε ανανέωση αργότερα."
+
+#: src/widgets/chat_input.py:177
 msgid "No chat models found. Pull one in Manage Models, then refresh."
 msgstr ""
 "Δεν βρέθηκαν μοντέλα συνομιλίας. Κατεβάστε ένα από τη Διαχείριση μοντέλων και "
 "ανανεώστε."
 
-#: src/widgets/chat_input.py:246
+#: src/widgets/chat_input.py:247
 msgid "Select Images"
 msgstr "Επιλογή εικόνων"
 
-#: src/widgets/chat_input.py:250
+#: src/widgets/chat_input.py:251
 msgid "Images"
 msgstr "Εικόνες"
 
-#: src/widgets/chat_input.py:283 src/widgets/chat_input.ui:116
+#: src/widgets/chat_input.py:284 src/widgets/chat_input.ui:116
 msgid "No image selected"
 msgstr "Δεν επιλέχθηκε εικόνα"
 
-#: src/widgets/chat_input.py:289
+#: src/widgets/chat_input.py:290
 #, python-brace-format
 msgid "{0} image selected"
 msgid_plural "{0} images selected"
@@ -1579,7 +1698,7 @@ msgstr "Εφαρμογή"
 msgid "Content"
 msgstr "Περιεχόμενο"
 
-#: src/widgets/json_view.py:160 src/widgets/options_panel.py:41
+#: src/widgets/json_view.py:160 src/widgets/options_panel.py:42
 msgid "JSON Schema"
 msgstr "Σχήμα JSON"
 
@@ -2581,252 +2700,258 @@ msgstr ""
 "Επιλέξτε μοντέλο και εισαγάγετε μήνυμα. Επιλέξτε συλλογές γνώσεων για να κάνετε "
 "ερωτήσεις για τα έγγραφά σας."
 
-#: src/widgets/options_panel.py:41
+#: src/widgets/options_panel.py:42
 msgid "Text"
 msgstr "Κείμενο"
 
-#: src/widgets/options_panel.py:41
+#: src/widgets/options_panel.py:42
 msgid "JSON"
 msgstr "JSON"
 
-#: src/widgets/options_panel.py:43 src/widgets/options_panel.py:72
+#: src/widgets/options_panel.py:44 src/widgets/options_panel.py:83
 msgid "Server default"
 msgstr "Προεπιλογή διακομιστή"
 
-#: src/widgets/options_panel.py:43
+#: src/widgets/options_panel.py:44
 msgid "Unload after reply"
 msgstr "Αποφόρτωση μετά την απάντηση"
 
-#: src/widgets/options_panel.py:43
+#: src/widgets/options_panel.py:44
 msgid "Five minutes"
 msgstr "Πέντε λεπτά"
 
-#: src/widgets/options_panel.py:44
+#: src/widgets/options_panel.py:45
 msgid "Thirty minutes"
 msgstr "Τριάντα λεπτά"
 
-#: src/widgets/options_panel.py:44
+#: src/widgets/options_panel.py:45
 msgid "Indefinitely"
 msgstr "Επ’ αόριστον"
 
-#: src/widgets/options_panel.py:44
+#: src/widgets/options_panel.py:45
 msgid "Custom seconds"
 msgstr "Προσαρμοσμένα δευτερόλεπτα"
 
-#: src/widgets/options_panel.py:63
+#: src/widgets/options_panel.py:53
+msgid "Ollama Cloud uses text output and manages model retention automatically."
+msgstr ""
+"Το Ollama Cloud χρησιμοποιεί έξοδο κειμένου και διαχειρίζεται αυτόματα την παραμονή "
+"των μοντέλων στη μνήμη."
+
+#: src/widgets/options_panel.py:74
 msgid "Server"
 msgstr "Διακομιστής"
 
-#: src/widgets/options_panel.py:88
+#: src/widgets/options_panel.py:100
 msgid "System Instructions"
 msgstr "Οδηγίες συστήματος"
 
-#: src/widgets/options_panel.py:89
+#: src/widgets/options_panel.py:101
 msgid "System prompt"
 msgstr "Προτροπή συστήματος"
 
-#: src/widgets/options_panel.py:89
+#: src/widgets/options_panel.py:101
 msgid "Optional instructions applied to this conversation."
 msgstr "Προαιρετικές οδηγίες που εφαρμόζονται σε αυτή τη συνομιλία."
 
-#: src/widgets/options_panel.py:90
+#: src/widgets/options_panel.py:102
 msgid "Optional instructions"
 msgstr "Προαιρετικές οδηγίες"
 
-#: src/widgets/options_panel.py:91
+#: src/widgets/options_panel.py:103
 msgid "Generation Limits"
 msgstr "Όρια παραγωγής"
 
-#: src/widgets/options_panel.py:91
+#: src/widgets/options_panel.py:103
 msgid "Blank fields use the server’s defaults."
 msgstr "Τα κενά πεδία χρησιμοποιούν τις προεπιλογές του διακομιστή."
 
-#: src/widgets/options_panel.py:92
+#: src/widgets/options_panel.py:104
 msgid "Context size (tokens)"
 msgstr "Μέγεθος συμφραζομένων (token)"
 
-#: src/widgets/options_panel.py:92
+#: src/widgets/options_panel.py:104
 msgid "Maximum context available to the model; larger values need more memory."
 msgstr ""
 "Μέγιστο διαθέσιμο μέγεθος συμφραζομένων για το μοντέλο· υψηλότερες τιμές απαιτούν "
 "περισσότερη μνήμη."
 
-#: src/widgets/options_panel.py:93
+#: src/widgets/options_panel.py:105
 msgid "Maximum output tokens"
 msgstr "Μέγιστο πλήθος token εξόδου"
 
-#: src/widgets/options_panel.py:93
+#: src/widgets/options_panel.py:105
 msgid "Use −1 for unlimited output or −2 to fill the context."
 msgstr "Χρησιμοποιήστε −1 για απεριόριστη έξοδο ή −2 για να γεμίσετε τα συμφραζόμενα."
 
-#: src/widgets/options_panel.py:94
+#: src/widgets/options_panel.py:106
 msgid "Stop sequences"
 msgstr "Ακολουθίες διακοπής"
 
-#: src/widgets/options_panel.py:94
+#: src/widgets/options_panel.py:106
 msgid "Separate sequences with commas. Generation stops when one is produced."
 msgstr "Διαχωρίστε τις ακολουθίες με κόμματα. Η παραγωγή σταματά όταν παραχθεί μία από αυτές."
 
-#: src/widgets/options_panel.py:95
+#: src/widgets/options_panel.py:107
 msgid "Sampling"
 msgstr "Δειγματοληψία"
 
-#: src/widgets/options_panel.py:97
+#: src/widgets/options_panel.py:109
 msgid "Temperature"
 msgstr "Θερμοκρασία"
 
-#: src/widgets/options_panel.py:97
+#: src/widgets/options_panel.py:109
 msgid "Higher values increase variation; zero is more predictable."
 msgstr "Υψηλότερες τιμές αυξάνουν την ποικιλία· το μηδέν δίνει πιο προβλέψιμα αποτελέσματα."
 
-#: src/widgets/options_panel.py:98
+#: src/widgets/options_panel.py:110
 msgid "Seed"
 msgstr "Σπόρος"
 
-#: src/widgets/options_panel.py:98
+#: src/widgets/options_panel.py:110
 msgid "An integer used to initialize random sampling."
 msgstr "Ακέραιος που χρησιμοποιείται για την αρχικοποίηση της τυχαίας δειγματοληψίας."
 
-#: src/widgets/options_panel.py:99
+#: src/widgets/options_panel.py:111
 msgid "Top K"
 msgstr "Top K"
 
-#: src/widgets/options_panel.py:99
+#: src/widgets/options_panel.py:111
 msgid "Number of candidate tokens to consider."
 msgstr "Πλήθος υποψήφιων token που εξετάζονται."
 
-#: src/widgets/options_panel.py:100
+#: src/widgets/options_panel.py:112
 msgid "Top P"
 msgstr "Top P"
 
-#: src/widgets/options_panel.py:100
+#: src/widgets/options_panel.py:112
 msgid "Cumulative probability cutoff, between 0 and 1."
 msgstr "Όριο αθροιστικής πιθανότητας, από 0 έως 1."
 
-#: src/widgets/options_panel.py:101
+#: src/widgets/options_panel.py:113
 msgid "Min P"
 msgstr "Min P"
 
-#: src/widgets/options_panel.py:101
+#: src/widgets/options_panel.py:113
 msgid "Minimum relative token probability, between 0 and 1."
 msgstr "Ελάχιστη σχετική πιθανότητα token, από 0 έως 1."
 
-#: src/widgets/options_panel.py:103
+#: src/widgets/options_panel.py:115
 msgid "Model Retention"
 msgstr "Παραμονή μοντέλου στη μνήμη"
 
-#: src/widgets/options_panel.py:105
+#: src/widgets/options_panel.py:120
 msgid "Keep model loaded"
 msgstr "Διατήρηση μοντέλου φορτωμένου"
 
-#: src/widgets/options_panel.py:108
+#: src/widgets/options_panel.py:124
 msgid "Custom duration (seconds)"
 msgstr "Προσαρμοσμένη διάρκεια (δευτερόλεπτα)"
 
-#: src/widgets/options_panel.py:108 src/widgets/options_panel.py:165
+#: src/widgets/options_panel.py:124 src/widgets/options_panel.py:187
 msgid "Enter a positive whole number of seconds."
 msgstr "Εισαγάγετε θετικό ακέραιο αριθμό δευτερολέπτων."
 
-#: src/widgets/options_panel.py:110
+#: src/widgets/options_panel.py:126
 msgid "Diagnostics"
 msgstr "Διαγνωστικά"
 
-#: src/widgets/options_panel.py:111
+#: src/widgets/options_panel.py:128
 msgid "Show response statistics"
 msgstr "Εμφάνιση στατιστικών απαντήσεων"
 
-#: src/widgets/options_panel.py:112
+#: src/widgets/options_panel.py:131
 msgid "Return token probabilities (logprobs)"
 msgstr "Επιστροφή πιθανοτήτων token (logprobs)"
 
-#: src/widgets/options_panel.py:115
+#: src/widgets/options_panel.py:135
 msgid "Top logprobs"
 msgstr "Κορυφαίες λογαριθμικές πιθανότητες"
 
-#: src/widgets/options_panel.py:115
+#: src/widgets/options_panel.py:135
 msgid "Number of alternative token probabilities, from 0 to 20."
 msgstr "Πλήθος πιθανοτήτων εναλλακτικών token, από 0 έως 20."
 
-#: src/widgets/options_panel.py:132
+#: src/widgets/options_panel.py:152
 msgid "Chat Settings"
 msgstr "Ρυθμίσεις συνομιλίας"
 
-#: src/widgets/options_panel.py:135
+#: src/widgets/options_panel.py:155
 msgid "Done"
 msgstr "Τέλος"
 
-#: src/widgets/options_panel.py:177
+#: src/widgets/options_panel.py:199
 msgid "Top logprobs must be between 0 and 20."
 msgstr "Το πλήθος κορυφαίων λογαριθμικών πιθανοτήτων πρέπει να είναι από 0 έως 20."
 
-#: src/widgets/options_panel.py:199
+#: src/widgets/options_panel.py:221
 #, python-brace-format
 msgid "Enabled tools: {0}. Results are supplied manually."
 msgstr "Ενεργά εργαλεία: {0}. Τα αποτελέσματα δίνονται χειροκίνητα."
 
-#: src/widgets/options_panel.py:199
+#: src/widgets/options_panel.py:221
 msgid "Tool calling is off."
 msgstr "Οι κλήσεις εργαλείων είναι ανενεργές."
 
-#: src/widgets/options_panel.py:202
+#: src/widgets/options_panel.py:224
 msgid "Checking tool support…"
 msgstr "Έλεγχος υποστήριξης εργαλείων…"
 
-#: src/widgets/options_panel.py:204
+#: src/widgets/options_panel.py:226
 msgid "This model reports no tool support; you can still test the API."
 msgstr ""
 "Αυτό το μοντέλο δηλώνει ότι δεν υποστηρίζει εργαλεία· μπορείτε ακόμη να δοκιμάσετε το"
 " API."
 
-#: src/widgets/options_panel.py:206
+#: src/widgets/options_panel.py:228
 msgid "Tool support is unknown."
 msgstr "Η υποστήριξη εργαλείων είναι άγνωστη."
 
-#: src/widgets/options_panel.py:275
+#: src/widgets/options_panel.py:297
 msgid "No hosts configured"
 msgstr "Δεν έχουν ρυθμιστεί διακομιστές"
 
-#: src/widgets/options_panel.py:313 src/widgets/options_panel.py:315
+#: src/widgets/options_panel.py:335 src/widgets/options_panel.py:337
 msgid "Enter a valid number."
 msgstr "Εισαγάγετε έγκυρο αριθμό."
 
-#: src/widgets/options_panel.py:333
+#: src/widgets/options_panel.py:355
 msgid "Value must not be negative."
 msgstr "Η τιμή δεν πρέπει να είναι αρνητική."
 
-#: src/widgets/options_panel.py:336
+#: src/widgets/options_panel.py:358
 msgid "Value must be between 0 and 1."
 msgstr "Η τιμή πρέπει να είναι από 0 έως 1."
 
-#: src/widgets/options_panel.py:338
+#: src/widgets/options_panel.py:360
 msgid "Context size must be positive."
 msgstr "Το μέγεθος συμφραζομένων πρέπει να είναι θετικό."
 
-#: src/widgets/options_panel.py:340
+#: src/widgets/options_panel.py:362
 msgid "Max tokens must be -2, -1, or a nonnegative integer."
 msgstr "Το μέγιστο πλήθος token πρέπει να είναι -2, -1 ή μη αρνητικός ακέραιος."
 
-#: src/widgets/options_panel.ui:20
+#: src/widgets/options_panel.ui:21
 msgid "Tool Calling"
 msgstr "Κλήσεις εργαλείων"
 
-#: src/widgets/options_panel.ui:26
+#: src/widgets/options_panel.ui:27
 msgid "Edit Tools…"
 msgstr "Επεξεργασία εργαλείων…"
 
-#: src/widgets/options_panel.ui:44
+#: src/widgets/options_panel.ui:46
 msgid "Output:"
 msgstr "Έξοδος:"
 
-#: src/widgets/options_panel.ui:56
+#: src/widgets/options_panel.ui:58
 msgid "Edit Schema…"
 msgstr "Επεξεργασία σχήματος…"
 
-#: src/widgets/options_panel.ui:63
+#: src/widgets/options_panel.ui:65
 msgid "Chat Settings…"
 msgstr "Ρυθμίσεις συνομιλίας…"
 
-#: src/widgets/options_panel.ui:65
+#: src/widgets/options_panel.ui:67
 msgid "Generation, Model Retention, and Diagnostics"
 msgstr "Παραγωγή, παραμονή μοντέλου στη μνήμη και διαγνωστικά"
 
@@ -3170,3 +3295,5 @@ msgstr "Συντομεύσεις _πληκτρολογίου"
 msgid "_About Gnollama"
 msgstr "_Σχετικά με το Gnollama"
 
+#~ msgid "Fetching version..."
+#~ msgstr "Ανάκτηση έκδοσης..."

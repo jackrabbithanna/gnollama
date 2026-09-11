@@ -183,8 +183,8 @@ flatpak-builder --user --force-clean /tmp/gnollama-flatpak-build io.github.jackr
 ## Languages
 
 The interface follows your desktop language. Arabic, German, Greek, Spanish,
-French, Hindi, Italian, Japanese, Korean, Portuguese, Turkish, and Simplified
-Chinese have complete application catalogs.
+French, Hindi, Italian, Japanese, Korean, Portuguese, Swahili, Turkish, Ukrainian,
+and Simplified Chinese have complete application catalogs.
 See the [translation review and maintenance guide](po/README.md) for coverage,
 language selection, review findings, and translation checks.
  

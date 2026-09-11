@@ -94,7 +94,9 @@ class TranslationTests(unittest.TestCase):
             'ja': (0,) * len(counts),
             'ko': (0,) * len(counts),
             'pt': (1, 0, 1, 1, 1, 1, 1, 1, 1),
+            'sw': (1, 0, 1, 1, 1, 1, 1, 1, 1),
             'tr': (1, 0, 1, 1, 1, 1, 1, 1, 1),
+            'uk': (2, 0, 1, 1, 2, 2, 2, 1, 1),
             'zh_CN': (0,) * len(counts),
         }
         self.assertEqual(set(expected), set(self.languages))
@@ -107,6 +109,14 @@ class TranslationTests(unittest.TestCase):
                     self.assertIn(str(count), text.format(count))
                     self.assertNotEqual(text, '{0} image selected' if count == 1
                                         else '{0} images selected')
+        # Ukrainian distinguishes last-digit forms except for the teens.
+        ukrainian_boundaries = {
+            4: 1, 5: 2, 12: 2, 14: 2, 21: 0, 22: 1, 25: 2,
+            101: 0, 111: 2, 112: 2, 114: 2,
+        }
+        for count, category in ukrainian_boundaries.items():
+            with self.subTest(language='uk', count=count):
+                self.assertEqual(self.catalogs['uk'].plural(count), category)
         menu = ('_New Chat', '_New Response', '_Manage hosts', '_Manage models',
                 '_Keyboard Shortcuts', '_About Gnollama')
         for language, catalog in self.catalogs.items():

@@ -14,12 +14,14 @@ Reviewed against Gnollama 0.13.0 on 2026-09-10.
 | Japanese | `ja` | 690 / 690 |
 | Korean | `ko` | 690 / 690 |
 | Portuguese | `pt` | 690 / 690 |
+| Swahili | `sw` | 690 / 690 |
 | Turkish | `tr` | 690 / 690 |
+| Ukrainian | `uk` | 690 / 690 |
 | Simplified Chinese | `zh_CN` | 690 / 690 |
 
 These counts include interface text, application-authored errors, store metadata,
 and current release notes. English is the fallback for untranslated messages.
-All twelve catalogs were completed with AI assistance and checked for terminology,
+All fourteen catalogs were completed with AI assistance and checked for terminology,
 placeholders, and completeness; the additions have not had independent
 native-speaker review. Simplified Chinese is intended for written Mandarin;
 Traditional Chinese is not included.
@@ -62,6 +64,9 @@ Traditional Chinese is not included.
   Japanese and Korean also use one form. Italian and Greek use singular/plural;
   Turkish uses one/other categories, with the same wording for numeric image and
   character counts because Turkish nouns remain singular after numbers.
+  Swahili uses singular/plural, including image-selection agreement. Ukrainian
+  uses three integer forms: one, few, and many, with the teen exceptions checked
+  separately from counts ending in 1 or 2–4.
   Other count summaries use label-style translations where needed.
 - **Arabic needed layout support.** Application startup selects direction
   from a contextual translation, even without GTK's Arabic catalog. GTK's
@@ -87,6 +92,8 @@ LANGUAGE=el gnollama
 LANGUAGE=tr gnollama
 LANGUAGE=ja gnollama
 LANGUAGE=ko gnollama
+LANGUAGE=uk gnollama
+LANGUAGE=sw gnollama
 ```
 
 Use an installed UTF-8 desktop locale for `LANG`/`LC_ALL`; GTK suppresses
@@ -129,8 +136,8 @@ Validation on 2026-09-10: the GNOME 50 SDK build, desktop/AppStream/schema check
 and all 144 regression tests passed with a virtual display and no skipped tests.
 A catalog timestamp change rebuilt both metadata targets, and the merged
 AppStream text matched the catalogs in every language.
-A staged installation under `/tmp` included all twelve compiled catalogs. Its
-chat and settings views were also inspected in all twelve languages at desktop
+A staged installation under `/tmp` included all fourteen compiled catalogs. Its
+chat and settings views were also inspected in all fourteen languages at desktop
 and narrow widths, including Arabic mirroring and script rendering.
 
 ## Remaining scope

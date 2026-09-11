@@ -86,12 +86,18 @@ class TranslationTests(unittest.TestCase):
         expected = {
             'ar': (0, 1, 2, 3, 4, 4, 5, 5, 3),
             'de': (1, 0, 1, 1, 1, 1, 1, 1, 1),
+            'el': (1, 0, 1, 1, 1, 1, 1, 1, 1),
             'es': (1, 0, 1, 1, 1, 1, 1, 1, 1),
             'fr': (0, 0, 1, 1, 1, 1, 1, 1, 1),
             'hi': (0, 0, 1, 1, 1, 1, 1, 1, 1),
+            'it': (1, 0, 1, 1, 1, 1, 1, 1, 1),
+            'ja': (0,) * len(counts),
+            'ko': (0,) * len(counts),
             'pt': (1, 0, 1, 1, 1, 1, 1, 1, 1),
+            'tr': (1, 0, 1, 1, 1, 1, 1, 1, 1),
             'zh_CN': (0,) * len(counts),
         }
+        self.assertEqual(set(expected), set(self.languages))
         for language, categories in expected.items():
             catalog = self.catalogs[language]
             for count, category in zip(counts, categories):

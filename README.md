@@ -140,7 +140,7 @@ Applied definitions and saved mock results persist per chat, including chats clo
 
 <img src="./screenshots/gnollama-screenshot.png" alt="gnollama" align="left"/>
 
-<img src="./screenshots/gnollama-chat-options.png" alt="gnollama" align="left"/>
+<img src="./screenshots/gnollama-rag-collections.png" alt="gnollama" align="left"/>
 
 <img src="./screenshots/gnollama-manage-models.png" alt="gnollama" align="left"/>
 

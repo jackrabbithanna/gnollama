@@ -131,7 +131,7 @@ class OptionsPanel(Gtk.Box):
             entry.connect('changed', lambda *args: (error.set_visible(False), entry.remove_css_class('error')))
             group.add(box)
 
-        system = group(_('System Instructions'))
+        system = self.system_group = group(_('System Instructions'))
         field(system, 'system_prompt_entry', _('System prompt'), _('Optional instructions applied to this conversation.'))
         self.system_prompt_entry.set_placeholder_text(_('Optional instructions'))
         limits = group(_('Generation Limits'), _('Blank fields use the server’s defaults.'))
@@ -183,7 +183,7 @@ class OptionsPanel(Gtk.Box):
         if not isinstance(self.get_root(), Gtk.Window):
             return
         if self._settings_dialog is None:
-            dialog = self._settings_dialog = Adw.Dialog(title=_('Chat Settings'), content_width=600, content_height=660)
+            dialog = self._settings_dialog = Adw.Dialog(title=getattr(self, 'settings_title', _('Chat Settings')), content_width=600, content_height=660)
             toolbar = Adw.ToolbarView()
             header = Adw.HeaderBar()
             done = Gtk.Button(label=_('Done'), css_classes=['suggested-action'])

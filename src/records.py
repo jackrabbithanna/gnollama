@@ -33,6 +33,25 @@ class ComparisonTarget(TypedDict):
     request: dict
 
 
+class ConversationParticipant(RequestSettings, total=False):
+    endpoint: str
+
+
+class ConversationRun(TypedDict):
+    id: str
+    status: str
+    next_turn: int
+
+
+class ConversationAttempt(TypedDict):
+    id: str
+    run_id: str
+    turn: int
+    attempt: int
+    input_uid: str
+    status: str
+
+
 @dataclass
 class Draft:
     id: str

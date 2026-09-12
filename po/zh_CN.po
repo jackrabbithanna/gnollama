@@ -3295,3 +3295,150 @@ msgstr "最近的聊天"
 #: src/window.py:79
 msgid "Recent comparisons"
 msgstr "最近的比较"
+
+#: src/window.py:80
+msgid "Recent model conversations"
+msgstr "最近的模型间对话"
+
+#: src/window.ui:132 src/widgets/model_conversation_view.py:25
+msgid "New Model to Model Conversation"
+msgstr "新建模型间对话"
+
+#: src/model_conversation.py:25
+msgid "The saved conversation has an incomplete turn history."
+msgstr "已保存对话的轮次历史不完整。"
+
+#: src/model_conversation.py:35
+msgid "Choose two participants."
+msgstr "请选择两个参与者。"
+
+#: src/model_conversation.py:46
+msgid ""
+"A participant’s server address changed. Restore the host or use Run Again."
+msgstr "参与者的服务器地址已更改。请恢复主机设置或选择重新运行。"
+
+#: src/model_conversation.py:60
+msgid "Embedding models cannot join a conversation."
+msgstr "嵌入模型无法参与对话。"
+
+#: src/model_conversation.py:62
+msgid "A participant does not support the selected thinking option."
+msgstr "参与者不支持所选的思考选项。"
+
+#: src/model_conversation.py:67
+msgid "Cloud targets manage model retention automatically."
+msgstr "云端目标会自动管理模型保留。"
+
+#: src/model_conversation.py:121
+msgid "Enter an opening prompt and choose 1–100 rounds."
+msgstr "请输入开场提示词并选择 1–100 轮。"
+
+#: src/model_conversation.py:259
+msgid "The model returned no usable text answer. Retry this turn."
+msgstr "模型未返回可用的文本回答。请重试本次回复。"
+
+#: src/widgets/model_target.py:30 src/widgets/model_conversation_view.py:198
+msgid "Advanced settings…"
+msgstr "高级设置…"
+
+#: src/widgets/model_conversation_view.py:48
+msgid "Rounds"
+msgstr "轮数"
+
+#: src/widgets/model_conversation_view.py:51
+msgid "One round includes one response from each model. Model A starts."
+msgstr "每轮包含每个模型各一次回复。由模型 A 开始。"
+
+#: src/widgets/model_conversation_view.py:52
+msgid "Opening prompt"
+msgstr "开场提示词"
+
+#: src/widgets/model_conversation_view.py:57
+msgid "Start conversation"
+msgstr "开始对话"
+
+#: src/widgets/model_conversation_view.py:58
+msgid "Give Model A a topic or task to begin the exchange."
+msgstr "给模型 A 一个话题或任务来开始交流。"
+
+#: src/widgets/model_conversation_view.py:65
+msgid "Conversation settings"
+msgstr "对话设置"
+
+#: src/widgets/model_conversation_view.py:71
+msgid "Load earlier messages"
+msgstr "加载较早的消息"
+
+#: src/widgets/model_conversation_view.py:74
+msgid "Pause"
+msgstr "暂停"
+
+#: src/widgets/model_conversation_view.py:75
+#: src/widgets/model_conversation_view.py:225
+msgid "Resume"
+msgstr "继续"
+
+#: src/widgets/model_conversation_view.py:76
+msgid "Stop"
+msgstr "停止"
+
+#: src/widgets/model_conversation_view.py:101
+#: src/widgets/model_conversation_view.py:192
+#: src/widgets/model_conversation_view.py:232
+#: src/widgets/model_conversation_view.py:251
+msgid "Model A"
+msgstr "模型 A"
+
+#: src/widgets/model_conversation_view.py:101
+#: src/widgets/model_conversation_view.py:192
+#: src/widgets/model_conversation_view.py:232
+#: src/widgets/model_conversation_view.py:251
+msgid "Model B"
+msgstr "模型 B"
+
+#: src/widgets/model_conversation_view.py:190
+#, python-brace-format
+msgid "Rounds: {0}"
+msgstr "轮数：{0}"
+
+#: src/widgets/model_conversation_view.py:195
+msgid "No system prompt"
+msgstr "无系统提示词"
+
+#: src/widgets/model_conversation_view.py:225
+msgid "Retry turn"
+msgstr "重试回复"
+
+#: src/widgets/model_conversation_view.py:227
+msgid "Paused"
+msgstr "已暂停"
+
+#: src/widgets/model_conversation_view.py:228
+msgid "Interrupted"
+msgstr "已中断"
+
+#: src/widgets/model_conversation_view.py:231
+msgid "Preparing conversation…"
+msgstr "正在准备对话…"
+
+#: src/widgets/model_conversation_view.py:231
+#, python-brace-format
+msgid "Round {0} of {1} · {2} responding"
+msgstr "第 {0}/{1} 轮 · {2} 正在回复"
+
+#: src/widgets/model_conversation_view.py:234
+msgid "Pausing after this response…"
+msgstr "将在本次回复后暂停…"
+
+#: src/widgets/model_conversation_view.py:236
+msgid "Stopping…"
+msgstr "正在停止…"
+
+#: src/widgets/model_conversation_view.py:252
+#, python-brace-format
+msgid "Round {0} · {1} · Attempt {2}"
+msgstr "第 {0} 轮 · {1} · 第 {2} 次尝试"
+
+#: src/widgets/model_conversation_view.py:271
+msgid "History is approaching the configured context size."
+msgstr "历史记录正在接近所配置的上下文大小。"

@@ -3429,3 +3429,150 @@ msgstr "Son sohbetler"
 #: src/window.py:79
 msgid "Recent comparisons"
 msgstr "Son karşılaştırmalar"
+
+#: src/window.py:80
+msgid "Recent model conversations"
+msgstr "Son model konuşmaları"
+
+#: src/window.ui:132 src/widgets/model_conversation_view.py:25
+msgid "New Model to Model Conversation"
+msgstr "Modeller Arasında Yeni Konuşma"
+
+#: src/model_conversation.py:25
+msgid "The saved conversation has an incomplete turn history."
+msgstr "Kaydedilen konuşmanın tur geçmişi eksik."
+
+#: src/model_conversation.py:35
+msgid "Choose two participants."
+msgstr "İki katılımcı seçin."
+
+#: src/model_conversation.py:46
+msgid ""
+"A participant’s server address changed. Restore the host or use Run Again."
+msgstr "Bir katılımcının sunucu adresi değişti. Sunucuyu geri yükleyin veya Yeniden Çalıştır seçeneğini kullanın."
+
+#: src/model_conversation.py:60
+msgid "Embedding models cannot join a conversation."
+msgstr "Gömme modelleri bir konuşmaya katılamaz."
+
+#: src/model_conversation.py:62
+msgid "A participant does not support the selected thinking option."
+msgstr "Bir katılımcı seçilen düşünme seçeneğini desteklemiyor."
+
+#: src/model_conversation.py:67
+msgid "Cloud targets manage model retention automatically."
+msgstr "Bulut hedefleri modelin bellekte tutulmasını otomatik yönetir."
+
+#: src/model_conversation.py:121
+msgid "Enter an opening prompt and choose 1–100 rounds."
+msgstr "Bir açılış iletisi girin ve 1–100 tur seçin."
+
+#: src/model_conversation.py:259
+msgid "The model returned no usable text answer. Retry this turn."
+msgstr "Model kullanılabilir bir metin yanıtı döndürmedi. Bu sırayı yeniden deneyin."
+
+#: src/widgets/model_target.py:30 src/widgets/model_conversation_view.py:198
+msgid "Advanced settings…"
+msgstr "Gelişmiş ayarlar…"
+
+#: src/widgets/model_conversation_view.py:48
+msgid "Rounds"
+msgstr "Turlar"
+
+#: src/widgets/model_conversation_view.py:51
+msgid "One round includes one response from each model. Model A starts."
+msgstr "Her tur, her modelden bir yanıt içerir. Model A başlar."
+
+#: src/widgets/model_conversation_view.py:52
+msgid "Opening prompt"
+msgstr "Açılış iletisi"
+
+#: src/widgets/model_conversation_view.py:57
+msgid "Start conversation"
+msgstr "Konuşmayı başlat"
+
+#: src/widgets/model_conversation_view.py:58
+msgid "Give Model A a topic or task to begin the exchange."
+msgstr "Konuşmayı başlatmak için Model A’ya bir konu veya görev verin."
+
+#: src/widgets/model_conversation_view.py:65
+msgid "Conversation settings"
+msgstr "Konuşma ayarları"
+
+#: src/widgets/model_conversation_view.py:71
+msgid "Load earlier messages"
+msgstr "Önceki iletileri yükle"
+
+#: src/widgets/model_conversation_view.py:74
+msgid "Pause"
+msgstr "Duraklat"
+
+#: src/widgets/model_conversation_view.py:75
+#: src/widgets/model_conversation_view.py:225
+msgid "Resume"
+msgstr "Sürdür"
+
+#: src/widgets/model_conversation_view.py:76
+msgid "Stop"
+msgstr "Durdur"
+
+#: src/widgets/model_conversation_view.py:101
+#: src/widgets/model_conversation_view.py:192
+#: src/widgets/model_conversation_view.py:232
+#: src/widgets/model_conversation_view.py:251
+msgid "Model A"
+msgstr "Model A"
+
+#: src/widgets/model_conversation_view.py:101
+#: src/widgets/model_conversation_view.py:192
+#: src/widgets/model_conversation_view.py:232
+#: src/widgets/model_conversation_view.py:251
+msgid "Model B"
+msgstr "Model B"
+
+#: src/widgets/model_conversation_view.py:190
+#, python-brace-format
+msgid "Rounds: {0}"
+msgstr "Turlar: {0}"
+
+#: src/widgets/model_conversation_view.py:195
+msgid "No system prompt"
+msgstr "Sistem istemi yok"
+
+#: src/widgets/model_conversation_view.py:225
+msgid "Retry turn"
+msgstr "Sırayı yeniden dene"
+
+#: src/widgets/model_conversation_view.py:227
+msgid "Paused"
+msgstr "Duraklatıldı"
+
+#: src/widgets/model_conversation_view.py:228
+msgid "Interrupted"
+msgstr "Kesintiye uğradı"
+
+#: src/widgets/model_conversation_view.py:231
+msgid "Preparing conversation…"
+msgstr "Konuşma hazırlanıyor…"
+
+#: src/widgets/model_conversation_view.py:231
+#, python-brace-format
+msgid "Round {0} of {1} · {2} responding"
+msgstr "Tur {0}/{1} · {2} yanıtlıyor"
+
+#: src/widgets/model_conversation_view.py:234
+msgid "Pausing after this response…"
+msgstr "Bu yanıttan sonra duraklatılacak…"
+
+#: src/widgets/model_conversation_view.py:236
+msgid "Stopping…"
+msgstr "Durduruluyor…"
+
+#: src/widgets/model_conversation_view.py:252
+#, python-brace-format
+msgid "Round {0} · {1} · Attempt {2}"
+msgstr "Tur {0} · {1} · Deneme {2}"
+
+#: src/widgets/model_conversation_view.py:271
+msgid "History is approaching the configured context size."
+msgstr "Geçmiş, yapılandırılan bağlam boyutuna yaklaşıyor."

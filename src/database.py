@@ -14,6 +14,7 @@ from .collections_store import MIGRATION as COLLECTIONS_MIGRATION
 from .web_store import MIGRATION as WEB_MIGRATION
 from .records import has_saved_work
 from .workspace_store import WorkspaceDatabase, migrate_workspace
+from .model_conversation_store import ModelConversationDatabase, migrate_model_conversations
 
 # Sequential migrations list
 # Add SQL scripts or functions accepting (conn, progress=None) to run sequentially.
@@ -46,6 +47,7 @@ MIGRATIONS = [
     ALTER TABLE hosts ADD COLUMN credential_id TEXT;
     """,
     migrate_workspace,
+    migrate_model_conversations,
 ]
 
 
@@ -55,7 +57,7 @@ class DatabaseUpgradeError(RuntimeError):
         self.backup_path = backup_path
 
 
-class DatabaseManager(KnowledgeDatabase, WorkspaceDatabase):
+class DatabaseManager(KnowledgeDatabase, WorkspaceDatabase, ModelConversationDatabase):
     """Manages SQLite database initialization and operations."""
 
     def __init__(self, db_path: str, progress=None) -> None:

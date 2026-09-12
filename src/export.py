@@ -21,10 +21,23 @@ def export_json(snapshot):
 def export_markdown(snapshot):
     snapshot = portable(snapshot)
     parts = ['# ' + snapshot['title'], '']
+    model_conversation = snapshot.get('kind') == 'model_conversation'
+    if model_conversation:
+        settings = snapshot['options']
+        parts += ['Rounds: ' + str(settings['rounds']), '', 'Status: ' + snapshot['run']['status'], '']
+        for index, participant in enumerate(settings['participants']):
+            parts += ['## Model ' + ('A' if index == 0 else 'B'), '',
+                      participant['model'] + ' — ' + participant['host'], '',
+                      participant.get('system') or '', '', '```json',
+                      json.dumps(participant, ensure_ascii=False, indent=2), '```', '']
     if snapshot.get('system'):
         parts += ['## System', '', snapshot['system'], '']
     for message in snapshot.get('messages', []):
-        parts += ['## ' + message.get('model', message['role'].title()), '', message.get('content', ''), '']
+        heading = message.get('model', message['role'].title())
+        if model_conversation and 'turn' in message:
+            heading = 'Round {} · Model {} · Attempt {} · {}'.format(
+                message['turn'] // 2 + 1, 'A' if message['participant'] == 0 else 'B', message['attempt'], heading)
+        parts += ['## ' + heading, '', message.get('content', ''), '']
         for index, encoded in enumerate(message.get('images', [])):
             import base64
             raw = base64.b64decode(encoded.split(',', 1)[-1])

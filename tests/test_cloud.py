@@ -146,7 +146,7 @@ class CloudStorageTests(CloudStorageFixture, unittest.TestCase):
         upgraded = self.open_storage(FakeCredentials())
         self.assertEqual(upgraded.get_host(host['id']), host)
         with upgraded.db._get_conn() as conn:
-            self.assertEqual(conn.execute('PRAGMA user_version').fetchone()[0], 11)
+            self.assertEqual(conn.execute('PRAGMA user_version').fetchone()[0], 12)
         self.assertIsNotNone(upgraded.db.backup_path)
 
 

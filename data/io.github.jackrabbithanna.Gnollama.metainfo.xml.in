@@ -48,6 +48,17 @@
   </screenshots>
 
   <releases>
+    <release version="0.16.0" date="2026-09-11">
+      <description>
+        <ul>
+          <li>New Model to Model Conversation</li>
+          <li>Recent model conversations</li>
+          <li>Pause</li>
+          <li>Resume</li>
+          <li>Retry turn</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.15.0" date="2026-09-11">
       <description>
         <ul>

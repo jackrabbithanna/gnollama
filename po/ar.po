@@ -3383,3 +3383,150 @@ msgstr "المحادثات الأخيرة"
 #: src/window.py:79
 msgid "Recent comparisons"
 msgstr "المقارنات الأخيرة"
+
+#: src/window.py:80
+msgid "Recent model conversations"
+msgstr "محادثات النماذج الأخيرة"
+
+#: src/window.ui:132 src/widgets/model_conversation_view.py:25
+msgid "New Model to Model Conversation"
+msgstr "محادثة جديدة بين نموذجين"
+
+#: src/model_conversation.py:25
+msgid "The saved conversation has an incomplete turn history."
+msgstr "سجل أدوار المحادثة المحفوظة غير مكتمل."
+
+#: src/model_conversation.py:35
+msgid "Choose two participants."
+msgstr "اختر مشاركين اثنين."
+
+#: src/model_conversation.py:46
+msgid ""
+"A participant’s server address changed. Restore the host or use Run Again."
+msgstr "تغير عنوان خادم أحد المشاركين. أعد إعداد المضيف أو استخدم التشغيل مجددًا."
+
+#: src/model_conversation.py:60
+msgid "Embedding models cannot join a conversation."
+msgstr "لا يمكن لنماذج التضمين المشاركة في محادثة."
+
+#: src/model_conversation.py:62
+msgid "A participant does not support the selected thinking option."
+msgstr "أحد المشاركين لا يدعم خيار التفكير المحدد."
+
+#: src/model_conversation.py:67
+msgid "Cloud targets manage model retention automatically."
+msgstr "تدير الوجهات السحابية الاحتفاظ بالنماذج تلقائيًا."
+
+#: src/model_conversation.py:121
+msgid "Enter an opening prompt and choose 1–100 rounds."
+msgstr "أدخل رسالة افتتاحية واختر من 1 إلى 100 جولة."
+
+#: src/model_conversation.py:259
+msgid "The model returned no usable text answer. Retry this turn."
+msgstr "لم يُرجع النموذج إجابة نصية قابلة للاستخدام. أعد محاولة هذا الدور."
+
+#: src/widgets/model_target.py:30 src/widgets/model_conversation_view.py:198
+msgid "Advanced settings…"
+msgstr "إعدادات متقدمة…"
+
+#: src/widgets/model_conversation_view.py:48
+msgid "Rounds"
+msgstr "الجولات"
+
+#: src/widgets/model_conversation_view.py:51
+msgid "One round includes one response from each model. Model A starts."
+msgstr "تتضمن كل جولة إجابة من كل نموذج. يبدأ النموذج A."
+
+#: src/widgets/model_conversation_view.py:52
+msgid "Opening prompt"
+msgstr "الرسالة الافتتاحية"
+
+#: src/widgets/model_conversation_view.py:57
+msgid "Start conversation"
+msgstr "بدء المحادثة"
+
+#: src/widgets/model_conversation_view.py:58
+msgid "Give Model A a topic or task to begin the exchange."
+msgstr "أعطِ النموذج A موضوعًا أو مهمة لبدء التبادل."
+
+#: src/widgets/model_conversation_view.py:65
+msgid "Conversation settings"
+msgstr "إعدادات المحادثة"
+
+#: src/widgets/model_conversation_view.py:71
+msgid "Load earlier messages"
+msgstr "تحميل الرسائل السابقة"
+
+#: src/widgets/model_conversation_view.py:74
+msgid "Pause"
+msgstr "إيقاف مؤقت"
+
+#: src/widgets/model_conversation_view.py:75
+#: src/widgets/model_conversation_view.py:225
+msgid "Resume"
+msgstr "استئناف"
+
+#: src/widgets/model_conversation_view.py:76
+msgid "Stop"
+msgstr "إيقاف"
+
+#: src/widgets/model_conversation_view.py:101
+#: src/widgets/model_conversation_view.py:192
+#: src/widgets/model_conversation_view.py:232
+#: src/widgets/model_conversation_view.py:251
+msgid "Model A"
+msgstr "النموذج A"
+
+#: src/widgets/model_conversation_view.py:101
+#: src/widgets/model_conversation_view.py:192
+#: src/widgets/model_conversation_view.py:232
+#: src/widgets/model_conversation_view.py:251
+msgid "Model B"
+msgstr "النموذج B"
+
+#: src/widgets/model_conversation_view.py:190
+#, python-brace-format
+msgid "Rounds: {0}"
+msgstr "الجولات: {0}"
+
+#: src/widgets/model_conversation_view.py:195
+msgid "No system prompt"
+msgstr "لا توجد تعليمات نظام"
+
+#: src/widgets/model_conversation_view.py:225
+msgid "Retry turn"
+msgstr "إعادة محاولة الدور"
+
+#: src/widgets/model_conversation_view.py:227
+msgid "Paused"
+msgstr "متوقف مؤقتًا"
+
+#: src/widgets/model_conversation_view.py:228
+msgid "Interrupted"
+msgstr "انقطعت"
+
+#: src/widgets/model_conversation_view.py:231
+msgid "Preparing conversation…"
+msgstr "جارٍ تحضير المحادثة…"
+
+#: src/widgets/model_conversation_view.py:231
+#, python-brace-format
+msgid "Round {0} of {1} · {2} responding"
+msgstr "الجولة {0} من {1} · {2} يجيب"
+
+#: src/widgets/model_conversation_view.py:234
+msgid "Pausing after this response…"
+msgstr "سيتوقف مؤقتًا بعد هذه الإجابة…"
+
+#: src/widgets/model_conversation_view.py:236
+msgid "Stopping…"
+msgstr "جارٍ الإيقاف…"
+
+#: src/widgets/model_conversation_view.py:252
+#, python-brace-format
+msgid "Round {0} · {1} · Attempt {2}"
+msgstr "الجولة {0} · {1} · المحاولة {2}"
+
+#: src/widgets/model_conversation_view.py:271
+msgid "History is approaching the configured context size."
+msgstr "يقترب السجل من حجم السياق المحدد."

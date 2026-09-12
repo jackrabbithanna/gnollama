@@ -3464,3 +3464,150 @@ msgstr "Mazungumzo ya hivi karibuni"
 #: src/window.py:79
 msgid "Recent comparisons"
 msgstr "Ulinganisho wa hivi karibuni"
+
+#: src/window.py:80
+msgid "Recent model conversations"
+msgstr "Mazungumzo ya hivi karibuni kati ya modeli"
+
+#: src/window.ui:132 src/widgets/model_conversation_view.py:25
+msgid "New Model to Model Conversation"
+msgstr "Mazungumzo mapya kati ya modeli"
+
+#: src/model_conversation.py:25
+msgid "The saved conversation has an incomplete turn history."
+msgstr "Historia ya zamu ya mazungumzo yaliyohifadhiwa haijakamilika."
+
+#: src/model_conversation.py:35
+msgid "Choose two participants."
+msgstr "Chagua washiriki wawili."
+
+#: src/model_conversation.py:46
+msgid ""
+"A participant’s server address changed. Restore the host or use Run Again."
+msgstr "Anwani ya seva ya mshiriki imebadilika. Rejesha seva au tumia Endesha tena."
+
+#: src/model_conversation.py:60
+msgid "Embedding models cannot join a conversation."
+msgstr "Modeli za upachikaji haziwezi kushiriki katika mazungumzo."
+
+#: src/model_conversation.py:62
+msgid "A participant does not support the selected thinking option."
+msgstr "Mshiriki haungi mkono chaguo la kufikiri lililochaguliwa."
+
+#: src/model_conversation.py:67
+msgid "Cloud targets manage model retention automatically."
+msgstr "Malengo ya wingu husimamia uhifadhi wa modeli kiotomatiki."
+
+#: src/model_conversation.py:121
+msgid "Enter an opening prompt and choose 1–100 rounds."
+msgstr "Ingiza ujumbe wa kuanza na uchague raundi 1–100."
+
+#: src/model_conversation.py:259
+msgid "The model returned no usable text answer. Retry this turn."
+msgstr "Modeli haikurudisha jibu la maandishi linaloweza kutumiwa. Jaribu zamu hii tena."
+
+#: src/widgets/model_target.py:30 src/widgets/model_conversation_view.py:198
+msgid "Advanced settings…"
+msgstr "Mipangilio ya kina…"
+
+#: src/widgets/model_conversation_view.py:48
+msgid "Rounds"
+msgstr "Raundi"
+
+#: src/widgets/model_conversation_view.py:51
+msgid "One round includes one response from each model. Model A starts."
+msgstr "Raundi moja inajumuisha jibu moja kutoka kila modeli. Modeli A huanza."
+
+#: src/widgets/model_conversation_view.py:52
+msgid "Opening prompt"
+msgstr "Ujumbe wa kuanza"
+
+#: src/widgets/model_conversation_view.py:57
+msgid "Start conversation"
+msgstr "Anza mazungumzo"
+
+#: src/widgets/model_conversation_view.py:58
+msgid "Give Model A a topic or task to begin the exchange."
+msgstr "Ipe Modeli A mada au kazi ili kuanza mazungumzo."
+
+#: src/widgets/model_conversation_view.py:65
+msgid "Conversation settings"
+msgstr "Mipangilio ya mazungumzo"
+
+#: src/widgets/model_conversation_view.py:71
+msgid "Load earlier messages"
+msgstr "Pakia ujumbe wa awali"
+
+#: src/widgets/model_conversation_view.py:74
+msgid "Pause"
+msgstr "Sitisha kwa muda"
+
+#: src/widgets/model_conversation_view.py:75
+#: src/widgets/model_conversation_view.py:225
+msgid "Resume"
+msgstr "Endelea"
+
+#: src/widgets/model_conversation_view.py:76
+msgid "Stop"
+msgstr "Simamisha"
+
+#: src/widgets/model_conversation_view.py:101
+#: src/widgets/model_conversation_view.py:192
+#: src/widgets/model_conversation_view.py:232
+#: src/widgets/model_conversation_view.py:251
+msgid "Model A"
+msgstr "Modeli A"
+
+#: src/widgets/model_conversation_view.py:101
+#: src/widgets/model_conversation_view.py:192
+#: src/widgets/model_conversation_view.py:232
+#: src/widgets/model_conversation_view.py:251
+msgid "Model B"
+msgstr "Modeli B"
+
+#: src/widgets/model_conversation_view.py:190
+#, python-brace-format
+msgid "Rounds: {0}"
+msgstr "Raundi: {0}"
+
+#: src/widgets/model_conversation_view.py:195
+msgid "No system prompt"
+msgstr "Hakuna maagizo ya mfumo"
+
+#: src/widgets/model_conversation_view.py:225
+msgid "Retry turn"
+msgstr "Jaribu zamu tena"
+
+#: src/widgets/model_conversation_view.py:227
+msgid "Paused"
+msgstr "Yamesitishwa kwa muda"
+
+#: src/widgets/model_conversation_view.py:228
+msgid "Interrupted"
+msgstr "Yamekatizwa"
+
+#: src/widgets/model_conversation_view.py:231
+msgid "Preparing conversation…"
+msgstr "Inaandaa mazungumzo…"
+
+#: src/widgets/model_conversation_view.py:231
+#, python-brace-format
+msgid "Round {0} of {1} · {2} responding"
+msgstr "Raundi {0} kati ya {1} · {2} inajibu"
+
+#: src/widgets/model_conversation_view.py:234
+msgid "Pausing after this response…"
+msgstr "Yatasitishwa baada ya jibu hili…"
+
+#: src/widgets/model_conversation_view.py:236
+msgid "Stopping…"
+msgstr "Inasimamisha…"
+
+#: src/widgets/model_conversation_view.py:252
+#, python-brace-format
+msgid "Round {0} · {1} · Attempt {2}"
+msgstr "Raundi {0} · {1} · Jaribio {2}"
+
+#: src/widgets/model_conversation_view.py:271
+msgid "History is approaching the configured context size."
+msgstr "Historia inakaribia ukubwa wa muktadha uliowekwa."

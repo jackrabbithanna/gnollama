@@ -3486,3 +3486,150 @@ msgstr "Πρόσφατες συνομιλίες"
 #: src/window.py:79
 msgid "Recent comparisons"
 msgstr "Πρόσφατες συγκρίσεις"
+
+#: src/window.py:80
+msgid "Recent model conversations"
+msgstr "Πρόσφατες συνομιλίες μοντέλων"
+
+#: src/window.ui:132 src/widgets/model_conversation_view.py:25
+msgid "New Model to Model Conversation"
+msgstr "Νέα συνομιλία μεταξύ μοντέλων"
+
+#: src/model_conversation.py:25
+msgid "The saved conversation has an incomplete turn history."
+msgstr "Το ιστορικό της αποθηκευμένης συνομιλίας είναι ελλιπές."
+
+#: src/model_conversation.py:35
+msgid "Choose two participants."
+msgstr "Επιλέξτε δύο συμμετέχοντες."
+
+#: src/model_conversation.py:46
+msgid ""
+"A participant’s server address changed. Restore the host or use Run Again."
+msgstr "Η διεύθυνση διακομιστή ενός συμμετέχοντα άλλαξε. Επαναφέρετε τον κεντρικό υπολογιστή ή επιλέξτε Εκτέλεση ξανά."
+
+#: src/model_conversation.py:60
+msgid "Embedding models cannot join a conversation."
+msgstr "Τα μοντέλα ενσωμάτωσης δεν μπορούν να συμμετέχουν σε συνομιλία."
+
+#: src/model_conversation.py:62
+msgid "A participant does not support the selected thinking option."
+msgstr "Ένας συμμετέχων δεν υποστηρίζει την επιλεγμένη επιλογή σκέψης."
+
+#: src/model_conversation.py:67
+msgid "Cloud targets manage model retention automatically."
+msgstr "Οι προορισμοί νέφους διαχειρίζονται αυτόματα τη διατήρηση μοντέλων."
+
+#: src/model_conversation.py:121
+msgid "Enter an opening prompt and choose 1–100 rounds."
+msgstr "Εισαγάγετε αρχικό μήνυμα και επιλέξτε 1–100 γύρους."
+
+#: src/model_conversation.py:259
+msgid "The model returned no usable text answer. Retry this turn."
+msgstr "Το μοντέλο δεν επέστρεψε χρήσιμη απάντηση κειμένου. Επαναλάβετε αυτή τη σειρά."
+
+#: src/widgets/model_target.py:30 src/widgets/model_conversation_view.py:198
+msgid "Advanced settings…"
+msgstr "Σύνθετες ρυθμίσεις…"
+
+#: src/widgets/model_conversation_view.py:48
+msgid "Rounds"
+msgstr "Γύροι"
+
+#: src/widgets/model_conversation_view.py:51
+msgid "One round includes one response from each model. Model A starts."
+msgstr "Κάθε γύρος περιλαμβάνει μία απάντηση από κάθε μοντέλο. Ξεκινά το μοντέλο A."
+
+#: src/widgets/model_conversation_view.py:52
+msgid "Opening prompt"
+msgstr "Αρχικό μήνυμα"
+
+#: src/widgets/model_conversation_view.py:57
+msgid "Start conversation"
+msgstr "Έναρξη συνομιλίας"
+
+#: src/widgets/model_conversation_view.py:58
+msgid "Give Model A a topic or task to begin the exchange."
+msgstr "Δώστε στο μοντέλο A ένα θέμα ή μια εργασία για να αρχίσει η ανταλλαγή."
+
+#: src/widgets/model_conversation_view.py:65
+msgid "Conversation settings"
+msgstr "Ρυθμίσεις συνομιλίας"
+
+#: src/widgets/model_conversation_view.py:71
+msgid "Load earlier messages"
+msgstr "Φόρτωση προηγούμενων μηνυμάτων"
+
+#: src/widgets/model_conversation_view.py:74
+msgid "Pause"
+msgstr "Παύση"
+
+#: src/widgets/model_conversation_view.py:75
+#: src/widgets/model_conversation_view.py:225
+msgid "Resume"
+msgstr "Συνέχιση"
+
+#: src/widgets/model_conversation_view.py:76
+msgid "Stop"
+msgstr "Διακοπή"
+
+#: src/widgets/model_conversation_view.py:101
+#: src/widgets/model_conversation_view.py:192
+#: src/widgets/model_conversation_view.py:232
+#: src/widgets/model_conversation_view.py:251
+msgid "Model A"
+msgstr "Μοντέλο A"
+
+#: src/widgets/model_conversation_view.py:101
+#: src/widgets/model_conversation_view.py:192
+#: src/widgets/model_conversation_view.py:232
+#: src/widgets/model_conversation_view.py:251
+msgid "Model B"
+msgstr "Μοντέλο B"
+
+#: src/widgets/model_conversation_view.py:190
+#, python-brace-format
+msgid "Rounds: {0}"
+msgstr "Γύροι: {0}"
+
+#: src/widgets/model_conversation_view.py:195
+msgid "No system prompt"
+msgstr "Χωρίς οδηγίες συστήματος"
+
+#: src/widgets/model_conversation_view.py:225
+msgid "Retry turn"
+msgstr "Επανάληψη σειράς"
+
+#: src/widgets/model_conversation_view.py:227
+msgid "Paused"
+msgstr "Σε παύση"
+
+#: src/widgets/model_conversation_view.py:228
+msgid "Interrupted"
+msgstr "Διακόπηκε"
+
+#: src/widgets/model_conversation_view.py:231
+msgid "Preparing conversation…"
+msgstr "Προετοιμασία συνομιλίας…"
+
+#: src/widgets/model_conversation_view.py:231
+#, python-brace-format
+msgid "Round {0} of {1} · {2} responding"
+msgstr "Γύρος {0} από {1} · Το {2} απαντά"
+
+#: src/widgets/model_conversation_view.py:234
+msgid "Pausing after this response…"
+msgstr "Παύση μετά από αυτή την απάντηση…"
+
+#: src/widgets/model_conversation_view.py:236
+msgid "Stopping…"
+msgstr "Διακοπή…"
+
+#: src/widgets/model_conversation_view.py:252
+#, python-brace-format
+msgid "Round {0} · {1} · Attempt {2}"
+msgstr "Γύρος {0} · {1} · Προσπάθεια {2}"
+
+#: src/widgets/model_conversation_view.py:271
+msgid "History is approaching the configured context size."
+msgstr "Το ιστορικό πλησιάζει το καθορισμένο μέγεθος συμφραζομένων."

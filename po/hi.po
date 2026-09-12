@@ -3408,3 +3408,150 @@ msgstr "हाल की चैट"
 #: src/window.py:79
 msgid "Recent comparisons"
 msgstr "हाल की तुलनाएँ"
+
+#: src/window.py:80
+msgid "Recent model conversations"
+msgstr "हाल की मॉडल वार्तालाप"
+
+#: src/window.ui:132 src/widgets/model_conversation_view.py:25
+msgid "New Model to Model Conversation"
+msgstr "मॉडलों के बीच नई बातचीत"
+
+#: src/model_conversation.py:25
+msgid "The saved conversation has an incomplete turn history."
+msgstr "सहेजी गई बातचीत का बारी इतिहास अधूरा है।"
+
+#: src/model_conversation.py:35
+msgid "Choose two participants."
+msgstr "दो प्रतिभागी चुनें।"
+
+#: src/model_conversation.py:46
+msgid ""
+"A participant’s server address changed. Restore the host or use Run Again."
+msgstr "एक प्रतिभागी के सर्वर का पता बदल गया है। होस्ट बहाल करें या फिर से चलाएँ चुनें।"
+
+#: src/model_conversation.py:60
+msgid "Embedding models cannot join a conversation."
+msgstr "एम्बेडिंग मॉडल बातचीत में भाग नहीं ले सकते।"
+
+#: src/model_conversation.py:62
+msgid "A participant does not support the selected thinking option."
+msgstr "एक प्रतिभागी चुने गए सोच विकल्प का समर्थन नहीं करता।"
+
+#: src/model_conversation.py:67
+msgid "Cloud targets manage model retention automatically."
+msgstr "क्लाउड लक्ष्य मॉडल को मेमोरी में रखने का प्रबंधन अपने आप करते हैं।"
+
+#: src/model_conversation.py:121
+msgid "Enter an opening prompt and choose 1–100 rounds."
+msgstr "प्रारंभिक संदेश लिखें और 1–100 चक्र चुनें।"
+
+#: src/model_conversation.py:259
+msgid "The model returned no usable text answer. Retry this turn."
+msgstr "मॉडल ने उपयोग करने योग्य पाठ उत्तर नहीं दिया। इस बारी को फिर आज़माएँ।"
+
+#: src/widgets/model_target.py:30 src/widgets/model_conversation_view.py:198
+msgid "Advanced settings…"
+msgstr "उन्नत सेटिंग्स…"
+
+#: src/widgets/model_conversation_view.py:48
+msgid "Rounds"
+msgstr "चक्र"
+
+#: src/widgets/model_conversation_view.py:51
+msgid "One round includes one response from each model. Model A starts."
+msgstr "एक चक्र में हर मॉडल का एक उत्तर शामिल है। मॉडल A शुरू करता है।"
+
+#: src/widgets/model_conversation_view.py:52
+msgid "Opening prompt"
+msgstr "प्रारंभिक संदेश"
+
+#: src/widgets/model_conversation_view.py:57
+msgid "Start conversation"
+msgstr "बातचीत शुरू करें"
+
+#: src/widgets/model_conversation_view.py:58
+msgid "Give Model A a topic or task to begin the exchange."
+msgstr "आदान-प्रदान शुरू करने के लिए मॉडल A को कोई विषय या कार्य दें।"
+
+#: src/widgets/model_conversation_view.py:65
+msgid "Conversation settings"
+msgstr "बातचीत की सेटिंग्स"
+
+#: src/widgets/model_conversation_view.py:71
+msgid "Load earlier messages"
+msgstr "पिछले संदेश लोड करें"
+
+#: src/widgets/model_conversation_view.py:74
+msgid "Pause"
+msgstr "विराम दें"
+
+#: src/widgets/model_conversation_view.py:75
+#: src/widgets/model_conversation_view.py:225
+msgid "Resume"
+msgstr "जारी रखें"
+
+#: src/widgets/model_conversation_view.py:76
+msgid "Stop"
+msgstr "रोकें"
+
+#: src/widgets/model_conversation_view.py:101
+#: src/widgets/model_conversation_view.py:192
+#: src/widgets/model_conversation_view.py:232
+#: src/widgets/model_conversation_view.py:251
+msgid "Model A"
+msgstr "मॉडल A"
+
+#: src/widgets/model_conversation_view.py:101
+#: src/widgets/model_conversation_view.py:192
+#: src/widgets/model_conversation_view.py:232
+#: src/widgets/model_conversation_view.py:251
+msgid "Model B"
+msgstr "मॉडल B"
+
+#: src/widgets/model_conversation_view.py:190
+#, python-brace-format
+msgid "Rounds: {0}"
+msgstr "चक्र: {0}"
+
+#: src/widgets/model_conversation_view.py:195
+msgid "No system prompt"
+msgstr "कोई सिस्टम निर्देश नहीं"
+
+#: src/widgets/model_conversation_view.py:225
+msgid "Retry turn"
+msgstr "बारी फिर आज़माएँ"
+
+#: src/widgets/model_conversation_view.py:227
+msgid "Paused"
+msgstr "विराम दिया गया"
+
+#: src/widgets/model_conversation_view.py:228
+msgid "Interrupted"
+msgstr "बाधित"
+
+#: src/widgets/model_conversation_view.py:231
+msgid "Preparing conversation…"
+msgstr "बातचीत तैयार हो रही है…"
+
+#: src/widgets/model_conversation_view.py:231
+#, python-brace-format
+msgid "Round {0} of {1} · {2} responding"
+msgstr "चक्र {0}/{1} · {2} उत्तर दे रहा है"
+
+#: src/widgets/model_conversation_view.py:234
+msgid "Pausing after this response…"
+msgstr "इस उत्तर के बाद विराम होगा…"
+
+#: src/widgets/model_conversation_view.py:236
+msgid "Stopping…"
+msgstr "रोक रहे हैं…"
+
+#: src/widgets/model_conversation_view.py:252
+#, python-brace-format
+msgid "Round {0} · {1} · Attempt {2}"
+msgstr "चक्र {0} · {1} · प्रयास {2}"
+
+#: src/widgets/model_conversation_view.py:271
+msgid "History is approaching the configured context size."
+msgstr "इतिहास निर्धारित संदर्भ आकार के निकट है।"

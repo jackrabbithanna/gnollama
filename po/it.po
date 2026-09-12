@@ -3471,3 +3471,150 @@ msgstr "Chat recenti"
 #: src/window.py:79
 msgid "Recent comparisons"
 msgstr "Confronti recenti"
+
+#: src/window.py:80
+msgid "Recent model conversations"
+msgstr "Conversazioni recenti tra modelli"
+
+#: src/window.ui:132 src/widgets/model_conversation_view.py:25
+msgid "New Model to Model Conversation"
+msgstr "Nuova conversazione tra modelli"
+
+#: src/model_conversation.py:25
+msgid "The saved conversation has an incomplete turn history."
+msgstr "La cronologia dei turni della conversazione salvata è incompleta."
+
+#: src/model_conversation.py:35
+msgid "Choose two participants."
+msgstr "Scegli due partecipanti."
+
+#: src/model_conversation.py:46
+msgid ""
+"A participant’s server address changed. Restore the host or use Run Again."
+msgstr "L’indirizzo del server di un partecipante è cambiato. Ripristina l’host o usa Esegui di nuovo."
+
+#: src/model_conversation.py:60
+msgid "Embedding models cannot join a conversation."
+msgstr "I modelli di embedding non possono partecipare a una conversazione."
+
+#: src/model_conversation.py:62
+msgid "A participant does not support the selected thinking option."
+msgstr "Un partecipante non supporta l’opzione di ragionamento selezionata."
+
+#: src/model_conversation.py:67
+msgid "Cloud targets manage model retention automatically."
+msgstr "Le destinazioni cloud gestiscono automaticamente la permanenza dei modelli in memoria."
+
+#: src/model_conversation.py:121
+msgid "Enter an opening prompt and choose 1–100 rounds."
+msgstr "Inserisci un messaggio iniziale e scegli da 1 a 100 cicli."
+
+#: src/model_conversation.py:259
+msgid "The model returned no usable text answer. Retry this turn."
+msgstr "Il modello non ha restituito una risposta testuale utilizzabile. Riprova questo turno."
+
+#: src/widgets/model_target.py:30 src/widgets/model_conversation_view.py:198
+msgid "Advanced settings…"
+msgstr "Impostazioni avanzate…"
+
+#: src/widgets/model_conversation_view.py:48
+msgid "Rounds"
+msgstr "Cicli"
+
+#: src/widgets/model_conversation_view.py:51
+msgid "One round includes one response from each model. Model A starts."
+msgstr "Ogni ciclo include una risposta di ciascun modello. Inizia il modello A."
+
+#: src/widgets/model_conversation_view.py:52
+msgid "Opening prompt"
+msgstr "Messaggio iniziale"
+
+#: src/widgets/model_conversation_view.py:57
+msgid "Start conversation"
+msgstr "Avvia conversazione"
+
+#: src/widgets/model_conversation_view.py:58
+msgid "Give Model A a topic or task to begin the exchange."
+msgstr "Assegna al modello A un argomento o un compito per iniziare lo scambio."
+
+#: src/widgets/model_conversation_view.py:65
+msgid "Conversation settings"
+msgstr "Impostazioni della conversazione"
+
+#: src/widgets/model_conversation_view.py:71
+msgid "Load earlier messages"
+msgstr "Carica messaggi precedenti"
+
+#: src/widgets/model_conversation_view.py:74
+msgid "Pause"
+msgstr "Pausa"
+
+#: src/widgets/model_conversation_view.py:75
+#: src/widgets/model_conversation_view.py:225
+msgid "Resume"
+msgstr "Riprendi"
+
+#: src/widgets/model_conversation_view.py:76
+msgid "Stop"
+msgstr "Interrompi"
+
+#: src/widgets/model_conversation_view.py:101
+#: src/widgets/model_conversation_view.py:192
+#: src/widgets/model_conversation_view.py:232
+#: src/widgets/model_conversation_view.py:251
+msgid "Model A"
+msgstr "Modello A"
+
+#: src/widgets/model_conversation_view.py:101
+#: src/widgets/model_conversation_view.py:192
+#: src/widgets/model_conversation_view.py:232
+#: src/widgets/model_conversation_view.py:251
+msgid "Model B"
+msgstr "Modello B"
+
+#: src/widgets/model_conversation_view.py:190
+#, python-brace-format
+msgid "Rounds: {0}"
+msgstr "Cicli: {0}"
+
+#: src/widgets/model_conversation_view.py:195
+msgid "No system prompt"
+msgstr "Nessuna istruzione di sistema"
+
+#: src/widgets/model_conversation_view.py:225
+msgid "Retry turn"
+msgstr "Riprova turno"
+
+#: src/widgets/model_conversation_view.py:227
+msgid "Paused"
+msgstr "In pausa"
+
+#: src/widgets/model_conversation_view.py:228
+msgid "Interrupted"
+msgstr "Interrotta"
+
+#: src/widgets/model_conversation_view.py:231
+msgid "Preparing conversation…"
+msgstr "Preparazione della conversazione…"
+
+#: src/widgets/model_conversation_view.py:231
+#, python-brace-format
+msgid "Round {0} of {1} · {2} responding"
+msgstr "Ciclo {0} di {1} · {2} sta rispondendo"
+
+#: src/widgets/model_conversation_view.py:234
+msgid "Pausing after this response…"
+msgstr "Pausa dopo questa risposta…"
+
+#: src/widgets/model_conversation_view.py:236
+msgid "Stopping…"
+msgstr "Interruzione…"
+
+#: src/widgets/model_conversation_view.py:252
+#, python-brace-format
+msgid "Round {0} · {1} · Attempt {2}"
+msgstr "Ciclo {0} · {1} · Tentativo {2}"
+
+#: src/widgets/model_conversation_view.py:271
+msgid "History is approaching the configured context size."
+msgstr "La cronologia si avvicina alla dimensione del contesto configurata."

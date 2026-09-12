@@ -3301,3 +3301,150 @@ msgstr "最近のチャット"
 #: src/window.py:79
 msgid "Recent comparisons"
 msgstr "最近の比較"
+
+#: src/window.py:80
+msgid "Recent model conversations"
+msgstr "最近のモデル間会話"
+
+#: src/window.ui:132 src/widgets/model_conversation_view.py:25
+msgid "New Model to Model Conversation"
+msgstr "新しいモデル間会話"
+
+#: src/model_conversation.py:25
+msgid "The saved conversation has an incomplete turn history."
+msgstr "保存された会話のターン履歴が不完全です。"
+
+#: src/model_conversation.py:35
+msgid "Choose two participants."
+msgstr "参加者を2つ選択してください。"
+
+#: src/model_conversation.py:46
+msgid ""
+"A participant’s server address changed. Restore the host or use Run Again."
+msgstr "参加者のサーバーアドレスが変更されました。ホストを元に戻すか、再実行してください。"
+
+#: src/model_conversation.py:60
+msgid "Embedding models cannot join a conversation."
+msgstr "埋め込みモデルは会話に参加できません。"
+
+#: src/model_conversation.py:62
+msgid "A participant does not support the selected thinking option."
+msgstr "選択した思考オプションに対応していない参加者がいます。"
+
+#: src/model_conversation.py:67
+msgid "Cloud targets manage model retention automatically."
+msgstr "クラウドの接続先ではモデルの保持が自動管理されます。"
+
+#: src/model_conversation.py:121
+msgid "Enter an opening prompt and choose 1–100 rounds."
+msgstr "開始メッセージを入力し、1～100ラウンドを選択してください。"
+
+#: src/model_conversation.py:259
+msgid "The model returned no usable text answer. Retry this turn."
+msgstr "モデルが使用可能なテキスト回答を返しませんでした。このターンを再試行してください。"
+
+#: src/widgets/model_target.py:30 src/widgets/model_conversation_view.py:198
+msgid "Advanced settings…"
+msgstr "詳細設定…"
+
+#: src/widgets/model_conversation_view.py:48
+msgid "Rounds"
+msgstr "ラウンド数"
+
+#: src/widgets/model_conversation_view.py:51
+msgid "One round includes one response from each model. Model A starts."
+msgstr "1ラウンドに各モデルの回答が1つずつ含まれます。モデルAから開始します。"
+
+#: src/widgets/model_conversation_view.py:52
+msgid "Opening prompt"
+msgstr "開始メッセージ"
+
+#: src/widgets/model_conversation_view.py:57
+msgid "Start conversation"
+msgstr "会話を開始"
+
+#: src/widgets/model_conversation_view.py:58
+msgid "Give Model A a topic or task to begin the exchange."
+msgstr "会話を始めるため、モデルAに話題やタスクを与えてください。"
+
+#: src/widgets/model_conversation_view.py:65
+msgid "Conversation settings"
+msgstr "会話の設定"
+
+#: src/widgets/model_conversation_view.py:71
+msgid "Load earlier messages"
+msgstr "以前のメッセージを読み込む"
+
+#: src/widgets/model_conversation_view.py:74
+msgid "Pause"
+msgstr "一時停止"
+
+#: src/widgets/model_conversation_view.py:75
+#: src/widgets/model_conversation_view.py:225
+msgid "Resume"
+msgstr "再開"
+
+#: src/widgets/model_conversation_view.py:76
+msgid "Stop"
+msgstr "停止"
+
+#: src/widgets/model_conversation_view.py:101
+#: src/widgets/model_conversation_view.py:192
+#: src/widgets/model_conversation_view.py:232
+#: src/widgets/model_conversation_view.py:251
+msgid "Model A"
+msgstr "モデルA"
+
+#: src/widgets/model_conversation_view.py:101
+#: src/widgets/model_conversation_view.py:192
+#: src/widgets/model_conversation_view.py:232
+#: src/widgets/model_conversation_view.py:251
+msgid "Model B"
+msgstr "モデルB"
+
+#: src/widgets/model_conversation_view.py:190
+#, python-brace-format
+msgid "Rounds: {0}"
+msgstr "ラウンド数：{0}"
+
+#: src/widgets/model_conversation_view.py:195
+msgid "No system prompt"
+msgstr "システムプロンプトなし"
+
+#: src/widgets/model_conversation_view.py:225
+msgid "Retry turn"
+msgstr "ターンを再試行"
+
+#: src/widgets/model_conversation_view.py:227
+msgid "Paused"
+msgstr "一時停止中"
+
+#: src/widgets/model_conversation_view.py:228
+msgid "Interrupted"
+msgstr "中断"
+
+#: src/widgets/model_conversation_view.py:231
+msgid "Preparing conversation…"
+msgstr "会話を準備中…"
+
+#: src/widgets/model_conversation_view.py:231
+#, python-brace-format
+msgid "Round {0} of {1} · {2} responding"
+msgstr "ラウンド {0}/{1} · {2}が回答中"
+
+#: src/widgets/model_conversation_view.py:234
+msgid "Pausing after this response…"
+msgstr "この回答の後に一時停止します…"
+
+#: src/widgets/model_conversation_view.py:236
+msgid "Stopping…"
+msgstr "停止中…"
+
+#: src/widgets/model_conversation_view.py:252
+#, python-brace-format
+msgid "Round {0} · {1} · Attempt {2}"
+msgstr "ラウンド {0} · {1} · 試行 {2}"
+
+#: src/widgets/model_conversation_view.py:271
+msgid "History is approaching the configured context size."
+msgstr "履歴が設定されたコンテキストサイズに近づいています。"

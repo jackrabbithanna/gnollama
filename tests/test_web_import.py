@@ -298,7 +298,7 @@ class WebKnowledgeTests(unittest.TestCase):
             new = DatabaseManager(path)
             self.assertEqual(new.knowledge_document(self.doc['id'])['text'], self.doc['text'])
             self.assertIsNone(new.knowledge_document(self.doc['id'])['web_source'])
-            self.assertIn('.pre-v11-', new.backup_path)
+            self.assertIn('.pre-v12-', new.backup_path)
 
     def test_failed_replacement_rolls_back_text_vectors_and_provenance(self):
         db = self.storage.db

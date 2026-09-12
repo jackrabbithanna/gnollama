@@ -16,10 +16,11 @@ Whether you are developing, experimenting, or chatting with local models, Gnolla
 ## Features
 
 * **Multi-Host Management**: Connect to local Ollama servers, remote servers, or Ollama Cloud. Add, edit, or delete configurations, verify host status, and define a default host.
-* **Dual Tab Workflows**:
+* **Generation Workflows**:
   * **New Chat (`/api/chat`)**: Multi-turn sessions that preserve conversation context.
   * **New Response (`/api/generate`)**: Single-turn completions ideal for prompt engineering and testing.
-  * Model lists appear before capability checks. Only the selected model is checked; models known to be embedding-only are excluded from Chat, Response, and Comparison. Opening an empty selector retries discovery. Embedding models remain available in Knowledge and Manage Models; unknown capabilities remain supported for older servers.
+  * **Model to Model Conversation**: Alternating A/B conversations with separate system prompts, bounded rounds, pause/resume, and saved transcripts.
+  * Model lists appear before capability checks. Only the selected model is checked; models known to be embedding-only are excluded from all generation modes. Opening an empty selector retries discovery. Embedding models remain available in Knowledge and Manage Models; unknown capabilities remain supported for older servers.
 * **Conversation History & Sidebar**:
   * Automatically saves chat logs and model configurations between runs.
   * **Pin Chats**: Pin essential conversations to the top of your history list.
@@ -42,7 +43,7 @@ Whether you are developing, experimenting, or chatting with local models, Gnolla
   * Separate display of Ollama's native thinking stream, with model-dependent thinking controls.
   * Display generation stats (including cached prompt tokens, finish reason, and tokens/second) and logprobs.
 * **Stop Responses**: Stop generation while keeping partial answers in chat history. Pending history writes finish before the application quits.
-* **Adaptive GNOME Navigation**: Native tabs support reordering and loading indicators. The sidebar groups Drafts, Pinned, Recent chats, and Recent comparisons, and collapses on narrow windows. Use Ctrl+W to close a tab, Ctrl+Page Up/Down to switch tabs, and F9 to toggle the sidebar.
+* **Adaptive GNOME Navigation**: Native tabs support reordering and loading indicators. The sidebar groups Drafts, Pinned, Recent chats, Recent comparisons, and Recent model conversations, and collapses on narrow windows. Use Ctrl+W to close a tab, Ctrl+Page Up/Down to switch tabs, and F9 to toggle the sidebar.
 
 ### Ollama Cloud
 
@@ -219,7 +220,7 @@ Server and model selectors stay visible. Expand **Options** for thinking, tools,
 
 **Manage Models** uses **Download Model…**, with a progress bar and expandable download details. Server records have persistent name/address labels, address validation, and a visible **Test Connection** action.
 
-The current release uses database schema version 11 and preserves existing documents, embeddings, collection memberships, chat settings, and historical citations.
+The current release uses database schema version 12 and preserves existing documents, embeddings, collection memberships, chat settings, and historical citations.
 
 
 ### Drafts, search, and comparisons
@@ -232,7 +233,23 @@ The conversation menu exports Markdown or versioned JSON after pending saves fin
 
 Choose **New Comparison** (Ctrl+Shift+N) to compare one fresh prompt across 2–4 distinct host/model pairs. All targets share the prompt, system instruction, settings, images, and one retrieval snapshot. Incompatible settings keep the draft available for correction. Stop individual targets or use **Stop All**. Results remain together in history with pin, rename, search, delete confirmation, and export. Reopening a result sends no requests; **Run Again** creates a new editor and run.
 
-The sidebar separates **Recent chats** and **Recent comparisons**; pinned items share **Pinned**. Comparison responses fill equal columns on wide windows and use a target switcher on narrow windows. Chat and comparison bubbles resize with the window. API details wrap, while code preserves its formatting and scrolls horizontally only when a line exceeds the available width.
+The sidebar separates **Recent chats**, **Recent comparisons**, and **Recent model conversations**; pinned items share **Pinned**. Comparison responses fill equal columns on wide windows and use a target switcher on narrow windows. Chat and comparison bubbles resize with the window. API details wrap, while code preserves its formatting and scrolls horizontally only when a line exceeds the available width.
+
+### Model to Model Conversation
+
+Choose **New Model to Model Conversation** to let two models exchange text. Configure each participant's host, model, visible system prompt, and independent advanced settings. The same model can occupy both slots with different instructions. **Rounds** defaults to 5 and accepts 1–100; each round contains an answer from A followed by an answer from B.
+
+Enter an opening prompt for A. Its completed answer becomes B's first prompt, and B's answer becomes A's next prompt. Each model remembers its own replies and the prompts it received. Only answer text crosses between participants; thinking and diagnostics remain available in the transcript. This mode uses text input and output, without attachments, knowledge retrieval, tools, or structured output.
+
+**Pause** completes the active response before waiting; **Resume** continues the same saved run. Configuration stays fixed while paused. **Stop** cancels immediately and ends the run. **Run Again** creates an editable copy. A failed or interrupted response offers **Retry turn** with the same input; partial answers are preserved for inspection and never passed onward. Empty answers also require retry. Reopening a run never starts requests automatically.
+
+Completed turns are saved before the next request starts. Graceful closure preserves partial output; after an abrupt crash, completed turns survive but unsaved streaming text may be lost. Full history is sent on each turn without application-side trimming. The approximate context warning is advisory, so the server may still truncate context or reject an oversized request.
+
+Model conversations support drafts, search, pinning, rename, deletion, and Markdown/JSON export. See the [implementation and validation notes](docs/model-to-model-conversation.md).
+
+![Model conversation setup](screenshots/gnollama-model-conversation-setup.png)
+
+![Paused model conversation](screenshots/gnollama-model-conversation.png)
 
 **Context estimate** reports text estimates using UTF-8 bytes divided by four, plus a positive configured output allowance. Image and chat-template overhead are unknown. An advisory appears at 80% of an explicitly configured context size. Estimates never truncate the conversation or change settings.
 

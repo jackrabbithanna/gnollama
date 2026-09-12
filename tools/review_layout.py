@@ -148,6 +148,34 @@ with tempfile.TemporaryDirectory(prefix='gnollama-layout-') as temporary, ExitSt
         bubble.api_expander.set_expanded(True)
     capture('comparison-api-wide-light', 1200)
     capture('comparison-api-narrow-dark', 360, True)
+    conversation = window.new_model_conversation_tab()
+    pump(lambda: all(p.input.get_selected_model() and not p.input.capabilities_loading for p in conversation.targets))
+    conversation.targets[1].input.select_model('juniper:4b')
+    conversation.targets[0].system_entry.restore_draft('Propose a practical design. Explain one improvement per turn.')
+    conversation.targets[1].system_entry.restore_draft('Review the proposal. Identify a weakness and suggest a concrete refinement.')
+    conversation.chat_input.entry.restore_draft('Design reliable draft recovery for a desktop chat application.')
+    conversation.rounds.set_value(2)
+    pump(lambda: all(not p.input.capabilities_loading for p in conversation.targets))
+    capture('model-conversation-setup-wide-light', 1200)
+    capture('model-conversation-setup-narrow-dark', 360, True)
+    # Pause after a real response, so the saved transcript also exercises Resume.
+    previous_finished = conversation.controller.finished
+    def conversation_finished(uid, state):
+        previous_finished(uid, state)
+        if conversation.controller.run['next_turn'] == 2:
+            conversation.controller.pause()
+    conversation.controller.finished = conversation_finished
+    with patch.object(ollama, 'chat', side_effect=response):
+        conversation.start()
+        pump(lambda: conversation.request is None and storage.writer.idle)
+    assert conversation.controller.run['status'] == 'paused', conversation.notice.get_text()
+    assert len(conversation.bubbles) == 2
+    capture('model-conversation-transcript-wide-light', 1200)
+    capture('model-conversation-transcript-narrow-dark', 360, True)
+    capture('model-conversation-transcript-narrow-rtl', 360, False, True)
+    for bubble in conversation.bubbles.values():
+        bubble.api_expander.set_expanded(True)
+    capture('model-conversation-api-narrow-dark', 360, True)
     GLib.source_remove(heartbeat)
     (output / 'layout-report.json').write_text(json.dumps(dict(captures=captures, rendered_messages=rendered,
         stored_messages=1000, heartbeat_max_ms=max(heartbeats), heartbeat_samples=len(heartbeats)), indent=2) + '\n')

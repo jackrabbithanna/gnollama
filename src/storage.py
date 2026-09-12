@@ -38,6 +38,7 @@ class ChatStorage:
         self.writer = OrderedWriter(self._write_failed)
         self.db.interrupt_knowledge_indexes()
         self.db.interrupt_comparisons()
+        self.db.interrupt_model_conversations()
         from .knowledge import KnowledgeService
         self.knowledge = KnowledgeService(self)
 

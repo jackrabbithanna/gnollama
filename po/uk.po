@@ -3462,3 +3462,150 @@ msgstr "Нещодавні чати"
 #: src/window.py:79
 msgid "Recent comparisons"
 msgstr "Нещодавні порівняння"
+
+#: src/window.py:80
+msgid "Recent model conversations"
+msgstr "Нещодавні розмови моделей"
+
+#: src/window.ui:132 src/widgets/model_conversation_view.py:25
+msgid "New Model to Model Conversation"
+msgstr "Нова розмова між моделями"
+
+#: src/model_conversation.py:25
+msgid "The saved conversation has an incomplete turn history."
+msgstr "Історія ходів збереженої розмови неповна."
+
+#: src/model_conversation.py:35
+msgid "Choose two participants."
+msgstr "Виберіть двох учасників."
+
+#: src/model_conversation.py:46
+msgid ""
+"A participant’s server address changed. Restore the host or use Run Again."
+msgstr "Адреса сервера учасника змінилася. Відновіть хост або скористайтеся повторним запуском."
+
+#: src/model_conversation.py:60
+msgid "Embedding models cannot join a conversation."
+msgstr "Моделі векторних подань не можуть брати участь у розмові."
+
+#: src/model_conversation.py:62
+msgid "A participant does not support the selected thinking option."
+msgstr "Учасник не підтримує вибраний параметр міркування."
+
+#: src/model_conversation.py:67
+msgid "Cloud targets manage model retention automatically."
+msgstr "Хмарні цілі автоматично керують утриманням моделей у пам’яті."
+
+#: src/model_conversation.py:121
+msgid "Enter an opening prompt and choose 1–100 rounds."
+msgstr "Введіть початкове повідомлення та виберіть 1–100 раундів."
+
+#: src/model_conversation.py:259
+msgid "The model returned no usable text answer. Retry this turn."
+msgstr "Модель не повернула придатної текстової відповіді. Повторіть цей хід."
+
+#: src/widgets/model_target.py:30 src/widgets/model_conversation_view.py:198
+msgid "Advanced settings…"
+msgstr "Додаткові налаштування…"
+
+#: src/widgets/model_conversation_view.py:48
+msgid "Rounds"
+msgstr "Раунди"
+
+#: src/widgets/model_conversation_view.py:51
+msgid "One round includes one response from each model. Model A starts."
+msgstr "Один раунд містить по одній відповіді кожної моделі. Починає модель A."
+
+#: src/widgets/model_conversation_view.py:52
+msgid "Opening prompt"
+msgstr "Початкове повідомлення"
+
+#: src/widgets/model_conversation_view.py:57
+msgid "Start conversation"
+msgstr "Почати розмову"
+
+#: src/widgets/model_conversation_view.py:58
+msgid "Give Model A a topic or task to begin the exchange."
+msgstr "Дайте моделі A тему або завдання для початку обміну."
+
+#: src/widgets/model_conversation_view.py:65
+msgid "Conversation settings"
+msgstr "Налаштування розмови"
+
+#: src/widgets/model_conversation_view.py:71
+msgid "Load earlier messages"
+msgstr "Завантажити попередні повідомлення"
+
+#: src/widgets/model_conversation_view.py:74
+msgid "Pause"
+msgstr "Призупинити"
+
+#: src/widgets/model_conversation_view.py:75
+#: src/widgets/model_conversation_view.py:225
+msgid "Resume"
+msgstr "Продовжити"
+
+#: src/widgets/model_conversation_view.py:76
+msgid "Stop"
+msgstr "Зупинити"
+
+#: src/widgets/model_conversation_view.py:101
+#: src/widgets/model_conversation_view.py:192
+#: src/widgets/model_conversation_view.py:232
+#: src/widgets/model_conversation_view.py:251
+msgid "Model A"
+msgstr "Модель A"
+
+#: src/widgets/model_conversation_view.py:101
+#: src/widgets/model_conversation_view.py:192
+#: src/widgets/model_conversation_view.py:232
+#: src/widgets/model_conversation_view.py:251
+msgid "Model B"
+msgstr "Модель B"
+
+#: src/widgets/model_conversation_view.py:190
+#, python-brace-format
+msgid "Rounds: {0}"
+msgstr "Раунди: {0}"
+
+#: src/widgets/model_conversation_view.py:195
+msgid "No system prompt"
+msgstr "Без системних інструкцій"
+
+#: src/widgets/model_conversation_view.py:225
+msgid "Retry turn"
+msgstr "Повторити хід"
+
+#: src/widgets/model_conversation_view.py:227
+msgid "Paused"
+msgstr "Призупинено"
+
+#: src/widgets/model_conversation_view.py:228
+msgid "Interrupted"
+msgstr "Перервано"
+
+#: src/widgets/model_conversation_view.py:231
+msgid "Preparing conversation…"
+msgstr "Підготовка розмови…"
+
+#: src/widgets/model_conversation_view.py:231
+#, python-brace-format
+msgid "Round {0} of {1} · {2} responding"
+msgstr "Раунд {0} з {1} · {2} відповідає"
+
+#: src/widgets/model_conversation_view.py:234
+msgid "Pausing after this response…"
+msgstr "Пауза після цієї відповіді…"
+
+#: src/widgets/model_conversation_view.py:236
+msgid "Stopping…"
+msgstr "Зупинення…"
+
+#: src/widgets/model_conversation_view.py:252
+#, python-brace-format
+msgid "Round {0} · {1} · Attempt {2}"
+msgstr "Раунд {0} · {1} · Спроба {2}"
+
+#: src/widgets/model_conversation_view.py:271
+msgid "History is approaching the configured context size."
+msgstr "Історія наближається до налаштованого розміру контексту."

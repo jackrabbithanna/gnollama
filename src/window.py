@@ -77,9 +77,10 @@ class GnollamaWindow(Adw.ApplicationWindow):
         self.pinned_section = Adw.SidebarSection(title=_('Pinned'))
         self.recent_chats_section = Adw.SidebarSection(title=_('Recent chats'))
         self.recent_comparisons_section = Adw.SidebarSection(title=_('Recent comparisons'))
+        self.recent_model_conversations_section = Adw.SidebarSection(title=_('Recent model conversations'))
         self.drafts_section = Adw.SidebarSection(title=_('Drafts'))
         for section in (self.drafts_section, self.pinned_section,
-                        self.recent_chats_section, self.recent_comparisons_section):
+                        self.recent_chats_section, self.recent_comparisons_section, self.recent_model_conversations_section):
             self.history_sidebar.append(section)
         self.draft_rows = {}
         self._setup_actions()
@@ -117,6 +118,9 @@ class GnollamaWindow(Adw.ApplicationWindow):
         from . import ollama
         ollama.cancel_all()
         for tab in self.tabs():
+            if hasattr(tab, 'prepare_shutdown'):
+                tab.prepare_shutdown()
+                continue
             tab.draft.flush()
             tab.chat_input.cancel_fetches()
             for picker in getattr(tab, 'targets', []):
@@ -197,6 +201,7 @@ class GnollamaWindow(Adw.ApplicationWindow):
     def _setup_actions(self):
         actions = [('new_tab', lambda *args: self.new_tab()),
                    ('new_comparison', lambda *args: self.new_comparison_tab()),
+                   ('new_model_conversation', lambda *args: self.new_model_conversation_tab()),
                    ('new_chat_tab', lambda *args: self.new_chat_tab()),
                    ('clear_history', self.on_clear_history),
                    ('manage_hosts', self.on_manage_hosts),
@@ -298,6 +303,10 @@ class GnollamaWindow(Adw.ApplicationWindow):
         from .widgets.comparison_view import ComparisonTab
         return self._add_tab(ComparisonTab(self.storage))
 
+    def new_model_conversation_tab(self):
+        from .widgets.model_conversation_view import ModelConversationTab
+        return self._add_tab(ModelConversationTab(self.storage))
+
     def new_tab(self):
         return self._add_tab(GenerationTab(mode='generate', storage=self.storage))
 
@@ -315,6 +324,9 @@ class GnollamaWindow(Adw.ApplicationWindow):
         if chat_data.get('kind') == 'comparison':
             from .widgets.comparison_view import ComparisonTab
             return self._add_tab(ComparisonTab(self.storage, saved=chat_data))
+        if chat_data.get('kind') == 'model_conversation':
+            from .widgets.model_conversation_view import ModelConversationTab
+            return self._add_tab(ModelConversationTab(self.storage, saved=chat_data))
         return self._add_tab(GenerationTab(mode='chat', chat_id=chat_data['id'],
                                            initial_history=chat_data.get('messages', []), storage=self.storage, chat_data=chat_data))
 
@@ -378,7 +390,7 @@ class GnollamaWindow(Adw.ApplicationWindow):
                 else:
                     self.add_history_row(chat)
             positions = {self.pinned_section: 0, self.recent_chats_section: 0,
-                         self.recent_comparisons_section: 0}
+                         self.recent_comparisons_section: 0, self.recent_model_conversations_section: 0}
             for chat in chats:
                 item = self.chat_rows[chat['id']]
                 section = item.get_section()
@@ -438,6 +450,8 @@ class GnollamaWindow(Adw.ApplicationWindow):
     def _history_section(self, chat):
         if chat.get('is_pinned'):
             return self.pinned_section
+        if chat.get('kind') == 'model_conversation':
+            return self.recent_model_conversations_section
         return self.recent_comparisons_section if chat.get('kind') == 'comparison' else self.recent_chats_section
 
     def add_history_row(self, chat, prepend=False):
@@ -496,6 +510,9 @@ class GnollamaWindow(Adw.ApplicationWindow):
                 if draft['mode'] == 'comparison':
                     from .widgets.comparison_view import ComparisonTab
                     self._add_tab(ComparisonTab(self.storage, draft=draft))
+                elif draft['mode'] == 'model_conversation':
+                    from .widgets.model_conversation_view import ModelConversationTab
+                    self._add_tab(ModelConversationTab(self.storage, draft=draft))
                 else:
                     self._add_tab(GenerationTab(mode=draft['mode'], storage=self.storage, draft=draft))
             return False

@@ -12,38 +12,7 @@ from .options_panel import OptionsPanel
 from .knowledge_view import SourcesView
 
 
-class TargetPicker(Gtk.Box):
-    def __init__(self, storage, changed, target=None):
-        super().__init__(orientation=Gtk.Orientation.VERTICAL, spacing=4)
-        self.panel = OptionsPanel()
-        self.panel.storage = storage
-        self.panel.update_hosts()
-        self.input = ChatInput()
-        self.input.services = storage.services
-        self.input.connection_box.get_parent().remove(self.input.connection_box)
-        self.input.connection_box.prepend(self.panel.host_row)
-        self.input.thinking_dropdown.get_parent().set_visible(False)
-        self.append(self.input.connection_box)
-        self.input.capability_notice.get_parent().remove(self.input.capability_notice)
-        self.append(self.input.capability_notice)
-        def refresh(*args):
-            host = self.panel.get_selected_host()
-            self.input.fetch_models(storage.connection(host) if host else None,
-                                    host_id=host['id'] if host else None)
-            changed()
-        if target:
-            for index, host in enumerate(self.panel.host_list):
-                if host['id'] == target.get('host_id'):
-                    self.panel.host_dropdown.set_selected(index)
-            self.input.pending_model_selection = target.get('model')
-        self.panel.host_dropdown.connect('notify::selected-item', refresh)
-        self.input.model_dropdown.connect('notify::selected', lambda *args: changed())
-        self.input.connect('capabilities-changed', lambda *args: changed())
-        refresh()
-
-    def value(self):
-        host = self.panel.get_selected_host()
-        return dict(host_id=host['id'] if host else None, model=self.input.get_selected_model())
+from .model_target import TargetPicker
 
 
 class ComparisonTab(Gtk.Box):

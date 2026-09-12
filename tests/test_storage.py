@@ -70,7 +70,7 @@ class StorageTests(unittest.TestCase):
         db = DatabaseManager(path)
         self.assertEqual(db.get_chat('chat')['messages'], [{'role': 'assistant', 'content': 'saved'}])
         with db._get_conn() as conn:
-            self.assertEqual(conn.execute('PRAGMA user_version').fetchone()[0], 11)
+            self.assertEqual(conn.execute('PRAGMA user_version').fetchone()[0], 12)
 
     def test_connection_closes_after_context(self):
         with self.storage.db._get_conn() as conn:

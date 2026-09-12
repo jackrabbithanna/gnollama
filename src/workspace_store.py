@@ -58,9 +58,12 @@ class WorkspaceDatabase:
                 match = conn.execute('SELECT order_index FROM messages WHERE chat_id=? AND uid=?', (id, match_uid)).fetchone()
                 if match:
                     offset = max(0, match[0] - 10)
-            return dict(row, options=json.loads(row['options'] or '{}'), system=row['system_prompt'],
+            result = dict(row, options=json.loads(row['options'] or '{}'), system=row['system_prompt'],
                 host=row['host_id'], messages=self._read_messages(conn, id, 50, offset, True),
                 message_count=count, message_offset=offset, paged=True)
+            if row['kind'] == 'model_conversation':
+                self._model_conversation_snapshot(conn, result)
+            return result
 
     def export_snapshot(self, id):
         # Read all tables through one SQLite snapshot, including images and target requests.
@@ -73,6 +76,8 @@ class WorkspaceDatabase:
             result['messages'] = self._read_messages(conn, id, include_ids=True)
             result['targets'] = [dict(r, settings=json.loads(r['settings']), request=json.loads(r['request']))
                 for r in conn.execute('SELECT * FROM comparison_targets WHERE run_id=? ORDER BY position', (id,))]
+            if row['kind'] == 'model_conversation':
+                self._model_conversation_snapshot(conn, result)
             return result
 
     def save_draft(self, draft):

@@ -3555,3 +3555,19 @@ msgstr "चक्र {0} · {1} · प्रयास {2}"
 #: src/widgets/model_conversation_view.py:271
 msgid "History is approaching the configured context size."
 msgstr "इतिहास निर्धारित संदर्भ आकार के निकट है।"
+
+#: src/widgets/history_sidebar.py:58 src/widgets/history_sidebar.py:100
+msgid "Show more"
+msgstr "और दिखाएँ"
+
+#: src/widgets/history_sidebar.py:100
+msgid "Show less"
+msgstr "कम दिखाएँ"
+
+#: src/widgets/history_sidebar.py:45
+msgid "Search suggestions"
+msgstr "खोज सुझाव"
+
+#: src/widgets/history_sidebar.py:131
+msgid "No matching conversations"
+msgstr "कोई मेल खाती बातचीत नहीं"

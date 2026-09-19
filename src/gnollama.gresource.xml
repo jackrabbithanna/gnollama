@@ -19,5 +19,7 @@
     <file>icons/scalable/actions/gnollama-sidebar-symbolic.svg</file>
     <file>icons/scalable/actions/gnollama-chats-symbolic.svg</file>
     <file>icons/scalable/actions/gnollama-draft-symbolic.svg</file>
+    <file>icons/scalable/actions/gnollama-comparison-symbolic.svg</file>
+    <file>icons/scalable/actions/gnollama-model-conversation-symbolic.svg</file>
   </gresource>
 </gresources>

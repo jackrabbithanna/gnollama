@@ -56,33 +56,10 @@ class GnollamaWindow(Adw.ApplicationWindow):
         self._save_error_dialog = None
         self.chat_rows = {}
         self.model_managers = []
-        self._history_generation = 0
-        self._history_limit = 100
-        self._history_cache = []
-        self._search_source = None
-        sidebar_toolbar = self.history_sidebar.get_parent()
-        sidebar_toolbar.set_content(None)
-        self.history_stack = Gtk.Stack()
-        self.history_stack.add_named(self.history_sidebar, 'history')
-        self.search_results = Gtk.ListBox(selection_mode=Gtk.SelectionMode.NONE)
-        self.history_stack.add_named(Gtk.ScrolledWindow(child=self.search_results, vexpand=True,
-            hscrollbar_policy=Gtk.PolicyType.NEVER), 'search')
-        sidebar_toolbar.set_content(self.history_stack)
-        self.history_search = Gtk.SearchEntry(placeholder_text=_('Search conversations'), margin_start=6, margin_end=6)
-        self.history_search.connect('search-changed', self._search_changed)
-        sidebar_toolbar.add_top_bar(self.history_search)
-        self.history_more = Gtk.Button(label=_('Load More'), visible=False)
-        self.history_more.connect('clicked', self._more_history)
-        sidebar_toolbar.add_bottom_bar(self.history_more)
-        self.pinned_section = Adw.SidebarSection(title=_('Pinned'))
-        self.recent_chats_section = Adw.SidebarSection(title=_('Recent chats'))
-        self.recent_comparisons_section = Adw.SidebarSection(title=_('Recent comparisons'))
-        self.recent_model_conversations_section = Adw.SidebarSection(title=_('Recent model conversations'))
-        self.drafts_section = Adw.SidebarSection(title=_('Drafts'))
-        for section in (self.drafts_section, self.pinned_section,
-                        self.recent_chats_section, self.recent_comparisons_section, self.recent_model_conversations_section):
-            self.history_sidebar.append(section)
-        self.draft_rows = {}
+        from .widgets.history_sidebar import HistorySidebar
+        self.history = HistorySidebar(self)
+        self.history_search = self.history.search
+        self.draft_rows = self.history.draft_rows
         self._setup_actions()
         self._sidebar_menu = Gio.Menu()
         self.history_sidebar.set_menu_model(self._sidebar_menu)
@@ -110,6 +87,8 @@ class GnollamaWindow(Adw.ApplicationWindow):
         if self._shutting_down:
             return
         self._shutting_down = True
+        self.history.invalidate()
+        self.history.popover.popdown()
         self.tab_view.set_sensitive(False)
         self.history_sidebar.set_sensitive(False)
         self.knowledge_view.set_sensitive(False)
@@ -330,92 +309,8 @@ class GnollamaWindow(Adw.ApplicationWindow):
         return self._add_tab(GenerationTab(mode='chat', chat_id=chat_data['id'],
                                            initial_history=chat_data.get('messages', []), storage=self.storage, chat_data=chat_data))
 
-    def _search_changed(self, *args):
-        self._history_limit = 100
-        if self._search_source:
-            GLib.source_remove(self._search_source)
-        self._search_source = GLib.timeout_add(250, self.load_history_sidebar)
-
-    def _more_history(self, *args):
-        self.load_history_sidebar(append=True)
-
-    def load_history_sidebar(self, append=False):
-        self._search_source = None
-        if self._allow_close:
-            return False
-        self._history_generation += 1
-        generation = self._history_generation
-        query = self.history_search.get_text()
-        previous = list(self._history_cache) if append else []
-        offset = len(previous)
-        def read():
-            try:
-                chats = self.storage.list_history(query, 101, offset)
-                drafts = self.storage.list_drafts()
-                GLib.idle_add(deliver, chats, drafts)
-            except Exception as exc:
-                from .widgets.feedback import toast
-                GLib.idle_add(toast, self, str(exc))
-        def deliver(chats, drafts):
-            if generation != self._history_generation or self._allow_close:
-                return False
-            self.history_stack.set_visible_child_name('search' if query else 'history')
-            more = len(chats) > 100
-            self._history_cache = previous + chats[:100]
-            chats = self._history_cache
-            wanted = {c['id'] for c in chats}
-            if not query:
-                wanted.update(getattr(t.strategy, 'chat_id', None) for t in self.tabs() if not t.closing)
-            for id in list(self.chat_rows):
-                if id not in wanted:
-                    self._remove_history_item(id)
-            if query:
-                self.search_results.remove_all()
-                from types import SimpleNamespace
-                for chat in chats:
-                    row = Adw.ActionRow(title=chat['title'], subtitle=chat.get('snippet') or '',
-                        activatable=True, use_markup=False, subtitle_lines=2, title_lines=1)
-                    item = SimpleNamespace(chat_id=chat['id'], match_uid=chat.get('match_uid'))
-                    row.connect('activated', lambda row, item=item: self._open_history_item(item))
-                    self.search_results.append(row)
-            for chat in chats:
-                item = self.chat_rows.get(chat['id'])
-                if item and item.get_section() != self._history_section(chat):
-                    self._remove_history_item(chat['id'])
-                    item = None
-                if item:
-                    item.set_title(display_chat_title(chat['title']))
-                    item.set_tooltip(chat.get('snippet') or item.get_title())
-                    item.match_uid = chat.get('match_uid')
-                else:
-                    self.add_history_row(chat)
-            positions = {self.pinned_section: 0, self.recent_chats_section: 0,
-                         self.recent_comparisons_section: 0, self.recent_model_conversations_section: 0}
-            for chat in chats:
-                item = self.chat_rows[chat['id']]
-                section = item.get_section()
-                position = positions[section]
-                if item.get_section_index() != position:
-                    section.remove(item)
-                    section.insert(item, position)
-                positions[section] += 1
-            for id in list(self.draft_rows):
-                if id not in {d['id'] for d in drafts}:
-                    self.drafts_section.remove(self.draft_rows.pop(id))
-            for draft in drafts:
-                item = self.draft_rows.get(draft['id'])
-                if item is None:
-                    item = Adw.SidebarItem(icon_name='gnollama-draft-symbolic')
-                    item.draft_id, item.chat_id = draft['id'], draft['chat_id']
-                    item.is_pinned = False
-                    self.drafts_section.append(item)
-                    self.draft_rows[draft['id']] = item
-                item.set_title(draft['title'] or _('Draft'))
-            self.history_more.set_visible(more)
-            self.on_tab_switched()
-            return False
-        self.storage.services.control.submit(read)
-        return False
+    def load_history_sidebar(self):
+        return self.history.reload()
 
     def _fill_history_menu(self, menu, item):
         menu.remove_all()
@@ -428,7 +323,7 @@ class GnollamaWindow(Adw.ApplicationWindow):
 
     def _setup_sidebar_menu(self, sidebar, item):
         self._sidebar_menu.remove_all()
-        if item is None:
+        if item is None or hasattr(item, 'category_toggle'):
             return
         if hasattr(item, 'draft_id'):
             for label, action in [(_('Continue'), 'draft_open'), (_('Discard Draft'), 'draft_discard')]:
@@ -448,31 +343,13 @@ class GnollamaWindow(Adw.ApplicationWindow):
         self.storage.delete_draft(draft_id, on_done=self.load_history_sidebar)
 
     def _history_section(self, chat):
-        if chat.get('is_pinned'):
-            return self.pinned_section
-        if chat.get('kind') == 'model_conversation':
-            return self.recent_model_conversations_section
-        return self.recent_comparisons_section if chat.get('kind') == 'comparison' else self.recent_chats_section
+        return self.history.section(chat)
 
     def add_history_row(self, chat, prepend=False):
-        item = Adw.SidebarItem(title=display_chat_title(chat.get('title', 'New Chat')), icon_name='gnollama-chats-symbolic')
-        item.chat_id = chat['id']
-        item.is_pinned = chat.get('is_pinned', False)
-        item.match_uid = chat.get('match_uid')
-        item.set_tooltip(item.get_title())
-        menu = Gio.Menu()
-        self._fill_history_menu(menu, item)
-        button = Gtk.MenuButton(icon_name='view-more-symbolic', menu_model=menu, tooltip_text=_('Chat actions'))
-        button.add_css_class('flat')
-        item.set_suffix(button)
-        section = self._history_section(chat)
-        (section.prepend if prepend else section.append)(item)
-        self.chat_rows[item.chat_id] = item
+        self.history.add_chat(chat)
 
     def _remove_history_item(self, chat_id):
-        item = self.chat_rows.pop(chat_id, None)
-        if item and item.get_section():
-            item.get_section().remove(item)
+        self.history.remove_chat(chat_id)
 
     def on_history_activated(self, sidebar, index):
         self._open_history_item(sidebar.get_item(index))
@@ -480,6 +357,10 @@ class GnollamaWindow(Adw.ApplicationWindow):
     def _open_history_item(self, item):
         if item is None:
             return
+        if hasattr(item, 'category_toggle'):
+            self.history.toggle(item.category_toggle)
+            return
+        self.history.popover.popdown()
         if self.split_view.get_collapsed():
             self.split_view.set_show_sidebar(False)
         if hasattr(item, 'draft_id'):
@@ -578,7 +459,7 @@ class GnollamaWindow(Adw.ApplicationWindow):
         return dialog
 
     def _delete_chat_confirmed(self, chat_id):
-        self._history_generation += 1
+        self.history.invalidate()
         for tab in self.tabs():
             if getattr(tab.strategy, 'chat_id', None) == chat_id:
                 self.close_tab(tab, delete=True)

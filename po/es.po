@@ -3627,3 +3627,19 @@ msgstr "Ronda {0} · {1} · Intento {2}"
 #: src/widgets/model_conversation_view.py:271
 msgid "History is approaching the configured context size."
 msgstr "El historial se acerca al tamaño de contexto configurado."
+
+#: src/widgets/history_sidebar.py:58 src/widgets/history_sidebar.py:100
+msgid "Show more"
+msgstr "Mostrar más"
+
+#: src/widgets/history_sidebar.py:100
+msgid "Show less"
+msgstr "Mostrar menos"
+
+#: src/widgets/history_sidebar.py:45
+msgid "Search suggestions"
+msgstr "Sugerencias de búsqueda"
+
+#: src/widgets/history_sidebar.py:131
+msgid "No matching conversations"
+msgstr "No hay conversaciones coincidentes"

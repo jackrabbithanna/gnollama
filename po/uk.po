@@ -3609,3 +3609,19 @@ msgstr "Раунд {0} · {1} · Спроба {2}"
 #: src/widgets/model_conversation_view.py:271
 msgid "History is approaching the configured context size."
 msgstr "Історія наближається до налаштованого розміру контексту."
+
+#: src/widgets/history_sidebar.py:58 src/widgets/history_sidebar.py:100
+msgid "Show more"
+msgstr "Показати більше"
+
+#: src/widgets/history_sidebar.py:100
+msgid "Show less"
+msgstr "Показати менше"
+
+#: src/widgets/history_sidebar.py:45
+msgid "Search suggestions"
+msgstr "Пошукові підказки"
+
+#: src/widgets/history_sidebar.py:131
+msgid "No matching conversations"
+msgstr "Немає відповідних розмов"

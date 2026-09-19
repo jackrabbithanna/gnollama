@@ -3442,3 +3442,19 @@ msgstr "第 {0} 轮 · {1} · 第 {2} 次尝试"
 #: src/widgets/model_conversation_view.py:271
 msgid "History is approaching the configured context size."
 msgstr "历史记录正在接近所配置的上下文大小。"
+
+#: src/widgets/history_sidebar.py:58 src/widgets/history_sidebar.py:100
+msgid "Show more"
+msgstr "显示更多"
+
+#: src/widgets/history_sidebar.py:100
+msgid "Show less"
+msgstr "收起"
+
+#: src/widgets/history_sidebar.py:45
+msgid "Search suggestions"
+msgstr "搜索建议"
+
+#: src/widgets/history_sidebar.py:131
+msgid "No matching conversations"
+msgstr "没有匹配的对话"

@@ -3618,3 +3618,19 @@ msgstr "Ciclo {0} · {1} · Tentativo {2}"
 #: src/widgets/model_conversation_view.py:271
 msgid "History is approaching the configured context size."
 msgstr "La cronologia si avvicina alla dimensione del contesto configurata."
+
+#: src/widgets/history_sidebar.py:58 src/widgets/history_sidebar.py:100
+msgid "Show more"
+msgstr "Mostra altro"
+
+#: src/widgets/history_sidebar.py:100
+msgid "Show less"
+msgstr "Mostra meno"
+
+#: src/widgets/history_sidebar.py:45
+msgid "Search suggestions"
+msgstr "Suggerimenti di ricerca"
+
+#: src/widgets/history_sidebar.py:131
+msgid "No matching conversations"
+msgstr "Nessuna conversazione corrispondente"

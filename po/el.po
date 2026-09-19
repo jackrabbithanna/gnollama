@@ -3633,3 +3633,19 @@ msgstr "Γύρος {0} · {1} · Προσπάθεια {2}"
 #: src/widgets/model_conversation_view.py:271
 msgid "History is approaching the configured context size."
 msgstr "Το ιστορικό πλησιάζει το καθορισμένο μέγεθος συμφραζομένων."
+
+#: src/widgets/history_sidebar.py:58 src/widgets/history_sidebar.py:100
+msgid "Show more"
+msgstr "Εμφάνιση περισσότερων"
+
+#: src/widgets/history_sidebar.py:100
+msgid "Show less"
+msgstr "Εμφάνιση λιγότερων"
+
+#: src/widgets/history_sidebar.py:45
+msgid "Search suggestions"
+msgstr "Προτάσεις αναζήτησης"
+
+#: src/widgets/history_sidebar.py:131
+msgid "No matching conversations"
+msgstr "Δεν βρέθηκαν συνομιλίες"

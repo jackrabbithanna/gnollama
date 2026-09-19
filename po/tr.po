@@ -3576,3 +3576,19 @@ msgstr "Tur {0} · {1} · Deneme {2}"
 #: src/widgets/model_conversation_view.py:271
 msgid "History is approaching the configured context size."
 msgstr "Geçmiş, yapılandırılan bağlam boyutuna yaklaşıyor."
+
+#: src/widgets/history_sidebar.py:58 src/widgets/history_sidebar.py:100
+msgid "Show more"
+msgstr "Daha fazla göster"
+
+#: src/widgets/history_sidebar.py:100
+msgid "Show less"
+msgstr "Daha az göster"
+
+#: src/widgets/history_sidebar.py:45
+msgid "Search suggestions"
+msgstr "Arama önerileri"
+
+#: src/widgets/history_sidebar.py:131
+msgid "No matching conversations"
+msgstr "Eşleşen konuşma yok"

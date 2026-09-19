@@ -227,7 +227,11 @@ The current release uses database schema version 12 and preserves existing docum
 
 Enter sends a prompt; Shift+Enter inserts a newline. The composer and system instructions accept multiline text without stripping indentation. Unsent text, images, and settings are saved after 500 ms and flushed on close. Reopen an existing chat to recover its draft, or use **Drafts** for unsent Chat, Response, and Comparison editors. **Discard Draft** removes the saved draft. Completed Response output stays temporary.
 
-Search titles and user/assistant messages from the sidebar. Search uses literal token prefixes and shows matching passages. Selecting a result opens its matching message. History and library lists load in pages of 100; conversations initially render 50 messages. **Load Older Messages** keeps the current reading position. During generation, scroll upward to stop following; use **Jump to latest** to resume.
+Each sidebar category shows its five most recently updated entries, with a distinct icon. **Show more** expands that category to its full list; **Show less** returns to five. Categories with five or fewer entries need no expansion control.
+
+Search filters every category as you type, including entries hidden by the five-item limit. It searches titles, user/assistant messages, and draft text using literal token prefixes. Matching message passages appear below conversation titles; selecting a conversation opens its matching message. The autocomplete menu suggests titles: choose one with the mouse, or use Up/Down followed by Enter or Tab, to fill the search field. Escape dismisses suggestions. Each filtered category can expand independently; clearing the search restores your previous browsing expansions.
+
+Library lists load in pages of 100; conversations initially render 50 messages. **Load Older Messages** keeps the current reading position. During generation, scroll upward to stop following; use **Jump to latest** to resume.
 
 The conversation menu exports Markdown or versioned JSON after pending saves finish. JSON preserves settings, thinking, outcomes, tool rounds, retrieval snapshots, and embedded attachments; credentials and their references are excluded. Copy actions retain literal code, including fenced Markdown. **Preview Markdown** is an optional rendering of that source.
 

@@ -3655,3 +3655,19 @@ msgstr "Tour {0} · {1} · Tentative {2}"
 #: src/widgets/model_conversation_view.py:271
 msgid "History is approaching the configured context size."
 msgstr "L’historique approche de la taille de contexte configurée."
+
+#: src/widgets/history_sidebar.py:58 src/widgets/history_sidebar.py:100
+msgid "Show more"
+msgstr "Afficher plus"
+
+#: src/widgets/history_sidebar.py:100
+msgid "Show less"
+msgstr "Afficher moins"
+
+#: src/widgets/history_sidebar.py:45
+msgid "Search suggestions"
+msgstr "Suggestions de recherche"
+
+#: src/widgets/history_sidebar.py:131
+msgid "No matching conversations"
+msgstr "Aucune conversation correspondante"

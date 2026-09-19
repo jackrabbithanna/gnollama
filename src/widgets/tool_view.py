@@ -77,7 +77,7 @@ class ToolCallsView(Gtk.Box):
         self.append(self.actions)
         self.update(False)
 
-    def update(self, editable):
+    def update(self, editable, can_continue=True):
         round = self.message['response_metadata']['tool_round']
         state = round['state']
         labels = {'pending': _('Awaiting manual tool results'), 'submitted': _('Tool results submitted'),
@@ -87,7 +87,7 @@ class ToolCallsView(Gtk.Box):
         pending = state == 'pending'
         self.actions.set_visible(pending)
         self.actions.set_sensitive(editable)
-        self.continue_button.set_sensitive(editable and all(r is not None for r in round['results']))
+        self.continue_button.set_sensitive(editable and can_continue and all(r is not None for r in round['results']))
         for index, button in enumerate(self.buttons):
             result = round['results'][index]
             button.set_visible(pending)

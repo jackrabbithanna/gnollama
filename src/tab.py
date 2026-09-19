@@ -575,6 +575,7 @@ class GenerationTab(Gtk.Box):
         self.options_panel.tool_support = self.chat_input.tool_support
         self.options_panel.tools_loading = self.chat_input.capabilities_loading
         self.options_panel.update_tools_notice()
+        self._sync_tools()
 
     def _persist_tool_options(self, *args):
         self._settings_edited()
@@ -598,8 +599,9 @@ class GenerationTab(Gtk.Box):
     def _sync_tools(self):
         pending = self.strategy.pending_round if isinstance(self.strategy, ChatStrategy) else None
         editable = not (self.request or self._tool_busy or self.closing or self._disposed)
+        can_continue = bool(self.chat_input.get_selected_model()) and not self.chat_input.capabilities_loading
         for view in self._tool_views:
-            view.update(editable and view.message is pending)
+            view.update(editable and view.message is pending, can_continue=can_continue)
         self.chat_input.awaiting_tools = pending is not None or self._tool_busy
         self.chat_input.update_capability_controls()
 

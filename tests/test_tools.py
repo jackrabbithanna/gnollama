@@ -1,4 +1,5 @@
 import copy
+from concurrent.futures import Future
 import json
 import unittest
 from pathlib import Path
@@ -122,7 +123,7 @@ class ToolUITests(unittest.TestCase):
         saved = self.storage.get_chat(tab.strategy.chat_id)
         restored = GenerationTab(mode='chat', chat_id=tab.strategy.chat_id, initial_history=saved['messages'], storage=self.storage)
         self.tabs.append(restored)
-        test_ui.pump_until(lambda: restored.chat_input.get_selected_model() == 'test' and session.worker.idle)
+        test_ui.wait_for_model(restored)
         self.assertEqual(restored.options_panel.tools_text, EXAMPLE_TOOLS)
         self.assertEqual(restored.strategy.pending_round['response_metadata']['tool_round']['results'], ['', None])
         restored._save_tool_result(restored.strategy.pending_round, 1, '{"temperature": 18}')
@@ -132,9 +133,9 @@ class ToolUITests(unittest.TestCase):
         restored.update_hosts()
         index = next(i for i, h in enumerate(restored.options_panel.host_list) if h['id'] == host['id'])
         restored.options_panel.host_dropdown.set_selected(index)
-        test_ui.pump_until(lambda: session.worker.idle and restored.chat_input.get_selected_model() == 'test')
+        test_ui.wait_for_model(restored)
         restored.chat_input.set_models(['other-model'])
-        test_ui.pump_until(lambda: session.worker.idle)
+        test_ui.wait_for_model(restored, 'other-model')
         restored.options_panel.temperature_entry.set_text('0.2')
         restored.options_panel.output_dropdown.set_selected(2)
         restored.options_panel.schema_text = '{"type":"object","required":["summary"]}'
@@ -160,6 +161,39 @@ class ToolUITests(unittest.TestCase):
         self.assertEqual(len(history), 5)
         self.assertEqual(history[-1]['response_metadata']['validation']['status'], 'valid')
         self.assertIsNone(restored.strategy.pending_round)
+
+    def test_continue_waits_for_selected_model_capabilities_to_reach_ui(self):
+        tab = self.tool_tab([call()])
+        pending = tab.strategy.pending_round
+        tab._save_tool_result(pending, 0, '20')
+        self.settle(tab)
+        view = tab._tool_views[0]
+        self.assertTrue(view.continue_button.get_sensitive())
+        tab.chat_input.set_models([])
+        self.assertFalse(view.continue_button.get_sensitive())
+        self.assertTrue(view.buttons[0].get_sensitive())
+        self.assertTrue(view.cancel_button.get_sensitive())
+        details = Future()
+        with patch.object(self.storage.services.catalog, 'request_details', return_value=details):
+            tab.chat_input.set_models(['other-model'])
+            details.set_result({'capabilities': ['completion', 'tools']})
+            # The request is finished, but its main-loop delivery is pending.
+            self.assertTrue(session.worker.idle)
+            self.assertTrue(tab.chat_input.capabilities_loading)
+            self.assertFalse(view.continue_button.get_sensitive())
+            self.assertTrue(view.buttons[0].get_sensitive())
+            with patch.object(ollama, 'chat', return_value=iter([
+                {'message': {'content': 'done'}, 'done': True}
+            ])) as chat:
+                tab.on_send_clicked(continuation=True)
+                chat.assert_not_called()
+                self.assertIs(tab.strategy.pending_round, pending)
+                test_ui.wait_for_model(tab, 'other-model')
+                self.assertTrue(view.continue_button.get_sensitive())
+                view.continue_button.emit('clicked')
+                self.settle(tab)
+                chat.assert_called_once()
+                self.assertEqual(chat.call_args.kwargs['model'], 'other-model')
 
     def test_successive_rounds_and_cancellation_results(self):
         tab = self.tool_tab([call(123), call(name='missing')])

@@ -27,6 +27,13 @@ def pump_until(predicate, timeout=4):
     raise AssertionError('Timed out waiting for GTK/background work')
 
 
+def wait_for_model(tab, model='test'):
+    # Worker completion can precede delivery of model capabilities to GTK.
+    pump_until(lambda: tab.chat_input.get_selected_model() == model
+               and not tab.chat_input._models_loading
+               and not tab.chat_input.capabilities_loading and session.worker.idle)
+
+
 @unittest.skipUnless(Gdk.Display.get_default(), 'GTK smoke tests require a display')
 class UITests(unittest.TestCase):
     def setUp(self):
@@ -59,7 +66,7 @@ class UITests(unittest.TestCase):
         chat = self.storage.create_chat()
         tab = GenerationTab(mode='chat', chat_id=chat['id'], storage=self.storage)
         self.tabs.append(tab)
-        pump_until(lambda: tab.chat_input.get_selected_model() == 'test' and session.worker.idle)
+        wait_for_model(tab)
         return tab
 
     def test_thinking_controls_and_saved_false(self):
@@ -175,7 +182,7 @@ class UITests(unittest.TestCase):
         self.windows.append(window)
         tab = window.tab_view.get_nth_page(0).get_child()
         self.tabs.append(tab)
-        pump_until(lambda: tab.chat_input.get_selected_model() == 'test' and session.worker.idle)
+        wait_for_model(tab)
         return window, tab
 
     def test_quit_cancels_stalled_request_and_drains_pending_save(self):

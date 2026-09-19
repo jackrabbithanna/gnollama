@@ -10,9 +10,16 @@ from test_ui import pump_until
 
 @unittest.skipUnless(Gdk.Display.get_default(), 'GTK tests require a display')
 class ResponseLayoutTests(unittest.TestCase):
-    setUp = test_ui.UITests.setUp
     tearDown = test_ui.UITests.tearDown
     make_window = test_ui.UITests.make_window
+
+    def setUp(self):
+        test_ui.UITests.setUp(self)
+        # Keep width assertions independent of sidebar transition frames.
+        settings = Gtk.Settings.get_default()
+        animations = settings.get_property('gtk-enable-animations')
+        self.addCleanup(settings.set_property, 'gtk-enable-animations', animations)
+        settings.set_property('gtk-enable-animations', False)
 
     def resize(self, window, width):
         window.set_default_size(width, 900)
@@ -29,7 +36,10 @@ class ResponseLayoutTests(unittest.TestCase):
         bubble.append_text('```python\n' + code + '\n```')
         tab.message_list.add_ai_bubble(bubble)
         self.resize(window, 520)
-        pump_until(lambda: bubble.markdown_view.get_first_child() is not None and bubble.bubble_box.get_width() > 300)
+        # append_text renders asynchronously; the initial empty label can be
+        # allocated before the streaming update replaces it with a code block.
+        pump_until(lambda: getattr(bubble.markdown_view.get_first_child(), '_raw_code', None) == code
+                   and bubble.bubble_box.get_width() > 300)
         block = bubble.markdown_view.get_first_child()
         scrolled = block._code_scrolled
         narrow = bubble.bubble_box.get_width()

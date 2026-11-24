@@ -72,7 +72,7 @@ class ResponseLayoutTests(unittest.TestCase):
             dict(id=id, settings=settings, status='complete') for id in ('one', 'two')], messages=[
             dict(uid='one', content='```python\n' + code + '\n```'),
             dict(uid='two', content='A short answer.')])
-        tab = window._add_tab(ComparisonTab(self.storage, saved=saved))
+        tab = window._add_tab(ComparisonTab(self.context, saved=saved))
         self.tabs.append(tab)
         self.resize(window, 900)
         bubbles = [value[1] for value in tab.results.values()]
@@ -104,11 +104,11 @@ class ResponseLayoutTests(unittest.TestCase):
         window, first = self.make_window()
         pump_until(lambda: self.storage.writer.idle)
         db = self.storage.db
-        db.update_chat_title(first.strategy.chat_id, 'Older chat', 30)
-        db.create_chat('new-chat', 'Newer chat', 50, 50, '')
+        db.chats.update_chat_title(first.strategy.chat_id, 'Older chat', 30)
+        db.chats.create_chat('new-chat', 'Newer chat', 50, 50, '')
         for id, stamp in [('old-comparison', 20), ('new-comparison', 40)]:
-            db.create_comparison(dict(id=id, prompt=id, message_uid=id + '-prompt', settings={}, targets=[]))
-            db.update_chat_title(id, id, stamp)
+            db.workspace.create_comparison(dict(id=id, prompt=id, message_uid=id + '-prompt', settings={}, targets=[]))
+            db.chats.update_chat_title(id, id, stamp)
         window.load_history_sidebar()
         pump_until(lambda: all(id in window.chat_rows for id in ('new-chat', 'old-comparison', 'new-comparison')))
         def ids(section):

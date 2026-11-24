@@ -17,10 +17,10 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from gettext import gettext as _
 from gi.repository import Adw, Gtk, Gio, GLib, Gdk, GObject
 from .tab import GenerationTab
 from .session import ChatStrategy, display_chat_title
-from .storage import ChatStorage
 from .host_manager import HostManagerDialog
 from .model_manager import ModelManagerDialog
 
@@ -35,7 +35,7 @@ class GnollamaWindow(Adw.ApplicationWindow):
     sidebar_toggle = Gtk.Template.Child()
     section_stack = Gtk.Template.Child()
 
-    def __init__(self, storage=None, **kwargs):
+    def __init__(self, context, **kwargs):
         super().__init__(**kwargs)
         content = self.get_content()
         self.set_content(None)
@@ -43,13 +43,13 @@ class GnollamaWindow(Adw.ApplicationWindow):
         self.set_content(self.toast_overlay)
         icon_theme = Gtk.IconTheme.get_for_display(Gdk.Display.get_default())
         icon_theme.add_resource_path('/io/github/jackrabbithanna/Gnollama/icons')
-        self.settings = Gio.Settings.new('io.github.jackrabbithanna.Gnollama')
-        self.storage = storage if storage is not None else ChatStorage()
+        self.context = context
+        self.storage = context.storage
         self.storage.on_error = self._on_save_error
         from .widgets.knowledge_view import KnowledgeView
-        self.knowledge_view = KnowledgeView(self.storage)
+        self.knowledge_view = KnowledgeView(self.context)
         self.section_stack.add_titled_with_icon(self.knowledge_view, 'knowledge', _('Knowledge'), 'folder-documents-symbolic')
-        self.storage.knowledge.listeners.append(self._knowledge_changed)
+        self.context.knowledge.listeners.append(self._knowledge_changed)
         self._shutting_down = False
         self._allow_close = False
         self._cleanup_future = None
@@ -93,30 +93,9 @@ class GnollamaWindow(Adw.ApplicationWindow):
         self.history_sidebar.set_sensitive(False)
         self.knowledge_view.set_sensitive(False)
         self.knowledge_view.close_dialogs()
-        self.storage.knowledge.cancel_all()
-        from . import ollama
-        ollama.cancel_all()
+        self.context.cancel_requests()
         for tab in self.tabs():
-            if hasattr(tab, 'prepare_shutdown'):
-                tab.prepare_shutdown()
-                continue
-            tab.draft.flush()
-            tab.chat_input.cancel_fetches()
-            for picker in getattr(tab, 'targets', []):
-                picker.input.cancel_fetches()
-            tab.knowledge_control.close_dialog()
-            if tab._retrieval_dialog:
-                tab._retrieval_dialog.close()
-            if tab.options_panel._schema_dialog is not None:
-                tab.options_panel._schema_dialog.close()
-            if tab.options_panel._tools_dialog is not None:
-                tab.options_panel._tools_dialog.close()
-            if tab.options_panel._settings_dialog is not None:
-                tab.options_panel._settings_dialog.close()
-            for view in tab._tool_views:
-                view.close_editor()
-            if tab.request:
-                tab.request.cancellable.cancel()
+            tab.prepare_shutdown()
         for window in list(Gtk.Window.list_toplevels()):
             parent = window.get_transient_for()
             while parent is not None and parent is not self:
@@ -133,9 +112,7 @@ class GnollamaWindow(Adw.ApplicationWindow):
     def _poll_shutdown(self):
         if not self._shutting_down:
             return False
-        from .session import worker
-        if (not self.storage.services.idle or not self.storage.knowledge.idle
-                or self.storage.pending_callbacks or any(tab.request or tab.chat_input.pending_imports for tab in self.tabs())):
+        if (not self.context.idle or any(tab.request or tab.chat_input.pending_imports for tab in self.tabs())):
             return True
         if self.storage.writer.error is not None:
             self._on_save_error(self.storage.writer.error)
@@ -146,9 +123,7 @@ class GnollamaWindow(Adw.ApplicationWindow):
             self._cleanup_future = self.storage.cleanup_empty_chats()
         if not self.storage.writer.idle:
             return True
-        self.storage.writer.shutdown()
-        self.storage.knowledge.shutdown()
-        self.storage.services.shutdown(wait=False)
+        self.context.shutdown()
         self._allow_close = True
         self.close()
         return False
@@ -168,14 +143,12 @@ class GnollamaWindow(Adw.ApplicationWindow):
             if choice == 'retry':
                 self.storage.writer.retry()
             elif self._shutting_down:
-                from . import ollama
                 self._shutting_down = False
                 self._cleanup_future = None
                 self.tab_view.set_sensitive(True)
                 self.history_sidebar.set_sensitive(True)
                 self.knowledge_view.set_sensitive(True)
-                self.storage.knowledge.closed = False
-                ollama.resume()
+                self.context.resume_requests()
                 for tab in self.tabs():
                     if not tab.closing:
                         tab.on_host_changed()
@@ -227,16 +200,16 @@ class GnollamaWindow(Adw.ApplicationWindow):
                         self.close_tab(tab, delete=True)
                 self.storage.clear_all_chats()
                 self.new_chat_tab()
-                self.storage._submit(lambda: None, on_done=self.load_history_sidebar)
+                self.storage.after_pending_writes(self.load_history_sidebar)
         dialog.connect('response', response)
         dialog.present(self)
 
     def on_manage_hosts(self, *args):
-        dialog = HostManagerDialog(storage=self.storage, on_hosts_changed_cb=self.on_hosts_changed)
+        dialog = HostManagerDialog(self.context, on_hosts_changed_cb=self.on_hosts_changed)
         dialog.present(self)
 
     def on_manage_models(self, *args):
-        dialog = ModelManagerDialog(storage=self.storage, is_model_busy=self.is_model_busy)
+        dialog = ModelManagerDialog(self.context, is_model_busy=self.is_model_busy)
         self.model_managers.append(dialog)
         dialog.connect('closed', lambda *args: self._forget_manager(dialog))
         dialog.present(self)
@@ -250,13 +223,13 @@ class GnollamaWindow(Adw.ApplicationWindow):
     def is_model_busy(self, host, model):
         from .services import model_key
         key = model_key(host, model)
-        if self.storage.services.models.busy(host, model) or self.storage.knowledge.busy(host, model):
+        if self.context.services.models.busy(host, model) or self.context.knowledge.busy(host, model):
             return True
         for tab in self.tabs():
             if not tab.request:
                 continue
             states = tab.request.states.values() if hasattr(tab.request, 'states') else [tab.request]
-            if any(model_key(state.settings['host'], state.settings['model']) == key for state in states):
+            if any(model_key(state.settings.target.url, state.settings.target.model) == key for state in states):
                 return True
         return False
 
@@ -287,19 +260,19 @@ class GnollamaWindow(Adw.ApplicationWindow):
 
     def new_comparison_tab(self):
         from .widgets.comparison_view import ComparisonTab
-        return self._add_tab(ComparisonTab(self.storage))
+        return self._add_tab(ComparisonTab(self.context))
 
     def new_model_conversation_tab(self):
         from .widgets.model_conversation_view import ModelConversationTab
-        return self._add_tab(ModelConversationTab(self.storage))
+        return self._add_tab(ModelConversationTab(self.context))
 
     def new_tab(self):
-        return self._add_tab(GenerationTab(mode='generate', storage=self.storage))
+        return self._add_tab(GenerationTab(mode='generate', context=self.context))
 
     def new_chat_tab(self):
         chat = self.storage.create_chat()
         self.add_history_row(chat, prepend=True)
-        return self._add_tab(GenerationTab(mode='chat', chat_id=chat['id'], storage=self.storage))
+        return self._add_tab(GenerationTab(mode='chat', chat_id=chat['id'], context=self.context))
 
     def open_chat_tab(self, chat_data):
         self.section_stack.set_visible_child_name('chats')
@@ -309,12 +282,12 @@ class GnollamaWindow(Adw.ApplicationWindow):
                 return tab
         if chat_data.get('kind') == 'comparison':
             from .widgets.comparison_view import ComparisonTab
-            return self._add_tab(ComparisonTab(self.storage, saved=chat_data))
+            return self._add_tab(ComparisonTab(self.context, saved=chat_data))
         if chat_data.get('kind') == 'model_conversation':
             from .widgets.model_conversation_view import ModelConversationTab
-            return self._add_tab(ModelConversationTab(self.storage, saved=chat_data))
+            return self._add_tab(ModelConversationTab(self.context, saved=chat_data))
         return self._add_tab(GenerationTab(mode='chat', chat_id=chat_data['id'],
-                                           initial_history=chat_data.get('messages', []), storage=self.storage, chat_data=chat_data))
+                                           initial_history=chat_data.get('messages', []), context=self.context, chat_data=chat_data))
 
     def load_history_sidebar(self):
         return self.history.reload()
@@ -397,14 +370,14 @@ class GnollamaWindow(Adw.ApplicationWindow):
                         return False
                 if draft['mode'] == 'comparison':
                     from .widgets.comparison_view import ComparisonTab
-                    self._add_tab(ComparisonTab(self.storage, draft=draft))
+                    self._add_tab(ComparisonTab(self.context, draft=draft))
                 elif draft['mode'] == 'model_conversation':
                     from .widgets.model_conversation_view import ModelConversationTab
-                    self._add_tab(ModelConversationTab(self.storage, draft=draft))
+                    self._add_tab(ModelConversationTab(self.context, draft=draft))
                 else:
-                    self._add_tab(GenerationTab(mode=draft['mode'], storage=self.storage, draft=draft))
+                    self._add_tab(GenerationTab(mode=draft['mode'], context=self.context, draft=draft))
             return False
-        self.storage.services.control.submit(read)
+        self.context.services.control.submit(read)
 
     def on_tab_switched(self, *args):
         page = self.tab_view.get_selected_page()
@@ -423,7 +396,7 @@ class GnollamaWindow(Adw.ApplicationWindow):
 
     def export_chat(self, chat_id, format):
         from .export import choose_export
-        choose_export(self, self.storage, chat_id, format)
+        choose_export(self, self.context, chat_id, format)
 
     def pin_chat(self, chat_id):
         item = self.chat_rows.get(chat_id)

@@ -1,21 +1,23 @@
 """Collection-aware text imports and a bounded, sequential file review queue."""
+from gettext import gettext as _
 from gi.repository import Gtk, Gio, GLib
 
 from ..knowledge import extract_document, make_document
 from .json_view import TextEditor, code_view, editor_frame
-from .knowledge_view import (CollectionDestination, WorkDialog, actions, button, field,
-                             label, plain_editor, preview_text)
+from .collection_views import CollectionDestination
+from .knowledge_common import WorkDialog, actions, button, field, label, plain_editor, preview_text
 
 
 class TextImportDialog(TextEditor):
-    def __init__(self, storage, collection_id=None):
+    def __init__(self, context, collection_id=None):
         super().__init__('', self.save, title=_('Add Text'),
                          hint=_('Paste text, choose a collection, and review it before adding.'),
                          apply_label=_('Add to Collection'))
-        self.storage = storage
+        self.context = context
+        self.storage = context.storage
         self.closed = False
         self.connect('closed', lambda *args: setattr(self, 'closed', True))
-        self.destination = CollectionDestination(storage, self, collection_id)
+        self.destination = CollectionDestination(context, self, collection_id)
         self.title_entry = Gtk.Entry()
         fields = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
         fields.append(self.destination)
@@ -27,7 +29,7 @@ class TextImportDialog(TextEditor):
         try:
             target = self.destination.require()
             document = make_document(self.title_entry.get_text(), text)
-            self.storage.knowledge.import_document(document, target['id'], self.saved)
+            self.context.knowledge.import_document(document, target['id'], self.saved)
         except ValueError as exc:
             self.show_error(exc)
             return False
@@ -56,13 +58,14 @@ class TextImportDialog(TextEditor):
 
 
 class FileImportDialog(WorkDialog):
-    def __init__(self, storage, collection_id=None):
+    def __init__(self, context, collection_id=None):
         super().__init__(_('Add Files'), width=760, height=720)
-        self.storage = storage
+        self.context = context
+        self.storage = context.storage
         self.items = []
         self.current = None
         self.job = None
-        self.destination = CollectionDestination(storage, self, collection_id)
+        self.destination = CollectionDestination(context, self, collection_id)
         self.box.append(self.destination)
         self.box.append(label(_('Import PDF or UTF-8 text files, including Markdown and source code. Maximum size: 50 MiB per file. Review one file at a time before adding.')))
         self.choose = button(_('Choose Files…'), self.choose_files)
@@ -91,7 +94,7 @@ class FileImportDialog(WorkDialog):
             getattr(self.footer, 'set_margin_' + side)(12)
         self.footer.set_visible(False)
         self.toolbar.add_bottom_bar(self.footer)
-        self.storage.knowledge.listeners.append(self.update_saved)
+        self.context.knowledge.listeners.append(self.update_saved)
         self.connect('closed', self.stop)
 
     def choose_files(self, *args):
@@ -172,7 +175,7 @@ class FileImportDialog(WorkDialog):
             info = file.query_info('standard::size', Gio.FileQueryInfoFlags.NONE, cancel)
             if info.get_size() > 50 * 1024 * 1024:
                 raise ValueError(_('Files must be no larger than 50 MiB.'))
-            _, raw, _etag = file.load_contents(cancel)
+            _ok, raw, _etag = file.load_contents(cancel)
             return extract_document(file.get_basename(), raw, cancel)
         def complete(result, error):
             if self.closed:
@@ -190,7 +193,7 @@ class FileImportDialog(WorkDialog):
                 self.notice.set_text('\n'.join(item['warnings']))
                 self.add.set_sensitive(True)
         try:
-            self.job = self.storage.knowledge.submit(_('Import file: {0}').format(item['file'].get_basename()), run, complete, importing=True)
+            self.job = self.context.knowledge.submit(_('Import file: {0}').format(item['file'].get_basename()), run, complete, importing=True)
         except ValueError as exc:
             complete(None, exc)
 
@@ -216,7 +219,7 @@ class FileImportDialog(WorkDialog):
                 self.update_saved()
                 self.advance()
         try:
-            self.job = self.storage.knowledge.import_document(document, self.collection_id, complete)
+            self.job = self.context.knowledge.import_document(document, self.collection_id, complete)
             self.status(item, 'saving')
             self.add.set_sensitive(False)
             self.skip_button.set_sensitive(False)
@@ -247,7 +250,7 @@ class FileImportDialog(WorkDialog):
             item['row'].set_text(item['file'].get_basename() + ' · ' + status)
 
     def stop(self, *args):
-        if self.update_saved in self.storage.knowledge.listeners:
-            self.storage.knowledge.listeners.remove(self.update_saved)
+        if self.update_saved in self.context.knowledge.listeners:
+            self.context.knowledge.listeners.remove(self.update_saved)
         if self.job and self.current and self.current['status'] == 'extracting':
             self.job['cancel'].cancel()

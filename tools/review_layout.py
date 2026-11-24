@@ -10,7 +10,6 @@ import subprocess
 import sys
 import tempfile
 import time
-from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
@@ -26,8 +25,8 @@ import gi
 gi.require_version('Gtk', '4.0')
 gi.require_version('Adw', '1')
 from gi.repository import Gtk, Adw, Gio, GLib
-from src.storage import ChatStorage
-from src import ollama
+from src.app_context import AppContext
+from tests.provider_fixture import provider_patch
 
 
 def pump(predicate, timeout=10):
@@ -42,8 +41,7 @@ def pump(predicate, timeout=10):
 
 
 with tempfile.TemporaryDirectory(prefix='gnollama-layout-') as temporary, ExitStack() as mocks:
-    os.environ.update(XDG_DATA_HOME=temporary, XDG_CONFIG_HOME=temporary, GSETTINGS_BACKEND='memory', GSETTINGS_SCHEMA_DIR=temporary)
-    subprocess.run(['glib-compile-schemas', '--targetdir=' + temporary, str(ROOT / 'data')], check=True)
+    os.environ.update(XDG_DATA_HOME=temporary, XDG_CONFIG_HOME=temporary, GSETTINGS_BACKEND='memory')
     if args.language != 'en':
         import locale
         os.environ['LANGUAGE'] = args.language
@@ -62,15 +60,16 @@ with tempfile.TemporaryDirectory(prefix='gnollama-layout-') as temporary, ExitSt
     Gtk.Settings.get_default().set_property('gtk-enable-animations', False)
     Gio.Resource.load(args.resource)._register()
     from src.window import GnollamaWindow
-    mocks.enter_context(patch.object(ollama, 'fetch_models', return_value=['cedar:8b', 'juniper:4b']))
-    mocks.enter_context(patch.object(ollama, 'show_model', return_value={'capabilities': ['completion', 'vision', 'thinking']}))
-    storage = ChatStorage(temporary)
+    mocks.enter_context(provider_patch('list_models', return_value=['cedar:8b', 'juniper:4b']))
+    mocks.enter_context(provider_patch('show_model', return_value={'capabilities': ['completion', 'vision', 'thinking']}))
+    context = AppContext(temporary)
+    storage = context.storage
     app = Adw.Application(application_id='io.github.jackrabbithanna.Gnollama.LayoutReview', flags=Gio.ApplicationFlags.NON_UNIQUE)
     app.register(None)
     Gtk.Widget.set_default_direction(Gtk.TextDirection.RTL if args.language == 'ar' else Gtk.TextDirection.LTR)
-    window = GnollamaWindow(application=app, storage=storage)
+    window = GnollamaWindow(application=app, context=context)
     window.present()
-    pump(lambda: storage.services.idle and storage.writer.idle)
+    pump(lambda: context.services.idle and storage.writer.idle)
     captures, heartbeats = [], []
     previous = [time.monotonic()]
     def beat():
@@ -117,7 +116,7 @@ with tempfile.TemporaryDirectory(prefix='gnollama-layout-') as temporary, ExitSt
     pump(lambda: not window.tabs())
     page = storage.conversation_page(tab.strategy.chat_id)
     tab = window.open_chat_tab(page)
-    pump(lambda: storage.services.idle)
+    pump(lambda: context.services.idle)
     rendered = 0
     child = tab.message_list.list_box.get_first_child()
     while child:
@@ -137,7 +136,7 @@ with tempfile.TemporaryDirectory(prefix='gnollama-layout-') as temporary, ExitSt
         content = ('```python\nresult = persist_draft(text, images, settings)\n```' if kwargs['model'] == 'cedar:8b' else
                    'Save the editor text and attachment bytes together.\n\n```markdown\n# Literal source stays available\n```')
         yield dict(message={'content': content}, done=True, eval_count=42)
-    with patch.object(ollama, 'chat', side_effect=response):
+    with provider_patch('chat', side_effect=response):
         comparison.send_or_stop()
         pump(lambda: comparison.request is None and storage.writer.idle)
     assert len(comparison.results) == 2, comparison.notice.get_text()
@@ -165,7 +164,7 @@ with tempfile.TemporaryDirectory(prefix='gnollama-layout-') as temporary, ExitSt
         if conversation.controller.run['next_turn'] == 2:
             conversation.controller.pause()
     conversation.controller.finished = conversation_finished
-    with patch.object(ollama, 'chat', side_effect=response):
+    with provider_patch('chat', side_effect=response):
         conversation.start()
         pump(lambda: conversation.request is None and storage.writer.idle)
     assert conversation.controller.run['status'] == 'paused', conversation.notice.get_text()

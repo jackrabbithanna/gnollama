@@ -39,28 +39,28 @@ def run(output, scale=1):
         messages = [dict(uid='m' + str(i), role='user' if i % 2 == 0 else 'assistant',
                          content='Message ' + str(i) + '\n' + 'Saved message text. ' * 100,
                          **({'images': [image]} if i % 10 == 0 else {})) for i in range(1000)]
-        measure('seed_1000_messages_with_images', lambda: db.append_messages('0', messages, 0))
-        page = measure('history_page_100', lambda: db.list_history(limit=100))
+        measure('seed_1000_messages_with_images', lambda: db.chats.append_messages('0', messages, 0))
+        page = measure('history_page_100', lambda: db.workspace.list_history(limit=100))
         assert len(page) == 100
-        page = measure('messages_page_50', lambda: db.get_messages('0', limit=50))
+        page = measure('messages_page_50', lambda: db.chats.get_messages('0', limit=50))
         assert len(page) == 50
-        measure('search_10000_conversations', lambda: db.list_history('benchmark 999', limit=100))
-        page = measure('documents_page_100', lambda: db.document_page(limit=100))
+        measure('search_10000_conversations', lambda: db.workspace.list_history('benchmark 999', limit=100))
+        page = measure('documents_page_100', lambda: db.knowledge.document_page(limit=100))
         assert len(page) == 100
         with db._get_conn() as conn:
             conn.execute("CREATE TRIGGER bounded_write BEFORE UPDATE ON messages WHEN old.uid!='new' BEGIN SELECT RAISE(ABORT, 'old message rewritten'); END")
             conn.commit()
-        measure('append_one_after_1000', lambda: db.append_messages('0', [dict(uid='new', role='assistant', content='delta')], 1000))
+        measure('append_one_after_1000', lambda: db.chats.append_messages('0', [dict(uid='new', role='assistant', content='delta')], 1000))
         config = new_config('recorded-fixture', 'fixture-v1', dimensions=8)
-        db.add_embedding_config(config)
-        db.begin_knowledge_index(dict(id='vectors', document_id=docs[0]['id'], config_id=config['id'],
+        db.knowledge.add_embedding_config(config)
+        db.knowledge.begin_knowledge_index(dict(id='vectors', document_id=docs[0]['id'], config_id=config['id'],
             host='http://localhost:11434', model=config['model'], chunk_size=1600, overlap=0, created_at=0))
         for offset in range(0, 50000 * scale, 1000):
             chunks = [dict(id='v' + str(i), ordinal=i, start=0, end=100,
                 vector=vector_blob([1, i / (50000 * scale), .1, .2, .3, .4, .5, .6])) for i in range(offset, offset + 1000)]
-            db.save_embedding_batch('vectors', config['id'], 8, chunks)
-        db.finish_knowledge_index('vectors', 'complete')
-        measure('search_50000_vectors', lambda: db.search_knowledge(config['id'], {'vectors': None}, [1, 0, .1, .2, .3, .4, .5, .6]))
+            db.knowledge.save_embedding_batch('vectors', config['id'], 8, chunks)
+        db.knowledge.finish_knowledge_index('vectors', 'complete')
+        measure('search_50000_vectors', lambda: db.knowledge.search_knowledge(config['id'], {'vectors': None}, [1, 0, .1, .2, .3, .4, .5, .6]))
         results['fixtures'] = dict(conversations=count, documents=count, messages=1001, vectors=50000 * scale)
         results['peak_rss_kib'] = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
         results['database_bytes'] = Path(db.db_path).stat().st_size

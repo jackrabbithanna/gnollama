@@ -1,4 +1,5 @@
 """Editors and transcript cards for the manual tool-calling playground."""
+from gettext import gettext as _
 import json
 from gi.repository import Gtk
 from .json_view import TextEditor, code_view

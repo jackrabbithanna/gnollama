@@ -1,8 +1,9 @@
 """Generation lifecycle and coalesced delivery, independent of GTK widgets."""
+from gettext import gettext as _
 import threading
 import time
 from gi.repository import GLib
-from . import ollama
+from .providers import ProviderError, RequestCancelled
 from .structured import validate_response
 from .tool_calling import inspect_calls
 
@@ -45,26 +46,26 @@ class RequestRunner:
         delivery = StreamDelivery(on_chunk)
         try:
             if state.cancellable.is_cancelled():
-                raise ollama.RequestCancelled()
-            with self.services.models.using(state.settings['host'], state.settings['model']):
+                raise RequestCancelled()
+            with self.services.models.using(state.settings.target.url, state.settings.target.model):
                 for chunk in strategy.process(state):
                     if state.cancellable.is_cancelled():
-                        raise ollama.RequestCancelled()
+                        raise RequestCancelled()
                     delivery.append(*state.consume(chunk))
                     if chunk.get('done'):
                         status = 'complete'
                         break
                 else:
-                    raise ollama.OllamaError(_('Response ended before completion.'))
-        except ollama.RequestCancelled:
+                    raise ProviderError(_('Response ended before completion.'))
+        except RequestCancelled:
             status = 'stopped'
         except Exception as exc:
             error = str(exc)
         try:
             if state.tool_calls:
-                state.metadata['tool_round'] = inspect_calls(state.tool_calls, state.settings.get('tools'), status)
-            elif state.settings.get('format') is not None:
-                state.metadata['validation'] = validate_response(state.content, state.settings['format'], status)
+                state.metadata['tool_round'] = inspect_calls(state.tool_calls, state.settings.wire.tools, status)
+            elif state.settings.wire.format is not None:
+                state.metadata['validation'] = validate_response(state.content, state.settings.wire.format, status)
         except Exception as exc:
             status, error = 'failed', str(exc)
             state.metadata['validation'] = {'status': 'incomplete', 'error': str(exc)}

@@ -196,6 +196,8 @@ You can then run `gnollama` to execute the application.
 
 Run `meson test -C build --print-errorlogs` after building. Regression tests use temporary databases and a local HTTP fixture server; they do not contact your Ollama servers. GTK tests require a display. Set `GNOLLAMA_REQUIRE_DISPLAY=1` to reject missing GTK coverage, as CI does. `tools/ci-test.sh` runs the complete suite under Xvfb. The CI matrix builds GNOME 51 Flatpaks on x86_64 and aarch64 and runs core compatibility tests on Python 3.11.
 
+CI also runs `ruff check .` and `mypy`, configured in `pyproject.toml`, and fails on any finding. Install the versions pinned in `.github/workflows/validation.yml` to run them locally.
+
 GNOME Builder builds the repository Flatpak manifest from the current checkout. For a command-line Flatpak build, use:
 
 ```bash
@@ -266,7 +268,7 @@ Model conversations support drafts, search, pinning, rename, deletion, and Markd
 
 ### Architecture and evaluation
 
-`Services` owns four inference workers, two control/read workers, two discovery workers, and two transfer workers. Model lists and selected-model capabilities use separate shared requests with a 60-second cache and digest-based capability identities. Subscribers do not occupy workers while waiting for another subscriber's request. Empty lists are not cached, and interacting with an empty selector refreshes discovery. Knowledge processing retains its bounded queues. An ordered writer serializes retryable transactions; submitted prompts consume only their matching draft revision. Message writes append or update changed records and retain unchanged attachment rows.
+`Services` owns four inference workers, two control/read workers, two discovery workers, and two transfer workers. Model lists and selected-model capabilities use separate shared requests with a 60-second cache and digest-based capability identities. Subscribers do not occupy workers while waiting for another subscriber's request. Empty lists are not cached, and interacting with an empty selector refreshes discovery. Knowledge processing retains its bounded queues. An ordered writer serializes retryable transactions on one long-lived SQLite connection, and each worker thread keeps its own read connection; submitted prompts consume only their matching draft revision. Message writes append or update changed records and retain unchanged attachment rows.
 
 See [the implementation plan](docs/stabilization-improvement-plan.md) and [validation notes](docs/stabilization-validation.md). Reproduce the isolated performance and retrieval fixtures in the configured Python/SDK environment:
 

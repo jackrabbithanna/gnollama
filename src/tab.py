@@ -1,16 +1,16 @@
-from typing import List, Optional, Any, Dict, Union
-from gi.repository import Adw, Gtk, Gio, GLib, GObject
+from gettext import gettext as _
+from typing import List, Optional, Any, Dict
+from gi.repository import Adw, Gtk, GLib, GObject
 import copy
-import base64
-from .session import RequestState, worker
-from . import ollama
-from .storage import ChatStorage
-from .session import GenerationStrategy, ChatStrategy, display_chat_title
-from .structured import InvalidSchema, validate_response
-from .tool_calling import InvalidTools, inspect_calls
+from .chat_controller import ChatController, ComposerInput
+from .drafts import DraftController
+from .providers import ProviderError
+from .records import RequestSettings, WireOptions
+from .session import display_chat_title
+from .structured import InvalidSchema
+from .tool_calling import InvalidTools
 from .widgets.tool_view import ToolCallsView
-from .widgets.knowledge_view import KnowledgeControl, SourcesView
-from .knowledge import validate_rag
+from .widgets.source_views import KnowledgeControl, SourcesView
 
 from .widgets.message_list import MessageList
 from .widgets.chat_input import ChatInput
@@ -18,7 +18,7 @@ from .widgets.options_panel import OptionsPanel
 
 @Gtk.Template(resource_path='/io/github/jackrabbithanna/Gnollama/tab.ui')
 class GenerationTab(Gtk.Box):
-    """The main widget for a chat or generation session."""
+    """The view of a chat or generation session; ChatController runs it."""
     __gtype_name__ = 'GenerationTab'
     
     __gsignals__ = {
@@ -30,42 +30,34 @@ class GenerationTab(Gtk.Box):
     message_list: MessageList = Gtk.Template.Child()
     chat_input: ChatInput = Gtk.Template.Child()
     options_panel: OptionsPanel = Gtk.Template.Child()
+    older_button: Gtk.Button = Gtk.Template.Child()
+    advanced: Gtk.Expander = Gtk.Template.Child()
+    options_box: Gtk.Box = Gtk.Template.Child()
+    context_expander: Gtk.Expander = Gtk.Template.Child()
+    context_label: Gtk.Label = Gtk.Template.Child()
+    discard_button: Gtk.Button = Gtk.Template.Child()
 
     def __init__(self, mode: str = 'generate', chat_id: Optional[str] = None,
-                 initial_history: Optional[List[Dict[str, Any]]] = None, storage: Optional[ChatStorage] = None,
+                 initial_history: Optional[List[Dict[str, Any]]] = None, context=None,
                  draft=None, chat_data=None, discover_models=True, **kwargs: Any) -> None:
         super().__init__(**kwargs)
         self.init_template()
         self.title = _('New Chat') if mode == 'chat' else _('New Response')
-        self.request = None
-        self.closing = False
-        self._close_callback = None
-        self._disposed = False
-        self._close_saving = False
-        self._tool_busy = False
-        self._tool_views = []
-        
-        if not storage:
-            storage = ChatStorage()
-        self.storage = storage
-        self.chat_input.services = storage.services
-        self.chat_input.discovery_enabled = discover_models
-        self.chat_input.connect('attachments-ready', lambda *args: self._finish_close())
+        self._tool_views: List[ToolCallsView] = []
 
-        if mode == 'chat':
-            self.strategy = ChatStrategy(storage, chat_id=chat_id, initial_history=initial_history)
-        else:
-            self.strategy = GenerationStrategy()
-            
+        self.context = context
+        self.storage = storage = context.storage
         self.mode = mode
-        self._paged = bool(chat_data and chat_data.get('paged'))
-        self._message_offset = (chat_data or {}).get('message_offset', 0)
-        self._message_count = (chat_data or {}).get('message_count', len(initial_history or []))
-        self.knowledge_control = KnowledgeControl(storage, self._persist_tool_options)
+        self.controller = ChatController(context, self, mode, chat_id, initial_history, chat_data)
+        self.chat_input.services = context.services
+        self.chat_input.discovery_enabled = discover_models
+        self.chat_input.connect('attachments-ready', lambda *args: self.controller.view_ready())
+
+        self.knowledge_control = KnowledgeControl(context, self._persist_tool_options)
         self.knowledge_control.set_visible(mode == 'chat')
         self.insert_child_after(self.knowledge_control, self.message_list)
         self._retrieval_dialog = None
-        self.chat_input.has_history_images = any(m.get('images') for m in getattr(self.strategy, 'history', []))
+        self.chat_input.has_history_images = self.controller.has_history_images
         
         self.options_panel.tools_available = mode == 'chat'
         self.options_panel.tools_box.set_visible(mode == 'chat')
@@ -90,47 +82,32 @@ class GenerationTab(Gtk.Box):
                  self.load_initial_history(self.strategy.history)
         self.on_host_changed()
         self._sync_tools()
-        from .drafts import DraftController
         self._configured = False
-        self._compact_options()
-        self.draft = DraftController(storage, mode, self.read_draft,
+        self._summarize_options()
+        self.draft = self.controller.draft = DraftController(storage, mode, self.read_draft,
             id=draft['id'] if draft else None, chat_id=chat_id)
         self.chat_input.entry.connect('changed', self.draft.changed)
         self.options_panel.watch_draft(self._settings_edited)
         self.chat_input.thinking_dropdown.connect('notify::selected', self._settings_edited)
         self.options_panel.host_dropdown.connect('notify::selected', self._settings_edited)
         self.chat_input.model_dropdown.connect('notify::selected', self._model_edited)
-        self.older_button = Gtk.Button(label=_('Load Older Messages'), visible=self._message_offset > 0)
+        self.older_button.set_visible(self.controller.message_offset > 0)
         self.older_button.connect('clicked', self.load_older)
-        self.prepend(self.older_button)
-        self.context_label = Gtk.Label(wrap=True, xalign=0, selectable=True)
-        self.context_expander = Gtk.Expander(label=_('Context estimate'), child=self.context_label)
         self.context_expander.connect('notify::expanded', lambda *args: self.update_context())
-        self.append(self.context_expander)
         self.chat_input.entry.connect('changed', lambda *args: self.update_context())
-        self.discard_button = Gtk.Button(label=_('Discard Draft'), halign=Gtk.Align.END)
         self.discard_button.connect('clicked', self.discard_draft)
-        self.append(self.discard_button)
         if draft:
             self.restore_draft(draft)
         elif chat_id:
             revision = self.draft.revision
             def fetch():
                 saved = storage.get_draft(chat_id)
-                GLib.idle_add(lambda: self.restore_draft(saved) if saved and not self.closing and self.draft.revision == revision else None)
-            storage.services.control.submit(fetch)
+                GLib.idle_add(lambda: self.restore_draft(saved) if saved and not self.controller.closing and self.draft.revision == revision else None)
+            context.services.control.submit(fetch)
 
-    def _compact_options(self):
-        self.remove(self.options_panel)
-        thinking = self.chat_input.thinking_dropdown.get_parent()
-        flow_child = thinking.get_parent()
-        flow_child.set_child(None)
-        self.chat_input.connection_box.remove(flow_child)
-        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
-        box.append(thinking)
-        box.append(self.options_panel)
-        self.advanced = Gtk.Expander(label=_('Options'), child=box, margin_start=12, margin_end=12)
-        self.append(self.advanced)
+    def _summarize_options(self):
+        # The composer is shared with other views, which keep thinking beside the model.
+        self.options_box.prepend(self.chat_input.detach_thinking())
         def summary(*args):
             active = []
             mode = self.options_panel.output_dropdown.get_selected_item()
@@ -145,87 +122,44 @@ class GenerationTab(Gtk.Box):
         self.chat_input.thinking_dropdown.connect('notify::selected', summary)
         summary()
 
-    def update_context(self, state=None):
-        if not hasattr(self, 'context_label'):
+    # The window and tests read these; the controller owns them.
+    request = property(lambda self: self.controller.request)
+    strategy = property(lambda self: self.controller.strategy)
+    closing = property(lambda self: self.controller.closing)
+
+    def update_context(self):
+        """Estimate the context the draft would use, while the estimate is shown."""
+        if not self.context_expander.get_expanded():
             return
-        from .context import estimate_context, describe_context
-        if state:
-            self._context_generation = getattr(self, '_context_generation', 0) + 1
-            messages = getattr(self.strategy, 'history', [dict(role='user', content=state.prompt, images=state.images)])
-            estimate = estimate_context(messages, state.settings, state.retrieval)
-            state.metadata['context_estimate'] = estimate
-        else:
-            if not self.context_expander.get_expanded():
-                return
-            panel = self.options_panel
-            options = {}
-            for name in ('num_ctx', 'num_predict'):
-                try:
-                    options[name] = int(getattr(panel, name + '_entry').get_text())
-                except ValueError:
-                    pass
-            messages = list(getattr(self.strategy, 'history', [])) + [dict(role='user', content=self.chat_input.entry.read_draft())]
-            settings = dict(options=options, system=panel.system_prompt_entry.get_text(),
-                tools=panel.tools_text, format=panel.schema_text)
-            if self._paged:
-                self._context_generation = getattr(self, '_context_generation', 0) + 1
-                generation = self._context_generation
-                prompt = messages[-1]
-                def read():
-                    history = self.storage.get_messages(self.strategy.chat_id)
-                    estimate = estimate_context(history + [prompt], settings)
-                    def deliver():
-                        if generation == self._context_generation and not self.closing:
-                            self.context_label.set_text(describe_context(estimate))
-                        return False
-                    GLib.idle_add(deliver)
-                self.storage.services.control.submit(read)
-                return
-            estimate = estimate_context(messages, settings)
+        panel = self.options_panel
+        options = {}
+        for name in ('num_ctx', 'num_predict'):
+            try:
+                options[name] = int(getattr(panel, name + '_entry').get_text())
+            except ValueError:
+                pass
+        # A draft is measured by the text of its tools and schema, valid or not.
+        wire = WireOptions(options=options, system=panel.system_prompt_entry.get_text(),
+            tools=panel.tools_text, format=panel.schema_text)
+        self.controller.estimate_draft(self.chat_input.entry.read_draft(), wire)
+
+    def context_estimated(self, estimate, expand):
+        from .context import describe_context
         self.context_label.set_text(describe_context(estimate))
-        if estimate['warning']:
+        if expand and estimate['warning']:
             self.context_expander.set_expanded(True)
 
     def load_older(self, *args):
-        if self._message_offset <= 0:
-            return
-        self.older_button.set_sensitive(False)
-        offset = max(0, self._message_offset - 50)
-        count = self._message_offset - offset
-        def read():
-            messages = self.storage.get_messages(self.strategy.chat_id, count, offset, True)
-            GLib.idle_add(deliver, messages)
-        def deliver(messages):
-            if self.closing:
-                return False
-            adjustment = self.message_list.get_vadjustment()
-            previous, value = adjustment.get_upper(), adjustment.get_value()
-            self.message_list._user_scrolling = True
-            self.message_list._insert_index = 0
-            self.load_initial_history(messages)
-            self.message_list._insert_index = None
-            self._message_offset = offset
-            self.older_button.set_visible(offset > 0)
-            self.older_button.set_sensitive(True)
-            def anchor():
-                adjustment.set_value(value + adjustment.get_upper() - previous)
-                return False
-            GLib.timeout_add(50, anchor)
-            return False
-        self.storage.services.control.submit(read)
+        if self.controller.load_older():
+            self.older_button.set_sensitive(False)
+
+    def older_loaded(self, messages):
+        self.message_list.prepend_page(lambda: self.load_initial_history(messages))
+        self.older_button.set_visible(self.controller.message_offset > 0)
+        self.older_button.set_sensitive(True)
 
     def show_message(self, uid):
-        def focus():
-            row = self.message_list.list_box.get_first_child()
-            while row:
-                if getattr(row, 'message_uid', None) == uid:
-                    self.message_list._user_scrolling = True
-                    row.set_focusable(True)
-                    row.grab_focus()
-                    break
-                row = row.get_next_sibling()
-            return False
-        GLib.timeout_add(100, focus)
+        self.message_list.scroll_to_message(uid)
 
     def _model_edited(self, *args):
         if self.chat_input.get_selected_model() and hasattr(self, 'draft'):
@@ -281,11 +215,13 @@ class GenerationTab(Gtk.Box):
         self.title = display_chat_title(chat_data.get('title', _('Chat')))
         if 'options' in chat_data:
             options = chat_data['options']
-            self.options_panel.load_options(options)
-            self.knowledge_control.load(options.get('knowledge', {}))
-            
+            stored = RequestSettings.from_chat_options(options)
+            self.controller.extra = stored.view.extra
+            self.options_panel.load_options(stored.wire, stored.view)
+            self.knowledge_control.load(stored.view.knowledge)
+
             if 'thinking_val' in options:
-                self.chat_input.load_thinking_val(options['thinking_val'])
+                self.chat_input.load_thinking_val(stored.wire.thinking)
         
         if 'system' in chat_data and chat_data['system']:
             self.options_panel.system_prompt_entry.set_text(chat_data['system'])
@@ -324,14 +260,14 @@ class GenerationTab(Gtk.Box):
             elif role == 'system':
                 self.message_list.add_system_message(content)
             if role in ('user', 'assistant', 'system'):
-                self.message_list._last_row.message_uid = msg.get('uid')
+                self.message_list.tag_last(msg.get('uid'))
 
     def on_host_changed(self, *args):
         if not self.chat_input.discovery_enabled:
             return
         host = self.options_panel.get_selected_host()
-        self.options_panel.set_cloud(ollama.is_cloud(host))
-        self.chat_input.fetch_models(self.storage.connection(host) if host else None,
+        self.options_panel.set_capabilities(self.context.capabilities(host))
+        self.chat_input.fetch_models(self.context.connection(host) if host else None,
                                      host_id=host['id'] if host else None)
 
     def update_hosts(self):
@@ -339,155 +275,90 @@ class GenerationTab(Gtk.Box):
         self.on_host_changed()
 
     def on_send_or_stop(self, *args):
-        if self.request:
-            self.request.cancellable.cancel()
+        if self.controller.request:
+            self.controller.stop()
             self.chat_input.send_button.set_sensitive(False)
         else:
             self.on_send_clicked()
 
     def on_send_clicked(self, *args, continuation=False, without_knowledge=False):
-        if (self.request or self.closing or self._disposed or self._tool_busy
-                or self.chat_input.pending_imports or self.chat_input.capabilities_loading):
-            return
-        pending = self.strategy.pending_round if isinstance(self.strategy, ChatStrategy) else None
-        if pending is not None and not continuation:
-            return
-        if continuation and (pending is None or any(r is None for r in pending['response_metadata']['tool_round']['results'])):
+        if (self.chat_input.pending_imports or self.chat_input.capabilities_loading
+                or not self.controller.can_send(continuation)):
             return
         prompt = '' if continuation else self.chat_input.entry.read_draft()
         if not prompt.strip() and not continuation:
             return
         try:
             host = self.options_panel.get_selected_host()
-            if not host:
-                raise ValueError(_('No host configured.'))
-            hostname = ollama.validate_host(host['hostname'])
             model = self.chat_input.get_selected_model()
-            if not model:
-                raise ValueError(_('Select an available model before sending.'))
-            from .services import model_key
-            unloading_models = self.storage.services.models.reserved
-            if model_key(hostname, model) in unloading_models:
-                raise ValueError(_('Wait for this model to finish unloading before sending.'))
-            options = self.options_panel.get_options_from_ui()
-            request_settings = self.options_panel.get_request_settings()
-            draft_images = [] if continuation else self.chat_input.get_images()
-            if self.chat_input.capabilities_loading and (draft_images or self.chat_input.has_history_images):
-                raise ValueError(_('Wait for image support to be checked before sending.'))
-            if self.chat_input.image_support is False and draft_images:
-                raise ValueError(_('Remove draft images or select a vision model to send.'))
-            logprobs = self.options_panel.logprobs_check.get_active()
-            top = self.options_panel.get_logprobs()
-            images = draft_images
-            settings = dict(host=hostname, host_id=host['id'], model=model,
-                            options=options, thinking=self.chat_input.get_thinking_value(),
-                            system=self.options_panel.system_prompt_entry.get_text().strip() or None,
-                            logprobs=logprobs, top_logprobs=top,
-                            show_stats=self.options_panel.stats_check.get_active(), endpoint=self.mode)
-            settings.update(request_settings)
-            settings['knowledge'] = copy.deepcopy(self.knowledge_control.options)
-            settings['query_override'] = self.knowledge_control.query.get_text().strip()
-            retrieve = (self.mode == 'chat' and settings['knowledge']['enabled'] and
-                        not continuation and not without_knowledge)
-            if retrieve:
-                validate_rag(settings['knowledge'])
-            settings['history_images_omitted'] = self.chat_input.image_support is False and self.chat_input.has_history_images
+            self.controller.check_target(host, model)
+            self.controller.send(self._read_input(prompt, host, model, continuation),
+                                 continuation=continuation, without_knowledge=without_knowledge)
         except InvalidTools as exc:
             self.options_panel.edit_tools(error=str(exc))
-            return
         except InvalidSchema as exc:
             self.options_panel.edit_schema(error=str(exc))
-            return
-        except (ValueError, OSError, RecursionError, GLib.Error, ollama.OllamaError) as exc:
+        except (ValueError, OSError, RecursionError, GLib.Error, ProviderError) as exc:
             self.message_list.add_system_message(str(exc))
-            return
 
-        state = RequestState(settings, prompt, images, continuation=continuation,
-                             connection=self.storage.connection(host))
-        if not continuation:
-            self.draft.flush()
-            state.draft_id, state.draft_revision = self.draft.id, self.draft.revision
-        if continuation:
-            self.strategy.commit_results()
-        self.request = state
+    def _read_input(self, prompt, host, model, continuation):
+        panel = self.options_panel
+        options = panel.get_options_from_ui()
+        request = panel.get_request_settings()
+        images = () if continuation else tuple(self.chat_input.get_images())
+        return ComposerInput(
+            prompt=prompt, images=images, host=host, model=model,
+            thinking=self.chat_input.get_thinking_value(), options=options, request=request,
+            system=panel.system_prompt_entry.get_text().strip() or None,
+            logprobs=panel.logprobs_check.get_active(), top_logprobs=panel.get_logprobs(),
+            show_stats=panel.stats_check.get_active(),
+            knowledge=copy.deepcopy(self.knowledge_control.options),
+            query_override=self.knowledge_control.query.get_text().strip(),
+            image_support=self.chat_input.image_support,
+            capabilities_loading=self.chat_input.capabilities_loading)
+
+    # --- What the controller reports ---
+
+    def request_changed(self):
         self.emit('request-changed')
-        self.chat_input.set_running(True)
-        if retrieve:
-            self.chat_input.entry.set_sensitive(False)
-            self.knowledge_control.set_sensitive(False)
-            self.knowledge_control.notice.set_text(_('Retrieving sources…'))
-            self.storage.services.inference.submit(self._retrieve_sources, state)
-            return
-        self._prepare_generation(state)
+        self.chat_input.set_running(self.controller.request is not None)
 
-    def _retrieve_sources(self, state):
-        error = None
-        try:
-            state.retrieval = self.storage.knowledge.retrieve(state.settings['knowledge'],
-                state.settings['query_override'] or state.prompt, state.cancellable)
-        except Exception as exc:
-            error = exc
-        GLib.idle_add(self._retrieval_finished, state, error)
-
-    def _retrieval_finished(self, state, error):
-        if self.request is not state:
-            return False
-        self.knowledge_control.set_sensitive(True)
-        self.knowledge_control._notice()
-        self.chat_input.entry.set_sensitive(True)
-        if error or state.cancellable.is_cancelled() or self.closing:
-            self.request = None
-            self.emit('request-changed')
-            self.chat_input.set_running(False)
-            if not self.closing and not state.cancellable.is_cancelled():
-                dialog = Adw.AlertDialog(heading=_('Could Not Retrieve Sources'), body=str(error))
-                dialog.add_response('adjust', _('Adjust Sources'))
-                dialog.add_response('retry', _('Retry'))
-                dialog.add_response('without', _('Send Without Knowledge'))
-                dialog.add_response('cancel', _('Keep Draft'))
-                dialog.set_default_response('cancel')
-                self._retrieval_dialog = dialog
-                def response(d, choice):
-                    self._retrieval_dialog = None
-                    if self.closing or self._disposed:
-                        return
-                    if choice == 'adjust':
-                        self.knowledge_control.open_picker()
-                    elif choice == 'retry':
-                        self.on_send_clicked()
-                    elif choice == 'without':
-                        self.on_send_clicked(without_knowledge=True)
-                dialog.connect('response', response)
-                dialog.present(self.get_root())
-            self._finish_close()
-        else:
-            self._prepare_generation(state)
-        return False
-
-    def _prepare_generation(self, state):
-        if not self._paged:
-            self._begin_generation(state)
-            return
+    def retrieval_started(self):
         self.chat_input.entry.set_sensitive(False)
-        def read():
-            try:
-                history = self.storage.get_messages(self.strategy.chat_id, include_ids=True)
-                GLib.idle_add(ready, history)
-            except Exception as exc:
-                GLib.idle_add(self._retrieval_finished, state, exc)
-        def ready(history):
-            self.strategy.history = history
-            self.strategy._saved_count = len(history)
-            self._paged = False
-            self.chat_input.entry.set_sensitive(True)
-            self._begin_generation(state)
-            return False
-        self.storage.services.control.submit(read)
+        self.knowledge_control.set_sensitive(False)
+        self.knowledge_control.notice.set_text(_('Retrieving sources…'))
 
-    def _begin_generation(self, state):
-        continuation = state.continuation
-        if not continuation:
-            self.draft.consumed()
+    def retrieval_ended(self):
+        self.knowledge_control.set_sensitive(True)
+        self.knowledge_control.refresh_notice()
+        self.chat_input.entry.set_sensitive(True)
+
+    def retrieval_failed(self, error):
+        dialog = Adw.AlertDialog(heading=_('Could Not Retrieve Sources'), body=str(error))
+        dialog.add_response('adjust', _('Adjust Sources'))
+        dialog.add_response('retry', _('Retry'))
+        dialog.add_response('without', _('Send Without Knowledge'))
+        dialog.add_response('cancel', _('Keep Draft'))
+        dialog.set_default_response('cancel')
+        self._retrieval_dialog = dialog
+        def response(d, choice):
+            self._retrieval_dialog = None
+            if self.controller.closing or self.controller.disposed:
+                return
+            if choice == 'adjust':
+                self.knowledge_control.open_picker()
+            elif choice == 'retry':
+                self.on_send_clicked()
+            elif choice == 'without':
+                self.on_send_clicked(without_knowledge=True)
+        dialog.connect('response', response)
+        dialog.present(self.get_root())
+
+    def history_loading(self, active):
+        self.chat_input.entry.set_sensitive(not active)
+
+    def generation_started(self, state):
+        if not state.continuation:
             self.draft.restoring = True
             self.chat_input.entry.clear_draft()
             self.chat_input.on_clear_image_clicked(None)
@@ -495,81 +366,48 @@ class GenerationTab(Gtk.Box):
             self.knowledge_control.query.set_text('')
             self.message_list.add_user_message(state.prompt, images=state.images)
         from .bubbles import AiBubble
-        bubble = AiBubble(model_name=state.settings['model'], output_format=state.settings.get('format'))
+        bubble = AiBubble(model_name=state.settings.target.model, output_format=state.settings.wire.format)
         bubble.set_api_details(state.api_details())
         self.message_list.add_ai_bubble(bubble)
+        state.presentation = bubble
         self._sync_tools()
-        if isinstance(self.strategy, ChatStrategy):
-            # Results are committed once before any follow-up HTTP request.
-            future = self.strategy.begin(state, on_done=lambda: self.storage.services.inference.submit(self.process_request, state, bubble))
-            if future is None:
-                self.storage.services.inference.submit(self.process_request, state, bubble)
-        else:
-            self.strategy.begin(state)
-            self.storage.delete_draft(state.draft_id, state.draft_revision,
-                on_done=lambda: self.storage.services.inference.submit(self.process_request, state, bubble))
-        self.update_context(state)
-        self._add_sources(state.metadata, bubble)
-        self.chat_input.has_history_images = any(m.get('images') for m in getattr(self.strategy, 'history', []))
+
+    def generation_prepared(self, state):
+        self._add_sources(state.metadata, state.presentation)
+        self.chat_input.has_history_images = self.controller.has_history_images
         self.chat_input.update_capability_controls()
 
     def _add_sources(self, metadata, bubble):
         if metadata.get('retrieval'):
             bubble.bubble_box.append(SourcesView(metadata['retrieval']))
 
-    def process_request(self, state, bubble):
-        from .request_runner import RequestRunner
-        RequestRunner(self.storage.services).run(self.strategy, state,
-            lambda content, thinking, logprobs: self._display_chunk(state, bubble, content, thinking, logprobs),
-            lambda status, error: self._finish_request(state, bubble, status, error))
-
-    def _display_chunk(self, state, bubble, content, thinking, logprobs):
-        if self._disposed or self.request is not state:
-            return False
+    def chunk(self, state, content, thinking, logprobs):
+        bubble = state.presentation
         if content:
             bubble.append_text(content)
         if thinking:
             bubble.append_thinking(thinking)
         if logprobs:
             bubble.append_logprobs(logprobs)
-        return False
 
-    def _finish_request(self, state, bubble, status, error):
-        if not state.finish(status, error):
-            return False
-        if not self._disposed:
-            bubble.show_response_metadata(state.metadata, state.settings['show_stats'])
-        self._tool_busy = bool(state.tool_calls)
-        self.request = None
-        self.emit('request-changed')
-        self.chat_input.set_running(False)
+    def request_finished(self, state):
+        state.presentation.show_response_metadata(state.metadata, state.settings.view.show_stats)
 
-        def saved():
-            self._tool_busy = False
-            self._sync_tools()
-            if isinstance(self.strategy, ChatStrategy) and not self.strategy.deleted:
-                def read_title():
-                    title = self.storage.chat_title(self.strategy.chat_id)
-                    def deliver():
-                        if title is not None and not self._disposed:
-                            self.title = display_chat_title(title)
-                            self.emit('chat-updated', self.strategy.chat_id, title)
-                        self._finish_close()
-                        return False
-                    GLib.idle_add(deliver)
-                self.storage.services.control.submit(read_title)
-            else:
-                self._finish_close()
+    def message_saved(self, state):
+        self._add_tool_view(state.saved_message, state.presentation)
 
-        future = self.strategy.save(state)
-        if future is not None:
-            self._add_tool_view(state.saved_message, bubble)
-            self._sync_tools()
-            # Retain definitions edited while the previous request was running.
-            self.storage.save_tool_state(self.strategy.chat_id, options=self._local_options(), on_done=saved)
-        if future is None:
-            saved()
-        return False
+    def tools_changed(self):
+        self._sync_tools()
+
+    def title_changed(self, chat_id, title):
+        self.title = display_chat_title(title)
+        self.emit('chat-updated', chat_id, title)
+
+    def options_saved(self):
+        self.emit('chat-updated', self.controller.chat_id, self.title)
+
+    def attachments_pending(self):
+        return bool(self.chat_input.pending_imports)
 
     def _tool_capabilities_changed(self, *args):
         self.options_panel.tool_support = self.chat_input.tool_support
@@ -579,87 +417,45 @@ class GenerationTab(Gtk.Box):
 
     def _persist_tool_options(self, *args):
         self._settings_edited()
-        if isinstance(self.strategy, ChatStrategy) and not self.closing and not self.strategy.deleted:
-            def saved():
-                if not self._disposed and not self.strategy.deleted:
-                    self.emit('chat-updated', self.strategy.chat_id, self.title)
-            self.storage.save_tool_state(self.strategy.chat_id, options=self._local_options(), on_done=saved)
+        self.controller.persist_options()
 
-    def _local_options(self):
+    def local_options(self):
         return dict(self.options_panel.get_tools_options(), knowledge=copy.deepcopy(self.knowledge_control.options))
 
     def _add_tool_view(self, message, bubble):
-        if not message or not (message.get('response_metadata') or {}).get('tool_round'):
+        if not message or bubble is None or not (message.get('response_metadata') or {}).get('tool_round'):
             return
-        view = ToolCallsView(message, self._save_tool_result,
-                             lambda: self.on_send_clicked(continuation=True), self._cancel_tool_round)
+        view = ToolCallsView(message, self.controller.save_tool_result,
+                             lambda: self.on_send_clicked(continuation=True), self.controller.cancel_tool_round)
         self._tool_views.append(view)
         bubble.bubble_box.append(view)
 
     def _sync_tools(self):
-        pending = self.strategy.pending_round if isinstance(self.strategy, ChatStrategy) else None
-        editable = not (self.request or self._tool_busy or self.closing or self._disposed)
+        pending = self.controller.pending_round
         can_continue = bool(self.chat_input.get_selected_model()) and not self.chat_input.capabilities_loading
         for view in self._tool_views:
-            view.update(editable and view.message is pending, can_continue=can_continue)
-        self.chat_input.awaiting_tools = pending is not None or self._tool_busy
+            view.update(self.controller.tools_editable and view.message is pending, can_continue=can_continue)
+        self.chat_input.awaiting_tools = pending is not None or self.controller.tool_busy
         self.chat_input.update_capability_controls()
 
-    def _save_tool_result(self, message, index, text):
-        if (self.request or self._tool_busy or self.closing or self._disposed
-                or self.strategy.pending_round is not message):
-            return
-        message['response_metadata']['tool_round']['results'][index] = text
-        self._save_tool_history()
-
-    def _save_tool_history(self):
-        self._tool_busy = True
-        self._sync_tools()
-        def saved():
-            self._tool_busy = False
-            self._sync_tools()
-        self.storage.save_tool_state(self.strategy.chat_id, messages=self.strategy.history, on_done=saved)
-
-    def _cancel_tool_round(self):
-        if (self.request or self._tool_busy or self.closing or self._disposed
-                or self.strategy.pending_round is None):
-            return
-        self.strategy.commit_results(cancel=True)
-        self._save_tool_history()
-
-    def close_session(self, on_done, delete=False):
-        self._discard_on_close = delete
-        self.closing = True
-        self._close_callback = on_done
+    def _close_dialogs(self):
         self.chat_input.cancel_fetches()
-        self.knowledge_control.close_dialog(dispose=True)
         if self._retrieval_dialog:
             self._retrieval_dialog.close()
         for view in self._tool_views:
             view.close_editor()
-        if self.options_panel._tools_dialog is not None:
-            self.options_panel._tools_dialog.close()
-        if self.options_panel._schema_dialog is not None:
-            self.options_panel._schema_dialog.close()
-        if self.options_panel._settings_dialog is not None:
-            self.options_panel._settings_dialog.close()
-        self.set_sensitive(False)
-        if delete and isinstance(self.strategy, ChatStrategy):
-            self.strategy.deleted = True
-        if self.request:
-            self.request.cancellable.cancel()
-        else:
-            # Keep the tab until earlier saves have completed, so reopening cannot
-            # start another request from an older database snapshot.
-            self.storage._submit(lambda: None, on_done=self._finish_close)
+        self.options_panel.close_dialogs()
 
-    def _finish_close(self):
-        if (self.closing and self.request is None and self._close_callback
-                and not self.chat_input.pending_imports and not self._close_saving):
-            self._close_saving = True
-            self.draft.close(discard=self._discard_on_close)
-            def complete():
-                callback, self._close_callback = self._close_callback, None
-                self._disposed = True
-                callback()
-            self.storage._submit(lambda: None, on_done=complete)
+    def prepare_shutdown(self):
+        """Stop work and close dialogs so the application can quit."""
+        self.draft.flush()
+        self.knowledge_control.close_dialog()
+        self._close_dialogs()
+        self.controller.stop()
+
+    def close_session(self, on_done, delete=False):
+        # Closing is recorded first, so a dialog that saves as it closes is ignored.
+        self.controller.close(on_done, delete=delete)
+        self.knowledge_control.close_dialog(dispose=True)
+        self._close_dialogs()
+        self.set_sensitive(False)

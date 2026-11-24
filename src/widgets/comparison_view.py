@@ -1,15 +1,16 @@
 """Comparison editor and adaptive saved results."""
+from gettext import gettext as _
 import copy
 from types import SimpleNamespace
 from gi.repository import Gtk, GObject, GLib, Pango
 from ..tab import GenerationTab
+from ..chat_controller import ComposerInput
+from ..records import RequestSettings
 from ..comparison import ComparisonRun, ComparisonController, prepare_run
 from ..drafts import DraftController
 from ..context import describe_context
 from ..bubbles import AiBubble
-from .chat_input import ChatInput
-from .options_panel import OptionsPanel
-from .knowledge_view import SourcesView
+from .source_views import SourcesView
 
 
 from .model_target import TargetPicker
@@ -20,9 +21,10 @@ class ComparisonTab(Gtk.Box):
                     'request-changed': (GObject.SignalFlags.RUN_FIRST, None, ())}
     title = GObject.Property(type=str, default='')
 
-    def __init__(self, storage, saved=None, draft=None):
+    def __init__(self, context, saved=None, draft=None):
         super().__init__(orientation=Gtk.Orientation.VERTICAL, spacing=6)
-        self.storage, self.mode = storage, 'comparison'
+        self.context, self.mode = context, 'comparison'
+        self.storage = context.storage
         self.strategy = SimpleNamespace(chat_id=saved['id'] if saved else None, deleted=False)
         self.title = saved['title'] if saved else _('New Comparison')
         self.request = None
@@ -31,13 +33,13 @@ class ComparisonTab(Gtk.Box):
         self._close_saving = False
         self.targets, self.results = [], {}
         self._wide = None
-        self.editor = GenerationTab(storage=storage, discover_models=False)
+        self.editor = GenerationTab(context=context, discover_models=False)
         self.editor.draft.close(discard=True)
         self.chat_input, self.options_panel = self.editor.chat_input, self.editor.options_panel
         self.chat_input.cancel_fetches()
         self.chat_input.discovery_enabled = False
-        self.chat_input._set_thinking_options(None)
-        self.options_panel.set_cloud(False)
+        self.chat_input.reset_thinking_options()
+        self.options_panel.set_capabilities(self.context.capabilities(None))
         self.knowledge_control = self.editor.knowledge_control
         self._retrieval_dialog, self._tool_views = None, []
         self.knowledge_control.set_visible(True)
@@ -70,7 +72,7 @@ class ComparisonTab(Gtk.Box):
         for child in (self.target_box, self.target_controls, self.notice, self.result_selector,
                       self.result_scroll, self.again_button, self.editor):
             self.append(child)
-        self.draft = DraftController(storage, 'comparison', self.read_draft, id=draft['id'] if draft else None)
+        self.draft = DraftController(context.storage, 'comparison', self.read_draft, id=draft['id'] if draft else None)
         self.chat_input.entry.connect('changed', self.draft.changed)
         self.options_panel.watch_draft(self.draft.changed)
         if saved:
@@ -101,7 +103,7 @@ class ComparisonTab(Gtk.Box):
         self._update_send()
 
     def _local_options(self):
-        return self.editor._local_options()
+        return self.editor.local_options()
 
     def read_draft(self):
         value = self.editor.read_draft()
@@ -122,7 +124,7 @@ class ComparisonTab(Gtk.Box):
     def add_target(self, target=None):
         if len(self.targets) >= 4:
             return
-        picker = TargetPicker(self.storage, self._targets_changed, target)
+        picker = TargetPicker(self.context, self._targets_changed, target)
         self.targets.append(picker)
         self.target_box.append(picker)
         self._targets_changed()
@@ -157,13 +159,14 @@ class ComparisonTab(Gtk.Box):
         if any(p.input.capabilities_loading for p in self.targets):
             return
         try:
-            settings = self.options_panel.get_request_settings()
-            settings.update(options=self.options_panel.get_options_from_ui(),
-                system=self.options_panel.system_prompt_entry.read_draft() or None,
-                thinking=self.chat_input.get_thinking_value(), logprobs=self.options_panel.logprobs_check.get_active(),
-                top_logprobs=self.options_panel.get_logprobs(), show_stats=self.options_panel.stats_check.get_active(),
-                knowledge=copy.deepcopy(self.knowledge_control.options), query_override=self.knowledge_control.query.get_text())
-            settings['draft_settings'] = self.editor.read_draft()['settings']
+            panel = self.options_panel
+            settings = ComposerInput(
+                request=panel.get_request_settings(), options=panel.get_options_from_ui(),
+                system=panel.system_prompt_entry.read_draft() or None,
+                thinking=self.chat_input.get_thinking_value(), logprobs=panel.logprobs_check.get_active(),
+                top_logprobs=panel.get_logprobs(), show_stats=panel.stats_check.get_active(),
+                knowledge=self.knowledge_control.options, query_override=self.knowledge_control.query.get_text(),
+            ).settings(draft_settings=self.editor.read_draft()['settings'])
             images = self.chat_input.get_images()
             self.draft.flush()
             revision = self.draft.revision
@@ -180,8 +183,8 @@ class ComparisonTab(Gtk.Box):
         self._update_send()
         def prepare():
             try:
-                run = prepare_run(self.storage, active, prompt, images, settings, targets, self.draft.id, revision)
-                self.storage._submit(self.storage.library.create_comparison, run, on_done=lambda: self._start(active, run))
+                run = prepare_run(self.context, active, prompt, images, settings, targets, self.draft.id, revision)
+                self.storage.submit(self.storage.library.create_comparison, run, on_done=lambda: self._start(active, run))
             except Exception as exc:
                 GLib.idle_add(failed, exc)
         def failed(exc):
@@ -195,7 +198,7 @@ class ComparisonTab(Gtk.Box):
                 self._error(exc)
             self._finish_close()
             return False
-        self.storage.services.inference.submit(prepare)
+        self.context.services.inference.submit(prepare)
 
     def _error(self, error):
         self.notice.set_text(str(error))
@@ -229,7 +232,7 @@ class ComparisonTab(Gtk.Box):
         def done(id, state):
             box, bubble, stop = self.results[id]
             stop.set_visible(False)
-            bubble.show_response_metadata(state.metadata, state.settings['show_stats'])
+            bubble.show_response_metadata(state.metadata, state.settings.view.show_stats)
             self._sources(box, state.metadata)
             if not active.pending:
                 self.request = None
@@ -238,21 +241,23 @@ class ComparisonTab(Gtk.Box):
                 self.emit('request-changed')
                 self.emit('chat-updated', run['id'], self.title)
                 self._finish_close()
-        ComparisonController(self.storage, active).dispatch(chunk, done)
+        ComparisonController(self.context, active).dispatch(chunk, done)
 
-    def _add_result(self, id, settings):
+    def _add_result(self, id, stored):
+        settings = RequestSettings.from_stored(stored)
+        model = settings.target.model
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6, hexpand=True)
-        title = Gtk.Label(label=settings['model'] + '\n' + settings['host'], wrap=True,
+        title = Gtk.Label(label=model + '\n' + settings.target.url, wrap=True,
                           wrap_mode=Pango.WrapMode.WORD_CHAR, selectable=True)
         box.append(title)
-        bubble = AiBubble(model_name=settings['model'], output_format=settings.get('format'), hexpand=True)
-        bubble.set_api_details(settings)
+        bubble = AiBubble(model_name=model, output_format=settings.wire.format, hexpand=True)
+        bubble.set_api_details(settings.api_details())
         box.append(bubble)
         stop = Gtk.Button(label=_('Stop response'))
         stop.connect('clicked', lambda *args: self.request.states[id].cancellable.cancel() if self.request else None)
         box.append(stop)
         self.results[id] = (box, bubble, stop)
-        bubble.model_name = settings['model']
+        bubble.model_name = model
         self.result_selector.set_model(Gtk.StringList.new([r[1].model_name for r in self.results.values()]))
         self._layout_results(force=True)
 
@@ -284,17 +289,16 @@ class ComparisonTab(Gtk.Box):
         else:
             saved = self.saved
             first = saved['messages'][0]
-            settings = saved['targets'][0]['settings']
-            self.options_panel.load_options(dict(settings.get('options', {}), **{
-                k: settings.get(k) for k in ('output_mode', 'schema_text', 'keep_alive', 'tools_text')}))
-            self.options_panel.system_prompt_entry.restore_draft(settings.get('system'))
-            self.knowledge_control.load(settings.get('knowledge', {}))
+            settings = RequestSettings.from_stored(saved['targets'][0]['settings'])
+            self.options_panel.load_options(settings.wire, settings.view)
+            self.options_panel.system_prompt_entry.restore_draft(settings.wire.system)
+            self.knowledge_control.load(settings.view.knowledge)
             values = self.read_draft()
             values['settings'] = copy.deepcopy(saved['options'].get('draft_settings', values['settings']))
             values.update(text=first['content'], images=first.get('images', []),
                 targets=[dict(host_id=t['settings']['host_id'], model=t['settings']['model']) for t in saved['targets']])
         import uuid
-        root._add_tab(ComparisonTab(self.storage, draft=dict(values, id=str(uuid.uuid4()), mode='comparison', revision=0)))
+        root._add_tab(ComparisonTab(self.context, draft=dict(values, id=str(uuid.uuid4()), mode='comparison', revision=0)))
 
     def show_message(self, uid):
         for index, id in enumerate(self.results):
@@ -308,6 +312,17 @@ class ComparisonTab(Gtk.Box):
         for picker in self.targets:
             picker.panel.update_hosts()
 
+    def prepare_shutdown(self):
+        """Stop work and close dialogs so the application can quit."""
+        self.draft.flush()
+        self.chat_input.cancel_fetches()
+        for picker in self.targets:
+            picker.input.cancel_fetches()
+        self.knowledge_control.close_dialog()
+        self.options_panel.close_dialogs()
+        if self.request:
+            self.request.cancellable.cancel()
+
     def close_session(self, on_done, delete=False):
         self.closing = True
         self._discard_on_close = delete
@@ -318,7 +333,7 @@ class ComparisonTab(Gtk.Box):
         if self.request:
             self.request.cancellable.cancel()
         else:
-            self.storage._submit(lambda: None, on_done=self._finish_close)
+            self.storage.after_pending_writes(self._finish_close)
 
     def _finish_close(self):
         if (self.closing and self.request is None and self._close_callback
@@ -329,4 +344,4 @@ class ComparisonTab(Gtk.Box):
                 callback, self._close_callback = self._close_callback, None
                 self._disposed = True
                 callback()
-            self.storage._submit(lambda: None, on_done=complete)
+            self.storage.after_pending_writes(complete)

@@ -1,9 +1,13 @@
 """Sequential model conversations, independent of their GTK presentation."""
+from gettext import gettext as _
 import copy
 import uuid
+from dataclasses import replace
+from typing import Any
 from gi.repository import Gio, GLib
-from . import ollama
+from .providers import ProviderError, RequestCancelled, validate_url
 from .context import estimate_context
+from .records import RequestSettings
 from .request_runner import RequestRunner
 from .session import RequestState, ChatStrategy
 
@@ -30,58 +34,61 @@ def conversation_messages(snapshot, turn):
     return messages, input_uid
 
 
-def validate_participants(storage, participants, cancel):
+def validate_participants(context, participants, cancel):
+    """Resolve two RequestSettings to their hosts; return them with their connections."""
     if len(participants) != 2:
         raise ValueError(_('Choose two participants.'))
     resolved, connections = [], []
-    for original in participants:
+    for settings in participants:
         if cancel.is_cancelled():
-            raise ollama.RequestCancelled()
-        settings = copy.deepcopy(original)
-        host = storage.get_host(settings.get('host_id'))
-        if host is None or not settings.get('model'):
+            raise RequestCancelled()
+        target, wire = settings.target, settings.wire
+        host = context.storage.get_host(target.host_id) if target else None
+        if host is None or not target.model:
             raise ValueError(_('Select an available model before sending.'))
-        destination = ollama.validate_host(host['hostname'])
-        if settings.get('host') and settings['host'] != destination:
+        destination = validate_url(host['hostname'])
+        if target.url and target.url != destination:
             raise ValueError(_('A participant’s server address changed. Restore the host or use Run Again.'))
-        connection = storage.connection(host)
-        models = dict(storage.services.catalog.models(connection, cancel))
-        if settings['model'] not in models:
+        connection = context.connection(host)
+        models = dict(context.services.catalog.models(connection, cancel))
+        if target.model not in models:
             raise ValueError(_('Selected model is no longer available.'))
-        details = models[settings['model']]
+        details = models[target.model]
         if details is None:
             try:
-                details = storage.services.catalog.details(connection, settings['model'], cancel)
-            except ollama.RequestCancelled:
+                details = context.services.catalog.details(connection, target.model, cancel)
+            except RequestCancelled:
                 raise
-            except ollama.OllamaError:
+            except ProviderError:
                 details = None
         caps = (details or {}).get('capabilities')
         if caps is not None:
             if 'embedding' in caps and 'completion' not in caps:
                 raise ValueError(_('Embedding models cannot join a conversation.'))
-            if settings.get('thinking') not in (None, False) and 'thinking' not in caps:
+            if wire.thinking not in (None, False) and 'thinking' not in caps:
                 raise ValueError(_('A participant does not support the selected thinking option.'))
         family = (details or {}).get('details', {}).get('family', '').replace('-', '').lower()
-        if family == 'gptoss' and settings.get('thinking') not in (None, 'low', 'medium', 'high'):
+        if family == 'gptoss' and wire.thinking not in (None, 'low', 'medium', 'high'):
             raise ValueError(_('The selected thinking level is incompatible with a target.'))
-        if ollama.is_cloud(host) and settings.get('keep_alive') is not None:
+        if wire.keep_alive is not None and not connection.capabilities.keep_alive:
             raise ValueError(_('Cloud targets manage model retention automatically.'))
-        settings.update(host=destination, endpoint='chat', format=None, tools=None)
-        resolved.append(settings)
+        resolved.append(replace(settings, endpoint='chat', target=replace(target, url=destination),
+                                wire=replace(wire, format=None, tools=None)))
         connections.append(connection)
     return resolved, connections
 
 
 class ModelConversationController:
     """All transitions run on the main context; workers only prepare/stream/save."""
-    def __init__(self, storage, changed=lambda: None, started=lambda *a: None,
+    def __init__(self, context, changed=lambda: None, started=lambda *a: None,
                  chunk=lambda *a: None, finished=lambda *a: None):
-        self.storage = storage
+        self.context = context
+        self.storage = context.storage
         self.changed, self.started, self.chunk, self.finished = changed, started, chunk, finished
         self.id = None
-        self.run = None
-        self.settings = None
+        self.run: Any = None
+        self.settings = None      # As stored: rounds, participants, and the setup draft.
+        self.participants = []    # The same participants as RequestSettings.
         self.busy = False
         self.error = None
         self.states = {}
@@ -96,11 +103,11 @@ class ModelConversationController:
             state.cancellable.cancel()
 
     def _write(self, fn, *args, done):
-        result = []
+        result: list = []
         def work():
             value = fn(*args)
             result[:] = [value]
-        self.storage._submit(work, on_done=lambda: done(result[0]))
+        self.storage.submit(work, on_done=lambda: done(result[0]))
 
     def _work(self, fn, done):
         generation = self._generation
@@ -114,7 +121,7 @@ class ModelConversationController:
                     done(result, error)
                 return False
             GLib.idle_add(deliver)
-        self.storage.services.inference.submit(work)
+        self.context.services.inference.submit(work)
 
     def start(self, prompt, rounds, participants, draft_id=None, draft_revision=None, draft_settings=None):
         if self.busy or self.id:
@@ -127,22 +134,24 @@ class ModelConversationController:
             if error or self._end:
                 self._preparation_failed(error)
                 return
-            participants, self.connections = result
+            self.participants, self.connections = result
             self.id = str(uuid.uuid4())
-            self.settings = dict(rounds=rounds, participants=participants, draft_settings=draft_settings or {})
+            self.settings = dict(rounds=rounds, participants=[p.to_stored(sparse=True) for p in self.participants],
+                                 draft_settings=draft_settings or {})
             record = dict(id=self.id, prompt=prompt, prompt_uid=str(uuid.uuid4()), settings=self.settings,
                           draft_id=draft_id, draft_revision=draft_revision)
             def saved(_):
                 self.run = dict(id=self.id, status='running', next_turn=0)
                 self.changed()
                 self._advance()
-            self._write(self.storage.db.create_model_conversation, record, done=saved)
-        self._work(lambda: validate_participants(self.storage, participants, self.cancellable), prepared)
+            self._write(self.storage.library.create_model_conversation, record, done=saved)
+        self._work(lambda: validate_participants(self.context, participants, self.cancellable), prepared)
 
     def load(self, snapshot):
         self.id = snapshot['id']
         self.run = copy.deepcopy(snapshot['run'])
         self.settings = copy.deepcopy(snapshot['options'])
+        self.participants = [RequestSettings.from_stored(p) for p in self.settings['participants']]
 
     def resume(self):
         if self.busy or not self.run or self.run['status'] not in ('paused', 'interrupted', 'failed'):
@@ -152,9 +161,9 @@ class ModelConversationController:
             if error or self._end:
                 self._preparation_failed(error)
                 return
-            _, self.connections = result
-            self._write(self.storage.db.set_model_conversation_status, self.id, 'running', done=self._resumed)
-        self._work(lambda: validate_participants(self.storage, self.settings['participants'], self.cancellable), prepared)
+            self.connections = result[1]
+            self._write(self.storage.library.set_model_conversation_status, self.id, 'running', done=self._resumed)
+        self._work(lambda: validate_participants(self.context, self.participants, self.cancellable), prepared)
 
     def _resumed(self, run):
         self.run = run
@@ -168,7 +177,7 @@ class ModelConversationController:
         self.changed()
 
     def _preparation_failed(self, error):
-        if error and not isinstance(error, ollama.RequestCancelled):
+        if error and not isinstance(error, RequestCancelled):
             self.error = str(error)
         if self.id and self._end:
             self._settle(self._end)
@@ -199,7 +208,7 @@ class ModelConversationController:
                 return
             self.run, self.busy = run, False
             self.changed()
-        self._write(self.storage.db.set_model_conversation_status, self.id, status, done=saved)
+        self._write(self.storage.library.set_model_conversation_status, self.id, status, done=saved)
 
     def _advance(self):
         if not self.run or self.run['status'] in ('complete', 'stopped'):
@@ -236,10 +245,10 @@ class ModelConversationController:
                 self.error = str(exc)
                 self._settle('failed')
                 return
-            settings = self.settings['participants'][turn % 2]
+            settings = self.participants[turn % 2]
             state = RequestState(settings, messages[-1]['content'], messages=messages,
                                  connection=self.connections[turn % 2])
-            state.metadata['context_estimate'] = estimate_context(messages, settings)
+            state.metadata['context_estimate'] = estimate_context(messages, settings.wire)
             uid = str(uuid.uuid4())
             self.states = {uid: state}
             message = self._message(uid, state)
@@ -261,24 +270,24 @@ class ModelConversationController:
                         GLib.idle_add(self._discard_pending, uid)
                         return
                     GLib.idle_add(self.started, attempt, state)
-                    RequestRunner(self.storage.services).run(ChatStrategy(self.storage), state,
+                    RequestRunner(self.context.services).run(ChatStrategy(self.storage), state,
                         lambda *parts: self.chunk(uid, *parts),
                         lambda status, error: self._finish(uid, state, status, error))
-                self.storage.services.inference.submit(work)
+                self.context.services.inference.submit(work)
                 self.changed()
-            self._write(self.storage.db.start_model_conversation_attempt, self.id, turn, uid, input_uid, message, done=saved)
+            self._write(self.storage.library.start_model_conversation_attempt, self.id, turn, uid, input_uid, message, done=saved)
         self._work(lambda: self.storage.export_snapshot(self.id), ready)
 
     def _discard_pending(self, uid):
         def saved(_):
             self.states.clear()
             self._settle(self._end or 'paused')
-        self._write(self.storage.db.discard_pending_model_conversation_attempt, uid, done=saved)
+        self._write(self.storage.library.discard_pending_model_conversation_attempt, uid, done=saved)
         return False
 
     @staticmethod
     def _message(uid, state):
-        return dict(uid=uid, role='assistant', model=state.settings['model'], content=state.content,
+        return dict(uid=uid, role='assistant', model=state.settings.target.model, content=state.content,
                     thinking_content=state.thinking, api_details=state.api_details(), response_metadata=copy.deepcopy(state.metadata))
 
     def _finish(self, uid, state, status, error):
@@ -296,5 +305,5 @@ class ModelConversationController:
             self.finished(uid, state)
             self.changed()
             self._advance()
-        self._write(self.storage.db.finish_model_conversation_attempt, uid, message,
+        self._write(self.storage.library.finish_model_conversation_attempt, uid, message,
                     self._end or ('paused' if self._pause and status == 'complete' else None), done=saved)

@@ -1,4 +1,5 @@
 """JSON editor and response view, with portal-based import and export."""
+from gettext import gettext as _
 from gi.repository import Adw, Gtk, Gio, GLib
 from ..markdown_view import GtkSource
 from ..structured import formatted_json, request_format
@@ -120,7 +121,7 @@ class TextEditor(Adw.Dialog):
                     self.show_error(exc.message)
         def loaded(file, result):
             try:
-                _, contents, _etag = file.load_contents_finish(result)
+                _ok, contents, _etag = file.load_contents_finish(result)
                 if not self._cancel.is_cancelled():
                     self.editor.get_buffer().set_text(contents.decode('utf-8-sig'))
                     self.error_label.set_visible(False)

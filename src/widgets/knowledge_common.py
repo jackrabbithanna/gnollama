@@ -1,16 +1,9 @@
 """Adaptive Knowledge Library, source selection, and retrieval inspection."""
-import copy
-import json
-import time
-from gettext import ngettext
+from gettext import gettext as _
 from gi.repository import Adw, Gtk, Gio, GLib, Pango
 
-from .. import ollama
-from ..knowledge import (DEFAULT_RAG, PRESETS, canonical_model, check_cancel, extract_document, make_document,
-                         model_identity, new_config, validate_rag)
-from ..session import worker
-from ..vectors import SEARCH_METRICS
-from .json_view import TextEditor, buffer_text
+from ..providers import ProviderError, RequestCancelled
+from ..knowledge import (PRESETS, check_cancel, new_config)
 
 
 def label(text='', **kwargs):
@@ -128,16 +121,16 @@ class WorkDialog(Adw.Dialog):
                     callback(value, error)
                 return False
             GLib.idle_add(deliver)
-        storage = getattr(self, 'storage', None)
-        (storage.services.control if storage else worker).submit(task)
+        self.context.services.control.submit(task)
 
 
 class HostModels(Gtk.Box):
     """Explicit embedding host/model picker with stale-result suppression."""
-    def __init__(self, storage, host='', model='', on_change=lambda: None):
+    def __init__(self, context, host='', model='', on_change=lambda: None):
         super().__init__(orientation=Gtk.Orientation.VERTICAL, spacing=6)
-        self.storage, self.on_change = storage, on_change
-        self.hosts = [host for host in storage.get_all_hosts() if not ollama.is_cloud(host)]
+        self.context, self.on_change = context, on_change
+        self.storage = context.storage
+        self.hosts = [host for host in context.storage.get_all_hosts() if context.capabilities(host).embeddings]
         self.models = []
         self.cancel = None
         self.generation = 0
@@ -166,7 +159,7 @@ class HostModels(Gtk.Box):
             return
         managed = hasattr(root, 'on_manage_models')
         manager = root.on_manage_models() if managed else ModelManagerDialog(
-            self.storage, is_model_busy=self.storage.knowledge.busy)
+            self.context, is_model_busy=self.context.knowledge.busy)
         for n, host in enumerate(manager.host_list):
             if host['hostname'].rstrip('/') == self.host().rstrip('/'):
                 manager.host_dropdown.set_selected(n)
@@ -185,6 +178,10 @@ class HostModels(Gtk.Box):
         i = self.host_dropdown.get_selected()
         return self.hosts[i]['hostname'] if i < len(self.hosts) else ''
 
+    def connection(self):
+        i = self.host_dropdown.get_selected()
+        return self.context.connection(self.hosts[i]) if i < len(self.hosts) else None
+
     def model(self):
         i = self.model_dropdown.get_selected()
         return self.models[i] if i < len(self.models) else None
@@ -193,7 +190,7 @@ class HostModels(Gtk.Box):
         self.stop()
         generation = self.generation
         cancel = self.cancel = Gio.Cancellable()
-        host = self.host()
+        host = self.connection()
         self.models = []
         self.model_dropdown.set_model(Gtk.StringList.new([]))
         self.notice.set_text(_('Checking embedding models…'))
@@ -201,14 +198,14 @@ class HostModels(Gtk.Box):
         def fetch():
             models, error = [], None
             try:
-                for model in ollama.fetch_model_details(host, cancellable=cancel) if host else []:
+                for model in host.list_models(cancellable=cancel) if host else []:
                     check_cancel(cancel)
                     try:
-                        info = ollama.show_model(host, model['name'], cancellable=cancel)
+                        info = host.show_model(model['name'], cancellable=cancel)
                         capabilities = info.get('capabilities')
-                    except ollama.RequestCancelled:
+                    except RequestCancelled:
                         raise
-                    except ollama.OllamaError:
+                    except ProviderError:
                         capabilities = None
                     if capabilities is None or 'embedding' in capabilities:
                         models.append(model)
@@ -227,16 +224,17 @@ class HostModels(Gtk.Box):
                 self.on_change()
                 return False
             GLib.idle_add(deliver)
-        self.storage.services.control.submit(fetch)
+        self.context.services.control.submit(fetch)
 
 
 class IndexDialog(WorkDialog):
-    def __init__(self, storage, document, on_started, defaults=None):
+    def __init__(self, context, document, on_started, defaults=None):
         super().__init__(_('Create Embeddings'))
-        self.storage, self.document = storage, document
+        self.context, self.document = context, document
+        self.storage = context.storage
         self.defaults = defaults
         self.box.append(label(document['title']))
-        self.host_models = HostModels(storage, (defaults or {}).get('host', ''),
+        self.host_models = HostModels(context, (defaults or {}).get('host', ''),
                                       (defaults or {}).get('model', ''), on_change=self._model_changed)
         self.box.append(self.host_models)
         self.connect('closed', lambda *args: self.host_models.stop())
@@ -261,7 +259,7 @@ class IndexDialog(WorkDialog):
         self.start.add_css_class('suggested-action')
         self.header.pack_end(self.start)
         if defaults:
-            config = storage.library.embedding_config(defaults['config_id'])
+            config = context.storage.library.embedding_config(defaults['config_id'])
             self.preset.set_selected(list(PRESETS).index(config['preset']))
             self.document_prefix.set_text(config['document_prefix'])
             self.query_prefix.set_text(config['query_prefix'])
@@ -287,7 +285,7 @@ class IndexDialog(WorkDialog):
 
     def _start(self, callback):
         try:
-            self.storage.knowledge.create_index(self.document['id'], *self.settings())
+            self.context.knowledge.create_index(self.document['id'], *self.settings())
             callback()
             self.close()
         except (ValueError, TypeError) as exc:

@@ -3,7 +3,6 @@
 import argparse
 import gettext
 import json
-import math
 from pathlib import Path
 import sys
 import tempfile
@@ -14,14 +13,14 @@ gettext.install('gnollama')
 from src.database import DatabaseManager
 from src.knowledge import make_document, new_config, augmented_messages, model_identity
 from src.vectors import vector_blob
-from src import ollama
+from src.providers import OllamaProvider
 
 
 def evaluate(host=None, model=None, answer_model=None):
     fixture = json.loads((ROOT / 'tests/fixtures/retrieval_reference.json').read_text())
-    identity = model_identity(host, model) if host else {'digest': 'recorded-fixture-v1'}
+    identity = model_identity(OllamaProvider(host), model) if host else {'digest': 'recorded-fixture-v1'}
     def vectors(texts, recorded):
-        return ollama.embed(host, model, texts)['embeddings'] if host else recorded
+        return OllamaProvider(host).embed(model, texts)['embeddings'] if host else recorded
     passages = fixture['passages']
     embeddings = vectors([p['text'] for p in passages], [p['vector'] for p in passages])
     queries = vectors([c['query'] for c in fixture['cases']], [c['vector'] for c in fixture['cases']])
@@ -29,17 +28,17 @@ def evaluate(host=None, model=None, answer_model=None):
     with tempfile.TemporaryDirectory(prefix='gnollama-evaluation-') as directory:
         db = DatabaseManager(str(Path(directory) / 'evaluation.db'))
         config = new_config(model or 'recorded', str(identity), dimensions=len(embeddings[0]))
-        db.add_embedding_config(config)
+        db.knowledge.add_embedding_config(config)
         for passage, vector in zip(passages, embeddings):
             document = make_document(passage['id'], passage['text'])
-            db.add_knowledge_document(document)
-            db.begin_knowledge_index(dict(id=passage['id'], document_id=document['id'], config_id=config['id'],
+            db.knowledge.add_knowledge_document(document)
+            db.knowledge.begin_knowledge_index(dict(id=passage['id'], document_id=document['id'], config_id=config['id'],
                 host=host or 'http://localhost:11434', model=model or 'recorded', chunk_size=1600, overlap=0, created_at=0))
-            db.save_embedding_batch(passage['id'], config['id'], len(vector), [dict(id=passage['id'], ordinal=0,
+            db.knowledge.save_embedding_batch(passage['id'], config['id'], len(vector), [dict(id=passage['id'], ordinal=0,
                 start=0, end=len(passage['text']), vector=vector_blob(vector))])
-            db.finish_knowledge_index(passage['id'], 'complete')
+            db.knowledge.finish_knowledge_index(passage['id'], 'complete')
         for case, query in zip(fixture['cases'], queries):
-            hits = db.search_knowledge(config['id'], {p['id']: None for p in passages}, query)
+            hits = db.knowledge.search_knowledge(config['id'], {p['id']: None for p in passages}, query)
             ids, expected = [h['id'] for h in hits], set(case['expected'])
             ranks = [ids.index(id) + 1 for id in expected if id in ids]
             report = dict(kind=case['kind'], query=case['query'], expected=case['expected'], expected_answer=case['answer'],
@@ -48,7 +47,7 @@ def evaluate(host=None, model=None, answer_model=None):
                 citation_support='requires human review', answer_correctness='requires human review')
             if answer_model:
                 messages = augmented_messages([dict(role='user', content=case['query'])], dict(hits=hits, query=case['query']))
-                report['answer'] = ''.join(chunk.get('message', {}).get('content', '') for chunk in ollama.chat(host, answer_model, messages))
+                report['answer'] = ''.join(chunk.get('message', {}).get('content', '') for chunk in OllamaProvider(host).chat(answer_model, messages))
             reports.append(report)
     scored = [r for r in reports if r['recall_at_6'] is not None]
     return dict(mode='live' if host else 'recorded', embedding_identity=identity,

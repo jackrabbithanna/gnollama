@@ -117,7 +117,10 @@ def render(tex: str, font_px: int, scale: int,
         tex = ROW_SPACING.sub(lambda match: r'\\', tex)
         svg = ziamath.Latex(tex, size=font_px * scale, color='#ffffff', inline=inline).svg()
         # The baseline is at y = 0, so the top edge of the view box is the ascent.
-        top = float(re.search(r'viewBox="\S+ (\S+) ', svg)[1])
+        view_box = re.search(r'viewBox="\S+ (\S+) ', svg)
+        if view_box is None:
+            raise ValueError('The rendered equation has no view box')
+        top = float(view_box[1])
         texture = _rasterize(svg)
     except Exception:
         return None
@@ -200,7 +203,7 @@ def _wrapped(markup: str) -> str:
 
 def _sequence(tokens: List[Tuple[str, ...]], pos: int, italic: bool, group: bool = False) -> Tuple[str, int]:
     """Converts tokens up to the end, or up to the closing brace of a group."""
-    parts = []
+    parts: List[str] = []
     while pos < len(tokens):
         if tokens[pos][4] == '}':
             if not group:

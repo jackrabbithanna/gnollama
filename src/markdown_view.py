@@ -1,7 +1,8 @@
+from gettext import gettext as _
 import html
 import math
 import re
-from typing import List, Dict, Any, Optional, Tuple, Union
+from typing import List, Dict, Any, Optional, Tuple
 from html.parser import HTMLParser
 from gi.repository import Gtk, Gdk, Gio, GLib, Graphene, Gsk, Pango, GObject, Adw
 
@@ -81,20 +82,28 @@ class PangoMarkupParser(HTMLParser):
             self.output.append("\n<span size='large' weight='bold'>")
         elif tag in ['b', 'strong']:
             tag_str = "<b>"
-            if self.in_table: self.cell_content += tag_str
-            else: self.output.append(tag_str)
+            if self.in_table:
+                self.cell_content += tag_str
+            else:
+                self.output.append(tag_str)
         elif tag in ['i', 'em']:
             tag_str = "<i>"
-            if self.in_table: self.cell_content += tag_str
-            else: self.output.append(tag_str)
+            if self.in_table:
+                self.cell_content += tag_str
+            else:
+                self.output.append(tag_str)
         elif tag in ['s', 'del', 'strike']:
             tag_str = "<s>"
-            if self.in_table: self.cell_content += tag_str
-            else: self.output.append(tag_str)
+            if self.in_table:
+                self.cell_content += tag_str
+            else:
+                self.output.append(tag_str)
         elif tag in ['code', 'tt']:
             tag_str = "<tt>"
-            if self.in_table: self.cell_content += tag_str
-            else: self.output.append(tag_str)
+            if self.in_table:
+                self.cell_content += tag_str
+            else:
+                self.output.append(tag_str)
         elif tag == 'p':
             if self.lists:
                 if not self.item_start:
@@ -127,15 +136,17 @@ class PangoMarkupParser(HTMLParser):
                 self.lists[-1] = number + 1
             self.item_start = True
         elif tag == 'a':
-            href = dict(attrs).get('href', '')
+            href = dict(attrs).get('href') or ''
             tag_str = f"<a href='{html.escape(href)}'>"
             if self.in_table: 
                  self.cell_content += tag_str
             else:
                 self.output.append(tag_str)
         elif tag == 'br':
-            if self.in_table: self.cell_content += " "
-            else: self.output.append("\n")
+            if self.in_table:
+                self.cell_content += " "
+            else:
+                self.output.append("\n")
         elif tag == 'hr':
             self.output.append("\n" + "─" * 20 + "\n")
         elif tag == 'pre':
@@ -166,27 +177,39 @@ class PangoMarkupParser(HTMLParser):
             self.output.append("</span>\n")
         elif tag in ['b', 'strong']:
             tag_str = "</b>"
-            if self.in_table: self.cell_content += tag_str
-            else: self.output.append(tag_str)
+            if self.in_table:
+                self.cell_content += tag_str
+            else:
+                self.output.append(tag_str)
         elif tag in ['i', 'em']:
             tag_str = "</i>"
-            if self.in_table: self.cell_content += tag_str
-            else: self.output.append(tag_str)
+            if self.in_table:
+                self.cell_content += tag_str
+            else:
+                self.output.append(tag_str)
         elif tag in ['s', 'del', 'strike']:
             tag_str = "</s>"
-            if self.in_table: self.cell_content += tag_str
-            else: self.output.append(tag_str)
+            if self.in_table:
+                self.cell_content += tag_str
+            else:
+                self.output.append(tag_str)
         elif tag in ['code', 'tt']:
             tag_str = "</tt>"
-            if self.in_table: self.cell_content += tag_str
-            else: self.output.append(tag_str)
+            if self.in_table:
+                self.cell_content += tag_str
+            else:
+                self.output.append(tag_str)
         elif tag == 'p':
-            if self.lists: self._ensure_newline()
-            elif not self.in_table: self.output.append("\n")
+            if self.lists:
+                self._ensure_newline()
+            elif not self.in_table:
+                self.output.append("\n")
         elif tag == 'a':
             tag_str = "</a>"
-            if self.in_table: self.cell_content += tag_str
-            else: self.output.append(tag_str)
+            if self.in_table:
+                self.cell_content += tag_str
+            else:
+                self.output.append(tag_str)
         elif tag == 'li':
             self._ensure_newline()
             self.item_start = False
@@ -227,12 +250,11 @@ class PangoMarkupParser(HTMLParser):
 
         # Handle multi-line cells: replace <br> with \n and split
         processed_rows = []
-        for row in self.table_rows:
+        for cells in self.table_rows:
             processed_row = []
-            for cell in row:
+            for cell in cells:
                 cell_text = re.sub(r'<br\s*/?>', '\n', cell, flags=re.IGNORECASE)
-                lines = cell_text.split('\n')
-                processed_row.append(lines)
+                processed_row.append(cell_text.split('\n'))
             processed_rows.append(processed_row)
 
         # Calc max widths

@@ -1,7 +1,7 @@
+from gettext import gettext as _
 from typing import Any, List, Dict, Optional, Callable
-from gi.repository import Adw, Gtk, Gio, GLib, GObject
-from .storage import ChatStorage
-from . import ollama
+from gi.repository import Adw, Gtk, GLib, GObject
+from .providers import CLOUD_URL, ProviderError, validate_url
 from .session import ViewRequests
 from .credentials import CredentialError
 
@@ -26,7 +26,7 @@ class HostEditDialog(Adw.Dialog):
         self.has_key = bool(has_session or (host and host.get('credential_id')))
         self.busy = False
         self.session_only = False
-        self._server_url = host['hostname'] if host and not ollama.is_cloud(host) else ''
+        self._server_url = host['hostname'] if host and host.get('provider') != 'ollama_cloud' else ''
         self.provider_dropdown.set_model(Gtk.StringList.new([_('Ollama Server'), _('Ollama Cloud')]))
         self.key_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
         self.api_key_entry = Gtk.PasswordEntry(show_peek_icon=True, hexpand=True)
@@ -54,7 +54,7 @@ class HostEditDialog(Adw.Dialog):
             self.name_entry.set_text(host['name'])
             self.hostname_entry.set_text(host['hostname'])
             self.default_check.set_active(host.get("default", False))
-            self.provider_dropdown.set_selected(1 if ollama.is_cloud(host) else 0)
+            self.provider_dropdown.set_selected(1 if host.get('provider') == 'ollama_cloud' else 0)
         self._provider_changed()
         self.validate_fields()
 
@@ -65,12 +65,12 @@ class HostEditDialog(Adw.Dialog):
     def _provider_changed(self, *args):
         cloud = self.provider == 'ollama_cloud'
         if cloud:
-            if self.hostname_entry.get_text() != ollama.CLOUD_URL:
+            if self.hostname_entry.get_text() != CLOUD_URL:
                 self._server_url = self.hostname_entry.get_text()
-            self.hostname_entry.set_text(ollama.CLOUD_URL)
+            self.hostname_entry.set_text(CLOUD_URL)
             if not self.name_entry.get_text().strip():
                 self.name_entry.set_text(_('Ollama Cloud'))
-        elif self.hostname_entry.get_text() == ollama.CLOUD_URL:
+        elif self.hostname_entry.get_text() == CLOUD_URL:
             self.hostname_entry.set_text(self._server_url)
         self.hostname_entry.set_editable(not cloud)
         self.key_box.set_visible(cloud)
@@ -98,8 +98,8 @@ class HostEditDialog(Adw.Dialog):
             error = _('Enter a name for this server.')
         else:
             try:
-                ollama.validate_host(self.hostname_entry.get_text().strip())
-            except (ValueError, ollama.OllamaError) as exc:
+                validate_url(self.hostname_entry.get_text().strip())
+            except (ValueError, ProviderError) as exc:
                 error = str(exc)
         if not error and self.provider == 'ollama_cloud':
             key = self.api_key_entry.get_text()
@@ -121,10 +121,11 @@ class HostManagerDialog(Adw.Dialog):
     hosts_group: Adw.PreferencesGroup = Gtk.Template.Child()
     add_button: Gtk.Button = Gtk.Template.Child()
 
-    def __init__(self, storage: ChatStorage, on_hosts_changed_cb: Optional[Callable[[], None]] = None, **kwargs: Any) -> None:
+    def __init__(self, context, on_hosts_changed_cb: Optional[Callable[[], None]] = None, **kwargs: Any) -> None:
         super().__init__(**kwargs)
         self.requests = ViewRequests(self)
-        self.storage: ChatStorage = storage
+        self.context = context
+        self.storage = context.storage
         self.on_hosts_changed_cb: Optional[Callable[[], None]] = on_hosts_changed_cb
         self.host_rows: List[Adw.ActionRow] = []
         
@@ -132,7 +133,7 @@ class HostManagerDialog(Adw.Dialog):
         self.load_hosts()
 
     def load_hosts(self) -> None:
-        """Reloads the host list from storage."""
+        """Reloads the host list from context."""
         for row in self.host_rows:
             self.hosts_group.remove(row)
         self.host_rows.clear()
@@ -191,18 +192,12 @@ class HostManagerDialog(Adw.Dialog):
 
         def fetch_version_thread() -> None:
             try:
-                if ollama.is_cloud(host):
-                    models = ollama.fetch_models(ollama.CLOUD_URL, cancellable=cancel)
-                    msg = _('Ollama Cloud is reachable. Available models: {0}\nYour API key will be checked when you generate a response.').format(len(models))
-                else:
-                    version = ollama.get_version(host['hostname'], cancellable=cancel)
-                    msg = _("Connected\nOllama Version: {0}").format(version)
-            except ollama.OllamaError as e:
+                msg = self.context.connection(host).probe(cancellable=cancel)
+            except ProviderError as e:
                 msg = _("Connection failed\n{0}").format(str(e))
             self.requests.deliver(dialog.set_body, msg, cancellable=cancel)
             
-        from .session import worker
-        self.storage.services.control.submit(fetch_version_thread)
+        self.context.services.control.submit(fetch_version_thread)
 
     def on_edit_clicked(self, btn: Gtk.Button, host: Dict[str, Any]) -> None:
         """Callback for the 'Edit' button."""
@@ -210,7 +205,7 @@ class HostManagerDialog(Adw.Dialog):
 
     def show_edit_dialog(self, host: Optional[Dict[str, Any]] = None) -> None:
         """Shows a dialog to add or edit a host."""
-        dialog = HostEditDialog(host=host, has_session=bool(host and self.storage.credentials.has_session(host['id'])))
+        dialog = HostEditDialog(host=host, has_session=bool(host and self.context.credentials.has_session(host['id'])))
         
         if not host and not self.storage.get_all_hosts():
             dialog.default_check.set_active(True)
@@ -251,8 +246,7 @@ class HostManagerDialog(Adw.Dialog):
                 finally:
                     values.pop('api_key', None)
                 GLib.idle_add(completed, error)
-            from .session import worker
-            self.storage.services.control.submit(save)
+            self.context.services.control.submit(save)
             
         dialog.connect("response", on_response)
         dialog.present(self)
@@ -289,8 +283,7 @@ class HostManagerDialog(Adw.Dialog):
                     except Exception as exc:
                         error = exc
                     GLib.idle_add(completed, error)
-                from .session import worker
-                self.storage.services.control.submit(delete)
+                self.context.services.control.submit(delete)
             dialog.close()
             
         dialog.connect("response", on_response)

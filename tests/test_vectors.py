@@ -1,5 +1,4 @@
 """Upgrade, transactional vector storage, and exact filtered retrieval regressions."""
-import copy
 import json
 import math
 import random
@@ -21,15 +20,15 @@ def add_index(db, id='index', vectors=None, config=None, status='complete'):
     vectors = vectors or [[1, 0], [0, 1]]
     config = config or new_config('qwen3-embedding:0.6b', 'digest')
     document = make_document(id, ''.join('Passage %03d. ' % n for n in range(len(vectors))))
-    db.add_knowledge_document(document)
-    db.add_embedding_config(config)
-    db.begin_knowledge_index(dict(id=id, document_id=document['id'], config_id=config['id'],
+    db.knowledge.add_knowledge_document(document)
+    db.knowledge.add_embedding_config(config)
+    db.knowledge.begin_knowledge_index(dict(id=id, document_id=document['id'], config_id=config['id'],
                                  host='http://localhost:11434', model=config['model'], chunk_size=1600,
                                  overlap=200, created_at=0))
     chunks = [dict(id=id + '-%05d' % n, ordinal=n, start=n*13, end=(n+1)*13,
                    vector=vector_blob(v)) for n, v in enumerate(vectors)]
-    db.save_embedding_batch(id, config['id'], len(vectors[0]), chunks)
-    db.finish_knowledge_index(id, status)
+    db.knowledge.save_embedding_batch(id, config['id'], len(vectors[0]), chunks)
+    db.knowledge.finish_knowledge_index(id, status)
     return document, config, chunks
 
 
@@ -40,21 +39,21 @@ def legacy_database(path, dimensions=2, raw=None):
     doc = make_document('Legacy source', 'The library opens at nine. Second saved passage.')
     config = new_config('old-embedding', 'old-digest', 'custom', query_prefix='Find: ')
     config['dimensions'] = dimensions
-    db.add_knowledge_document(doc)
-    db.add_embedding_config(config)
+    db.knowledge.add_knowledge_document(doc)
+    db.knowledge.add_embedding_config(config)
     for id, status in [('complete', 'complete'), ('partial', 'interrupted')]:
-        db.begin_knowledge_index(dict(id=id, document_id=doc['id'], config_id=config['id'],
+        db.knowledge.begin_knowledge_index(dict(id=id, document_id=doc['id'], config_id=config['id'],
                                      host='http://old:11434', model=config['model'], chunk_size=1600,
                                      overlap=200, created_at=0))
         with db._get_conn() as conn:
             conn.execute('INSERT INTO knowledge_chunks VALUES (?, ?, 0, 0, 25, ?)',
                          (id+'-chunk', id, raw if raw is not None else vector_blob([1, 0])))
             conn.commit()
-        db.finish_knowledge_index(id, status)
+        db.knowledge.finish_knowledge_index(id, status)
     options = {'knowledge': {'config_id': config['id'], 'selection': {'complete': ['complete-chunk']}},
                'tools_text': '[]', 'temperature': .2}
-    db.create_chat('old', 'Keep chat', 1, 2, 'chat-model')
-    db.update_chat('old', 'chat-model', options, None, None, 2)
+    db.chats.create_chat('old', 'Keep chat', 1, 2, 'chat-model')
+    db.chats.update_chat('old', 'chat-model', options, None, None, 2)
     messages = [dict(role='assistant', content='Saved answer [S1]', response_metadata={'retrieval': {'hits': [{'text': doc['text']}]}}),
                 dict(role='assistant', content='', tool_calls=[{'function': {'name': 'read_file', 'arguments': {'path': 'test'}}}]),
                 dict(role='tool', content='saved result', tool_name='read_file')]
@@ -84,11 +83,11 @@ class VectorStorageTests(unittest.TestCase):
         wal.commit()
         progress = []
         upgraded = DatabaseManager(str(self.path), progress=progress.append)
-        self.assertEqual(upgraded.get_chat('old'), chat)
-        self.assertEqual(upgraded.knowledge_vector('complete-chunk'), vector_blob([1, 0]))
-        self.assertEqual(upgraded.knowledge_vector('partial-chunk'), vector_blob([1, 0]))
-        self.assertEqual({i['status'] for i in upgraded.knowledge_indexes()}, {'complete', 'interrupted'})
-        self.assertEqual(upgraded.embedding_config(config['id']), config)
+        self.assertEqual(upgraded.chats.get_chat('old'), chat)
+        self.assertEqual(upgraded.knowledge.knowledge_vector('complete-chunk'), vector_blob([1, 0]))
+        self.assertEqual(upgraded.knowledge.knowledge_vector('partial-chunk'), vector_blob([1, 0]))
+        self.assertEqual({i['status'] for i in upgraded.knowledge.knowledge_indexes()}, {'complete', 'interrupted'})
+        self.assertEqual(upgraded.knowledge.embedding_config(config['id']), config)
         with upgraded._get_conn() as conn:
             self.assertEqual(conn.execute('PRAGMA user_version').fetchone()[0], 12)
             self.assertNotIn('vector', [r['name'] for r in conn.execute('PRAGMA table_info(knowledge_chunks)')])
@@ -99,7 +98,7 @@ class VectorStorageTests(unittest.TestCase):
             self.assertEqual(backup.execute('SELECT vector FROM knowledge_chunks LIMIT 1').fetchone()[0], vector_blob([1, 0]))
         self.assertTrue(progress)
         self.assertIsNone(DatabaseManager(str(self.path)).backup_path)
-        hits = upgraded.search_knowledge(config['id'], {'complete': None}, [1, 0])
+        hits = upgraded.knowledge.search_knowledge(config['id'], {'complete': None}, [1, 0])
         self.assertEqual([h['id'] for h in hits], ['complete-chunk'])
 
     def test_failed_upgrade_rolls_back_virtual_tables_and_old_column_then_retries(self):
@@ -115,7 +114,7 @@ class VectorStorageTests(unittest.TestCase):
             self.assertEqual(conn.execute('PRAGMA user_version').fetchone()[0], 6)
             self.assertEqual(conn.execute('SELECT vector FROM knowledge_chunks LIMIT 1').fetchone()[0], vector_blob([1, 0]))
             self.assertEqual(conn.execute("SELECT name FROM sqlite_master WHERE name LIKE 'knowledge_vec_%'").fetchall(), [])
-        self.assertEqual(DatabaseManager(str(self.path)).get_chat('old'), chat)
+        self.assertEqual(DatabaseManager(str(self.path)).chats.get_chat('old'), chat)
 
     def test_backup_failure_and_future_version_do_not_change_the_database(self):
         old, config, chat = legacy_database(self.path)
@@ -151,25 +150,29 @@ class VectorStorageTests(unittest.TestCase):
         altered = dict(chunks[0], vector=vector_blob([0, 1]))
         conflict = dict(chunks[1], id='different-id')  # Duplicate ordinal fails after the first write.
         with self.assertRaises(sqlite3.IntegrityError):
-            db.save_embedding_batch('index', config['id'], 2, [altered, conflict])
-        self.assertEqual(db.knowledge_vector(chunks[0]['id']), chunks[0]['vector'])
-        self.assertIsNone(db.knowledge_vector('different-id'))
-        original = db._get_conn
+            db.knowledge.save_embedding_batch('index', config['id'], 2, [altered, conflict])
+        self.assertEqual(db.knowledge.knowledge_vector(chunks[0]['id']), chunks[0]['vector'])
+        self.assertIsNone(db.knowledge.knowledge_vector('different-id'))
+        original = db.connections.connection
         @contextmanager
         def deny_parent_delete():
             with original() as conn:
                 conn.set_authorizer(lambda action, table, *args: sqlite3.SQLITE_DENY
                                     if action == sqlite3.SQLITE_DELETE and table == 'knowledge_documents' else sqlite3.SQLITE_OK)
-                yield conn
-        with patch.object(db, '_get_conn', deny_parent_delete):
+                try:
+                    yield conn
+                finally:
+                    # The connection outlives this use.
+                    conn.set_authorizer(None)
+        with patch.object(db.connections, 'connection', deny_parent_delete):
             with self.assertRaises(sqlite3.DatabaseError):
-                db.delete_knowledge_document(doc['id'])
-        self.assertEqual(db.knowledge_vector(chunks[0]['id']), chunks[0]['vector'])
-        self.assertIsNotNone(db.knowledge_document(doc['id']))
-        db.delete_knowledge_document(doc['id'])
+                db.knowledge.delete_knowledge_document(doc['id'])
+        self.assertEqual(db.knowledge.knowledge_vector(chunks[0]['id']), chunks[0]['vector'])
+        self.assertIsNotNone(db.knowledge.knowledge_document(doc['id']))
+        db.knowledge.delete_knowledge_document(doc['id'])
         with db._get_conn() as conn:
             self.assertEqual(conn.execute(f'SELECT count(*) FROM {vector_table(config["id"])}').fetchone()[0], 0)
-        self.assertIsNone(DatabaseManager(str(self.path)).knowledge_vector(chunks[0]['id']))
+        self.assertIsNone(DatabaseManager(str(self.path)).knowledge.knowledge_vector(chunks[0]['id']))
 
     def test_mixed_selection_ties_and_configuration_isolation(self):
         db = DatabaseManager(str(self.path))
@@ -179,18 +182,18 @@ class VectorStorageTests(unittest.TestCase):
         add_index(db, 'other-config', [[1, 0, 0]], new_config('other-model', 'other-digest'))
         chosen = [c['id'] for c in partial[:3]]
         expected = sorted([c['id'] for c in chunks] + chosen, reverse=True)[:6]
-        hits = db.search_knowledge(config['id'], {'whole': None, 'partial': chosen}, [1, 0])
+        hits = db.knowledge.search_knowledge(config['id'], {'whole': None, 'partial': chosen}, [1, 0])
         self.assertEqual([h['id'] for h in hits], expected)
         # More than k excluded vectors are closer: filtering after global KNN would fail.
         _, _, weak = add_index(db, 'weak', [[.6, .8]])
         for chosen in (None, [weak[0]['id']]):
-            filtered = db.search_knowledge(config['id'], {'weak': chosen}, [1, 0], count=1)
+            filtered = db.knowledge.search_knowledge(config['id'], {'weak': chosen}, [1, 0], count=1)
             self.assertEqual([h['id'] for h in filtered], [weak[0]['id']])
         for selection in ({'whole': None, 'excluded': ['missing']}, {'other-config': None}):
             with self.assertRaises(ValueError):
-                db.search_knowledge(config['id'], selection, [1, 0])
-        self.assertEqual(db.search_knowledge(config['id'], {'partial': [partial[0]['id']]}, [0, 1], minimum=.5), [])
-        short = db.search_knowledge(config['id'], {'whole': None}, [1, 0], budget=4)
+                db.knowledge.search_knowledge(config['id'], selection, [1, 0])
+        self.assertEqual(db.knowledge.search_knowledge(config['id'], {'partial': [partial[0]['id']]}, [0, 1], minimum=.5), [])
+        short = db.knowledge.search_knowledge(config['id'], {'whole': None}, [1, 0], budget=4)
         self.assertEqual(len(short[0]['text']), 4)
         self.assertTrue(short[0]['truncated'])
 
@@ -204,7 +207,7 @@ class VectorStorageTests(unittest.TestCase):
             values = vector_values(chunk['vector'])
             return math.fsum(a*b for a,b in zip(values,query)) / math.sqrt(math.fsum(a*a for a in values) * math.fsum(a*a for a in query))
         expected = sorted(chunks, key=lambda c: (cosine(c), c['id']), reverse=True)[:6]
-        actual = db.search_knowledge(config['id'], {'index': None}, query)
+        actual = db.knowledge.search_knowledge(config['id'], {'index': None}, query)
         self.assertEqual([h['id'] for h in actual], [c['id'] for c in expected])
         for hit, chunk in zip(actual, expected):
             self.assertAlmostEqual(hit['score'], cosine(chunk), places=6)
@@ -214,8 +217,8 @@ class VectorStorageTests(unittest.TestCase):
             if len(calls) >= 3:
                 raise RuntimeError('cancelled search')
         with self.assertRaisesRegex(RuntimeError, 'cancelled search'):
-            db.search_knowledge(config['id'], {'index': [c['id'] for c in chunks]}, query, check_cancel=cancel)
-        self.assertEqual(len(db.search_knowledge(config['id'], {'index': None}, query)), 6)
+            db.knowledge.search_knowledge(config['id'], {'index': [c['id'] for c in chunks]}, query, check_cancel=cancel)
+        self.assertEqual(len(db.knowledge.search_knowledge(config['id'], {'index': None}, query)), 6)
 
     def test_native_extension_disabled_after_loading_and_qwen_format(self):
         db = DatabaseManager(str(self.path))
@@ -236,19 +239,19 @@ class VectorStorageTests(unittest.TestCase):
         # A globally better neighbor must never leak into a selected source search.
         add_index(db, id='excluded', vectors=[[1, 0, 0]])
         selection, query = {'index': None}, [1, 0, 0]
-        cosine = db.search_knowledge(config['id'], selection, query, count=1)
-        euclidean = db.search_knowledge(config['id'], selection, query, count=1, metric='euclidean')
-        manhattan = db.search_knowledge(config['id'], selection, query, count=1, metric='manhattan')
+        cosine = db.knowledge.search_knowledge(config['id'], selection, query, count=1)
+        euclidean = db.knowledge.search_knowledge(config['id'], selection, query, count=1, metric='euclidean')
+        manhattan = db.knowledge.search_knowledge(config['id'], selection, query, count=1, metric='manhattan')
         self.assertEqual(cosine[0]['id'], chunks[0]['id'])
         self.assertEqual(euclidean[0]['id'], chunks[0]['id'])
         self.assertEqual(manhattan[0]['id'], chunks[1]['id'])
         self.assertAlmostEqual(euclidean[0]['score'], math.sqrt(.4), places=6)
         self.assertAlmostEqual(manhattan[0]['score'], .3 + math.sqrt(.51), places=6)
         for metric, maximum, expected in [('euclidean', .7, chunks[0]), ('manhattan', 1.03, chunks[1])]:
-            hits = db.search_knowledge(config['id'], selection, query, metric=metric, maximum=maximum)
+            hits = db.knowledge.search_knowledge(config['id'], selection, query, metric=metric, maximum=maximum)
             self.assertEqual([h['id'] for h in hits], [expected['id']])
-            self.assertEqual(db.search_knowledge(config['id'], selection, query, metric=metric, maximum=0), [])
-            restricted = db.search_knowledge(config['id'], {'index': [chunks[1]['id']]}, query, metric=metric, budget=4)
+            self.assertEqual(db.knowledge.search_knowledge(config['id'], selection, query, metric=metric, maximum=0), [])
+            restricted = db.knowledge.search_knowledge(config['id'], {'index': [chunks[1]['id']]}, query, metric=metric, budget=4)
             self.assertEqual(restricted[0]['id'], chunks[1]['id'])
             self.assertEqual(len(restricted[0]['text']), 4)
 
@@ -263,7 +266,7 @@ class VectorStorageTests(unittest.TestCase):
                 differences = [a-b for a, b in zip(vector_values(chunk['vector']), query)]
                 return math.sqrt(math.fsum(d*d for d in differences)) if metric == 'euclidean' else math.fsum(abs(d) for d in differences)
             expected = sorted(chunks, key=lambda c: (-distance(c), c['id']), reverse=True)[:6]
-            hits = db.search_knowledge(config['id'], {'index': None}, query, metric=metric)
+            hits = db.knowledge.search_knowledge(config['id'], {'index': None}, query, metric=metric)
             self.assertEqual([h['id'] for h in hits], [c['id'] for c in expected])
             for hit, chunk in zip(hits, expected):
                 self.assertAlmostEqual(hit['score'], distance(chunk), places=6)
@@ -273,12 +276,12 @@ class VectorStorageTests(unittest.TestCase):
                 if len(calls) >= 4:
                     raise RuntimeError('cancelled distance search')
             with self.assertRaisesRegex(RuntimeError, 'cancelled distance search'):
-                db.search_knowledge(config['id'], {'index': None}, query, metric=metric, check_cancel=cancel)
-            self.assertEqual(len(db.search_knowledge(config['id'], {'index': None}, query, metric=metric)), 6)
+                db.knowledge.search_knowledge(config['id'], {'index': None}, query, metric=metric, check_cancel=cancel)
+            self.assertEqual(len(db.knowledge.search_knowledge(config['id'], {'index': None}, query, metric=metric)), 6)
         _, tied_config, tied = add_index(db, id='ties', vectors=[[1, 0], [0, 1], [-1, 0]],
                                          config=new_config('other', 'other'))
         for metric in ('euclidean', 'manhattan'):
-            actual = db.search_knowledge(tied_config['id'], {'ties': None}, [0, -1], count=1, metric=metric)
+            actual = db.knowledge.search_knowledge(tied_config['id'], {'ties': None}, [0, -1], count=1, metric=metric)
             self.assertEqual(actual[0]['id'], tied[2]['id'])
 
     def test_metric_and_threshold_validation_rejects_mismatched_units(self):
@@ -290,13 +293,13 @@ class VectorStorageTests(unittest.TestCase):
                    dict(metric='manhattan', maximum=True), dict(minimum='invalid')]
         for kwargs in invalid:
             with self.subTest(kwargs=kwargs), self.assertRaises(ValueError):
-                db.search_knowledge(config['id'], {'index': None}, [1, 0], **kwargs)
+                db.knowledge.search_knowledge(config['id'], {'index': None}, [1, 0], **kwargs)
 
     def test_distance_reader_handles_reused_slots_and_matches_public_api(self):
         db = DatabaseManager(str(self.path))
         add_index(db, id='removed')
         _, config, kept = add_index(db, id='kept')
-        db.delete_knowledge_index('removed')
+        db.knowledge.delete_knowledge_index('removed')
         _, _, added = add_index(db, id='added', vectors=[[-1, 0], [1, 1]])
         for metric in ('cosine', 'euclidean', 'manhattan'):
             with db._get_conn() as conn:
@@ -317,5 +320,5 @@ class VectorStorageTests(unittest.TestCase):
             conn.execute(f'UPDATE {vector_table(config["id"])}_rowids SET chunk_offset=999 WHERE id=?', (chunks[0]['id'],))
             conn.commit()
         with self.assertRaisesRegex(ValueError, 'do not match their source'):
-            db.search_knowledge(config['id'], {'index': None}, [1, 0], metric='manhattan')
+            db.knowledge.search_knowledge(config['id'], {'index': None}, [1, 0], metric='manhattan')
         self.assertEqual(len(vector_values(vector_blob([1e300, 1e300]))), 2)

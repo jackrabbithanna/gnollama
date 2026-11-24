@@ -1,4 +1,5 @@
 import base64
+import sqlite3
 import tempfile
 import threading
 import unittest
@@ -46,7 +47,7 @@ class StorageTests(unittest.TestCase):
         messages = [{'role': 'user', 'content': 'original'}]
         self.storage.save_chat(self.chat['id'], messages, model='old').result(2)
         with self.assertRaises(Exception):
-            self.storage.db.save_chat(self.chat['id'], [{'role': 'user', 'content': 'bad', 'images': ['!']}], model='new')
+            self.storage.db.chats.save_chat(self.chat['id'], [{'role': 'user', 'content': 'bad', 'images': ['!']}], model='new')
         chat = self.storage.get_chat(self.chat['id'])
         self.assertEqual(chat['messages'], messages)
         self.assertEqual(chat['model'], 'old')
@@ -54,29 +55,64 @@ class StorageTests(unittest.TestCase):
     def test_version_three_migration_preserves_messages(self):
         path = self.directory.name + '/v3.db'
         db = DatabaseManager(path)
-        db.create_chat('chat', 'old chat', 1, 1, 'model')
-        db.save_messages('chat', [{'role': 'assistant', 'content': 'saved'}])
+        db.chats.create_chat('chat', 'old chat', 1, 1, 'model')
+        db.chats.save_messages('chat', [{'role': 'assistant', 'content': 'saved'}])
         with db._get_conn() as conn:
-            for column in ('response_metadata', 'tool_calls', 'tool_name', 'tool_call_id'):
-                conn.execute('ALTER TABLE messages DROP COLUMN ' + column)
-            for table in ('knowledge_web_sources', 'knowledge_collection_documents', 'knowledge_collections', 'knowledge_chunks', 'knowledge_indexes', 'embedding_configs', 'knowledge_documents'):
-                conn.execute('DROP TABLE ' + table)
-            conn.execute('ALTER TABLE hosts DROP COLUMN provider')
-            conn.execute('ALTER TABLE hosts DROP COLUMN credential_id')
-            from legacy_schema import remove_workspace
-            remove_workspace(conn)
-            conn.execute('PRAGMA user_version=3')
-            conn.commit()
+            from legacy_schema import downgrade_to_version_three
+            downgrade_to_version_three(conn)
         db = DatabaseManager(path)
-        self.assertEqual(db.get_chat('chat')['messages'], [{'role': 'assistant', 'content': 'saved'}])
+        self.assertEqual(db.chats.get_chat('chat')['messages'], [{'role': 'assistant', 'content': 'saved'}])
         with db._get_conn() as conn:
             self.assertEqual(conn.execute('PRAGMA user_version').fetchone()[0], 12)
 
-    def test_connection_closes_after_context(self):
-        with self.storage.db._get_conn() as conn:
-            conn.execute('SELECT 1')
-        with self.assertRaises(Exception):
-            conn.execute('SELECT 1')
+    def test_a_thread_keeps_one_connection_and_threads_do_not_share(self):
+        db = self.storage.db
+        with db._get_conn() as first:
+            with db._get_conn() as nested:
+                self.assertIs(nested, first)
+        with db._get_conn() as again:
+            self.assertIs(again, first)
+            # Set up once, not on every use.
+            self.assertEqual(again.execute('PRAGMA foreign_keys').fetchone()[0], 1)
+            self.assertTrue(again.execute('SELECT vec_version()').fetchone()[0])
+        seen = []
+        def other():
+            with db._get_conn() as conn:
+                seen.append(conn)
+        worker = threading.Thread(target=other)
+        worker.start()
+        worker.join()
+        self.assertIsNot(seen[0], first)
+
+    def test_uncommitted_work_is_rolled_back_when_a_use_ends(self):
+        db = self.storage.db
+        with db._get_conn() as conn:
+            conn.execute("INSERT INTO hosts(id,name,hostname) VALUES ('lost','lost','http://lost')")
+        self.assertIsNone(db.chats.get_host('lost'))
+        with self.assertRaises(ZeroDivisionError), db._get_conn() as conn:
+            conn.execute('BEGIN IMMEDIATE')
+            conn.execute("INSERT INTO hosts(id,name,hostname) VALUES ('lost','lost','http://lost')")
+            1 / 0
+        with db._get_conn() as conn:
+            self.assertFalse(conn.in_transaction)
+        self.assertIsNone(db.chats.get_host('lost'))
+
+    def test_closing_releases_connections_and_later_use_still_works(self):
+        db = self.storage.db
+        with db._get_conn() as conn:
+            pass
+        with db._get_conn() as busy:
+            db.close()
+            # A connection in use is closed when its work ends.
+            self.assertEqual(busy.execute('SELECT 1').fetchone()[0], 1)
+        for closed in (conn, busy):
+            with self.assertRaises(sqlite3.ProgrammingError):
+                closed.execute('SELECT 1')
+        self.assertTrue(db.chats.get_all_hosts())
+        with db._get_conn() as transient:
+            pass
+        with self.assertRaises(sqlite3.ProgrammingError):
+            transient.execute('SELECT 1')
 
 
 class WriterTests(unittest.TestCase):

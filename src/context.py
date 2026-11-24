@@ -1,21 +1,23 @@
 """Advisory text estimates; never modifies an inference request."""
+from gettext import gettext as _
 import json
 import math
 
 
-def estimate_context(messages, settings, retrieval=None):
+def estimate_context(messages, wire, retrieval=None):
+    """`wire` is a WireOptions; a draft estimate passes unparsed tools and schema text."""
     def tokens(value):
         if not isinstance(value, str):
             value = json.dumps(value, ensure_ascii=False) if value else ''
         return math.ceil(len(value.encode('utf-8')) / 4)
-    parts = dict(history=0, prompt=0, system=tokens(settings.get('system') or ''),
-                 tools_schema=tokens(settings.get('tools')) + tokens(settings.get('format')),
+    parts = dict(history=0, prompt=0, system=tokens(wire.system or ''),
+                 tools_schema=tokens(wire.tools) + tokens(wire.format),
                  retrieval=sum(tokens(h.get('text', '')) for h in (retrieval or {}).get('hits', [])))
     visible = [m for m in messages if m.get('role') != 'system']
     for index, message in enumerate(visible):
         parts['prompt' if index == len(visible) - 1 and message['role'] == 'user' else 'history'] += tokens(message.get('content', ''))
         parts['history'] += tokens(message.get('thinking', message.get('thinking_content', ''))) + tokens(message.get('tool_calls'))
-    options = settings.get('options', {})
+    options = wire.options
     reserve = max(0, options.get('num_predict') or 0)
     capacity = options.get('num_ctx') or None
     total = sum(parts.values())
@@ -25,7 +27,6 @@ def estimate_context(messages, settings, retrieval=None):
 
 
 def describe_context(estimate):
-    from gettext import gettext as _
     lines = [_('Estimated text tokens: {0} (UTF-8 bytes ÷ 4)').format(estimate['text_tokens']),
         _('History: {history}; prompt: {prompt}; system: {system}; tools/schema: {tools_schema}; sources: {retrieval}').format(**estimate['parts']),
         _('Output allowance: {0}').format(estimate['output_allowance'])]

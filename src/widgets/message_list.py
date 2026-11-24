@@ -1,5 +1,6 @@
-from typing import List, Optional, Any, Dict
-from gi.repository import Adw, Gtk, GObject, GLib
+from gettext import gettext as _
+from typing import List, Optional, Any
+from gi.repository import Adw, Gtk, GLib
 from ..bubbles import UserBubble, AiBubble
 
 @Gtk.Template(resource_path='/io/github/jackrabbithanna/Gnollama/widgets/message_list.ui')
@@ -107,6 +108,54 @@ class MessageList(Gtk.Overlay):
             self.list_box.insert(row, self._insert_index)
             self._insert_index += 1
         self._last_row = row if isinstance(row, Gtk.ListBoxRow) else row.get_parent()
+
+    @property
+    def following(self):
+        """Whether the view is following the newest message."""
+        return not self._user_scrolling
+
+    def hold_position(self):
+        """Stop following the newest message, as if the reader had scrolled up."""
+        self._user_scrolling = True
+
+    def prepend_page(self, render, delay=50):
+        """Add rows before the first one while keeping what the reader sees in place.
+
+        `render` adds the rows with the usual add_* methods.
+        """
+        adjustment = self.get_vadjustment()
+        previous, value = adjustment.get_upper(), adjustment.get_value()
+        self._user_scrolling = True
+        self._insert_index = 0
+        try:
+            render()
+        finally:
+            self._insert_index = None
+
+        def anchor():
+            adjustment.set_value(value + adjustment.get_upper() - previous)
+            return False
+        if delay is None:
+            GLib.idle_add(anchor)
+        else:
+            GLib.timeout_add(delay, anchor)
+
+    def tag_last(self, uid):
+        """Name the row just added, so scroll_to_message can find it."""
+        self._last_row.message_uid = uid
+
+    def scroll_to_message(self, uid):
+        def focus():
+            row = self.list_box.get_first_child()
+            while row:
+                if getattr(row, 'message_uid', None) == uid:
+                    self._user_scrolling = True
+                    row.set_focusable(True)
+                    row.grab_focus()
+                    break
+                row = row.get_next_sibling()
+            return False
+        GLib.timeout_add(100, focus)
 
     def clear(self) -> None:
         """Clears all messages."""

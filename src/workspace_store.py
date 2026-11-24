@@ -5,6 +5,9 @@ import re
 import time
 import uuid
 
+from .model_conversation_store import model_conversation_snapshot
+from .store_common import Repository, append_messages, consume_draft, read_draft, read_messages
+
 
 def migrate_workspace(conn, progress=None):
     conn.execute('ALTER TABLE messages ADD COLUMN uid TEXT')
@@ -40,7 +43,7 @@ def migrate_workspace(conn, progress=None):
         conn.execute(f'CREATE TRIGGER {name} {sql}')
 
 
-class WorkspaceDatabase:
+class WorkspaceDatabase(Repository):
     def chat_title(self, id):
         with self._get_conn() as conn:
             row = conn.execute('SELECT title FROM chats WHERE id=?', (id,)).fetchone()
@@ -59,10 +62,10 @@ class WorkspaceDatabase:
                 if match:
                     offset = max(0, match[0] - 10)
             result = dict(row, options=json.loads(row['options'] or '{}'), system=row['system_prompt'],
-                host=row['host_id'], messages=self._read_messages(conn, id, 50, offset, True),
+                host=row['host_id'], messages=read_messages(conn, id, 50, offset, True),
                 message_count=count, message_offset=offset, paged=True)
             if row['kind'] == 'model_conversation':
-                self._model_conversation_snapshot(conn, result)
+                model_conversation_snapshot(conn, result)
             return result
 
     def export_snapshot(self, id):
@@ -73,11 +76,11 @@ class WorkspaceDatabase:
             if row is None:
                 return None
             result = dict(row, options=json.loads(row['options'] or '{}'), system=row['system_prompt'])
-            result['messages'] = self._read_messages(conn, id, include_ids=True)
+            result['messages'] = read_messages(conn, id, include_ids=True)
             result['targets'] = [dict(r, settings=json.loads(r['settings']), request=json.loads(r['request']))
                 for r in conn.execute('SELECT * FROM comparison_targets WHERE run_id=? ORDER BY position', (id,))]
             if row['kind'] == 'model_conversation':
-                self._model_conversation_snapshot(conn, result)
+                model_conversation_snapshot(conn, result)
             return result
 
     def save_draft(self, draft):
@@ -102,15 +105,7 @@ class WorkspaceDatabase:
 
     def get_draft(self, id):
         with self._get_conn() as conn:
-            row = conn.execute('SELECT * FROM drafts WHERE id=?', (id,)).fetchone()
-            if row is None:
-                return None
-            draft = dict(row)
-            draft['settings'] = json.loads(draft['settings'])
-            draft['targets'] = json.loads(draft['targets'])
-            draft['images'] = [base64.b64encode(r[0]).decode('ascii') for r in conn.execute(
-                'SELECT image_data FROM draft_images WHERE draft_id=? ORDER BY position', (id,))]
-            return draft
+            return read_draft(conn, id)
 
     def list_drafts(self, limit=100, offset=0):
         with self._get_conn() as conn:
@@ -123,18 +118,14 @@ class WorkspaceDatabase:
 
     def delete_draft(self, id, revision=None):
         with self._get_conn() as conn:
-            self._consume_draft(conn, id, revision)
+            consume_draft(conn, id, revision)
             conn.commit()
-
-    def _consume_draft(self, conn, id, revision=None):
-        if id:
-            conn.execute('DELETE FROM drafts WHERE id=? AND (? IS NULL OR revision<=?)', (id, revision, revision))
 
     def list_history(self, query='', limit=100, offset=0):
         terms = re.findall(r'\w+', query, re.UNICODE)
         expression = ' AND '.join('"' + term.replace('"', '""') + '"*' for term in terms)
         with self._get_conn() as conn:
-            params = []
+            params: list = []
             if expression:
                 sql = '''WITH matches AS MATERIALIZED (
                     SELECT chat_id,NULL AS match_uid,title AS snippet FROM title_search WHERE title_search MATCH ?
@@ -156,22 +147,13 @@ class WorkspaceDatabase:
             now = time.time()
             conn.execute('''INSERT INTO chats(id,title,created_at,updated_at,kind,options)
                 VALUES (?,?,?,?, 'comparison',?)''', (run['id'], run['prompt'].splitlines()[0][:60], now, now, json.dumps(run['settings'])))
-            self._append_messages(conn, run['id'], [{'uid': run['message_uid'], 'role': 'user', 'content': run['prompt'],
+            append_messages(conn, run['id'], [{'uid': run['message_uid'], 'role': 'user', 'content': run['prompt'],
                 'images': run.get('images', []), 'response_metadata': {'retrieval': run.get('retrieval')}}], 0)
             for position, target in enumerate(run['targets']):
                 conn.execute('INSERT INTO comparison_targets(id,run_id,position,settings,request,status) VALUES (?,?,?,?,?,?)',
                     (target['id'], run['id'], position, json.dumps(target['settings']), json.dumps(target['request']), 'queued'))
-            self._consume_draft(conn, run.get('draft_id'), run.get('draft_revision'))
+            consume_draft(conn, run.get('draft_id'), run.get('draft_revision'))
             conn.commit()
-
-    def comparison(self, id):
-        chat = self.get_chat(id)
-        if chat is None or chat.get('kind') != 'comparison':
-            return None
-        with self._get_conn() as conn:
-            chat['targets'] = [dict(r, settings=json.loads(r['settings']), request=json.loads(r['request']))
-                for r in conn.execute('SELECT * FROM comparison_targets WHERE run_id=? ORDER BY position', (id,))]
-        return chat
 
     def start_comparison_target(self, id):
         with self._get_conn() as conn:
@@ -184,7 +166,7 @@ class WorkspaceDatabase:
             target = conn.execute('SELECT * FROM comparison_targets WHERE id=?', (id,)).fetchone()
             if target is None:
                 return
-            self._append_messages(conn, target['run_id'], [message], target['position'] + 1)
+            append_messages(conn, target['run_id'], [message], target['position'] + 1)
             conn.execute('UPDATE comparison_targets SET status=? WHERE id=?', (message['response_metadata']['status'], id))
             conn.execute('UPDATE chats SET updated_at=? WHERE id=?', (time.time(), target['run_id']))
             conn.commit()

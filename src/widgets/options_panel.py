@@ -1,7 +1,8 @@
+from gettext import gettext as _
+from ..providers import capabilities
 import math
 from typing import Dict, Any, Callable, List, Optional
 from gi.repository import Adw, Gtk, GObject, GLib, Pango
-from ..storage import ChatStorage
 from ..structured import request_format
 from .json_view import SchemaEditor
 from .tool_view import ToolsEditor
@@ -24,7 +25,7 @@ class OptionsPanel(Gtk.Box):
 
     def __init__(self, **kwargs: Any) -> None:
         super().__init__(**kwargs)
-        self.cloud = False
+        self.capabilities = capabilities(None)
         self._settings_dialog = None
         self._build_settings()
         self.settings_button.connect('clicked', self.open_settings)
@@ -51,15 +52,16 @@ class OptionsPanel(Gtk.Box):
         self.tools_button.connect('clicked', self.edit_tools)
         self._format_changed()
         self._keep_alive_changed()
-        self.cloud_notice = Gtk.Label(label=_('Ollama Cloud uses text output and manages model retention automatically.'),
-                                      xalign=0, wrap=True, visible=False)
-        self.append(self.cloud_notice)
+        self.provider_notice = Gtk.Label(xalign=0, wrap=True, visible=False)
+        self.append(self.provider_notice)
 
-    def set_cloud(self, cloud):
-        self.cloud = cloud
-        self.output_dropdown.set_sensitive(not cloud)
-        self.memory_group.set_sensitive(not cloud)
-        self.cloud_notice.set_visible(cloud)
+    def set_capabilities(self, capabilities):
+        """Disable what the selected host's provider lacks, and say why."""
+        self.capabilities = capabilities
+        self.output_dropdown.set_sensitive(capabilities.structured_output)
+        self.memory_group.set_sensitive(capabilities.keep_alive)
+        self.provider_notice.set_text(_(capabilities.options_notice) if capabilities.options_notice else '')
+        self.provider_notice.set_visible(bool(capabilities.options_notice))
         self._format_changed()
 
     def snapshot_draft(self):
@@ -208,8 +210,13 @@ class OptionsPanel(Gtk.Box):
             return
         self._settings_dialog.close()
 
+    def close_dialogs(self):
+        for dialog in (self._tools_dialog, self._schema_dialog, self._settings_dialog):
+            if dialog is not None:
+                dialog.close()
+
     def get_keep_alive(self):
-        if self.cloud:
+        if not self.capabilities.keep_alive:
             return None
         value = self.keep_alive_values[self.keep_alive_dropdown.get_selected()]
         if value == 'custom':
@@ -280,7 +287,7 @@ class OptionsPanel(Gtk.Box):
         return {'tools_enabled': self.tools_available and self.tools_check.get_active(), 'tools_text': self.tools_text}
 
     def _format_changed(self, *args):
-        schema_mode = not self.cloud and self.output_dropdown.get_selected() == 2
+        schema_mode = self.capabilities.structured_output and self.output_dropdown.get_selected() == 2
         self.schema_button.set_visible(schema_mode)
         if (args and schema_mode and not self.schema_text.strip()
                 and not self._restoring_options and self.get_mapped()):
@@ -288,7 +295,7 @@ class OptionsPanel(Gtk.Box):
             GLib.idle_add(self._open_missing_schema)
 
     def _open_missing_schema(self):
-        if (not self.cloud and self.get_mapped() and self.output_dropdown.get_selected() == 2
+        if (self.capabilities.structured_output and self.get_mapped() and self.output_dropdown.get_selected() == 2
                 and not self.schema_text.strip() and self._schema_dialog is None):
             self.edit_schema()
         return False
@@ -309,7 +316,7 @@ class OptionsPanel(Gtk.Box):
         self._schema_dialog.present(self)
 
     def get_request_settings(self):
-        mode = 'text' if self.cloud else self.output_modes[self.output_dropdown.get_selected()]
+        mode = 'text' if not self.capabilities.structured_output else self.output_modes[self.output_dropdown.get_selected()]
         output_format = request_format(mode, self.schema_text)
         keep_alive = self.get_keep_alive()
         tools_options = self.get_tools_options()
@@ -396,23 +403,24 @@ class OptionsPanel(Gtk.Box):
             self.field_error('num_predict_entry', _('Max tokens must be -2, -1, or a nonnegative integer.'))
         return options
 
-    def load_options(self, options: Dict[str, Any]) -> None:
-        """Populates UI options from a dict."""
-        mode = options.get('output_mode', 'text')
+    def load_options(self, wire, view) -> None:
+        """Populates the panel from stored WireOptions and ViewState."""
+        mode = view.output_mode
+        options = wire.options
         self._restoring_options = True
-        self.tools_text = options.get('tools_text', '')
-        self.tools_check.set_active(options.get('tools_enabled', False))
+        self.tools_text = view.tools_text
+        self.tools_check.set_active(view.tools_enabled)
         self.update_tools_notice()
-        self.schema_text = options.get('schema_text', '')
+        self.schema_text = view.schema_text
         self.output_dropdown.set_selected(self.output_modes.index(mode) if mode in self.output_modes else 0)
         self._restoring_options = False
-        keep_alive = options.get('keep_alive')
+        keep_alive = wire.keep_alive
         if keep_alive in self.keep_alive_values:
             self.keep_alive_dropdown.set_selected(self.keep_alive_values.index(keep_alive))
         else:
             self.keep_alive_dropdown.set_selected(5)
             self.keep_alive_entry.set_text(str(keep_alive))
-        self.stats_check.set_active(options.get('show_stats', True))
+        self.stats_check.set_active(view.show_stats)
         self.seed_entry.set_text(str(options.get('seed', '')))
         self.temperature_entry.set_text(str(options.get('temperature', '')))
         self.top_k_entry.set_text(str(options.get('top_k', '')))
@@ -429,8 +437,6 @@ class OptionsPanel(Gtk.Box):
         else:
             self.stop_entry.set_text("")
             
-        if 'logprobs' in options:
-            self.logprobs_check.set_active(options['logprobs'])
-            
-        if 'top_logprobs' in options and options['top_logprobs'] is not None:
-            self.top_logprobs_entry.set_text(str(options['top_logprobs']))
+        self.logprobs_check.set_active(wire.logprobs)
+        if wire.top_logprobs is not None:
+            self.top_logprobs_entry.set_text(str(wire.top_logprobs))

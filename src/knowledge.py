@@ -7,12 +7,13 @@ import re
 import threading
 import time
 import uuid
+from typing import Any, Dict
 from concurrent.futures import ThreadPoolExecutor
 from contextlib import contextmanager
 from gettext import gettext as _
 
 from gi.repository import Gio, GLib
-from . import ollama
+from .providers import ProviderError, RequestCancelled, validate_url
 from .vectors import vector_blob, validate_dimensions, validate_search_metric
 
 
@@ -23,7 +24,7 @@ PRESETS = {
     'qwen3': ('', 'Instruct: Given a web search query, retrieve relevant passages that answer the query\nQuery:'),
     'custom': ('', ''),
 }
-DEFAULT_RAG = dict(enabled=False, config_id=None, host='', model='', selection={}, collection_ids=[],
+DEFAULT_RAG: Dict[str, Any] = dict(enabled=False, config_id=None, host='', model='', selection={}, collection_ids=[],
                    count=6, budget=8000, minimum=None, metric='cosine', maximum=None)
 SOURCE_INSTRUCTIONS = (
     'Use the supplied reference passages to answer the question. Prefer these sources; '
@@ -36,7 +37,7 @@ SOURCE_INSTRUCTIONS = (
 
 def check_cancel(cancel):
     if cancel is not None and cancel.is_cancelled():
-        raise ollama.RequestCancelled(_('Operation stopped'))
+        raise RequestCancelled(_('Operation stopped'))
 
 
 def make_document(title, text, filename='', pages=None, file_hash=None):
@@ -111,9 +112,9 @@ def canonical_model(name):
     return name if ':' in name.rsplit('/', 1)[-1] else name + ':latest'
 
 
-def model_identity(host, model, cancel=None, digest=None):
+def model_identity(connection, model, cancel=None, digest=None):
     check_cancel(cancel)
-    tag = next((m for m in ollama.fetch_model_details(host, cancellable=cancel)
+    tag = next((m for m in connection.list_models(cancellable=cancel)
                 if canonical_model(m['name']) == canonical_model(model)), None)
     if tag is None or not tag.get('digest'):
         raise ValueError(_('The embedding model is unavailable or its digest is missing. Choose a compatible host and model.'))
@@ -143,7 +144,7 @@ def validate_rag(options):
     if not isinstance(options.get('collection_ids', []), list) or any(
             not isinstance(id, str) or not id for id in options.get('collection_ids', [])):
         raise ValueError(_('Invalid collection selection. Choose sources again.'))
-    ollama.validate_host(options.get('host', ''))
+    validate_url(options.get('host', ''))
     if not options.get('model'):
         raise ValueError(_('Select the embedding model on the chosen host.'))
     if type(options.get('count')) is not int or not 1 <= options['count'] <= 20:
@@ -173,9 +174,8 @@ def augmented_messages(messages, snapshot):
 
 
 class KnowledgeService:
-    def __init__(self, storage):
-        self.storage = storage
-        self.db = storage.db
+    def __init__(self, library, services, providers):
+        self.library, self.services, self.providers = library, services, providers
         self.executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix='GnollamaKnowledge')
         self.preparations = ThreadPoolExecutor(max_workers=1, thread_name_prefix='GnollamaCollections')
         self.imports = ThreadPoolExecutor(max_workers=2, thread_name_prefix='GnollamaURLs')
@@ -208,7 +208,7 @@ class KnowledgeService:
 
     def reserve_model(self, host, model, is_busy):
         """Serialize destructive model operations against newly starting embedding calls."""
-        return self.storage.services.models.reserve(host, model,
+        return self.services.models.reserve(host, model,
             lambda h, m: self.busy(h, m) or is_busy(h, m))
 
     def indexing_digest(self, digest):
@@ -218,7 +218,7 @@ class KnowledgeService:
     @contextmanager
     def using(self, host, model, cancel):
         key = (host.rstrip('/'), canonical_model(model))
-        with self.storage.services.models.using(host, model):
+        with self.services.models.using(host, model):
             with self._lock:
                 if self.closed:
                     raise ValueError(_('The Knowledge Library is closing.'))
@@ -236,7 +236,7 @@ class KnowledgeService:
 
     def _write(self, fn, *args, cancel=None):
         done = threading.Event()
-        result = []
+        result: list = []
         def write():
             try:
                 result.append((fn(*args), None))
@@ -244,7 +244,7 @@ class KnowledgeService:
                 # Stale UI selections are recoverable job errors, not failed disk
                 # writes that should pause every subsequent storage operation.
                 result.append((None, exc))
-        self.storage._submit(write, on_done=done.set)
+        self.library.submit(write, on_done=done.set)
         while not done.wait(.05):
             check_cancel(cancel)
         value, error = result[0]
@@ -253,9 +253,11 @@ class KnowledgeService:
         return value
 
     def require_host(self, host):
-        if not any(h['hostname'].rstrip('/') == host.rstrip('/') and not ollama.is_cloud(h)
-                   for h in self.storage.get_all_hosts()):
-            raise ValueError(_('The embedding host was removed. Choose a configured host before continuing.'))
+        """Return the connection of a configured host that can embed."""
+        for record in self.library.hosts():
+            if record['hostname'].rstrip('/') == host.rstrip('/') and self.providers.capabilities(record).embeddings:
+                return self.providers.connection(record)
+        raise ValueError(_('The embedding host was removed. Choose a configured host before continuing.'))
 
     def submit(self, title, function, callback=None, host='', model='', index_id=None, document_id=None,
                preparation=False, metadata=None, importing=False, allow_update=False):
@@ -268,7 +270,7 @@ class KnowledgeService:
                 raise ValueError(_('The Knowledge Library is closing.'))
             documents = {document_id, *job.get('document_ids', ())}
             if preparation and self._document_updates and job.get('collection_id'):
-                documents.update(d['id'] for d in self.db.collection_documents(job['collection_id']))
+                documents.update(d['id'] for d in self.library.collection_documents(job['collection_id']))
             if (documents & (self._document_updates - self._document_committed)
                     and not allow_update and not job.get('reserved_document')):
                 raise ValueError(_('This document is being replaced. Retry the build when replacement finishes.'))
@@ -285,7 +287,7 @@ class KnowledgeService:
                 error = exc
                 job['error'] = str(exc)
                 if index_id:
-                    self.storage._submit(self.db.finish_knowledge_index, index_id,
+                    self.library.submit(self.library.finish_knowledge_index, index_id,
                                          'interrupted' if job['cancel'].is_cancelled() else 'failed', str(exc), on_done=self.changed)
             finally:
                 if job.get('reserved_document'):
@@ -304,7 +306,7 @@ class KnowledgeService:
     def save_web_document(self, document, source, collection_id, expected=None, callback=None):
         document, source, expected = copy.deepcopy(document), copy.deepcopy(source), copy.deepcopy(expected)
         id = expected['id'] if expected else document['id']
-        groups = {c['id'] for c in self.db.source_collections(document_id=id)}
+        groups = {c['id'] for c in self.library.source_collections(document_id=id)}
         with self._lock:
             if id in self._document_updates or any(not j['done'] and (
                     j.get('document_id') == id and j.get('index_id') or
@@ -316,13 +318,13 @@ class KnowledgeService:
             progress(_('Saving the web document…'))
             check_cancel(cancel)
             # Once committed, rebuilding may stop, but invalidated vectors must stay invalid.
-            result = self._write(self.db.save_web_document, document, source, collection_id,
+            result = self._write(self.library.save_web_document, document, source, collection_id,
                                  expected['id'] if expected else None, expected['content_hash'] if expected else None)
             result['warnings'] = []
             for index in result['indexes']:
                 if self.closed or cancel.is_cancelled():
                     break  # Persisted interrupted indexes remain available for Retry.
-                config = self.db.embedding_config(index['config_id'])
+                config = self.library.embedding_config(index['config_id'])
                 try:
                     self.create_index(id, index['host'], index['model'], config, index['chunk_size'], index['overlap'],
                                       index_id=index['id'], prepared=True, replacing=True)
@@ -358,8 +360,8 @@ class KnowledgeService:
         collection = dict(id=str(uuid.uuid4()), name=name.strip(), config_id=config['id'], host=host, model=model,
                           chunk_size=size, overlap=overlap, created_at=stamp, updated_at=stamp)
         def run(cancel, progress):
-            self._write(self.db.add_embedding_config, config, cancel=cancel)
-            self._write(self.db.create_knowledge_collection, collection, tuple(document_ids), cancel=cancel)
+            self._write(self.library.add_embedding_config, config, cancel=cancel)
+            self._write(self.library.create_knowledge_collection, collection, tuple(document_ids), cancel=cancel)
             self._prepare_collection(collection['id'], document_ids, cancel, progress)
             return collection['id']
         return self.submit(_('Create collection'), run, callback, host, model, preparation=True,
@@ -369,7 +371,7 @@ class KnowledgeService:
         document = copy.deepcopy(document)
         def run(cancel, progress):
             check_cancel(cancel)
-            id = self._write(self.db.import_collection_document, document, collection_id)
+            id = self._write(self.library.import_collection_document, document, collection_id)
             warning = None
             try:
                 self.build_collection(collection_id, [id])
@@ -381,10 +383,10 @@ class KnowledgeService:
                            preparation=True, metadata=dict(collection_id=collection_id))
 
     def build_collection(self, id, document_ids=(), callback=None):
-        collection = self.db.knowledge_collection(id)
+        collection = self.library.knowledge_collection(id)
         if collection is None:
             raise ValueError(_('The collection was deleted.'))
-        config = self.db.embedding_config(collection['config_id'])
+        config = self.library.embedding_config(collection['config_id'])
         return self.submit(_('Prepare collection: {0}').format(collection['name']),
                           lambda cancel, progress: self._prepare_collection(id, document_ids, cancel, progress),
                           callback, collection['host'], collection['model'], preparation=True,
@@ -401,19 +403,19 @@ class KnowledgeService:
                            host=j['host'], model=j['model'], chunk_size=j['chunk_size'], overlap=j['overlap'],
                            created_at=j['created_at']) for j in self.jobs.values()
                       if not j['done'] and not j['cancel'].is_cancelled() and j.get('index_id') and j.get('config_id')]
-        indexes = self._write(self.db.prepare_collection_indexes, id, tuple(document_ids), queued)
+        indexes = self._write(self.library.prepare_collection_indexes, id, tuple(document_ids), queued)
         pending = list(indexes)
         try:
             for index in indexes:
                 check_cancel(cancel)
-                config = self.db.embedding_config(index['config_id'])
+                config = self.library.embedding_config(index['config_id'])
                 self.create_index(index['document_id'], index['host'], index['model'], config,
                                   index['chunk_size'], index['overlap'], index_id=index['id'], prepared=True,
                                   title=_('Create embeddings: {0}').format(index['title']))
                 pending.pop(0)
         finally:
             for index in pending:
-                self.storage._submit(self.db.finish_knowledge_index, index['id'], 'interrupted',
+                self.library.submit(self.library.finish_knowledge_index, index['id'], 'interrupted',
                                      _('Build was stopped before it started.'), on_done=self.changed)
             self.changed()
         return id
@@ -429,35 +431,35 @@ class KnowledgeService:
         index_id = index_id or str(uuid.uuid4())
         def run(cancel, progress):
             try:
-                document = self.db.knowledge_document(document_id)
+                document = self.library.knowledge_document(document_id)
                 if document is None:
                     raise ValueError(_('The source document was deleted.'))
-                chunks = []
+                chunks: list = []
                 for chunk in chunk_text(document['text'], size, overlap):
                     check_cancel(cancel)
                     if len(chunks) >= 100000:
                         raise ValueError(_('This index would exceed 100,000 chunks. Increase the chunk size or reduce overlap.'))
                     # Keep offsets in the queue, avoiding copies of highly overlapping text.
                     chunks.append(dict(start=chunk['start'], end=chunk['end']))
-                self._write(self.db.add_embedding_config, config, cancel=cancel)
-                existing = self.db.embedding_config(config['id'])
+                self._write(self.library.add_embedding_config, config, cancel=cancel)
+                existing = self.library.embedding_config(config['id'])
                 dimension = existing['dimensions']
                 index = dict(id=index_id, document_id=document_id, config_id=config['id'], host=host, model=model,
                              chunk_size=size, overlap=overlap, created_at=time.time())
-                self._write(self.db.begin_knowledge_index, index, prepared, cancel=cancel)
-                self.require_host(host)
+                self._write(self.library.begin_knowledge_index, index, prepared, cancel=cancel)
+                connection = self.require_host(host)
                 with self.using(host, model, cancel):
-                    identity = model_identity(host, model, cancel, config['digest'])
+                    identity = model_identity(connection, model, cancel, config['digest'])
                     queue, ordinal = list(chunks), 0
                     while queue:
                         check_cancel(cancel)
                         batch = queue[:16]
                         progress(_('Embedding chunks: {0} complete, {1} remaining').format(ordinal, len(queue)))
                         try:
-                            response = ollama.embed(host, model, [config['document_prefix'] + document['text'][c['start']:c['end']] for c in batch],
+                            response = connection.embed(model, [config['document_prefix'] + document['text'][c['start']:c['end']] for c in batch],
                                                     dimensions=config['requested_dimensions'], cancellable=cancel)
-                        except ollama.OllamaError as exc:
-                            if isinstance(exc, ollama.RequestCancelled):
+                        except ProviderError as exc:
+                            if isinstance(exc, RequestCancelled):
                                 raise
                             if not re.search(r'(context length|context window|input.*too long|exceed.*context)', str(exc), re.I):
                                 raise
@@ -465,10 +467,10 @@ class KnowledgeService:
                             if len(batch) > 1:
                                 batch = batch[:1]
                                 try:
-                                    response = ollama.embed(host, model, config['document_prefix'] + document['text'][batch[0]['start']:batch[0]['end']],
+                                    response = connection.embed(model, config['document_prefix'] + document['text'][batch[0]['start']:batch[0]['end']],
                                                             dimensions=config['requested_dimensions'], cancellable=cancel)
-                                except ollama.OllamaError as single:
-                                    if isinstance(single, ollama.RequestCancelled) or not re.search(r'(context length|context window|input.*too long|exceed.*context)', str(single), re.I):
+                                except ProviderError as single:
+                                    if isinstance(single, RequestCancelled) or not re.search(r'(context length|context window|input.*too long|exceed.*context)', str(single), re.I):
                                         raise
                                     response = None
                             else:
@@ -491,14 +493,14 @@ class KnowledgeService:
                         records = [dict(id=str(uuid.uuid5(uuid.NAMESPACE_URL, index_id + ':' + str(ordinal + n))),
                                         ordinal=ordinal + n, start=c['start'], end=c['end'], vector=vector_blob(v))
                                    for n, (c, v) in enumerate(zip(batch, vectors))]
-                        self._write(self.db.save_embedding_batch, index_id, config['id'], dimension, records, cancel=cancel)
+                        self._write(self.library.save_embedding_batch, index_id, config['id'], dimension, records, cancel=cancel)
                         del queue[:len(batch)]
                         ordinal += len(batch)
-                    model_identity(host, model, cancel, identity['digest'])
-                    self._write(self.db.finish_knowledge_index, index_id, 'complete', cancel=cancel)
+                    model_identity(connection, model, cancel, identity['digest'])
+                    self._write(self.library.finish_knowledge_index, index_id, 'complete', cancel=cancel)
                     return index_id
             except Exception as exc:
-                self.storage._submit(self.db.finish_knowledge_index, index_id,
+                self.library.submit(self.library.finish_knowledge_index, index_id,
                                      'interrupted' if cancel.is_cancelled() else 'failed', str(exc), on_done=self.changed)
                 raise
         return self.submit(title or _('Create embeddings'), run, callback, host, model, index_id, document_id,
@@ -508,24 +510,24 @@ class KnowledgeService:
 
     def retrieve(self, options, query, cancel):
         validate_rag(options)
-        self.db.check_collection_sources(options['config_id'], options.get('selection', {}), options.get('collection_ids', []))
-        config = self.db.embedding_config(options['config_id'])
+        self.library.check_collection_sources(options['config_id'], options.get('selection', {}), options.get('collection_ids', []))
+        config = self.library.embedding_config(options['config_id'])
         if config is None or config['dimensions'] is None:
             raise ValueError(_('This embedding configuration has no completed vectors.'))
         if not query.strip():
             raise ValueError(_('Enter a search query.'))
         host, model = options['host'], options['model']
-        self.require_host(host)
+        connection = self.require_host(host)
         with self.using(host, model, cancel):
-            model_identity(host, model, cancel, config['digest'])
-            response = ollama.embed(host, model, config['query_prefix'] + query,
+            model_identity(connection, model, cancel, config['digest'])
+            response = connection.embed(model, config['query_prefix'] + query,
                                     dimensions=config['requested_dimensions'], cancellable=cancel)
-            model_identity(host, model, cancel, config['digest'])
+            model_identity(connection, model, cancel, config['digest'])
             vector = response['embeddings'][0]
             if len(vector) != config['dimensions']:
                 raise ValueError(_('Query dimensions differ from the stored vectors. Rebuild the index.'))
-            sources = {}
-            hits = self.db.search_knowledge(config['id'], options.get('selection', {}), vector, options['count'],
+            sources: dict = {}
+            hits = self.library.search_knowledge(config['id'], options.get('selection', {}), vector, options['count'],
                                             options['budget'], options['minimum'], lambda: check_cancel(cancel),
                                             collection_ids=options.get('collection_ids', []), source_snapshot=sources,
                                             metric=options.get('metric', 'cosine'), maximum=options.get('maximum'))

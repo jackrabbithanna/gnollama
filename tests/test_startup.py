@@ -6,7 +6,7 @@ from unittest.mock import patch
 from gi.repository import Adw, Gdk, Gio
 from src import startup
 from src.database import DatabaseUpgradeError
-from src.storage import ChatStorage
+from src.app_context import AppContext
 from test_ui import pump_until
 
 
@@ -18,13 +18,13 @@ class StartupTests(unittest.TestCase):
                                    flags=Gio.ApplicationFlags.NON_UNIQUE)
         self.app.register(None)
         self.window = None
-        self.storage = None
+        self.context = None
 
     def tearDown(self):
         if self.window:
             self.window.destroy()
-        if self.storage and not self.storage.writer._closed:
-            startup.StartupWindow.dispose_storage(self.storage)
+        if self.context:
+            self.context.shutdown()
         self.temp.cleanup()
 
     def test_open_happens_off_main_thread_and_reports_progress(self):
@@ -35,10 +35,10 @@ class StartupTests(unittest.TestCase):
             progress('Checking saved vectors')
             started.set()
             release.wait(4)
-            self.storage = ChatStorage(self.temp.name, progress=progress)
-            return self.storage
+            self.context = AppContext(self.temp.name, progress=progress)
+            return self.context
         ready = []
-        with patch.object(startup, 'ChatStorage', side_effect=opening):
+        with patch.object(startup, 'AppContext', side_effect=opening):
             self.window = startup.StartupWindow(self.app, ready.append)
             self.window.present()
             try:
@@ -48,34 +48,34 @@ class StartupTests(unittest.TestCase):
             finally:
                 release.set()
             pump_until(lambda: not self.window.busy)
-        self.assertEqual(ready, [self.storage])
+        self.assertEqual(ready, [self.context])
 
     def test_error_shows_backup_and_retry_does_not_replace_database(self):
         ready = []
         def opening(progress):
-            self.storage = ChatStorage(self.temp.name, progress=progress)
-            return self.storage
-        with patch.object(startup, 'ChatStorage', side_effect=DatabaseUpgradeError('disk full', '/tmp/recovery.bak')):
+            self.context = AppContext(self.temp.name, progress=progress)
+            return self.context
+        with patch.object(startup, 'AppContext', side_effect=DatabaseUpgradeError('disk full', '/tmp/recovery.bak')):
             self.window = startup.StartupWindow(self.app, ready.append)
             self.window.present()
             pump_until(lambda: not self.window.busy)
         self.assertTrue(self.window.retry.get_visible())
         self.assertIn('/tmp/recovery.bak', self.window.page.get_description())
         self.assertEqual(ready, [])
-        with patch.object(startup, 'ChatStorage', side_effect=opening):
+        with patch.object(startup, 'AppContext', side_effect=opening):
             self.window.retry.emit('clicked')
             pump_until(lambda: not self.window.busy)
-        self.assertEqual(ready, [self.storage])
+        self.assertEqual(ready, [self.context])
 
-    def test_close_during_upgrade_waits_and_disposes_storage(self):
+    def test_close_during_upgrade_waits_and_disposes_context(self):
         started, release = threading.Event(), threading.Event()
         def opening(progress):
             started.set()
             release.wait(4)
-            self.storage = ChatStorage(self.temp.name, progress=progress)
-            return self.storage
+            self.context = AppContext(self.temp.name, progress=progress)
+            return self.context
         ready = []
-        with patch.object(startup, 'ChatStorage', side_effect=opening):
+        with patch.object(startup, 'AppContext', side_effect=opening):
             self.window = startup.StartupWindow(self.app, ready.append)
             self.window.present()
             try:
@@ -87,5 +87,5 @@ class StartupTests(unittest.TestCase):
                 release.set()
             pump_until(lambda: not self.window.busy)
         self.assertEqual(ready, [])
-        self.assertTrue(self.storage.writer._closed)
-        self.assertTrue(self.storage.knowledge.closed)
+        self.assertTrue(self.context.storage.writer.closed)
+        self.assertTrue(self.context.knowledge.closed)

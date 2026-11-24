@@ -2,6 +2,9 @@
 import json
 from gettext import gettext as _
 
+from .store_common import Repository
+from .vectors import table_exists, vector_table
+
 MIGRATION = '''
 CREATE TABLE knowledge_web_sources (
     document_id TEXT PRIMARY KEY REFERENCES knowledge_documents(id) ON DELETE CASCADE,
@@ -13,7 +16,12 @@ CREATE TABLE knowledge_web_sources (
 FIELDS = ('source_url', 'final_url', 'fetched_at', 'content_type', 'selector', 'extractor', 'edited')
 
 
-class WebSourceDatabase:
+class WebSourceDatabase(Repository):
+    def _delete_index_vectors(self, conn, index_id):
+        index = conn.execute('SELECT config_id FROM knowledge_indexes WHERE id=?', (index_id,)).fetchone()
+        if index is not None and table_exists(conn, index['config_id']):
+            conn.execute(f'DELETE FROM {vector_table(index["config_id"])} WHERE index_id=?', (index_id,))
+
     def _web_source(self, conn, document_id):
         # Older-schema fixtures and upgrade preflight must still be readable.
         if not conn.execute("SELECT 1 FROM sqlite_master WHERE name='knowledge_web_sources'").fetchone():

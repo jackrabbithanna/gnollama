@@ -10,7 +10,6 @@ import subprocess
 import sys
 import tempfile
 import time
-from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
@@ -41,8 +40,7 @@ def pump(predicate, timeout=10):
 
 with tempfile.TemporaryDirectory(prefix='gnollama-history-review-') as temporary:
     os.environ.update(XDG_DATA_HOME=temporary, XDG_CONFIG_HOME=temporary,
-                      GSETTINGS_BACKEND='memory', GSETTINGS_SCHEMA_DIR=temporary)
-    subprocess.run(['glib-compile-schemas', '--targetdir=' + temporary, str(ROOT / 'data')], check=True)
+                      GSETTINGS_BACKEND='memory')
     if args.language != 'en':
         os.environ['LANGUAGE'] = args.language
         locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
@@ -60,17 +58,18 @@ with tempfile.TemporaryDirectory(prefix='gnollama-history-review-') as temporary
     Gtk.Settings.get_default().set_property('gtk-enable-animations', False)
     Gtk.Widget.set_default_direction(Gtk.TextDirection.RTL if args.language == 'ar' else Gtk.TextDirection.LTR)
     Gio.Resource.load(args.resource)._register()
-    from src.storage import ChatStorage
+    from src.app_context import AppContext
     from src.window import GnollamaWindow
     from src.history import CATEGORIES
-    from src import ollama
-    storage = ChatStorage(temporary)
+    from tests.provider_fixture import provider_patch
+    context = AppContext(temporary)
+    storage = context.storage
     app = Adw.Application(application_id='io.github.jackrabbithanna.Gnollama.HistoryReview', flags=Gio.ApplicationFlags.NON_UNIQUE)
     app.register(None)
-    with patch.object(ollama, 'fetch_models', return_value=['cedar:8b']), patch.object(ollama, 'show_model', return_value={'capabilities': ['completion']}):
-        window = GnollamaWindow(application=app, storage=storage)
+    with provider_patch('list_models', return_value=['cedar:8b']), provider_patch('show_model', return_value={'capabilities': ['completion']}):
+        window = GnollamaWindow(application=app, context=context)
         window.present()
-        pump(lambda: storage.services.idle and storage.writer.idle and not window.history.pending)
+        pump(lambda: context.services.idle and storage.writer.idle and not window.history.pending)
         titles = dict(chat='Chat', comparison='Comparison', model_conversation='Model conversation', pinned='Pinned')
         with storage.db._get_conn() as conn:
             for key in CATEGORIES[1:]:
@@ -81,7 +80,7 @@ with tempfile.TemporaryDirectory(prefix='gnollama-history-review-') as temporary
                             'chat' if key == 'pinned' else key, key == 'pinned'))
             conn.commit()
         for index in range(2):
-            storage.db.save_draft(dict(id=f'draft-{index}', mode='chat', text='Solar draft ' + str(index + 1),
+            storage.db.workspace.save_draft(dict(id=f'draft-{index}', mode='chat', text='Solar draft ' + str(index + 1),
                                       settings={}, targets=[], revision=1))
         window.load_history_sidebar()
         pump(lambda: not window.history.pending)

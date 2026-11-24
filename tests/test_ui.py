@@ -6,9 +6,11 @@ import unittest
 from unittest.mock import patch
 
 from gi.repository import Gdk, GLib, Gtk
-from src import ollama, session
-from src.bubbles import AiBubble, format_statistics
-from src.storage import ChatStorage
+from src.providers import OllamaProvider, ProviderError
+from src.records import ViewState, WireOptions
+from provider_fixture import provider_patch
+from src.bubbles import format_statistics
+from src.app_context import AppContext
 from src.tab import GenerationTab
 from src.widgets.chat_input import ChatInput
 from src.window import GnollamaWindow
@@ -31,18 +33,18 @@ def wait_for_model(tab, model='test'):
     # Worker completion can precede delivery of model capabilities to GTK.
     pump_until(lambda: tab.chat_input.get_selected_model() == model
                and not tab.chat_input._models_loading
-               and not tab.chat_input.capabilities_loading and session.worker.idle)
+               and not tab.chat_input.capabilities_loading and tab.context.services.idle)
 
 
 @unittest.skipUnless(Gdk.Display.get_default(), 'GTK smoke tests require a display')
 class UITests(unittest.TestCase):
     def setUp(self):
-        ollama.resume()
         self.temp = tempfile.TemporaryDirectory()
-        self.storage = ChatStorage(self.temp.name)
+        self.context = AppContext(self.temp.name)
+        self.storage = self.context.storage
         self.stack = ExitStack()
-        self.stack.enter_context(patch.object(ollama, 'fetch_models', return_value=['test']))
-        self.stack.enter_context(patch.object(ollama, 'show_model', return_value={'capabilities': ['thinking']}))
+        self.stack.enter_context(provider_patch('list_models', return_value=['test']))
+        self.stack.enter_context(provider_patch('show_model', return_value={'capabilities': ['thinking']}))
         self.tabs = []
         self.windows = []
 
@@ -52,25 +54,24 @@ class UITests(unittest.TestCase):
             tab.chat_input.cancel_fetches()
             if tab.request:
                 tab.request.cancellable.cancel()
-        pump_until(lambda: session.worker.idle and all(t.request is None for t in self.tabs))
+        pump_until(lambda: self.context.services.idle and all(t.request is None for t in self.tabs))
         pump_until(lambda: self.storage.writer.idle)
-        if not self.storage.writer._closed:
-            self.storage.writer.shutdown()
+        self.context.shutdown()
         for window in self.windows:
             window.destroy()
         self.stack.close()
         self.temp.cleanup()
-        ollama.resume()
 
     def make_tab(self):
         chat = self.storage.create_chat()
-        tab = GenerationTab(mode='chat', chat_id=chat['id'], storage=self.storage)
+        tab = GenerationTab(mode='chat', chat_id=chat['id'], context=self.context)
         self.tabs.append(tab)
         wait_for_model(tab)
         return tab
 
     def test_thinking_controls_and_saved_false(self):
         widget = ChatInput()
+        widget.services = self.context.services
         widget.load_thinking_val(False)
         self.assertIs(widget.get_thinking_value(), False)
         widget._set_thinking_options({'details': {'family': 'gptoss'}, 'capabilities': ['thinking']})
@@ -94,6 +95,7 @@ class UITests(unittest.TestCase):
     def test_pasting_clipboard_image_attaches_it_and_text_still_pastes(self):
         import base64
         widget = ChatInput()
+        widget.services = self.context.services
         clipboard = widget.entry.view.get_clipboard()
         pixels = GLib.Bytes.new(bytes([255, 0, 0, 255] * 4))
         texture = Gdk.MemoryTexture.new(2, 2, Gdk.MemoryFormat.R8G8B8A8, pixels, 8)
@@ -109,7 +111,7 @@ class UITests(unittest.TestCase):
 
         widget.image_support = False
         widget.entry.view.emit('paste-clipboard')
-        pump_until(lambda: session.worker.idle)
+        pump_until(lambda: self.context.services.idle)
         for _ in range(20):
             GLib.MainContext.default().iteration(False)
         self.assertEqual(len(widget.restored_images), 1)
@@ -122,6 +124,7 @@ class UITests(unittest.TestCase):
     def test_pasting_copied_files_attaches_images_and_falls_back_to_text(self):
         from gi.repository import Gio, GObject
         widget = ChatInput()
+        widget.services = self.context.services
         clipboard = widget.entry.view.get_clipboard()
         folder = tempfile.TemporaryDirectory()
         self.addCleanup(folder.cleanup)
@@ -178,7 +181,7 @@ class UITests(unittest.TestCase):
         self.assertEqual(history[-1]['content'], 'partial')
         self.assertEqual(history[-1]['response_metadata']['status'], 'stopped')
         restored = GenerationTab(mode='chat', chat_id=tab.strategy.chat_id,
-                                 initial_history=history, storage=self.storage)
+                                 initial_history=history, context=self.context)
         self.tabs.append(restored)
         self.assertEqual(restored.strategy.history, history)
 
@@ -187,7 +190,7 @@ class UITests(unittest.TestCase):
         def chat(**kwargs):
             yield {'message': {'content': kwargs['messages'][-1]['content']}, 'done': True,
                    'eval_count': 2, 'eval_duration': 1_000_000_000}
-        with patch.object(ollama, 'chat', side_effect=chat):
+        with provider_patch('chat', side_effect=chat):
             for tab, prompt in ((first, 'one'), (second, 'two')):
                 tab.chat_input.entry.set_text(prompt)
                 tab.on_send_clicked()
@@ -199,7 +202,7 @@ class UITests(unittest.TestCase):
 
     def test_premature_end_is_saved_as_failed(self):
         tab = self.make_tab()
-        with patch.object(ollama, 'chat', return_value=iter([{'message': {'content': 'partial'}}])):
+        with provider_patch('chat', return_value=iter([{'message': {'content': 'partial'}}])):
             tab.chat_input.entry.set_text('test')
             tab.on_send_clicked()
             pump_until(lambda: tab.request is None and self.storage.writer.idle)
@@ -226,7 +229,7 @@ class UITests(unittest.TestCase):
         self.storage.update_host(selected['id'], 'Renamed', 'http://127.0.0.1:1234', True)
         tab.update_hosts()
         self.assertEqual(tab.options_panel.get_selected_host()['name'], 'Renamed')
-        self.assertEqual(tab.chat_input._host, 'http://127.0.0.1:1234')
+        self.assertEqual(tab.chat_input._host.url, 'http://127.0.0.1:1234')
 
     def test_close_tab_waits_for_stopped_answer_save(self):
         fixture = Server('stall')
@@ -243,8 +246,7 @@ class UITests(unittest.TestCase):
         self.assertEqual(self.storage.get_chat(tab.strategy.chat_id)['messages'][-1]['response_metadata']['status'], 'stopped')
 
     def make_window(self):
-        with patch('src.window.ChatStorage', return_value=self.storage):
-            window = GnollamaWindow()
+        window = GnollamaWindow(context=self.context)
         self.windows.append(window)
         tab = window.tab_view.get_nth_page(0).get_child()
         self.tabs.append(tab)
@@ -261,8 +263,8 @@ class UITests(unittest.TestCase):
         tab.on_send_clicked()
         pump_until(lambda: tab.request.content == 'partial')
         release = threading.Event()
-        self.storage._submit(lambda: release.wait(3))
-        with patch.object(self.storage.services, 'shutdown') as shutdown:
+        self.storage.submit(lambda: release.wait(3))
+        with patch.object(self.context.services, 'shutdown') as shutdown:
             self.assertTrue(window.on_close_request())
             pump_until(lambda: tab.request is None)
             self.assertFalse(window._allow_close)
@@ -279,14 +281,14 @@ class UITests(unittest.TestCase):
         def save():
             if blocked:
                 raise OSError('disk full')
-        future = self.storage._submit(save)
+        future = self.storage.submit(save)
         with self.assertRaises(OSError):
             future.result(2)
         window.request_shutdown()
         pump_until(lambda: window._save_error_dialog is not None)
         self.assertFalse(window._allow_close)
         blocked = False
-        with patch.object(self.storage.services, 'shutdown'):
+        with patch.object(self.context.services, 'shutdown'):
             window._save_error_dialog.emit('response', 'retry')
             pump_until(lambda: window._allow_close)
 
@@ -301,21 +303,22 @@ class UITests(unittest.TestCase):
 
     def test_stale_model_and_capability_results_are_ignored(self):
         widget = ChatInput()
+        widget.services = self.context.services
         gate = threading.Event()
         started = threading.Event()
         def models(host, **kwargs):
-            if host == 'http://old':
+            if host.url == 'http://old':
                 started.set()
                 gate.wait(2)
                 return ['old-model']
             return ['new-model']
-        with patch.object(ollama, 'fetch_models', side_effect=models):
-            widget.fetch_models('http://old')
+        with provider_patch('list_models', side_effect=models):
+            widget.fetch_models(OllamaProvider('http://old'))
             self.assertTrue(started.wait(1))
-            widget.fetch_models('http://new')
+            widget.fetch_models(OllamaProvider('http://new'))
             pump_until(lambda: widget.get_selected_model() == 'new-model')
             gate.set()
-            pump_until(lambda: session.worker.idle)
+            pump_until(lambda: self.context.services.idle)
             self.assertEqual(widget.get_selected_model(), 'new-model')
         gate.clear()
         started.clear()
@@ -325,18 +328,19 @@ class UITests(unittest.TestCase):
                 gate.wait(2)
                 return {'capabilities': ['completion']}
             return {'capabilities': ['thinking']}
-        with patch.object(ollama, 'show_model', side_effect=details):
+        with provider_patch('show_model', side_effect=details):
             widget.set_models(['old-model', 'new-model'])
             self.assertTrue(started.wait(1))
             widget.select_model('new-model')
             pump_until(lambda: 'max' in widget._thinking_values)
             gate.set()
-            pump_until(lambda: session.worker.idle)
+            pump_until(lambda: self.context.services.idle)
             self.assertIn('max', widget._thinking_values)
         widget.cancel_fetches()
 
     def test_chat_model_picker_filters_by_capabilities_and_reuses_details(self):
         widget = ChatInput()
+        widget.services = self.context.services
         self.addCleanup(widget.cancel_fetches)
         responses = {
             'qwen3-embedding:0.6b': {'capabilities': ['embedding']},
@@ -348,13 +352,13 @@ class UITests(unittest.TestCase):
         }
         def details(host, model, **kwargs):
             if responses[model] is None:
-                raise ollama.OllamaError('show is unavailable')
+                raise ProviderError('show is unavailable')
             return responses[model]
-        with patch.object(ollama, 'fetch_models', return_value=list(responses)), \
-                patch.object(ollama, 'show_model', side_effect=details) as show:
-            widget.fetch_models('http://models')
+        with provider_patch('list_models', return_value=list(responses)), \
+                provider_patch('show_model', side_effect=details) as show:
+            widget.fetch_models(OllamaProvider('http://models'))
             pump_until(lambda: widget.get_selected_model() is not None
-                       and not widget.capabilities_loading and session.worker.idle)
+                       and not widget.capabilities_loading and self.context.services.idle)
             model = widget.model_dropdown.get_model()
             self.assertEqual([model.get_string(i) for i in range(model.get_n_items())],
                              list(responses)[2:])
@@ -372,33 +376,34 @@ class UITests(unittest.TestCase):
 
     def test_chat_model_refresh_preserves_selection_and_handles_embedding_only_host(self):
         widget = ChatInput()
+        widget.services = self.context.services
         self.addCleanup(widget.cancel_fetches)
         responses = {'vectors': {'capabilities': ['embedding']},
                      'chat-one': {'capabilities': ['completion']},
                      'chat-two': {'capabilities': ['completion']}}
-        with patch.object(ollama, 'fetch_models', side_effect=lambda *a, **kw: list(responses)), \
-                patch.object(ollama, 'show_model', side_effect=lambda h, m, **kw: responses[m]):
+        with provider_patch('list_models', side_effect=lambda *a, **kw: list(responses)), \
+                provider_patch('show_model', side_effect=lambda h, m, **kw: responses[m]):
             widget.pending_model_selection = 'chat-two'
-            widget.fetch_models('http://models')
-            pump_until(lambda: widget.get_selected_model() == 'chat-two' and session.worker.idle)
-            widget.fetch_models('http://models')
-            pump_until(lambda: widget.get_selected_model() == 'chat-two' and session.worker.idle)
+            widget.fetch_models(OllamaProvider('http://models'))
+            pump_until(lambda: widget.get_selected_model() == 'chat-two' and self.context.services.idle)
+            widget.fetch_models(OllamaProvider('http://models'))
+            pump_until(lambda: widget.get_selected_model() == 'chat-two' and self.context.services.idle)
             # A saved embedding selection must not silently switch to another model.
             widget.pending_model_selection = 'vectors'
-            widget.fetch_models('http://models')
-            pump_until(lambda: not widget._models_loading and not widget.capabilities_loading and session.worker.idle)
+            widget.fetch_models(OllamaProvider('http://models'))
+            pump_until(lambda: not widget._models_loading and not widget.capabilities_loading and self.context.services.idle)
             self.assertIsNone(widget.get_selected_model())
             self.assertFalse(widget.send_button.get_sensitive())
             widget.select_model('chat-one')
             # Refresh must invalidate cached capabilities even on the same host.
             responses['chat-one'] = {'capabilities': ['embedding']}
             del responses['chat-two']
-            widget.fetch_models('http://models')
-            pump_until(lambda: not widget._models_loading and not widget.capabilities_loading and session.worker.idle)
+            widget.fetch_models(OllamaProvider('http://models'), refresh=True)
+            pump_until(lambda: not widget._models_loading and not widget.capabilities_loading and self.context.services.idle)
             # Unchecked entries remain available until their capabilities are known.
             widget.select_model('vectors')
             # Worker completion can precede delivery of its GTK callback.
-            pump_until(lambda: session.worker.idle and 'No chat models found' in widget.capability_notice.get_text())
+            pump_until(lambda: self.context.services.idle and 'No chat models found' in widget.capability_notice.get_text())
             self.assertEqual(widget.model_dropdown.get_model().get_n_items(), 0)
             self.assertIsNone(widget.get_selected_model())
             self.assertFalse(widget.send_button.get_sensitive())
@@ -407,27 +412,28 @@ class UITests(unittest.TestCase):
 
     def test_chat_model_filter_ignores_cancelled_host_capabilities(self):
         widget = ChatInput()
+        widget.services = self.context.services
         self.addCleanup(widget.cancel_fetches)
         started, release = threading.Event(), threading.Event()
         def details(host, model, **kwargs):
-            if host == 'http://old':
+            if host.url == 'http://old':
                 started.set()
                 release.wait(2)
                 return {'capabilities': ['embedding']}
             return {'capabilities': ['completion', 'vision']}
-        with patch.object(ollama, 'fetch_models', return_value=['same-name', 'next-model']), \
-                patch.object(ollama, 'show_model', side_effect=details) as show:
+        with provider_patch('list_models', return_value=['same-name', 'next-model']), \
+                provider_patch('show_model', side_effect=details) as show:
             try:
-                widget.fetch_models('http://old')
+                widget.fetch_models(OllamaProvider('http://old'))
                 pump_until(started.is_set)
-                widget.fetch_models('http://new')
+                widget.fetch_models(OllamaProvider('http://new'))
                 pump_until(lambda: widget.get_selected_model() == 'same-name')
             finally:
                 release.set()
-            pump_until(lambda: session.worker.idle)
+            pump_until(lambda: self.context.services.idle)
             self.assertEqual(widget.get_selected_model(), 'same-name')
             self.assertIs(widget.image_support, True)
-            self.assertEqual([c.args for c in show.call_args_list],
+            self.assertEqual([(c.args[0].url, c.args[1]) for c in show.call_args_list],
                              [('http://old', 'same-name'), ('http://new', 'same-name')])
 
     def test_generate_mode_and_model_pull_dialog_cancellation(self):
@@ -435,7 +441,7 @@ class UITests(unittest.TestCase):
         self.addCleanup(fixture.close)
         host = self.storage.get_all_hosts()[0]
         self.storage.update_host(host['id'], host['name'], fixture.host, True)
-        tab = GenerationTab(mode='generate', storage=self.storage)
+        tab = GenerationTab(mode='generate', context=self.context)
         self.tabs.append(tab)
         wait_for_model(tab)
         tab.chat_input.entry.set_text('single turn')
@@ -445,6 +451,7 @@ class UITests(unittest.TestCase):
         self.assertEqual(self.storage.get_all_chats(), [])
         from src.model_manager import PullModelDialog
         parent = Gtk.Window()
+        parent.context = self.context
         self.windows.append(parent)
         dialog = PullModelDialog(parent, fixture.host)
         fixture.server.mode = 'headers'
@@ -474,14 +481,14 @@ class UITests(unittest.TestCase):
             self.assertEqual(kwargs['format']['type'], 'object')
             self.assertEqual(kwargs['keep_alive'], 0)
             yield {'message': {'content': '{"count":"two"}'}, 'done': True}
-        with patch.object(ollama, 'chat', side_effect=chat):
+        with provider_patch('chat', side_effect=chat):
             tab.on_send_clicked()
             pump_until(lambda: tab.request is None and self.storage.writer.idle)
         saved = self.storage.get_chat(tab.strategy.chat_id)
         self.assertEqual(saved['options']['keep_alive'], 0)
         self.assertEqual(saved['options']['output_mode'], 'schema')
         self.assertEqual(saved['messages'][-1]['response_metadata']['validation']['status'], 'schema_mismatch')
-        restored = GenerationTab(mode='chat', chat_id=saved['id'], initial_history=saved['messages'], storage=self.storage)
+        restored = GenerationTab(mode='chat', chat_id=saved['id'], initial_history=saved['messages'], context=self.context)
         self.tabs.append(restored)
         self.assertEqual(restored.options_panel.schema_text, panel.schema_text)
         self.assertEqual(restored.options_panel.get_request_settings()['keep_alive'], 0)
@@ -552,7 +559,7 @@ class UITests(unittest.TestCase):
         def chat(**kwargs):
             requests.append(kwargs['messages'])
             yield {'message': {'content': 'a red pixel'}, 'done': True}
-        with patch.object(ollama, 'chat', side_effect=chat):
+        with provider_patch('chat', side_effect=chat):
             tab.on_send_clicked()
             pump_until(lambda: tab.request is None and self.storage.writer.idle)
             self.assertIn('images', requests[0][0])
@@ -584,7 +591,7 @@ class UITests(unittest.TestCase):
         window, first = self.make_window()
         second = window.new_chat_tab()
         self.tabs.append(second)
-        pump_until(lambda: session.worker.idle and self.storage.writer.idle)
+        pump_until(lambda: self.context.services.idle and self.storage.writer.idle)
         page = window.tab_view.get_page(first)
         window.tab_view.reorder_page(page, 1)
         window.tab_view.set_selected_page(page)
@@ -607,7 +614,7 @@ class UITests(unittest.TestCase):
         pump_until(lambda: first.request and first.request.content == 'partial')
         self.assertTrue(page.get_loading())
         release = threading.Event()
-        self.storage._submit(lambda: release.wait(3))
+        self.storage.submit(lambda: release.wait(3))
         window.tab_view.close_page(page)
         pump_until(lambda: first.request is None)
         self.assertEqual(window.tab_view.get_n_pages(), 2)
@@ -623,15 +630,15 @@ class UITests(unittest.TestCase):
 
     def test_running_models_refresh_unload_busy_and_close(self):
         from src.model_manager import ModelManagerDialog, model_key, running_model_subtitle
-        unloading_models = self.storage.services.models.reserved
-        self.stack.enter_context(patch.object(ollama, 'fetch_model_details', return_value=[]))
+        unloading_models = self.context.services.models.reserved
+        self.stack.enter_context(provider_patch('list_models', return_value=[]))
         calls = []
         def running(host, **kwargs):
             calls.append(host)
             return [{'name': 'test', 'size_vram': 0, 'context_length': 4096}]
-        self.stack.enter_context(patch.object(ollama, 'fetch_running_models', side_effect=running))
+        self.stack.enter_context(provider_patch('running', side_effect=running))
         busy = True
-        manager = ModelManagerDialog(self.storage, is_model_busy=lambda host, model: busy)
+        manager = ModelManagerDialog(self.context, is_model_busy=lambda host, model: busy)
         manager.model_stack.set_visible_child_name('running')
         manager.present()
         pump_until(lambda: bool(manager._running_rows))
@@ -645,7 +652,7 @@ class UITests(unittest.TestCase):
         def unload(*args, **kwargs):
             gate.wait(2)
             return {'done': True}
-        with patch.object(ollama, 'unload_model', side_effect=unload) as api:
+        with provider_patch('unload', side_effect=unload) as api:
             manager.on_unload_clicked(button, host, model)
             self.assertIn(model_key(host, model), unloading_models)
             self.assertFalse(button.get_sensitive())
@@ -655,25 +662,25 @@ class UITests(unittest.TestCase):
             self.assertEqual(api.call_count, 1)
         self.assertGreaterEqual(len(calls), 2)
         manager.close()
-        pump_until(lambda: manager._poll_id is None and session.worker.idle)
+        pump_until(lambda: manager._poll_id is None and self.context.services.idle)
         self.assertTrue(manager.requests.closed)
 
     def test_running_model_refresh_ignores_old_host_and_does_not_overlap(self):
         from src.model_manager import ModelManagerDialog
-        self.stack.enter_context(patch.object(ollama, 'fetch_model_details', return_value=[]))
+        self.stack.enter_context(provider_patch('list_models', return_value=[]))
         old_host = self.storage.get_all_hosts()[0]
-        new_host = self.storage.add_host('Other', 'http://other:11434', False)
+        self.storage.add_host('Other', 'http://other:11434', False)
         gate, started = threading.Event(), threading.Event()
         calls = []
         def running(host, **kwargs):
-            calls.append(host)
-            if host == old_host['hostname']:
+            calls.append(host.url)
+            if host.url == old_host['hostname']:
                 started.set()
                 gate.wait(3)
                 return [{'name': 'old'}]
             return [{'name': 'new'}]
-        with patch.object(ollama, 'fetch_running_models', side_effect=running):
-            manager = ModelManagerDialog(self.storage)
+        with provider_patch('running', side_effect=running):
+            manager = ModelManagerDialog(self.context)
             manager.model_stack.set_visible_child_name('running')
             manager.present()
             pump_until(started.is_set)
@@ -682,7 +689,7 @@ class UITests(unittest.TestCase):
             manager.host_dropdown.set_selected(1)
             pump_until(lambda: manager._running_rows and manager._running_rows[0][2] == 'new')
             gate.set()
-            pump_until(lambda: session.worker.idle)
+            pump_until(lambda: self.context.services.idle)
             self.assertEqual(manager._running_rows[0][2], 'new')
             manager.close()
 
@@ -690,8 +697,8 @@ class UITests(unittest.TestCase):
         from gi.repository import Adw
         from src.host_manager import HostManagerDialog
         from src.model_manager import ModelDetailsView, PullModelDialog
-        self.stack.enter_context(patch.object(ollama, 'fetch_model_details', return_value=[{'name': 'test', 'details': None}]))
-        self.stack.enter_context(patch.object(ollama, 'fetch_running_models', return_value=[]))
+        self.stack.enter_context(provider_patch('list_models', return_value=[{'name': 'test', 'details': None}]))
+        self.stack.enter_context(provider_patch('running', return_value=[]))
         window, tab = self.make_window()
         window.present()
         pump_until(window.get_mapped)
@@ -702,7 +709,7 @@ class UITests(unittest.TestCase):
         pump_until(lambda: hosts.requests.closed)
         models = window.on_manage_models()
         self.assertIsInstance(models, Adw.Dialog)
-        pump_until(lambda: session.worker.idle and window.get_visible_dialog() is models)
+        pump_until(lambda: self.context.services.idle and window.get_visible_dialog() is models)
         models.on_pull_clicked(None)
         pull = window.get_visible_dialog()
         self.assertIsInstance(pull, PullModelDialog)
@@ -712,7 +719,7 @@ class UITests(unittest.TestCase):
         models.on_model_info_clicked(None, {'name': 'test'})
         details = window.get_visible_dialog()
         self.assertIsInstance(details, ModelDetailsView)
-        with patch.object(self.storage.services, 'shutdown'):
+        with patch.object(self.context.services, 'shutdown'):
             window.request_shutdown()
             pump_until(lambda: models.requests.closed and details.requests.closed)
             self.assertNotIn(models, window.model_managers)
@@ -765,13 +772,13 @@ class UITests(unittest.TestCase):
             if blocked:
                 raise OSError('disk full')
         with self.assertRaises(OSError):
-            self.storage._submit(save).result(2)
+            self.storage.submit(save).result(2)
         tab.chat_input.set_model_details(None, loading=True)
         window.request_shutdown()
         pump_until(lambda: window._save_error_dialog is not None)
         window._save_error_dialog.emit('response', 'keep')
         pump_until(lambda: tab.chat_input.get_selected_model() == 'test'
-                   and not tab.chat_input.capabilities_loading and session.worker.idle)
+                   and not tab.chat_input.capabilities_loading and tab.context.services.idle)
         self.assertFalse(window._shutting_down)
         self.assertIs(tab.chat_input.image_support, False)
         blocked = False
@@ -788,7 +795,7 @@ class UITests(unittest.TestCase):
         pump_until(lambda: panel.output_dropdown.get_mapped())
         tab.chat_input.entry.set_text('Return JSON with count equal to 7.')
         response = iter([{'message': {'content': '{"count":7}'}, 'done': True}])
-        with patch.object(ollama, 'chat', return_value=response) as chat:
+        with provider_patch('chat', return_value=response) as chat:
             panel.output_dropdown.set_selected(2)
             pump_until(lambda: panel._schema_dialog is not None)
             editor = panel._schema_dialog
@@ -831,7 +838,7 @@ class UITests(unittest.TestCase):
         for text in ('{"type":"object"}', ''):
             panel.output_dropdown.set_selected(0)
             with patch.object(panel, 'edit_schema') as edit:
-                panel.load_options({'output_mode': 'schema', 'schema_text': text})
+                panel.load_options(WireOptions(), ViewState(output_mode='schema', schema_text=text))
                 pump_until(lambda: True)
                 edit.assert_not_called()
             self.assertEqual(panel.schema_text, text)

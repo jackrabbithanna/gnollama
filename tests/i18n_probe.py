@@ -29,8 +29,6 @@ if Gdk.Display.get_default() is None:
     sys.exit(77)
 Adw.init()
 os.environ['GSETTINGS_BACKEND'] = 'memory'
-os.environ['GSETTINGS_SCHEMA_DIR'] = str(directory)
-subprocess.run(['glib-compile-schemas', '--targetdir=' + str(directory), str(root / 'data')], check=True)
 resource = directory / 'gnollama.gresource'
 subprocess.run(['glib-compile-resources', str(root / 'src/gnollama.gresource.xml'),
                 '--sourcedir=' + str(root / 'src'), '--target=' + str(resource)], check=True)
@@ -76,5 +74,3 @@ print(json.dumps({
     'options_min_width': options.measure(Gtk.Orientation.HORIZONTAL, -1).minimum,
     'settings_min_width': options.settings_content.measure(Gtk.Orientation.HORIZONTAL, -1).minimum,
 }))
-from src.session import worker
-worker.shutdown()

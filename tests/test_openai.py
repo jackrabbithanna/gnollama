@@ -15,7 +15,7 @@ from src.credentials import CredentialError, CredentialStore
 from src.model_conversation import validate_participants
 from src.providers import (CLOUD_URL, OllamaCloudProvider, OllamaProvider, OpenAICompatibleProvider,
                            ProviderError, RequestCancelled)
-from src.providers.openai import chat_body, wire_messages
+from src.providers.openai import chat_body, fingerprint, wire_messages
 from src.records import RequestSettings, WireOptions
 from src.session import api_messages
 from src.tab import GenerationTab
@@ -43,6 +43,13 @@ ANSWER = [event({'role': 'assistant', 'content': ''}), event({'content': 'Hel'})
                                           'prompt_tokens_details': {'cached_tokens': 3}}), DONE]
 
 
+def vectors(*rows, order=None):
+    """An embeddings response holding `rows`, sent in `order` where that is not their own."""
+    data = [{'object': 'embedding', 'embedding': row, 'index': index} for index, row in enumerate(rows)]
+    return {'object': 'list', 'data': [data[index] for index in order] if order else data, 'model': 'test',
+            'usage': {'prompt_tokens': 0, 'total_tokens': 0}}
+
+
 class Handler(BaseHTTPRequestHandler):
     def log_message(self, *args):
         pass
@@ -60,10 +67,13 @@ class Handler(BaseHTTPRequestHandler):
         try:
             if server.status != 200:
                 self.wfile.write(server.body)
+            elif self.path.endswith('/embeddings/models'):
+                self.wfile.write(json.dumps(server.embedders).encode())
             elif self.path.endswith('/models'):
                 self.wfile.write(json.dumps(server.models).encode())
             else:
-                for line in server.lines:
+                embedding = self.path.endswith('/embeddings')
+                for line in [json.dumps(server.embeddings).encode()] if embedding else server.lines:
                     self.wfile.write(line + b'\n\n')
                     self.wfile.flush()
                 # Comments keep the stream open; writing one to a closed socket fails.
@@ -80,6 +90,7 @@ class Server:
         self.server = server = ThreadingHTTPServer(('127.0.0.1', 0), Handler)
         server.lines, server.status, server.body, server.stall = list(lines), 200, b'', False
         server.models = {'object': 'list', 'data': [{'id': 'test', 'object': 'model'}, {'id': 'other'}]}
+        server.embeddings, server.embedders = vectors([1.0, 0.0]), {'data': []}
         server.received = []
         server.started, server.release, server.dropped = threading.Event(), threading.Event(), threading.Event()
         self.thread = threading.Thread(target=server.serve_forever, daemon=True)
@@ -223,6 +234,96 @@ class LoopbackTests(unittest.TestCase):
         self.assertIsInstance(errors[0], RequestCancelled)
         self.assertTrue(self.server.dropped.wait(3), 'the server still has a connection')
 
+    def test_embed_returns_one_vector_for_each_text_in_their_order(self):
+        self.assertEqual(self.provider().embed('test', 'one'), {'embeddings': [[1.0, 0.0]]})
+        self.assertEqual(self.server.received[-1], ('/v1/embeddings', {'model': 'test', 'input': ['one']}, None))
+        # The order of the array is not promised; each vector names its text.
+        self.server.embeddings = vectors([1, 0], [0, 1.5], [-1, 1], order=[2, 0, 1])
+        self.assertEqual(self.provider().embed('test', ['a', 'b', 'c'], dimensions=2),
+                         {'embeddings': [[1, 0], [0, 1.5], [-1, 1]]})
+        # Nothing asks the server to refuse a long input, since it has no way to.
+        self.assertEqual(self.server.received[-1][1], {'model': 'test', 'input': ['a', 'b', 'c'], 'dimensions': 2})
+        self.assertEqual(OpenAICompatibleProvider(self.fixture.host + '/v1/').embed('test', ('a', 'b', 'c')),
+                         {'embeddings': [[1, 0], [0, 1.5], [-1, 1]]})
+        self.assertEqual(self.server.received[-1][0], '/v1/embeddings')
+
+    def test_embed_refuses_an_answer_that_is_not_one_good_vector_for_each_text(self):
+        def row(index, embedding=(1, 0)):
+            return {'embedding': list(embedding), 'index': index}
+        number, invalid, uneven = 'incorrect number of embeddings', 'invalid embedding vector', 'do not match, or a vector'
+        cases = [({'data': [row(0)]}, number), ({'data': [row(0), row(1), row(2)]}, number),
+                 ({'data': [row(0), row(0)]}, number), ({'data': [row(0), row(2)]}, number),
+                 ({'data': [row(0), row(None)]}, number), ({'data': [row(False), row(True)]}, number),
+                 ({'data': [row(0), 'vector']}, number), ({'data': 'none'}, number), ({}, number),
+                 ({'data': [row(0), {'index': 1}]}, invalid), ({'data': [row(0), {'index': 1, 'embedding': 'ab'}]}, invalid),
+                 (vectors([1, 0], []), invalid), (vectors([1, 0], [1, '0']), invalid), (vectors([1, 0], [True, 1]), invalid),
+                 (vectors([1, 0], [float('nan'), 1]), invalid), (vectors([1, 0], [float('inf'), 1]), invalid),
+                 (vectors([1, 0], [0, 0.0]), uneven), (vectors([1, 0], [1]), uneven), (vectors([1], [1, 0]), uneven)]
+        for answer, expected in cases:
+            self.server.embeddings = answer
+            with self.subTest(answer=answer), self.assertRaisesRegex(ProviderError, expected):
+                self.provider().embed('test', ['a', 'b'])
+        # A server may ignore the size asked for; its vectors are then not the ones wanted.
+        self.server.embeddings = vectors([1, 0], [0, 1])
+        with self.assertRaisesRegex(ProviderError, 'returned 2 dimensions where 3 were requested.*may not support'):
+            self.provider().embed('test', ['a', 'b'], dimensions=3)
+        self.assertEqual(self.server.received[-1][1]['dimensions'], 3)
+
+    def test_embed_sends_nothing_it_cannot_ask_for(self):
+        embed = self.provider().embed
+        for texts in ('', ' \n', [], ['a', ''], ['a', None], [b'a']):
+            with self.subTest(texts=texts), self.assertRaisesRegex(ProviderError, 'nonempty text'):
+                embed('test', texts)
+        for size in (0, -1, True, 2.0, '2'):
+            with self.subTest(dimensions=size), self.assertRaisesRegex(ProviderError, 'positive integer'):
+                embed('test', 'a', dimensions=size)
+        for keep in (0, -1, 300):
+            with self.subTest(keep_alive=keep), self.assertRaisesRegex(ProviderError, 'does not accept: keep_alive'):
+                embed('test', 'a', keep_alive=keep)
+        self.assertEqual(self.server.received, [])
+        embed('test', 'a', keep_alive=None)
+        self.assertEqual(self.server.received[-1][1], {'model': 'test', 'input': ['a']})
+
+    def test_embed_sends_the_key_explains_errors_and_can_be_stopped(self):
+        saved = self.provider(host_id='host', credential_id='reference', credentials=Keys({'reference': 'sk-secret'}))
+        saved.embed('test', 'a')
+        self.assertEqual(self.server.received[-1][2], 'Bearer sk-secret')
+        self.server.body = b'{"error": {"message": "Model sk-secret is not an embedding model"}}'
+        for status, expected in ((401, 'rejected the API key'), (429, 'usage or rate limit'),
+                                 (400, r'^Model \[redacted\] is not an embedding model$')):
+            self.server.status = status
+            with self.subTest(status=status), self.assertRaisesRegex(ProviderError, expected) as caught:
+                saved.embed('test', 'a')
+            self.assertEqual(caught.exception.status, status)
+        # An error sent with a success status is an error still.
+        self.server.status, self.server.embeddings = 200, {'error': {'message': 'No such model'}}
+        with self.assertRaisesRegex(ProviderError, '^No such model$'):
+            saved.embed('test', 'a')
+
+        stopped = Gio.Cancellable()
+        stopped.cancel()
+        before = len(self.server.received)
+        with self.assertRaises(RequestCancelled):
+            saved.embed('test', 'a', cancellable=stopped)
+        self.assertEqual(len(self.server.received), before)
+        self.server.embeddings, self.server.stall = vectors([1, 0]), True
+        cancel, errors = Gio.Cancellable(), []
+
+        def run():
+            try:
+                saved.embed('test', 'a', cancellable=cancel)
+            except Exception as exc:
+                errors.append(exc)
+        thread = threading.Thread(target=run, daemon=True)
+        self.server.started.clear()
+        thread.start()
+        self.assertTrue(self.server.started.wait(3))
+        cancel.cancel()
+        thread.join(2)
+        self.assertFalse(thread.is_alive())
+        self.assertIsInstance(errors[0], RequestCancelled)
+        self.assertTrue(self.server.dropped.wait(3), 'the server still has a connection')
+
     def test_abandoning_the_response_closes_the_socket(self):
         self.server.lines, self.server.stall = ANSWER[:2], True
         stream = self.provider().chat('test', USER)
@@ -287,16 +388,18 @@ class LoopbackTests(unittest.TestCase):
                 self.send_header('Location', other.host + self.path)
                 self.end_headers()
         self.server.RequestHandlerClass = Redirect
-        with self.assertRaisesRegex(ProviderError, 'HTTP Error 307'):
-            self.chat(provider=self.provider(host_id='host', credential_id='reference',
-                                             credentials=Keys({'reference': 'sk-secret'})))
+        keyed = self.provider(host_id='host', credential_id='reference', credentials=Keys({'reference': 'sk-secret'}))
+        for call in (lambda: self.chat(provider=keyed), lambda: keyed.embed('test', 'a')):
+            with self.assertRaisesRegex(ProviderError, 'HTTP Error 307'):
+                call()
+        self.assertEqual([request[2] for request in self.server.received], ['Bearer sk-secret'] * 2)
         self.assertEqual(other.server.received, [])
 
     def test_models_probe_details_and_base_url_forms(self):
         for suffix in ('', '/', '/v1', '/v1/', '/api', '/api/v1'):
             with self.subTest(suffix=suffix):
                 provider = OpenAICompatibleProvider(self.fixture.host + suffix)
-                self.assertEqual(provider.list_models(), [{'name': 'test'}, {'name': 'other'}])
+                self.assertEqual([model['name'] for model in provider.list_models()], ['test', 'other'])
                 self.assertEqual(self.server.received[-1][0], ('/api' if 'api' in suffix else '') + '/v1/models')
         self.assertEqual(self.provider().probe(), 'Connected\nAvailable models: 2')
         before = len(self.server.received)
@@ -309,17 +412,126 @@ class LoopbackTests(unittest.TestCase):
         with self.assertRaises(ProviderError):
             OpenAICompatibleProvider('localhost:1234').list_models()
 
+    def test_every_model_may_embed_and_its_name_alone_identifies_it(self):
+        provider = self.provider()
+        listed = [{'name': 'test', 'digest': fingerprint('test')}, {'name': 'other', 'digest': fingerprint('other')}]
+        self.assertEqual(provider.list_models(), listed)
+        # The list does not say which models embed, so none is left out and none is asked about.
+        self.assertEqual(provider.list_embedding_models(), listed)
+        self.assertEqual([request[0] for request in self.server.received], ['/v1/models'] * 2)
+        self.assertRegex(listed[0]['digest'], '^[0-9a-f]{64}$')
+        self.assertNotEqual(listed[0]['digest'], listed[1]['digest'])
+        # Whatever else the server says of a model, the fingerprint is of its name.
+        self.server.models['data'][0].update(created=1, owned_by='someone', object='changed')
+        self.assertEqual(provider.model_tag('test'), listed[0])
+        self.assertEqual(provider.model_tag('other'), listed[1])
+        self.assertIsNone(provider.model_tag('gone'))
+        before = len(self.server.received)
+        self.assertIsNone(provider.embedding_context('test'))
+        self.assertEqual(len(self.server.received), before)
+        stopped = Gio.Cancellable()
+        stopped.cancel()
+        for call in (provider.list_embedding_models, lambda **named: provider.model_tag('test', **named)):
+            with self.assertRaises(RequestCancelled):
+                call(cancellable=stopped)
+
     def test_class_declares_what_the_host_editor_and_panel_read(self):
         cls, caps = OpenAICompatibleProvider, OpenAICompatibleProvider.capabilities
         self.assertEqual((cls.kind, cls.label, cls.default_url, cls.default_name, cls.key_url),
                          ('openai', 'OpenAI-Compatible Server', '', '', ''))
         self.assertEqual((cls.fixed_url, cls.requires_key, cls.key_optional), (None, False, True))
         offered = {name for name, value in vars(caps).items() if value is True}
-        self.assertEqual(offered, {'thinking_levels', 'structured_output', 'tools', 'logprobs', 'thinking_text'})
+        # A fingerprint of the name is not a digest of the model, so `model_verification` stays off.
+        self.assertEqual(offered, {'embeddings', 'thinking_levels', 'structured_output', 'tools', 'logprobs',
+                                   'thinking_text'})
         self.assertIn('not checked', caps.options_notice)
-        for name in ('generate', 'embed', 'pull', 'delete', 'running', 'unload'):
+        for name in ('generate', 'pull', 'delete', 'running', 'unload'):
             with self.subTest(operation=name), self.assertRaises(NotImplementedError):
                 getattr(self.provider(), name)('test')
+
+
+class DefaultTests(unittest.TestCase):
+    """What every type inherits, on the type that lists and describes models as Ollama does."""
+    TAGS = [{'name': 'nomic-embed-text:latest', 'digest': 'aa'}, {'name': 'llama3:8b', 'digest': 'bb'},
+            {'name': 'broken:latest', 'digest': 'cc'}, {'name': 'library/old:latest', 'digest': 'dd'},
+            {'name': 'bge-m3:latest', 'digest': 'ee'}]
+    SHOWN = {'nomic-embed-text:latest': {'capabilities': ['embedding'], 'model_info': {
+                 'general.architecture': 'nomic-bert', 'nomic-bert.context_length': 2048}},
+             'llama3:8b': {'capabilities': ['completion', 'tools'], 'model_info': {
+                 'general.architecture': 'llama', 'llama.context_length': 8192}},
+             'library/old:latest': {'details': {'family': 'bert'}},
+             'bge-m3:latest': {'capabilities': ['embedding', 'completion']}}
+
+    def setUp(self):
+        self.asked, self.stop = [], None
+
+        def request(provider, endpoint, data=None, *args, **named):
+            self.asked.append((endpoint, data and data['model']))
+            if endpoint == '/api/tags':
+                return {'models': [dict(tag) for tag in self.TAGS]}
+            if data['model'] == self.stop:
+                raise RequestCancelled('Request stopped')
+            if data['model'] not in self.SHOWN:
+                raise ProviderError('boom', 500)
+            return dict(self.SHOWN[data['model']])
+        patched = patch.object(OllamaProvider, '_request', request)
+        patched.start()
+        self.addCleanup(patched.stop)
+        self.provider = OllamaProvider('http://localhost:11434')
+
+    def test_embedding_models_are_those_that_embed_or_may(self):
+        models = self.provider.list_embedding_models()
+        # A model that cannot be asked about, or whose answer names no capabilities, may embed.
+        self.assertEqual(models, [dict(self.TAGS[0], context_length=2048), self.TAGS[2], self.TAGS[3], self.TAGS[4]])
+        self.assertEqual(self.asked, [('/api/tags', None)] + [('/api/show', tag['name']) for tag in self.TAGS])
+        self.assertEqual(self.provider.list_models(), self.TAGS)
+        self.stop = 'broken:latest'
+        with self.assertRaises(RequestCancelled):
+            self.provider.list_embedding_models()
+        self.assertEqual(self.asked[-1], ('/api/show', 'broken:latest'))
+
+    def test_a_model_is_found_by_its_name_with_or_without_the_default_tag(self):
+        tag = self.provider.model_tag
+        self.assertEqual(tag('nomic-embed-text'), self.TAGS[0])
+        self.assertEqual(tag('nomic-embed-text:latest'), self.TAGS[0])
+        self.assertEqual(tag('library/old'), self.TAGS[3])
+        self.assertEqual(tag('llama3:8b'), self.TAGS[1])
+        for unknown in ('llama3', 'llama3:latest', 'old', 'gone', ''):
+            with self.subTest(name=unknown):
+                self.assertIsNone(tag(unknown))
+        self.assertEqual(set(self.asked), {('/api/tags', None)})
+        # The name as given wins over the same name completed.
+        with patch.object(self, 'TAGS', [{'name': 'a:latest', 'digest': '1'}, {'name': 'a', 'digest': '2'}]):
+            self.assertEqual((tag('a')['digest'], tag('a:latest')['digest']), ('2', '1'))
+
+    def test_embedding_context_is_what_the_details_say(self):
+        context = self.provider.embedding_context
+        self.assertEqual((context('nomic-embed-text:latest'), context('llama3:8b')), (2048, 8192))
+        self.assertIsNone(context('library/old:latest'))
+        self.assertIsNone(context('bge-m3:latest'))
+        with self.assertRaisesRegex(ProviderError, 'boom'):
+            context('broken:latest')
+
+    def test_ollama_vectors_pass_the_checks_every_type_makes(self):
+        answers = []
+        with patch.object(OllamaProvider, '_request', lambda provider, endpoint, data, *args: answers.pop(0)):
+            answers.append({'embeddings': [[1, 0], [0, 1]], 'model': 'm'})
+            self.assertEqual(self.provider.embed('m', ['a', 'b'], dimensions=2),
+                             {'embeddings': [[1, 0], [0, 1]], 'model': 'm'})
+            for answer, expected in (({'embeddings': [[1, 0]]}, 'incorrect number'), ({}, 'incorrect number'),
+                                     ({'embeddings': [[1, 0], [1, None]]}, 'invalid embedding vector'),
+                                     ({'embeddings': [[1, 0], [0, 0]]}, 'do not match, or a vector is zero'),
+                                     ({'embeddings': [[1, 0], [1, 0, 0]]}, 'do not match, or a vector is zero')):
+                answers.append(answer)
+                with self.subTest(answer=answer), self.assertRaisesRegex(ProviderError, expected):
+                    self.provider.embed('m', ['a', 'b'])
+            answers.append({'embeddings': [[1, 0], [0, 1]]})
+            with self.assertRaisesRegex(ProviderError, 'returned 2 dimensions where 4 were requested'):
+                self.provider.embed('m', ['a', 'b'], dimensions=4)
+            with self.assertRaisesRegex(ProviderError, 'nonempty text'):
+                self.provider.embed('m', [])
+            with self.assertRaisesRegex(ProviderError, 'positive integer'):
+                self.provider.embed('m', 'a', dimensions=0)
 
 
 class TranslationTests(unittest.TestCase):

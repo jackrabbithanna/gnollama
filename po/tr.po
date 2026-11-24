@@ -3823,3 +3823,27 @@ msgstr "Bu model için kullanılamaz."
 #: src/widgets/comparison_view.py
 msgid "Not available for every target."
 msgstr "Her hedef için kullanılamaz."
+
+#: src/providers/base.py
+msgid "The server returned {0} dimensions where {1} were requested. It may not support choosing dimensions for this model."
+msgstr "Sunucu, {1} boyut istenmişken {0} boyut döndürdü. Bu model için boyut seçmeyi desteklemiyor olabilir."
+
+#: src/knowledge.py
+msgid "A chunk is estimated at {0} tokens. The embedding model accepts {1}, and this server shortens longer text without notice. The estimate is rough, so nothing above {2} is sent. Use a smaller chunk size."
+msgstr "Bir parçanın {0} token olduğu tahmin ediliyor. Gömme modeli {1} kabul ediyor ve bu sunucu daha uzun metni haber vermeden kısaltıyor. Tahmin kabadır, bu yüzden {2} üzerindeki hiçbir şey gönderilmez. Daha küçük bir parça boyutu kullanın."
+
+#: src/knowledge.py
+msgid "The search query is estimated at {0} tokens. The embedding model accepts {1}, and this server shortens longer text without notice. The estimate is rough, so nothing above {2} is sent. Shorten the query."
+msgstr "Arama sorgusunun {0} token olduğu tahmin ediliyor. Gömme modeli {1} kabul ediyor ve bu sunucu daha uzun metni haber vermeden kısaltıyor. Tahmin kabadır, bu yüzden {2} üzerindeki hiçbir şey gönderilmez. Sorguyu kısaltın."
+
+#: src/widgets/knowledge_common.py
+msgid "This model cannot be fully verified: it is recognized by what the server reports about it, not by its contents, so a replacement that reports the same would go unnoticed."
+msgstr "Bu model tam olarak doğrulanamaz: içeriğine göre değil, sunucunun onun hakkında bildirdiklerine göre tanınır; bu yüzden aynısını bildiren bir değişiklik fark edilmez."
+
+#: src/widgets/knowledge_common.py
+msgid "No embedding models are available. Try refreshing later."
+msgstr "Kullanılabilir gömme modeli yok. Daha sonra yenilemeyi deneyin."
+
+#: src/widgets/knowledge_common.py
+msgid "No embedding models found on this server. Load one there, then refresh."
+msgstr "Bu sunucuda gömme modeli bulunamadı. Orada bir tane yükleyin, sonra yenileyin."

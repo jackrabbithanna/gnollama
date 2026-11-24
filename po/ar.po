@@ -3779,3 +3779,27 @@ msgstr "غير متاح لهذا النموذج."
 #: src/widgets/comparison_view.py
 msgid "Not available for every target."
 msgstr "غير متاح لكل الأهداف."
+
+#: src/providers/base.py
+msgid "The server returned {0} dimensions where {1} were requested. It may not support choosing dimensions for this model."
+msgstr "أعاد الخادم {0} بُعدًا بينما طُلب {1}. ربما لا يدعم اختيار الأبعاد لهذا النموذج."
+
+#: src/knowledge.py
+msgid "A chunk is estimated at {0} tokens. The embedding model accepts {1}, and this server shortens longer text without notice. The estimate is rough, so nothing above {2} is sent. Use a smaller chunk size."
+msgstr "يُقدَّر المقطع بـ {0} وحدة نصية. نموذج التضمين يقبل {1}، وهذا الخادم يقصّر النص الأطول دون إشعار. التقدير تقريبي، لذا لا يُرسل ما يزيد على {2}. استخدم حجم مقطع أصغر."
+
+#: src/knowledge.py
+msgid "The search query is estimated at {0} tokens. The embedding model accepts {1}, and this server shortens longer text without notice. The estimate is rough, so nothing above {2} is sent. Shorten the query."
+msgstr "يُقدَّر استعلام البحث بـ {0} وحدة نصية. نموذج التضمين يقبل {1}، وهذا الخادم يقصّر النص الأطول دون إشعار. التقدير تقريبي، لذا لا يُرسل ما يزيد على {2}. قصّر الاستعلام."
+
+#: src/widgets/knowledge_common.py
+msgid "This model cannot be fully verified: it is recognized by what the server reports about it, not by its contents, so a replacement that reports the same would go unnoticed."
+msgstr "لا يمكن التحقق من هذا النموذج بالكامل: يُتعرَّف عليه بما يذكره الخادم عنه لا بمحتواه، ولذلك لن يُلاحَظ استبداله بنموذج يذكر المعلومات نفسها."
+
+#: src/widgets/knowledge_common.py
+msgid "No embedding models are available. Try refreshing later."
+msgstr "لا توجد نماذج تضمين متاحة. حاول التحديث لاحقًا."
+
+#: src/widgets/knowledge_common.py
+msgid "No embedding models found on this server. Load one there, then refresh."
+msgstr "لم يُعثر على نماذج تضمين على هذا الخادم. حمّل واحدًا هناك ثم حدّث."

@@ -3858,3 +3858,27 @@ msgstr "Haipatikani kwa modeli hii."
 #: src/widgets/comparison_view.py
 msgid "Not available for every target."
 msgstr "Haipatikani kwa kila lengo."
+
+#: src/providers/base.py
+msgid "The server returned {0} dimensions where {1} were requested. It may not support choosing dimensions for this model."
+msgstr "Seva ilirudisha vipimo {0} ilhali {1} viliombwa. Huenda haitumii uchaguzi wa vipimo kwa modeli hii."
+
+#: src/knowledge.py
+msgid "A chunk is estimated at {0} tokens. The embedding model accepts {1}, and this server shortens longer text without notice. The estimate is rough, so nothing above {2} is sent. Use a smaller chunk size."
+msgstr "Kipande kinakadiriwa kuwa tokeni {0}. Modeli ya embedding hupokea {1}, na seva hii hufupisha maandishi marefu zaidi bila taarifa. Makadirio ni ya takriban, kwa hivyo hakuna kinachotumwa zaidi ya {2}. Tumia ukubwa mdogo wa kipande."
+
+#: src/knowledge.py
+msgid "The search query is estimated at {0} tokens. The embedding model accepts {1}, and this server shortens longer text without notice. The estimate is rough, so nothing above {2} is sent. Shorten the query."
+msgstr "Hoja ya utafutaji inakadiriwa kuwa tokeni {0}. Modeli ya embedding hupokea {1}, na seva hii hufupisha maandishi marefu zaidi bila taarifa. Makadirio ni ya takriban, kwa hivyo hakuna kinachotumwa zaidi ya {2}. Fupisha hoja."
+
+#: src/widgets/knowledge_common.py
+msgid "This model cannot be fully verified: it is recognized by what the server reports about it, not by its contents, so a replacement that reports the same would go unnoticed."
+msgstr "Modeli hii haiwezi kuthibitishwa kikamilifu: inatambuliwa kwa kile seva inachoripoti kuihusu, si kwa maudhui yake, kwa hivyo mbadala unaoripoti vivyo hivyo haungegunduliwa."
+
+#: src/widgets/knowledge_common.py
+msgid "No embedding models are available. Try refreshing later."
+msgstr "Hakuna modeli za embedding zinazopatikana. Jaribu kuonyesha upya baadaye."
+
+#: src/widgets/knowledge_common.py
+msgid "No embedding models found on this server. Load one there, then refresh."
+msgstr "Hakuna modeli za embedding zilizopatikana kwenye seva hii. Pakia moja huko, kisha onyesha upya."

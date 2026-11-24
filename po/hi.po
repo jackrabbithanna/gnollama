@@ -3804,3 +3804,27 @@ msgstr "इस मॉडल के लिए उपलब्ध नहीं।"
 #: src/widgets/comparison_view.py
 msgid "Not available for every target."
 msgstr "हर लक्ष्य के लिए उपलब्ध नहीं।"
+
+#: src/providers/base.py
+msgid "The server returned {0} dimensions where {1} were requested. It may not support choosing dimensions for this model."
+msgstr "सर्वर ने {0} आयाम लौटाए जबकि {1} माँगे गए थे। हो सकता है कि यह इस मॉडल के लिए आयाम चुनने का समर्थन न करता हो।"
+
+#: src/knowledge.py
+msgid "A chunk is estimated at {0} tokens. The embedding model accepts {1}, and this server shortens longer text without notice. The estimate is rough, so nothing above {2} is sent. Use a smaller chunk size."
+msgstr "एक खंड का अनुमान {0} टोकन है। एम्बेडिंग मॉडल {1} स्वीकार करता है, और यह सर्वर लंबे पाठ को बिना सूचना के छोटा कर देता है। अनुमान मोटा है, इसलिए {2} से ऊपर कुछ नहीं भेजा जाता। छोटा खंड आकार उपयोग करें।"
+
+#: src/knowledge.py
+msgid "The search query is estimated at {0} tokens. The embedding model accepts {1}, and this server shortens longer text without notice. The estimate is rough, so nothing above {2} is sent. Shorten the query."
+msgstr "खोज क्वेरी का अनुमान {0} टोकन है। एम्बेडिंग मॉडल {1} स्वीकार करता है, और यह सर्वर लंबे पाठ को बिना सूचना के छोटा कर देता है। अनुमान मोटा है, इसलिए {2} से ऊपर कुछ नहीं भेजा जाता। क्वेरी छोटी करें।"
+
+#: src/widgets/knowledge_common.py
+msgid "This model cannot be fully verified: it is recognized by what the server reports about it, not by its contents, so a replacement that reports the same would go unnoticed."
+msgstr "इस मॉडल को पूरी तरह सत्यापित नहीं किया जा सकता: इसे इसकी सामग्री से नहीं, बल्कि सर्वर द्वारा दी गई जानकारी से पहचाना जाता है, इसलिए वही जानकारी देने वाला बदला हुआ मॉडल पकड़ में नहीं आएगा।"
+
+#: src/widgets/knowledge_common.py
+msgid "No embedding models are available. Try refreshing later."
+msgstr "कोई एम्बेडिंग मॉडल उपलब्ध नहीं है। बाद में रीफ़्रेश करके देखें।"
+
+#: src/widgets/knowledge_common.py
+msgid "No embedding models found on this server. Load one there, then refresh."
+msgstr "इस सर्वर पर कोई एम्बेडिंग मॉडल नहीं मिला। वहाँ एक लोड करें, फिर रीफ़्रेश करें।"

@@ -13,6 +13,7 @@ from contextlib import contextmanager
 from gettext import gettext as _
 
 from gi.repository import Gio, GLib
+from .context import estimate_tokens
 from .providers import ProviderError, RequestCancelled, validate_url
 from .services import host_key
 from .vectors import vector_blob, validate_dimensions, validate_search_metric
@@ -25,8 +26,9 @@ PRESETS = {
     'qwen3': ('', 'Instruct: Given a web search query, retrieve relevant passages that answer the query\nQuery:'),
     'custom': ('', ''),
 }
-DEFAULT_RAG: Dict[str, Any] = dict(enabled=False, config_id=None, host='', model='', selection={}, collection_ids=[],
-                   count=6, budget=8000, minimum=None, metric='cosine', maximum=None)
+# `host_kind` is the embedding host's type; options saved before other types could embed lack it.
+DEFAULT_RAG: Dict[str, Any] = dict(enabled=False, config_id=None, host='', host_kind='ollama', model='', selection={},
+                   collection_ids=[], count=6, budget=8000, minimum=None, metric='cosine', maximum=None)
 SOURCE_INSTRUCTIONS = (
     'Use the supplied reference passages to answer the question. Prefer these sources; '
     'say when they do not contain the answer. Cite passage labels such as [S1] when the '
@@ -113,10 +115,42 @@ def canonical_model(name):
     return name if ':' in name.rsplit('/', 1)[-1] else name + ':latest'
 
 
+def embedding_host_key(url, kind=None):
+    """The `host_key` of an embedding host as a collection, index, or chat stores it, or None if it names no server.
+
+    A stored host without a type was built on an Ollama host.
+    """
+    try:
+        return host_key(dict(provider=kind, hostname=url))
+    except (ProviderError, AttributeError, TypeError):
+        return None
+
+
+def input_limit(connection, model, cancel=None):
+    """The tokens `model` accepts in one input where over-long text must be refused here, else None."""
+    # Ollama refuses over-long input itself (`truncate: false`), so nothing changes for it.
+    if connection.capabilities.refuses_long_input:
+        return None
+    limit = connection.embedding_context(model, cancellable=cancel)
+    return limit if type(limit) is int and limit > 0 else None
+
+
+def allowed_estimate(limit):
+    """The largest token estimate sent to a model that accepts `limit` tokens.
+
+    The estimate runs low for dense text, so a fifth of the limit is held back: a refused
+    text can be shortened, and one the server cuts short corrupts the index unseen.
+    """
+    return limit * 4 // 5
+
+
+def too_long(text, limit):
+    return limit is not None and estimate_tokens(text) > allowed_estimate(limit)
+
+
 def model_identity(connection, model, cancel=None, digest=None):
     check_cancel(cancel)
-    tag = next((m for m in connection.list_models(cancellable=cancel)
-                if canonical_model(m['name']) == canonical_model(model)), None)
+    tag = connection.model_tag(model, cancellable=cancel)
     if tag is None or not tag.get('digest'):
         raise ValueError(_('The embedding model is unavailable or its digest is missing. Choose a compatible host and model.'))
     if digest is not None and tag['digest'] != digest:
@@ -146,6 +180,8 @@ def validate_rag(options):
             not isinstance(id, str) or not id for id in options.get('collection_ids', [])):
         raise ValueError(_('Invalid collection selection. Choose sources again.'))
     validate_url(options.get('host', ''))
+    if not isinstance(options.get('host_kind') or 'ollama', str):
+        raise ValueError(_('Invalid host type.'))
     if not options.get('model'):
         raise ValueError(_('Select the embedding model on the chosen host.'))
     if type(options.get('count')) is not int or not 1 <= options['count'] <= 20:
@@ -202,14 +238,11 @@ class KnowledgeService:
 
     def busy(self, host, model):
         """Whether an embedding call or a waiting job uses `model` on a host record or connection."""
-        (kind, url), name = host_key(host), canonical_model(model)
+        key, name = host_key(host), canonical_model(model)
         with self._lock:
-            if ((kind, url), name) in self._active:
-                return True
-            # A job knows only its address, which names the host there that can embed.
-            return self.providers.capabilities(dict(provider=kind)).embeddings and any(
-                not j['done'] and j.get('host') == url and canonical_model(j.get('model', '')) == name
-                for j in self.jobs.values())
+            return (key, name) in self._active or any(
+                not j['done'] and j.get('host') and embedding_host_key(j['host'], j.get('host_kind')) == key
+                and canonical_model(j.get('model', '')) == name for j in self.jobs.values())
 
     def reserve_model(self, host, model, is_busy):
         """Serialize destructive model operations against newly starting embedding calls."""
@@ -257,23 +290,22 @@ class KnowledgeService:
             raise error
         return value
 
-    def require_host(self, host):
-        """Return the connection of the configured host at the address `host` that can embed.
+    def require_host(self, host, kind=None):
+        """Return the connection of the configured host of type `kind` at the address `host`.
 
         A host of another type at that address neither answers for it nor hides it.
         """
-        records = [r for r in self.library.hosts()
-                   if r['hostname'].rstrip('/') == host.rstrip('/') and self.providers.capabilities(r).embeddings]
-        # Collections store the address alone, and every one so far was built on an Ollama host.
-        records.sort(key=lambda r: (r.get('provider') or 'ollama') != 'ollama')
-        if records:
-            return self.providers.connection(records[0])
+        key = embedding_host_key(host, kind)
+        for record in self.library.hosts():
+            if key and embedding_host_key(record['hostname'], record.get('provider')) == key \
+                    and self.providers.capabilities(record).embeddings:
+                return self.providers.connection(record)
         raise ValueError(_('The embedding host was removed. Choose a configured host before continuing.'))
 
     def submit(self, title, function, callback=None, host='', model='', index_id=None, document_id=None,
-               preparation=False, metadata=None, importing=False, allow_update=False):
+               preparation=False, metadata=None, importing=False, allow_update=False, kind=None):
         id = str(uuid.uuid4())
-        job = dict(id=id, title=title, host=host.rstrip('/'), model=model, index_id=index_id,
+        job = dict(id=id, title=title, host=host.rstrip('/'), host_kind=kind or 'ollama', model=model, index_id=index_id,
                    document_id=document_id, progress=_('Queued'), cancel=Gio.Cancellable(), done=False, error=None)
         job.update(metadata or {})
         with self._lock:
@@ -338,7 +370,7 @@ class KnowledgeService:
                 config = self.library.embedding_config(index['config_id'])
                 try:
                     self.create_index(id, index['host'], index['model'], config, index['chunk_size'], index['overlap'],
-                                      index_id=index['id'], prepared=True, replacing=True)
+                                      index_id=index['id'], prepared=True, replacing=True, kind=index['host_kind'])
                 except ValueError as exc:
                     result['warnings'].append(str(exc))
             # Allow builds of the committed text while still excluding another replacement.
@@ -361,21 +393,23 @@ class KnowledgeService:
                 self._document_updates.discard(id)
             raise
 
-    def create_collection(self, name, host, model, config, size=1600, overlap=200, document_ids=(), callback=None):
+    def create_collection(self, name, host, model, config, size=1600, overlap=200, document_ids=(), callback=None,
+                          kind=None):
         if not name.strip():
             raise ValueError(_('Enter a collection name.'))
         # Validate settings even for an empty collection.
         list(chunk_text('', size, overlap))
-        self.require_host(host)
+        self.require_host(host, kind)
         stamp = time.time()
-        collection = dict(id=str(uuid.uuid4()), name=name.strip(), config_id=config['id'], host=host, model=model,
+        collection = dict(id=str(uuid.uuid4()), name=name.strip(), config_id=config['id'], host=host,
+                          host_kind=kind or 'ollama', model=model,
                           chunk_size=size, overlap=overlap, created_at=stamp, updated_at=stamp)
         def run(cancel, progress):
             self._write(self.library.add_embedding_config, config, cancel=cancel)
             self._write(self.library.create_knowledge_collection, collection, tuple(document_ids), cancel=cancel)
             self._prepare_collection(collection['id'], document_ids, cancel, progress)
             return collection['id']
-        return self.submit(_('Create collection'), run, callback, host, model, preparation=True,
+        return self.submit(_('Create collection'), run, callback, host, model, preparation=True, kind=kind,
                            metadata=dict(digest=config['digest'], collection_id=collection['id'], document_ids=list(document_ids)))
 
     def import_document(self, document, collection_id, callback=None):
@@ -401,7 +435,7 @@ class KnowledgeService:
         return self.submit(_('Prepare collection: {0}').format(collection['name']),
                           lambda cancel, progress: self._prepare_collection(id, document_ids, cancel, progress),
                           callback, collection['host'], collection['model'], preparation=True,
-                          metadata=dict(digest=config['digest'], collection_id=id, document_ids=list(document_ids)))
+                          kind=collection['host_kind'], metadata=dict(digest=config['digest'], collection_id=id, document_ids=list(document_ids)))
 
     def _prepare_collection(self, id, document_ids, cancel, progress):
         check_cancel(cancel)
@@ -411,7 +445,8 @@ class KnowledgeService:
         # in this single-worker executor.
         with self._lock:
             queued = [dict(id=j['index_id'], document_id=j['document_id'], config_id=j['config_id'],
-                           host=j['host'], model=j['model'], chunk_size=j['chunk_size'], overlap=j['overlap'],
+                           host=j['host'], host_kind=j['host_kind'], model=j['model'],
+                           chunk_size=j['chunk_size'], overlap=j['overlap'],
                            created_at=j['created_at']) for j in self.jobs.values()
                       if not j['done'] and not j['cancel'].is_cancelled() and j.get('index_id') and j.get('config_id')]
         indexes = self._write(self.library.prepare_collection_indexes, id, tuple(document_ids), queued)
@@ -422,7 +457,7 @@ class KnowledgeService:
                 config = self.library.embedding_config(index['config_id'])
                 self.create_index(index['document_id'], index['host'], index['model'], config,
                                   index['chunk_size'], index['overlap'], index_id=index['id'], prepared=True,
-                                  title=_('Create embeddings: {0}').format(index['title']))
+                                  title=_('Create embeddings: {0}').format(index['title']), kind=index['host_kind'])
                 pending.pop(0)
         finally:
             for index in pending:
@@ -432,7 +467,7 @@ class KnowledgeService:
         return id
 
     def create_index(self, document_id, host, model, config, size=1600, overlap=200, callback=None, index_id=None,
-                     prepared=False, title=None, replacing=False):
+                     prepared=False, title=None, replacing=False, kind=None):
         with self._lock:
             if index_id:
                 active = next((j for j in self.jobs.values() if j.get('index_id') == index_id and not j['done']
@@ -455,12 +490,19 @@ class KnowledgeService:
                 self._write(self.library.add_embedding_config, config, cancel=cancel)
                 existing = self.library.embedding_config(config['id'])
                 dimension = existing['dimensions']
-                index = dict(id=index_id, document_id=document_id, config_id=config['id'], host=host, model=model,
+                index = dict(id=index_id, document_id=document_id, config_id=config['id'], host=host,
+                             host_kind=kind or 'ollama', model=model,
                              chunk_size=size, overlap=overlap, created_at=time.time())
                 self._write(self.library.begin_knowledge_index, index, prepared, cancel=cancel)
-                connection = self.require_host(host)
+                connection = self.require_host(host, kind)
                 with self.using(connection, model, cancel):
                     identity = model_identity(connection, model, cancel, config['digest'])
+                    limit = input_limit(connection, model, cancel)
+                    for chunk in chunks if limit else ():
+                        text = config['document_prefix'] + document['text'][chunk['start']:chunk['end']]
+                        if too_long(text, limit):
+                            raise ValueError(_('A chunk is estimated at {0} tokens. The embedding model accepts {1}, and this server shortens longer text without notice. The estimate is rough, so nothing above {2} is sent. Use a smaller chunk size.').format(
+                                estimate_tokens(text), limit, allowed_estimate(limit)))
                     queue, ordinal = list(chunks), 0
                     while queue:
                         check_cancel(cancel)
@@ -515,7 +557,7 @@ class KnowledgeService:
                                      'interrupted' if cancel.is_cancelled() else 'failed', str(exc), on_done=self.changed)
                 raise
         return self.submit(title or _('Create embeddings'), run, callback, host, model, index_id, document_id,
-                           allow_update=replacing,
+                           allow_update=replacing, kind=kind,
                            metadata=dict(digest=config['digest'], config_id=config['id'], chunk_size=size,
                                          overlap=overlap, created_at=time.time()))
 
@@ -528,9 +570,13 @@ class KnowledgeService:
         if not query.strip():
             raise ValueError(_('Enter a search query.'))
         host, model = options['host'], options['model']
-        connection = self.require_host(host)
+        connection = self.require_host(host, options.get('host_kind'))
         with self.using(connection, model, cancel):
             model_identity(connection, model, cancel, config['digest'])
+            limit = input_limit(connection, model, cancel)
+            if too_long(config['query_prefix'] + query, limit):
+                raise ValueError(_('The search query is estimated at {0} tokens. The embedding model accepts {1}, and this server shortens longer text without notice. The estimate is rough, so nothing above {2} is sent. Shorten the query.').format(
+                    estimate_tokens(config['query_prefix'] + query), limit, allowed_estimate(limit)))
             response = connection.embed(model, config['query_prefix'] + query,
                                     dimensions=config['requested_dimensions'], cancellable=cancel)
             model_identity(connection, model, cancel, config['digest'])

@@ -3697,3 +3697,27 @@ msgstr "このモデルでは利用できません。"
 #: src/widgets/comparison_view.py
 msgid "Not available for every target."
 msgstr "一部のターゲットでは利用できません。"
+
+#: src/providers/base.py
+msgid "The server returned {0} dimensions where {1} were requested. It may not support choosing dimensions for this model."
+msgstr "サーバーは {1} 次元の要求に対して {0} 次元を返しました。このモデルでは次元数の指定に対応していない可能性があります。"
+
+#: src/knowledge.py
+msgid "A chunk is estimated at {0} tokens. The embedding model accepts {1}, and this server shortens longer text without notice. The estimate is rough, so nothing above {2} is sent. Use a smaller chunk size."
+msgstr "チャンクは推定 {0} トークンです。埋め込みモデルが受け付けるのは {1} トークンで、このサーバーは長いテキストを通知なく切り詰めます。推定は大まかなため、{2} を超えるものは送信しません。チャンクサイズを小さくしてください。"
+
+#: src/knowledge.py
+msgid "The search query is estimated at {0} tokens. The embedding model accepts {1}, and this server shortens longer text without notice. The estimate is rough, so nothing above {2} is sent. Shorten the query."
+msgstr "検索クエリは推定 {0} トークンです。埋め込みモデルが受け付けるのは {1} トークンで、このサーバーは長いテキストを通知なく切り詰めます。推定は大まかなため、{2} を超えるものは送信しません。クエリを短くしてください。"
+
+#: src/widgets/knowledge_common.py
+msgid "This model cannot be fully verified: it is recognized by what the server reports about it, not by its contents, so a replacement that reports the same would go unnoticed."
+msgstr "このモデルは完全には検証できません。内容ではなくサーバーの報告内容で識別するため、同じ報告をする別のモデルに置き換わっても気付けません。"
+
+#: src/widgets/knowledge_common.py
+msgid "No embedding models are available. Try refreshing later."
+msgstr "利用できる埋め込みモデルがありません。後でもう一度更新してください。"
+
+#: src/widgets/knowledge_common.py
+msgid "No embedding models found on this server. Load one there, then refresh."
+msgstr "このサーバーに埋め込みモデルが見つかりません。サーバー側で読み込んでから更新してください。"

@@ -9,20 +9,25 @@ from src.providers import PROVIDERS, OpenRouterProvider, ProviderError, supports
 from src.providers.openai import fingerprint
 from src.providers.openrouter import thinking_levels
 from test_lmstudio import SCHEMA, HostFixture, KeyChecks, Loopback
-from test_openai import USER, Handler
+from test_openai import USER, Handler, vectors
 
 PNG = 'iVBORw0KGgoAAAAAAAAAAAAAAAAAAAAA'
 TEXT, VISION, EFFORTS = 'inference-net/schematron-v2-turbo', 'mistralai/pixtral-large-2502', 'thinkingmachines/inkling-2-mini'
 MANDATORY, ALWAYS, SWITCH = 'google/gemini-4-neon', 'liquid/lfm-3-1.7b', 'tencent/hy4-flash'
 AUDIO, ROUTER, FREE = 'google/lyria-3-pro-preview', 'openrouter/auto', 'nvidia/nemotron-3.5-lightning:free'
 LISTED = [TEXT, VISION, EFFORTS, MANDATORY, ALWAYS, SWITCH, AUDIO, ROUTER, FREE]
+COHERE, NEMOTRON, VOYAGE, BGE = ('cohere/embed-5-fast', 'nvidia/nemotron-3.5-embed-1b:free',
+                                 'mongodb/voyage-4-lite', 'baai/bge-m3')
+EMBEDDERS = [COHERE, NEMOTRON, VOYAGE, BGE]
 
 
 class Catalog(Loopback):
     """The one address the type accepts, moved to the loopback server."""
     RECORDED = 'openrouter_models.json'
+    EMBEDDERS = 'openrouter_embeddings.json'
     KIND = OpenRouterProvider
     MODEL = EFFORTS
+    EMBEDDER = NEMOTRON
     NAME = 'Router'
 
     def locate(self):
@@ -34,6 +39,9 @@ class Catalog(Loopback):
     def save_host(self):
         return self.storage.save_host(self.NAME, self.url, True, provider='openrouter',
                                       api_key='sk-or-test', session_only=True)
+
+    def embedder(self, name):
+        return next(model for model in self.server.embedders['data'] if model['id'] == name)
 
 
 class ModelTests(Catalog, KeyChecks, unittest.TestCase):
@@ -111,6 +119,87 @@ class ModelTests(Catalog, KeyChecks, unittest.TestCase):
         del self.entry(TEXT)['canonical_slug']
         self.assertNotIn('digest', self.provider().list_models()[0])
 
+    def test_embedding_models_come_from_their_own_list(self):
+        provider = self.provider()
+        models = provider.list_embedding_models()
+        self.assertEqual(self.server.received, [('/api/v1/embeddings/models', None, None)])
+        self.assertEqual([model['name'] for model in models], EMBEDDERS)
+        self.assertEqual(models[1], {'name': NEMOTRON, 'digest': fingerprint('nvidia/nemotron-3.5-embed-1b-20261021'),
+                                     'context_length': 32768})
+        # The model list is as it was: neither list holds a model of the other.
+        self.assertEqual([model['name'] for model in provider.list_models()], LISTED)
+        self.assertEqual(self.server.received[-1][0], '/api/v1/models')
+        self.embedder(BGE).update(context_length=None, canonical_slug='')
+        self.assertEqual(provider.list_embedding_models()[3], {'name': BGE})
+        self.server.embedders = {'error': {'message': 'Catalog unavailable'}}
+        with self.assertRaisesRegex(ProviderError, '^Catalog unavailable$'):
+            provider.list_embedding_models()
+        self.server.embedders = {'data': None}
+        with self.assertRaisesRegex(ProviderError, 'did not return a model list'):
+            provider.list_embedding_models()
+
+    def test_a_chat_or_embedding_model_is_found_with_its_fingerprint(self):
+        provider = self.provider()
+        self.assertEqual(provider.model_tag(NEMOTRON), provider.list_embedding_models()[1])
+        self.assertEqual(provider.model_tag(COHERE)['digest'], fingerprint('cohere/embed-5-fast-20261029'))
+        self.assertEqual(provider.model_tag(EFFORTS), provider.list_models()[2])
+        self.assertEqual(provider.model_tag(FREE)['digest'], fingerprint(self.entry(FREE)['canonical_slug']))
+        for unknown in ('gone', NEMOTRON.removesuffix(':free'), AUDIO + ':free'):
+            with self.subTest(model=unknown):
+                self.assertIsNone(provider.model_tag(unknown))
+        # An embedding model is found without reading the long list.
+        del self.server.received[:]
+        provider.model_tag(VOYAGE)
+        self.assertEqual([request[0] for request in self.server.received], ['/api/v1/embeddings/models'])
+        before = provider.model_tag(VOYAGE)['digest']
+        self.embedder(VOYAGE).update(context_length=1, name='Renamed', pricing={})
+        self.assertEqual(provider.model_tag(VOYAGE)['digest'], before)
+        self.embedder(VOYAGE)['canonical_slug'] += '-v2'
+        self.assertNotEqual(provider.model_tag(VOYAGE)['digest'], before)
+        self.assertEqual(provider.model_tag(COHERE)['digest'], fingerprint('cohere/embed-5-fast-20261029'))
+
+    def test_embedding_context_and_details_come_from_the_embedding_list(self):
+        provider = self.provider()
+        self.assertEqual([provider.embedding_context(name) for name in EMBEDDERS], [128000, 32768, 32000, 8194])
+        self.assertEqual({request[0] for request in self.server.received}, {'/api/v1/embeddings/models'})
+        for unknown in ('gone', EFFORTS):
+            with self.subTest(model=unknown), self.assertRaisesRegex(ProviderError, 'no longer available'):
+                provider.embedding_context(unknown)
+        free = provider.show_model(NEMOTRON)
+        self.assertEqual(free, {'capabilities': ['embedding'], 'context_length': 32768,
+                                'pricing': {'prompt': '0', 'completion': '0'}})
+        self.assertEqual([supports(free, name) for name in ('embedding', 'completion', 'tools')], [True, False, False])
+        self.assertEqual(provider.show_model(COHERE), {
+            'capabilities': ['embedding'], 'context_length': 128000,
+            'pricing': {'prompt': '0.00000008', 'completion': '0', 'image_token': '0.0000004'}})
+        # It lists no parameters, so nothing about the host's options is narrowed by it.
+        self.assertIs(provider.model_capabilities(free), provider.capabilities)
+        self.embedder(BGE).update(context_length='8194', pricing=None)
+        self.assertEqual(provider.show_model(BGE), {'capabilities': ['embedding']})
+        self.assertIsNone(provider.embedding_context(BGE))
+        # A chat model is still described from the model list alone.
+        del self.server.received[:]
+        self.assertEqual(provider.show_model(TEXT)['capabilities'], ['completion'])
+        self.assertEqual([request[0] for request in self.server.received], ['/api/v1/models'])
+        with self.assertRaisesRegex(ProviderError, 'no longer available'):
+            provider.show_model('gone')
+
+    def test_embeddings_go_to_the_fixed_address_without_the_routing_rule_of_a_chat(self):
+        self.server.embeddings = vectors([0.25, 0.5], [1, 0], order=[1, 0])
+        self.assertEqual(self.keyed().embed(NEMOTRON, ['a', 'b'], dimensions=2), {'embeddings': [[0.25, 0.5], [1, 0]]})
+        self.assertEqual(self.server.received[-1], ('/api/v1/embeddings', {
+            'model': NEMOTRON, 'input': ['a', 'b'], 'dimensions': 2}, 'Bearer sk-secret'))
+        with self.assertRaisesRegex(ProviderError, 'returned 2 dimensions where 8 were requested'):
+            self.keyed().embed(NEMOTRON, ['a', 'b'], dimensions=8)
+        with self.assertRaisesRegex(ProviderError, 'does not accept: keep_alive'):
+            self.keyed().embed(NEMOTRON, 'a', keep_alive=0)
+        self.server.status, self.server.body = 429, b'{"error": {"message": "Rate limit exceeded: free-models-per-day"}}'
+        with self.assertRaisesRegex(ProviderError, 'usage or rate limit'):
+            self.keyed().embed(NEMOTRON, 'a')
+        self.server.status = 200
+        with self.assertRaisesRegex(ProviderError, 'OpenRouter requires'):
+            OpenRouterProvider('https://example.com/api').embed(NEMOTRON, 'a')
+
     def test_thinking_settings_are_sent_as_the_reasoning_object(self):
         self.assertFalse({'reasoning', 'reasoning_effort'} & set(self.body()))
         for setting, sent in ((False, {'effort': 'none'}), (True, {'enabled': True}), ('low', {'effort': 'low'}),
@@ -165,8 +254,10 @@ class DeclarationTests(unittest.TestCase):
         self.assertEqual(cls(cls.fixed_url)._address('/chat/completions'), 'https://openrouter.ai/api/v1/chat/completions')
         self.assertEqual(cls(cls.fixed_url)._address('/models'), 'https://openrouter.ai/api/v1/models')
         offered = {name for name, value in vars(caps).items() if value is True}
-        self.assertEqual(offered, {'thinking_levels', 'structured_output', 'tools', 'logprobs', 'thinking_text',
-                                   'sampling_extras'})
+        self.assertEqual(offered, {'embeddings', 'thinking_levels', 'structured_output', 'tools', 'logprobs',
+                                   'thinking_text', 'sampling_extras'})
+        self.assertEqual(cls(cls.fixed_url)._address('/embeddings/models'),
+                         'https://openrouter.ai/api/v1/embeddings/models')
         self.assertEqual(caps.options_notice, '')
         self.assertIs(PROVIDERS['openrouter'], cls)
 

@@ -9,7 +9,7 @@ from gettext import gettext as _
 from gi.repository import Soup
 
 from ..credentials import CredentialError
-from .base import Capabilities, Provider
+from .base import Capabilities, Provider, check_vectors, embedding_texts
 from .transport import ProviderError, RequestCancelled, error_text, validate_url
 
 LABEL = 'OpenAI-Compatible Server'
@@ -212,7 +212,7 @@ def table(value) -> dict:
 
 @dataclass(frozen=True)
 class OpenAICompatibleProvider(Provider):
-    """Chat and model listing under /v1, with an optional bearer key."""
+    """Chat, embeddings, and model listing under /v1, with an optional bearer key."""
     kind = 'openai'
     label = LABEL
     default_url = ''
@@ -221,8 +221,8 @@ class OpenAICompatibleProvider(Provider):
     name_example = 'For example: Local Server'
     url_example = 'http://localhost:8080'
     key_optional = True
-    capabilities = Capabilities(thinking_levels=True, structured_output=True, tools=True, logprobs=True,
-                                thinking_text=True, options_notice=NOTICE)
+    capabilities = Capabilities(embeddings=True, thinking_levels=True, structured_output=True, tools=True,
+                                logprobs=True, thinking_text=True, options_notice=NOTICE)
     optional_suffix = '/v1'
     json_mode = JSON_OBJECT  # What asks for JSON without a schema.
 
@@ -272,12 +272,41 @@ class OpenAICompatibleProvider(Provider):
                 if isinstance(model, dict) and isinstance(model.get(name), str) and model[name]]
 
     def list_models(self, timeout=10, cancellable=None):
-        return [{'name': model['id']} for model in self._listed(lambda: self._address('/models'), 'data', 'id',
-                                                                timeout, cancellable)]
+        # The server gives nothing to tell one build of a model from another, so the name alone identifies it.
+        return [{'name': model['id'], 'digest': fingerprint(model['id'])}
+                for model in self._listed(lambda: self._address('/models'), 'data', 'id', timeout, cancellable)]
+
+    def list_embedding_models(self, timeout=10, cancellable=None):
+        # The list does not say which models embed.
+        return self.list_models(timeout=timeout, cancellable=cancellable)
 
     def show_model(self, name, timeout=10, cancellable=None):
         # The server reports nothing about a model, so its capabilities stay unknown.
         return {'thinking_levels': list(THINKING_LEVELS)}
+
+    def embed(self, model, input, dimensions=None, keep_alive=None, timeout=300, cancellable=None):
+        """Return validated embeddings under `embeddings`, in the order of the texts.
+
+        The API cannot be told to refuse an input longer than the model's context, and a
+        server may shorten one without saying so; the caller checks the length first.
+        """
+        texts = embedding_texts(input, dimensions)
+        if keep_alive is not None:
+            raise ProviderError(_('This server does not accept: {0}.').format('keep_alive'))
+        data = {'model': model, 'input': texts}
+        if dimensions is not None:
+            data['dimensions'] = dimensions
+        result = self.transport.request(lambda: self._address('/embeddings'), lambda: data, 'POST',
+                                        timeout, cancellable, **self._hooks())
+        rows = result.get('data')
+        # Each vector says which text it is for; the order they arrive in is not promised.
+        places = {row.get('index'): row.get('embedding') for row in rows if isinstance(row, dict)
+                  and type(row.get('index')) is int} if isinstance(rows, list) else {}
+        if not isinstance(rows, list) or len(rows) != len(texts) or set(places) != set(range(len(texts))):
+            raise ProviderError(_('The server returned an incorrect number of embeddings.'))
+        vectors = [places[index] for index in range(len(texts))]
+        check_vectors(vectors, len(texts), dimensions)
+        return {'embeddings': vectors}
 
     def probe(self, cancellable=None):
         return _('Connected\nAvailable models: {0}').format(len(self.list_models(cancellable=cancellable)))

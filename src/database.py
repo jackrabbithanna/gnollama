@@ -47,6 +47,11 @@ MIGRATIONS: List[Union[str, Callable[..., None]]] = [
     """,
     migrate_workspace,
     migrate_model_conversations,
+    # Version 13: An embedding host is its type and address; every earlier row was built on an Ollama host.
+    """
+    ALTER TABLE knowledge_collections ADD COLUMN host_kind TEXT NOT NULL DEFAULT 'ollama';
+    ALTER TABLE knowledge_indexes ADD COLUMN host_kind TEXT NOT NULL DEFAULT 'ollama';
+    """,
 ]
 
 

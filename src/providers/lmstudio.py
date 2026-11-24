@@ -4,7 +4,7 @@ from gettext import gettext as _
 
 from .base import Capabilities
 from .openai import OpenAICompatibleProvider, effort, find, fingerprint, table
-from .transport import validate_url
+from .transport import ProviderError, validate_url
 
 # The thinking settings as `reasoning_effort` takes them; it refuses "on" and "off".
 EFFORTS = {False: 'none', True: 'medium', 'low': 'low', 'medium': 'medium', 'high': 'high', 'max': 'xhigh'}
@@ -36,6 +36,21 @@ def tag(model):
     return dict(entry, size=size) if type(size) is int else entry
 
 
+def lengths(model):
+    """The context a model is loaded with, if it is loaded, and the most it can be given."""
+    loaded = model.get('loaded_instances')
+    found = dict(context_length=table(table(loaded[0]).get('config')).get('context_length')
+                 if isinstance(loaded, list) and loaded else None,
+                 max_context_length=model.get('max_context_length'))
+    return {key: value for key, value in found.items() if type(value) is int and value > 0}
+
+
+def limit(model):
+    """The tokens one input may hold: a model loads with less than its maximum, and then that limits it."""
+    found = lengths(model)
+    return found.get('context_length') or found.get('max_context_length')
+
+
 def describe(model):
     """The details of one listed model, saying only what the server said."""
     result: dict = {'details': details(model)}
@@ -55,12 +70,7 @@ def describe(model):
         known['thinking'] = any(level is not False for level in result['thinking_levels'])
     if known:
         result['supports'] = known
-    loaded = model.get('loaded_instances')
-    lengths = dict(context_length=table(table(loaded[0]).get('config')).get('context_length')
-                   if isinstance(loaded, list) and loaded else None,
-                   max_context_length=model.get('max_context_length'))
-    # A model loads with less than its maximum, and the loaded size is what limits a request.
-    result.update({key: value for key, value in lengths.items() if type(value) is int})
+    result.update(lengths(model))
     return result
 
 
@@ -69,8 +79,8 @@ class LMStudioProvider(OpenAICompatibleProvider):
     kind = 'lmstudio'
     label = default_name = name_example = 'LM Studio'
     default_url = url_example = 'http://localhost:1234'
-    capabilities = Capabilities(thinking_levels=True, structured_output=True, tools=True, logprobs=True,
-                                sampling_extras=True, thinking_text=True)
+    capabilities = Capabilities(embeddings=True, thinking_levels=True, structured_output=True, tools=True,
+                                logprobs=True, sampling_extras=True, thinking_text=True)
     # The server refuses the `json_object` type.
     json_mode = {'type': 'json_schema', 'json_schema': {'name': 'response', 'schema': {'type': 'object'}}}
 
@@ -86,6 +96,23 @@ class LMStudioProvider(OpenAICompatibleProvider):
 
     def list_models(self, timeout=10, cancellable=None):
         return [tag(model) for model in self._models(timeout, cancellable)]
+
+    def list_embedding_models(self, timeout=10, cancellable=None):
+        # By type alone: the server embeds with a chat model too, and its vectors are of no use.
+        return [dict(tag(model), **({'context_length': limit(model)} if limit(model) else {}))
+                for model in self._models(timeout, cancellable) if model.get('type') == 'embedding']
+
+    def embedding_context(self, name, timeout=10, cancellable=None):
+        model = find(self._models(timeout, cancellable), 'key', name)
+        if 'context_length' not in lengths(model) and model.get('type') == 'embedding':
+            # Not loaded, so only the maximum is known, and a model loads with far less. One word
+            # loads it, and then the server says what it loaded with.
+            try:
+                self.embed(name, 'context', cancellable=cancellable)
+                model = find(self._models(timeout, cancellable), 'key', name)
+            except ProviderError:
+                pass  # The maximum is the best there is; embedding will report what is wrong.
+        return limit(model)
 
     def show_model(self, name, timeout=10, cancellable=None):
         # The list is the only source, so it is read again; loading a model changes what it says.

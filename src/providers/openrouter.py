@@ -2,7 +2,7 @@
 from dataclasses import dataclass, replace
 from gettext import gettext as _
 
-from .base import Capabilities
+from .base import Capabilities, named
 from .openai import OpenAICompatibleProvider, effort, find, fingerprint, table
 from .transport import ProviderError
 
@@ -69,6 +69,24 @@ def describe(model):
     return result
 
 
+def tag(model):
+    slug = model.get('canonical_slug')
+    return {'name': model['id'], **({'digest': fingerprint(slug)} if isinstance(slug, str) and slug else {})}
+
+
+def context(model):
+    length = model.get('context_length')
+    return length if type(length) is int and length > 0 else None
+
+
+def describe_embedding(model):
+    result: dict = {'capabilities': ['embedding']}
+    if context(model):
+        result['context_length'] = context(model)
+    prices = {key: value for key, value in table(model.get('pricing')).items() if isinstance(value, str)}
+    return dict(result, pricing=prices) if prices else result
+
+
 @dataclass(frozen=True)
 class OpenRouterProvider(OpenAICompatibleProvider):
     kind = 'openrouter'
@@ -79,8 +97,8 @@ class OpenRouterProvider(OpenAICompatibleProvider):
     requires_key = True
     key_optional = False
     # Not every model takes every option; the service leaves out what a model's provider lacks.
-    capabilities = Capabilities(thinking_levels=True, structured_output=True, tools=True, logprobs=True,
-                                sampling_extras=True, thinking_text=True)
+    capabilities = Capabilities(embeddings=True, thinking_levels=True, structured_output=True, tools=True,
+                                logprobs=True, sampling_extras=True, thinking_text=True)
 
     @classmethod
     def check_url(cls, url):
@@ -118,12 +136,28 @@ class OpenRouterProvider(OpenAICompatibleProvider):
         return [model for model in self._listed(lambda: self._address('/models'), 'data', 'id', timeout, cancellable)
                 if chats(model)]
 
+    def _embedders(self, timeout, cancellable):
+        # Models that embed have a list of their own. It has come whole; a further page would not be read.
+        return self._listed(lambda: self._address('/embeddings/models'), 'data', 'id', timeout, cancellable)
+
     def list_models(self, timeout=10, cancellable=None):
-        def tag(model):
-            slug = model.get('canonical_slug')
-            return {'name': model['id'], **({'digest': fingerprint(slug)} if isinstance(slug, str) and slug else {})}
         return [tag(model) for model in self._models(timeout, cancellable)]
+
+    def list_embedding_models(self, timeout=10, cancellable=None):
+        return [dict(tag(model), **({'context_length': context(model)} if context(model) else {}))
+                for model in self._embedders(timeout, cancellable)]
+
+    def model_tag(self, name, timeout=10, cancellable=None):
+        # The embedding list first: it is the short one, and a collection asks about a model on it.
+        return (named(self.list_embedding_models(timeout, cancellable), name)
+                or named(self.list_models(timeout, cancellable), name))
+
+    def embedding_context(self, name, timeout=10, cancellable=None):
+        return context(find(self._embedders(timeout, cancellable), 'id', name))
 
     def show_model(self, name, timeout=10, cancellable=None):
         # The catalog has no entry for one model, so the whole list is read again.
-        return describe(find(self._models(timeout, cancellable), 'id', name))
+        for model in self._models(timeout, cancellable):
+            if model['id'] == name:
+                return describe(model)
+        return describe_embedding(find(self._embedders(timeout, cancellable), 'id', name))

@@ -1,13 +1,12 @@
 """Ollama's native HTTP API: a local or self-hosted server, and Ollama Cloud."""
 import copy
-import math
 from dataclasses import dataclass
 from gettext import gettext as _
 
 from gi.repository import Soup
 
 from ..credentials import CredentialError
-from .base import Capabilities, Provider
+from .base import Capabilities, Provider, check_vectors, embedding_texts
 from .transport import ProviderError, RequestCancelled, validate_url
 
 CLOUD_URL = 'https://ollama.com'
@@ -66,7 +65,7 @@ class OllamaProvider(Provider):
                                 thinking_levels=True, structured_output=True, tools=True,
                                 logprobs=True, keep_alive=True, raw_generate=True,
                                 sampling_extras=True, context_size=True, thinking_text=True,
-                                timing_stats=True, model_verification=True)
+                                timing_stats=True, model_verification=True, refuses_long_input=True)
 
     @property
     def key(self):
@@ -114,28 +113,14 @@ class OllamaProvider(Provider):
 
     def embed(self, model, input, dimensions=None, keep_alive=None, timeout=300, cancellable=None):
         """Return validated native embeddings without allowing silent input truncation."""
-        texts = [input] if isinstance(input, str) else list(input)
-        if not texts or any(not isinstance(text, str) or not text.strip() for text in texts):
-            raise ProviderError(_('Enter nonempty text to embed.'))
+        texts = embedding_texts(input, dimensions)
         data = {'model': model, 'input': texts, 'truncate': False}
         if dimensions is not None:
-            if type(dimensions) is not int or dimensions <= 0:
-                raise ProviderError(_('Embedding dimensions must be a positive integer.'))
             data['dimensions'] = dimensions
         if keep_alive is not None:
             data['keep_alive'] = keep_alive
         result = self._request('/api/embed', data, 'POST', timeout, cancellable)
-        vectors = result.get('embeddings') if isinstance(result, dict) else None
-        if not isinstance(vectors, list) or len(vectors) != len(texts):
-            raise ProviderError(_('The server returned an incorrect number of embeddings.'))
-        size = dimensions
-        for vector in vectors:
-            if (not isinstance(vector, list) or not vector or
-                    any(type(n) not in (int, float) or not math.isfinite(n) for n in vector)):
-                raise ProviderError(_('The server returned an invalid embedding vector.'))
-            size = size or len(vector)
-            if len(vector) != size or not any(vector):
-                raise ProviderError(_('Embedding dimensions do not match, or a vector is zero.'))
+        check_vectors(result.get('embeddings') if isinstance(result, dict) else None, len(texts), dimensions)
         return result
 
     def delete(self, model, timeout=10, cancellable=None):
@@ -192,7 +177,7 @@ class OllamaCloudProvider(OllamaProvider):
     key_url = 'https://ollama.com/settings/keys'
     capabilities = Capabilities(thinking_levels=True, tools=True, logprobs=True, raw_generate=True,
         sampling_extras=True, context_size=True, thinking_text=True, timing_stats=True,
-        model_verification=True, options_notice=CLOUD_NOTICE)
+        model_verification=True, refuses_long_input=True, options_notice=CLOUD_NOTICE)
     fixed_url = CLOUD_URL
     requires_key = True
     endpoints = ('/api/tags', '/api/show', '/api/chat', '/api/generate')

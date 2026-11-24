@@ -206,9 +206,10 @@ class KnowledgeTests(unittest.TestCase):
             host = next(h for h in self.storage.get_all_hosts() if h['hostname'] == 'http://embed:11434')
             self.assertTrue(self.context.knowledge.busy(host, TAG['name']))
             self.assertTrue(self.context.knowledge.busy(dict(host, hostname='http://embed:11434/'), 'embed'))
-            # A host of a type that cannot embed, at the same address, is not held up by the job.
+            # A host of another type at the same address is not held up by the job, whether or not it embeds.
             with patch.dict(PROVIDERS, LIMITED):
-                self.assertFalse(self.context.knowledge.busy(dict(host, provider='limited'), TAG['name']))
+                for kind in ('limited', 'openai'):
+                    self.assertFalse(self.context.knowledge.busy(dict(host, provider=kind), TAG['name']))
             second['cancel'].cancel()
             release.set()
             pump_until(lambda: second['done'] and self.storage.writer.idle)

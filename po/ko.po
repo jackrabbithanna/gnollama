@@ -3699,3 +3699,27 @@ msgstr "이 모델에서는 사용할 수 없습니다."
 #: src/widgets/comparison_view.py
 msgid "Not available for every target."
 msgstr "일부 대상에서는 사용할 수 없습니다."
+
+#: src/providers/base.py
+msgid "The server returned {0} dimensions where {1} were requested. It may not support choosing dimensions for this model."
+msgstr "{1}차원을 요청했지만 서버가 {0}차원을 반환했습니다. 이 모델에서는 차원 선택을 지원하지 않을 수 있습니다."
+
+#: src/knowledge.py
+msgid "A chunk is estimated at {0} tokens. The embedding model accepts {1}, and this server shortens longer text without notice. The estimate is rough, so nothing above {2} is sent. Use a smaller chunk size."
+msgstr "청크가 약 {0} 토큰으로 추정됩니다. 임베딩 모델은 {1} 토큰을 받으며, 이 서버는 더 긴 텍스트를 알림 없이 줄입니다. 추정치는 대략적이므로 {2}을(를) 넘는 것은 보내지 않습니다. 청크 크기를 줄이세요."
+
+#: src/knowledge.py
+msgid "The search query is estimated at {0} tokens. The embedding model accepts {1}, and this server shortens longer text without notice. The estimate is rough, so nothing above {2} is sent. Shorten the query."
+msgstr "검색어가 약 {0} 토큰으로 추정됩니다. 임베딩 모델은 {1} 토큰을 받으며, 이 서버는 더 긴 텍스트를 알림 없이 줄입니다. 추정치는 대략적이므로 {2}을(를) 넘는 것은 보내지 않습니다. 검색어를 줄이세요."
+
+#: src/widgets/knowledge_common.py
+msgid "This model cannot be fully verified: it is recognized by what the server reports about it, not by its contents, so a replacement that reports the same would go unnoticed."
+msgstr "이 모델은 완전히 검증할 수 없습니다. 내용이 아니라 서버가 보고하는 정보로 식별하므로, 같은 정보를 보고하는 다른 모델로 바뀌어도 알 수 없습니다."
+
+#: src/widgets/knowledge_common.py
+msgid "No embedding models are available. Try refreshing later."
+msgstr "사용할 수 있는 임베딩 모델이 없습니다. 나중에 새로 고쳐 보세요."
+
+#: src/widgets/knowledge_common.py
+msgid "No embedding models found on this server. Load one there, then refresh."
+msgstr "이 서버에서 임베딩 모델을 찾을 수 없습니다. 서버에서 모델을 불러온 뒤 새로 고치세요."

@@ -23,6 +23,8 @@ SERVER, MODEL, TARGETS = ('Not available on this server.', 'Not available for th
 EVERYTHING = ['include_reasoning', 'logprobs', 'max_tokens', 'min_p', 'reasoning', 'response_format', 'seed',
               'stop', 'temperature', 'tools', 'top_k', 'top_p']
 FLAGS = [f.name for f in fields(Capabilities) if f.type is bool]
+# Offered by the host type whatever the model, so narrowing leaves it alone.
+HOST = {'embeddings'}
 
 
 def catalog(name):
@@ -51,12 +53,12 @@ class NarrowingTests(unittest.TestCase):
         for model, (flags, left_out) in cases.items():
             with self.subTest(model=model):
                 narrowed = record(catalog(model))
-                self.assertEqual((offered(narrowed), narrowed.left_out), (flags, left_out))
+                self.assertEqual((offered(narrowed), narrowed.left_out), (flags | HOST, left_out))
         # Either name of a pair is enough.
         for parameters, flag in ((['response_format'], 'structured_output'), (['structured_outputs'], 'structured_output'),
                                  (['reasoning_effort'], 'thinking_levels'), (['include_reasoning'], 'thinking_text')):
-            self.assertEqual(offered(record(parameters)), {flag})
-        self.assertEqual(offered(record(['reasoning'])), {'thinking_levels', 'thinking_text'})
+            self.assertEqual(offered(record(parameters)), {flag} | HOST)
+        self.assertEqual(offered(record(['reasoning'])), {'thinking_levels', 'thinking_text'} | HOST)
         self.assertEqual(record(['max_completion_tokens']).left_out, ('temperature', 'top_p', 'seed', 'stop'))
         self.assertEqual(record(['max_tokens', 'temperature', 'top_p', 'stop']).left_out, ('seed',))
 
@@ -104,7 +106,7 @@ class NarrowingTests(unittest.TestCase):
     def test_what_two_models_share(self):
         text, vision = record(catalog(TEXT)), record(catalog(VISION))
         both = text.both(replace(vision, left_out=('seed', 'stop')))
-        self.assertEqual((offered(both), both.left_out), (set(), ('seed', 'stop')))
+        self.assertEqual((offered(both), both.left_out), (HOST, ('seed', 'stop')))
         self.assertEqual(text.both(text), text)
         local = PROVIDERS['ollama'].capabilities
         self.assertEqual(offered(local.both(PROVIDERS['ollama_cloud'].capabilities)),

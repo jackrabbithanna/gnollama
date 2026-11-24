@@ -3896,3 +3896,27 @@ msgstr "Für dieses Modell nicht verfügbar."
 #: src/widgets/comparison_view.py
 msgid "Not available for every target."
 msgstr "Nicht für jedes Ziel verfügbar."
+
+#: src/providers/base.py
+msgid "The server returned {0} dimensions where {1} were requested. It may not support choosing dimensions for this model."
+msgstr "Der Server lieferte {0} Dimensionen, angefordert waren {1}. Möglicherweise unterstützt er die Wahl der Dimensionen für dieses Modell nicht."
+
+#: src/knowledge.py
+msgid "A chunk is estimated at {0} tokens. The embedding model accepts {1}, and this server shortens longer text without notice. The estimate is rough, so nothing above {2} is sent. Use a smaller chunk size."
+msgstr "Ein Abschnitt wird auf {0} Tokens geschätzt. Das Embedding-Modell nimmt {1} an, und dieser Server kürzt längeren Text ohne Hinweis. Die Schätzung ist grob, daher wird nichts über {2} gesendet. Verwenden Sie eine kleinere Abschnittsgröße."
+
+#: src/knowledge.py
+msgid "The search query is estimated at {0} tokens. The embedding model accepts {1}, and this server shortens longer text without notice. The estimate is rough, so nothing above {2} is sent. Shorten the query."
+msgstr "Die Suchanfrage wird auf {0} Tokens geschätzt. Das Embedding-Modell nimmt {1} an, und dieser Server kürzt längeren Text ohne Hinweis. Die Schätzung ist grob, daher wird nichts über {2} gesendet. Kürzen Sie die Anfrage."
+
+#: src/widgets/knowledge_common.py
+msgid "This model cannot be fully verified: it is recognized by what the server reports about it, not by its contents, so a replacement that reports the same would go unnoticed."
+msgstr "Dieses Modell kann nicht vollständig überprüft werden: Es wird an den Angaben des Servers erkannt, nicht an seinem Inhalt, sodass ein Ersatz mit denselben Angaben unbemerkt bliebe."
+
+#: src/widgets/knowledge_common.py
+msgid "No embedding models are available. Try refreshing later."
+msgstr "Keine Embedding-Modelle verfügbar. Versuchen Sie später, die Liste zu aktualisieren."
+
+#: src/widgets/knowledge_common.py
+msgid "No embedding models found on this server. Load one there, then refresh."
+msgstr "Auf diesem Server wurden keine Embedding-Modelle gefunden. Laden Sie dort eines und aktualisieren Sie dann."

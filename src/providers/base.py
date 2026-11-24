@@ -1,10 +1,11 @@
 """What every model provider offers, and what each one can do."""
+import math
 from dataclasses import dataclass, field, fields, replace
 from gettext import gettext as _
 from typing import Any, ClassVar
 from urllib.parse import urlsplit
 
-from .transport import Transport
+from .transport import ProviderError, RequestCancelled, Transport
 
 
 @dataclass(frozen=True)
@@ -24,6 +25,7 @@ class Capabilities:
     thinking_text: bool = False    # returns what the model thought
     timing_stats: bool = False     # load, prompt, and generation durations
     model_verification: bool = False  # a content digest, not a fingerprint
+    refuses_long_input: bool = False  # refuses text to embed that is longer than the model takes; others shorten it unseen
     # Sampling options one model does not take, by the names in a WireOptions. No provider lacks them.
     left_out: tuple = ()
     # Untranslated; shown beside the options this provider lacks.
@@ -111,6 +113,48 @@ def same_address(first, second, suffix=''):
         return False
 
 
+def canonical(name):
+    """A model name with the tag Ollama assumes for one that has none."""
+    return name if ':' in name.rsplit('/', 1)[-1] else name + ':latest'
+
+
+def named(entries, name):
+    """The list entry for a model name as given, else as Ollama completes it, or None."""
+    for same in (lambda entry: entry == name, lambda entry: canonical(entry) == canonical(name)):
+        for entry in entries:
+            if isinstance(entry.get('name'), str) and same(entry['name']):
+                return entry
+    return None
+
+
+def embedding_texts(input, dimensions=None):
+    """The texts of an embedding request as a list, once they and the dimensions asked for are valid."""
+    texts = [input] if isinstance(input, str) else list(input)
+    if not texts or any(not isinstance(text, str) or not text.strip() for text in texts):
+        raise ProviderError(_('Enter nonempty text to embed.'))
+    if dimensions is not None and (type(dimensions) is not int or dimensions <= 0):
+        raise ProviderError(_('Embedding dimensions must be a positive integer.'))
+    return texts
+
+
+def check_vectors(vectors, count, dimensions=None):
+    """Raise unless `vectors` holds one usable vector for each of `count` texts, all of one size."""
+    if not isinstance(vectors, list) or len(vectors) != count:
+        raise ProviderError(_('The server returned an incorrect number of embeddings.'))
+    for vector in vectors:
+        if (not isinstance(vector, list) or not vector or
+                any(type(n) not in (int, float) or not math.isfinite(n) for n in vector)):
+            raise ProviderError(_('The server returned an invalid embedding vector.'))
+    sizes = {len(vector) for vector in vectors}
+    if len(sizes) != 1 or not all(any(vector) for vector in vectors):
+        raise ProviderError(_('Embedding dimensions do not match, or a vector is zero.'))
+    if dimensions is not None and sizes != {dimensions}:
+        # Some servers ignore the size asked for and answer in the model's own.
+        raise ProviderError(_('The server returned {0} dimensions where {1} were requested. '
+                              'It may not support choosing dimensions for this model.').format(
+                                  sizes.pop(), dimensions))
+
+
 @dataclass(frozen=True)
 class Provider:
     """A request destination bound to its transport; never holds an API key.
@@ -184,6 +228,35 @@ class Provider:
         """
         self.capabilities.require(wire, host)
         self.model_capabilities(details).require(wire, host, model)
+
+    def list_embedding_models(self, timeout=10, cancellable=None):
+        """The listed models that can embed, each with its `context_length` where the server says.
+
+        A model whose details cannot be read stays, since it may embed.
+        """
+        models = []
+        for model in self.list_models(timeout=timeout, cancellable=cancellable):
+            try:
+                details = self.show_model(model['name'], timeout=timeout, cancellable=cancellable)
+            except RequestCancelled:
+                raise
+            except ProviderError:
+                details = None
+            capabilities = details.get('capabilities') if isinstance(details, dict) else None
+            if capabilities is None or 'embedding' in capabilities:
+                length = details.get('context_length') if isinstance(details, dict) else None
+                models.append(dict(model, context_length=length) if type(length) is int else model)
+        return models
+
+    def model_tag(self, name, timeout=10, cancellable=None):
+        """The list entry, with its `digest`, of a chat or embedding model, or None."""
+        return named(self.list_models(timeout=timeout, cancellable=cancellable), name)
+
+    def embedding_context(self, name, timeout=10, cancellable=None):
+        """The tokens an embedding model accepts in one input, or None where the server does not say."""
+        details = self.show_model(name, timeout=timeout, cancellable=cancellable)
+        length = details.get('context_length') if isinstance(details, dict) else None
+        return length if type(length) is int and length > 0 else None
 
     list_models = show_model = chat = generate = embed = _unavailable
     pull = delete = running = unload = probe = _unavailable

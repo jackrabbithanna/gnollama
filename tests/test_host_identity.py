@@ -130,21 +130,22 @@ class HostIdentityTests(unittest.TestCase):
             self.assertEqual([host_key(c) for c in connections], [('ollama', URL), ('limited', URL)])
             self.assertEqual([s.target.url for s in resolved], [URL, URL])
 
-    def test_embedding_host_is_the_record_that_can_embed(self):
+    def test_embedding_host_is_the_record_of_the_stored_type_that_can_embed(self):
         knowledge = self.context.knowledge
         with patch.dict(PROVIDERS, {**LIMITED, **OPTIONAL_KEY}):
             # Listed before the Ollama record at the address; the first cannot embed.
             self.storage.save_host('Limited', 'http://embed:11434', provider='limited')
-            with self.assertRaisesRegex(ValueError, 'embedding host was removed'):
-                knowledge.require_host('http://embed:11434')
             other = self.storage.save_host('Other', 'http://embed:11434', provider='optional_key')
-            self.assertEqual(knowledge.require_host('http://embed:11434').host_id, other['id'])
-            # A collection stores no type, and one built before other types could embed is Ollama's.
+            # A stored host without a type was built on an Ollama host, and no other type answers for it.
+            for kind in (None, 'ollama', 'limited'):
+                with self.assertRaisesRegex(ValueError, 'embedding host was removed'):
+                    knowledge.require_host('http://embed:11434', kind)
+            self.assertEqual(knowledge.require_host('http://embed:11434', 'optional_key').host_id, other['id'])
             embed = self.storage.add_host('Embedding host', 'http://embed:11434')
             for address in ('http://embed:11434', 'http://embed:11434/'):
                 connection = knowledge.require_host(address)
                 self.assertEqual((connection.kind, connection.host_id), ('ollama', embed['id']))
-
+                self.assertEqual(knowledge.require_host(address, 'optional_key').host_id, other['id'])
 
 if __name__ == '__main__':
     unittest.main()

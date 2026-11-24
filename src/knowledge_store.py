@@ -5,7 +5,7 @@ import sqlite3
 import time
 from gettext import gettext as _
 from .vectors import create_vector_table, table_exists, vector_blob, vector_table, vector_values, validate_dimensions, validate_search_metric, distance_candidates
-from .collections_store import CollectionDatabase
+from .collections_store import CollectionDatabase, index_values
 from .web_store import WebSourceDatabase
 
 
@@ -154,11 +154,10 @@ class KnowledgeDatabase(WebSourceDatabase, CollectionDatabase):
             self._delete_index_vectors(conn, index['id'])
             conn.execute('DELETE FROM knowledge_chunks WHERE index_id=?', (index['id'],))
             conn.execute('''INSERT INTO knowledge_indexes
-                (id, document_id, config_id, host, model, chunk_size, overlap, status, created_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?, 'indexing', ?)
+                (id, document_id, config_id, host, model, chunk_size, overlap, status, created_at, host_kind)
+                VALUES (?, ?, ?, ?, ?, ?, ?, 'indexing', ?, ?)
                 ON CONFLICT(id) DO UPDATE SET status='indexing', error=NULL, completed_at=NULL,
-                    host=excluded.host, model=excluded.model''', tuple(index[k] for k in
-                    ('id', 'document_id', 'config_id', 'host', 'model', 'chunk_size', 'overlap', 'created_at')))
+                    host=excluded.host, host_kind=excluded.host_kind, model=excluded.model''', index_values(index))
             conn.commit()
 
     def save_embedding_batch(self, index_id, config_id, dimensions, chunks):

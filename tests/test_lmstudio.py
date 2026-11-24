@@ -14,7 +14,7 @@ from src.providers import PROVIDERS, LMStudioProvider, OpenAICompatibleProvider,
 from src.providers.openai import fingerprint
 from src.records import RequestSettings, WireOptions
 from src.tab import GenerationTab
-from test_openai import ANSWER, USER, Handler, Keys, Server
+from test_openai import ANSWER, USER, Handler, Keys, Server, vectors
 from test_ui import pump_until, wait_for_model
 
 GEMMA, K2 = 'google/gemma-4-12b-qat', 'k2-horizon-3.7b'
@@ -31,13 +31,17 @@ def recorded(name):
 class Loopback:
     """A server that lists the recorded models, and the provider under test bound to it."""
     RECORDED = 'lmstudio_models.json'
+    EMBEDDERS = None  # A recorded list of embedding models, where the type has one of its own.
     KIND = LMStudioProvider
     MODEL = K2
+    EMBEDDER = NOMIC
 
     def setUp(self):
         self.fixture = Server()
         self.server = self.fixture.server
         self.server.models = recorded(self.RECORDED)
+        if self.EMBEDDERS:
+            self.server.embedders = recorded(self.EMBEDDERS)
         self.addCleanup(self.fixture.close)
         self.locate()
 
@@ -59,7 +63,9 @@ class KeyChecks:
     """What the base class promises about a key holds for a named type and its own requests."""
     def calls(self, provider):
         return (provider.list_models, lambda: provider.show_model(self.MODEL),
-                lambda: list(provider.chat(self.MODEL, USER)))
+                lambda: list(provider.chat(self.MODEL, USER)), provider.list_embedding_models,
+                lambda: provider.model_tag(self.EMBEDDER), lambda: provider.embedding_context(self.EMBEDDER),
+                lambda: provider.embed(self.EMBEDDER, 'text'))
 
     def keyed(self):
         return self.provider(host_id='host', credential_id='reference', credentials=Keys({'reference': 'sk-secret'}))
@@ -67,7 +73,9 @@ class KeyChecks:
     def test_key_goes_with_every_request_and_never_follows_a_redirect(self):
         for call in self.calls(self.keyed()):
             call()
-        self.assertEqual([request[2] for request in self.server.received], ['Bearer sk-secret'] * 3)
+        # At least one request for each call; a type may make more, and each must carry the key.
+        self.assertGreaterEqual(len(self.server.received), 7)
+        self.assertEqual({request[2] for request in self.server.received}, {'Bearer sk-secret'})
         self.assertNotIn('sk-secret', repr(self.keyed()))
         other = Server()
         self.addCleanup(other.close)
@@ -172,6 +180,71 @@ class ModelTests(Loopback, KeyChecks, unittest.TestCase):
         self.server.models = {'data': []}
         with self.assertRaisesRegex(ProviderError, 'did not return a model list'):
             self.provider().list_models()
+
+    def test_embedding_models_are_those_of_that_type(self):
+        provider = self.provider()
+        models = provider.list_embedding_models()
+        self.assertEqual([request[0] for request in self.server.received], ['/api/v1/models'])
+        listed = {model['name']: model for model in provider.list_models()}
+        # As the model list has them, with the context an input must fit.
+        self.assertEqual(models, [dict(listed[EMBEDDING], context_length=262144), dict(listed[NOMIC], context_length=2048)])
+        self.assertEqual(models[1], {
+            'name': NOMIC, 'size': 84106624, 'capabilities': ['embedding'], 'context_length': 2048,
+            'digest': fingerprint(NOMIC, None, 'Q4_K_M', 84106624),
+            'details': {'format': 'gguf', 'quantization_level': 'Q4_K_M'}})
+        # The server embeds with a chat model without complaint, so the type decides, not the name.
+        self.entry(K2)['type'] = 'embedding'
+        self.entry(NOMIC)['type'] = 'llm'
+        self.assertEqual([model['name'] for model in provider.list_embedding_models()], [EMBEDDING, K2])
+
+    def test_embedding_context_is_the_loaded_size_or_else_the_most_a_model_takes(self):
+        provider = self.provider()
+        self.assertEqual((provider.embedding_context(EMBEDDING), provider.embedding_context(NOMIC)), (262144, 2048))
+        # A model that is not loaded is sent one word first, since it loads with less than its maximum.
+        self.assertEqual([path for path, *rest in self.server.received].count('/v1/embeddings'), 2)
+        self.assertEqual(self.server.received[-2][1]['input'], ['context'])
+        self.assertEqual(provider.embedding_context(K2), 67584)
+        self.entry(NOMIC)['loaded_instances'] = [{'id': NOMIC, 'config': {'context_length': 512}}]
+        self.assertEqual(provider.embedding_context(NOMIC), 512)
+        self.assertEqual(provider.list_embedding_models()[1]['context_length'], 512)
+        # Loading a model does not make it another model.
+        self.assertEqual(provider.list_embedding_models()[1]['digest'], fingerprint(NOMIC, None, 'Q4_K_M', 84106624))
+        for said in (None, 0, '2048', True):
+            self.entry(NOMIC).update(loaded_instances=[], max_context_length=said)
+            with self.subTest(said=said):
+                self.assertIsNone(provider.embedding_context(NOMIC))
+                self.assertNotIn('context_length', provider.list_embedding_models()[1])
+        with self.assertRaisesRegex(ProviderError, 'no longer available'):
+            provider.embedding_context('gone')
+
+    def test_a_chat_or_embedding_model_is_found_with_its_fingerprint(self):
+        provider = self.provider()
+        listed = {model['name']: model for model in provider.list_models()}
+        for name in (K2, GEMMA, NOMIC, EMBEDDING):
+            with self.subTest(model=name):
+                self.assertEqual(provider.model_tag(name), listed[name])
+                self.assertRegex(provider.model_tag(name)['digest'], '^[0-9a-f]{64}$')
+        for unknown in ('gone', 'elephant-1-decision', NOMIC + '-2'):
+            with self.subTest(model=unknown):
+                self.assertIsNone(provider.model_tag(unknown))
+        before = provider.model_tag(NOMIC)['digest']
+        self.entry(NOMIC)['size_bytes'] += 1
+        self.assertNotEqual(provider.model_tag(NOMIC)['digest'], before)
+        self.assertEqual(provider.list_embedding_models()[1]['digest'], provider.model_tag(NOMIC)['digest'])
+
+    def test_embeddings_go_through_the_compatible_api_and_ignored_dimensions_are_refused(self):
+        self.server.embeddings = vectors([0.5, -0.5, 0.0], [0.0, 1.0, 0.0], order=[1, 0])
+        for suffix in ('', '/v1'):
+            with self.subTest(suffix=suffix):
+                answer = LMStudioProvider(self.url + suffix).embed(NOMIC, ['a', 'b'])
+                self.assertEqual(answer, {'embeddings': [[0.5, -0.5, 0.0], [0.0, 1.0, 0.0]]})
+                self.assertEqual(self.server.received[-1], ('/v1/embeddings', {'model': NOMIC, 'input': ['a', 'b']}, None))
+        # The server answers in the model's own size whatever is asked.
+        with self.assertRaisesRegex(ProviderError, 'returned 3 dimensions where 2 were requested'):
+            self.provider().embed(NOMIC, ['a', 'b'], dimensions=2)
+        self.assertEqual(self.server.received[-1][1], {'model': NOMIC, 'input': ['a', 'b'], 'dimensions': 2})
+        with self.assertRaisesRegex(ProviderError, 'does not accept: keep_alive'):
+            self.provider().embed(NOMIC, 'a', keep_alive=60)
 
     def test_details_say_only_what_the_server_said(self):
         show = self.provider().show_model
@@ -280,13 +353,14 @@ class ModelTests(Loopback, KeyChecks, unittest.TestCase):
                          ('lmstudio', 'LM Studio', 'http://localhost:1234', 'LM Studio', '', 'http://localhost:1234'))
         self.assertEqual((cls.fixed_url, cls.requires_key, cls.key_optional), (None, False, True))
         offered = {name for name, value in vars(caps).items() if value is True}
-        self.assertEqual(offered, {'thinking_levels', 'structured_output', 'tools', 'logprobs', 'thinking_text',
-                                   'sampling_extras'})
+        # It embeds; its fingerprint is not a digest of the model, so `model_verification` stays off.
+        self.assertEqual(offered, {'embeddings', 'thinking_levels', 'structured_output', 'tools', 'logprobs',
+                                   'thinking_text', 'sampling_extras'})
         # A type that reports its models does not carry the generic type's warning.
         self.assertEqual(caps.options_notice, '')
         self.assertTrue(OpenAICompatibleProvider.capabilities.options_notice)
         self.assertIs(PROVIDERS['lmstudio'], cls)
-        for name in ('generate', 'embed', 'pull', 'delete', 'running', 'unload'):
+        for name in ('generate', 'pull', 'delete', 'running', 'unload'):
             with self.subTest(operation=name), self.assertRaises(NotImplementedError):
                 getattr(self.provider(), name)('test')
 

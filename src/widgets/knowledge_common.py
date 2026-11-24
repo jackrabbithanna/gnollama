@@ -2,9 +2,8 @@
 from gettext import gettext as _
 from gi.repository import Adw, Gtk, Gio, GLib, Pango
 
-from ..providers import ProviderError, RequestCancelled
 from .search import searchable
-from ..knowledge import (PRESETS, check_cancel, new_config)
+from ..knowledge import (PRESETS, embedding_host_key, new_config)
 
 
 def label(text='', **kwargs):
@@ -68,6 +67,15 @@ def config_label(config):
                                          config['dimensions'] or _('Native dimensions'), config['digest'][:10])
 
 
+def verification_notice(context, kind):
+    """What to say of an embedding model on a host of type `kind` that gives no content digest, else ''."""
+    try:
+        verified = context.capabilities(dict(provider=kind)).model_verification
+    except ValueError:
+        return ''  # A type this version does not know; its host cannot be found either.
+    return '' if verified else _('This model cannot be fully verified: it is recognized by what the server reports about it, not by its contents, so a replacement that reports the same would go unnoticed.')
+
+
 def preview_text(document):
     if not document['pages']:
         return document['text']
@@ -126,7 +134,7 @@ class WorkDialog(Adw.Dialog):
 
 class HostModels(Gtk.Box):
     """Explicit embedding host/model picker with stale-result suppression."""
-    def __init__(self, context, host='', model='', on_change=lambda: None):
+    def __init__(self, context, host='', model='', on_change=lambda: None, kind=None):
         super().__init__(orientation=Gtk.Orientation.VERTICAL, spacing=6)
         self.context, self.on_change = context, on_change
         self.storage = context.storage
@@ -138,18 +146,26 @@ class HostModels(Gtk.Box):
         self.host_dropdown = dropdown([h['name'] for h in self.hosts])
         self.model_dropdown = dropdown([])
         self.notice = label()
+        self.verification = label(visible=False)
+        self.verification.add_css_class('dim-label')
         field(self, _('Embedding server'), self.host_dropdown)
         field(self, _('Embedding model'), self.model_dropdown)
         self.append(self.notice)
+        self.append(self.verification)
         self.append(actions(button(_('Manage Models…'), self.manage_models),
                             button(_('Refresh'), self.refresh)))
-        for i, h in enumerate(self.hosts):
-            if h['hostname'].rstrip('/') == host.rstrip('/'):
-                self.host_dropdown.set_selected(i)
-                break
+        self.select_host(host, kind)
         self.host_dropdown.connect('notify::selected', self.refresh)
         self.model_dropdown.connect('notify::selected', lambda *args: self.on_change())
         self.refresh()
+
+    def select_host(self, host, kind=None):
+        """Select the host of type `kind` at the address `host`, as a collection, index, or chat stores it."""
+        key = embedding_host_key(host, kind)
+        for i, record in enumerate(self.hosts):
+            if key and embedding_host_key(record['hostname'], record.get('provider')) == key:
+                self.host_dropdown.set_selected(i)
+                break
 
     def manage_models(self, *args):
         from ..model_manager import ModelManagerDialog
@@ -179,9 +195,22 @@ class HostModels(Gtk.Box):
         i = self.host_dropdown.get_selected()
         return self.hosts[i]['hostname'] if i < len(self.hosts) else ''
 
+    def kind(self):
+        i = self.host_dropdown.get_selected()
+        return (self.hosts[i].get('provider') or 'ollama') if i < len(self.hosts) else 'ollama'
+
     def connection(self):
         i = self.host_dropdown.get_selected()
         return self.context.connection(self.hosts[i]) if i < len(self.hosts) else None
+
+    @staticmethod
+    def _empty_notice(host):
+        if host is None or host.capabilities.model_management:
+            return _('No embedding models found. Download one in Manage Models, then refresh.')
+        # A hosted service, whose models the user cannot add to.
+        if host.fixed_url:
+            return _('No embedding models are available. Try refreshing later.')
+        return _('No embedding models found on this server. Load one there, then refresh.')
 
     def model(self):
         i = self.model_dropdown.get_selected()
@@ -195,22 +224,15 @@ class HostModels(Gtk.Box):
         self.models = []
         self.model_dropdown.set_model(Gtk.StringList.new([]))
         self.notice.set_text(_('Checking embedding models…'))
+        notice = verification_notice(self.context, self.kind()) if host else ''
+        self.verification.set_text(notice)
+        self.verification.set_visible(bool(notice))
         self.on_change()
         def fetch():
             models, error = [], None
             try:
-                for model in host.list_models(cancellable=cancel) if host else []:
-                    check_cancel(cancel)
-                    try:
-                        info = host.show_model(model['name'], cancellable=cancel)
-                        capabilities = info.get('capabilities')
-                    except RequestCancelled:
-                        raise
-                    except ProviderError:
-                        capabilities = None
-                    if capabilities is None or 'embedding' in capabilities:
-                        models.append(model)
-                models.sort(key=lambda model: model['name'].casefold())
+                models = sorted(host.list_embedding_models(cancellable=cancel) if host else [],
+                                key=lambda model: model['name'].casefold())
             except Exception as exc:
                 error = str(exc)
             def deliver():
@@ -222,7 +244,7 @@ class HostModels(Gtk.Box):
                     if model['name'] == self.desired_model:
                         self.model_dropdown.set_selected(i)
                         break
-                self.notice.set_text(error or ('' if models else _('No embedding models found. Download one in Manage Models, then refresh.')))
+                self.notice.set_text(error or ('' if models else self._empty_notice(host)))
                 self.on_change()
                 return False
             GLib.idle_add(deliver)
@@ -236,8 +258,8 @@ class IndexDialog(WorkDialog):
         self.storage = context.storage
         self.defaults = defaults
         self.box.append(label(document['title']))
-        self.host_models = HostModels(context, (defaults or {}).get('host', ''),
-                                      (defaults or {}).get('model', ''), on_change=self._model_changed)
+        self.host_models = HostModels(context, (defaults or {}).get('host', ''), (defaults or {}).get('model', ''),
+                                      on_change=self._model_changed, kind=(defaults or {}).get('host_kind'))
         self.box.append(self.host_models)
         self.connect('closed', lambda *args: self.host_models.stop())
         self.preset = Gtk.DropDown.new_from_strings([_('Plain'), _('EmbeddingGemma retrieval'), _('Nomic retrieval'), _('Qwen3 retrieval'), _('Custom prefixes')])
@@ -287,7 +309,7 @@ class IndexDialog(WorkDialog):
 
     def _start(self, callback):
         try:
-            self.context.knowledge.create_index(self.document['id'], *self.settings())
+            self.context.knowledge.create_index(self.document['id'], *self.settings(), kind=self.host_models.kind())
             callback()
             self.close()
         except (ValueError, TypeError) as exc:

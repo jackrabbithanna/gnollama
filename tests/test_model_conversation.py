@@ -313,12 +313,14 @@ class ConversationTests(unittest.TestCase):
         with self.storage.db._get_conn() as conn:
             conn.execute('DROP TABLE model_conversation_attempts')
             conn.execute('DROP TABLE model_conversation_runs')
+            from legacy_schema import remove_host_kind
+            remove_host_kind(conn)
             conn.execute('PRAGMA user_version=11')
             conn.commit()
         upgraded = DatabaseManager(self.storage.db_path)
         self.assertEqual(upgraded.chats.get_messages(chat['id'])[0]['content'], 'retained')
         with upgraded._get_conn() as conn:
-            self.assertEqual(conn.execute('PRAGMA user_version').fetchone()[0], 12)
+            self.assertEqual(conn.execute('PRAGMA user_version').fetchone()[0], 13)
 
 
 @unittest.skipUnless(Gdk.Display.get_default(), 'GTK tests require a display')

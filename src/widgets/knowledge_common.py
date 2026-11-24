@@ -3,6 +3,7 @@ from gettext import gettext as _
 from gi.repository import Adw, Gtk, Gio, GLib, Pango
 
 from ..providers import ProviderError, RequestCancelled
+from .search import searchable
 from ..knowledge import (PRESETS, check_cancel, new_config)
 
 
@@ -17,8 +18,7 @@ def dropdown(names):
     factory.connect('setup', lambda f, item: item.set_child(Gtk.Label(xalign=0, ellipsize=Pango.EllipsizeMode.END, max_width_chars=28)))
     factory.connect('bind', lambda f, item: item.get_child().set_text(item.get_item().get_string()))
     widget.set_factory(factory)
-    widget.set_enable_search(True)
-    return widget
+    return searchable(widget)
 
 
 def button(text, callback):
@@ -137,7 +137,6 @@ class HostModels(Gtk.Box):
         self.desired_model = model
         self.host_dropdown = dropdown([h['name'] for h in self.hosts])
         self.model_dropdown = dropdown([])
-        self.model_dropdown.set_enable_search(True)
         self.notice = label()
         field(self, _('Embedding server'), self.host_dropdown)
         field(self, _('Embedding model'), self.model_dropdown)
@@ -211,6 +210,7 @@ class HostModels(Gtk.Box):
                         capabilities = None
                     if capabilities is None or 'embedding' in capabilities:
                         models.append(model)
+                models.sort(key=lambda model: model['name'].casefold())
             except Exception as exc:
                 error = str(exc)
             def deliver():

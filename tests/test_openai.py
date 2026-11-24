@@ -462,6 +462,9 @@ class HostTests(unittest.TestCase):
     def make_tab(self):
         tab = GenerationTab(mode='chat', chat_id=self.storage.create_chat()['id'], context=self.context)
         self.tabs.append(tab)
+        # The list is sorted by name, so the model wanted is chosen, not waited for.
+        pump_until(lambda: tab.chat_input.get_selected_model() and not tab.chat_input._models_loading)
+        tab.chat_input.select_model('test')
         wait_for_model(tab)
         return tab
 

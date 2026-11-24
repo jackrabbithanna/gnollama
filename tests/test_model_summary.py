@@ -209,22 +209,22 @@ class WidgetTests(unittest.TestCase):
             self.assertEqual(widget.model_summary.get_text(), '')
 
     def test_summary_follows_the_selected_model_and_is_empty_while_details_load(self):
-        details = {'test': PRICED, 'plain': {'capabilities': ['completion'], 'context_length': 8192}, 'silent': {}}
+        details = {'test': PRICED, 'zplain': {'capabilities': ['completion'], 'context_length': 8192}, 'zsilent': {}}
         with provider_patch('list_models', return_value=list(details)), \
                 provider_patch('show_model', side_effect=lambda host, name, **kw: details[name]):
             tab = self.make_tab()
             composer = tab.chat_input
             self.assertTrue(self.shown(composer).startswith('$0.075 / $0.30 per 1M tokens'))
-            composer.select_model('plain')
+            composer.select_model('zplain')
             # Asked for, not yet answered.
             self.assertTrue(composer.capabilities_loading)
             self.assertIsNone(self.shown(composer))
-            wait_for_model(tab, 'plain')
+            wait_for_model(tab, 'zplain')
             self.assertEqual(self.shown(composer), 'No images · No tools · No thinking · 8K context')
             # What is stored and sent is still the model's name.
-            self.assertEqual(composer.get_selected_model(), 'plain')
-            composer.select_model('silent')
-            wait_for_model(tab, 'silent')
+            self.assertEqual(composer.get_selected_model(), 'zplain')
+            composer.select_model('zsilent')
+            wait_for_model(tab, 'zsilent')
             self.assertIsNone(self.shown(composer))
             composer.fetch_models(None)
             self.assertIsNone(self.shown(composer))

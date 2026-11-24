@@ -464,8 +464,8 @@ class UITests(unittest.TestCase):
         widget.services = self.context.services
         self.addCleanup(widget.cancel_fetches)
         responses = {
-            'qwen3-embedding:0.6b': {'capabilities': ['embedding']},
-            'custom-search-model': {'capabilities': ['embedding', 'vision']},
+            'a-qwen3-embedding:0.6b': {'capabilities': ['embedding']},
+            'b-custom-search-model': {'capabilities': ['embedding', 'vision']},
             'chat-embedding-helper': {'capabilities': ['completion', 'vision', 'tools']},
             'dual-purpose': {'capabilities': ['completion', 'embedding']},
             'legacy': {},
@@ -542,7 +542,7 @@ class UITests(unittest.TestCase):
                 release.wait(2)
                 return {'capabilities': ['embedding']}
             return {'capabilities': ['completion', 'vision']}
-        with provider_patch('list_models', return_value=['same-name', 'next-model']), \
+        with provider_patch('list_models', return_value=['same-name', 'then-model']), \
                 provider_patch('show_model', side_effect=details) as show:
             try:
                 widget.fetch_models(OllamaProvider('http://old'))

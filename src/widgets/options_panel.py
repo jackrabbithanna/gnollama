@@ -7,6 +7,7 @@ from ..structured import request_format
 from .json_view import SchemaEditor
 from .tool_view import ToolsEditor
 from ..tool_calling import parse_tools, InvalidTools
+from .search import searchable
 from .composer import Composer
 
 # The field of each sampling option, and the capability that some fields need.
@@ -168,7 +169,7 @@ class OptionsPanel(Gtk.Box):
                                        margin_start=12, margin_end=12, margin_top=12, margin_bottom=12)
         self.field_errors = {}
         self.field_hints = {}
-        self.host_dropdown = Gtk.DropDown(enable_search=True, hexpand=True)
+        self.host_dropdown = searchable(Gtk.DropDown(hexpand=True))
         factory = Gtk.SignalListItemFactory()
         factory.connect('setup', lambda f, item: item.set_child(Gtk.Label(xalign=0, ellipsize=Pango.EllipsizeMode.END, max_width_chars=20)))
         factory.connect('bind', lambda f, item: item.get_child().set_text(item.get_item().get_string()))

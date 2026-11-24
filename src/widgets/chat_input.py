@@ -3,6 +3,7 @@ from gettext import gettext as _, ngettext
 from gi.repository import Gtk, GObject, Gio, GLib, Gdk, Pango
 from ..model_summary import prices, summary_parts
 from ..providers import RequestCancelled, supports
+from .search import searchable
 from .composer import Composer  # noqa: F401 - registers the type chat_input.ui names
 
 @Gtk.Template(resource_path='/io/github/jackrabbithanna/Gnollama/widgets/chat_input.ui')
@@ -61,7 +62,7 @@ class ChatInput(Gtk.Box):
         factory.connect('setup', lambda f, item: item.set_child(Gtk.Label(ellipsize=Pango.EllipsizeMode.END, max_width_chars=24, xalign=0)))
         factory.connect('bind', lambda f, item: item.get_child().set_text(item.get_item().get_string()))
         self.model_dropdown.set_factory(factory)
-        self.model_dropdown.set_enable_search(True)
+        searchable(self.model_dropdown)
         click = Gtk.GestureClick(button=1)
         click.set_propagation_phase(Gtk.PropagationPhase.CAPTURE)
         click.connect('pressed', self._retry_empty_models)
@@ -288,7 +289,8 @@ class ChatInput(Gtk.Box):
                 return
             except Exception as exc:
                 error = str(exc)
-            GLib.idle_add(deliver, models, details, error)
+            # By name, whatever order the server lists them in.
+            GLib.idle_add(deliver, sorted(models, key=str.casefold), details, error)
         future = self.services.catalog.request_models(host, cancel, refresh)
         future.add_done_callback(finished)
 

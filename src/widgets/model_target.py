@@ -1,4 +1,5 @@
 """Shared host/model selection with optional participant settings."""
+from gettext import gettext as _
 from gi.repository import Gtk
 from ..chat_controller import ComposerInput
 from .chat_input import ChatInput

@@ -1,17 +1,10 @@
 """Adaptive Knowledge Library, source selection, and retrieval inspection."""
-import copy
-import json
-import time
-from gettext import ngettext
-from gi.repository import Adw, Gtk, Gio, GLib, Pango
-
-from ..knowledge import (DEFAULT_RAG, PRESETS, canonical_model, check_cancel, extract_document, make_document,
-                         model_identity, new_config, validate_rag)
-from ..vectors import SEARCH_METRICS
-from .json_view import TextEditor, buffer_text
+from gettext import gettext as _
+from gi.repository import Gtk
 
 
-from .knowledge_common import *
+
+from .knowledge_common import button, clear, dropdown, field, IndexDialog, label, WorkDialog
 
 class CollectionDialog(IndexDialog):
     def __init__(self, context, on_created, collection=None):

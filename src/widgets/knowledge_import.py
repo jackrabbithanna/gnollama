@@ -1,10 +1,11 @@
 """Collection-aware text imports and a bounded, sequential file review queue."""
+from gettext import gettext as _
 from gi.repository import Gtk, Gio, GLib
 
 from ..knowledge import extract_document, make_document
 from .json_view import TextEditor, code_view, editor_frame
-from .knowledge_view import (CollectionDestination, WorkDialog, actions, button, field,
-                             label, plain_editor, preview_text)
+from .collection_views import CollectionDestination
+from .knowledge_common import WorkDialog, actions, button, field, label, plain_editor, preview_text
 
 
 class TextImportDialog(TextEditor):
@@ -174,7 +175,7 @@ class FileImportDialog(WorkDialog):
             info = file.query_info('standard::size', Gio.FileQueryInfoFlags.NONE, cancel)
             if info.get_size() > 50 * 1024 * 1024:
                 raise ValueError(_('Files must be no larger than 50 MiB.'))
-            _, raw, _etag = file.load_contents(cancel)
+            _ok, raw, _etag = file.load_contents(cancel)
             return extract_document(file.get_basename(), raw, cancel)
         def complete(result, error):
             if self.closed:

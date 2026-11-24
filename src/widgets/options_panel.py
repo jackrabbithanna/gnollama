@@ -1,8 +1,8 @@
+from gettext import gettext as _
 from ..providers import capabilities
 import math
 from typing import Dict, Any, Callable, List, Optional
 from gi.repository import Adw, Gtk, GObject, GLib, Pango
-from ..storage import ChatStorage
 from ..structured import request_format
 from .json_view import SchemaEditor
 from .tool_view import ToolsEditor

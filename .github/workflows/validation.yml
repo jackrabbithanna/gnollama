@@ -11,7 +11,9 @@ jobs:
         with:
           python-version: '3.11'
       - run: sudo apt-get update && sudo apt-get install -y libgirepository1.0-dev libcairo2-dev gir1.2-soup-3.0 gir1.2-secret-1
-      - run: pip install PyGObject==3.50.0 -r requirements.lock
+      - run: pip install PyGObject==3.50.0 -r requirements.lock ruff==0.17.6 mypy==2.4.1
+      - run: ruff check .
+      - run: mypy
       - run: python tests/run_core.py
   flatpak:
     strategy:

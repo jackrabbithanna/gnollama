@@ -2,18 +2,19 @@
 import copy
 import json
 import time
-from gettext import ngettext
-from gi.repository import Adw, Gtk, Gio, GLib, Pango
+from gettext import gettext as _, ngettext
+from gi.repository import Adw, Gtk, Gio, GLib
 
-from ..knowledge import (DEFAULT_RAG, PRESETS, canonical_model, check_cancel, extract_document, make_document,
-                         model_identity, new_config, validate_rag)
-from ..vectors import SEARCH_METRICS
-from .json_view import TextEditor, buffer_text
+from ..knowledge import (DEFAULT_RAG, canonical_model, model_identity)
+from .json_view import TextEditor
 
 
-from .knowledge_common import *
+from .knowledge_common import (
+    actions, button, clear, config_label, document_status, dropdown, HostModels, IndexDialog, label,
+    plain_editor, preview_text, section, WorkDialog,
+)
 from .collection_views import CollectionDialog, CollectionDestination, DocumentPicker
-from .source_views import SourcesView, SourcePicker, ChunkPicker, KnowledgeControl
+from .source_views import SourcePicker, ChunkPicker
 
 class KnowledgeView(Gtk.Box):
     def __init__(self, context):

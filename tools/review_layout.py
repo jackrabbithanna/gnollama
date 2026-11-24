@@ -10,7 +10,6 @@ import subprocess
 import sys
 import tempfile
 import time
-from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
@@ -27,7 +26,6 @@ gi.require_version('Gtk', '4.0')
 gi.require_version('Adw', '1')
 from gi.repository import Gtk, Adw, Gio, GLib
 from src.app_context import AppContext
-from src.providers import OllamaProvider
 from tests.provider_fixture import provider_patch
 
 
@@ -43,8 +41,7 @@ def pump(predicate, timeout=10):
 
 
 with tempfile.TemporaryDirectory(prefix='gnollama-layout-') as temporary, ExitStack() as mocks:
-    os.environ.update(XDG_DATA_HOME=temporary, XDG_CONFIG_HOME=temporary, GSETTINGS_BACKEND='memory', GSETTINGS_SCHEMA_DIR=temporary)
-    subprocess.run(['glib-compile-schemas', '--targetdir=' + temporary, str(ROOT / 'data')], check=True)
+    os.environ.update(XDG_DATA_HOME=temporary, XDG_CONFIG_HOME=temporary, GSETTINGS_BACKEND='memory')
     if args.language != 'en':
         import locale
         os.environ['LANGUAGE'] = args.language

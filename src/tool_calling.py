@@ -1,4 +1,5 @@
 """Tool definitions and manual-result protocol handling; never executes tools."""
+from gettext import gettext as _
 import copy
 import json
 

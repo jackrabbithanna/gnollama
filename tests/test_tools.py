@@ -6,7 +6,6 @@ from pathlib import Path
 from unittest.mock import Mock, patch
 
 from gi.repository import Gdk, Gio, Gtk
-from src import session
 from src.providers import OllamaProvider, ProviderError, RequestCancelled
 from provider_fixture import provider_patch
 from src.database import DatabaseManager
@@ -14,7 +13,6 @@ from src.session import RequestState, api_messages
 from src.tab import GenerationTab
 from src.tool_calling import EXAMPLE_TOOLS, InvalidTools, inspect_calls, parse_tools
 from src.widgets.json_view import buffer_text
-from src.widgets.tool_view import ToolsEditor
 import test_ui
 from test_session import settings
 from test_transport import Server
@@ -289,13 +287,13 @@ class ToolUITests(unittest.TestCase):
         tab = self.tool_tab([call()])
         tab.controller.save_tool_result(tab.strategy.pending_round, 0, '20')
         self.settle(tab)
-        save = self.storage.db.save_chat
+        save = self.storage.db.chats.save_chat
         blocked = True
         def saving(*args, **kwargs):
             if blocked:
                 raise OSError('disk full')
             return save(*args, **kwargs)
-        with patch.object(self.storage.db, 'save_chat', side_effect=saving), provider_patch('chat', return_value=iter([{'message': {'content': 'done'}, 'done': True}])) as chat:
+        with patch.object(self.storage.db.chats, 'save_chat', side_effect=saving), provider_patch('chat', return_value=iter([{'message': {'content': 'done'}, 'done': True}])) as chat:
             try:
                 tab.on_send_clicked(continuation=True)
                 test_ui.pump_until(lambda: self.storage.writer.error is not None)
@@ -347,8 +345,8 @@ class ToolUITests(unittest.TestCase):
     def test_v4_migration_and_tool_state_merge_preserve_other_settings(self):
         path = str(Path(self.temp.name) / 'old.db')
         db = DatabaseManager(path)
-        db.create_chat('old', 'old', 1, 1, 'model')
-        db.save_chat('old', [{'role': 'assistant', 'content': 'answer', 'response_metadata': {'status': 'complete'}}],
+        db.chats.create_chat('old', 'old', 1, 1, 'model')
+        db.chats.save_chat('old', [{'role': 'assistant', 'content': 'answer', 'response_metadata': {'status': 'complete'}}],
                      options={'temperature': 0.7, 'schema_text': '{}'})
         with db._get_conn() as conn:
             for column in ('tool_calls', 'tool_name', 'tool_call_id'):
@@ -362,16 +360,16 @@ class ToolUITests(unittest.TestCase):
             conn.execute('PRAGMA user_version = 4')
             conn.commit()
         db = DatabaseManager(path)
-        db.save_tool_state('old', options={'tools_text': EXAMPLE_TOOLS, 'tools_enabled': True})
-        saved = db.get_chat('old')
+        db.chats.save_tool_state('old', options={'tools_text': EXAMPLE_TOOLS, 'tools_enabled': True})
+        saved = db.chats.get_chat('old')
         self.assertEqual(saved['options']['temperature'], 0.7)
         self.assertEqual(saved['options']['schema_text'], '{}')
         self.assertEqual(saved['messages'][0]['content'], 'answer')
         with db._get_conn() as conn:
             self.assertEqual(conn.execute('PRAGMA user_version').fetchone()[0], 12)
-        db.delete_chat('old')
-        db.save_tool_state('old', messages=[], options={'tools_text': EXAMPLE_TOOLS})
-        self.assertIsNone(db.get_chat('old'))
+        db.chats.delete_chat('old')
+        db.chats.save_tool_state('old', messages=[], options={'tools_text': EXAMPLE_TOOLS})
+        self.assertIsNone(db.chats.get_chat('old'))
 
     def test_stop_and_close_while_results_wait_for_storage(self):
         import threading

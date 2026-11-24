@@ -10,7 +10,6 @@ import subprocess
 import sys
 import tempfile
 import time
-from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
@@ -41,8 +40,7 @@ def pump(predicate, timeout=10):
 
 with tempfile.TemporaryDirectory(prefix='gnollama-history-review-') as temporary:
     os.environ.update(XDG_DATA_HOME=temporary, XDG_CONFIG_HOME=temporary,
-                      GSETTINGS_BACKEND='memory', GSETTINGS_SCHEMA_DIR=temporary)
-    subprocess.run(['glib-compile-schemas', '--targetdir=' + temporary, str(ROOT / 'data')], check=True)
+                      GSETTINGS_BACKEND='memory')
     if args.language != 'en':
         os.environ['LANGUAGE'] = args.language
         locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
@@ -63,7 +61,6 @@ with tempfile.TemporaryDirectory(prefix='gnollama-history-review-') as temporary
     from src.app_context import AppContext
     from src.window import GnollamaWindow
     from src.history import CATEGORIES
-    from src.providers import OllamaProvider
     from tests.provider_fixture import provider_patch
     context = AppContext(temporary)
     storage = context.storage
@@ -83,7 +80,7 @@ with tempfile.TemporaryDirectory(prefix='gnollama-history-review-') as temporary
                             'chat' if key == 'pinned' else key, key == 'pinned'))
             conn.commit()
         for index in range(2):
-            storage.db.save_draft(dict(id=f'draft-{index}', mode='chat', text='Solar draft ' + str(index + 1),
+            storage.db.workspace.save_draft(dict(id=f'draft-{index}', mode='chat', text='Solar draft ' + str(index + 1),
                                       settings={}, targets=[], revision=1))
         window.load_history_sidebar()
         pump(lambda: not window.history.pending)

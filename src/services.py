@@ -5,6 +5,7 @@ import time
 from concurrent.futures import Future, ThreadPoolExecutor
 from contextlib import contextmanager
 from dataclasses import dataclass
+from typing import Any
 from gettext import gettext as _
 
 from gi.repository import Gio
@@ -120,7 +121,7 @@ class ModelCatalog:
 
     def _request(self, connection, kind, cancel, name=None, refresh=False):
         key = self.connection_key(connection)
-        future = Future()
+        future: Future = Future()
         with self._condition:
             if cancel is not None and cancel.is_cancelled():
                 future.set_exception(RequestCancelled())
@@ -137,7 +138,7 @@ class ModelCatalog:
                 return future
             generation = self._generation(key)
             pending_key = (cache_key, generation)
-            job = self._pending.get(pending_key)
+            job: Any = self._pending.get(pending_key)
             leader = job is None or job['cancel'].is_cancelled()
             if leader:
                 job = dict(cancel=Gio.Cancellable(), members=[], done=False)

@@ -1,6 +1,5 @@
 import copy
 import io
-import json
 import tempfile
 import threading
 import time
@@ -11,17 +10,17 @@ from gi.repository import Gdk, Gio
 from pypdf import PdfWriter
 from pypdf.generic import DecodedStreamObject, DictionaryObject, NameObject
 
-from src import session
 
 from src.providers import OllamaProvider, ProviderError, RequestCancelled
 
 from provider_fixture import provider_patch
 from src.database import DatabaseManager
-from src.knowledge import (DEFAULT_RAG, augmented_messages, chunk_text, extract_document,
+from src.knowledge import (DEFAULT_RAG, chunk_text, extract_document,
                            make_document, new_config, vector_blob)
 from src.app_context import AppContext
 from src.tab import GenerationTab
-from src.widgets.knowledge_view import ChunkPicker, IndexDialog, SourcePicker, SourcesView
+from src.widgets.knowledge_common import IndexDialog
+from src.widgets.source_views import ChunkPicker, SourcePicker, SourcesView
 from test_transport import Server
 import test_ui
 from test_ui import pump_until
@@ -35,18 +34,18 @@ def indexed(storage, id='index', text='Alpha reference.\n\nBeta reference.', vec
         storage.add_host('Embedding host', 'http://embed:11434')
     document = make_document('Reference ' + id, text, pages=[dict(page=1, start=0, end=len(text))])
     config = new_config(TAG['name'], TAG['digest'])
-    storage.db.add_knowledge_document(document)
-    storage.db.add_embedding_config(config)
+    storage.db.knowledge.add_knowledge_document(document)
+    storage.db.knowledge.add_embedding_config(config)
     index = dict(id=id, document_id=document['id'], config_id=config['id'], host='http://embed:11434', model=TAG['name'],
                  chunk_size=1600, overlap=200, created_at=time.time())
-    storage.db.begin_knowledge_index(index)
+    storage.db.knowledge.begin_knowledge_index(index)
     vectors = vectors or [[1, 0], [0, 1]]
     middle = len(text) // len(vectors)
-    storage.db.save_embedding_batch(id, config['id'], len(vectors[0]), [
+    storage.db.knowledge.save_embedding_batch(id, config['id'], len(vectors[0]), [
         dict(id=id + str(n), ordinal=n, start=n * middle, end=(n+1)*middle if n+1 < len(vectors) else len(text), vector=vector_blob(v))
         for n, v in enumerate(vectors)])
-    storage.db.finish_knowledge_index(id, 'complete')
-    config = storage.db.embedding_config(config['id'])
+    storage.db.knowledge.finish_knowledge_index(id, 'complete')
+    config = storage.db.knowledge.embedding_config(config['id'])
     options = dict(copy.deepcopy(DEFAULT_RAG), enabled=True, config_id=config['id'], host=index['host'],
                    model=TAG['name'], selection={id: None})
     return document, config, index, options
@@ -131,7 +130,8 @@ class KnowledgeTests(unittest.TestCase):
     def test_ranking_selection_isolation_budget_and_missing_sources(self):
         document, config, index, options = indexed(self.storage)
         indexed(self.storage, 'other', 'Another document, not selected.', [[1, 0]])
-        search = lambda selection, **kwargs: self.storage.db.search_knowledge(config['id'], selection, [1, 0], **kwargs)
+        def search(selection, **kwargs):
+            return self.storage.db.knowledge.search_knowledge(config['id'], selection, [1, 0], **kwargs)
         hits = search(options['selection'])
         self.assertEqual(hits[0]['id'], 'index0')
         self.assertEqual(len(hits), 2)
@@ -147,8 +147,8 @@ class KnowledgeTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 search(selection)
         with self.assertRaises(ValueError):
-            self.storage.db.search_knowledge('different-config', options['selection'], [1, 0])
-        self.storage.db.finish_knowledge_index('index', 'failed')
+            self.storage.db.knowledge.search_knowledge('different-config', options['selection'], [1, 0])
+        self.storage.db.knowledge.finish_knowledge_index('index', 'failed')
         with self.assertRaises(ValueError):
             search(options['selection'])
 
@@ -163,19 +163,19 @@ class KnowledgeTests(unittest.TestCase):
         with provider_patch('list_models', side_effect=[[TAG], [dict(TAG, digest='changed')]]), provider_patch('embed', return_value={'embeddings': [[1, 0]]}):
             with self.assertRaisesRegex(ValueError, 'changed'):
                 self.context.knowledge.retrieve(options, 'Question', Gio.Cancellable())
-        self.storage.db.create_chat('chat', 'Sources', 0, 0, 'model')
-        self.storage.db.save_messages('chat', [{'role': 'assistant', 'content': 'Answer [S1]', 'response_metadata': {'retrieval': snapshot}}])
-        self.assertEqual(self.storage.db.model_embedding_usage(TAG['digest'])['vectors'], 2)
-        self.storage.db.delete_model_embeddings(TAG['digest'])
-        self.assertIsNotNone(self.storage.db.knowledge_document(doc['id']))
-        self.assertEqual(self.storage.db.knowledge_indexes(), [])
-        self.storage.db.delete_knowledge_document(doc['id'])
-        saved = self.storage.db.get_messages('chat')[0]['response_metadata']['retrieval']
+        self.storage.db.chats.create_chat('chat', 'Sources', 0, 0, 'model')
+        self.storage.db.chats.save_messages('chat', [{'role': 'assistant', 'content': 'Answer [S1]', 'response_metadata': {'retrieval': snapshot}}])
+        self.assertEqual(self.storage.db.knowledge.model_embedding_usage(TAG['digest'])['vectors'], 2)
+        self.storage.db.knowledge.delete_model_embeddings(TAG['digest'])
+        self.assertIsNotNone(self.storage.db.knowledge.knowledge_document(doc['id']))
+        self.assertEqual(self.storage.db.knowledge.knowledge_indexes(), [])
+        self.storage.db.knowledge.delete_knowledge_document(doc['id'])
+        saved = self.storage.db.chats.get_messages('chat')[0]['response_metadata']['retrieval']
         self.assertEqual(saved, snapshot)
 
     def test_index_queue_splits_oversized_input_and_retries_interruption(self):
         document = make_document('Long', 'searchable source ' * 80)
-        self.storage.db.add_knowledge_document(document)
+        self.storage.db.knowledge.add_knowledge_document(document)
         config = new_config(TAG['name'], TAG['digest'], 'nomic')
         seen = []
         def embed(host, model, input, **kwargs):
@@ -188,7 +188,7 @@ class KnowledgeTests(unittest.TestCase):
             job = self.context.knowledge.create_index(document['id'], 'http://embed:11434', TAG['name'], config)
             pump_until(lambda: job['done'] and self.storage.writer.idle, timeout=8)
         self.assertIsNone(job['error'])
-        index = self.storage.db.knowledge_indexes()[0]
+        index = self.storage.db.knowledge.knowledge_indexes()[0]
         self.assertEqual(index['status'], 'complete')
         self.assertGreater(index['chunks'], 1)
         self.assertTrue(all(t.startswith('search_document: ') for t in seen))
@@ -206,20 +206,20 @@ class KnowledgeTests(unittest.TestCase):
             second['cancel'].cancel()
             release.set()
             pump_until(lambda: second['done'] and self.storage.writer.idle)
-        interrupted = next(i for i in self.storage.db.knowledge_indexes() if i['id'] == second['index_id'])
+        interrupted = next(i for i in self.storage.db.knowledge.knowledge_indexes() if i['id'] == second['index_id'])
         self.assertEqual(interrupted['status'], 'interrupted')
-        self.assertEqual(next(i for i in self.storage.db.knowledge_indexes() if i['id'] == index['id'])['status'], 'complete')
+        self.assertEqual(next(i for i in self.storage.db.knowledge.knowledge_indexes() if i['id'] == index['id'])['status'], 'complete')
         with provider_patch('list_models', return_value=[TAG]), provider_patch('embed', side_effect=embed):
             retry = self.context.knowledge.create_index(document['id'], interrupted['host'], TAG['name'], config, index_id=interrupted['id'])
             pump_until(lambda: retry['done'] and self.storage.writer.idle, timeout=8)
         self.assertIsNone(retry['error'])
-        self.assertEqual(len(self.storage.db.knowledge_indexes()), 2)
+        self.assertEqual(len(self.storage.db.knowledge.knowledge_indexes()), 2)
 
     def test_v5_migration_and_empty_chat_selection(self):
         path = self.temp.name + '/v5.db'
         db = DatabaseManager(path)
-        db.create_chat('old', 'Old', 0, 0, 'chat')
-        db.save_messages('old', [{'role': 'assistant', 'content': 'saved'}])
+        db.chats.create_chat('old', 'Old', 0, 0, 'chat')
+        db.chats.save_messages('old', [{'role': 'assistant', 'content': 'saved'}])
         with db._get_conn() as conn:
             for table in ('knowledge_web_sources', 'knowledge_collection_documents', 'knowledge_collections', 'knowledge_chunks', 'knowledge_indexes', 'embedding_configs', 'knowledge_documents'):
                 conn.execute('DROP TABLE ' + table)
@@ -230,39 +230,39 @@ class KnowledgeTests(unittest.TestCase):
             conn.execute('PRAGMA user_version=5')
             conn.commit()
         migrated = DatabaseManager(path)
-        self.assertEqual(migrated.get_messages('old')[0]['content'], 'saved')
-        self.assertEqual(migrated.knowledge_documents(), [])
-        migrated.create_chat('empty', 'New Chat', 0, 0, '')
-        migrated.save_tool_state('empty', options={'knowledge': {'selection': {'index': None}}})
-        migrated.cleanup_empty_chats()
-        self.assertIsNotNone(migrated.get_chat('empty'))
+        self.assertEqual(migrated.chats.get_messages('old')[0]['content'], 'saved')
+        self.assertEqual(migrated.knowledge.knowledge_documents(), [])
+        migrated.chats.create_chat('empty', 'New Chat', 0, 0, '')
+        migrated.chats.save_tool_state('empty', options={'knowledge': {'selection': {'index': None}}})
+        migrated.chats.cleanup_empty_chats()
+        self.assertIsNotNone(migrated.chats.get_chat('empty'))
 
     def test_index_write_failure_waits_for_retry_and_digest_change_never_publishes(self):
         document = make_document('Retryable', 'Saved source text for indexing.')
-        self.storage.db.add_knowledge_document(document)
+        self.storage.db.knowledge.add_knowledge_document(document)
         config = new_config(TAG['name'], TAG['digest'])
-        original = self.storage.db.save_embedding_batch
+        original = self.storage.db.knowledge.save_embedding_batch
         fail = [True]
         def write(*args):
             if fail[0]:
                 raise OSError('disk full')
             return original(*args)
-        with provider_patch('list_models', return_value=[TAG]), provider_patch('embed', return_value={'embeddings': [[1, 0]]}) as embed, patch.object(self.storage.db, 'save_embedding_batch', side_effect=write):
+        with provider_patch('list_models', return_value=[TAG]), provider_patch('embed', return_value={'embeddings': [[1, 0]]}) as embed, patch.object(self.storage.db.knowledge, 'save_embedding_batch', side_effect=write):
             job = self.context.knowledge.create_index(document['id'], 'http://embed:11434', TAG['name'], config)
             pump_until(lambda: self.storage.writer.error is not None)
             self.assertFalse(job['done'])
-            self.assertEqual(self.storage.db.knowledge_indexes()[0]['status'], 'indexing')
+            self.assertEqual(self.storage.db.knowledge.knowledge_indexes()[0]['status'], 'indexing')
             fail[0] = False
             self.storage.writer.retry()
             pump_until(lambda: job['done'] and self.storage.writer.idle)
         self.assertIsNone(job['error'])
         self.assertEqual(embed.call_count, 1)
-        self.assertEqual(self.storage.db.knowledge_indexes()[0]['chunks'], 1)
+        self.assertEqual(self.storage.db.knowledge.knowledge_indexes()[0]['chunks'], 1)
         with provider_patch('list_models', side_effect=[[TAG], [dict(TAG, digest='replacement')]]), provider_patch('embed', return_value={'embeddings': [[1, 0]]}):
             changed = self.context.knowledge.create_index(document['id'], 'http://embed:11434', TAG['name'], config)
             pump_until(lambda: changed['done'] and self.storage.writer.idle)
         self.assertIn('changed', changed['error'])
-        statuses = {i['id']: i['status'] for i in self.storage.db.knowledge_indexes()}
+        statuses = {i['id']: i['status'] for i in self.storage.db.knowledge.knowledge_indexes()}
         self.assertEqual(statuses[job['index_id']], 'complete')
         self.assertEqual(statuses[changed['index_id']], 'failed')
 
@@ -283,8 +283,8 @@ class KnowledgeUITests(unittest.TestCase):
         doc, config, index, options = indexed(self.storage)
         collection = dict(id='tool-sources', name='Tool sources', config_id=config['id'], host=index['host'],
                           model=index['model'], chunk_size=1600, overlap=200, created_at=0, updated_at=0)
-        self.storage.db.create_knowledge_collection(collection)
-        self.storage.db.prepare_collection_indexes(collection['id'], [doc['id']])
+        self.storage.db.knowledge.create_knowledge_collection(collection)
+        self.storage.db.knowledge.prepare_collection_indexes(collection['id'], [doc['id']])
         options.update(selection={}, collection_ids=[collection['id']])
         tab = self.make_tab()
         tab.knowledge_control.load(options)
@@ -313,7 +313,7 @@ class KnowledgeUITests(unittest.TestCase):
         tab.controller.save_tool_result(tab.strategy.pending_round, 0, 'result')
         pump_until(lambda: not tab.controller.tool_busy and self.storage.writer.idle)
         saved = self.storage.get_chat(tab.strategy.chat_id)
-        self.storage.db.delete_knowledge_document(doc['id'])
+        self.storage.db.knowledge.delete_knowledge_document(doc['id'])
         restored = GenerationTab(mode='chat', context=self.context, chat_id=saved['id'], initial_history=saved['messages'])
         self.tabs.append(restored)
         pump_until(lambda: self.context.services.idle)
@@ -358,9 +358,9 @@ class KnowledgeUITests(unittest.TestCase):
 
     def test_library_dialogs_select_chunks_validate_hosts_and_search(self):
         doc, config, index, options = indexed(self.storage)
-        self.storage.db.create_knowledge_collection(dict(id='sources', name='Sources', config_id=config['id'],
+        self.storage.db.knowledge.create_knowledge_collection(dict(id='sources', name='Sources', config_id=config['id'],
             host=index['host'], model=index['model'], chunk_size=1600, overlap=200, created_at=0, updated_at=0))
-        self.storage.db.prepare_collection_indexes('sources', [doc['id']])
+        self.storage.db.knowledge.prepare_collection_indexes('sources', [doc['id']])
         options.update(selection={}, collection_ids=['sources'])
         window, tab = self.make_window()
         with provider_patch('list_models', return_value=[TAG]), provider_patch('show_model', return_value={'capabilities': ['embedding']}):
@@ -370,7 +370,7 @@ class KnowledgeUITests(unittest.TestCase):
             current = picker.current_options()
             self.assertEqual(current['selection'], {})
             self.assertEqual(current['collection_ids'], ['sources'])
-            index_row = self.storage.db.knowledge_indexes()[0]
+            index_row = self.storage.db.knowledge.knowledge_indexes()[0]
             selected = []
             chunks = ChunkPicker(self.context, index_row, [], selected.append)
             chunks.present(picker)
@@ -439,20 +439,20 @@ class KnowledgeUITests(unittest.TestCase):
             self.assertFalse(dialog.get_extra_child().get_active())
             dialog.emit('response', 'delete')
             pump_until(lambda: self.context.services.idle and self.storage.writer.idle)
-        self.assertEqual(self.storage.db.model_embedding_usage(TAG['digest'])['vectors'], 2)
+        self.assertEqual(self.storage.db.knowledge.model_embedding_usage(TAG['digest'])['vectors'], 2)
         with patch('src.model_manager.Adw.AlertDialog.present', lambda d, parent: dialogs.append(d)), provider_patch('delete', side_effect=ProviderError('offline')):
             manager.on_model_delete_clicked(None, TAG)
             dialog = dialogs[-1]
             dialog.get_extra_child().set_active(True)
             dialog.emit('response', 'delete')
             pump_until(lambda: self.context.services.idle and self.storage.writer.idle)
-        self.assertEqual(self.storage.db.model_embedding_usage(TAG['digest'])['vectors'], 2)
+        self.assertEqual(self.storage.db.knowledge.model_embedding_usage(TAG['digest'])['vectors'], 2)
         with patch('src.model_manager.Adw.AlertDialog.present', lambda d, parent: dialogs.append(d)), provider_patch('delete', return_value=True):
             manager.on_model_delete_clicked(None, TAG)
             dialog = dialogs[-1]
             dialog.get_extra_child().set_active(True)
             dialog.emit('response', 'delete')
             pump_until(lambda: self.context.services.idle and self.storage.writer.idle)
-        self.assertEqual(self.storage.db.model_embedding_usage(TAG['digest'])['vectors'], 0)
-        self.assertIsNotNone(self.storage.db.knowledge_document(doc['id']))
+        self.assertEqual(self.storage.db.knowledge.model_embedding_usage(TAG['digest'])['vectors'], 0)
+        self.assertIsNotNone(self.storage.db.knowledge.knowledge_document(doc['id']))
         manager.requests.close()

@@ -1,4 +1,5 @@
 """Comparison editor and adaptive saved results."""
+from gettext import gettext as _
 import copy
 from types import SimpleNamespace
 from gi.repository import Gtk, GObject, GLib, Pango
@@ -9,9 +10,7 @@ from ..comparison import ComparisonRun, ComparisonController, prepare_run
 from ..drafts import DraftController
 from ..context import describe_context
 from ..bubbles import AiBubble
-from .chat_input import ChatInput
-from .options_panel import OptionsPanel
-from .knowledge_view import SourcesView
+from .source_views import SourcesView
 
 
 from .model_target import TargetPicker

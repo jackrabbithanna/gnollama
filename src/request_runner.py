@@ -1,4 +1,5 @@
 """Generation lifecycle and coalesced delivery, independent of GTK widgets."""
+from gettext import gettext as _
 import threading
 import time
 from gi.repository import GLib

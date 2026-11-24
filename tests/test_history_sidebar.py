@@ -22,7 +22,7 @@ def seed(storage, count=9):
                     'chat' if key == 'pinned' else key, key == 'pinned'))
         conn.commit()
     for index in range(count):
-        storage.db.save_draft(dict(id=f'draft-{index}', mode='chat', text=('Solar ' if index < 7 else 'Lunar ') + str(index),
+        storage.db.workspace.save_draft(dict(id=f'draft-{index}', mode='chat', text=('Solar ' if index < 7 else 'Lunar ') + str(index),
                                   settings={}, targets=[], revision=1))
 
 
@@ -58,8 +58,8 @@ class SidebarStorageTests(unittest.TestCase):
         self.assertTrue(all(len(rows) == 2 for rows in result.values()))
 
     def test_searches_message_bodies_and_full_draft_text_with_literal_prefixes(self):
-        self.storage.db.append_messages('comparison-0', [dict(uid='body-match', role='assistant', content='Distinctive aardvark result')], 0)
-        self.storage.db.save_draft(dict(id='long', mode='chat', text='Opening text ' * 40 + 'AARDVARK', settings={}, targets=[], revision=1))
+        self.storage.db.chats.append_messages('comparison-0', [dict(uid='body-match', role='assistant', content='Distinctive aardvark result')], 0)
+        self.storage.db.workspace.save_draft(dict(id='long', mode='chat', text='Opening text ' * 40 + 'AARDVARK', settings={}, targets=[], revision=1))
         result = self.storage.sidebar_snapshot('aardv')['groups']
         self.assertEqual(result['comparison'][0]['match_uid'], 'body-match')
         self.assertIn('aardvark', result['comparison'][0]['snippet'])
@@ -68,15 +68,15 @@ class SidebarStorageTests(unittest.TestCase):
         self.assertFalse(any(self.storage.sidebar_snapshot('%')['groups'].values()))
 
     def test_completions_cover_hidden_titles_without_loading_full_messages(self):
-        self.storage.db.update_chat_title('comparison-0', 'Unique autocomplete title', 0)
-        self.storage.db.update_chat_title('chat-0', 'Unique autocomplete title', 0)
+        self.storage.db.chats.update_chat_title('comparison-0', 'Unique autocomplete title', 0)
+        self.storage.db.chats.update_chat_title('chat-0', 'Unique autocomplete title', 0)
         result = self.storage.sidebar_snapshot('uniq')
         self.assertEqual([r['title'] for r in result['suggestions']], ['Unique autocomplete title'])
         self.assertLessEqual(len(self.storage.sidebar_snapshot('solar')['suggestions']), 8)
         self.assertEqual(self.storage.sidebar_snapshot('')['suggestions'], [])
 
     def test_draft_search_is_case_and_accent_insensitive(self):
-        self.storage.db.save_draft(dict(id='accent', mode='chat', text='Café Überprüfung', settings={}, targets=[], revision=1))
+        self.storage.db.workspace.save_draft(dict(id='accent', mode='chat', text='Café Überprüfung', settings={}, targets=[], revision=1))
         self.assertEqual([r['id'] for r in self.storage.sidebar_snapshot('CAFE uber')['groups']['drafts']], ['accent'])
 
 

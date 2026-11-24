@@ -4,6 +4,7 @@ import heapq
 import json
 import math
 import struct
+from typing import Any
 from gettext import gettext as _
 
 
@@ -98,9 +99,10 @@ def distance_candidates(conn, config_id, column, ids, query, count, metric, chec
     cursor = conn.execute(f'''SELECT k.id, r.rowid AS vector_rowid, r.chunk_id AS block_id, r.chunk_offset
         FROM knowledge_chunks k LEFT JOIN {name}_rowids r ON r.id=k.id
         WHERE {field} IN (SELECT value FROM json_each(?)) ORDER BY r.chunk_id, r.chunk_offset''', (encoded,))
-    block_id = blob = None
+    block_id = None
+    blob: Any = None
     size = len(query)
-    heap = []
+    heap: list = []
     try:
         for row in cursor:
             check_cancel()

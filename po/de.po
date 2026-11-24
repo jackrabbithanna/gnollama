@@ -23,14 +23,6 @@ msgstr ""
 msgid "Ollama;LLM;AI;Chat;Assistant;"
 msgstr "Ollama;LLM;AI;Chat;Assistant;"
 
-#: data/io.github.jackrabbithanna.Gnollama.gschema.xml:7
-msgid "Default Ollama Host"
-msgstr "Standard-Ollama-Host"
-
-#: data/io.github.jackrabbithanna.Gnollama.gschema.xml:8
-msgid "The default URL for the Ollama API server."
-msgstr "Die Standard-URL des Ollama-API-Servers."
-
 #: data/io.github.jackrabbithanna.Gnollama.desktop.in:2
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:7 src/startup.py:10
 #: src/window.ui:5

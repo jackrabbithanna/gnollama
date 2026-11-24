@@ -8,14 +8,14 @@ class OrderedWriter:
     def __init__(self, on_error=None):
         self._executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix='GnollamaStorage')
         self._lock = Lock()
-        self._jobs = deque()
+        self._jobs: deque = deque()
         self._running = False
         self._closed = False
         self.error = None
         self.on_error = on_error
 
     def submit(self, fn, *args, **kwargs):
-        future = Future()
+        future: Future = Future()
         with self._lock:
             if self._closed:
                 raise RuntimeError('Storage is closed')

@@ -3,7 +3,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-from gi.repository import Gdk, Gtk, GLib
+from gi.repository import Gdk, Gtk
 from src.database import DatabaseManager
 from src.markdown_view import MarkdownView
 from src.widgets.message_list import MessageList
@@ -16,21 +16,21 @@ class CleanupTests(unittest.TestCase):
     def test_collection_only_chat_survives_cleanup(self):
         with tempfile.TemporaryDirectory() as directory:
             db = DatabaseManager(directory + '/test.db')
-            db.create_chat('configured', 'New Chat', 0, 0, '')
-            db.save_tool_state('configured', options={'knowledge': {'selection': {}, 'collection_ids': ['manuals']}})
-            db.create_chat('unused', 'New Chat', 0, 0, '')
-            db.cleanup_empty_chats()
-            self.assertIsNotNone(db.get_chat('configured'))
-            self.assertIsNone(db.get_chat('unused'))
+            db.chats.create_chat('configured', 'New Chat', 0, 0, '')
+            db.chats.save_tool_state('configured', options={'knowledge': {'selection': {}, 'collection_ids': ['manuals']}})
+            db.chats.create_chat('unused', 'New Chat', 0, 0, '')
+            db.chats.cleanup_empty_chats()
+            self.assertIsNotNone(db.chats.get_chat('configured'))
+            self.assertIsNone(db.chats.get_chat('unused'))
 
     def test_scoped_cleanup_leaves_other_open_empty_chats(self):
         with tempfile.TemporaryDirectory() as directory:
             db = DatabaseManager(directory + '/test.db')
             for chat_id in ('closing', 'open'):
-                db.create_chat(chat_id, 'New Chat', 0, 0, '')
-            db.cleanup_empty_chats('closing')
-            self.assertIsNone(db.get_chat('closing'))
-            self.assertIsNotNone(db.get_chat('open'))
+                db.chats.create_chat(chat_id, 'New Chat', 0, 0, '')
+            db.chats.cleanup_empty_chats('closing')
+            self.assertIsNone(db.chats.get_chat('closing'))
+            self.assertIsNotNone(db.chats.get_chat('open'))
 
     def test_fences_preserve_literal_content(self):
         class Parser:

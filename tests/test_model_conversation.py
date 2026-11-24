@@ -7,10 +7,10 @@ import unittest
 from contextlib import ExitStack
 from unittest.mock import patch
 from gi.repository import Gdk
-from src.providers import OllamaProvider, ProviderError, RequestCancelled
+from src.providers import ProviderError, RequestCancelled
 from provider_fixture import provider_patch
 from src.app_context import AppContext
-from src.model_conversation import ModelConversationController, conversation_messages
+from src.model_conversation import ModelConversationController
 from src.export import export_json, export_markdown
 from src.records import RequestSettings
 from test_ui import pump_until
@@ -149,7 +149,7 @@ class ConversationTests(unittest.TestCase):
 
     def test_draft_consumption_and_validation_failure(self):
         draft = dict(id='draft', mode='model_conversation', text='opening', settings={}, targets=[], revision=2)
-        self.storage.db.save_draft(draft)
+        self.storage.db.workspace.save_draft(draft)
         broken = copy.deepcopy(self.participants)
         broken[0]['model'] = 'missing'
         self.controller.start('opening', 1, typed(broken), 'draft', 2)
@@ -162,14 +162,14 @@ class ConversationTests(unittest.TestCase):
         self.assertIsNone(self.storage.get_draft('draft'))
 
     def test_save_failure_blocks_next_request_and_retry_is_idempotent(self):
-        original = self.storage.db.finish_model_conversation_attempt
+        original = self.storage.db.model_conversations.finish_model_conversation_attempt
         failed = threading.Event()
         def fail_once(*args):
             if not failed.is_set():
                 failed.set()
                 raise OSError('disk full')
             return original(*args)
-        with patch.object(self.storage.db, 'finish_model_conversation_attempt', side_effect=fail_once), provider_patch('chat', side_effect=lambda **kw: iter([dict(message={'content': 'ok'}, done=True)])) as api:
+        with patch.object(self.storage.db.model_conversations, 'finish_model_conversation_attempt', side_effect=fail_once), provider_patch('chat', side_effect=lambda **kw: iter([dict(message={'content': 'ok'}, done=True)])) as api:
             self.controller.start('opening', 1, typed(self.participants))
             pump_until(lambda: self.storage.writer.error is not None)
             self.assertEqual(api.call_count, 1)
@@ -189,7 +189,7 @@ class ConversationTests(unittest.TestCase):
             conn.execute("UPDATE model_conversation_runs SET status='running',next_turn=1 WHERE id=?", (snapshot['id'],))
             conn.execute("UPDATE model_conversation_attempts SET status='running' WHERE id=?", (snapshot['attempts'][1]['id'],))
             conn.commit()
-        self.storage.db.interrupt_model_conversations()
+        self.storage.db.model_conversations.interrupt_model_conversations()
         snapshot = self.snapshot()
         self.assertEqual(snapshot['run']['status'], 'interrupted')
         self.assertEqual([a['status'] for a in snapshot['attempts']], ['complete', 'interrupted'])
@@ -203,7 +203,7 @@ class ConversationTests(unittest.TestCase):
         self.assertIn('system one', markdown)
         self.assertIn('"attempts"', export_json(snapshot))
         self.assertEqual(self.storage.list_history('reply2')[0]['id'], snapshot['id'])
-        self.storage.db.delete_chat(snapshot['id'])
+        self.storage.db.chats.delete_chat(snapshot['id'])
         self.assertIsNone(self.snapshot())
         with self.storage.db._get_conn() as conn:
             self.assertEqual(conn.execute('SELECT count(*) FROM model_conversation_attempts').fetchone()[0], 0)
@@ -239,13 +239,13 @@ class ConversationTests(unittest.TestCase):
         self.assertEqual(self.snapshot()['run']['status'], 'stopped')
 
     def test_pause_while_attempt_save_is_pending_discards_placeholder(self):
-        original = self.storage.db.start_model_conversation_attempt
+        original = self.storage.db.model_conversations.start_model_conversation_attempt
         entered, release = threading.Event(), threading.Event()
         def blocked(*args):
             entered.set()
             release.wait(3)
             return original(*args)
-        with patch.object(self.storage.db, 'start_model_conversation_attempt', side_effect=blocked), provider_patch('chat') as api:
+        with patch.object(self.storage.db.model_conversations, 'start_model_conversation_attempt', side_effect=blocked), provider_patch('chat') as api:
             self.controller.start('opening', 1, typed(self.participants))
             pump_until(entered.is_set)
             self.controller.pause()
@@ -284,7 +284,7 @@ class ConversationTests(unittest.TestCase):
         self.assertEqual(self.snapshot()['run']['status'], 'complete')
 
     def test_deleted_run_is_never_recreated_by_completion(self):
-        self.controller.started = lambda *a: self.storage.db.delete_chat(self.controller.id)
+        self.controller.started = lambda *a: self.storage.db.chats.delete_chat(self.controller.id)
         self.run_to_end(1)
         self.assertIsNone(self.snapshot())
 
@@ -292,14 +292,14 @@ class ConversationTests(unittest.TestCase):
         from src.database import DatabaseManager
         chat = self.storage.create_chat()
         pump_until(lambda: self.storage.writer.idle)
-        self.storage.db.append_messages(chat['id'], [dict(uid='existing', role='user', content='retained')], 0)
+        self.storage.db.chats.append_messages(chat['id'], [dict(uid='existing', role='user', content='retained')], 0)
         with self.storage.db._get_conn() as conn:
             conn.execute('DROP TABLE model_conversation_attempts')
             conn.execute('DROP TABLE model_conversation_runs')
             conn.execute('PRAGMA user_version=11')
             conn.commit()
         upgraded = DatabaseManager(self.storage.db_path)
-        self.assertEqual(upgraded.get_messages(chat['id'])[0]['content'], 'retained')
+        self.assertEqual(upgraded.chats.get_messages(chat['id'])[0]['content'], 'retained')
         with upgraded._get_conn() as conn:
             self.assertEqual(conn.execute('PRAGMA user_version').fetchone()[0], 12)
 
@@ -402,7 +402,8 @@ class ConversationUITests(unittest.TestCase):
     def test_layout_resizes_and_long_settings_stay_scrollable(self):
         from test_response_layout import ResponseLayoutTests
         window, tab = self.make_conversation()
-        resize = lambda width: ResponseLayoutTests.resize(self, window, width)
+        def resize(width):
+            return ResponseLayoutTests.resize(self, window, width)
         resize(1050)
         pump_until(lambda: tab._wide and tab.targets[0].get_width() > 300)
         self.assertAlmostEqual(tab.targets[0].get_width(), tab.targets[1].get_width(), delta=2)

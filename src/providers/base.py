@@ -1,5 +1,6 @@
 """What every model provider offers, and what each one can do."""
 from dataclasses import dataclass, field
+from typing import Any
 
 from .transport import Transport
 
@@ -31,12 +32,12 @@ class Provider:
     url: str
     host_id: str | None = None
     credential_id: str | None = None
-    credentials: object = field(default=None, repr=False, compare=False)
+    credentials: Any = field(default=None, repr=False, compare=False)
     transport: Transport = field(default_factory=Transport, repr=False, compare=False)
 
     kind = ''
     capabilities = Capabilities()
-    fixed_url = None       # The only URL this provider accepts, if any.
+    fixed_url: str | None = None  # The only URL this provider accepts, if any.
     requires_key = False
 
     @classmethod

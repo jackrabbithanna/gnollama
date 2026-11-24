@@ -1,3 +1,4 @@
+from gettext import gettext as _
 from typing import List, Optional, Any, Dict
 from gi.repository import Adw, Gtk, GLib, GObject
 import copy
@@ -9,7 +10,7 @@ from .session import display_chat_title
 from .structured import InvalidSchema
 from .tool_calling import InvalidTools
 from .widgets.tool_view import ToolCallsView
-from .widgets.knowledge_view import KnowledgeControl, SourcesView
+from .widgets.source_views import KnowledgeControl, SourcesView
 
 from .widgets.message_list import MessageList
 from .widgets.chat_input import ChatInput
@@ -29,6 +30,12 @@ class GenerationTab(Gtk.Box):
     message_list: MessageList = Gtk.Template.Child()
     chat_input: ChatInput = Gtk.Template.Child()
     options_panel: OptionsPanel = Gtk.Template.Child()
+    older_button: Gtk.Button = Gtk.Template.Child()
+    advanced: Gtk.Expander = Gtk.Template.Child()
+    options_box: Gtk.Box = Gtk.Template.Child()
+    context_expander: Gtk.Expander = Gtk.Template.Child()
+    context_label: Gtk.Label = Gtk.Template.Child()
+    discard_button: Gtk.Button = Gtk.Template.Child()
 
     def __init__(self, mode: str = 'generate', chat_id: Optional[str] = None,
                  initial_history: Optional[List[Dict[str, Any]]] = None, context=None,
@@ -36,7 +43,7 @@ class GenerationTab(Gtk.Box):
         super().__init__(**kwargs)
         self.init_template()
         self.title = _('New Chat') if mode == 'chat' else _('New Response')
-        self._tool_views = []
+        self._tool_views: List[ToolCallsView] = []
 
         self.context = context
         self.storage = storage = context.storage
@@ -76,7 +83,7 @@ class GenerationTab(Gtk.Box):
         self.on_host_changed()
         self._sync_tools()
         self._configured = False
-        self._compact_options()
+        self._summarize_options()
         self.draft = self.controller.draft = DraftController(storage, mode, self.read_draft,
             id=draft['id'] if draft else None, chat_id=chat_id)
         self.chat_input.entry.connect('changed', self.draft.changed)
@@ -84,17 +91,11 @@ class GenerationTab(Gtk.Box):
         self.chat_input.thinking_dropdown.connect('notify::selected', self._settings_edited)
         self.options_panel.host_dropdown.connect('notify::selected', self._settings_edited)
         self.chat_input.model_dropdown.connect('notify::selected', self._model_edited)
-        self.older_button = Gtk.Button(label=_('Load Older Messages'), visible=self.controller.message_offset > 0)
+        self.older_button.set_visible(self.controller.message_offset > 0)
         self.older_button.connect('clicked', self.load_older)
-        self.prepend(self.older_button)
-        self.context_label = Gtk.Label(wrap=True, xalign=0, selectable=True)
-        self.context_expander = Gtk.Expander(label=_('Context estimate'), child=self.context_label)
         self.context_expander.connect('notify::expanded', lambda *args: self.update_context())
-        self.append(self.context_expander)
         self.chat_input.entry.connect('changed', lambda *args: self.update_context())
-        self.discard_button = Gtk.Button(label=_('Discard Draft'), halign=Gtk.Align.END)
         self.discard_button.connect('clicked', self.discard_draft)
-        self.append(self.discard_button)
         if draft:
             self.restore_draft(draft)
         elif chat_id:
@@ -104,17 +105,9 @@ class GenerationTab(Gtk.Box):
                 GLib.idle_add(lambda: self.restore_draft(saved) if saved and not self.controller.closing and self.draft.revision == revision else None)
             context.services.control.submit(fetch)
 
-    def _compact_options(self):
-        self.remove(self.options_panel)
-        thinking = self.chat_input.thinking_dropdown.get_parent()
-        flow_child = thinking.get_parent()
-        flow_child.set_child(None)
-        self.chat_input.connection_box.remove(flow_child)
-        box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
-        box.append(thinking)
-        box.append(self.options_panel)
-        self.advanced = Gtk.Expander(label=_('Options'), child=box, margin_start=12, margin_end=12)
-        self.append(self.advanced)
+    def _summarize_options(self):
+        # The composer is shared with other views, which keep thinking beside the model.
+        self.options_box.prepend(self.chat_input.detach_thinking())
         def summary(*args):
             active = []
             mode = self.options_panel.output_dropdown.get_selected_item()
@@ -136,7 +129,7 @@ class GenerationTab(Gtk.Box):
 
     def update_context(self):
         """Estimate the context the draft would use, while the estimate is shown."""
-        if not hasattr(self, 'context_label') or not self.context_expander.get_expanded():
+        if not self.context_expander.get_expanded():
             return
         panel = self.options_panel
         options = {}
@@ -152,8 +145,6 @@ class GenerationTab(Gtk.Box):
 
     def context_estimated(self, estimate, expand):
         from .context import describe_context
-        if not hasattr(self, 'context_label'):
-            return
         self.context_label.set_text(describe_context(estimate))
         if expand and estimate['warning']:
             self.context_expander.set_expanded(True)

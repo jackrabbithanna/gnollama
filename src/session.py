@@ -1,5 +1,7 @@
 """Per-request generation state and conversation persistence."""
+from gettext import gettext as _
 import copy
+from typing import Optional
 from dataclasses import dataclass, field
 
 from gi.repository import Gio
@@ -33,8 +35,8 @@ class RequestState:
     finalized: bool = False
     tool_calls: list = field(default_factory=list)
     continuation: bool = False
-    saved_message: dict = None
-    retrieval: dict = None
+    saved_message: Optional[dict] = None
+    retrieval: Optional[dict] = None
     connection: object = field(default=None, repr=False)
     draft_id: str | None = None
     draft_revision: int | None = None
@@ -158,7 +160,7 @@ class ChatStrategy(GenerationStrategy):
         if state.settings.wire.system:
             state.messages.insert(0, {'role': 'system', 'content': state.settings.wire.system})
         if state.continuation:
-            latest = next((m for m in reversed(self.history) if m['role'] == 'user'), {})
+            latest: dict = next((m for m in reversed(self.history) if m['role'] == 'user'), {})
             state.retrieval = copy.deepcopy((latest.get('response_metadata') or {}).get('retrieval'))
         state.messages = augmented_messages(state.messages, state.retrieval)
         if state.retrieval:
@@ -197,7 +199,7 @@ class ViewRequests:
     def __init__(self, window):
         import weakref
         self.closed = False
-        self._cancellables = weakref.WeakSet()
+        self._cancellables: weakref.WeakSet = weakref.WeakSet()
         from gi.repository import Adw
         window.connect('closed' if isinstance(window, Adw.Dialog) else 'close-request', self.close)
         window.connect('destroy', self.close)

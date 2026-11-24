@@ -1,15 +1,9 @@
 """Adaptive Knowledge Library, source selection, and retrieval inspection."""
-import copy
-import json
-import time
-from gettext import ngettext
+from gettext import gettext as _
 from gi.repository import Adw, Gtk, Gio, GLib, Pango
 
 from ..providers import ProviderError, RequestCancelled
-from ..knowledge import (DEFAULT_RAG, PRESETS, canonical_model, check_cancel, extract_document, make_document,
-                         model_identity, new_config, validate_rag)
-from ..vectors import SEARCH_METRICS
-from .json_view import TextEditor, buffer_text
+from ..knowledge import (PRESETS, check_cancel, new_config)
 
 
 def label(text='', **kwargs):

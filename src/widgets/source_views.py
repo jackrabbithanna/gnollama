@@ -2,16 +2,17 @@
 import copy
 import json
 import time
-from gettext import ngettext
-from gi.repository import Adw, Gtk, Gio, GLib, Pango
+from gettext import gettext as _
+from gi.repository import Gtk
 
-from ..knowledge import (DEFAULT_RAG, PRESETS, canonical_model, check_cancel, extract_document, make_document,
-                         model_identity, new_config, validate_rag)
+from ..knowledge import (DEFAULT_RAG, validate_rag)
 from ..vectors import SEARCH_METRICS
-from .json_view import TextEditor, buffer_text
+from .json_view import TextEditor
 
 
-from .knowledge_common import *
+from .knowledge_common import (
+    actions, button, clear, config_label, dropdown, field, HostModels, label, section, WorkDialog,
+)
 
 class SourcesView(Gtk.Expander):
     def __init__(self, snapshot):

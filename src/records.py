@@ -84,7 +84,8 @@ class RequestSettings:
     def api_details(self):
         """What a response records about its request: the destination and wire options."""
         wire = _values(self.wire)
-        return dict(host=self.target.url, model=self.target.model, options=wire['options'],
+        target = self.target or ModelTarget()
+        return dict(host=target.url, model=target.model, options=wire['options'],
                     thinking=wire['thinking'], system=wire['system'], logprobs=wire['logprobs'],
                     top_logprobs=wire['top_logprobs'], endpoint=self.endpoint, format=wire['format'],
                     keep_alive=wire['keep_alive'], tools=wire['tools'])

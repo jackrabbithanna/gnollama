@@ -1,5 +1,6 @@
-from typing import List, Optional, Any, Dict
-from gi.repository import Adw, Gtk, GObject, GLib
+from gettext import gettext as _
+from typing import List, Optional, Any
+from gi.repository import Adw, Gtk, GLib
 from ..bubbles import UserBubble, AiBubble
 
 @Gtk.Template(resource_path='/io/github/jackrabbithanna/Gnollama/widgets/message_list.ui')

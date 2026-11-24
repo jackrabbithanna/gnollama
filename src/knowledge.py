@@ -7,6 +7,7 @@ import re
 import threading
 import time
 import uuid
+from typing import Any, Dict
 from concurrent.futures import ThreadPoolExecutor
 from contextlib import contextmanager
 from gettext import gettext as _
@@ -23,7 +24,7 @@ PRESETS = {
     'qwen3': ('', 'Instruct: Given a web search query, retrieve relevant passages that answer the query\nQuery:'),
     'custom': ('', ''),
 }
-DEFAULT_RAG = dict(enabled=False, config_id=None, host='', model='', selection={}, collection_ids=[],
+DEFAULT_RAG: Dict[str, Any] = dict(enabled=False, config_id=None, host='', model='', selection={}, collection_ids=[],
                    count=6, budget=8000, minimum=None, metric='cosine', maximum=None)
 SOURCE_INSTRUCTIONS = (
     'Use the supplied reference passages to answer the question. Prefer these sources; '
@@ -235,7 +236,7 @@ class KnowledgeService:
 
     def _write(self, fn, *args, cancel=None):
         done = threading.Event()
-        result = []
+        result: list = []
         def write():
             try:
                 result.append((fn(*args), None))
@@ -433,7 +434,7 @@ class KnowledgeService:
                 document = self.library.knowledge_document(document_id)
                 if document is None:
                     raise ValueError(_('The source document was deleted.'))
-                chunks = []
+                chunks: list = []
                 for chunk in chunk_text(document['text'], size, overlap):
                     check_cancel(cancel)
                     if len(chunks) >= 100000:
@@ -525,7 +526,7 @@ class KnowledgeService:
             vector = response['embeddings'][0]
             if len(vector) != config['dimensions']:
                 raise ValueError(_('Query dimensions differ from the stored vectors. Rebuild the index.'))
-            sources = {}
+            sources: dict = {}
             hits = self.library.search_knowledge(config['id'], options.get('selection', {}), vector, options['count'],
                                             options['budget'], options['minimum'], lambda: check_cancel(cancel),
                                             collection_ids=options.get('collection_ids', []), source_snapshot=sources,

@@ -4,6 +4,8 @@ import time
 import uuid
 from gettext import gettext as _
 
+from .store_common import Repository
+
 
 MIGRATION = """
 CREATE TABLE knowledge_collections (
@@ -47,7 +49,7 @@ BEGIN SELECT RAISE(ABORT, 'Incompatible collection index'); END;
 """
 
 
-class CollectionDatabase:
+class CollectionDatabase(Repository):
     def knowledge_collections(self):
         with self._get_conn() as conn:
             return [dict(r) for r in conn.execute('''SELECT c.*, e.digest, e.dimensions, e.preset,

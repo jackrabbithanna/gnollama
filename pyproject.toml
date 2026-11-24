@@ -1,0 +1,51 @@
+# Lint and type-check settings. The application is built with Meson; this is
+# not a Python package definition.
+
+[tool.ruff]
+target-version = "py311"
+extend-exclude = ["_build", "_flatpak", "build", "builddir", "repo"]
+
+[tool.ruff.lint]
+# Syntax errors, undefined and unused names, and statements that hide a mistake.
+select = ["E4", "E7", "E9", "F"]
+
+[tool.ruff.lint.per-file-ignores]
+# gi.require_version() has to run before the gi.repository imports it governs.
+"src/credentials.py" = ["E402"]
+"src/main.py" = ["E402"]
+"src/providers/transport.py" = ["E402"]
+"src/web_import.py" = ["E402"]
+# Tests and tools set up sys.path, gettext, and GTK before importing the application.
+"tests/*" = ["E402"]
+"tools/*" = ["E402"]
+
+[tool.mypy]
+python_version = "3.11"
+packages = ["src"]
+# The permissive baseline: annotated code is checked everywhere. Bodies of
+# functions without annotations are checked only in the modules listed below.
+warn_unused_ignores = true
+warn_redundant_casts = true
+
+[[tool.mypy.overrides]]
+# Not typed, or typed differently from one release to the next. Skipping them
+# keeps the result the same whether or not they are installed.
+module = [
+    "cairo.*", "cssselect.*", "gi.*", "jsonschema.*", "lxml.*", "markdown.*", "markdownify.*",
+    "pypdf.*", "referencing.*", "sqlite_vec.*", "trafilatura.*", "ziamath.*",
+]
+follow_imports = "skip"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+# Modules that import without GTK. Add a module here when it is tightened.
+module = [
+    "src.app_context", "src.chat_controller", "src.chat_store", "src.collections_store",
+    "src.comparison", "src.connections", "src.context", "src.credentials", "src.database",
+    "src.drafts", "src.export", "src.history", "src.knowledge", "src.knowledge_store",
+    "src.library_repository", "src.model_conversation", "src.model_conversation_store",
+    "src.providers.*", "src.records", "src.request_runner", "src.services", "src.session",
+    "src.storage", "src.store_common", "src.structured", "src.tool_calling", "src.vectors",
+    "src.web_import", "src.web_store", "src.workspace_store", "src.writer",
+]
+check_untyped_defs = true

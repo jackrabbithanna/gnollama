@@ -59,11 +59,6 @@ class KnowledgeDatabase(WebSourceDatabase, CollectionDatabase):
             conn.commit()
             return id
 
-    def _delete_index_vectors(self, conn, index_id):
-        index = conn.execute('SELECT config_id FROM knowledge_indexes WHERE id=?', (index_id,)).fetchone()
-        if index is not None and table_exists(conn, index['config_id']):
-            conn.execute(f'DELETE FROM {vector_table(index["config_id"])} WHERE index_id=?', (index_id,))
-
     def document_page(self, query='', scope='all', limit=100, offset=0, exclude_collection=None):
         with self._get_conn() as conn:
             where, args = [], []
@@ -283,7 +278,9 @@ class KnowledgeDatabase(WebSourceDatabase, CollectionDatabase):
                 config = conn.execute('SELECT dimensions FROM embedding_configs WHERE id=?', (config_id,)).fetchone()
                 if config is None or config['dimensions'] != len(query) // 4:
                     raise ValueError(_('Query dimensions differ from the stored vectors. Rebuild the index.'))
-                indexes, whole, partial = {}, [], []
+                indexes: dict = {}
+                whole: list = []
+                partial: list = []
                 for index_id, chosen in selection.items():
                     check_cancel()
                     index = conn.execute('''SELECT i.*, d.title, d.pages FROM knowledge_indexes i

@@ -3,7 +3,6 @@
 import argparse
 import gettext
 import json
-import math
 from pathlib import Path
 import sys
 import tempfile
@@ -29,17 +28,17 @@ def evaluate(host=None, model=None, answer_model=None):
     with tempfile.TemporaryDirectory(prefix='gnollama-evaluation-') as directory:
         db = DatabaseManager(str(Path(directory) / 'evaluation.db'))
         config = new_config(model or 'recorded', str(identity), dimensions=len(embeddings[0]))
-        db.add_embedding_config(config)
+        db.knowledge.add_embedding_config(config)
         for passage, vector in zip(passages, embeddings):
             document = make_document(passage['id'], passage['text'])
-            db.add_knowledge_document(document)
-            db.begin_knowledge_index(dict(id=passage['id'], document_id=document['id'], config_id=config['id'],
+            db.knowledge.add_knowledge_document(document)
+            db.knowledge.begin_knowledge_index(dict(id=passage['id'], document_id=document['id'], config_id=config['id'],
                 host=host or 'http://localhost:11434', model=model or 'recorded', chunk_size=1600, overlap=0, created_at=0))
-            db.save_embedding_batch(passage['id'], config['id'], len(vector), [dict(id=passage['id'], ordinal=0,
+            db.knowledge.save_embedding_batch(passage['id'], config['id'], len(vector), [dict(id=passage['id'], ordinal=0,
                 start=0, end=len(passage['text']), vector=vector_blob(vector))])
-            db.finish_knowledge_index(passage['id'], 'complete')
+            db.knowledge.finish_knowledge_index(passage['id'], 'complete')
         for case, query in zip(fixture['cases'], queries):
-            hits = db.search_knowledge(config['id'], {p['id']: None for p in passages}, query)
+            hits = db.knowledge.search_knowledge(config['id'], {p['id']: None for p in passages}, query)
             ids, expected = [h['id'] for h in hits], set(case['expected'])
             ranks = [ids.index(id) + 1 for id in expected if id in ids]
             report = dict(kind=case['kind'], query=case['query'], expected=case['expected'], expected_answer=case['answer'],

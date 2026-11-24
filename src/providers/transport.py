@@ -36,7 +36,7 @@ def validate_url(url):
 
 
 def read_all(stream, cancellable):
-    chunks = []
+    chunks: list = []
     while True:
         chunk = stream.read_bytes(8192, cancellable).get_data()
         if not chunk:

@@ -1,6 +1,5 @@
 import copy
 import unittest
-from unittest.mock import patch
 
 from src.structured import InvalidSchema, request_format, validate_response, formatted_json
 from src.session import RequestState, api_messages

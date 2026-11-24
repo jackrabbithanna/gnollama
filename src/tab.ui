@@ -5,6 +5,12 @@
   <template class="GenerationTab" parent="GtkBox">
     <property name="orientation">vertical</property>
     <child>
+      <object class="GtkButton" id="older_button">
+        <property name="label" translatable="yes">Load Older Messages</property>
+        <property name="visible">False</property>
+      </object>
+    </child>
+    <child>
       <object class="MessageList" id="message_list">
       </object>
     </child>
@@ -13,7 +19,38 @@
       </object>
     </child>
     <child>
-      <object class="OptionsPanel" id="options_panel">
+      <object class="GtkExpander" id="advanced">
+        <property name="label" translatable="yes">Options</property>
+        <property name="margin-start">12</property>
+        <property name="margin-end">12</property>
+        <property name="child">
+          <object class="GtkBox" id="options_box">
+            <property name="orientation">vertical</property>
+            <property name="spacing">6</property>
+            <child>
+              <object class="OptionsPanel" id="options_panel">
+              </object>
+            </child>
+          </object>
+        </property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkExpander" id="context_expander">
+        <property name="label" translatable="yes">Context estimate</property>
+        <property name="child">
+          <object class="GtkLabel" id="context_label">
+            <property name="wrap">True</property>
+            <property name="xalign">0</property>
+            <property name="selectable">True</property>
+          </object>
+        </property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkButton" id="discard_button">
+        <property name="label" translatable="yes">Discard Draft</property>
+        <property name="halign">end</property>
       </object>
     </child>
   </template>

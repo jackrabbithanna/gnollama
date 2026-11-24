@@ -1,6 +1,7 @@
+from gettext import gettext as _
 import base64
 from typing import List, Optional, Any, Dict
-from gi.repository import Gtk, GObject, Pango, GLib, Gdk
+from gi.repository import Gtk, GLib, Gdk
 from .markdown_view import MarkdownView
 
 @Gtk.Template(resource_path='/io/github/jackrabbithanna/Gnollama/user_bubble.ui')
@@ -47,6 +48,8 @@ class AiBubble(Gtk.ListBoxRow):
     api_expander: Gtk.Expander = Gtk.Template.Child()
     thinking_expander: Gtk.Expander = Gtk.Template.Child()
     thinking_label: Gtk.Label = Gtk.Template.Child()
+    # The text view that shows log probabilities, once any have arrived.
+    active_logprobs_label: Optional[Gtk.TextView] = None
 
     def __init__(self, model_name: Optional[str] = None, output_format=None, **kwargs: Any) -> None:
         from .widgets.json_view import JsonResponseView
@@ -142,7 +145,7 @@ class AiBubble(Gtk.ListBoxRow):
 
     def append_logprobs(self, logprobs_data: Any) -> None:
         """Appends logprobs data to a text view in an expander."""
-        if not hasattr(self, 'active_logprobs_label') or self.active_logprobs_label is None:
+        if self.active_logprobs_label is None:
             # Create expander for logprobs
             expander = Gtk.Expander(label=_("Logprobs"))
             expander.set_hexpand(True)

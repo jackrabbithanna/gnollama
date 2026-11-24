@@ -1,5 +1,4 @@
 """Collection import journeys, settings dialogs, and source-selection behavior."""
-import copy
 from contextlib import ExitStack
 from pathlib import Path
 import tempfile
@@ -9,13 +8,14 @@ import unittest
 from unittest.mock import patch
 
 from gi.repository import Adw, Gdk, Gio, Gtk
-from src import session
-from src.providers import OllamaProvider, ProviderError
+from src.providers import ProviderError
 from provider_fixture import provider_patch
-from src.knowledge import DEFAULT_RAG, make_document, new_config
+from src.knowledge import make_document, new_config
 from src.app_context import AppContext
 from src.widgets.knowledge_import import FileImportDialog, TextImportDialog
-from src.widgets.knowledge_view import CollectionDestination, CollectionDialog, KnowledgeView, SourcePicker, WorkDialog
+from src.widgets.collection_views import CollectionDialog
+from src.widgets.knowledge_view import KnowledgeView
+from src.widgets.source_views import SourcePicker
 from src.widgets.url_import import URLImportDialog
 from src.widgets.json_view import buffer_text
 from src.host_manager import HostEditDialog
@@ -79,15 +79,15 @@ class UsabilityTests(unittest.TestCase):
         dialog.editor.get_buffer().set_text('Install Gnollama using GNOME Builder.')
         dialog.apply_text()
         self.assertIn('destination collection', dialog.error_label.get_text())
-        self.assertEqual(self.storage.db.knowledge_documents(), [])
+        self.assertEqual(self.storage.db.knowledge.knowledge_documents(), [])
         self.assertIn('GNOME Builder', buffer_text(dialog.editor))
         dialog.destination.refresh('Manuals')
         dialog.apply_text()
         pump_until(lambda: dialog.closed)
         self.drain()
-        group = next(c for c in self.storage.db.knowledge_collections() if c['id'] == 'Manuals')
+        group = next(c for c in self.storage.db.knowledge.knowledge_collections() if c['id'] == 'Manuals')
         self.assertEqual((group['documents'], group['ready']), (1, 1))
-        self.assertEqual(self.storage.db.collection_documents('Manuals')[0]['title'], 'Getting started')
+        self.assertEqual(self.storage.db.knowledge.collection_documents('Manuals')[0]['title'], 'Getting started')
 
     def test_destination_creation_and_all_imports_share_selected_collection(self):
         view = KnowledgeView(self.context)
@@ -125,11 +125,11 @@ class UsabilityTests(unittest.TestCase):
         dialog.start_files(files)
         pump_until(lambda: dialog.items[0]['status'] == 'ready')
         self.assertEqual([i['status'] for i in dialog.items], ['ready', 'queued', 'queued'])
-        self.assertEqual(self.storage.db.knowledge_documents(), [])
+        self.assertEqual(self.storage.db.knowledge.knowledge_documents(), [])
         dialog.title_entry.set_text('Renamed guide')
         dialog.save()
         pump_until(lambda: dialog.items[1]['status'] == 'failed')
-        self.assertEqual(len(self.storage.db.knowledge_documents()), 1)
+        self.assertEqual(len(self.storage.db.knowledge.knowledge_documents()), 1)
         dialog.skip()
         pump_until(lambda: dialog.items[2]['status'] == 'ready')
         dialog.save()
@@ -137,7 +137,7 @@ class UsabilityTests(unittest.TestCase):
         self.drain()
         dialog.update_saved()
         self.assertEqual([i['status'] for i in dialog.items], ['saved', 'skipped', 'saved'])
-        self.assertEqual(next(c for c in self.storage.db.knowledge_collections() if c['id'] == 'Files')['ready'], 2)
+        self.assertEqual(next(c for c in self.storage.db.knowledge.knowledge_collections() if c['id'] == 'Files')['ready'], 2)
         self.assertIn('Ready to Search', dialog.items[0]['row'].get_text())
         self.assertIsNone(dialog.items[0]['document'])
 
@@ -161,7 +161,7 @@ class UsabilityTests(unittest.TestCase):
             self.assertTrue(dialog.job['cancel'].is_cancelled())
             release.set()
             self.drain()
-        self.assertEqual(self.storage.db.knowledge_documents(), [])
+        self.assertEqual(self.storage.db.knowledge.knowledge_documents(), [])
 
     def test_import_reuses_vectors_and_deleted_destination_does_not_save(self):
         collection(self.storage.db, 'A', self.config)
@@ -170,17 +170,17 @@ class UsabilityTests(unittest.TestCase):
         results = []
         self.context.knowledge.import_document(doc, 'A', lambda r, e: results.append((r, e)))
         self.drain()
-        indexes = self.storage.db.knowledge_indexes()
+        indexes = self.storage.db.knowledge.knowledge_indexes()
         self.context.knowledge.import_document(make_document('Duplicate', doc['text']), 'B')
         self.drain()
-        self.assertEqual(len(self.storage.db.knowledge_documents()), 1)
-        self.assertEqual(self.storage.db.knowledge_indexes(), indexes)
-        self.assertEqual(next(c for c in self.storage.db.knowledge_collections() if c['id'] == 'B')['ready'], 1)
-        self.storage.db.delete_knowledge_collection('B')
+        self.assertEqual(len(self.storage.db.knowledge.knowledge_documents()), 1)
+        self.assertEqual(self.storage.db.knowledge.knowledge_indexes(), indexes)
+        self.assertEqual(next(c for c in self.storage.db.knowledge.knowledge_collections() if c['id'] == 'B')['ready'], 1)
+        self.storage.db.knowledge.delete_knowledge_collection('B')
         job = self.context.knowledge.import_document(make_document('New', 'Different unsaved content'), 'B')
         self.drain()
         self.assertIn('deleted', job['error'])
-        self.assertEqual(len(self.storage.db.knowledge_documents()), 1)
+        self.assertEqual(len(self.storage.db.knowledge.knowledge_documents()), 1)
         self.assertIsNone(self.storage.writer.error)
 
     def test_failed_preparation_preserves_source_and_membership(self):
@@ -188,12 +188,12 @@ class UsabilityTests(unittest.TestCase):
         with provider_patch('embed', side_effect=ProviderError('Embedding server unavailable')):
             self.context.knowledge.import_document(make_document('Saved source', 'Retry this document after reconnecting.'), 'Failures')
             self.drain()
-        members = self.storage.db.collection_documents('Failures')
+        members = self.storage.db.knowledge.collection_documents('Failures')
         self.assertEqual(len(members), 1)
         self.assertEqual(members[0]['status'], 'failed')
         self.context.knowledge.build_collection('Failures')
         self.drain()
-        self.assertEqual(next(c for c in self.storage.db.knowledge_collections() if c['id'] == 'Failures')['ready'], 1)
+        self.assertEqual(next(c for c in self.storage.db.knowledge.knowledge_collections() if c['id'] == 'Failures')['ready'], 1)
 
     def test_first_collection_selects_configuration_and_keeps_focused_rows(self):
         collection(self.storage.db, 'A', self.config)

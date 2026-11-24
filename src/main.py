@@ -1,5 +1,5 @@
 import sys
-from gettext import pgettext
+from gettext import gettext as _, pgettext
 from typing import List, Optional, Any, Callable
 import gi
 

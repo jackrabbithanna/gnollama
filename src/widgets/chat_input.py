@@ -1,9 +1,8 @@
-from typing import List, Optional, Any, Dict, Callable
-from gettext import ngettext
+from typing import Any, Dict, List, Optional
+from gettext import gettext as _, ngettext
 from gi.repository import Gtk, GObject, Gio, GLib, Gdk, Pango
-import threading
 from ..providers import RequestCancelled
-from .composer import Composer
+from .composer import Composer  # noqa: F401 - registers the type chat_input.ui names
 
 @Gtk.Template(resource_path='/io/github/jackrabbithanna/Gnollama/widgets/chat_input.ui')
 class ChatInput(Gtk.Box):
@@ -27,8 +26,8 @@ class ChatInput(Gtk.Box):
     def __init__(self, **kwargs: Any) -> None:
         super().__init__(**kwargs)
         
-        self.selected_image_paths = []
-        self.restored_images = []
+        self.selected_image_paths: List[str] = []
+        self.restored_images: List[str] = []
         self.pending_imports = 0
         self._image_generation = 0
         self.entry.set_placeholder_text(_('Type a message...'))
@@ -43,12 +42,12 @@ class ChatInput(Gtk.Box):
         self._capability_id = 0
         self._fetch_cancel = None
         self._capability_cancel = None
-        self._model_details = {}
+        self._model_details: Dict[str, Any] = {}
         self._model_list_notice = ''
         self._model_placeholder = False
         self._running = False
         self._desired_thinking = None
-        self._thinking_values = []
+        self._thinking_values: List[Any] = []
         self.image_support = None
         self.tool_support = None
         self.awaiting_tools = False
@@ -101,6 +100,14 @@ class ChatInput(Gtk.Box):
         self.thinking_dropdown.set_selected(values.index(desired) if desired in values else 0)
         self.thinking_dropdown.set_sensitive(len(values) > 1)
         self._setting_thinking = False
+
+    def detach_thinking(self):
+        """Hand the thinking control to a view that places it elsewhere."""
+        row = self.thinking_dropdown.get_parent()
+        cell = row.get_parent()
+        cell.set_child(None)
+        self.connection_box.remove(cell)
+        return row
 
     def get_thinking_value(self):
         index = self.thinking_dropdown.get_selected()

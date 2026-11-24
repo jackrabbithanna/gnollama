@@ -1,5 +1,6 @@
+from gettext import gettext as _
 from typing import Any, List, Dict, Optional, Callable
-from gi.repository import Adw, Gtk, Gio, GLib, GObject
+from gi.repository import Adw, Gtk, GLib, GObject
 from .providers import CLOUD_URL, ProviderError, validate_url
 from .session import ViewRequests
 from .credentials import CredentialError

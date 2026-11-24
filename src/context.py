@@ -1,4 +1,5 @@
 """Advisory text estimates; never modifies an inference request."""
+from gettext import gettext as _
 import json
 import math
 
@@ -26,7 +27,6 @@ def estimate_context(messages, wire, retrieval=None):
 
 
 def describe_context(estimate):
-    from gettext import gettext as _
     lines = [_('Estimated text tokens: {0} (UTF-8 bytes ÷ 4)').format(estimate['text_tokens']),
         _('History: {history}; prompt: {prompt}; system: {system}; tools/schema: {tools_schema}; sources: {retrieval}').format(**estimate['parts']),
         _('Output allowance: {0}').format(estimate['output_allowance'])]

@@ -6,11 +6,10 @@ import unittest
 from unittest.mock import patch
 
 from gi.repository import Gdk, GLib, Gtk
-from src import session
 from src.providers import OllamaProvider, ProviderError
 from src.records import ViewState, WireOptions
 from provider_fixture import provider_patch
-from src.bubbles import AiBubble, format_statistics
+from src.bubbles import format_statistics
 from src.app_context import AppContext
 from src.tab import GenerationTab
 from src.widgets.chat_input import ChatInput
@@ -670,7 +669,7 @@ class UITests(unittest.TestCase):
         from src.model_manager import ModelManagerDialog
         self.stack.enter_context(provider_patch('list_models', return_value=[]))
         old_host = self.storage.get_all_hosts()[0]
-        new_host = self.storage.add_host('Other', 'http://other:11434', False)
+        self.storage.add_host('Other', 'http://other:11434', False)
         gate, started = threading.Event(), threading.Event()
         calls = []
         def running(host, **kwargs):

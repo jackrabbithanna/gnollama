@@ -1,4 +1,5 @@
 """Structured request formats and local, offline response validation."""
+from gettext import gettext as _
 import json
 import math
 

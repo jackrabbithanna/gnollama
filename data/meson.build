@@ -37,16 +37,6 @@ appstreamcli = find_program('appstreamcli', required: false, disabler: true)
 test('Validate appstream file', appstreamcli,
      args: ['validate', '--no-net', '--explain', appstream_file])
 
-install_data('io.github.jackrabbithanna.Gnollama.gschema.xml',
-  install_dir: get_option('datadir') / 'glib-2.0' / 'schemas'
-)
-
-compile_schemas = find_program('glib-compile-schemas', required: false, disabler: true)
-test('Validate schema file',
-     compile_schemas,
-     args: ['--strict', '--dry-run', meson.current_source_dir()])
-
-
 service_conf = configuration_data()
 service_conf.set('bindir', get_option('prefix') / get_option('bindir'))
 configure_file(

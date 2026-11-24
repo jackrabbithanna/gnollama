@@ -17,6 +17,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from gettext import gettext as _
 from gi.repository import Adw, Gtk, Gio, GLib, Gdk, GObject
 from .tab import GenerationTab
 from .session import ChatStrategy, display_chat_title
@@ -42,7 +43,6 @@ class GnollamaWindow(Adw.ApplicationWindow):
         self.set_content(self.toast_overlay)
         icon_theme = Gtk.IconTheme.get_for_display(Gdk.Display.get_default())
         icon_theme.add_resource_path('/io/github/jackrabbithanna/Gnollama/icons')
-        self.settings = Gio.Settings.new('io.github.jackrabbithanna.Gnollama')
         self.context = context
         self.storage = context.storage
         self.storage.on_error = self._on_save_error

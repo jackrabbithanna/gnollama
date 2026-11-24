@@ -1,8 +1,8 @@
-from typing import Any, List, Dict, Optional, Union, Callable
-from gi.repository import Adw, Gtk, Gio, GLib, GObject
+from gettext import gettext as _
+from typing import Any, List, Dict, Optional
+from gi.repository import Adw, Gtk, GLib
 from .providers import ProviderError, RequestCancelled, validate_url
 from .session import ViewRequests
-import threading
 import json
 from datetime import datetime
 
@@ -58,7 +58,7 @@ class ModelManagerDialog(Adw.Dialog):
         self._running_cancel = None
         self._running_pending = False
         self._poll_id = None
-        self._running_rows = []
+        self._running_rows: List[Any] = []
         self.is_model_busy = is_model_busy or (lambda host, model: False)
         self.model_stack.connect('notify::visible-child-name', self._view_changed)
         self.connect('map', self._mapped)
@@ -515,7 +515,8 @@ class ModelManagerDialog(Adw.Dialog):
         for k in collapsible_keys:
             if k in show_data:
                 label = k.replace("_", " ").title()
-                if k == "modelfile": label = "Modelfile"
+                if k == "modelfile":
+                    label = "Modelfile"
                 add_field(_(label), show_data[k], collapsible=True)
 
 @Gtk.Template(resource_path='/io/github/jackrabbithanna/Gnollama/pull_model_dialog.ui')
@@ -532,7 +533,7 @@ class PullModelDialog(Adw.Dialog):
 
     progress_bar = Gtk.Template.Child()
 
-    def __init__(self, owner: Optional[Gtk.Widget], hostname: str, **kwargs: Any) -> None:
+    def __init__(self, owner: Any, hostname: str, **kwargs: Any) -> None:
         super().__init__(**kwargs)
         self.requests = ViewRequests(self)
         # The model manager that opened this dialog, refreshed after a download.

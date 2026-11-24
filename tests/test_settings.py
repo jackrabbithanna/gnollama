@@ -176,16 +176,16 @@ class StoredChatTests(unittest.TestCase):
                       show_stats=True, repeat_penalty=1.1)
         path = self.temp.name + '/v3.db'
         db = DatabaseManager(path)
-        db.create_chat('chat', 'old chat', 1, 1, 'model')
-        db.update_chat('chat', 'model', legacy, 'system', None, time.time())
+        db.chats.create_chat('chat', 'old chat', 1, 1, 'model')
+        db.chats.update_chat('chat', 'model', legacy, 'system', None, time.time())
         with db._get_conn() as conn:
             downgrade_to_version_three(conn)
         db = DatabaseManager(path)
-        loaded = RequestSettings.from_chat_options(db.get_chat('chat')['options'])
+        loaded = RequestSettings.from_chat_options(db.chats.get_chat('chat')['options'])
         self.assertEqual(loaded.wire.options, {'temperature': 0.7, 'seed': 42})
         self.assertEqual(loaded.view.extra, {'repeat_penalty': 1.1})
-        db.update_chat('chat', 'model', loaded.to_chat_options(), 'system', None, time.time())
-        saved = db.get_chat('chat')['options']
+        db.chats.update_chat('chat', 'model', loaded.to_chat_options(), 'system', None, time.time())
+        saved = db.chats.get_chat('chat')['options']
         self.assertEqual({key: saved[key] for key in legacy}, legacy)
         self.assertEqual(RequestSettings.from_chat_options(saved), loaded)
 

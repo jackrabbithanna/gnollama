@@ -1,8 +1,9 @@
 """Fresh-prompt comparison preparation and independent target lifecycles."""
+from gettext import gettext as _
 import copy
 import uuid
 from dataclasses import dataclass, field
-from gi.repository import Gio, GLib
+from gi.repository import Gio
 from .providers import ProviderError, RequestCancelled, validate_url
 from .knowledge import augmented_messages, validate_rag
 from dataclasses import replace
@@ -15,7 +16,7 @@ from .request_runner import RequestRunner
 @dataclass
 class ComparisonRun:
     id: str = field(default_factory=lambda: str(uuid.uuid4()))
-    cancellable: object = field(default_factory=Gio.Cancellable)
+    cancellable: Gio.Cancellable = field(default_factory=Gio.Cancellable)
     states: dict = field(default_factory=dict)
     pending: set = field(default_factory=set)
 

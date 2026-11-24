@@ -45,3 +45,5 @@ class AppContext:
             self.storage.writer.shutdown()
         self.knowledge.shutdown()
         self.services.shutdown(wait=wait)
+        # Work still finishing on a worker opens a connection of its own.
+        self.storage.close()

@@ -104,11 +104,11 @@ class ResponseLayoutTests(unittest.TestCase):
         window, first = self.make_window()
         pump_until(lambda: self.storage.writer.idle)
         db = self.storage.db
-        db.update_chat_title(first.strategy.chat_id, 'Older chat', 30)
-        db.create_chat('new-chat', 'Newer chat', 50, 50, '')
+        db.chats.update_chat_title(first.strategy.chat_id, 'Older chat', 30)
+        db.chats.create_chat('new-chat', 'Newer chat', 50, 50, '')
         for id, stamp in [('old-comparison', 20), ('new-comparison', 40)]:
-            db.create_comparison(dict(id=id, prompt=id, message_uid=id + '-prompt', settings={}, targets=[]))
-            db.update_chat_title(id, id, stamp)
+            db.workspace.create_comparison(dict(id=id, prompt=id, message_uid=id + '-prompt', settings={}, targets=[]))
+            db.chats.update_chat_title(id, id, stamp)
         window.load_history_sidebar()
         pump_until(lambda: all(id in window.chat_rows for id in ('new-chat', 'old-comparison', 'new-comparison')))
         def ids(section):

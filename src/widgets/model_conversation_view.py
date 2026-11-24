@@ -1,4 +1,5 @@
 """Setup, transcript, and recovery controls for model-to-model conversations."""
+from gettext import gettext as _
 import copy
 import uuid
 from types import SimpleNamespace

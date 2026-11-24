@@ -1,4 +1,5 @@
 """Grouped history, independent expansion, and keyboard title completion."""
+from gettext import gettext as _
 from collections import deque
 import time
 from gi.repository import Gtk, Adw, Gio, GLib, Gdk, Pango

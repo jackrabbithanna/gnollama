@@ -1,7 +1,9 @@
 """Sequential model conversations, independent of their GTK presentation."""
+from gettext import gettext as _
 import copy
 import uuid
 from dataclasses import replace
+from typing import Any
 from gi.repository import Gio, GLib
 from .providers import ProviderError, RequestCancelled, validate_url
 from .context import estimate_context
@@ -84,7 +86,7 @@ class ModelConversationController:
         self.storage = context.storage
         self.changed, self.started, self.chunk, self.finished = changed, started, chunk, finished
         self.id = None
-        self.run = None
+        self.run: Any = None
         self.settings = None      # As stored: rounds, participants, and the setup draft.
         self.participants = []    # The same participants as RequestSettings.
         self.busy = False
@@ -101,7 +103,7 @@ class ModelConversationController:
             state.cancellable.cancel()
 
     def _write(self, fn, *args, done):
-        result = []
+        result: list = []
         def work():
             value = fn(*args)
             result[:] = [value]
@@ -159,7 +161,7 @@ class ModelConversationController:
             if error or self._end:
                 self._preparation_failed(error)
                 return
-            _, self.connections = result
+            self.connections = result[1]
             self._write(self.storage.library.set_model_conversation_status, self.id, 'running', done=self._resumed)
         self._work(lambda: validate_participants(self.context, self.participants, self.cancellable), prepared)
 

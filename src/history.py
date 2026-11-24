@@ -19,12 +19,12 @@ def _words(text):
     return re.findall(r'\w+', ''.join(c for c in normalized if not unicodedata.combining(c)))
 
 
-def sidebar_snapshot(database, query='', expanded=()):
+def sidebar_snapshot(connections, query='', expanded=()):
     """One read snapshot; limits apply after searching, separately per section."""
     terms = re.findall(r'\w+', query, re.UNICODE)
     expression = ' AND '.join('"' + term.replace('"', '""') + '"*' for term in terms)
     searching = bool(query.strip())
-    with database._get_conn() as conn:
+    with connections.connection() as conn:
         conn.execute('BEGIN')
         prefix, join, params = '', '', []
         if expression:
@@ -71,7 +71,7 @@ def sidebar_snapshot(database, query='', expanded=()):
                 GROUP BY c.title ORDER BY max(c.updated_at) DESC,c.title LIMIT 8''', (expression,))]
             for row in conn.execute(draft_sql + ' AND draft_matches(substr(d.text,1,80)) ORDER BY d.updated_at DESC,d.id LIMIT 8'):
                 suggestions.append(dict(title=row['title'], kind='drafts', is_pinned=False, updated_at=row['updated_at']))
-        unique = {}
+        unique: dict = {}
         for item in sorted(suggestions, key=lambda r: (-r['updated_at'], r['title'])):
             unique.setdefault(item['title'], item)
         return dict(groups=groups, suggestions=list(unique.values())[:8])

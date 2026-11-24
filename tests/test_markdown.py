@@ -1,4 +1,5 @@
 """Markdown text blocks rendered as Pango markup."""
+import importlib.util
 import unittest
 
 from unittest import mock
@@ -166,9 +167,7 @@ class MathWidgetTests(unittest.TestCase):
         self.assertEqual(self.children(view)[:2], [before, block])
 
     def test_equation_is_drawn_at_its_own_size(self):
-        try:
-            import ziamath
-        except ImportError:
+        if importlib.util.find_spec('ziamath') is None:
             self.skipTest('ziamath is not installed')
         block = MathBlock('x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}')
         self.assertTrue(block.scrolled.get_visible())
@@ -183,9 +182,7 @@ class MathWidgetTests(unittest.TestCase):
         pump_until(lambda: 0 < block.picture.get_width() < width)
 
     def test_inline_equations_are_drawn_inside_the_text(self):
-        try:
-            import ziamath
-        except ImportError:
+        if importlib.util.find_spec('ziamath') is None:
             self.skipTest('ziamath is not installed')
         view = MarkdownView('Here \\(\\frac{dx}{dt} = kx\\) and $x_0$.\n\n'
                             '| a |\n|---|\n| $\\begin{cases} a \\\\[4pt] b \\end{cases}$ |')

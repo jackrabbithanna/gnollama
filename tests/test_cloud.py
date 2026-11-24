@@ -5,7 +5,7 @@ import unittest
 from dataclasses import replace
 from unittest.mock import patch
 
-from gi.repository import Adw, Gdk, Gio, GLib, Gtk
+from gi.repository import Adw, Gdk, Gio, Gtk
 from src import session
 from src.providers import CLOUD_URL, OllamaCloudProvider, OllamaProvider, ProviderError, RequestCancelled, transport
 from provider_fixture import provider_patch
@@ -15,7 +15,7 @@ from src.app_context import AppContext
 from src.host_manager import HostEditDialog, HostManagerDialog
 from src.model_manager import ModelManagerDialog
 from src.widgets.options_panel import OptionsPanel
-from src.widgets.knowledge_view import HostModels
+from src.widgets.knowledge_common import HostModels
 from test_transport import Server
 from test_ui import pump_until
 

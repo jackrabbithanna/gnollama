@@ -3,7 +3,6 @@ import threading
 import unittest
 from unittest.mock import patch
 from gi.repository import Gdk, Gio, Gtk
-from src import session
 from src.providers import OllamaProvider, RequestCancelled
 from provider_fixture import provider_patch
 from src.widgets.chat_input import ChatInput

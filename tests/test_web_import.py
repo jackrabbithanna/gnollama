@@ -3,7 +3,6 @@ import io
 import sqlite3
 import tempfile
 import threading
-import time
 import unittest
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -11,8 +10,8 @@ from unittest.mock import patch
 
 from gi.repository import Gdk, Gio
 from src.app_context import AppContext
-from src import database, session
-from src.providers import OllamaProvider, ProviderError, RequestCancelled
+from src import database
+from src.providers import ProviderError, RequestCancelled
 from provider_fixture import provider_patch
 from src.database import DatabaseManager, DatabaseUpgradeError
 from src.knowledge import augmented_messages, make_document
@@ -216,9 +215,9 @@ class WebKnowledgeTests(unittest.TestCase):
         self.storage = self.context.storage
         self.doc, self.config, self.index, self.options = indexed(self.storage)
         for id in ('a', 'b'):
-            self.storage.db.create_knowledge_collection(dict(id=id, name='Collection '+id, config_id=self.config['id'],
+            self.storage.db.knowledge.create_knowledge_collection(dict(id=id, name='Collection '+id, config_id=self.config['id'],
                 host=self.index['host'], model=self.index['model'], chunk_size=1600, overlap=200, created_at=0, updated_at=0))
-            self.storage.db.prepare_collection_indexes(id, [self.doc['id']])
+            self.storage.db.knowledge.prepare_collection_indexes(id, [self.doc['id']])
         self.source = dict(source_url='https://example.com/', final_url='https://example.com/article', fetched_at=1,
                            content_type='text/html', selector='main', extractor='test', edited=False)
         with self.storage.db._get_conn() as conn:
@@ -235,36 +234,36 @@ class WebKnowledgeTests(unittest.TestCase):
 
     def test_replacement_invalidates_all_shared_vectors_and_preserves_history(self):
         db = self.storage.db
-        hits = db.search_knowledge(self.config['id'], {}, [1, 0], collection_ids=['a'])
+        hits = db.knowledge.search_knowledge(self.config['id'], {}, [1, 0], collection_ids=['a'])
         self.assertEqual(hits[0]['web_source']['source_url'], self.source['source_url'])
         snapshot = {'hits': hits}
         self.assertIn('URL: https://example.com/article', augmented_messages([{'role':'user','content':'question'}], snapshot)[-1]['content'])
-        db.create_chat('saved', 'Saved', 0, 0, 'chat')
-        db.save_messages('saved', [{'role':'assistant', 'content':'Earlier answer', 'response_metadata':{'retrieval':snapshot}}])
+        db.chats.create_chat('saved', 'Saved', 0, 0, 'chat')
+        db.chats.save_messages('saved', [{'role':'assistant', 'content':'Earlier answer', 'response_metadata':{'retrieval':snapshot}}])
         candidate = make_document('Updated', 'Different article text.')
-        result = db.save_web_document(candidate, self.source, 'a', self.doc['id'], self.doc['content_hash'])
+        result = db.knowledge.save_web_document(candidate, self.source, 'a', self.doc['id'], self.doc['content_hash'])
         self.assertEqual(set(result['collections']), {'a', 'b'})
         self.assertEqual(len(result['indexes']), 1)
-        self.assertEqual(db.knowledge_document(self.doc['id'])['text'], candidate['text'])
-        self.assertTrue(all(c['ready'] == 0 for c in db.knowledge_collections()))
-        self.assertEqual(db.knowledge_chunk_ids(self.index['id']), set())
+        self.assertEqual(db.knowledge.knowledge_document(self.doc['id'])['text'], candidate['text'])
+        self.assertTrue(all(c['ready'] == 0 for c in db.knowledge.knowledge_collections()))
+        self.assertEqual(db.knowledge.knowledge_chunk_ids(self.index['id']), set())
         with self.assertRaises(ValueError):
-            db.search_knowledge(self.config['id'], {}, [1, 0], collection_ids=['b'])
-        self.assertEqual(db.get_chat('saved')['messages'][0]['response_metadata']['retrieval'], snapshot)
+            db.knowledge.search_knowledge(self.config['id'], {}, [1, 0], collection_ids=['b'])
+        self.assertEqual(db.chats.get_chat('saved')['messages'][0]['response_metadata']['retrieval'], snapshot)
 
     def test_unchanged_source_reuses_vectors_and_stale_preview_cannot_replace(self):
         db = self.storage.db
-        old = db.web_document(self.source['source_url'])
-        ids = db.knowledge_chunk_ids(self.index['id'])
-        result = db.save_web_document(self.doc, dict(self.source, fetched_at=2), 'a', old['id'], old['content_hash'])
+        old = db.knowledge.web_document(self.source['source_url'])
+        ids = db.knowledge.knowledge_chunk_ids(self.index['id'])
+        result = db.knowledge.save_web_document(self.doc, dict(self.source, fetched_at=2), 'a', old['id'], old['content_hash'])
         self.assertFalse(result['changed'])
-        self.assertEqual(db.knowledge_chunk_ids(self.index['id']), ids)
+        self.assertEqual(db.knowledge.knowledge_chunk_ids(self.index['id']), ids)
         with self.assertRaisesRegex(ValueError, 'changed since'):
-            db.save_web_document(make_document('Stale', 'Wrong content'), self.source, 'a', old['id'], 'outdated-hash')
+            db.knowledge.save_web_document(make_document('Stale', 'Wrong content'), self.source, 'a', old['id'], 'outdated-hash')
         with self.assertRaisesRegex(ValueError, 'deleted'):
-            db.save_web_document(self.doc, self.source, 'missing', old['id'], old['content_hash'])
-        self.assertEqual(db.knowledge_chunk_ids(self.index['id']), ids)
-        other = db.save_web_document(make_document('Same text, distinct URL', self.doc['text']),
+            db.knowledge.save_web_document(self.doc, self.source, 'missing', old['id'], old['content_hash'])
+        self.assertEqual(db.knowledge.knowledge_chunk_ids(self.index['id']), ids)
+        other = db.knowledge.save_web_document(make_document('Same text, distinct URL', self.doc['text']),
                                      dict(self.source, source_url='https://other.example/'), 'a')
         self.assertNotEqual(other['id'], old['id'])
 
@@ -272,22 +271,22 @@ class WebKnowledgeTests(unittest.TestCase):
         done = []
         with provider_patch('list_models', return_value=[TAG]), \
              provider_patch('embed', side_effect=lambda host, model, texts, **kw: {'embeddings': [[1, 0] for _ in texts]}):
-            job = self.context.knowledge.save_web_document(make_document('Updated', 'New article information.'),
-                self.source, 'a', self.storage.db.web_document(self.source['source_url']), lambda r, e: done.append((r,e)))
+            self.context.knowledge.save_web_document(make_document('Updated', 'New article information.'),
+                self.source, 'a', self.storage.db.knowledge.web_document(self.source['source_url']), lambda r, e: done.append((r,e)))
             with self.assertRaisesRegex(ValueError, 'Wait for'):
                 self.context.knowledge.save_web_document(self.doc, self.source, 'b', self.doc)
             pump_until(lambda: bool(done) and self.context.knowledge.idle and self.storage.writer.idle)
             self.assertIsNone(done[0][1])
-            self.assertTrue(all(c['ready'] == 1 for c in self.storage.db.knowledge_collections()))
+            self.assertTrue(all(c['ready'] == 1 for c in self.storage.db.knowledge.knowledge_collections()))
             self.assertFalse(self.context.knowledge._document_updates)
-            self.assertEqual(len(self.storage.db.knowledge_indexes()), 1)
+            self.assertEqual(len(self.storage.db.knowledge.knowledge_indexes()), 1)
 
     def test_migration_rollback_and_backup(self):
         with tempfile.TemporaryDirectory() as temp:
             path = str(Path(temp)/'old.db')
             with patch.object(database, 'MIGRATIONS', database.MIGRATIONS[:7]):
                 old = DatabaseManager(path)
-            old.add_knowledge_document(self.doc)
+            old.knowledge.add_knowledge_document(self.doc)
             def fail(conn, progress=None):
                 conn.execute('CREATE TABLE knowledge_web_sources(id TEXT)')
                 raise ValueError('injected failure')
@@ -298,48 +297,48 @@ class WebKnowledgeTests(unittest.TestCase):
                 self.assertEqual(conn.execute('PRAGMA user_version').fetchone()[0], 8)
                 self.assertIsNone(conn.execute("SELECT name FROM sqlite_master WHERE name='knowledge_web_sources'").fetchone())
             new = DatabaseManager(path)
-            self.assertEqual(new.knowledge_document(self.doc['id'])['text'], self.doc['text'])
-            self.assertIsNone(new.knowledge_document(self.doc['id'])['web_source'])
+            self.assertEqual(new.knowledge.knowledge_document(self.doc['id'])['text'], self.doc['text'])
+            self.assertIsNone(new.knowledge.knowledge_document(self.doc['id'])['web_source'])
             self.assertIn('.pre-v12-', new.backup_path)
 
     def test_failed_replacement_rolls_back_text_vectors_and_provenance(self):
         db = self.storage.db
-        before = db.knowledge_document(self.doc['id'])
-        chunks = db.knowledge_chunk_ids(self.index['id'])
-        delete = db._delete_index_vectors
+        before = db.knowledge.knowledge_document(self.doc['id'])
+        chunks = db.knowledge.knowledge_chunk_ids(self.index['id'])
+        delete = db.knowledge._delete_index_vectors
         def fail(conn, index_id):
             delete(conn, index_id)
             raise sqlite3.OperationalError('injected disk error')
-        with patch.object(db, '_delete_index_vectors', side_effect=fail), self.assertRaises(sqlite3.OperationalError):
-            db.save_web_document(make_document('New', 'New content'), dict(self.source, fetched_at=3),
+        with patch.object(db.knowledge, '_delete_index_vectors', side_effect=fail), self.assertRaises(sqlite3.OperationalError):
+            db.knowledge.save_web_document(make_document('New', 'New content'), dict(self.source, fetched_at=3),
                                   'a', self.doc['id'], self.doc['content_hash'])
-        self.assertEqual(db.knowledge_document(self.doc['id']), before)
-        self.assertEqual(db.knowledge_chunk_ids(self.index['id']), chunks)
-        self.assertTrue(db.search_knowledge(self.config['id'], {}, [1, 0], collection_ids=['a']))
-        self.assertTrue(all(c['ready'] == 1 for c in db.knowledge_collections()))
+        self.assertEqual(db.knowledge.knowledge_document(self.doc['id']), before)
+        self.assertEqual(db.knowledge.knowledge_chunk_ids(self.index['id']), chunks)
+        self.assertTrue(db.knowledge.search_knowledge(self.config['id'], {}, [1, 0], collection_ids=['a']))
+        self.assertTrue(all(c['ready'] == 1 for c in db.knowledge.knowledge_collections()))
 
     def test_failed_rebuild_can_retry_and_preserves_standalone_settings(self):
         db = self.storage.db
         service = self.context.knowledge
         second = dict(self.index, id='standalone', chunk_size=250, overlap=25)
-        db.begin_knowledge_index(second)
-        db.finish_knowledge_index(second['id'], 'interrupted')
+        db.knowledge.begin_knowledge_index(second)
+        db.knowledge.finish_knowledge_index(second['id'], 'interrupted')
         with provider_patch('list_models', return_value=[TAG]), \
              provider_patch('embed', side_effect=ProviderError('offline')):
             service.save_web_document(make_document('Updated', 'New reference text.'), self.source, 'a',
-                                       db.web_document(self.source['source_url']))
+                                       db.knowledge.web_document(self.source['source_url']))
             pump_until(lambda: service.idle and self.storage.writer.idle)
-        indexes = db.knowledge_indexes(document_id=self.doc['id'])
+        indexes = db.knowledge.knowledge_indexes(document_id=self.doc['id'])
         self.assertEqual({i['status'] for i in indexes}, {'failed'})
         self.assertEqual({(i['id'], i['chunk_size'], i['overlap']) for i in indexes},
                           {(self.index['id'], 1600, 200), ('standalone', 250, 25)})
-        self.assertTrue(all(c['ready'] == 0 for c in db.knowledge_collections()))
+        self.assertTrue(all(c['ready'] == 0 for c in db.knowledge.knowledge_collections()))
         with provider_patch('list_models', return_value=[TAG]), \
              provider_patch('embed', side_effect=lambda h,m,t,**kw: {'embeddings':[[1,0] for _ in t]}):
             service.build_collection('a')
             pump_until(lambda: service.idle and self.storage.writer.idle)
-        self.assertTrue(all(c['ready'] == 1 for c in db.knowledge_collections()))
-        self.assertTrue(db.search_knowledge(self.config['id'], {}, [1, 0], collection_ids=['b']))
+        self.assertTrue(all(c['ready'] == 1 for c in db.knowledge.knowledge_collections()))
+        self.assertTrue(db.knowledge.search_knowledge(self.config['id'], {}, [1, 0], collection_ids=['b']))
 
     def test_queued_replacement_guards_new_builds_and_cancellation_releases_reservation(self):
         service = self.context.knowledge
@@ -352,7 +351,7 @@ class WebKnowledgeTests(unittest.TestCase):
         self.assertTrue(started.wait(2))
         try:
             job = service.save_web_document(make_document('Changed', 'Updated reference'), self.source, 'a',
-                                            self.storage.db.web_document(self.source['source_url']))
+                                            self.storage.db.knowledge.web_document(self.source['source_url']))
             with self.assertRaisesRegex(ValueError, 'being replaced'):
                 service.build_collection('a')
             with self.assertRaisesRegex(ValueError, 'being replaced'):
@@ -362,7 +361,7 @@ class WebKnowledgeTests(unittest.TestCase):
             release.set()
         pump_until(lambda: service.idle and self.storage.writer.idle)
         self.assertFalse(service._document_updates)
-        self.assertEqual(self.storage.db.knowledge_document(self.doc['id'])['text'], self.doc['text'])
+        self.assertEqual(self.storage.db.knowledge.knowledge_document(self.doc['id'])['text'], self.doc['text'])
 
 
 @unittest.skipUnless(Gdk.Display.get_default(), 'GTK tests require a display')
@@ -379,7 +378,7 @@ class URLDialogTests(unittest.TestCase):
         fixture = WebServer()
         self.addCleanup(fixture.close)
         document, config, index, options = indexed(self.storage)
-        self.storage.db.create_knowledge_collection(dict(id='web', name='Web', config_id=config['id'],
+        self.storage.db.knowledge.create_knowledge_collection(dict(id='web', name='Web', config_id=config['id'],
             host=index['host'], model=index['model'], chunk_size=1600, overlap=200, created_at=0, updated_at=0))
         window, tab = self.make_window()
         window.present()
@@ -389,7 +388,7 @@ class URLDialogTests(unittest.TestCase):
         dialog.start()
         pump_until(lambda: dialog.active == 0 and all(i['status'] not in ('queued', 'fetching') for i in dialog.items), timeout=10)
         self.assertEqual([i['status'] for i in dialog.items], ['ready', 'failed'])
-        self.assertEqual(len(self.storage.db.knowledge_documents()), 1)
+        self.assertEqual(len(self.storage.db.knowledge.knowledge_documents()), 1)
         dialog.rows.select_row(dialog.items[0]['row'])
         dialog.selector.set_text('.notes')
         dialog.reextract()
@@ -410,7 +409,7 @@ class URLDialogTests(unittest.TestCase):
                 provider_patch('embed', side_effect=lambda h,m,t,**kw: {'embeddings':[[1,0] for _ in t]}):
             dialog.save()
             pump_until(lambda: dialog.items[0]['status'] == 'saved' and self.context.knowledge.idle and self.storage.writer.idle)
-        saved = self.storage.db.web_document(fixture.host+'/guide')
+        saved = self.storage.db.knowledge.web_document(fixture.host+'/guide')
         self.assertEqual(saved['title'], 'Edited page')
         self.assertEqual(saved['text'], 'My reviewed text for the collection.')
         self.assertTrue(saved['web_source']['edited'])
@@ -463,7 +462,7 @@ class URLDialogTests(unittest.TestCase):
         dialog.close()
         pump_until(lambda: dialog.closed and dialog.active == 0)
         self.assertFalse(Path(dialog.cache.name).exists())
-        self.assertEqual(len(self.storage.db.knowledge_documents()), 1)
+        self.assertEqual(len(self.storage.db.knowledge.knowledge_documents()), 1)
 
     def test_replacement_requires_confirmation_and_cancel_preserves_document(self):
         fixture = WebServer()
@@ -471,8 +470,8 @@ class URLDialogTests(unittest.TestCase):
         dialog = self.make_import(fixture.host+'/guide')
         pump_until(lambda: dialog.active == 0)
         item = dialog.items[0]
-        saved = self.storage.db.save_web_document(item['document'], item['source'], 'Web')
-        old = self.storage.db.web_document(item['url'])
+        saved = self.storage.db.knowledge.save_web_document(item['document'], item['source'], 'Web')
+        old = self.storage.db.knowledge.web_document(item['url'])
         dialog.retry()
         pump_until(lambda: dialog.active == 0)
         dialog.editor.get_buffer().set_text('A replacement page reviewed by the user.')
@@ -482,14 +481,14 @@ class URLDialogTests(unittest.TestCase):
         self.assertEqual(len(prompts), 1)
         self.assertIn('Web', prompts[0].get_body())
         prompts[0].emit('response', 'cancel')
-        self.assertEqual(self.storage.db.knowledge_document(saved['id'])['text'], old['text'])
+        self.assertEqual(self.storage.db.knowledge.knowledge_document(saved['id'])['text'], old['text'])
         with patch('src.widgets.url_import.Adw.AlertDialog.present', lambda d, parent: prompts.append(d)), \
              provider_patch('list_models', return_value=[TAG]), \
              provider_patch('embed', side_effect=lambda h,m,t,**kw: {'embeddings':[[1,0] for _ in t]}):
             dialog.save()
             prompts[-1].emit('response', 'replace')
             pump_until(lambda: item['status'] == 'saved' and self.context.knowledge.idle and self.storage.writer.idle)
-        self.assertEqual(self.storage.db.web_document(item['url'])['id'], old['id'])
-        self.assertEqual(self.storage.db.knowledge_document(old['id'])['text'], 'A replacement page reviewed by the user.')
+        self.assertEqual(self.storage.db.knowledge.web_document(item['url'])['id'], old['id'])
+        self.assertEqual(self.storage.db.knowledge.knowledge_document(old['id'])['text'], 'A replacement page reviewed by the user.')
         dialog.close()
         pump_until(lambda: dialog.closed)

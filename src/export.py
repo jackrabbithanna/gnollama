@@ -1,4 +1,5 @@
 """Portable, credential-free conversation snapshots."""
+from gettext import gettext as _
 import copy
 import json
 
@@ -54,7 +55,6 @@ def export_markdown(snapshot):
 
 def choose_export(parent, context, chat_id, format):
     from gi.repository import Gtk, Gio, GLib
-    from gettext import gettext as _
     from .widgets.feedback import toast
     dialog = Gtk.FileDialog(title=_('Export Conversation'), initial_name='conversation.' + ('json' if format == 'json' else 'md'))
     def chosen(dialog, result):

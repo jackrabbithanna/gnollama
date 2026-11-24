@@ -8,7 +8,6 @@ import unittest
 from unittest.mock import patch
 from gi.repository import Gtk, Gdk, Gio
 from src.app_context import AppContext
-from src.services import Services, ModelCatalog
 from src.providers import OllamaProvider, ProviderError, RequestCancelled
 from provider_fixture import provider_patch
 from src.context import estimate_context
@@ -38,49 +37,49 @@ class WorkspaceTests(unittest.TestCase):
     def test_incremental_retry_preserves_row_and_attachment_identity(self):
         db, id = self.storage.db, self.chat['id']
         message = dict(uid='stable', role='user', content='first', images=[base64.b64encode(b'image').decode()])
-        db.append_messages(id, [message], 0)
+        db.chats.append_messages(id, [message], 0)
         with db._get_conn() as conn:
             row = tuple(conn.execute('SELECT * FROM message_images').fetchone())
             conn.execute("CREATE TRIGGER untouched BEFORE UPDATE ON messages WHEN old.uid='stable' BEGIN SELECT RAISE(ABORT, 'old message rewritten'); END")
             conn.commit()
-        db.append_messages(id, [dict(uid='answer', role='assistant', content='second')], 1)
-        db.append_messages(id, [dict(uid='answer', role='assistant', content='second')], 1)
+        db.chats.append_messages(id, [dict(uid='answer', role='assistant', content='second')], 1)
+        db.chats.append_messages(id, [dict(uid='answer', role='assistant', content='second')], 1)
         with db._get_conn() as conn:
             self.assertEqual(tuple(conn.execute('SELECT * FROM message_images').fetchone()), row)
-        self.assertEqual(len(db.get_messages(id)), 2)
+        self.assertEqual(len(db.chats.get_messages(id)), 2)
 
     def test_draft_bytes_revision_and_atomic_consumption(self):
         db, id = self.storage.db, self.chat['id']
         draft = dict(id=id, mode='chat', chat_id=id, revision=2, text='  code\n', settings={}, images=[base64.b64encode(b'bytes').decode()])
-        db.save_draft(draft)
-        db.save_draft(dict(draft, revision=1, text='stale'))
-        self.assertEqual(db.get_draft(id)['text'], '  code\n')
-        db.save_chat(id, [dict(uid='user', role='user', content='submitted')], start=0, draft_id=id, draft_revision=1)
-        self.assertEqual(db.get_draft(id)['images'], draft['images'])
-        db.save_chat(id, [], start=1, draft_id=id, draft_revision=2)
-        self.assertIsNone(db.get_draft(id))
-        db.delete_chat(id)
-        db.save_draft(draft)
-        self.assertIsNone(db.get_draft(id))
+        db.workspace.save_draft(draft)
+        db.workspace.save_draft(dict(draft, revision=1, text='stale'))
+        self.assertEqual(db.workspace.get_draft(id)['text'], '  code\n')
+        db.chats.save_chat(id, [dict(uid='user', role='user', content='submitted')], start=0, draft_id=id, draft_revision=1)
+        self.assertEqual(db.workspace.get_draft(id)['images'], draft['images'])
+        db.chats.save_chat(id, [], start=1, draft_id=id, draft_revision=2)
+        self.assertIsNone(db.workspace.get_draft(id))
+        db.chats.delete_chat(id)
+        db.workspace.save_draft(draft)
+        self.assertIsNone(db.workspace.get_draft(id))
 
     def test_search_is_literal_prefix_and_returns_message_anchor(self):
         db, id = self.storage.db, self.chat['id']
-        db.append_messages(id, [dict(uid='match', role='assistant', content='Unique aardvark language')], 0)
-        result = db.list_history('"aardv" OR --')
+        db.chats.append_messages(id, [dict(uid='match', role='assistant', content='Unique aardvark language')], 0)
+        result = db.workspace.list_history('"aardv" OR --')
         self.assertEqual(result, [])
-        result = db.list_history('aardv')
+        result = db.workspace.list_history('aardv')
         self.assertEqual(result[0]['id'], id)
         self.assertEqual(result[0]['match_uid'], 'match')
         self.assertIn('aardvark', result[0]['snippet'])
-        db.update_message(id, 'match', dict(uid='match', role='assistant', content='updated'))
-        self.assertEqual(db.list_history('aardv'), [])
-        db.delete_chat(id)
-        self.assertEqual(db.list_history('updated'), [])
+        db.chats.update_message(id, 'match', dict(uid='match', role='assistant', content='updated'))
+        self.assertEqual(db.workspace.list_history('aardv'), [])
+        db.chats.delete_chat(id)
+        self.assertEqual(db.workspace.list_history('updated'), [])
 
     def test_snapshot_export_preserves_unknown_metadata_and_excludes_secrets(self):
         db, id = self.storage.db, self.chat['id']
         text = '```markdown\n# literal\n```'
-        db.append_messages(id, [dict(uid='m', role='assistant', content=text,
+        db.chats.append_messages(id, [dict(uid='m', role='assistant', content=text,
             future_metadata={'x': 1}, response_metadata={'status': 'complete', 'credential_id': 'secret'})], 0)
         snapshot = self.storage.export_snapshot(id)
         exported = json.loads(export_json(snapshot))
@@ -91,7 +90,7 @@ class WorkspaceTests(unittest.TestCase):
 
     def test_message_pages_are_bounded_and_locate_search_match(self):
         db, id = self.storage.db, self.chat['id']
-        db.append_messages(id, [dict(uid=str(i), role='user', content=str(i)) for i in range(130)], 0)
+        db.chats.append_messages(id, [dict(uid=str(i), role='user', content=str(i)) for i in range(130)], 0)
         page = self.storage.conversation_page(id)
         self.assertEqual(len(page['messages']), 50)
         self.assertEqual(page['message_offset'], 80)
@@ -203,7 +202,7 @@ class WorkspaceTests(unittest.TestCase):
         with patch.object(self.context.services.catalog, 'models', return_value=[(name, None) for name in ('one', 'two')]):
             active = ComparisonRun()
             run = prepare_run(self.context, active, 'question', [], settings, targets, None, 0)
-        self.storage.db.create_comparison(run)
+        self.storage.db.workspace.create_comparison(run)
         active.cancellable.cancel()
         with provider_patch('chat') as api:
             ComparisonController(self.context, active).dispatch(lambda *args: None, lambda *args: None)

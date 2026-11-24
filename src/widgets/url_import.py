@@ -1,4 +1,5 @@
 """One batch review dialog for URL imports; only explicit saves modify the library."""
+from gettext import gettext as _
 import tempfile
 
 from gi.repository import Adw, Gtk
@@ -6,7 +7,8 @@ from gi.repository import Adw, Gtk
 from ..knowledge import check_cancel, make_document
 from ..web_import import MAX_CACHE, MAX_DOWNLOAD, extract_download, fetch_url, parse_urls
 from .json_view import buffer_text, code_view, editor_frame
-from .knowledge_view import CollectionDestination, WorkDialog, actions, button, field, label, section
+from .collection_views import CollectionDestination
+from .knowledge_common import WorkDialog, actions, button, field, label, section
 
 
 class URLImportDialog(WorkDialog):

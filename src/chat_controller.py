@@ -27,6 +27,7 @@ The view provides:
 import copy
 from dataclasses import dataclass, field
 from gettext import gettext as _
+from typing import Any, Callable, Optional
 
 from gi.repository import GLib
 
@@ -87,6 +88,7 @@ class ChatController:
     def __init__(self, context, view, mode='generate', chat_id=None, initial_history=None, chat_data=None):
         self.context, self.view, self.mode = context, view, mode
         self.storage, self.services = context.storage, context.services
+        self.strategy: Any
         if mode == 'chat':
             self.strategy = ChatStrategy(self.storage, chat_id=chat_id, initial_history=initial_history)
         else:
@@ -94,14 +96,14 @@ class ChatController:
         chat_data = chat_data or {}
         self.paged = bool(chat_data.get('paged'))
         self.message_offset = chat_data.get('message_offset', 0)
-        self.draft = None  # Assigned by the view, which knows how to read the composer.
+        self.draft: Any = None  # Assigned by the view, which knows how to read the composer.
         # Stored options this version does not know; the view sets them when it loads a chat.
         self.extra = {}
-        self.request = None
+        self.request: Any = None
         self.closing = False
         self.disposed = False
         self.tool_busy = False
-        self._close_callback = None
+        self._close_callback: Optional[Callable[[], None]] = None
         self._close_saving = False
         self._discard_on_close = False
         self._context_generation = 0
@@ -246,7 +248,8 @@ class ChatController:
         if not state.continuation:
             self.draft.consumed()
         self.view.generation_started(state)
-        run = lambda: self.services.inference.submit(self._run, state)
+        def run():
+            return self.services.inference.submit(self._run, state)
         if self.is_chat:
             # Results are committed once before any follow-up HTTP request.
             if self.strategy.begin(state, on_done=run) is None:
@@ -409,5 +412,6 @@ class ChatController:
             def complete():
                 callback, self._close_callback = self._close_callback, None
                 self.disposed = True
-                callback()
+                if callback is not None:
+                    callback()
             self.storage.after_pending_writes(complete)

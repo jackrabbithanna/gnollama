@@ -1,6 +1,5 @@
 # List of source files containing translatable strings. Keep sorted.
 data/io.github.jackrabbithanna.Gnollama.desktop.in
-data/io.github.jackrabbithanna.Gnollama.gschema.xml
 data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in
 src/ai_bubble.ui
 src/bubbles.py
@@ -34,6 +33,7 @@ src/startup.py
 src/storage.py
 src/structured.py
 src/tab.py
+src/tab.ui
 src/tool_calling.py
 src/vectors.py
 src/web_import.py

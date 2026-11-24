@@ -4,7 +4,7 @@
 # Translated and reviewed with AI assistance, 2026.
 msgid ""
 msgstr ""
-"Project-Id-Version: gnollama 0.15.0\n"
+"Project-Id-Version: gnollama 0.17.0\n"
 "Report-Msgid-Bugs-To: https://github.com/jackrabbithanna/gnollama/issues\n"
 "POT-Creation-Date: 2026-09-11 12:07-0600\n"
 "PO-Revision-Date: 2026-09-11 00:00+0000\n"
@@ -17,13 +17,9 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.18.0\n"
 
-#: data/io.github.jackrabbithanna.Gnollama.desktop.in:2
-msgid "gnollama"
-msgstr "gnollama"
-
 #: data/io.github.jackrabbithanna.Gnollama.desktop.in:8
-msgid "GTK;"
-msgstr "GTK;"
+msgid "Ollama;LLM;AI;Chat;Assistant;"
+msgstr "Ollama;LLM;AI;Chat;Assistant;"
 
 #: data/io.github.jackrabbithanna.Gnollama.gschema.xml:7
 msgid "Default Ollama Host"
@@ -33,6 +29,7 @@ msgstr "Server Ollama predefinito"
 msgid "The default URL for the Ollama API server."
 msgstr "L’URL predefinito del server API di Ollama."
 
+#: data/io.github.jackrabbithanna.Gnollama.desktop.in:2
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:7 src/startup.py:10
 #: src/window.ui:5
 msgid "Gnollama"
@@ -136,6 +133,7 @@ msgstr ""
 "Esplora i modelli cloud con controlli adatti al servizio e usa fonti di conoscenza "
 "locali nelle chat cloud."
 
+#: data/io.github.jackrabbithanna.Gnollama.desktop.in:2
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:72
 msgid ""
 "Add a Knowledge Library for text and PDF imports, local embedding indexes, and "
@@ -144,6 +142,7 @@ msgstr ""
 "Aggiunta di una biblioteca di conoscenze per importare testo e PDF, creare indici "
 "locali di embedding e conversare sulla base di fonti."
 
+#: data/io.github.jackrabbithanna.Gnollama.desktop.in:2
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:74
 msgid ""
 "Start with knowledge collections and add text, files, or URLs with explicit "
@@ -152,6 +151,7 @@ msgstr ""
 "Inizia dalle raccolte di conoscenze e aggiungi testo, file o URL con destinazioni "
 "esplicite e anteprime guidate."
 
+#: data/io.github.jackrabbithanna.Gnollama.desktop.in:2
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:75
 msgid ""
 "Choose collections before search settings, and use adaptive chat settings with "
@@ -160,10 +160,12 @@ msgstr ""
 "Scegli le raccolte prima delle impostazioni di ricerca e usa impostazioni di chat "
 "adattabili, con controlli e indicazioni più chiari."
 
+#: data/io.github.jackrabbithanna.Gnollama.desktop.in:2
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:76
 msgid "Create and compare embeddings, inspect chunks and vectors, and test semantic searches."
 msgstr "Crea e confronta embedding, esamina segmenti e vettori e prova ricerche semantiche."
 
+#: data/io.github.jackrabbithanna.Gnollama.desktop.in:2
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:77
 msgid ""
 "Select documents or chunks for chats, with independent embedding hosts and saved "
@@ -172,6 +174,7 @@ msgstr ""
 "Seleziona documenti o segmenti per le chat, con server di embedding indipendenti e "
 "passaggi delle fonti salvati."
 
+#: data/io.github.jackrabbithanna.Gnollama.desktop.in:2
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:78
 msgid ""
 "Warn about stored embeddings when deleting models, with optional vector cleanup that "
@@ -180,6 +183,7 @@ msgstr ""
 "Avvisa degli embedding salvati quando si eliminano modelli, con pulizia facoltativa "
 "dei vettori che conserva il testo originale."
 
+#: data/io.github.jackrabbithanna.Gnollama.desktop.in:2
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:79
 msgid ""
 "Search with sqlite-vec, automatically migrate existing vectors with a database "
@@ -3634,3 +3638,15 @@ msgstr "Suggerimenti di ricerca"
 #: src/widgets/history_sidebar.py:131
 msgid "No matching conversations"
 msgstr "Nessuna conversazione corrispondente"
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in
+msgid "Compare answers from two models"
+msgstr "Confronta le risposte di due modelli"
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in
+msgid "Let two models talk to each other"
+msgstr "Fai conversare due modelli tra loro"
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in
+msgid "Organize documents into knowledge collections"
+msgstr "Organizza i documenti in raccolte di conoscenza"

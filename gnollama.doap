@@ -16,7 +16,6 @@ Supports images, system prompts, thinking controls, log probabilities, and gener
   </description>
 
   <homepage rdf:resource="https://github.com/jackrabbithanna/gnollama/" />
-  <support-forum rdf:resource="" />
   <bug-database rdf:resource="https://github.com/jackrabbithanna/gnollama/issues/" />
 
   <programming-language>Python</programming-language>
@@ -25,7 +24,6 @@ Supports images, system prompts, thinking controls, log probabilities, and gener
     <foaf:Person>
       <foaf:name>Mark Hanna</foaf:name>
       <foaf:mbox rdf:resource="mailto:mark@jackrabbithanna.com" />
-      <gnome:userid></gnome:userid>
     </foaf:Person>
   </maintainer>
 

@@ -24,20 +24,19 @@ def running_model_subtitle(model):
     return _('Memory: {0} · VRAM: {1}\nContext: {2} · Expires: {3}').format(size('size'), size('size_vram'), context, expiry)
 
 @Gtk.Template(resource_path='/io/github/jackrabbithanna/Gnollama/model_details_view.ui')
-class ModelDetailsView(Adw.Window):
-    """Window for displaying detailed information about a model."""
+class ModelDetailsView(Adw.Dialog):
+    """Dialog for displaying detailed information about a model."""
     __gtype_name__ = 'ModelDetailsView'
 
     main_box: Gtk.Box = Gtk.Template.Child()
 
-    def __init__(self, transient_for: Gtk.Window, model_name: str, **kwargs: Any) -> None:
+    def __init__(self, model_name: str, **kwargs: Any) -> None:
         super().__init__(**kwargs)
         self.requests = ViewRequests(self)
-        self.set_transient_for(transient_for)
         self.set_title(f"{_('Model Details')}: {model_name}")
 
 @Gtk.Template(resource_path='/io/github/jackrabbithanna/Gnollama/model_manager.ui')
-class ModelManagerDialog(Adw.Window):
+class ModelManagerDialog(Adw.Dialog):
     """Dialog for managing Ollama models (listing, info, deletion, pulling)."""
     __gtype_name__ = 'ModelManagerDialog'
 
@@ -248,7 +247,7 @@ class ModelManagerDialog(Adw.Window):
         if not host or ollama.is_cloud(host):
             return
         dialog = PullModelDialog(self, host['hostname'])
-        dialog.present()
+        dialog.present(self)
 
     def fetch_models_for_selected_host(self) -> None:
         """Fetches models from the currently selected host and updates the list."""
@@ -331,7 +330,7 @@ class ModelManagerDialog(Adw.Window):
         if not host:
             return
             
-        view = ModelDetailsView(self, model['name'])
+        view = ModelDetailsView(model['name'])
         spinner = Gtk.Spinner()
         spinner.start()
         spinner.set_halign(Gtk.Align.CENTER)
@@ -339,7 +338,7 @@ class ModelManagerDialog(Adw.Window):
         spinner.set_margin_bottom(24)
         spinner.set_size_request(32, 32)
         view.main_box.append(spinner)
-        view.present()
+        view.present(self)
         cancel = view.requests.new_cancel()
         self.requests._cancellables.add(cancel)
 
@@ -521,7 +520,7 @@ class ModelManagerDialog(Adw.Window):
                 add_field(_(label), show_data[k], collapsible=True)
 
 @Gtk.Template(resource_path='/io/github/jackrabbithanna/Gnollama/pull_model_dialog.ui')
-class PullModelDialog(Adw.Window):
+class PullModelDialog(Adw.Dialog):
     """Dialog for pulling (downloading) a new model from a host."""
     __gtype_name__ = 'PullModelDialog'
 
@@ -534,12 +533,13 @@ class PullModelDialog(Adw.Window):
 
     progress_bar = Gtk.Template.Child()
 
-    def __init__(self, transient_for: Gtk.Window, hostname: str, **kwargs: Any) -> None:
+    def __init__(self, owner: Optional[Gtk.Widget], hostname: str, **kwargs: Any) -> None:
         super().__init__(**kwargs)
         self.requests = ViewRequests(self)
-        self.set_transient_for(transient_for)
+        # The model manager that opened this dialog, refreshed after a download.
+        self.owner = owner
         from .services import Services
-        self.services = transient_for.storage.services if hasattr(transient_for, 'storage') else Services()
+        self.services = owner.storage.services if hasattr(owner, 'storage') else Services()
         self.hostname: str = hostname
         self.pulling: bool = False
         self.pull_future: Optional[Any] = None
@@ -553,7 +553,9 @@ class PullModelDialog(Adw.Window):
             self.pulling = False
             self._pull_cancel.cancel()
         self.requests.close()
-        self.close()
+        # Adw.Dialog.close() is only valid once the dialog has been presented.
+        if self.get_parent() is not None:
+            self.close()
 
     def on_pull_clicked(self, btn: Gtk.Button) -> None:
         """Starts the model pull process."""
@@ -629,7 +631,7 @@ class PullModelDialog(Adw.Window):
         self.cancel_btn.set_label(_("Close"))
         self.cancel_btn.add_css_class("suggested-action")
         self.pull_btn.set_visible(False)
-        parent = self.get_transient_for()
+        parent = self.owner
         if parent and hasattr(parent, 'fetch_models_for_selected_host'):
             parent.fetch_models_for_selected_host()
 

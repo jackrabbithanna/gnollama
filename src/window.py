@@ -123,6 +123,11 @@ class GnollamaWindow(Adw.ApplicationWindow):
                 parent = parent.get_transient_for()
             if parent is self:
                 window.close()
+        # Manager dialogs cancel their own requests when closed.
+        dialogs = self.get_dialogs()
+        for dialog in [dialogs.get_item(i) for i in range(dialogs.get_n_items())]:
+            if hasattr(dialog, 'requests'):
+                dialog.force_close()
         GLib.timeout_add(50, self._poll_shutdown)
 
     def _poll_shutdown(self):
@@ -200,6 +205,10 @@ class GnollamaWindow(Adw.ApplicationWindow):
             self.add_action(action)
 
     def load_css(self):
+        # Adw.Application loads style.css from its resource base path at startup.
+        # Windows created without it (tests, layout tools) load the stylesheet here.
+        if isinstance(self.get_application(), Adw.Application):
+            return
         provider = Gtk.CssProvider()
         provider.load_from_resource('/io/github/jackrabbithanna/Gnollama/style.css')
         Gtk.StyleContext.add_provider_for_display(Gdk.Display.get_default(), provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
@@ -224,15 +233,13 @@ class GnollamaWindow(Adw.ApplicationWindow):
 
     def on_manage_hosts(self, *args):
         dialog = HostManagerDialog(storage=self.storage, on_hosts_changed_cb=self.on_hosts_changed)
-        dialog.set_transient_for(self)
-        dialog.present()
+        dialog.present(self)
 
     def on_manage_models(self, *args):
         dialog = ModelManagerDialog(storage=self.storage, is_model_busy=self.is_model_busy)
         self.model_managers.append(dialog)
-        dialog.connect('close-request', lambda *args: self._forget_manager(dialog))
-        dialog.set_transient_for(self)
-        dialog.present()
+        dialog.connect('closed', lambda *args: self._forget_manager(dialog))
+        dialog.present(self)
         return dialog
 
     def _forget_manager(self, dialog):

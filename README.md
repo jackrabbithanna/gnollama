@@ -161,7 +161,7 @@ I wanted a GNOME application for Ollama that I could use to test and experiment 
 
 ### Meson
 
-Requires Python 3.11+, PyGObject, GTK 4.18+, libadwaita 1.9+, libsoup 3, libsecret 0.20+ with Secret 1 introspection, jsonschema 4.26+, sqlite-vec 0.1.9, SQLite 3.41+ with extension loading, pypdf, and Markdown. The Flatpak manifest uses GNOME 50 and builds the current checkout. It bundles checksum-pinned dependencies for aarch64 and x86_64, including sqlite-vec 0.1.9 and pypdf 6.18.0.
+Requires Python 3.11+, PyGObject, GTK 4.18+, libadwaita 1.9+, libsoup 3, libsecret 0.20+ with Secret 1 introspection, jsonschema 4.26+, sqlite-vec 0.1.9, SQLite 3.41+ with extension loading, pypdf, and Markdown. The Flatpak manifest uses GNOME 51 and builds the current checkout. It bundles checksum-pinned dependencies for aarch64 and x86_64, including sqlite-vec 0.1.9 and pypdf 6.18.0.
 Code highlighting requires [GTKSourceView](https://wiki.gnome.org/Projects/GtkSourceView) version 5
 
 For a native build on a Debian/Ubuntu installation whose GTK and libadwaita packages meet the minimum versions above, install the development and introspection packages, then use the locked Python dependencies:
@@ -176,7 +176,7 @@ python3 -m venv --system-site-packages .venv
 python -m pip install -r requirements.lock
 ```
 
-The Flatpak build supplies its own GNOME 50 SDK and pinned Python dependencies.
+The Flatpak build supplies its own GNOME 51 SDK and pinned Python dependencies.
 
 ```bash
 meson setup build
@@ -187,7 +187,7 @@ You can then run `gnollama` to execute the application.
 
 ## Validation
 
-Run `meson test -C build --print-errorlogs` after building. Regression tests use temporary databases and a local HTTP fixture server; they do not contact your Ollama servers. GTK tests require a display. Set `GNOLLAMA_REQUIRE_DISPLAY=1` to reject missing GTK coverage, as CI does. `tools/ci-test.sh` runs the complete suite under Xvfb. The CI matrix builds GNOME 50 Flatpaks on x86_64 and aarch64 and runs core compatibility tests on Python 3.11.
+Run `meson test -C build --print-errorlogs` after building. Regression tests use temporary databases and a local HTTP fixture server; they do not contact your Ollama servers. GTK tests require a display. Set `GNOLLAMA_REQUIRE_DISPLAY=1` to reject missing GTK coverage, as CI does. `tools/ci-test.sh` runs the complete suite under Xvfb. The CI matrix builds GNOME 51 Flatpaks on x86_64 and aarch64 and runs core compatibility tests on Python 3.11.
 
 GNOME Builder builds the repository Flatpak manifest from the current checkout. For a command-line Flatpak build, use:
 

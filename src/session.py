@@ -212,12 +212,13 @@ class ChatStrategy(GenerationStrategy):
 
 
 class ViewRequests:
-    """Cancel a window's jobs and suppress deliveries after it closes."""
+    """Cancel a window's or dialog's jobs and suppress deliveries after it closes."""
     def __init__(self, window):
         import weakref
         self.closed = False
         self._cancellables = weakref.WeakSet()
-        window.connect('close-request', self.close)
+        from gi.repository import Adw
+        window.connect('closed' if isinstance(window, Adw.Dialog) else 'close-request', self.close)
         window.connect('destroy', self.close)
 
     def new_cancel(self):

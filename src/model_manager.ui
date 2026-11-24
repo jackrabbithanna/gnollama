@@ -1,13 +1,11 @@
 <interface domain="gnollama">
-  <requires lib="gtk" version="4.0" />
-  <requires lib="Adw" version="1.0" />
-  <template class="ModelManagerDialog" parent="AdwWindow">
+  <requires lib="gtk" version="4.18"/>
+  <requires lib="Adw" version="1.9"/>
+  <template class="ModelManagerDialog" parent="AdwDialog">
     <property name="title" translatable="yes">Manage Models</property>
-    <property name="default-width">600</property>
-    <property name="default-height">500</property>
-    <property name="modal">True</property>
-    <property name="destroy-with-parent">True</property>
-    <property name="content">
+    <property name="content-width">600</property>
+    <property name="content-height">500</property>
+    <property name="child">
       <object class="AdwToolbarView">
         <child type="top">
           <object class="AdwHeaderBar">

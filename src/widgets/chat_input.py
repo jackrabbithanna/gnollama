@@ -1,6 +1,6 @@
 from typing import List, Optional, Any, Dict, Callable
 from gettext import ngettext
-from gi.repository import Gtk, GObject, Gio, GdkPixbuf, GLib, Gdk, Pango
+from gi.repository import Gtk, GObject, Gio, GLib, Gdk, Pango
 import threading
 from .. import ollama
 from .composer import Composer

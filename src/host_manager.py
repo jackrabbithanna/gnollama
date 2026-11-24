@@ -114,7 +114,7 @@ class HostEditDialog(Adw.Dialog):
         self.validation_error.set_visible(bool(error) and bool(args))
 
 @Gtk.Template(resource_path='/io/github/jackrabbithanna/Gnollama/host_manager.ui')
-class HostManagerDialog(Adw.Window):
+class HostManagerDialog(Adw.Dialog):
     """Dialog for managing Ollama host configurations."""
     __gtype_name__ = 'HostManagerDialog'
 

@@ -36,8 +36,6 @@ class ResponseLayoutTests(unittest.TestCase):
         bubble.append_text('```python\n' + code + '\n```')
         tab.message_list.add_ai_bubble(bubble)
         self.resize(window, 520)
-        # append_text renders asynchronously; the initial empty label can be
-        # allocated before the streaming update replaces it with a code block.
         pump_until(lambda: getattr(bubble.markdown_view.get_first_child(), '_raw_code', None) == code
                    and bubble.bubble_box.get_width() > 300)
         block = bubble.markdown_view.get_first_child()

@@ -5,7 +5,7 @@ from unittest import mock
 
 from gi.repository import Adw, Gdk, Gtk
 from src import math_render
-from src.markdown_view import MarkdownView, MathBlock, TableBlock, table_data
+from src.markdown_view import SEGMENT_SIZE, MarkdownView, MathBlock, TableBlock, segment_ends, table_data
 from test_ui import pump_until
 
 
@@ -293,3 +293,134 @@ class TableWidgetTests(unittest.TestCase):
             clamp.set_tightening_threshold(width)
             pump_until(lambda: abs(table.scrolled.get_width() - width) <= 4 and settled())
         self.assertEqual(table.scrolled.get_height(), wide)
+
+
+PROSE = ('A paragraph with **bold** text, `code` and inline math \\(a^2\\) that is long enough '
+         'to add up over a response of several thousand characters.\n\n')
+MIXED = ''.join(
+    f'## Section {n}\n\n' + PROSE * 3
+    + '- point one\n- point two\n\n    continued text of point two\n\n- point three\n\n'
+    + f'```python\nvalue = {n}\n\n\nprint(value)  # $$ and \\[ are literal here\n```\n\n'
+    + TABLE + f'\n| c | {n} |\n\n'
+    + 'So:\n\n\\[\nx = \\frac{-b}{2a}\n\n+ 1\n\\]\n\n'
+    + '1. step one\n2. step two\n\n> a quote\n\n> its second paragraph\n\n' + PROSE
+    for n in range(12))
+
+
+class SegmentTests(unittest.TestCase):
+    def test_short_text_is_one_segment(self):
+        self.assertEqual(segment_ends(PROSE * 3), [])
+
+    def test_long_text_is_cut_at_paragraph_breaks(self):
+        text = PROSE * 60
+        ends = segment_ends(text)
+        self.assertGreater(len(ends), 2)
+        for start, end in zip([0] + ends, ends):
+            self.assertGreaterEqual(end - start, SEGMENT_SIZE)
+            self.assertLess(end - start, SEGMENT_SIZE + 2 * len(PROSE))
+            self.assertTrue(text[:end].endswith('\n\n') and text[end:].startswith('A paragraph'))
+
+    def test_cuts_are_the_same_however_much_text_follows(self):
+        ends = segment_ends(MIXED)
+        self.assertGreater(len(ends), 2)
+        for length in range(0, len(MIXED), 97):
+            for complete in (True, False):
+                found = segment_ends(MIXED[:length], complete)
+                self.assertEqual(found, ends[:len(found)])
+
+    def test_no_cut_inside_code_lists_quotes_or_open_equations(self):
+        long = PROSE * 15
+        # These lines may continue the list, quote or indented text above the blank line.
+        for line in ('- another item', '* another item', '2. another item', '    continued', '> more', ': definition'):
+            self.assertNotIn(len(long), segment_ends(long + line + '\n\nend'), line)
+        self.assertIn(len(long), segment_ends(long + 'A new paragraph\n\nend'))
+        self.assertEqual(segment_ends('Money $$ and\n\n' + long + 'end'), [])
+        code = '```\n' + long + '```\n\n'
+        self.assertEqual(segment_ends(code + 'text'), [len(code)])
+        self.assertEqual(segment_ends('\\[ x\n\n' + long + 'end'), [])
+        # A finished equation or code block does not hold the text after it together.
+        self.assertTrue(segment_ends('\\[ x \\]\n\n' + long + 'end'))
+        self.assertTrue(segment_ends('```\n$$\n```\n\n' + long + 'end'))
+
+    def test_unfinished_last_line_is_not_cut_off_while_streaming(self):
+        text = PROSE * 15
+        self.assertEqual(len(text), segment_ends(text + 'A')[-1])
+        self.assertNotIn(len(text), segment_ends(text + 'A', complete=False))
+        self.assertIn(len(text), segment_ends(text + 'A\n', complete=False))
+        self.assertNotIn(len(text), segment_ends(text + '-', complete=False))
+        self.assertNotIn(len(text), segment_ends(text + '- item\n', complete=False))
+
+
+class StreamingTests(unittest.TestCase):
+    def shown(self, view):
+        found, child = [], view.get_first_child()
+        while child:
+            if isinstance(child, TableBlock):
+                rows = [child.store.get_item(i).cells for i in range(child.store.get_n_items())]
+                found.append(('table', child.header, rows, child.raw))
+            elif isinstance(child, MathBlock):
+                found.append(('math', child.tex))
+            elif isinstance(child, Gtk.Label):
+                found.append(('text', child.get_label()))
+            else:
+                found.append(('code', child._lang, child._raw_code))
+            child = child.get_next_sibling()
+        return found
+
+    def test_streaming_in_any_chunks_matches_rendering_at_once(self):
+        import random
+        whole = self.shown(MarkdownView(MIXED))
+        self.assertGreater(len(segment_ends(MIXED)), 2)
+        for seed in range(3):
+            chooser = random.Random(seed)
+            view, end, step = MarkdownView(''), 0, 0
+            while end < len(MIXED):
+                end = min(len(MIXED), end + chooser.choice((1, 2, 5, 17, 60, 300)))
+                view.update(MIXED[:end], streaming=True)
+                step += 1
+                if step % 25 == 0:
+                    fresh = MarkdownView('')
+                    fresh.update(MIXED[:end], streaming=True)
+                    self.assertEqual(self.shown(view), self.shown(fresh), (seed, end))
+            view.update(MIXED)
+            self.assertEqual(self.shown(view), whole)
+
+    def test_text_is_the_same_one_character_at_a_time(self):
+        text = PROSE * 16 + 'Before a list:\n\n- item\n\n- item two\n\n' + PROSE + '\\[\ny\n\n= x\n\\]\n\n' + PROSE * 16
+        view = MarkdownView('')
+        for end in range(len(text) - 2700, len(text) + 1):
+            view.update(text[:end], streaming=True)
+        middle = self.shown(view)
+        fresh = MarkdownView('')
+        fresh.update(text, streaming=True)
+        self.assertEqual(middle, self.shown(fresh))
+        view.update(text)
+        self.assertEqual(self.shown(view), self.shown(MarkdownView(text)))
+
+    def test_finished_segments_are_left_alone(self):
+        text = PROSE * 90
+        view = MarkdownView('')
+        view.update(text[:len(text) // 2], streaming=True)
+        first = view.get_first_child()
+        with mock.patch.object(MarkdownView, '_parse_blocks', autospec=True,
+                               side_effect=MarkdownView._parse_blocks) as parse:
+            for end in range(len(text) // 2, len(text), 40):
+                view.update(text[:end], streaming=True)
+        self.assertIs(view.get_first_child(), first)
+        self.assertLess(max(len(call.args[1]) for call in parse.call_args_list), SEGMENT_SIZE + 2 * len(PROSE))
+        self.assertGreater(len(self.shown(view)), 4)
+
+    def test_text_that_is_not_a_continuation_is_rendered_again(self):
+        view = MarkdownView('')
+        view.update(PROSE * 40, streaming=True)
+        view.update('Something else', streaming=True)
+        self.assertEqual(self.shown(view), [('text', 'Something else')])
+
+    def test_bubble_shows_each_chunk_at_once(self):
+        from src.bubbles import AiBubble
+        bubble = AiBubble(model_name='test')
+        bubble.append_text('Hello ')
+        bubble.append_text('**there**')
+        self.assertEqual(self.shown(bubble.markdown_view), [('text', 'Hello <b>there</b>')])
+        bubble.show_response_metadata({})
+        self.assertEqual(self.shown(bubble.markdown_view), [('text', 'Hello <b>there</b>')])

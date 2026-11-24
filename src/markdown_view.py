@@ -270,6 +270,53 @@ class PangoMarkupParser(HTMLParser):
 MARKDOWN_EXTENSIONS = ['extra', 'fenced_code', 'sane_lists']
 TABLE_DELIMITER = re.compile(r'^ {0,3}\|?(\s*:?-+:?\s*\|)+(\s*:?-+:?\s*)?$')
 FENCE = re.compile(r'^\s*(`{3,}|~{3,})')
+FENCE_OPEN = re.compile(r'^(\s*)(`{3,}|~{3,})(.*)$')
+FENCE_CLOSE = re.compile(r'^(\s*)(`{3,}|~{3,})\s*$')
+# Long responses are rendered as separate segments of about this many characters,
+# so that streamed text only re-renders the segment still being written.
+SEGMENT_SIZE = 2000
+DISPLAY_OPENER = re.compile(r'\\\[|\$\$|\\begin\{')
+# A line that may belong to the list, quote or indented block before the blank line above it.
+CONTINUATION = re.compile(r'[ \t>:]|[-*+][ \t]|\d+[.)][ \t]')
+
+
+def segment_ends(text: str, complete: bool = True) -> List[int]:
+    """Offsets where text can be cut into segments that render independently.
+
+    A cut is made at the first paragraph break once a segment is long enough. Text
+    added after a cut never changes the segments before it, so they can be left
+    alone while a response streams in. The last line only counts when it is
+    complete, as an unfinished line may still turn into a list item.
+    """
+    ends: List[int] = []
+    lines = text.split('\n')
+    start = pos = 0
+    fence: Optional[str] = None
+    blank = False
+    prose: List[str] = []
+    for index, line in enumerate(lines):
+        if fence:
+            close = FENCE_CLOSE.match(line)
+            if close and close.group(2)[0] == fence[0] and len(close.group(2)) >= len(fence):
+                fence = None
+        elif not line.strip():
+            blank = True
+        else:
+            if (blank and pos - start >= SEGMENT_SIZE and (complete or index < len(lines) - 1)
+                    and not CONTINUATION.match(line)
+                    # An equation that is still open could reach back across the cut.
+                    and not DISPLAY_OPENER.search(math_render.DISPLAY_MATH.sub('', '\n'.join(prose)))):
+                ends.append(pos)
+                start = pos
+                prose = []
+            blank = False
+            opening = FENCE_OPEN.match(line)
+            if opening:
+                fence = opening.group(2)
+            else:
+                prose.append(line)
+        pos += len(line) + 1
+    return ends
 
 
 def _table_start(lines: List[str], index: int) -> bool:
@@ -572,6 +619,9 @@ class MarkdownView(Gtk.Box):
         self.add_css_class("markdown-view")
         self._text: str = text
         self._tables: Dict[str, Optional[Dict[str, Any]]] = {}
+        # While streaming, the leading segments that are finished and their last widget.
+        self._settled_text: str = ''
+        self._settled_widget: Optional[Gtk.Widget] = None
 
         self._theme_handler_id = None
         if Adw:
@@ -609,15 +659,37 @@ class MarkdownView(Gtk.Box):
                         buffer.set_style_scheme(scheme)
             curr_child = curr_child.get_next_sibling()
 
-    def update(self, text: str) -> None:
-        """Updates the view with new markdown text."""
-        self._text = text
-        self.render()
+    def update(self, text: str, streaming: bool = False) -> None:
+        """Updates the view with new markdown text.
 
-    def render(self) -> None:
+        With streaming, text that extends what is already shown only renders the
+        segments that are new or unfinished. The result is the same either way,
+        apart from a last line that streaming does not yet treat as complete.
+        """
+        self._text = text
+        self.render(streaming)
+
+    def render(self, streaming: bool = False) -> None:
         """Parses and renders the current markdown text."""
-        blocks = self._parse_blocks(self._text)
+        text = self._text
+        if not streaming or not text.startswith(self._settled_text):
+            self._settled_text, self._settled_widget = '', None
+        offset = len(self._settled_text)
+        rest = text[offset:]
+        start = 0
+        for end in segment_ends(rest, complete=not streaming):
+            blocks = self._blocks(rest[start:end].rstrip(), {})
+            self._settled_widget = self._sync_view(blocks, self._settled_widget, trim=False)
+            start = end
+        if start:
+            self._settled_text = text[:offset + start]
         tables: Dict[str, Optional[Dict[str, Any]]] = {}
+        self._sync_view(self._blocks(rest[start:], tables), self._settled_widget)
+        self._tables = tables
+
+    def _blocks(self, text: str, tables: Dict[str, Optional[Dict[str, Any]]]) -> List[Dict[str, Any]]:
+        """Parses one segment, recording the tables it parsed in `tables`."""
+        blocks = self._parse_blocks(text)
         for block in blocks:
             if block['type'] == 'table':
                 raw = block['content']
@@ -627,8 +699,7 @@ class MarkdownView(Gtk.Box):
                     block['type'] = 'text'  # Not a table after all
                 else:
                     block['data'] = data
-        self._tables = tables
-        self._sync_view(blocks)
+        return blocks
 
     def _parse_blocks(self, text: str) -> List[Dict[str, Any]]:
         """Parses markdown text into a list of block dictionaries."""
@@ -639,7 +710,7 @@ class MarkdownView(Gtk.Box):
         
         while i < n:
             line = lines[i]
-            match = re.match(r'^(\s*)(`{3,}|~{3,})(.*)$', line)
+            match = FENCE_OPEN.match(line)
             
             if match:
                 indent, fence, raw_lang = match.groups()
@@ -650,7 +721,7 @@ class MarkdownView(Gtk.Box):
                 i = content_start_idx
                 while i < n:
                     curr_line = lines[i]
-                    close_match = re.match(r'^(\s*)(`{3,}|~{3,})\s*$', curr_line)
+                    close_match = FENCE_CLOSE.match(curr_line)
                     if close_match:
                         c_indent, c_fence = close_match.groups()
                         if c_fence[0] == fence[0] and len(c_fence) >= len(fence):
@@ -684,10 +755,12 @@ class MarkdownView(Gtk.Box):
                 
         return blocks
 
-    def _sync_view(self, blocks: List[Dict[str, Any]]) -> None:
-        """Syncs the Gtk widget list with the parsed blocks, minimizing churn."""
-        curr_child = self.get_first_child()
-        prev_child: Optional[Gtk.Widget] = None
+    def _sync_view(self, blocks: List[Dict[str, Any]], after: Optional[Gtk.Widget] = None,
+                   trim: bool = True) -> Optional[Gtk.Widget]:
+        """Syncs the widgets that follow `after` with the parsed blocks, minimizing churn.
+        Widgets left over are removed unless `trim` is False. Returns the last block's widget."""
+        curr_child = after.get_next_sibling() if after else self.get_first_child()
+        prev_child: Optional[Gtk.Widget] = after
         
         for block in blocks:
             match = False
@@ -723,10 +796,11 @@ class MarkdownView(Gtk.Box):
                 self.insert_child_after(new_widget, prev_child)
                 prev_child = new_widget
                 
-        while curr_child:
+        while trim and curr_child:
             next_s = curr_child.get_next_sibling()
             self.remove(curr_child)
             curr_child = next_s
+        return prev_child
 
     def _create_widget_for_block(self, block: Dict[str, Any]) -> Gtk.Widget:
         """Creates an appropriate widget for a given block type."""

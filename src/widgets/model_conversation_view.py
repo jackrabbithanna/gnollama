@@ -295,7 +295,6 @@ class ModelConversationTab(Gtk.Box):
                 oldest = rows[0]
                 for uid, bubble in list(self.bubbles.items()):
                     if bubble is oldest:
-                        bubble.cancel_delivery()
                         del self.bubbles[uid]
                 self.message_list.list_box.remove(oldest)
                 self._offset += 1
@@ -389,7 +388,6 @@ class ModelConversationTab(Gtk.Box):
             if self._disposed or self.closing or getattr(self.get_root(), '_shutting_down', False):
                 return False
             if page:
-                self.message_list.cancel_deliveries()
                 self.message_list.clear()
                 self.bubbles.clear()
                 self._offset = page['message_offset']
@@ -437,7 +435,6 @@ class ModelConversationTab(Gtk.Box):
             self.draft.close(discard=self._discard_on_close)
             def saved():
                 self._disposed = True
-                self.message_list.cancel_deliveries()
                 callback, self._close_callback = self._close_callback, None
                 callback()
             self.storage._submit(lambda: None, on_done=saved)

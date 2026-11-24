@@ -1,8 +1,11 @@
 import html
+import math
 import re
 from typing import List, Dict, Any, Optional, Tuple, Union
 from html.parser import HTMLParser
-from gi.repository import Gtk, Gdk, Pango, GObject, Adw
+from gi.repository import Gtk, Gdk, Gio, GLib, Graphene, Gsk, Pango, GObject, Adw
+
+from . import math_render
 
 try:
     import markdown
@@ -28,11 +31,21 @@ class PangoMarkupParser(HTMLParser):
     A simple HTML parser that converts a subset of HTML into Pango markup.
     Also handles ASCII table rendering for basic HTML tables.
     """
-    def __init__(self) -> None:
+    LIST_INDENT = "    "
+
+    def __init__(self, collect_tables: bool = False) -> None:
         super().__init__()
+        # Keep tables as data in self.tables instead of drawing them as text.
+        self.collect_tables = collect_tables
+        self.tables: List[Dict[str, Any]] = []
         self.output: List[str] = []
         self.tags: List[str] = []
-        
+
+        # List state: one entry per open list, None for bullets or the next
+        # number for ordered lists.
+        self.lists: List[Optional[int]] = []
+        self.item_start: bool = False  # Marker written, no item content yet
+
         # Table state
         self.in_table: bool = False
         self.table_rows: List[List[str]] = []
@@ -44,6 +57,8 @@ class PangoMarkupParser(HTMLParser):
         if tag == 'table':
             self.in_table = True
             self.table_rows = []
+            self.table_align: List[float] = []
+            self.table_has_header = False
             self.output.append("\n") # Spacing before table
         elif tag == 'tr':
             if self.in_table:
@@ -52,6 +67,10 @@ class PangoMarkupParser(HTMLParser):
             if self.in_table:
                 self.in_cell = True
                 self.cell_content = ""
+                if not self.table_rows:
+                    self.table_has_header = self.table_has_header or tag == 'th'
+                    style = dict(attrs).get('style') or ''
+                    self.table_align.append(1.0 if 'right' in style else 0.5 if 'center' in style else 0.0)
             else:
                 self.output.append(" | ")
         elif tag in ['h1', 'h2']:
@@ -77,12 +96,36 @@ class PangoMarkupParser(HTMLParser):
             if self.in_table: self.cell_content += tag_str
             else: self.output.append(tag_str)
         elif tag == 'p':
-            if not self.in_table and self.output and not self.output[-1].endswith("\n\n"):
+            if self.lists:
+                if not self.item_start:
+                    # Later paragraphs of an item line up under its text.
+                    self._ensure_newline()
+                    self.output.append(self.LIST_INDENT * len(self.lists))
+            elif not self.in_table and self.output and not self.output[-1].endswith("\n\n"):
                 self.output.append("\n")
-        elif tag == 'ul':
-            self.output.append("\n")
+        elif tag in ['ul', 'ol']:
+            if self.lists:
+                self._ensure_newline()
+            else:
+                self.output.append("\n")
+            number: Optional[int] = None
+            if tag == 'ol':
+                try:
+                    number = int(dict(attrs).get('start') or 1)
+                except ValueError:
+                    number = 1
+            self.lists.append(number)
+            self.item_start = False
         elif tag == 'li':
-            self.output.append("• ")
+            self._ensure_newline()
+            indent = self.LIST_INDENT * max(len(self.lists) - 1, 0)
+            number = self.lists[-1] if self.lists else None
+            if number is None:
+                self.output.append(f"{indent}• ")
+            else:
+                self.output.append(f"{indent}{number}. ")
+                self.lists[-1] = number + 1
+            self.item_start = True
         elif tag == 'a':
             href = dict(attrs).get('href', '')
             tag_str = f"<a href='{html.escape(href)}'>"
@@ -103,7 +146,12 @@ class PangoMarkupParser(HTMLParser):
     def handle_endtag(self, tag: str) -> None:
         if tag == 'table':
             self.in_table = False
-            self.render_ascii_table()
+            if self.collect_tables:
+                header = self.table_rows[:1] if self.table_has_header else []
+                self.tables.append({'header': header[0] if header else [], 'align': self.table_align,
+                                    'rows': self.table_rows[len(header):]})
+            else:
+                self.render_ascii_table()
             self.output.append("\n")
         elif tag == 'tr':
             if self.in_table:
@@ -133,13 +181,19 @@ class PangoMarkupParser(HTMLParser):
             if self.in_table: self.cell_content += tag_str
             else: self.output.append(tag_str)
         elif tag == 'p':
-            if not self.in_table: self.output.append("\n")
+            if self.lists: self._ensure_newline()
+            elif not self.in_table: self.output.append("\n")
         elif tag == 'a':
             tag_str = "</a>"
             if self.in_table: self.cell_content += tag_str
             else: self.output.append(tag_str)
         elif tag == 'li':
-            self.output.append("\n")
+            self._ensure_newline()
+            self.item_start = False
+        elif tag in ['ul', 'ol']:
+            if self.lists:
+                self.lists.pop()
+            self.item_start = False
         elif tag == 'blockquote':
             self.output.append("</i>\n")
         elif tag == 'pre':
@@ -149,8 +203,19 @@ class PangoMarkupParser(HTMLParser):
         if self.in_table and self.in_cell:
             self.cell_content += html.escape(data) 
         elif not self.in_table:
+            if self.lists:
+                # Line breaks between list tags are HTML formatting, not content.
+                if not data.strip() and (self.item_start or not self.output or self.output[-1].endswith("\n")):
+                    return
+                if self.item_start:
+                    data = data.lstrip()
+                self.item_start = False
             self.output.append(html.escape(data))
-    
+
+    def _ensure_newline(self) -> None:
+        if self.output and not self.output[-1].endswith("\n"):
+            self.output.append("\n")
+
     def render_ascii_table(self) -> None:
         """Renders the collected table rows as an ASCII table using Pango tags for styling."""
         if not self.table_rows:
@@ -202,6 +267,295 @@ class PangoMarkupParser(HTMLParser):
         return "".join(self.output).strip()
 
 
+MARKDOWN_EXTENSIONS = ['extra', 'fenced_code', 'sane_lists']
+TABLE_DELIMITER = re.compile(r'^ {0,3}\|?(\s*:?-+:?\s*\|)+(\s*:?-+:?\s*)?$')
+FENCE = re.compile(r'^\s*(`{3,}|~{3,})')
+
+
+def _table_start(lines: List[str], index: int) -> bool:
+    """True when a top-level pipe table starts at lines[index]."""
+    if index + 1 >= len(lines):
+        return False
+    header = lines[index]
+    return ('|' in header and bool(header.strip()) and not re.match(r'^(\t| {4})', header)
+            and not FENCE.match(header) and bool(TABLE_DELIMITER.match(lines[index + 1].rstrip())))
+
+
+def table_data(text: str) -> Optional[Dict[str, Any]]:
+    """Parses one Markdown table into a header, column alignments and rows of Pango markup."""
+    if not markdown:
+        return None
+    try:
+        text, spans = math_render.protect(text)
+        parser = PangoMarkupParser(collect_tables=True)
+        parser.feed(markdown.markdown(text, extensions=MARKDOWN_EXTENSIONS))
+    except Exception:
+        return None
+    if len(parser.tables) != 1 or not parser.tables[0]['header'] or parser.get_markup():
+        return None
+    table = parser.tables[0]
+    # A header without rows comes back with one empty row.
+    if len(table['rows']) == 1 and not any(table['rows'][0]):
+        table['rows'] = []
+    table['header'] = [math_render.restore(cell, spans) for cell in table['header']]
+    table['rows'] = [[math_render.restore(cell, spans) for cell in row] for row in table['rows']]
+    return table
+
+
+# Before GTK 4.24 column view rows stay one line tall and cut off wrapped text,
+# so cells stay on one line there and wide tables scroll sideways.
+WRAP_TABLE_CELLS = Gtk.check_version(4, 24, 0) is None
+
+
+def font_pixels(widget: Gtk.Widget) -> float:
+    """The size of the widget's font in logical pixels."""
+    font = widget.get_pango_context().get_font_description()
+    size = font.get_size() / Pango.SCALE or 11
+    if not font.get_size_is_absolute():
+        dpi = widget.get_settings().get_property('gtk-xft-dpi') / 1024
+        size *= (dpi if dpi > 0 else 96) / 72
+    return size
+
+
+def snapshot_equation(snapshot: Gtk.Snapshot, texture: Gdk.Texture, bounds: Graphene.Rect, color: Gdk.RGBA) -> None:
+    """Draws an equation in the given colour. Its texture is only a mask."""
+    snapshot.push_mask(Gsk.MaskMode.ALPHA)
+    snapshot.append_texture(texture, bounds)
+    snapshot.pop()
+    snapshot.append_color(color, bounds)
+    snapshot.pop()
+
+
+class MathLabel(Gtk.Label):
+    """A label that draws the inline equations in its markup as images on the text's baseline.
+    Equations that cannot be rendered are shown as text."""
+    __gtype_name__ = 'GnollamaMathLabel'
+    OBJECT = '￼'  # Stands in the text where an equation is drawn.
+
+    def __init__(self, **kwargs: Any) -> None:
+        super().__init__(**kwargs)
+        self._markup = ''
+        self._equations: List[Tuple[int, Tuple[Gdk.Texture, float, float, float]]] = []
+        self.connect('notify::scale-factor', lambda *args: self.set_markup(self._markup))
+
+    def set_markup(self, markup: str) -> None:
+        self._markup = markup
+        had_equations = bool(self._equations)
+        self._equations = []
+        if '' not in markup:
+            Gtk.Label.set_markup(self, markup)
+            if had_equations:
+                self.set_attributes(None)
+            return
+        size, scale = round(font_pixels(self)), self.get_scale_factor()
+        images = []
+
+        def convert(tex: str) -> str:
+            image = math_render.render(tex, size, scale, True)
+            if not image:
+                return math_render.inline_markup(tex)
+            images.append(image)
+            return self.OBJECT
+
+        Gtk.Label.set_markup(self, math_render.expand(markup.replace(self.OBJECT, ''), convert))
+        # Each stand-in character is given the size of its equation, so the text makes room for it.
+        attributes = Pango.AttrList()
+        index = 0
+        for image, before in zip(images, self.get_text().split(self.OBJECT)):
+            index += len(before.encode())
+            texture, width, height, ascent = image
+            shape = Pango.Rectangle()
+            shape.x, shape.y = 0, -round(ascent * Pango.SCALE)
+            shape.width, shape.height = round(width * Pango.SCALE), round(height * Pango.SCALE)
+            attribute = Pango.attr_shape_new(shape, shape)
+            attribute.start_index, attribute.end_index = index, index + len(self.OBJECT.encode())
+            attributes.insert(attribute)
+            self._equations.append((index, image))
+            index += len(self.OBJECT.encode())
+        self.set_attributes(attributes)
+
+    def do_snapshot(self, snapshot: Gtk.Snapshot) -> None:
+        Gtk.Label.do_snapshot(self, snapshot)
+        if not self._equations:
+            return
+        layout = self.get_layout()
+        left, top = self.get_layout_offsets()
+        baselines = []
+        lines = layout.get_iter()
+        while True:
+            baselines.append(lines.get_baseline())
+            if not lines.next_line():
+                break
+        color = self.get_color()
+        for index, (texture, width, height, ascent) in self._equations:
+            line = layout.index_to_line_x(index, False)[0]
+            x = left + layout.index_to_pos(index).x / Pango.SCALE
+            y = top + baselines[line] / Pango.SCALE - ascent
+            snapshot_equation(snapshot, texture, Graphene.Rect().init(round(x), round(y), width, height), color)
+
+
+class TableRow(GObject.Object):
+    def __init__(self, cells: List[str]) -> None:
+        super().__init__()
+        self.cells = cells
+
+
+class TableBlock(Gtk.Box):
+    """A Markdown table shown in a column view that is always as tall as its rows."""
+    __gtype_name__ = 'GnollamaTableBlock'
+
+    def __init__(self, data: Dict[str, Any], raw: str) -> None:
+        super().__init__(orientation=Gtk.Orientation.VERTICAL, spacing=6, halign=Gtk.Align.START)
+        self.add_css_class("table-block")
+        self.add_css_class("margin-v-6")
+        self.header: List[str] = data['header']
+        self.align: List[float] = data['align']
+        self.raw = raw
+        self._height_source = 0
+        self.store = Gio.ListStore.new(TableRow)
+        self.view = Gtk.ColumnView(model=Gtk.NoSelection(model=self.store), reorderable=False,
+                                   show_row_separators=True, show_column_separators=True)
+        for index, title in enumerate(self.header):
+            factory = Gtk.SignalListItemFactory()
+            factory.connect('setup', self._setup_cell, self.align[index] if index < len(self.align) else 0.0)
+            factory.connect('bind', self._bind_cell, index)
+            # Column titles are plain text.
+            plain = html.unescape(re.sub(r'<[^>]+>', '', math_render.to_text(title)))
+            self.view.append_column(Gtk.ColumnViewColumn(title=plain, factory=factory, expand=True))
+        self.scrolled = Gtk.ScrolledWindow(child=self.view, propagate_natural_width=True, propagate_natural_height=True)
+        self.scrolled.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.NEVER)
+        # Rows changing height show up on the vertical adjustment, a new width on the horizontal one.
+        self.scrolled.get_vadjustment().connect('changed', self._queue_height)
+        self.scrolled.get_hadjustment().connect('changed', self._queue_height)
+        # The border is on a separate frame so the scrolled window's height is exactly its request.
+        self.append(Gtk.Frame(child=self.scrolled))
+        copy_button = Gtk.Button(label=_('Copy Table'), halign=Gtk.Align.END)
+        from .widgets.feedback import copy_text
+        copy_button.connect('clicked', lambda button: copy_text(button, self.raw))
+        self.append(copy_button)
+        self.set_rows(data['rows'])
+
+    def _setup_cell(self, factory: Any, item: Any, xalign: float) -> None:
+        justify = Gtk.Justification.RIGHT if xalign == 1.0 else Gtk.Justification.CENTER if xalign == 0.5 else Gtk.Justification.LEFT
+        item.set_child(MathLabel(use_markup=True, selectable=True, wrap=WRAP_TABLE_CELLS, wrap_mode=Pango.WrapMode.WORD_CHAR,
+                                 xalign=xalign, yalign=0, justify=justify))
+
+    def _bind_cell(self, factory: Any, item: Any, index: int) -> None:
+        cells = item.get_item().cells
+        item.get_child().set_markup(cells[index] if index < len(cells) else "")
+
+    def set_rows(self, rows: List[List[str]]) -> None:
+        """Replaces the rows, leaving unchanged leading rows in place."""
+        old = [self.store.get_item(i).cells for i in range(self.store.get_n_items())]
+        start = 0
+        while start < min(len(old), len(rows)) and old[start] == rows[start]:
+            start += 1
+        if start == len(old) == len(rows):
+            return
+        self.store.splice(start, len(old) - start, [TableRow(row) for row in rows[start:]])
+        self._queue_height()
+
+    def _queue_height(self, *args: Any) -> None:
+        if not self._height_source:
+            self._height_source = GLib.idle_add(self._sync_height)
+
+    def _sync_height(self) -> bool:
+        """Column views request a height that ignores how cells wrap at the
+        allocated width, so request the height the rows really need."""
+        self._height_source = 0
+        scrolled = self.scrolled
+        if not scrolled.get_mapped() or scrolled.get_height() <= 0:
+            return False
+        adjustment = scrolled.get_vadjustment()
+        if adjustment.get_upper() > adjustment.get_page_size() + 1:
+            # Rows are cut off: grow by the missing amount.
+            want = scrolled.get_height() + adjustment.get_upper() - adjustment.get_page_size()
+        else:
+            # Everything fits: shrink to the bottom edge of the last row.
+            rows = self.view.get_last_child()
+            ok, bounds = rows.compute_bounds(scrolled)
+            if not ok:
+                return False
+            bottom = bounds.get_y()
+            below = scrolled.get_height() - (bounds.get_y() + bounds.get_height())
+            row = rows.get_first_child()
+            while row:
+                ok, row_bounds = row.compute_bounds(scrolled)
+                if ok:
+                    bottom = max(bottom, row_bounds.get_y() + row_bounds.get_height())
+                row = row.get_next_sibling()
+            want = bottom + max(below, 0)
+        want = math.ceil(want)
+        if abs(want - scrolled.get_height()) > 1:
+            scrolled.set_size_request(-1, want)
+        return False
+
+
+class MathPicture(Gtk.Widget):
+    """A rendered equation, drawn in the text colour and sized to match the text."""
+    __gtype_name__ = 'GnollamaMathPicture'
+
+    def __init__(self) -> None:
+        super().__init__(halign=Gtk.Align.CENTER, valign=Gtk.Align.CENTER)
+        self._tex = ''
+        self._image: Optional[Tuple[Gdk.Texture, float, float, float]] = None
+        self.connect('notify::scale-factor', lambda *args: self.set_tex(self._tex))
+
+    def set_tex(self, tex: str) -> bool:
+        """Renders the equation. Returns False if it cannot be rendered."""
+        self._tex = tex
+        # Display equations read best a little larger than the text around them.
+        self._image = math_render.render(tex, round(font_pixels(self) * 1.2), self.get_scale_factor())
+        self.queue_resize()
+        return self._image is not None
+
+    def do_measure(self, orientation: Gtk.Orientation, for_size: int) -> Tuple[int, int, int, int]:
+        size = 0
+        if self._image:
+            size = math.ceil(self._image[1 if orientation == Gtk.Orientation.HORIZONTAL else 2])
+        return size, size, -1, -1
+
+    def do_snapshot(self, snapshot: Gtk.Snapshot) -> None:
+        if not self._image:
+            return
+        texture, width, height, ascent = self._image
+        snapshot_equation(snapshot, texture, Graphene.Rect().init(0, 0, width, height), self.get_color())
+
+
+class MathBlock(Gtk.Box):
+    """A display equation, with its TeX source shown instead when it cannot be rendered."""
+    __gtype_name__ = 'GnollamaMathBlock'
+
+    def __init__(self, tex: str) -> None:
+        super().__init__(spacing=6)
+        self.add_css_class("math-block")
+        self.tex: Optional[str] = None
+        self.picture = MathPicture()
+        self.scrolled = Gtk.ScrolledWindow(child=self.picture, hexpand=True,
+                                           propagate_natural_width=True, propagate_natural_height=True)
+        self.scrolled.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.NEVER)
+        self.append(self.scrolled)
+        self.source = Gtk.Label(selectable=True, wrap=True, wrap_mode=Pango.WrapMode.WORD_CHAR, xalign=0, hexpand=True)
+        self.source.add_css_class("monospace")
+        self.append(self.source)
+        copy_button = Gtk.Button(icon_name='edit-copy-symbolic', tooltip_text=_('Copy TeX'), valign=Gtk.Align.CENTER)
+        copy_button.add_css_class("flat")
+        from .widgets.feedback import copy_text
+        copy_button.connect('clicked', lambda button: copy_text(button, self.tex))
+        self.append(copy_button)
+        self.set_tex(tex)
+
+    def set_tex(self, tex: str) -> None:
+        if tex == self.tex:
+            return
+        self.tex = tex
+        rendered = self.picture.set_tex(tex)
+        self.scrolled.set_visible(rendered)
+        self.source.set_visible(not rendered)
+        self.source.set_text(tex)
+        self.picture.update_property([Gtk.AccessibleProperty.LABEL], [tex])
+
+
 class MarkdownView(Gtk.Box):
     """
     A GTK widget that renders Markdown by breaking it into blocks of text and code.
@@ -217,7 +571,8 @@ class MarkdownView(Gtk.Box):
         self.wrap_code = wrap_code
         self.add_css_class("markdown-view")
         self._text: str = text
-        
+        self._tables: Dict[str, Optional[Dict[str, Any]]] = {}
+
         self._theme_handler_id = None
         if Adw:
             sm = Adw.StyleManager.get_default()
@@ -262,6 +617,17 @@ class MarkdownView(Gtk.Box):
     def render(self) -> None:
         """Parses and renders the current markdown text."""
         blocks = self._parse_blocks(self._text)
+        tables: Dict[str, Optional[Dict[str, Any]]] = {}
+        for block in blocks:
+            if block['type'] == 'table':
+                raw = block['content']
+                data = self._tables[raw] if raw in self._tables else table_data(raw)
+                tables[raw] = data
+                if data is None:
+                    block['type'] = 'text'  # Not a table after all
+                else:
+                    block['data'] = data
+        self._tables = tables
         self._sync_view(blocks)
 
     def _parse_blocks(self, text: str) -> List[Dict[str, Any]]:
@@ -300,16 +666,21 @@ class MarkdownView(Gtk.Box):
             text_buffer = []
             while i < n:
                 curr_line = lines[i]
-                if re.match(r'^\s*(`{3,}|~{3,})', curr_line):
+                if FENCE.match(curr_line) or _table_start(lines, i):
                     break
                 text_buffer.append(curr_line)
                 i += 1
             
             if text_buffer:
-                blocks.append({
-                    'type': 'text',
-                    'content': "\n".join(text_buffer)
-                })
+                for kind, content in math_render.split_display("\n".join(text_buffer)):
+                    blocks.append({'type': kind, 'content': content})
+
+            if i < n and _table_start(lines, i):
+                end = i + 2
+                while end < n and lines[end].strip() and '|' in lines[end] and not FENCE.match(lines[end]):
+                    end += 1
+                blocks.append({'type': 'table', 'content': "\n".join(lines[i:end])})
+                i = end
                 
         return blocks
 
@@ -329,6 +700,14 @@ class MarkdownView(Gtk.Box):
                     match = True
                 elif block['type'] == 'text' and is_text:
                     self._update_text_block(curr_child, block['content'])
+                    match = True
+                elif (block['type'] == 'table' and isinstance(curr_child, TableBlock)
+                      and (curr_child.header, curr_child.align) == (block['data']['header'], block['data']['align'])):
+                    curr_child.raw = block['content']
+                    curr_child.set_rows(block['data']['rows'])
+                    match = True
+                elif block['type'] == 'math' and isinstance(curr_child, MathBlock):
+                    curr_child.set_tex(block['content'])
                     match = True
             
             if match and curr_child:
@@ -352,13 +731,17 @@ class MarkdownView(Gtk.Box):
     def _create_widget_for_block(self, block: Dict[str, Any]) -> Gtk.Widget:
         """Creates an appropriate widget for a given block type."""
         if block['type'] == 'text':
-             label = Gtk.Label()
+             label = MathLabel()
              label.set_wrap(True)
              label.set_wrap_mode(Pango.WrapMode.WORD_CHAR)
              label.set_xalign(0)
              label.set_selectable(True)
              self._update_text_block(label, block['content'])
              return label
+        elif block['type'] == 'table':
+             return TableBlock(block['data'], block['content'])
+        elif block['type'] == 'math':
+             return MathBlock(block['content'])
         else: # code
              return self._create_code_widget(block['lang'], block['content'])
 
@@ -444,16 +827,17 @@ class MarkdownView(Gtk.Box):
             return
         
         try:
+            text, spans = math_render.protect(text)
             text = re.sub(r'~~(.*?)~~', r'<s>\1</s>', text)
             if markdown:
-                html_text = markdown.markdown(text, extensions=['extra', 'fenced_code'])
+                html_text = markdown.markdown(text, extensions=MARKDOWN_EXTENSIONS)
             else:
                 html_text = html.escape(text)
             parser = PangoMarkupParser()
             parser.feed(html_text)
-            markup = parser.get_markup()
+            markup = math_render.restore(parser.get_markup(), spans)
         except Exception:
-            markup = html.escape(text)
+            markup = html.escape(label._raw_md)
             
         label.set_markup(markup)
 

@@ -961,6 +961,14 @@ msgstr "Traduzione assistita dall’IA"
 msgid "Copy Code"
 msgstr "Copia codice"
 
+#: src/markdown_view.py
+msgid "Copy Table"
+msgstr "Copia tabella"
+
+#: src/markdown_view.py
+msgid "Copy TeX"
+msgstr "Copia TeX"
+
 #: src/markdown_view.py:422
 msgid "Preview Markdown"
 msgstr "Anteprima Markdown"

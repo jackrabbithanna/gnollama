@@ -36,7 +36,12 @@ Whether you are developing, experimenting, or chatting with local models, Gnolla
   * **Add URLs**: Review batches of web pages, PDFs, or text URLs before adding them to a collection. Extract main content automatically or use a CSS selector, edit the preview, and retain source URLs in chat citations.
 * **Model Lifetime**: Choose the server default, unload after a reply, five or thirty minutes, indefinitely, or a custom duration in seconds in **Chat Settings…**. This setting applies to requests from that tab.
 * **Rich Markdown & Code Rendering**: Full Markdown support and code syntax highlighting (powered by GTKSourceView 5).
+* **Math Rendering**: TeX in responses is typeset as equations that follow the theme's text colour and font size.
+  * Display equations (`\[ … \]`, `$$ … $$`, a bare `\begin{…}` environment, or a line that is only TeX) are centred on their own line, with a button to copy the TeX source.
+  * Inline equations (`\( … \)`, `$ … $`) are drawn within the text, including inside tables. Prices such as `$5` and anything in code are left as written.
+  * Selecting and copying text copies a placeholder character for each inline equation rather than its TeX.
 * **Multimodal Image Support**: Upload and attach multiple images to your prompts for vision-enabled models.
+  * Paste a copied image, screenshot, or image file into the composer (Ctrl+V) to attach it. Clipboards that also offer plain text paste as text.
   * Models explicitly lacking vision cannot receive new attachments. Earlier images remain visible and saved but are omitted from outgoing history for those models, with a notice in the composer.
   * Hosts without capability metadata retain manual image support, marked as unknown.
 * **Thinking & completion Details**:
@@ -164,19 +169,21 @@ I wanted a GNOME application for Ollama that I could use to test and experiment 
 Requires Python 3.11+, PyGObject, GTK 4.18+, libadwaita 1.9+, libsoup 3, libsecret 0.20+ with Secret 1 introspection, jsonschema 4.26+, sqlite-vec 0.1.9, SQLite 3.41+ with extension loading, pypdf, and Markdown. The Flatpak manifest uses GNOME 51 and builds the current checkout. It bundles checksum-pinned dependencies for aarch64 and x86_64, including sqlite-vec 0.1.9 and pypdf 6.18.0.
 Code highlighting requires [GTKSourceView](https://wiki.gnome.org/Projects/GtkSourceView) version 5
 
+Math rendering requires [ziamath](https://ziamath.readthedocs.io), which is in `requirements.lock`, together with the librsvg introspection data (Rsvg 2.0) and pycairo. Without ziamath, display equations are shown as TeX source and simple inline equations as plain text. Without librsvg or pycairo, equations are drawn through GTK's image loader, which can fail inside a sandbox.
+
 For a native build on a Debian/Ubuntu installation whose GTK and libadwaita packages meet the minimum versions above, install the development and introspection packages, then use the locked Python dependencies:
 
 ```bash
 sudo apt-get install meson ninja-build gettext desktop-file-utils python3-venv python3-gi \
   libgtk-4-dev libadwaita-1-dev libsoup-3.0-dev libsecret-1-dev \
   gir1.2-gtk-4.0 gir1.2-adw-1 gir1.2-soup-3.0 gir1.2-secret-1 \
-  libgtksourceview-5-dev gir1.2-gtksource-5
+  libgtksourceview-5-dev gir1.2-gtksource-5 gir1.2-rsvg-2.0 python3-gi-cairo
 python3 -m venv --system-site-packages .venv
 . .venv/bin/activate
 python -m pip install -r requirements.lock
 ```
 
-The Flatpak build supplies its own GNOME 51 SDK and pinned Python dependencies.
+The Flatpak build supplies its own GNOME 51 SDK and pinned Python dependencies. librsvg and pycairo come from the GNOME runtime.
 
 ```bash
 meson setup build

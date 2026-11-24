@@ -881,6 +881,14 @@ msgstr ""
 msgid "Copy Code"
 msgstr "Nakili Msimbo"
 
+#: src/markdown_view.py
+msgid "Copy Table"
+msgstr ""
+
+#: src/markdown_view.py
+msgid "Copy TeX"
+msgstr ""
+
 #: src/markdown_view.py:422
 msgid "Preview Markdown"
 msgstr "Hakiki Markdown"

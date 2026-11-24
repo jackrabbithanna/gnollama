@@ -881,6 +881,14 @@ msgstr "AI 도움을 받은 번역"
 msgid "Copy Code"
 msgstr "코드 복사"
 
+#: src/markdown_view.py
+msgid "Copy Table"
+msgstr "표 복사"
+
+#: src/markdown_view.py
+msgid "Copy TeX"
+msgstr "TeX 복사"
+
 #: src/markdown_view.py:422
 msgid "Preview Markdown"
 msgstr "Markdown 미리 보기"

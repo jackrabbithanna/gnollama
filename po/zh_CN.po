@@ -881,6 +881,14 @@ msgstr "AI 辅助翻译"
 msgid "Copy Code"
 msgstr "复制代码"
 
+#: src/markdown_view.py
+msgid "Copy Table"
+msgstr "复制表格"
+
+#: src/markdown_view.py
+msgid "Copy TeX"
+msgstr "复制 TeX"
+
 #: src/markdown_view.py:422
 msgid "Preview Markdown"
 msgstr "预览 Markdown"

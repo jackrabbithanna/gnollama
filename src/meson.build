@@ -25,6 +25,12 @@ if markdown_check.returncode() != 0
   warning('python3-markdown not found. Markdown rendering will be limited.')
 endif
 
+# Check for ziamath (optional, for rendering equations)
+ziamath_check = run_command(py3, '-c', 'import ziamath', check: false)
+if ziamath_check.returncode() != 0
+  warning('ziamath not found. Display equations will be shown as TeX source.')
+endif
+
 # Check for GtkSourceView (optional, for code highlighting)
 dependency('gtksourceview-5', required: false)
 
@@ -83,6 +89,7 @@ gnollama_sources = [
   'writer.py',
   'database.py',
   'markdown_view.py',
+  'math_render.py',
   'bubbles.py',
   'host_manager.py',
   'model_manager.py',

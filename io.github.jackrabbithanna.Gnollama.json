@@ -83,6 +83,30 @@
             ]
         },
         {
+            "name": "python3-math",
+            "buildsystem": "simple",
+            "build-commands": [
+                "pip3 install --no-index --find-links=. --ignore-installed --prefix=${FLATPAK_DEST} ziamath==0.13"
+            ],
+            "sources": [
+                {
+                    "type": "file",
+                    "url": "https://files.pythonhosted.org/packages/f8/0d/6e029024b14f3da85408601fd7607eff8d84081d1934b64785373ecb9be5/ziamath-0.13-py3-none-any.whl",
+                    "sha256": "67a9b9714101fc90c2d6d0328e578f3ac311fb007644f2bbb9314ba2bc1c1459"
+                },
+                {
+                    "type": "file",
+                    "url": "https://files.pythonhosted.org/packages/0c/ea/c5d6e745660b1d95fd257e9fc7f906541ede9bb2edf2ee8fdb4bc151c129/ziafont-0.11-py3-none-any.whl",
+                    "sha256": "b62132be3da9667a80d048ab5498f107e49761722b69965788c2c747a38e7373"
+                },
+                {
+                    "type": "file",
+                    "url": "https://files.pythonhosted.org/packages/07/30/b8bcfb01a2514cb7554a048ed52883de276e66d757c3cc535a3c29eb9e98/latex2mathml-3.81.1-py3-none-any.whl",
+                    "sha256": "c337668441b71c819b6733905a8058ba9a9d767bae11a0c5fdacb3aff31361bd"
+                }
+            ]
+        },
+        {
             "name": "python3-knowledge",
             "buildsystem": "simple",
             "build-commands": [

@@ -949,6 +949,14 @@ msgstr "Переклад за допомогою штучного інтелек
 msgid "Copy Code"
 msgstr "Копіювати код"
 
+#: src/markdown_view.py
+msgid "Copy Table"
+msgstr "Копіювати таблицю"
+
+#: src/markdown_view.py
+msgid "Copy TeX"
+msgstr "Копіювати TeX"
+
 #: src/markdown_view.py:422
 msgid "Preview Markdown"
 msgstr "Перегляд Markdown"

@@ -2,10 +2,22 @@
 from gi.repository import Gtk, Gdk, GObject, Pango
 
 
+def clipboard_attachment_kind(formats):
+    """Return 'files', 'image' or None for the clipboard's offered formats."""
+    if formats.contain_gtype(Gdk.FileList):
+        return 'files'
+    # Spreadsheet cells and rich text offer a bitmap next to the text; only a
+    # clipboard without plain text is treated as an image.
+    if formats.contain_gtype(Gdk.Texture) and not formats.contain_gtype(GObject.TYPE_STRING):
+        return 'image'
+    return None
+
+
 class Composer(Gtk.Box):
     __gtype_name__ = 'GnollamaComposer'
     __gsignals__ = {'activate': (GObject.SignalFlags.RUN_FIRST, None, ()),
-                    'changed': (GObject.SignalFlags.RUN_FIRST, None, ())}
+                    'changed': (GObject.SignalFlags.RUN_FIRST, None, ()),
+                    'paste-attachment': (GObject.SignalFlags.RUN_FIRST, None, (Gdk.Clipboard, str))}
 
     def __init__(self, **kwargs):
         super().__init__(orientation=Gtk.Orientation.VERTICAL, **kwargs)
@@ -14,6 +26,7 @@ class Composer(Gtk.Box):
         self.view = Gtk.TextView(hexpand=True, wrap_mode=Gtk.WrapMode.WORD_CHAR, top_margin=8, bottom_margin=8,
                                  left_margin=8, right_margin=8, accepts_tab=False)
         self.view.connect('preedit-changed', lambda view, text: setattr(self, '_preedit', bool(text)))
+        self.view.connect('paste-clipboard', self._paste_clipboard)
         self.scrolled = Gtk.ScrolledWindow(hexpand=True, child=self.view, hscrollbar_policy=Gtk.PolicyType.NEVER,
             min_content_height=40, max_content_height=184, propagate_natural_height=True)
         overlay = Gtk.Overlay(hexpand=True, child=self.scrolled)
@@ -38,6 +51,20 @@ class Composer(Gtk.Box):
             self.emit('activate')
             return True
         return False
+
+    def _paste_clipboard(self, view):
+        clipboard = view.get_clipboard()
+        kind = clipboard_attachment_kind(clipboard.get_formats())
+        if kind:
+            view.stop_emission_by_name('paste-clipboard')
+            self.emit('paste-attachment', clipboard, kind)
+
+    def insert_text(self, text):
+        buffer = self.view.get_buffer()
+        buffer.begin_user_action()
+        buffer.delete_selection(True, True)
+        buffer.insert_at_cursor(text)
+        buffer.end_user_action()
 
     def _changed(self, buffer):
         self.placeholder.set_visible(not buffer.get_char_count())

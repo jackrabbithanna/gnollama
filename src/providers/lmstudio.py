@@ -30,6 +30,9 @@ def tag(model):
     entry = {'name': model['key'], 'details': details(model),
              'digest': fingerprint(model['key'], model.get('selected_variant'),
                                    table(model.get('quantization')).get('name'), size)}
+    if model.get('type') == 'embedding':
+        # Said in the list, so a chat model list can leave it out before asking for details.
+        entry['capabilities'] = ['embedding']
     return dict(entry, size=size) if type(size) is int else entry
 
 

@@ -314,16 +314,14 @@ class HostTests(HostFixture, unittest.TestCase):
         self.assertEqual(self.shown(self.select(tab, PLAIN)), (None, None, 'Image support unknown.', True, ALL_LEVELS))
         self.assertIsNone(panel.tool_support)
 
-    def test_embedding_models_leave_the_chat_list(self):
-        tab = self.make_tab(GEMMA)
-        composer = tab.chat_input
-        composer.select_model(EMBEDDING)
-
-        def names():
-            model = composer.model_dropdown.get_model()
-            return [model.get_string(index) for index in range(model.get_n_items())]
-        pump_until(lambda: EMBEDDING not in names() and self.context.services.idle)
-        self.assertEqual([name for name in names() if name in (GEMMA, K2, NOMIC)], [GEMMA, K2, NOMIC])
+    def test_embedding_models_are_never_in_the_chat_list(self):
+        composer = self.make_tab(GEMMA).chat_input
+        model = composer.model_dropdown.get_model()
+        names = [model.get_string(index) for index in range(model.get_n_items())]
+        # The list says which they are, so no details are asked for first.
+        self.assertEqual([name for name in names if name in (GEMMA, EMBEDDING, K2, NOMIC)], [GEMMA, K2])
+        listed = {tag['name']: tag.get('capabilities') for tag in self.provider().list_models()}
+        self.assertEqual(listed, {GEMMA: None, EMBEDDING: ['embedding'], K2: None, NOMIC: ['embedding'], PLAIN: None})
 
     def test_tab_sends_the_thinking_setting_the_composer_offers(self):
         tab = self.make_tab(GEMMA)

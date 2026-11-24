@@ -265,7 +265,8 @@ class ChatInput(Gtk.Box):
                 for tag in future.result():
                     model = tag['name'] if isinstance(tag, dict) else tag
                     info = self.services.catalog.cached_details(host, model)
-                    if self._embedding_only(info):
+                    # Some servers say so in the list itself.
+                    if self._embedding_only(info) or self._embedding_only(tag):
                         continue
                     models.append(model)
                     if info is not None:

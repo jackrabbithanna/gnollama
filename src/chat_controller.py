@@ -33,6 +33,7 @@ from gi.repository import GLib
 from .context import estimate_context
 from .knowledge import validate_rag
 from .providers import validate_url
+from .records import ModelTarget, RequestSettings, ViewState, WireOptions
 from .request_runner import RequestRunner
 from .services import model_key
 from .session import ChatStrategy, GenerationStrategy, RequestState
@@ -61,6 +62,26 @@ class ComposerInput:
     image_support: bool | None = None
     capabilities_loading: bool = False
 
+    def settings(self, url=None, endpoint='chat', history_images_omitted=False,
+                 draft_settings=None, extra=None):
+        """The one place a composer's values are sorted into what is sent and what is kept.
+
+        The result shares nothing with the widgets it was read from.
+        """
+        request = self.request
+        target = ModelTarget(self.host['id'], url, self.model) if self.host else None
+        wire = WireOptions(options=self.options, system=self.system, thinking=self.thinking,
+                           format=request.get('format'), keep_alive=request.get('keep_alive'),
+                           tools=request.get('tools'), logprobs=self.logprobs,
+                           top_logprobs=self.top_logprobs)
+        view = ViewState(show_stats=self.show_stats, output_mode=request.get('output_mode', 'text'),
+                         schema_text=request.get('schema_text', ''),
+                         tools_enabled=request.get('tools_enabled', False),
+                         tools_text=request.get('tools_text', ''), knowledge=self.knowledge,
+                         query_override=self.query_override, draft_settings=draft_settings or {},
+                         extra=extra or {})
+        return copy.deepcopy(RequestSettings(target, wire, view, endpoint, history_images_omitted))
+
 
 class ChatController:
     def __init__(self, context, view, mode='generate', chat_id=None, initial_history=None, chat_data=None):
@@ -74,6 +95,8 @@ class ChatController:
         self.paged = bool(chat_data.get('paged'))
         self.message_offset = chat_data.get('message_offset', 0)
         self.draft = None  # Assigned by the view, which knows how to read the composer.
+        # Stored options this version does not know; the view sets them when it loads a chat.
+        self.extra = {}
         self.request = None
         self.closing = False
         self.disposed = False
@@ -143,18 +166,14 @@ class ChatController:
             raise ValueError(_('Wait for image support to be checked before sending.'))
         if input.image_support is False and images:
             raise ValueError(_('Remove draft images or select a vision model to send.'))
-        settings = dict(host=hostname, host_id=input.host['id'], model=input.model,
-                        options=input.options, thinking=input.thinking, system=input.system,
-                        logprobs=input.logprobs, top_logprobs=input.top_logprobs,
-                        show_stats=input.show_stats, endpoint=self.mode)
-        settings.update(input.request)
-        settings['knowledge'] = copy.deepcopy(input.knowledge)
-        settings['query_override'] = input.query_override
-        retrieve = (self.mode == 'chat' and settings['knowledge'].get('enabled') and
+        settings = input.settings(
+            hostname, self.mode, extra=self.extra,
+            history_images_omitted=input.image_support is False and self.has_history_images)
+        knowledge = settings.view.knowledge
+        retrieve = (self.mode == 'chat' and knowledge.get('enabled') and
                     not continuation and not without_knowledge)
         if retrieve:
-            validate_rag(settings['knowledge'])
-        settings['history_images_omitted'] = input.image_support is False and self.has_history_images
+            validate_rag(knowledge)
 
         state = RequestState(settings, '' if continuation else input.prompt, images, continuation=continuation,
                              connection=self.context.connection(input.host))
@@ -180,7 +199,8 @@ class ChatController:
         error = None
         try:
             state.retrieval = self.context.knowledge.retrieve(
-                state.settings['knowledge'], state.settings['query_override'] or state.prompt, state.cancellable)
+                state.settings.view.knowledge, state.settings.view.query_override or state.prompt,
+                state.cancellable)
         except Exception as exc:
             error = exc
         GLib.idle_add(self._retrieval_finished, state, error)
@@ -237,7 +257,7 @@ class ChatController:
         self._context_generation += 1
         messages = getattr(self.strategy, 'history',
                            [dict(role='user', content=state.prompt, images=state.images)])
-        estimate = estimate_context(messages, state.settings, state.retrieval)
+        estimate = estimate_context(messages, state.settings.wire, state.retrieval)
         state.metadata['context_estimate'] = estimate
         self.view.context_estimated(estimate, True)
         self.view.generation_prepared(state)
@@ -341,18 +361,18 @@ class ChatController:
         self.services.control.submit(read)
         return True
 
-    def estimate_draft(self, prompt, settings):
+    def estimate_draft(self, prompt, wire):
         """Estimate the context a prompt would use with the current history."""
         latest = dict(role='user', content=prompt)
         if not self.paged:
-            self.view.context_estimated(estimate_context(list(self.history) + [latest], settings), True)
+            self.view.context_estimated(estimate_context(list(self.history) + [latest], wire), True)
             return
         self._context_generation += 1
         generation = self._context_generation
 
         def read():
             history = self.storage.get_messages(self.strategy.chat_id)
-            estimate = estimate_context(history + [latest], settings)
+            estimate = estimate_context(history + [latest], wire)
 
             def deliver():
                 if generation == self._context_generation and not self.closing:

@@ -45,10 +45,9 @@ class StructuredTests(unittest.TestCase):
         self.assertIsNone(validate_response('ordinary text', None))
 
     def test_request_snapshot_retains_format_and_incomplete_status(self):
-        config = settings()
-        config.update(format=copy.deepcopy(SCHEMA), output_mode='schema', schema_text='schema source', keep_alive=0)
+        config = settings(format=copy.deepcopy(SCHEMA), output_mode='schema', schema_text='schema source', keep_alive=0)
         state = RequestState(config, 'test')
-        config['format']['type'] = 'array'
+        config.wire.format['type'] = 'array'
         state.content = '{'
         state.finish('stopped')
         self.assertEqual(state.metadata['validation']['status'], 'incomplete')

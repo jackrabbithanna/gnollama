@@ -5,7 +5,9 @@ from dataclasses import dataclass, field
 from gi.repository import Gio, GLib
 from .providers import ProviderError, RequestCancelled, validate_url
 from .knowledge import augmented_messages, validate_rag
+from dataclasses import replace
 from .context import estimate_context
+from .records import ModelTarget
 from .session import RequestState, ChatStrategy
 from .request_runner import RequestRunner
 
@@ -22,7 +24,9 @@ class ComparisonRun:
 
 
 def prepare_run(context, active, prompt, images, settings, targets, draft_id, revision):
+    """`settings` is the RequestSettings every target shares; each gets its own target."""
     settings, images, targets = copy.deepcopy((settings, images, targets))
+    wire, knowledge = settings.wire, settings.view.knowledge
     if not 2 <= len(targets) <= 4:
         raise ValueError(_('Choose two to four targets.'))
     identities = [(t['host_id'], t['model']) for t in targets]
@@ -53,38 +57,38 @@ def prepare_run(context, active, prompt, images, settings, targets, draft_id, re
                 raise ValueError(_('Embedding models cannot generate comparisons.'))
             if images and 'vision' not in caps:
                 raise ValueError(_('Every target must support the shared images.'))
-            if settings.get('thinking') not in (None, False) and 'thinking' not in caps:
+            if wire.thinking not in (None, False) and 'thinking' not in caps:
                 raise ValueError(_('Every target must support the selected thinking option.'))
         limits = connection.capabilities
-        if ((settings.get('format') is not None and not limits.structured_output)
-                or (settings.get('keep_alive') is not None and not limits.keep_alive)):
+        if ((wire.format is not None and not limits.structured_output)
+                or (wire.keep_alive is not None and not limits.keep_alive)):
             raise ValueError(_('Cloud targets do not support shared structured output or model retention.'))
         family = (details or {}).get('details', {}).get('family', '').replace('-', '').lower()
-        if family == 'gptoss' and settings.get('thinking') not in (None, 'low', 'medium', 'high'):
+        if family == 'gptoss' and wire.thinking not in (None, 'low', 'medium', 'high'):
             raise ValueError(_('The selected thinking level is incompatible with a target.'))
         resolved.append((target, host, connection))
     retrieval = None
-    if settings.get('knowledge', {}).get('enabled'):
-        validate_rag(settings['knowledge'])
-        retrieval = copy.deepcopy(context.knowledge.retrieve(settings['knowledge'], settings.get('query_override') or prompt, active.cancellable))
+    if knowledge.get('enabled'):
+        validate_rag(knowledge)
+        retrieval = copy.deepcopy(context.knowledge.retrieve(knowledge, settings.view.query_override or prompt, active.cancellable))
     messages = [{'role': 'user', 'content': prompt}]
     if images:
         messages[0]['images'] = copy.deepcopy(images)
-    if settings.get('system'):
-        messages.insert(0, {'role': 'system', 'content': settings['system']})
-    wire = augmented_messages(messages, retrieval)
-    run = dict(id=active.id, prompt=prompt, images=images, settings=settings, retrieval=retrieval,
+    if wire.system:
+        messages.insert(0, {'role': 'system', 'content': wire.system})
+    sent = augmented_messages(messages, retrieval)
+    run = dict(id=active.id, prompt=prompt, images=images, settings=settings.to_stored(), retrieval=retrieval,
                message_uid=str(uuid.uuid4()), targets=[], draft_id=draft_id, draft_revision=revision)
     for target, host, connection in resolved:
         id = str(uuid.uuid4())
-        effective = dict(settings, host=validate_url(host['hostname']), host_id=host['id'],
-                         model=target['model'], endpoint='chat')
-        state = RequestState(effective, prompt, images, messages=copy.deepcopy(wire), connection=connection, retrieval=copy.deepcopy(retrieval))
+        effective = replace(settings, endpoint='chat', target=ModelTarget(
+            host['id'], validate_url(host['hostname']), target['model']))
+        state = RequestState(effective, prompt, images, messages=copy.deepcopy(sent), connection=connection, retrieval=copy.deepcopy(retrieval))
         state.metadata['retrieval'] = copy.deepcopy(retrieval)
-        state.metadata['context_estimate'] = estimate_context(messages, effective, retrieval)
+        state.metadata['context_estimate'] = estimate_context(messages, wire, retrieval)
         active.states[id] = state
-        run['targets'].append(dict(id=id, settings=effective, request=dict(messages=copy.deepcopy(wire),
-            **{k: effective.get(k) for k in ('model', 'options', 'thinking', 'format', 'keep_alive', 'logprobs', 'top_logprobs')})))
+        run['targets'].append(dict(id=id, settings=effective.to_stored(), request=dict(
+            messages=copy.deepcopy(sent), model=target['model'], **copy.deepcopy(wire.provider_args()))))
     if active.cancellable.is_cancelled():
         raise RequestCancelled()
     active.pending = set(active.states)
@@ -106,7 +110,7 @@ class ComparisonController:
 
         def finished(id, state, status, error):
             state.finish(status, error)
-            message = dict(uid=id, role='assistant', model=state.settings['model'], content=state.content,
+            message = dict(uid=id, role='assistant', model=state.settings.target.model, content=state.content,
                 thinking_content=state.thinking, api_details=state.api_details(), response_metadata=state.metadata)
             def saved():
                 self.active.pending.discard(id)

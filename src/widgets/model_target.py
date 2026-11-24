@@ -1,5 +1,6 @@
 """Shared host/model selection with optional participant settings."""
 from gi.repository import Gtk
+from ..chat_controller import ComposerInput
 from .chat_input import ChatInput
 from .options_panel import OptionsPanel
 
@@ -60,11 +61,13 @@ class TargetPicker(Gtk.Box):
         return value
 
     def request_settings(self):
-        value = self.value()
-        return dict(host_id=value['host_id'], model=value['model'], system=self.system_entry.read_draft() or None,
-                    options=self.panel.get_options_from_ui(), thinking=self.input.get_thinking_value(),
-                    keep_alive=self.panel.get_keep_alive(), logprobs=self.panel.logprobs_check.get_active(),
-                    top_logprobs=self.panel.get_logprobs(), show_stats=self.panel.stats_check.get_active())
+        """This participant's RequestSettings; its host URL is resolved when the run starts."""
+        return ComposerInput(
+            host=self.panel.get_selected_host(), model=self.input.get_selected_model(),
+            system=self.system_entry.read_draft() or None, options=self.panel.get_options_from_ui(),
+            thinking=self.input.get_thinking_value(), request=dict(keep_alive=self.panel.get_keep_alive()),
+            logprobs=self.panel.logprobs_check.get_active(), top_logprobs=self.panel.get_logprobs(),
+            show_stats=self.panel.stats_check.get_active()).settings()
 
     def close(self):
         self.input.cancel_fetches()

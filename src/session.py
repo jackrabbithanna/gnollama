@@ -1,4 +1,3 @@
-from .records import RequestSettings
 """Per-request generation state and conversation persistence."""
 import copy
 from dataclasses import dataclass, field
@@ -8,6 +7,7 @@ from .providers import ProviderError
 from .structured import validate_response
 from .tool_calling import inspect_calls, wire_calls, result_messages
 from .knowledge import augmented_messages
+from .records import RequestSettings
 
 
 def display_chat_title(title):
@@ -68,21 +68,19 @@ class RequestState:
         self.metadata['status'] = status
         if error:
             self.metadata['error'] = error
-        validation = None if self.tool_calls else (self.metadata.get('validation') or validate_response(self.content, self.settings.get('format'), status))
+        validation = None if self.tool_calls else (self.metadata.get('validation') or validate_response(self.content, self.settings.wire.format, status))
         if validation is not None:
             self.metadata['validation'] = validation
         if self.tool_calls:
             self.metadata.pop('validation', None)
             if 'tool_round' not in self.metadata:
-                self.metadata['tool_round'] = inspect_calls(self.tool_calls, self.settings.get('tools'), status)
-        if self.settings.get('history_images_omitted'):
+                self.metadata['tool_round'] = inspect_calls(self.tool_calls, self.settings.wire.tools, status)
+        if self.settings.history_images_omitted:
             self.metadata['history_images_omitted'] = True
         return True
 
     def api_details(self):
-        return {k: v for k, v in self.settings.items()
-                if k not in ('host_id', 'show_stats', 'output_mode', 'schema_text', 'history_images_omitted',
-                             'tools_enabled', 'tools_text', 'knowledge', 'query_override', 'draft_settings')}
+        return self.settings.api_details()
 
 
 def api_messages(history, include_images=True):
@@ -112,11 +110,10 @@ class GenerationStrategy:
         pass
 
     def process(self, state):
-        args = {k: state.settings[k] for k in
-                ('model', 'options', 'thinking', 'logprobs', 'top_logprobs')}
-        args.update(format=state.settings.get('format'), keep_alive=state.settings.get('keep_alive'))
-        return state.connection.generate(**args, prompt=state.prompt, system=state.settings['system'],
-                               images=state.images, cancellable=state.cancellable)
+        wire = state.settings.wire
+        return state.connection.generate(model=state.settings.target.model, **wire.provider_args(),
+                                         prompt=state.prompt, system=wire.system,
+                                         images=state.images, cancellable=state.cancellable)
 
     def save(self, state, on_done=None):
         pass
@@ -157,9 +154,9 @@ class ChatStrategy(GenerationStrategy):
             if state.images:
                 msg['images'] = state.images
             self.history.append(msg)
-        state.messages = api_messages(self.history, include_images=not state.settings.get('history_images_omitted'))
-        if state.settings['system']:
-            state.messages.insert(0, {'role': 'system', 'content': state.settings['system']})
+        state.messages = api_messages(self.history, include_images=not state.settings.history_images_omitted)
+        if state.settings.wire.system:
+            state.messages.insert(0, {'role': 'system', 'content': state.settings.wire.system})
         if state.continuation:
             latest = next((m for m in reversed(self.history) if m['role'] == 'user'), {})
             state.retrieval = copy.deepcopy((latest.get('response_metadata') or {}).get('retrieval'))
@@ -169,42 +166,30 @@ class ChatStrategy(GenerationStrategy):
         return self.save(state, on_done=on_done)
 
     def process(self, state):
-        args = {k: state.settings[k] for k in
-                ('model', 'options', 'thinking', 'logprobs', 'top_logprobs')}
-        args.update(format=state.settings.get('format'), keep_alive=state.settings.get('keep_alive'))
-        return state.connection.chat(**args, messages=state.messages, cancellable=state.cancellable,
-                           tools=state.settings.get('tools'))
+        wire = state.settings.wire
+        return state.connection.chat(model=state.settings.target.model, **wire.provider_args(),
+                                     messages=state.messages, cancellable=state.cancellable, tools=wire.tools)
 
     def save(self, state, on_done=None):
         if self.deleted or not self.chat_id:
             return
+        settings = state.settings
         if state.finalized and state.saved_message is None:
             state.saved_message = {'role': 'assistant', 'content': state.content,
-                                 'thinking_content': state.thinking, 'model': state.settings['model'],
+                                 'thinking_content': state.thinking, 'model': settings.target.model,
                                  'api_details': state.api_details(),
                                  'response_metadata': copy.deepcopy(state.metadata)}
             if state.tool_calls:
                 state.saved_message['tool_calls'] = copy.deepcopy(state.tool_calls)
             self.history.append(state.saved_message)
-        options = dict(state.settings['options'])
-        options.update(thinking_val=state.settings['thinking'],
-                       logprobs=state.settings['logprobs'],
-                       top_logprobs=state.settings['top_logprobs'],
-                       show_stats=state.settings['show_stats'])
-        options.update(output_mode=state.settings.get('output_mode', 'text'),
-                       schema_text=state.settings.get('schema_text', ''),
-                       keep_alive=state.settings.get('keep_alive'),
-                       tools_enabled=state.settings.get('tools_enabled', False),
-                       tools_text=state.settings.get('tools_text', ''))
-        options['knowledge'] = copy.deepcopy(state.settings.get('knowledge', {}))
         start = self._saved_count
         self._saved_count = len(self.history)
         return self.storage.save_chat_delta(self.chat_id, self.history[start:], start,
                                       draft_id=state.draft_id if not state.finalized else None,
                                       draft_revision=state.draft_revision,
-                                      model=state.settings['model'],
-                                      options=options, system=state.settings['system'],
-                                      host=state.settings['host_id'], on_done=on_done)
+                                      model=settings.target.model,
+                                      options=settings.to_chat_options(), system=settings.wire.system,
+                                      host=settings.target.host_id, on_done=on_done)
 
 
 class ViewRequests:

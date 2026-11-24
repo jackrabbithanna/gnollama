@@ -191,15 +191,16 @@ class ModelConversationTab(Gtk.Box):
         self.summary.set_visible(True)
         content = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
         content.append(Gtk.Label(label=_('Rounds: {0}').format(self.controller.settings['rounds']), xalign=0))
-        for index, settings in enumerate(self.controller.settings['participants']):
+        for index, settings in enumerate(self.controller.participants):
             label = _('Model A') if index == 0 else _('Model B')
-            content.append(Gtk.Label(label=label + ' · ' + settings['model'] + '\n' + settings['host'],
+            content.append(Gtk.Label(label=label + ' · ' + settings.target.model + '\n' + settings.target.url,
                                      wrap=True, wrap_mode=Pango.WrapMode.WORD_CHAR, xalign=0, selectable=True))
-            content.append(Gtk.Label(label=settings.get('system') or _('No system prompt'), wrap=True,
+            content.append(Gtk.Label(label=settings.wire.system or _('No system prompt'), wrap=True,
                                      wrap_mode=Pango.WrapMode.WORD_CHAR, xalign=0, selectable=True))
             import json
+            stored = self.controller.settings['participants'][index]
             content.append(Gtk.Expander(label=_('Advanced settings…'), child=MarkdownView(
-                '```json\n' + json.dumps(settings, indent=2, ensure_ascii=False) + '\n```', wrap_code=True)))
+                '```json\n' + json.dumps(stored, indent=2, ensure_ascii=False) + '\n```', wrap_code=True)))
         self.summary.set_child(Gtk.ScrolledWindow(child=content, hscrollbar_policy=Gtk.PolicyType.NEVER,
             min_content_height=80, max_content_height=300, propagate_natural_height=True))
 
@@ -251,19 +252,19 @@ class ModelConversationTab(Gtk.Box):
             return
         bubble = AiBubble(model_name=message.get('model'))
         participant = message.get('participant', 0)
-        settings = self.controller.settings['participants'][participant]
+        settings = self.controller.participants[participant]
         label = _('Model A') if participant == 0 else _('Model B')
-        bubble.header.set_text(_('Round {0} · {1} · Attempt {2}').format(message.get('turn', 0) // 2 + 1, label, message.get('attempt', 1)) + ' · ' + settings['model'])
-        bubble.header.set_tooltip_text(settings['host'])
-        host_label = Gtk.Label(label=settings['host'], xalign=0, wrap=True, wrap_mode=Pango.WrapMode.WORD_CHAR,
+        bubble.header.set_text(_('Round {0} · {1} · Attempt {2}').format(message.get('turn', 0) // 2 + 1, label, message.get('attempt', 1)) + ' · ' + settings.target.model)
+        bubble.header.set_tooltip_text(settings.target.url)
+        host_label = Gtk.Label(label=settings.target.url, xalign=0, wrap=True, wrap_mode=Pango.WrapMode.WORD_CHAR,
                                selectable=True, css_classes=['dim-label', 'caption'])
         bubble.bubble_box.insert_child_after(host_label, bubble.header)
-        bubble.set_api_details(message.get('api_details', settings))
+        bubble.set_api_details(message.get('api_details') or settings.api_details())
         bubble.append_text(message.get('content', ''))
         bubble.append_thinking(message.get('thinking_content', ''))
         metadata = message.get('response_metadata', {})
         if metadata.get('status') != 'running':
-            bubble.show_response_metadata(metadata, settings.get('show_stats', True))
+            bubble.show_response_metadata(metadata, settings.view.show_stats)
         self._context(bubble, metadata)
         self.message_list.add_ai_bubble(bubble)
         self.bubbles[message['uid']] = bubble
@@ -322,7 +323,7 @@ class ModelConversationTab(Gtk.Box):
             bubble.thinking_text = state.thinking
             bubble.thinking_label.set_text(state.thinking)
             bubble.thinking_expander.set_visible(bool(state.thinking))
-            bubble.show_response_metadata(state.metadata, state.settings.get('show_stats', True))
+            bubble.show_response_metadata(state.metadata, state.settings.view.show_stats)
 
     def load_older(self, *args):
         if self._page_loading or not self._offset:

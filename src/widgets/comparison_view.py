@@ -3,6 +3,8 @@ import copy
 from types import SimpleNamespace
 from gi.repository import Gtk, GObject, GLib, Pango
 from ..tab import GenerationTab
+from ..chat_controller import ComposerInput
+from ..records import RequestSettings
 from ..comparison import ComparisonRun, ComparisonController, prepare_run
 from ..drafts import DraftController
 from ..context import describe_context
@@ -158,13 +160,14 @@ class ComparisonTab(Gtk.Box):
         if any(p.input.capabilities_loading for p in self.targets):
             return
         try:
-            settings = self.options_panel.get_request_settings()
-            settings.update(options=self.options_panel.get_options_from_ui(),
-                system=self.options_panel.system_prompt_entry.read_draft() or None,
-                thinking=self.chat_input.get_thinking_value(), logprobs=self.options_panel.logprobs_check.get_active(),
-                top_logprobs=self.options_panel.get_logprobs(), show_stats=self.options_panel.stats_check.get_active(),
-                knowledge=copy.deepcopy(self.knowledge_control.options), query_override=self.knowledge_control.query.get_text())
-            settings['draft_settings'] = self.editor.read_draft()['settings']
+            panel = self.options_panel
+            settings = ComposerInput(
+                request=panel.get_request_settings(), options=panel.get_options_from_ui(),
+                system=panel.system_prompt_entry.read_draft() or None,
+                thinking=self.chat_input.get_thinking_value(), logprobs=panel.logprobs_check.get_active(),
+                top_logprobs=panel.get_logprobs(), show_stats=panel.stats_check.get_active(),
+                knowledge=self.knowledge_control.options, query_override=self.knowledge_control.query.get_text(),
+            ).settings(draft_settings=self.editor.read_draft()['settings'])
             images = self.chat_input.get_images()
             self.draft.flush()
             revision = self.draft.revision
@@ -230,7 +233,7 @@ class ComparisonTab(Gtk.Box):
         def done(id, state):
             box, bubble, stop = self.results[id]
             stop.set_visible(False)
-            bubble.show_response_metadata(state.metadata, state.settings['show_stats'])
+            bubble.show_response_metadata(state.metadata, state.settings.view.show_stats)
             self._sources(box, state.metadata)
             if not active.pending:
                 self.request = None
@@ -241,19 +244,21 @@ class ComparisonTab(Gtk.Box):
                 self._finish_close()
         ComparisonController(self.context, active).dispatch(chunk, done)
 
-    def _add_result(self, id, settings):
+    def _add_result(self, id, stored):
+        settings = RequestSettings.from_stored(stored)
+        model = settings.target.model
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6, hexpand=True)
-        title = Gtk.Label(label=settings['model'] + '\n' + settings['host'], wrap=True,
+        title = Gtk.Label(label=model + '\n' + settings.target.url, wrap=True,
                           wrap_mode=Pango.WrapMode.WORD_CHAR, selectable=True)
         box.append(title)
-        bubble = AiBubble(model_name=settings['model'], output_format=settings.get('format'), hexpand=True)
-        bubble.set_api_details(settings)
+        bubble = AiBubble(model_name=model, output_format=settings.wire.format, hexpand=True)
+        bubble.set_api_details(settings.api_details())
         box.append(bubble)
         stop = Gtk.Button(label=_('Stop response'))
         stop.connect('clicked', lambda *args: self.request.states[id].cancellable.cancel() if self.request else None)
         box.append(stop)
         self.results[id] = (box, bubble, stop)
-        bubble.model_name = settings['model']
+        bubble.model_name = model
         self.result_selector.set_model(Gtk.StringList.new([r[1].model_name for r in self.results.values()]))
         self._layout_results(force=True)
 
@@ -285,11 +290,10 @@ class ComparisonTab(Gtk.Box):
         else:
             saved = self.saved
             first = saved['messages'][0]
-            settings = saved['targets'][0]['settings']
-            self.options_panel.load_options(dict(settings.get('options', {}), **{
-                k: settings.get(k) for k in ('output_mode', 'schema_text', 'keep_alive', 'tools_text')}))
-            self.options_panel.system_prompt_entry.restore_draft(settings.get('system'))
-            self.knowledge_control.load(settings.get('knowledge', {}))
+            settings = RequestSettings.from_stored(saved['targets'][0]['settings'])
+            self.options_panel.load_options(settings.wire, settings.view)
+            self.options_panel.system_prompt_entry.restore_draft(settings.wire.system)
+            self.knowledge_control.load(settings.view.knowledge)
             values = self.read_draft()
             values['settings'] = copy.deepcopy(saved['options'].get('draft_settings', values['settings']))
             values.update(text=first['content'], images=first.get('images', []),

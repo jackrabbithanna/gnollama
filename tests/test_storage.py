@@ -57,16 +57,8 @@ class StorageTests(unittest.TestCase):
         db.create_chat('chat', 'old chat', 1, 1, 'model')
         db.save_messages('chat', [{'role': 'assistant', 'content': 'saved'}])
         with db._get_conn() as conn:
-            for column in ('response_metadata', 'tool_calls', 'tool_name', 'tool_call_id'):
-                conn.execute('ALTER TABLE messages DROP COLUMN ' + column)
-            for table in ('knowledge_web_sources', 'knowledge_collection_documents', 'knowledge_collections', 'knowledge_chunks', 'knowledge_indexes', 'embedding_configs', 'knowledge_documents'):
-                conn.execute('DROP TABLE ' + table)
-            conn.execute('ALTER TABLE hosts DROP COLUMN provider')
-            conn.execute('ALTER TABLE hosts DROP COLUMN credential_id')
-            from legacy_schema import remove_workspace
-            remove_workspace(conn)
-            conn.execute('PRAGMA user_version=3')
-            conn.commit()
+            from legacy_schema import downgrade_to_version_three
+            downgrade_to_version_three(conn)
         db = DatabaseManager(path)
         self.assertEqual(db.get_chat('chat')['messages'], [{'role': 'assistant', 'content': 'saved'}])
         with db._get_conn() as conn:

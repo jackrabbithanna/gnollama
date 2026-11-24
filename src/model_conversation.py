@@ -1,9 +1,11 @@
 """Sequential model conversations, independent of their GTK presentation."""
 import copy
 import uuid
+from dataclasses import replace
 from gi.repository import Gio, GLib
 from .providers import ProviderError, RequestCancelled, validate_url
 from .context import estimate_context
+from .records import RequestSettings
 from .request_runner import RequestRunner
 from .session import RequestState, ChatStrategy
 
@@ -31,27 +33,28 @@ def conversation_messages(snapshot, turn):
 
 
 def validate_participants(context, participants, cancel):
+    """Resolve two RequestSettings to their hosts; return them with their connections."""
     if len(participants) != 2:
         raise ValueError(_('Choose two participants.'))
     resolved, connections = [], []
-    for original in participants:
+    for settings in participants:
         if cancel.is_cancelled():
             raise RequestCancelled()
-        settings = copy.deepcopy(original)
-        host = context.storage.get_host(settings.get('host_id'))
-        if host is None or not settings.get('model'):
+        target, wire = settings.target, settings.wire
+        host = context.storage.get_host(target.host_id) if target else None
+        if host is None or not target.model:
             raise ValueError(_('Select an available model before sending.'))
         destination = validate_url(host['hostname'])
-        if settings.get('host') and settings['host'] != destination:
+        if target.url and target.url != destination:
             raise ValueError(_('A participant’s server address changed. Restore the host or use Run Again.'))
         connection = context.connection(host)
         models = dict(context.services.catalog.models(connection, cancel))
-        if settings['model'] not in models:
+        if target.model not in models:
             raise ValueError(_('Selected model is no longer available.'))
-        details = models[settings['model']]
+        details = models[target.model]
         if details is None:
             try:
-                details = context.services.catalog.details(connection, settings['model'], cancel)
+                details = context.services.catalog.details(connection, target.model, cancel)
             except RequestCancelled:
                 raise
             except ProviderError:
@@ -60,15 +63,15 @@ def validate_participants(context, participants, cancel):
         if caps is not None:
             if 'embedding' in caps and 'completion' not in caps:
                 raise ValueError(_('Embedding models cannot join a conversation.'))
-            if settings.get('thinking') not in (None, False) and 'thinking' not in caps:
+            if wire.thinking not in (None, False) and 'thinking' not in caps:
                 raise ValueError(_('A participant does not support the selected thinking option.'))
         family = (details or {}).get('details', {}).get('family', '').replace('-', '').lower()
-        if family == 'gptoss' and settings.get('thinking') not in (None, 'low', 'medium', 'high'):
+        if family == 'gptoss' and wire.thinking not in (None, 'low', 'medium', 'high'):
             raise ValueError(_('The selected thinking level is incompatible with a target.'))
-        if settings.get('keep_alive') is not None and not connection.capabilities.keep_alive:
+        if wire.keep_alive is not None and not connection.capabilities.keep_alive:
             raise ValueError(_('Cloud targets manage model retention automatically.'))
-        settings.update(host=destination, endpoint='chat', format=None, tools=None)
-        resolved.append(settings)
+        resolved.append(replace(settings, endpoint='chat', target=replace(target, url=destination),
+                                wire=replace(wire, format=None, tools=None)))
         connections.append(connection)
     return resolved, connections
 
@@ -82,7 +85,8 @@ class ModelConversationController:
         self.changed, self.started, self.chunk, self.finished = changed, started, chunk, finished
         self.id = None
         self.run = None
-        self.settings = None
+        self.settings = None      # As stored: rounds, participants, and the setup draft.
+        self.participants = []    # The same participants as RequestSettings.
         self.busy = False
         self.error = None
         self.states = {}
@@ -128,9 +132,10 @@ class ModelConversationController:
             if error or self._end:
                 self._preparation_failed(error)
                 return
-            participants, self.connections = result
+            self.participants, self.connections = result
             self.id = str(uuid.uuid4())
-            self.settings = dict(rounds=rounds, participants=participants, draft_settings=draft_settings or {})
+            self.settings = dict(rounds=rounds, participants=[p.to_stored(sparse=True) for p in self.participants],
+                                 draft_settings=draft_settings or {})
             record = dict(id=self.id, prompt=prompt, prompt_uid=str(uuid.uuid4()), settings=self.settings,
                           draft_id=draft_id, draft_revision=draft_revision)
             def saved(_):
@@ -144,6 +149,7 @@ class ModelConversationController:
         self.id = snapshot['id']
         self.run = copy.deepcopy(snapshot['run'])
         self.settings = copy.deepcopy(snapshot['options'])
+        self.participants = [RequestSettings.from_stored(p) for p in self.settings['participants']]
 
     def resume(self):
         if self.busy or not self.run or self.run['status'] not in ('paused', 'interrupted', 'failed'):
@@ -155,7 +161,7 @@ class ModelConversationController:
                 return
             _, self.connections = result
             self._write(self.storage.library.set_model_conversation_status, self.id, 'running', done=self._resumed)
-        self._work(lambda: validate_participants(self.context, self.settings['participants'], self.cancellable), prepared)
+        self._work(lambda: validate_participants(self.context, self.participants, self.cancellable), prepared)
 
     def _resumed(self, run):
         self.run = run
@@ -237,10 +243,10 @@ class ModelConversationController:
                 self.error = str(exc)
                 self._settle('failed')
                 return
-            settings = self.settings['participants'][turn % 2]
+            settings = self.participants[turn % 2]
             state = RequestState(settings, messages[-1]['content'], messages=messages,
                                  connection=self.connections[turn % 2])
-            state.metadata['context_estimate'] = estimate_context(messages, settings)
+            state.metadata['context_estimate'] = estimate_context(messages, settings.wire)
             uid = str(uuid.uuid4())
             self.states = {uid: state}
             message = self._message(uid, state)
@@ -279,7 +285,7 @@ class ModelConversationController:
 
     @staticmethod
     def _message(uid, state):
-        return dict(uid=uid, role='assistant', model=state.settings['model'], content=state.content,
+        return dict(uid=uid, role='assistant', model=state.settings.target.model, content=state.content,
                     thinking_content=state.thinking, api_details=state.api_details(), response_metadata=copy.deepcopy(state.metadata))
 
     def _finish(self, uid, state, status, error):

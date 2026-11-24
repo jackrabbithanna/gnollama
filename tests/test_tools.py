@@ -51,8 +51,7 @@ class ToolProtocolTests(unittest.TestCase):
         self.assertEqual(inspect_calls([call()], tools, 'stopped')['state'], 'incomplete')
 
     def test_stream_accumulation_history_fields_and_final_validation(self):
-        config = settings()
-        config.update(tools=parse_tools(EXAMPLE_TOOLS), format={'type': 'object'})
+        config = settings(tools=parse_tools(EXAMPLE_TOOLS), format={'type': 'object'})
         state = RequestState(config, 'weather')
         first, second = call(id='one'), call('tests/test_calculator.py')
         state.consume({'message': {'thinking': 'look up', 'tool_calls': [first]}})

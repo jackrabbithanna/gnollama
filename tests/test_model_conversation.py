@@ -12,8 +12,13 @@ from provider_fixture import provider_patch
 from src.app_context import AppContext
 from src.model_conversation import ModelConversationController, conversation_messages
 from src.export import export_json, export_markdown
+from src.records import RequestSettings
 from test_ui import pump_until
 import test_ui
+
+
+def typed(participants):
+    return [RequestSettings.from_stored(p) for p in participants]
 
 
 class ConversationTests(unittest.TestCase):
@@ -48,7 +53,7 @@ class ConversationTests(unittest.TestCase):
             calls.append(copy.deepcopy(kwargs['messages']))
             yield dict(message={'content': 'reply' + str(len(calls)), 'thinking': 'private'}, done=True)
         with provider_patch('chat', side_effect=chat or respond):
-            self.controller.start('  opening\n```text\ncode\n```', rounds, self.participants)
+            self.controller.start('  opening\n```text\ncode\n```', rounds, typed(self.participants))
             pump_until(lambda: not self.controller.busy)
         return calls
 
@@ -81,7 +86,7 @@ class ConversationTests(unittest.TestCase):
             yield dict(message={'content': kwargs['model']}, done=True)
         self.controller.started = lambda *a: self.controller.pause()
         with provider_patch('chat', side_effect=respond):
-            self.controller.start('opening', 1, self.participants)
+            self.controller.start('opening', 1, typed(self.participants))
             pump_until(lambda: not self.controller.busy)
             self.assertEqual(calls, ['one'])
             self.assertEqual(self.snapshot()['run']['status'], 'paused')
@@ -102,7 +107,7 @@ class ConversationTests(unittest.TestCase):
             raise RequestCancelled()
         self.controller.chunk = lambda *a: self.controller.stop()
         with provider_patch('chat', side_effect=respond) as api:
-            self.controller.start('opening', 4, self.participants)
+            self.controller.start('opening', 4, typed(self.participants))
             pump_until(lambda: not self.controller.busy)
             self.controller.resume()
             self.assertEqual(api.call_count, 1)
@@ -147,12 +152,12 @@ class ConversationTests(unittest.TestCase):
         self.storage.db.save_draft(draft)
         broken = copy.deepcopy(self.participants)
         broken[0]['model'] = 'missing'
-        self.controller.start('opening', 1, broken, 'draft', 2)
+        self.controller.start('opening', 1, typed(broken), 'draft', 2)
         pump_until(lambda: not self.controller.busy)
         self.assertIsNotNone(self.storage.get_draft('draft'))
         self.assertIsNone(self.controller.id)
         with provider_patch('chat', return_value=iter([dict(message={'content': 'ok'}, done=True)])):
-            self.controller.start('opening', 1, self.participants, 'draft', 2)
+            self.controller.start('opening', 1, typed(self.participants), 'draft', 2)
             pump_until(lambda: not self.controller.busy)
         self.assertIsNone(self.storage.get_draft('draft'))
 
@@ -165,7 +170,7 @@ class ConversationTests(unittest.TestCase):
                 raise OSError('disk full')
             return original(*args)
         with patch.object(self.storage.db, 'finish_model_conversation_attempt', side_effect=fail_once), provider_patch('chat', side_effect=lambda **kw: iter([dict(message={'content': 'ok'}, done=True)])) as api:
-            self.controller.start('opening', 1, self.participants)
+            self.controller.start('opening', 1, typed(self.participants))
             pump_until(lambda: self.storage.writer.error is not None)
             self.assertEqual(api.call_count, 1)
             self.assertTrue(self.controller.busy)
@@ -216,7 +221,7 @@ class ConversationTests(unittest.TestCase):
 
     def test_pause_during_preparation_starts_no_requests(self):
         with provider_patch('chat') as api:
-            self.controller.start('opening', 2, self.participants)
+            self.controller.start('opening', 2, typed(self.participants))
             self.controller.pause()
             pump_until(lambda: not self.controller.busy)
             self.assertFalse(api.called)
@@ -225,7 +230,7 @@ class ConversationTests(unittest.TestCase):
 
     def test_paused_run_can_be_stopped_without_a_new_request(self):
         with provider_patch('chat') as api:
-            self.controller.start('opening', 2, self.participants)
+            self.controller.start('opening', 2, typed(self.participants))
             self.controller.pause()
             pump_until(lambda: not self.controller.busy)
             self.controller.stop()
@@ -241,7 +246,7 @@ class ConversationTests(unittest.TestCase):
             release.wait(3)
             return original(*args)
         with patch.object(self.storage.db, 'start_model_conversation_attempt', side_effect=blocked), provider_patch('chat') as api:
-            self.controller.start('opening', 1, self.participants)
+            self.controller.start('opening', 1, typed(self.participants))
             pump_until(entered.is_set)
             self.controller.pause()
             release.set()
@@ -262,7 +267,7 @@ class ConversationTests(unittest.TestCase):
                 threading.Event().wait(.005)
             raise RequestCancelled()
         with provider_patch('chat', side_effect=stalled) as api:
-            self.controller.start('opening', 1, self.participants)
+            self.controller.start('opening', 1, typed(self.participants))
             pump_until(lambda: any(s.content for s in self.controller.states.values()))
             self.controller.stop(interrupted=True)
             pump_until(lambda: not self.controller.busy)

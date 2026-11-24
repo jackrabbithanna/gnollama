@@ -51,6 +51,12 @@ class ArchitectureTests(unittest.TestCase):
             with self.subTest(module=str(path.relative_to(ROOT))):
                 self.assertEqual(private.findall(path.read_text()), [])
 
+    def test_request_settings_are_typed_records_not_dictionaries(self):
+        keyed = re.compile(r'\bstate\.settings(\[|\.get\(|\.items\()')
+        for path in SOURCES:
+            with self.subTest(module=str(path.relative_to(ROOT))):
+                self.assertEqual(keyed.findall(path.read_text()), [])
+
 
 if __name__ == '__main__':
     unittest.main()

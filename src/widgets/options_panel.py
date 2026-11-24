@@ -403,23 +403,24 @@ class OptionsPanel(Gtk.Box):
             self.field_error('num_predict_entry', _('Max tokens must be -2, -1, or a nonnegative integer.'))
         return options
 
-    def load_options(self, options: Dict[str, Any]) -> None:
-        """Populates UI options from a dict."""
-        mode = options.get('output_mode', 'text')
+    def load_options(self, wire, view) -> None:
+        """Populates the panel from stored WireOptions and ViewState."""
+        mode = view.output_mode
+        options = wire.options
         self._restoring_options = True
-        self.tools_text = options.get('tools_text', '')
-        self.tools_check.set_active(options.get('tools_enabled', False))
+        self.tools_text = view.tools_text
+        self.tools_check.set_active(view.tools_enabled)
         self.update_tools_notice()
-        self.schema_text = options.get('schema_text', '')
+        self.schema_text = view.schema_text
         self.output_dropdown.set_selected(self.output_modes.index(mode) if mode in self.output_modes else 0)
         self._restoring_options = False
-        keep_alive = options.get('keep_alive')
+        keep_alive = wire.keep_alive
         if keep_alive in self.keep_alive_values:
             self.keep_alive_dropdown.set_selected(self.keep_alive_values.index(keep_alive))
         else:
             self.keep_alive_dropdown.set_selected(5)
             self.keep_alive_entry.set_text(str(keep_alive))
-        self.stats_check.set_active(options.get('show_stats', True))
+        self.stats_check.set_active(view.show_stats)
         self.seed_entry.set_text(str(options.get('seed', '')))
         self.temperature_entry.set_text(str(options.get('temperature', '')))
         self.top_k_entry.set_text(str(options.get('top_k', '')))
@@ -436,8 +437,6 @@ class OptionsPanel(Gtk.Box):
         else:
             self.stop_entry.set_text("")
             
-        if 'logprobs' in options:
-            self.logprobs_check.set_active(options['logprobs'])
-            
-        if 'top_logprobs' in options and options['top_logprobs'] is not None:
-            self.top_logprobs_entry.set_text(str(options['top_logprobs']))
+        self.logprobs_check.set_active(wire.logprobs)
+        if wire.top_logprobs is not None:
+            self.top_logprobs_entry.set_text(str(wire.top_logprobs))

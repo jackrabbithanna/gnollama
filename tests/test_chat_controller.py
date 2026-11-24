@@ -10,6 +10,7 @@ from gi.repository import GLib
 
 from provider_fixture import provider_patch
 from src.app_context import AppContext
+from src.records import WireOptions
 from src.chat_controller import ChatController, ComposerInput
 from src.drafts import DraftController
 from src.knowledge import DEFAULT_RAG
@@ -226,7 +227,7 @@ class ChatControllerTests(unittest.TestCase):
         self.assertEqual(controller.message_offset, max(0, offset - 50))
         self.assertEqual(older[-1]['content'], 'turn %d' % (offset - 1))
 
-        controller.estimate_draft('next', dict(options={}, system='', tools='', format=''))
+        controller.estimate_draft('next', WireOptions(system='', tools='', format=''))
         pump_until(lambda: 'context_estimated' in view.names())
         self.assertIs(view.events[view.names().index('context_estimated')][2], False)
 

@@ -8,6 +8,7 @@ from unittest.mock import patch
 from gi.repository import Gdk, GLib, Gtk
 from src import session
 from src.providers import OllamaProvider, ProviderError
+from src.records import ViewState, WireOptions
 from provider_fixture import provider_patch
 from src.bubbles import AiBubble, format_statistics
 from src.app_context import AppContext
@@ -838,7 +839,7 @@ class UITests(unittest.TestCase):
         for text in ('{"type":"object"}', ''):
             panel.output_dropdown.set_selected(0)
             with patch.object(panel, 'edit_schema') as edit:
-                panel.load_options({'output_mode': 'schema', 'schema_text': text})
+                panel.load_options(WireOptions(), ViewState(output_mode='schema', schema_text=text))
                 pump_until(lambda: True)
                 edit.assert_not_called()
             self.assertEqual(panel.schema_text, text)

@@ -4,6 +4,7 @@ import copy
 from .chat_controller import ChatController, ComposerInput
 from .drafts import DraftController
 from .providers import ProviderError
+from .records import RequestSettings, WireOptions
 from .session import display_chat_title
 from .structured import InvalidSchema
 from .tool_calling import InvalidTools
@@ -144,9 +145,10 @@ class GenerationTab(Gtk.Box):
                 options[name] = int(getattr(panel, name + '_entry').get_text())
             except ValueError:
                 pass
-        settings = dict(options=options, system=panel.system_prompt_entry.get_text(),
+        # A draft is measured by the text of its tools and schema, valid or not.
+        wire = WireOptions(options=options, system=panel.system_prompt_entry.get_text(),
             tools=panel.tools_text, format=panel.schema_text)
-        self.controller.estimate_draft(self.chat_input.entry.read_draft(), settings)
+        self.controller.estimate_draft(self.chat_input.entry.read_draft(), wire)
 
     def context_estimated(self, estimate, expand):
         from .context import describe_context
@@ -222,11 +224,13 @@ class GenerationTab(Gtk.Box):
         self.title = display_chat_title(chat_data.get('title', _('Chat')))
         if 'options' in chat_data:
             options = chat_data['options']
-            self.options_panel.load_options(options)
-            self.knowledge_control.load(options.get('knowledge', {}))
-            
+            stored = RequestSettings.from_chat_options(options)
+            self.controller.extra = stored.view.extra
+            self.options_panel.load_options(stored.wire, stored.view)
+            self.knowledge_control.load(stored.view.knowledge)
+
             if 'thinking_val' in options:
-                self.chat_input.load_thinking_val(options['thinking_val'])
+                self.chat_input.load_thinking_val(stored.wire.thinking)
         
         if 'system' in chat_data and chat_data['system']:
             self.options_panel.system_prompt_entry.set_text(chat_data['system'])
@@ -371,7 +375,7 @@ class GenerationTab(Gtk.Box):
             self.knowledge_control.query.set_text('')
             self.message_list.add_user_message(state.prompt, images=state.images)
         from .bubbles import AiBubble
-        bubble = AiBubble(model_name=state.settings['model'], output_format=state.settings.get('format'))
+        bubble = AiBubble(model_name=state.settings.target.model, output_format=state.settings.wire.format)
         bubble.set_api_details(state.api_details())
         self.message_list.add_ai_bubble(bubble)
         state.presentation = bubble
@@ -396,7 +400,7 @@ class GenerationTab(Gtk.Box):
             bubble.append_logprobs(logprobs)
 
     def request_finished(self, state):
-        state.presentation.show_response_metadata(state.metadata, state.settings['show_stats'])
+        state.presentation.show_response_metadata(state.metadata, state.settings.view.show_stats)
 
     def message_saved(self, state):
         self._add_tool_view(state.saved_message, state.presentation)

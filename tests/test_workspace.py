@@ -12,6 +12,7 @@ from src.services import Services, ModelCatalog
 from src.providers import OllamaProvider, ProviderError, RequestCancelled
 from provider_fixture import provider_patch
 from src.context import estimate_context
+from src.records import RequestSettings, ViewState, WireOptions
 from src.export import export_json, export_markdown
 from src.comparison import ComparisonRun, prepare_run, ComparisonController
 from src.widgets.composer import Composer
@@ -114,7 +115,7 @@ class WorkspaceTests(unittest.TestCase):
             gate.set()
 
     def test_context_estimate_is_advisory_and_counts_unicode_and_output(self):
-        settings = dict(options=dict(num_ctx=10, num_predict=4), system='')
+        settings = WireOptions(options=dict(num_ctx=10, num_predict=4), system='')
         before = copy.deepcopy(settings)
         estimate = estimate_context([dict(role='user', content='😀' * 4)], settings)
         self.assertEqual(estimate['text_tokens'], 4)
@@ -176,10 +177,11 @@ class WorkspaceTests(unittest.TestCase):
     def test_comparison_resolves_sources_once_and_keeps_shared_options(self):
         from src.knowledge import DEFAULT_RAG
         host = self.storage.get_all_hosts()[0]
-        settings = dict(options={'num_ctx': 2048}, system='Shared instructions', thinking=True,
-            format={'type': 'object'}, keep_alive=30, logprobs=True, top_logprobs=2, show_stats=True,
-            knowledge=dict(DEFAULT_RAG, enabled=True, config_id='config', host=host['hostname'],
-                           model='embed', collection_ids=['source']))
+        settings = RequestSettings(wire=WireOptions(
+            options={'num_ctx': 2048}, system='Shared instructions', thinking=True,
+            format={'type': 'object'}, keep_alive=30, logprobs=True, top_logprobs=2),
+            view=ViewState(knowledge=dict(DEFAULT_RAG, enabled=True, config_id='config', host=host['hostname'],
+                                          model='embed', collection_ids=['source'])))
         snapshot = dict(query='question', hits=[dict(title='Reference', text='A shared passage.', id='passage')])
         targets = [dict(host_id=host['id'], model=name) for name in ('one', 'two')]
         with patch.object(self.context.services.catalog, 'models', return_value=[(name, {'capabilities': ['completion', 'vision', 'thinking']}) for name in ('one', 'two')]), patch.object(self.context.knowledge, 'retrieve', return_value=snapshot) as retrieve:
@@ -196,8 +198,7 @@ class WorkspaceTests(unittest.TestCase):
 
     def test_comparison_stop_all_saves_stopped_outcomes(self):
         host = self.storage.get_all_hosts()[0]
-        settings = dict(options={}, system=None, thinking=None, format=None, keep_alive=None,
-                        logprobs=False, top_logprobs=None, show_stats=True, knowledge={})
+        settings = RequestSettings()
         targets = [dict(host_id=host['id'], model=name) for name in ('one', 'two')]
         with patch.object(self.context.services.catalog, 'models', return_value=[(name, None) for name in ('one', 'two')]):
             active = ComparisonRun()

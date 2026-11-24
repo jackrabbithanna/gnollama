@@ -46,7 +46,7 @@ class RequestRunner:
         try:
             if state.cancellable.is_cancelled():
                 raise RequestCancelled()
-            with self.services.models.using(state.settings['host'], state.settings['model']):
+            with self.services.models.using(state.settings.target.url, state.settings.target.model):
                 for chunk in strategy.process(state):
                     if state.cancellable.is_cancelled():
                         raise RequestCancelled()
@@ -62,9 +62,9 @@ class RequestRunner:
             error = str(exc)
         try:
             if state.tool_calls:
-                state.metadata['tool_round'] = inspect_calls(state.tool_calls, state.settings.get('tools'), status)
-            elif state.settings.get('format') is not None:
-                state.metadata['validation'] = validate_response(state.content, state.settings['format'], status)
+                state.metadata['tool_round'] = inspect_calls(state.tool_calls, state.settings.wire.tools, status)
+            elif state.settings.wire.format is not None:
+                state.metadata['validation'] = validate_response(state.content, state.settings.wire.format, status)
         except Exception as exc:
             status, error = 'failed', str(exc)
             state.metadata['validation'] = {'status': 'incomplete', 'error': str(exc)}

@@ -73,6 +73,7 @@ class ChatInput(Gtk.Box):
         self._set_thinking_options(None)
         self.attach_button.connect('clicked', self.on_attach_clicked)
         self.clear_image_button.connect('clicked', self.on_clear_image_clicked)
+        self.entry.connect('paste-attachment', self.on_paste_attachment)
         self.model_dropdown.connect('notify::selected-item', self._model_changed)
         self.thinking_dropdown.connect('notify::selected-item', self._thinking_changed)
 
@@ -338,20 +339,72 @@ class ChatInput(Gtk.Box):
                     
         dialog.open_multiple(parent_window, None, on_files_selected)
 
-    def import_images(self, paths):
+    def on_paste_attachment(self, composer, clipboard, kind):
+        """Attaches a pasted image or copied image files; other files paste as text."""
+        if kind == 'image':
+            def textured(clipboard, result):
+                try:
+                    texture = clipboard.read_texture_finish(result)
+                except GLib.Error as exc:
+                    self._toast(str(exc.message))
+                    return
+                if texture:
+                    self.attach_pasted([texture])
+            clipboard.read_texture_async(None, textured)
+            return
+
+        def text_read(clipboard, result):
+            try:
+                text = clipboard.read_text_finish(result)
+            except GLib.Error:
+                return
+            if text:
+                composer.insert_text(text)
+
+        def files_read(clipboard, result):
+            try:
+                value = clipboard.read_value_finish(result)
+                files = value.get_files() if value else []
+            except GLib.Error:
+                files = []
+            paths = [f.get_path() for f in files if f.get_path() and
+                     Gio.content_type_guess(f.get_basename(), None)[0].startswith('image/')]
+            if paths:
+                self.attach_pasted(paths)
+            else:
+                clipboard.read_text_async(None, text_read)
+        clipboard.read_value_async(Gdk.FileList, GLib.PRIORITY_DEFAULT, None, files_read)
+
+    def attach_pasted(self, sources):
+        if self.image_support is False:
+            self._toast(_('This model does not support images.'))
+            return
+        self.import_images(sources)
+
+    def _toast(self, message):
+        from .feedback import toast
+        toast(self, message)
+
+    def import_images(self, sources):
+        """Adds draft images from file paths or Gdk.Texture objects."""
         import base64
+        limit = 50 * 1024 * 1024
         self.pending_imports += 1
         self.set_running(self._running)
         generation = self._image_generation
         def read():
             images, errors = [], []
-            for path in paths:
+            for source in sources:
                 try:
-                    with open(path, 'rb') as stream:
-                        raw = stream.read(50 * 1024 * 1024 + 1)
-                    if len(raw) > 50 * 1024 * 1024:
+                    if isinstance(source, Gdk.Texture):
+                        raw = source.save_to_png_bytes().get_data()
+                    else:
+                        with open(source, 'rb') as stream:
+                            raw = stream.read(limit + 1)
+                    if len(raw) > limit:
                         raise ValueError(_('Files must be no larger than 50 MiB.'))
-                    Gdk.Texture.new_from_bytes(GLib.Bytes.new(raw))
+                    if not isinstance(source, Gdk.Texture):
+                        Gdk.Texture.new_from_bytes(GLib.Bytes.new(raw))
                     images.append(base64.b64encode(raw).decode('ascii'))
                 except (OSError, ValueError, GLib.Error) as exc:
                     errors.append(str(exc))
@@ -363,8 +416,7 @@ class ChatInput(Gtk.Box):
                 self.update_capability_controls()
                 self.emit('attachments-ready')
                 if errors:
-                    from .feedback import toast
-                    toast(self, '\n'.join(errors))
+                    self._toast('\n'.join(errors))
                 return False
             GLib.idle_add(deliver)
         from ..session import worker

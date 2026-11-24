@@ -81,6 +81,72 @@ class UITests(unittest.TestCase):
         self.assertIn(False, widget._thinking_values)
         self.assertIsNone(widget.get_thinking_value())
 
+    def test_clipboard_attachment_kind_prefers_text_over_incidental_bitmaps(self):
+        from src.widgets.composer import clipboard_attachment_kind
+        def remote(*mime_types):
+            return Gdk.ContentFormats.new(list(mime_types)).union_deserialize_gtypes()
+        self.assertEqual(clipboard_attachment_kind(remote('image/png')), 'image')
+        self.assertEqual(clipboard_attachment_kind(remote('image/png', 'text/html')), 'image')
+        self.assertIsNone(clipboard_attachment_kind(remote('image/png', 'text/plain;charset=utf-8')))
+        self.assertIsNone(clipboard_attachment_kind(remote('text/plain;charset=utf-8')))
+        self.assertEqual(clipboard_attachment_kind(remote('text/uri-list', 'text/plain;charset=utf-8')), 'files')
+
+    def test_pasting_clipboard_image_attaches_it_and_text_still_pastes(self):
+        import base64
+        widget = ChatInput()
+        clipboard = widget.entry.view.get_clipboard()
+        pixels = GLib.Bytes.new(bytes([255, 0, 0, 255] * 4))
+        texture = Gdk.MemoryTexture.new(2, 2, Gdk.MemoryFormat.R8G8B8A8, pixels, 8)
+        from gi.repository import GObject
+        # A bare set() advertises the GdkMemoryTexture subtype, unlike other applications.
+        clipboard.set_content(Gdk.ContentProvider.new_for_value(GObject.Value(Gdk.Texture, texture)))
+        widget.entry.view.emit('paste-clipboard')
+        pump_until(lambda: widget.restored_images and not widget.pending_imports)
+        self.assertEqual(len(widget.restored_images), 1)
+        self.assertTrue(base64.b64decode(widget.restored_images[0]).startswith(b'\x89PNG'))
+        self.assertEqual(widget.entry.read_draft(), '')
+        self.assertTrue(widget.image_preview_scrolled.get_visible())
+
+        widget.image_support = False
+        widget.entry.view.emit('paste-clipboard')
+        pump_until(lambda: session.worker.idle)
+        for _ in range(20):
+            GLib.MainContext.default().iteration(False)
+        self.assertEqual(len(widget.restored_images), 1)
+
+        clipboard.set('plain words')
+        widget.entry.view.emit('paste-clipboard')
+        pump_until(lambda: widget.entry.read_draft() == 'plain words')
+        self.assertEqual(len(widget.restored_images), 1)
+
+    def test_pasting_copied_files_attaches_images_and_falls_back_to_text(self):
+        from gi.repository import Gio, GObject
+        widget = ChatInput()
+        clipboard = widget.entry.view.get_clipboard()
+        folder = tempfile.TemporaryDirectory()
+        self.addCleanup(folder.cleanup)
+        pixels = GLib.Bytes.new(bytes([0, 0, 255, 255] * 4))
+        image = folder.name + '/shot.png'
+        Gdk.MemoryTexture.new(2, 2, Gdk.MemoryFormat.R8G8B8A8, pixels, 8).save_to_png(image)
+        def copy(path):
+            files = Gdk.FileList.new_from_array([Gio.File.new_for_path(path)])
+            value = GObject.Value(Gdk.FileList, files)
+            clipboard.set_content(Gdk.ContentProvider.new_union([
+                Gdk.ContentProvider.new_for_value(value),
+                Gdk.ContentProvider.new_for_value(GObject.Value(str, path))]))
+        copy(image)
+        widget.entry.view.emit('paste-clipboard')
+        pump_until(lambda: widget.restored_images and not widget.pending_imports)
+        self.assertEqual(len(widget.restored_images), 1)
+        self.assertEqual(widget.entry.read_draft(), '')
+
+        notes = folder.name + '/notes.txt'
+        open(notes, 'w').close()
+        copy(notes)
+        widget.entry.view.emit('paste-clipboard')
+        pump_until(lambda: widget.entry.read_draft() == notes)
+        self.assertEqual(len(widget.restored_images), 1)
+
     def test_statistics_distinguish_missing_zero_and_speed(self):
         absent = format_statistics({'eval_duration': 0})
         self.assertIn('Cached: Unavailable', absent)

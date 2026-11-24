@@ -41,6 +41,7 @@ Whether you are developing, experimenting, or chatting with local models, Gnolla
   * Inline equations (`\( … \)`, `$ … $`) are drawn within the text, including inside tables. Prices such as `$5` and anything in code are left as written.
   * Selecting and copying text copies a placeholder character for each inline equation rather than its TeX.
 * **Multimodal Image Support**: Upload and attach multiple images to your prompts for vision-enabled models.
+  * Paste a copied image, screenshot, or image file into the composer (Ctrl+V) to attach it. Clipboards that also offer plain text paste as text.
   * Models explicitly lacking vision cannot receive new attachments. Earlier images remain visible and saved but are omitted from outgoing history for those models, with a notice in the composer.
   * Hosts without capability metadata retain manual image support, marked as unknown.
 * **Thinking & completion Details**:

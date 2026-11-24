@@ -1,0 +1,123 @@
+{
+ "models": [
+  {
+   "type": "decision",
+   "publisher": "waseigo",
+   "key": "elephant-1-decision",
+   "display_name": "Elephant 1",
+   "architecture": "qwen35",
+   "quantization": {
+    "name": "Q4_K_M",
+    "bits_per_weight": 4
+   },
+   "size_bytes": 6253341408,
+   "params_string": "9.0B",
+   "max_context_length": 262144,
+   "format": "gguf",
+   "decision_type": "openjev",
+   "has_vision_adapter": true,
+   "loaded_instances": []
+  },
+  {
+   "type": "llm",
+   "publisher": "google",
+   "key": "google/gemma-4-12b-qat",
+   "display_name": "Gemma 4 12B QAT",
+   "architecture": "gemma4",
+   "quantization": {
+    "name": "Q4_0",
+    "bits_per_weight": 4
+   },
+   "size_bytes": 7151067268,
+   "params_string": "12B",
+   "loaded_instances": [],
+   "max_context_length": 262144,
+   "format": "gguf",
+   "capabilities": {
+    "vision": true,
+    "trained_for_tool_use": true,
+    "reasoning": {
+     "allowed_options": [
+      "off",
+      "on"
+     ],
+     "default": "on"
+    }
+   },
+   "description": null,
+   "variants": [
+    "google/gemma-4-12b-qat@q4_0"
+   ],
+   "selected_variant": "google/gemma-4-12b-qat@q4_0"
+  },
+  {
+   "type": "embedding",
+   "publisher": "unsloth",
+   "key": "text-embedding-embeddinggemma-2",
+   "display_name": "Embeddinggemma 2",
+   "quantization": {
+    "name": "Q8_0",
+    "bits_per_weight": 8
+   },
+   "size_bytes": 1290750752,
+   "params_string": "271M",
+   "loaded_instances": [],
+   "max_context_length": 262144,
+   "format": "gguf"
+  },
+  {
+   "type": "llm",
+   "publisher": "IFM",
+   "key": "k2-horizon-3.7b",
+   "display_name": "K2 Horizon 4B",
+   "architecture": "k2-horizon",
+   "quantization": {
+    "name": "Q4_K_M",
+    "bits_per_weight": 4
+   },
+   "size_bytes": 3156598144,
+   "params_string": "5.1B",
+   "loaded_instances": [
+    {
+     "id": "k2-horizon-3.7b",
+     "config": {
+      "context_length": 67584,
+      "eval_batch_size": 2048,
+      "flash_attention": true,
+      "offload_kv_cache_to_gpu": true
+     },
+     "remaining_ttl_seconds": 3228
+    }
+   ],
+   "max_context_length": 524288,
+   "format": "gguf",
+   "capabilities": {
+    "vision": false,
+    "trained_for_tool_use": false,
+    "reasoning": {
+     "allowed_options": [
+      "off",
+      "on"
+     ],
+     "default": "on"
+    }
+   },
+   "description": null
+  },
+  {
+   "type": "embedding",
+   "publisher": "nomic-ai",
+   "key": "text-embedding-nomic-embed-text-v1.5",
+   "display_name": "Nomic Embed Text v1.5",
+   "quantization": {
+    "name": "Q4_K_M",
+    "bits_per_weight": 4
+   },
+   "size_bytes": 84106624,
+   "params_string": null,
+   "loaded_instances": [],
+   "max_context_length": 2048,
+   "format": "gguf"
+  }
+ ]
+}

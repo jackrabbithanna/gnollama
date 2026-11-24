@@ -97,6 +97,7 @@ gnollama_sources = [
   'bubbles.py',
   'host_manager.py',
   'model_manager.py',
+  'model_summary.py',
 ]
 
 install_data(gnollama_sources, install_dir: moduledir)
@@ -120,6 +121,7 @@ gnollama_widget_sources = [
   'widgets/url_import.py',
   'widgets/knowledge_import.py',
   'widgets/message_list.py',
+  'widgets/search.py',
 ]
 
 install_data(gnollama_widget_sources, install_dir: moduledir / 'widgets')
@@ -127,9 +129,13 @@ install_data(gnollama_widget_sources, install_dir: moduledir / 'widgets')
 gnollama_provider_sources = [
   'providers/__init__.py',
   'providers/base.py',
+  'providers/lmstudio.py',
   'providers/ollama.py',
+  'providers/openai.py',
+  'providers/openrouter.py',
   'providers/registry.py',
   'providers/transport.py',
+  'providers/vercel.py',
 ]
 
 install_data(gnollama_provider_sources, install_dir: moduledir / 'providers')

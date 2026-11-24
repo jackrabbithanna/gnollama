@@ -11,7 +11,7 @@ from .json_view import TextEditor
 
 from .knowledge_common import (
     actions, button, clear, config_label, document_status, dropdown, HostModels, IndexDialog, label,
-    plain_editor, preview_text, section, WorkDialog,
+    plain_editor, preview_text, section, verification_notice, WorkDialog,
 )
 from .collection_views import CollectionDialog, CollectionDestination, DocumentPicker
 from .source_views import SourcePicker, ChunkPicker
@@ -274,6 +274,9 @@ class KnowledgeView(Gtk.Box):
         settings.append(label(config_label(collection)))
         settings.append(label(_('Chunk size: {0} characters · Overlap: {1} characters').format(collection['chunk_size'], collection['overlap'])))
         settings.append(label(collection['host']))
+        unverified = verification_notice(self.context, collection['host_kind'])
+        if unverified:
+            settings.append(label(unverified))
         menu = Gio.Menu()
         menu_actions = Gio.SimpleActionGroup()
         for name, title, callback in (
@@ -314,7 +317,8 @@ class KnowledgeView(Gtk.Box):
         if hasattr(root, 'new_chat_tab'):
             tab = root.new_chat_tab()
             options = dict(copy.deepcopy(DEFAULT_RAG), enabled=True, config_id=collection['config_id'],
-                           host=collection['host'], model=collection['model'], collection_ids=[collection['id']])
+                           host=collection['host'], host_kind=collection['host_kind'], model=collection['model'],
+                           collection_ids=[collection['id']])
             tab.knowledge_control.load(options)
             tab.knowledge_control.on_change()
             tab.chat_input.entry.grab_focus()
@@ -351,7 +355,7 @@ class KnowledgeView(Gtk.Box):
 
     def _collection_host(self, collection):
         dialog = WorkDialog(_('Change Embedding Model'))
-        hosts = HostModels(self.context, collection['host'], collection['model'])
+        hosts = HostModels(self.context, collection['host'], collection['model'], kind=collection['host_kind'])
         dialog.box.append(hosts)
         dialog.box.append(label(_('Choose a host and embedding model matching the collection’s original model digest. Embedding settings stay the same.')))
         dialog.connect('closed', lambda *args: hosts.stop())
@@ -361,7 +365,7 @@ class KnowledgeView(Gtk.Box):
                 dialog.show_error(_('Choose a model with the collection’s original digest.'))
                 return
             self.storage.submit(self.storage.library.update_collection_endpoint, collection['id'], hosts.host(),
-                                 model['name'], model['digest'], on_done=self.context.knowledge.changed)
+                                 model['name'], model['digest'], hosts.kind(), on_done=self.context.knowledge.changed)
             dialog.close()
         dialog.header.pack_end(button(_('Save'), save))
         self.present_dialog(dialog)
@@ -369,18 +373,23 @@ class KnowledgeView(Gtk.Box):
     def _check_availability(self, indexes):
         if self.context.knowledge.closed:
             return
-        hosts = {i['host'] for i in indexes if i['id'] not in self.availability}
+        hosts = {(i['host'], i['host_kind']) for i in indexes if i['id'] not in self.availability}
         for host in hosts - self._availability_loading:
             self._availability_loading.add(host)
             cancel = Gio.Cancellable()
             self._availability_cancels.append(cancel)
-            selected = [i for i in indexes if i['host'] == host]
+            selected = [i for i in indexes if (i['host'], i['host_kind']) == host]
             def fetch(host=host, selected=selected, cancel=cancel):
                 states = {}
                 try:
-                    models = self.context.knowledge.require_host(host).list_models(cancellable=cancel)
+                    connection = self.context.knowledge.require_host(*host)
+                    # Not every server lists its embedding models with the others, so each is asked for by name.
+                    tags = {}
                     for index in selected:
-                        match = next((m for m in models if canonical_model(m['name']) == canonical_model(index['model'])), None)
+                        name = canonical_model(index['model'])
+                        if name not in tags:
+                            tags[name] = connection.model_tag(index['model'], cancellable=cancel)
+                        match = tags[name]
                         states[index['id']] = (_('Original model available') if match and match.get('digest') == index['digest']
                                                else _('Unavailable — the original model changed or was removed. Choose a compatible server for searches.'))
                 except Exception as exc:
@@ -434,6 +443,9 @@ class KnowledgeView(Gtk.Box):
                                _('Chunks: {0}').format(index['chunks']))))
             if index['error']:
                 group.append(label(index['error']))
+            unverified = verification_notice(self.context, index['host_kind'])
+            if unverified:
+                group.append(label(unverified))
             row_actions = [button(_('Inspect Chunks'), lambda *args, i=index: self.present_dialog(ChunkPicker(self.context, i))),
                            button(_('Check Model'), lambda *args, i=index: self._check_model(i)),
                            button(_('Delete Index'), lambda *args, i=index: self._delete(index=i))]
@@ -547,7 +559,8 @@ class KnowledgeView(Gtk.Box):
         options = copy.deepcopy(DEFAULT_RAG)
         collection = self.storage.library.knowledge_collection(self.collection_id) if self.collection_id else None
         if collection:
-            options.update(config_id=collection['config_id'], host=collection['host'], model=collection['model'],
+            options.update(config_id=collection['config_id'], host=collection['host'],
+                           host_kind=collection['host_kind'], model=collection['model'],
                            collection_ids=[collection['id']])
         self.present_dialog(SourcePicker(self.context, options))
 
@@ -591,12 +604,14 @@ class KnowledgeView(Gtk.Box):
             return
         config = self.storage.library.embedding_config(index['config_id'])
         self.context.knowledge.create_index(index['document_id'], index['host'], index['model'], config,
-                                             index['chunk_size'], index['overlap'], index_id=index['id'])
+                                             index['chunk_size'], index['overlap'], index_id=index['id'],
+                                             kind=index['host_kind'])
 
     def _check_model(self, index):
         dialog = WorkDialog(_('Embedding Model Availability'), height=280)
         status = label(_('Checking…'))
         dialog.box.append(status)
-        dialog.run(lambda cancel: model_identity(index['host'], index['model'], cancel, index['digest']),
+        dialog.run(lambda cancel: model_identity(self.context.knowledge.require_host(index['host'], index['host_kind']),
+                                                 index['model'], cancel, index['digest']),
                    lambda result, error: status.set_text(str(error) if error else _('The original model is available on this host.')))
         self.present_dialog(dialog)

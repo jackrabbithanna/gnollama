@@ -10,6 +10,24 @@ def remove_workspace(conn):
     for table, column in (('messages', 'uid'), ('messages', 'extra'), ('chats', 'kind')):
         if column in {row[1] for row in conn.execute('PRAGMA table_info(' + table + ')')}:
             conn.execute('ALTER TABLE ' + table + ' DROP COLUMN ' + column)
+    remove_host_kind(conn)
+
+
+def remove_host_kind(conn):
+    """Leave the knowledge tables as every version before 13 stored them."""
+    for table in ('knowledge_collections', 'knowledge_indexes'):
+        if 'host_kind' in {row[1] for row in conn.execute('PRAGMA table_info(' + table + ')')}:
+            conn.execute('ALTER TABLE ' + table + ' DROP COLUMN host_kind')
+
+
+def begin_index(db, index):
+    """Start an index as a schema older than version 13 stored it, with no host type."""
+    with db._get_conn() as conn:
+        conn.execute('''INSERT INTO knowledge_indexes
+            (id, document_id, config_id, host, model, chunk_size, overlap, status, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, 'indexing', ?)''', tuple(index[k] for k in
+            ('id', 'document_id', 'config_id', 'host', 'model', 'chunk_size', 'overlap', 'created_at')))
+        conn.commit()
 
 
 def downgrade_to_version_three(conn):

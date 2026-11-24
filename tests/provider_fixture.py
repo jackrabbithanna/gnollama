@@ -1,7 +1,44 @@
-"""Replace a provider operation for every connection, including Ollama Cloud."""
+"""Replace a provider operation for every connection, and providers that differ from Ollama."""
 from unittest.mock import MagicMock, patch
 
-from src.providers import OllamaProvider
+from src.providers import Capabilities, OllamaProvider
+
+
+class LimitedProvider(OllamaProvider):
+    """Chat with tools and nothing else, as a provider that lacks most options."""
+    kind = 'limited'
+    capabilities = Capabilities(tools=True)
+
+
+def limited_host(storage):
+    """A saved host of LimitedProvider. Call inside `patch.dict(PROVIDERS, LIMITED)`."""
+    return storage.save_host('Limited', 'http://localhost:11434', provider='limited')
+
+
+LIMITED = {'limited': LimitedProvider}
+
+
+class OptionalKeyProvider(OllamaProvider):
+    """Takes an API key but works without one, at a suggested address."""
+    kind = 'optional_key'
+    label = 'Optional Key Server'
+    key_optional = True
+    default_url = 'http://localhost:1234'
+    name_example = url_example = ''
+
+
+OPTIONAL_KEY = {'optional_key': OptionalKeyProvider}
+
+
+class RequiredKeyProvider(OllamaProvider):
+    """Needs an API key, at any address."""
+    kind = 'required_key'
+    label = 'Required Key Server'
+    requires_key = True
+
+
+# Two keyed types that can share an address. The optional one stays last.
+KEYED = {'required_key': RequiredKeyProvider, **OPTIONAL_KEY}
 
 
 class provider_patch:

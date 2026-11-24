@@ -1,13 +1,12 @@
 """Ollama's native HTTP API: a local or self-hosted server, and Ollama Cloud."""
 import copy
-import math
 from dataclasses import dataclass
 from gettext import gettext as _
 
 from gi.repository import Soup
 
 from ..credentials import CredentialError
-from .base import Capabilities, Provider
+from .base import Capabilities, Provider, check_vectors, embedding_texts
 from .transport import ProviderError, RequestCancelled, validate_url
 
 CLOUD_URL = 'https://ollama.com'
@@ -18,6 +17,9 @@ CLOUD_NOTICE = 'Ollama Cloud uses text output and manages model retention automa
 def _extracted():
     """Marks text that is translated where it is displayed, not here."""
     _('Ollama Cloud uses text output and manages model retention automatically.')
+    _('Ollama Server')
+    _('Ollama Cloud')
+    _('For example: Local Ollama')
 
 
 def common_params(data, options, thinking, logprobs, top_logprobs, format=None, keep_alive=None):
@@ -43,12 +45,27 @@ def common_params(data, options, thinking, logprobs, top_logprobs, format=None, 
         data['options'] = copy.deepcopy(options)
 
 
+def context_length(info):
+    """The most context a model takes, which `/api/show` files under the name of its architecture."""
+    if not isinstance(info, dict):
+        return None
+    endings = [key for key in info if isinstance(key, str) and key.endswith('.context_length')]
+    named = f"{info.get('general.architecture')}.context_length"
+    key = named if named in info else endings[0] if len(endings) == 1 else None
+    return info[key] if key and type(info[key]) is int and info[key] > 0 else None
+
+
 @dataclass(frozen=True)
 class OllamaProvider(Provider):
     kind = 'ollama'
+    label = 'Ollama Server'
+    name_example = 'For example: Local Ollama'
+    url_example = 'http://localhost:11434'
     capabilities = Capabilities(model_management=True, running_models=True, embeddings=True,
                                 thinking_levels=True, structured_output=True, tools=True,
-                                logprobs=True, keep_alive=True, raw_generate=True)
+                                logprobs=True, keep_alive=True, raw_generate=True,
+                                sampling_extras=True, context_size=True, thinking_text=True,
+                                timing_stats=True, model_verification=True, refuses_long_input=True)
 
     @property
     def key(self):
@@ -83,7 +100,10 @@ class OllamaProvider(Provider):
         return self._request('/api/tags', timeout=timeout, cancellable=cancellable).get('models', [])
 
     def show_model(self, name, timeout=10, cancellable=None):
-        return self._request('/api/show', {'model': name, 'verbose': False}, 'POST', timeout, cancellable)
+        details = self._request('/api/show', {'model': name, 'verbose': False}, 'POST', timeout, cancellable)
+        length = context_length(details.get('model_info')) if isinstance(details, dict) else None
+        # Under the key the other providers use; the server's own answer wins if it ever has one.
+        return details if length is None else {'context_length': length, **details}
 
     def version(self, timeout=5, cancellable=None):
         return self._request('/api/version', timeout=timeout, cancellable=cancellable).get('version', 'Unknown')
@@ -93,28 +113,14 @@ class OllamaProvider(Provider):
 
     def embed(self, model, input, dimensions=None, keep_alive=None, timeout=300, cancellable=None):
         """Return validated native embeddings without allowing silent input truncation."""
-        texts = [input] if isinstance(input, str) else list(input)
-        if not texts or any(not isinstance(text, str) or not text.strip() for text in texts):
-            raise ProviderError(_('Enter nonempty text to embed.'))
+        texts = embedding_texts(input, dimensions)
         data = {'model': model, 'input': texts, 'truncate': False}
         if dimensions is not None:
-            if type(dimensions) is not int or dimensions <= 0:
-                raise ProviderError(_('Embedding dimensions must be a positive integer.'))
             data['dimensions'] = dimensions
         if keep_alive is not None:
             data['keep_alive'] = keep_alive
         result = self._request('/api/embed', data, 'POST', timeout, cancellable)
-        vectors = result.get('embeddings') if isinstance(result, dict) else None
-        if not isinstance(vectors, list) or len(vectors) != len(texts):
-            raise ProviderError(_('The server returned an incorrect number of embeddings.'))
-        size = dimensions
-        for vector in vectors:
-            if (not isinstance(vector, list) or not vector or
-                    any(type(n) not in (int, float) or not math.isfinite(n) for n in vector)):
-                raise ProviderError(_('The server returned an invalid embedding vector.'))
-            size = size or len(vector)
-            if len(vector) != size or not any(vector):
-                raise ProviderError(_('Embedding dimensions do not match, or a vector is zero.'))
+        check_vectors(result.get('embeddings') if isinstance(result, dict) else None, len(texts), dimensions)
         return result
 
     def delete(self, model, timeout=10, cancellable=None):
@@ -166,8 +172,12 @@ class OllamaProvider(Provider):
 class OllamaCloudProvider(OllamaProvider):
     """One fixed origin, bearer authentication, and no model management."""
     kind = 'ollama_cloud'
+    label = default_name = name_example = 'Ollama Cloud'
+    url_example = ''  # The address is fixed.
+    key_url = 'https://ollama.com/settings/keys'
     capabilities = Capabilities(thinking_levels=True, tools=True, logprobs=True, raw_generate=True,
-        options_notice=CLOUD_NOTICE)
+        sampling_extras=True, context_size=True, thinking_text=True, timing_stats=True,
+        model_verification=True, refuses_long_input=True, options_notice=CLOUD_NOTICE)
     fixed_url = CLOUD_URL
     requires_key = True
     endpoints = ('/api/tags', '/api/show', '/api/chat', '/api/generate')

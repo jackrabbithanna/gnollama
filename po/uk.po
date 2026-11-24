@@ -380,10 +380,6 @@ msgstr "Усі цілі мають підтримувати спільні зо�
 msgid "Every target must support the selected thinking option."
 msgstr "Усі цілі мають підтримувати вибрану опцію міркування."
 
-#: src/comparison.py:52
-msgid "Cloud targets do not support shared structured output or model retention."
-msgstr "Хмарні цілі не підтримують спільний структурований вивід або утримання моделі."
-
 #: src/comparison.py:55
 msgid "The selected thinking level is incompatible with a target."
 msgstr "Вибраний рівень міркування несумісний з однією з цілей."
@@ -625,10 +621,6 @@ msgstr "Не вдалося видалити"
 #: src/host_manager.ui:6 src/host_manager.ui:17
 msgid "Manage Hosts"
 msgstr "Керування серверами"
-
-#: src/host_manager.ui:35
-msgid "Ollama Servers"
-msgstr "Сервери Ollama"
 
 #: src/host_manager.ui:36
 msgid "Select a server to edit its name or address."
@@ -1184,10 +1176,6 @@ msgstr "Моделі в пам’яті"
 msgid "Ollama Cloud requires https://ollama.com."
 msgstr "Ollama Cloud потребує https://ollama.com."
 
-#: src/ollama.py:80
-msgid "Enter a valid http:// or https:// Ollama host URL."
-msgstr "Введіть коректну URL-адресу сервера Ollama з http:// або https://."
-
 #: src/ollama.py:89 src/ollama.py:104 src/ollama.py:137
 msgid "Request stopped"
 msgstr "Запит зупинено"
@@ -1207,14 +1195,6 @@ msgstr ""
 #: src/ollama.py:126
 msgid "Ollama Cloud usage or rate limit reached. Try again later."
 msgstr "Досягнуто ліміту використання або запитів Ollama Cloud. Спробуйте пізніше."
-
-#: src/ollama.py:163
-msgid "Invalid JSON received from Ollama"
-msgstr "Отримано некоректний JSON від Ollama"
-
-#: src/ollama.py:165
-msgid "Expected a JSON object from Ollama"
-msgstr "Очікувався об’єкт JSON від Ollama"
 
 #: src/ollama.py:222
 msgid "Enter nonempty text to embed."
@@ -1752,9 +1732,6 @@ msgstr "Ця модель не підтримує зображення."
 msgid "Earlier images remain saved; only text history will be sent."
 msgstr "Попередні зображення залишаються збереженими; буде надіслано лише текстову історію."
 
-#: src/widgets/chat_input.py:125
-msgid "Image support unknown."
-msgstr "Підтримка зображень невідома."
 
 #: src/widgets/chat_input.py:137
 msgid "Select a chat model"
@@ -3496,10 +3473,6 @@ msgstr "Моделі векторних подань не можуть брат�
 msgid "A participant does not support the selected thinking option."
 msgstr "Учасник не підтримує вибраний параметр міркування."
 
-#: src/model_conversation.py:67
-msgid "Cloud targets manage model retention automatically."
-msgstr "Хмарні цілі автоматично керують утриманням моделей у пам’яті."
-
 #: src/model_conversation.py:121
 msgid "Enter an opening prompt and choose 1–100 rounds."
 msgstr "Введіть початкове повідомлення та виберіть 1–100 раундів."
@@ -3641,3 +3614,279 @@ msgstr "Дозвольте двом моделям спілкуватися мі
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in
 msgid "Organize documents into knowledge collections"
 msgstr "Упорядковуйте документи в колекції знань"
+
+#: src/widgets/options_panel.py
+msgid "Not available on this server."
+msgstr "Недоступно на цьому сервері."
+
+#: src/chat_controller.py
+msgid "This server does not offer single responses. Open a chat to use it."
+msgstr "Цей сервер не надає окремих відповідей. Відкрийте чат, щоб користуватися ним."
+
+#: src/providers/base.py
+msgid "{host} does not support: {options}."
+msgstr "{host} не підтримує: {options}."
+
+#: src/providers/base.py
+msgid "Structured output"
+msgstr "Структурований вивід"
+
+#: src/host_manager.py
+msgid "Remove the saved key"
+msgstr "Вилучити збережений ключ"
+
+#: src/host_manager.py
+msgid "Optional. Stored securely in your desktop keyring."
+msgstr "Необов’язково. Надійно зберігається у зв’язці ключів вашої стільниці."
+
+#: src/host_manager.ui
+msgid "Servers"
+msgstr "Сервери"
+
+#: src/providers/openai.py
+msgid "OpenAI-Compatible Server"
+msgstr "Сервер, сумісний з OpenAI"
+
+#: src/providers/openai.py
+msgid "This server type does not report what its models support, so thinking, image, and tool support are not checked."
+msgstr "Цей тип сервера не повідомляє, що підтримують його моделі, тому підтримка мислення, зображень та інструментів не перевіряється."
+
+#: src/providers/openai.py
+msgid "This server does not accept: {0}."
+msgstr "Цей сервер не приймає: {0}."
+
+#: src/providers/openai.py
+msgid "This server accepts only the Low, Medium, and High thinking levels."
+msgstr "Цей сервер приймає лише рівні мислення Низький, Середній і Високий."
+
+#: src/providers/transport.py
+msgid "Invalid JSON received from the server"
+msgstr "Від сервера отримано некоректний JSON"
+
+#: src/providers/openai.py
+msgid "The server rejected the API key, or requires one. Edit this host to check its API key."
+msgstr "Сервер відхилив ключ API або вимагає ключ. Відредагуйте цей вузол, щоб перевірити ключ API."
+
+#: src/providers/openai.py
+msgid "The server reported a usage or rate limit. Try again later."
+msgstr "Сервер повідомив про обмеження використання або частоти запитів. Спробуйте пізніше."
+
+#: src/providers/openai.py
+msgid "The server did not return a model list."
+msgstr "Сервер не повернув список моделей."
+
+#: src/providers/openai.py
+msgid "Connected\nAvailable models: {0}"
+msgstr "З’єднано\nДоступні моделі: {0}"
+
+#: src/providers/transport.py
+msgid "Enter a valid http:// or https:// server URL."
+msgstr "Введіть коректну адресу сервера, що починається з http:// або https://."
+
+#: src/providers/transport.py
+msgid "Expected a JSON object from the server"
+msgstr "Від сервера очікувався об’єкт JSON"
+
+#: src/widgets/chat_input.py
+msgid "No models found on this server. Load one there, then refresh."
+msgstr "На цьому сервері не знайдено моделей. Завантажте модель на сервері, а потім оновіть."
+
+#: src/providers/openai.py
+msgid "For example: Local Server"
+msgstr "Наприклад: Локальний сервер"
+
+#: src/bubbles.py
+msgid "Total (measured locally): {0}"
+msgstr "Загалом (виміряно локально): {0}"
+
+#: src/bubbles.py
+msgid "Tokens/s (measured locally): {0}"
+msgstr "Токенів/с (виміряно локально): {0}"
+
+#: src/bubbles.py
+msgid "Timed by Gnollama, not reported by the server. The total includes network delay and model loading."
+msgstr "Виміряно Gnollama, а не повідомлено сервером. Загальний час включає мережеву затримку та завантаження моделі."
+
+#: src/providers/lmstudio.py
+msgid "LM Studio"
+msgstr "LM Studio"
+
+#: src/providers/openrouter.py
+msgid "OpenRouter"
+msgstr "OpenRouter"
+
+#: src/providers/openrouter.py
+msgid "OpenRouter requires {0}."
+msgstr "OpenRouter потребує {0}."
+
+#: src/providers/vercel.py
+msgid "Vercel AI Gateway"
+msgstr "Vercel AI Gateway"
+
+#: src/providers/vercel.py
+msgid "Vercel AI Gateway requires {0}."
+msgstr "Vercel AI Gateway потребує {0}."
+
+#: src/model_manager.py
+msgid "Context Length"
+msgstr "Довжина контексту"
+
+#: src/model_manager.py
+msgid "Max Context Length"
+msgstr "Максимальна довжина контексту"
+
+#: src/model_summary.py
+msgid "Free"
+msgstr "Безкоштовно"
+
+#: src/model_summary.py
+msgid "${0} / ${1} per 1M tokens"
+msgstr "${0} / ${1} за 1 млн токенів"
+
+#: src/model_summary.py
+msgid "No images"
+msgstr "Без зображень"
+
+#: src/model_summary.py
+msgid "Tools"
+msgstr "Інструменти"
+
+#: src/model_summary.py
+msgid "No tools"
+msgstr "Без інструментів"
+
+#: src/model_summary.py
+msgid "No thinking"
+msgstr "Без міркувань"
+
+#: src/model_summary.py
+msgid "Not trained for tools"
+msgstr "Не навчено для інструментів"
+
+#: src/model_summary.py
+msgid "{0}M"
+msgstr "{0} млн"
+
+#: src/model_summary.py
+msgid "{0}K"
+msgstr "{0}K"
+
+#: src/model_summary.py
+msgid "{0} context"
+msgstr "Контекст {0}"
+
+#: src/model_summary.py
+msgid "{0} context max"
+msgstr "Макс. контекст {0}"
+
+#: src/model_summary.py
+msgid "Prompt: ${0} per 1M tokens"
+msgstr "Ввід: ${0} за 1 млн токенів"
+
+#: src/model_summary.py
+msgid "Completion: ${0} per 1M tokens"
+msgstr "Вивід: ${0} за 1 млн токенів"
+
+#: src/model_summary.py
+msgid "Cache read: ${0} per 1M tokens"
+msgstr "Читання кешу: ${0} за 1 млн токенів"
+
+#: src/model_summary.py
+msgid "Cache write: ${0} per 1M tokens"
+msgstr "Запис кешу: ${0} за 1 млн токенів"
+
+#: src/model_summary.py
+msgid "Cache write, kept one hour: ${0} per 1M tokens"
+msgstr "Запис кешу, зберігання одну годину: ${0} за 1 млн токенів"
+
+#: src/model_summary.py
+msgid "Reasoning: ${0} per 1M tokens"
+msgstr "Міркування: ${0} за 1 млн токенів"
+
+#: src/model_summary.py
+msgid "Image input: ${0} per 1M tokens"
+msgstr "Ввід зображень: ${0} за 1 млн токенів"
+
+#: src/model_summary.py
+msgid "Audio input: ${0} per 1M tokens"
+msgstr "Ввід аудіо: ${0} за 1 млн токенів"
+
+#: src/model_summary.py
+msgid "Cached audio input: ${0} per 1M tokens"
+msgstr "Кешований ввід аудіо: ${0} за 1 млн токенів"
+
+#: src/model_summary.py
+msgid "Image output: ${0} per 1M tokens"
+msgstr "Вивід зображень: ${0} за 1 млн токенів"
+
+#: src/model_summary.py
+msgid "Audio output: ${0} per 1M tokens"
+msgstr "Вивід аудіо: ${0} за 1 млн токенів"
+
+#: src/model_summary.py
+msgid "Web search: ${0} per search"
+msgstr "Вебпошук: ${0} за пошук"
+
+#: src/model_summary.py
+msgid "Request: ${0} per request"
+msgstr "Запит: ${0} за запит"
+
+#: src/model_summary.py
+msgid "{0}: ${1}"
+msgstr "{0}: ${1}"
+
+#: src/model_summary.py
+msgid "Prices are as listed when this was read; they can change."
+msgstr "Ціни вказано на момент зчитування; вони можуть змінитися."
+
+#: src/widgets/chat_input.py
+msgid "Prompt and completion prices in US dollars per million tokens, as listed when the model list was read."
+msgstr "Ціни вводу та виводу в доларах США за мільйон токенів, як було вказано під час зчитування списку моделей."
+
+#: src/model_manager.py
+msgid "Pricing"
+msgstr "Ціни"
+
+#: src/model_manager.py
+msgid "Supported Parameters"
+msgstr "Підтримувані параметри"
+
+#: src/model_manager.py
+msgid "Max Completion Tokens"
+msgstr "Максимум токенів виводу"
+
+#: src/model_manager.py
+msgid "Reasoning"
+msgstr "Міркування"
+
+#: src/widgets/options_panel.py
+msgid "Not available for this model."
+msgstr "Недоступно для цієї моделі."
+
+#: src/widgets/comparison_view.py
+msgid "Not available for every target."
+msgstr "Недоступно для всіх цілей."
+
+#: src/providers/base.py
+msgid "The server returned {0} dimensions where {1} were requested. It may not support choosing dimensions for this model."
+msgstr "Сервер повернув {0} вимірів, хоча запитано {1}. Можливо, він не підтримує вибір кількості вимірів для цієї моделі."
+
+#: src/knowledge.py
+msgid "A chunk is estimated at {0} tokens. The embedding model accepts {1}, and this server shortens longer text without notice. The estimate is rough, so nothing above {2} is sent. Use a smaller chunk size."
+msgstr "Фрагмент оцінено в {0} токенів. Модель ембедингів приймає {1}, а цей сервер скорочує довший текст без попередження. Оцінка приблизна, тому нічого понад {2} не надсилається. Використайте менший розмір фрагмента."
+
+#: src/knowledge.py
+msgid "The search query is estimated at {0} tokens. The embedding model accepts {1}, and this server shortens longer text without notice. The estimate is rough, so nothing above {2} is sent. Shorten the query."
+msgstr "Пошуковий запит оцінено в {0} токенів. Модель ембедингів приймає {1}, а цей сервер скорочує довший текст без попередження. Оцінка приблизна, тому нічого понад {2} не надсилається. Скоротіть запит."
+
+#: src/widgets/knowledge_common.py
+msgid "This model cannot be fully verified: it is recognized by what the server reports about it, not by its contents, so a replacement that reports the same would go unnoticed."
+msgstr "Цю модель неможливо повністю перевірити: її розпізнають за тим, що про неї повідомляє сервер, а не за вмістом, тож заміну, яка повідомляє те саме, не буде помічено."
+
+#: src/widgets/knowledge_common.py
+msgid "No embedding models are available. Try refreshing later."
+msgstr "Немає доступних моделей ембедингів. Спробуйте оновити пізніше."
+
+#: src/widgets/knowledge_common.py
+msgid "No embedding models found on this server. Load one there, then refresh."
+msgstr "На цьому сервері не знайдено моделей ембедингів. Завантажте там одну, а потім оновіть."

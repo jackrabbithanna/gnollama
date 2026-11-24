@@ -6,11 +6,12 @@ import threading
 import unittest
 from contextlib import ExitStack
 from unittest.mock import patch
-from gi.repository import Gdk
+from gi.repository import Gdk, Gio
 from src.providers import ProviderError, RequestCancelled
-from provider_fixture import provider_patch
+from provider_fixture import LIMITED, limited_host, provider_patch
+from src.providers.registry import PROVIDERS
 from src.app_context import AppContext
-from src.model_conversation import ModelConversationController
+from src.model_conversation import ModelConversationController, validate_participants
 from src.export import export_json, export_markdown
 from src.records import RequestSettings
 from test_ui import pump_until
@@ -56,6 +57,22 @@ class ConversationTests(unittest.TestCase):
             self.controller.start('  opening\n```text\ncode\n```', rounds, typed(self.participants))
             pump_until(lambda: not self.controller.busy)
         return calls
+
+    def test_a_participant_cannot_carry_what_its_host_lacks(self):
+        with patch.dict(PROVIDERS, LIMITED):
+            limited = limited_host(self.storage)
+            self.participants[1]['host_id'] = limited['id']
+            def validate(**changes):
+                people = [dict(self.participants[0]), dict(self.participants[1], **changes)]
+                return validate_participants(self.context, typed(people), Gio.Cancellable())
+            for changes, name in ((dict(options={'min_p': 0.1}), 'Min P'), (dict(options={'num_ctx': 2048}), 'Context size'),
+                                  (dict(logprobs=True), 'Return token probabilities')):
+                with self.subTest(changes=changes), self.assertRaisesRegex(ValueError, 'Limited does not support: ' + name):
+                    validate(**changes)
+            # The first participant's host takes these, and each is checked against its own.
+            self.participants[0].update(options={'top_k': 5, 'num_ctx': 2048}, logprobs=True)
+            resolved, connections = validate()
+            self.assertEqual([c.kind for c in connections], ['ollama', 'limited'])
 
     def test_exact_histories_and_round_count(self):
         calls = self.run_to_end()
@@ -296,12 +313,14 @@ class ConversationTests(unittest.TestCase):
         with self.storage.db._get_conn() as conn:
             conn.execute('DROP TABLE model_conversation_attempts')
             conn.execute('DROP TABLE model_conversation_runs')
+            from legacy_schema import remove_host_kind
+            remove_host_kind(conn)
             conn.execute('PRAGMA user_version=11')
             conn.commit()
         upgraded = DatabaseManager(self.storage.db_path)
         self.assertEqual(upgraded.chats.get_messages(chat['id'])[0]['content'], 'retained')
         with upgraded._get_conn() as conn:
-            self.assertEqual(conn.execute('PRAGMA user_version').fetchone()[0], 12)
+            self.assertEqual(conn.execute('PRAGMA user_version').fetchone()[0], 13)
 
 
 @unittest.skipUnless(Gdk.Display.get_default(), 'GTK tests require a display')
@@ -343,6 +362,23 @@ class ConversationUITests(unittest.TestCase):
             self.assertEqual(len(reopened.targets), 0)
             self.assertEqual(len(reopened.bubbles), 2)
             self.assertEqual(api.call_count, 2)
+            host = self.storage.get_all_hosts()[0]
+            model = tab.controller.participants[0].target.model
+            titles = ['Round 1 · Model {0} · Attempt 1 · {1} ({2})'.format(name, host['name'], model) for name in 'AB']
+            for view in (tab, reopened):
+                self.assertEqual([b.header.get_text() for b in view.bubbles.values()], titles)
+            self.assertEqual(snapshot['messages'][-1]['api_details']['host_name'], host['name'])
+            # A run saved before the name was recorded finds its host by id, under its present name.
+            self.storage.update_host(host['id'], 'Renamed', host['hostname'], True)
+            older = copy.deepcopy(snapshot)
+            for record in older['messages'] + older['options']['participants']:
+                (record.get('api_details') or record).pop('host_name', None)
+            older['messages'][-1]['api_details'].update(host_id=None, host='http://gone.example:1234')
+            reopened = ModelConversationTab(self.context, saved=older)
+            self.tabs.append(reopened)
+            self.assertEqual([b.header.get_text() for b in reopened.bubbles.values()],
+                             ['Round 1 · Model A · Attempt 1 · Renamed ({0})'.format(model),
+                              'Round 1 · Model B · Attempt 1 · ' + model])
             self.assertTrue(reopened.summary.get_visible())
         tab.run_again()
         clone = window.tab_view.get_selected_page().get_child()

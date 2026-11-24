@@ -1,13 +1,13 @@
 from gettext import gettext as _
 from typing import Any, List, Dict, Optional, Callable
 from gi.repository import Adw, Gtk, GLib, GObject
-from .providers import CLOUD_URL, ProviderError, validate_url
+from .providers import PROVIDERS, ProviderError, validate_url
 from .session import ViewRequests
 from .credentials import CredentialError
 
 @Gtk.Template(resource_path='/io/github/jackrabbithanna/Gnollama/host_edit_dialog.ui')
 class HostEditDialog(Adw.Dialog):
-    """Dialog for adding or editing an Ollama host."""
+    """Dialog for adding or editing a host of any provider type."""
     __gtype_name__ = 'HostEditDialog'
     __gsignals__ = {'response': (GObject.SignalFlags.RUN_FIRST, None, (str,))}
 
@@ -26,16 +26,21 @@ class HostEditDialog(Adw.Dialog):
         self.has_key = bool(has_session or (host and host.get('credential_id')))
         self.busy = False
         self.session_only = False
-        self._server_url = host['hostname'] if host and host.get('provider') != 'ollama_cloud' else ''
-        self.provider_dropdown.set_model(Gtk.StringList.new([_('Ollama Server'), _('Ollama Cloud')]))
+        self._server_url = self._suggested_url = ''
+        self.kinds = dict(PROVIDERS)
+        self._saved_kind = (host.get('provider') or 'ollama') if host else None
+        self.provider_dropdown.set_model(Gtk.StringList.new([_(kind.label) for kind in self.kinds.values()]))
         self.key_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
         self.api_key_entry = Gtk.PasswordEntry(show_peek_icon=True, hexpand=True)
         self.api_key_entry.set_direction(Gtk.TextDirection.LTR)
         self.key_box.append(Gtk.Label(label=_('API key'), xalign=0, mnemonic_widget=self.api_key_entry))
         self.key_box.append(self.api_key_entry)
-        self.key_box.append(Gtk.Label(label=_('Leave blank to keep the existing key.') if self.has_key else
-                                     _('Stored securely in your desktop keyring.'), xalign=0, wrap=True))
-        self.key_box.append(Gtk.LinkButton(uri='https://ollama.com/settings/keys', label=_('Create an API key')))
+        self.key_hint = Gtk.Label(xalign=0, wrap=True)
+        self.key_box.append(self.key_hint)
+        self.remove_key_check = Gtk.CheckButton(label=_('Remove the saved key'))
+        self.key_box.append(self.remove_key_check)
+        self.key_link = Gtk.LinkButton(label=_('Create an API key'))
+        self.key_box.append(self.key_link)
         self.fields_box.insert_child_after(self.key_box, self.hostname_entry)
         self.hostname_entry.set_direction(Gtk.TextDirection.LTR)
         self.validation_error = Gtk.Label(xalign=0, wrap=True, visible=False)
@@ -47,35 +52,84 @@ class HostEditDialog(Adw.Dialog):
         self.cancel_button.connect('clicked', lambda *_: self.close())
         self.session_button.connect('clicked', self._use_session)
         self.name_entry.connect('changed', self.validate_fields)
-        self.hostname_entry.connect('changed', self.validate_fields)
+        self.hostname_entry.connect('changed', self._address_changed)
         self.api_key_entry.connect('changed', self.validate_fields)
+        self.remove_key_check.connect('toggled', self._remove_key_toggled)
         self.provider_dropdown.connect('notify::selected', self._provider_changed)
         if host:
             self.name_entry.set_text(host['name'])
             self.hostname_entry.set_text(host['hostname'])
             self.default_check.set_active(host.get("default", False))
-            self.provider_dropdown.set_selected(1 if host.get('provider') == 'ollama_cloud' else 0)
+            if self._saved_kind in self.kinds:
+                self.provider_dropdown.set_selected(list(self.kinds).index(self._saved_kind))
         self._provider_changed()
         self.validate_fields()
 
     @property
     def provider(self):
-        return 'ollama_cloud' if self.provider_dropdown.get_selected() == 1 else 'ollama'
+        return list(self.kinds)[self.provider_dropdown.get_selected()]
+
+    @property
+    def kind(self):
+        return self.kinds[self.provider]
+
+    @property
+    def takes_key(self):
+        return self.kind.requires_key or self.kind.key_optional
+
+    @property
+    def keeps_key(self):
+        # As ChatStorage.save_host decides it, for what the fields hold now.
+        return bool(self.has_key and self.host and
+                    self.kind.keeps_key(self.host, self.hostname_entry.get_text().strip()))
+
+    @property
+    def clear_key(self):
+        return self.remove_key_check.get_visible() and self.remove_key_check.get_active()
+
+    @property
+    def api_key(self):
+        return self.api_key_entry.get_text() if self.takes_key and not self.clear_key else ''
 
     def _provider_changed(self, *args):
-        cloud = self.provider == 'ollama_cloud'
-        if cloud:
-            if self.hostname_entry.get_text() != CLOUD_URL:
-                self._server_url = self.hostname_entry.get_text()
-            self.hostname_entry.set_text(CLOUD_URL)
-            if not self.name_entry.get_text().strip():
-                self.name_entry.set_text(_('Ollama Cloud'))
-        elif self.hostname_entry.get_text() == CLOUD_URL:
-            self.hostname_entry.set_text(self._server_url)
-        self.hostname_entry.set_editable(not cloud)
-        self.key_box.set_visible(cloud)
+        kind = self.kind
+        url = self.hostname_entry.get_text()
+        if url not in [k.fixed_url for k in self.kinds.values() if k.fixed_url]:
+            self._server_url = url
+        if not kind.fixed_url and (not self._server_url.strip() or self._server_url == self._suggested_url):
+            self._server_url = self._suggested_url = kind.default_url
+        self.hostname_entry.set_text(kind.fixed_url or self._server_url)
+        if kind.default_name and not self.name_entry.get_text().strip():
+            self.name_entry.set_text(_(kind.default_name))
+        self.hostname_entry.set_editable(not kind.fixed_url)
+        self.name_entry.set_placeholder_text(_(kind.name_example) if kind.name_example else None)
+        self.hostname_entry.set_placeholder_text(kind.url_example or None)
+        self.key_box.set_visible(self.takes_key)
+        self.remove_key_check.set_active(False)
+        self._show_key_state()
+        self.key_link.set_uri(kind.key_url)
+        self.key_link.set_visible(bool(kind.key_url))
         self.session_button.set_visible(False)
         self.session_only = False
+        self.validate_fields()
+
+    def _show_key_state(self):
+        kind, keeps = self.kind, self.keeps_key
+        self.key_hint.set_text(_('Leave blank to keep the existing key.') if keeps else
+                               _('Stored securely in your desktop keyring.') if kind.requires_key else
+                               _('Optional. Stored securely in your desktop keyring.'))
+        if not (kind.key_optional and keeps):
+            # A hidden check box must not leave the key field disabled.
+            self.remove_key_check.set_active(False)
+        self.remove_key_check.set_visible(kind.key_optional and keeps)
+
+    def _address_changed(self, *args):
+        # Whether the key is kept depends on the address as well as the type.
+        self._show_key_state()
+        self.validate_fields(*args)
+
+    def _remove_key_toggled(self, *args):
+        self.api_key_entry.set_sensitive(not self.remove_key_check.get_active())
         self.validate_fields()
 
     def _use_session(self, *args):
@@ -101,9 +155,9 @@ class HostEditDialog(Adw.Dialog):
                 validate_url(self.hostname_entry.get_text().strip())
             except (ValueError, ProviderError) as exc:
                 error = str(exc)
-        if not error and self.provider == 'ollama_cloud':
-            key = self.api_key_entry.get_text()
-            if key or not self.has_key:
+        if not error:
+            key = self.api_key
+            if key or self.kind.requires_key and not self.keeps_key:
                 try:
                     from .credentials import CredentialStore
                     CredentialStore.validate(key)
@@ -115,7 +169,7 @@ class HostEditDialog(Adw.Dialog):
 
 @Gtk.Template(resource_path='/io/github/jackrabbithanna/Gnollama/host_manager.ui')
 class HostManagerDialog(Adw.Dialog):
-    """Dialog for managing Ollama host configurations."""
+    """Dialog for managing host configurations."""
     __gtype_name__ = 'HostManagerDialog'
 
     hosts_group: Adw.PreferencesGroup = Gtk.Template.Child()
@@ -217,7 +271,8 @@ class HostManagerDialog(Adw.Dialog):
                           hostname=dialog.hostname_entry.get_text().strip(),
                           is_default=dialog.default_check.get_active(),
                           host_id=host['id'] if host else None, provider=dialog.provider,
-                          api_key=dialog.api_key_entry.get_text(), session_only=dialog.session_only)
+                          api_key=dialog.api_key, session_only=dialog.session_only,
+                          clear_key=dialog.clear_key)
             dialog.set_busy(True)
 
             def completed(error):
@@ -226,7 +281,7 @@ class HostManagerDialog(Adw.Dialog):
                     dialog.validation_error.set_text(str(error))
                     dialog.validation_error.set_visible(True)
                     dialog.session_button.set_visible(isinstance(error, CredentialError) and
-                        dialog.provider == 'ollama_cloud' and bool(dialog.api_key_entry.get_text()))
+                        bool(dialog.api_key))
                     dialog.session_only = False
                 else:
                     dialog.api_key_entry.set_text('')

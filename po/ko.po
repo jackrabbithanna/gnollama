@@ -338,10 +338,6 @@ msgstr "모든 대상이 공유 이미지를 지원해야 합니다."
 msgid "Every target must support the selected thinking option."
 msgstr "모든 대상이 선택한 사고 옵션을 지원해야 합니다."
 
-#: src/comparison.py:52
-msgid "Cloud targets do not support shared structured output or model retention."
-msgstr "클라우드 대상은 공유 구조화 출력이나 모델 유지를 지원하지 않습니다."
-
 #: src/comparison.py:55
 msgid "The selected thinking level is incompatible with a target."
 msgstr "선택한 사고 수준이 일부 대상과 호환되지 않습니다."
@@ -575,10 +571,6 @@ msgstr "삭제 실패"
 #: src/host_manager.ui:6 src/host_manager.ui:17
 msgid "Manage Hosts"
 msgstr "호스트 관리"
-
-#: src/host_manager.ui:35
-msgid "Ollama Servers"
-msgstr "Ollama 서버"
 
 #: src/host_manager.ui:36
 msgid "Select a server to edit its name or address."
@@ -1108,10 +1100,6 @@ msgstr "메모리에 있는 모델"
 msgid "Ollama Cloud requires https://ollama.com."
 msgstr "Ollama Cloud에는 https://ollama.com이 필요합니다."
 
-#: src/ollama.py:80
-msgid "Enter a valid http:// or https:// Ollama host URL."
-msgstr "http:// 또는 https://로 시작하는 올바른 Ollama 호스트 URL을 입력하세요."
-
 #: src/ollama.py:89 src/ollama.py:104 src/ollama.py:137
 msgid "Request stopped"
 msgstr "요청이 중지됨"
@@ -1129,14 +1117,6 @@ msgstr "Ollama Cloud가 API 키 또는 계정 접근을 거부했습니다. 이 
 #: src/ollama.py:126
 msgid "Ollama Cloud usage or rate limit reached. Try again later."
 msgstr "Ollama Cloud 사용량 또는 요청 빈도 한도에 도달했습니다. 나중에 다시 시도하세요."
-
-#: src/ollama.py:163
-msgid "Invalid JSON received from Ollama"
-msgstr "Ollama에서 올바르지 않은 JSON을 받았습니다"
-
-#: src/ollama.py:165
-msgid "Expected a JSON object from Ollama"
-msgstr "Ollama에서 JSON 객체가 반환되어야 합니다"
 
 #: src/ollama.py:222
 msgid "Enter nonempty text to embed."
@@ -1656,9 +1636,6 @@ msgstr "이 모델은 이미지를 지원하지 않습니다."
 msgid "Earlier images remain saved; only text history will be sent."
 msgstr "이전 이미지는 저장된 상태로 유지되며 텍스트 기록만 전송됩니다."
 
-#: src/widgets/chat_input.py:125
-msgid "Image support unknown."
-msgstr "이미지 지원 여부를 알 수 없습니다."
 
 #: src/widgets/chat_input.py:137
 msgid "Select a chat model"
@@ -3337,10 +3314,6 @@ msgstr "임베딩 모델은 대화에 참여할 수 없습니다."
 msgid "A participant does not support the selected thinking option."
 msgstr "참가자가 선택한 사고 옵션을 지원하지 않습니다."
 
-#: src/model_conversation.py:67
-msgid "Cloud targets manage model retention automatically."
-msgstr "클라우드 대상은 모델 보관을 자동으로 관리합니다."
-
 #: src/model_conversation.py:121
 msgid "Enter an opening prompt and choose 1–100 rounds."
 msgstr "시작 메시지를 입력하고 1–100라운드를 선택하세요."
@@ -3482,3 +3455,279 @@ msgstr "두 모델이 서로 대화하게 하기"
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in
 msgid "Organize documents into knowledge collections"
 msgstr "문서를 지식 컬렉션으로 정리"
+
+#: src/widgets/options_panel.py
+msgid "Not available on this server."
+msgstr "이 서버에서는 사용할 수 없습니다."
+
+#: src/chat_controller.py
+msgid "This server does not offer single responses. Open a chat to use it."
+msgstr "이 서버는 단일 응답을 제공하지 않습니다. 사용하려면 채팅을 여세요."
+
+#: src/providers/base.py
+msgid "{host} does not support: {options}."
+msgstr "{host}에서 지원하지 않는 항목: {options}."
+
+#: src/providers/base.py
+msgid "Structured output"
+msgstr "구조화된 출력"
+
+#: src/host_manager.py
+msgid "Remove the saved key"
+msgstr "저장된 키 제거"
+
+#: src/host_manager.py
+msgid "Optional. Stored securely in your desktop keyring."
+msgstr "선택 사항입니다. 데스크톱 키링에 안전하게 저장됩니다."
+
+#: src/host_manager.ui
+msgid "Servers"
+msgstr "서버"
+
+#: src/providers/openai.py
+msgid "OpenAI-Compatible Server"
+msgstr "OpenAI 호환 서버"
+
+#: src/providers/openai.py
+msgid "This server type does not report what its models support, so thinking, image, and tool support are not checked."
+msgstr "이 유형의 서버는 모델이 지원하는 기능을 알려 주지 않으므로 사고, 이미지, 도구 지원 여부를 확인하지 않습니다."
+
+#: src/providers/openai.py
+msgid "This server does not accept: {0}."
+msgstr "이 서버에서 허용하지 않는 항목: {0}."
+
+#: src/providers/openai.py
+msgid "This server accepts only the Low, Medium, and High thinking levels."
+msgstr "이 서버는 낮음, 중간, 높음 사고 수준만 허용합니다."
+
+#: src/providers/transport.py
+msgid "Invalid JSON received from the server"
+msgstr "서버에서 잘못된 JSON을 받았습니다"
+
+#: src/providers/openai.py
+msgid "The server rejected the API key, or requires one. Edit this host to check its API key."
+msgstr "서버가 API 키를 거부했거나 키가 필요합니다. 이 호스트를 편집하여 API 키를 확인하세요."
+
+#: src/providers/openai.py
+msgid "The server reported a usage or rate limit. Try again later."
+msgstr "서버가 사용량 또는 속도 제한을 알렸습니다. 나중에 다시 시도하세요."
+
+#: src/providers/openai.py
+msgid "The server did not return a model list."
+msgstr "서버가 모델 목록을 반환하지 않았습니다."
+
+#: src/providers/openai.py
+msgid "Connected\nAvailable models: {0}"
+msgstr "연결됨\n사용 가능한 모델: {0}"
+
+#: src/providers/transport.py
+msgid "Enter a valid http:// or https:// server URL."
+msgstr "http:// 또는 https://로 시작하는 올바른 서버 URL을 입력하세요."
+
+#: src/providers/transport.py
+msgid "Expected a JSON object from the server"
+msgstr "서버에서 JSON 객체가 와야 합니다"
+
+#: src/widgets/chat_input.py
+msgid "No models found on this server. Load one there, then refresh."
+msgstr "이 서버에서 모델을 찾을 수 없습니다. 서버에서 모델을 불러온 다음 새로 고치세요."
+
+#: src/providers/openai.py
+msgid "For example: Local Server"
+msgstr "예: 로컬 서버"
+
+#: src/bubbles.py
+msgid "Total (measured locally): {0}"
+msgstr "전체 (로컬 측정): {0}"
+
+#: src/bubbles.py
+msgid "Tokens/s (measured locally): {0}"
+msgstr "토큰/초 (로컬 측정): {0}"
+
+#: src/bubbles.py
+msgid "Timed by Gnollama, not reported by the server. The total includes network delay and model loading."
+msgstr "서버가 보고한 값이 아니라 Gnollama가 측정한 값입니다. 전체 시간에는 네트워크 지연과 모델 불러오기 시간이 포함됩니다."
+
+#: src/providers/lmstudio.py
+msgid "LM Studio"
+msgstr "LM Studio"
+
+#: src/providers/openrouter.py
+msgid "OpenRouter"
+msgstr "OpenRouter"
+
+#: src/providers/openrouter.py
+msgid "OpenRouter requires {0}."
+msgstr "OpenRouter에는 {0}이(가) 필요합니다."
+
+#: src/providers/vercel.py
+msgid "Vercel AI Gateway"
+msgstr "Vercel AI Gateway"
+
+#: src/providers/vercel.py
+msgid "Vercel AI Gateway requires {0}."
+msgstr "Vercel AI Gateway에는 {0}이(가) 필요합니다."
+
+#: src/model_manager.py
+msgid "Context Length"
+msgstr "컨텍스트 길이"
+
+#: src/model_manager.py
+msgid "Max Context Length"
+msgstr "최대 컨텍스트 길이"
+
+#: src/model_summary.py
+msgid "Free"
+msgstr "무료"
+
+#: src/model_summary.py
+msgid "${0} / ${1} per 1M tokens"
+msgstr "100만 토큰당 ${0} / ${1}"
+
+#: src/model_summary.py
+msgid "No images"
+msgstr "이미지 미지원"
+
+#: src/model_summary.py
+msgid "Tools"
+msgstr "도구"
+
+#: src/model_summary.py
+msgid "No tools"
+msgstr "도구 미지원"
+
+#: src/model_summary.py
+msgid "No thinking"
+msgstr "사고 없음"
+
+#: src/model_summary.py
+msgid "Not trained for tools"
+msgstr "도구용으로 학습되지 않음"
+
+#: src/model_summary.py
+msgid "{0}M"
+msgstr "{0}M"
+
+#: src/model_summary.py
+msgid "{0}K"
+msgstr "{0}K"
+
+#: src/model_summary.py
+msgid "{0} context"
+msgstr "컨텍스트 {0}"
+
+#: src/model_summary.py
+msgid "{0} context max"
+msgstr "최대 컨텍스트 {0}"
+
+#: src/model_summary.py
+msgid "Prompt: ${0} per 1M tokens"
+msgstr "입력: 100만 토큰당 ${0}"
+
+#: src/model_summary.py
+msgid "Completion: ${0} per 1M tokens"
+msgstr "출력: 100만 토큰당 ${0}"
+
+#: src/model_summary.py
+msgid "Cache read: ${0} per 1M tokens"
+msgstr "캐시 읽기: 100만 토큰당 ${0}"
+
+#: src/model_summary.py
+msgid "Cache write: ${0} per 1M tokens"
+msgstr "캐시 쓰기: 100만 토큰당 ${0}"
+
+#: src/model_summary.py
+msgid "Cache write, kept one hour: ${0} per 1M tokens"
+msgstr "캐시 쓰기(1시간 보관): 100만 토큰당 ${0}"
+
+#: src/model_summary.py
+msgid "Reasoning: ${0} per 1M tokens"
+msgstr "사고: 100만 토큰당 ${0}"
+
+#: src/model_summary.py
+msgid "Image input: ${0} per 1M tokens"
+msgstr "이미지 입력: 100만 토큰당 ${0}"
+
+#: src/model_summary.py
+msgid "Audio input: ${0} per 1M tokens"
+msgstr "오디오 입력: 100만 토큰당 ${0}"
+
+#: src/model_summary.py
+msgid "Cached audio input: ${0} per 1M tokens"
+msgstr "캐시된 오디오 입력: 100만 토큰당 ${0}"
+
+#: src/model_summary.py
+msgid "Image output: ${0} per 1M tokens"
+msgstr "이미지 출력: 100만 토큰당 ${0}"
+
+#: src/model_summary.py
+msgid "Audio output: ${0} per 1M tokens"
+msgstr "오디오 출력: 100만 토큰당 ${0}"
+
+#: src/model_summary.py
+msgid "Web search: ${0} per search"
+msgstr "웹 검색: 검색당 ${0}"
+
+#: src/model_summary.py
+msgid "Request: ${0} per request"
+msgstr "요청: 요청당 ${0}"
+
+#: src/model_summary.py
+msgid "{0}: ${1}"
+msgstr "{0}: ${1}"
+
+#: src/model_summary.py
+msgid "Prices are as listed when this was read; they can change."
+msgstr "가격은 읽은 시점에 게시된 값이며 변경될 수 있습니다."
+
+#: src/widgets/chat_input.py
+msgid "Prompt and completion prices in US dollars per million tokens, as listed when the model list was read."
+msgstr "입력 및 출력 가격(100만 토큰당 미국 달러)이며, 모델 목록을 읽은 시점에 게시된 값입니다."
+
+#: src/model_manager.py
+msgid "Pricing"
+msgstr "가격"
+
+#: src/model_manager.py
+msgid "Supported Parameters"
+msgstr "지원되는 매개변수"
+
+#: src/model_manager.py
+msgid "Max Completion Tokens"
+msgstr "최대 출력 토큰"
+
+#: src/model_manager.py
+msgid "Reasoning"
+msgstr "사고"
+
+#: src/widgets/options_panel.py
+msgid "Not available for this model."
+msgstr "이 모델에서는 사용할 수 없습니다."
+
+#: src/widgets/comparison_view.py
+msgid "Not available for every target."
+msgstr "일부 대상에서는 사용할 수 없습니다."
+
+#: src/providers/base.py
+msgid "The server returned {0} dimensions where {1} were requested. It may not support choosing dimensions for this model."
+msgstr "{1}차원을 요청했지만 서버가 {0}차원을 반환했습니다. 이 모델에서는 차원 선택을 지원하지 않을 수 있습니다."
+
+#: src/knowledge.py
+msgid "A chunk is estimated at {0} tokens. The embedding model accepts {1}, and this server shortens longer text without notice. The estimate is rough, so nothing above {2} is sent. Use a smaller chunk size."
+msgstr "청크가 약 {0} 토큰으로 추정됩니다. 임베딩 모델은 {1} 토큰을 받으며, 이 서버는 더 긴 텍스트를 알림 없이 줄입니다. 추정치는 대략적이므로 {2}을(를) 넘는 것은 보내지 않습니다. 청크 크기를 줄이세요."
+
+#: src/knowledge.py
+msgid "The search query is estimated at {0} tokens. The embedding model accepts {1}, and this server shortens longer text without notice. The estimate is rough, so nothing above {2} is sent. Shorten the query."
+msgstr "검색어가 약 {0} 토큰으로 추정됩니다. 임베딩 모델은 {1} 토큰을 받으며, 이 서버는 더 긴 텍스트를 알림 없이 줄입니다. 추정치는 대략적이므로 {2}을(를) 넘는 것은 보내지 않습니다. 검색어를 줄이세요."
+
+#: src/widgets/knowledge_common.py
+msgid "This model cannot be fully verified: it is recognized by what the server reports about it, not by its contents, so a replacement that reports the same would go unnoticed."
+msgstr "이 모델은 완전히 검증할 수 없습니다. 내용이 아니라 서버가 보고하는 정보로 식별하므로, 같은 정보를 보고하는 다른 모델로 바뀌어도 알 수 없습니다."
+
+#: src/widgets/knowledge_common.py
+msgid "No embedding models are available. Try refreshing later."
+msgstr "사용할 수 있는 임베딩 모델이 없습니다. 나중에 새로 고쳐 보세요."
+
+#: src/widgets/knowledge_common.py
+msgid "No embedding models found on this server. Load one there, then refresh."
+msgstr "이 서버에서 임베딩 모델을 찾을 수 없습니다. 서버에서 모델을 불러온 뒤 새로 고치세요."

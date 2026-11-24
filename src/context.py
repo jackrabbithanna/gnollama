@@ -4,12 +4,17 @@ import json
 import math
 
 
+def estimate_tokens(text):
+    """UTF-8 bytes ÷ 4: close for English prose, low for dense text and many other languages."""
+    return math.ceil(len(text.encode('utf-8')) / 4)
+
+
 def estimate_context(messages, wire, retrieval=None):
     """`wire` is a WireOptions; a draft estimate passes unparsed tools and schema text."""
     def tokens(value):
         if not isinstance(value, str):
             value = json.dumps(value, ensure_ascii=False) if value else ''
-        return math.ceil(len(value.encode('utf-8')) / 4)
+        return estimate_tokens(value)
     parts = dict(history=0, prompt=0, system=tokens(wire.system or ''),
                  tools_schema=tokens(wire.tools) + tokens(wire.format),
                  retrieval=sum(tokens(h.get('text', '')) for h in (retrieval or {}).get('hits', [])))

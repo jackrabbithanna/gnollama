@@ -57,7 +57,7 @@ class CredentialStore:
         key = self.validate(key)
         try:
             saved = Secret.password_store_sync(self.schema, {'credential': reference},
-                                               Secret.COLLECTION_DEFAULT, 'Gnollama — Ollama Cloud',
+                                               Secret.COLLECTION_DEFAULT, 'Gnollama API key',
                                                key, cancellable)
             if saved:
                 return

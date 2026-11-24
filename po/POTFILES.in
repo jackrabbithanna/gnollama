@@ -21,8 +21,13 @@ src/markdown_view.py
 src/model_details_view.ui
 src/model_manager.py
 src/model_manager.ui
+src/providers/base.py
 src/providers/registry.py
 src/providers/ollama.py
+src/providers/openai.py
+src/providers/lmstudio.py
+src/providers/openrouter.py
+src/providers/vercel.py
 src/providers/transport.py
 src/pull_model_dialog.ui
 src/request_runner.py
@@ -59,3 +64,4 @@ src/model_conversation.py
 src/widgets/model_target.py
 src/widgets/model_conversation_view.py
 src/widgets/history_sidebar.py
+src/model_summary.py

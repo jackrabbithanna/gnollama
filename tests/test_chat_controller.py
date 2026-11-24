@@ -8,7 +8,8 @@ from unittest.mock import patch
 
 from gi.repository import GLib
 
-from provider_fixture import provider_patch
+from provider_fixture import LIMITED, limited_host, provider_patch
+from src.providers.registry import PROVIDERS
 from src.app_context import AppContext
 from src.records import WireOptions
 from src.chat_controller import ChatController, ComposerInput
@@ -99,6 +100,32 @@ class ChatControllerTests(unittest.TestCase):
         pump_until(lambda: controller.request is None and not controller.tool_busy
                    and self.storage.writer.idle and self.context.idle)
 
+    def test_a_request_cannot_carry_what_the_host_lacks(self):
+        with patch.dict(PROVIDERS, LIMITED), provider_patch('chat', side_effect=answer()) as chat, \
+                provider_patch('generate') as generate:
+            host = limited_host(self.storage)
+            single, single_view = self.controller('generate')
+            with self.assertRaisesRegex(ValueError, 'single responses'):
+                single.send(self.input(host=host))
+            controller, view = self.controller()
+            cases = [(dict(options={'top_k': 5, 'min_p': 0.1}), 'Top K, Min P'),
+                     (dict(options={'num_ctx': 4096}), 'Context size'),
+                     (dict(logprobs=True), 'Return token probabilities'),
+                     (dict(request=dict(format='json')), 'Structured output'),
+                     (dict(request=dict(keep_alive=60)), 'Model Retention')]
+            for case, name in cases:
+                with self.subTest(case=case), self.assertRaisesRegex(ValueError, 'Limited does not support: ' + name):
+                    controller.send(self.input(host=host, **case))
+            self.assertIsNone(controller.request)
+            self.assertEqual(view.events + single_view.events, [])
+            # What the host does take still goes through.
+            tools = [{'type': 'function', 'function': {'name': 'lookup', 'parameters': {'type': 'object'}}}]
+            self.assertTrue(controller.send(self.input(host=host, options={'temperature': 0.2, 'top_p': 0.9},
+                                                       request=dict(tools=tools))))
+            self.settle(controller)
+        self.assertEqual(chat.call_args.kwargs['options'], {'temperature': 0.2, 'top_p': 0.9})
+        generate.assert_not_called()
+
     def test_generate_reports_each_stage_once(self):
         controller, view = self.controller('generate')
         with provider_patch('generate', side_effect=lambda **kw: iter([{'response': 'one '}, {'response': 'two', 'done': True}])) as generate:
@@ -124,6 +151,11 @@ class ChatControllerTests(unittest.TestCase):
         self.assertEqual(chat.call_args.kwargs['messages'][-1], {'role': 'user', 'content': 'first question'})
         saved = self.storage.get_chat(controller.chat_id)
         self.assertEqual([m['content'] for m in saved['messages']], ['first question', 'hello'])
+        details, metadata = saved['messages'][-1]['api_details'], saved['messages'][-1]['response_metadata']
+        self.assertEqual((details['host_id'], details['host_name'], details['host']),
+                         (self.host['id'], self.host['name'], self.host['hostname']))
+        self.assertLessEqual(0, metadata['first_token_seconds'])
+        self.assertLessEqual(metadata['first_token_seconds'], metadata['elapsed_seconds'])
         self.assertIn('message_saved', view.names())
         self.assertEqual(view.events[view.names().index('title_changed')][1], controller.chat_id)
 

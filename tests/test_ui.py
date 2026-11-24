@@ -8,7 +8,8 @@ from unittest.mock import patch
 from gi.repository import Gdk, GLib, Gtk
 from src.providers import OllamaProvider, ProviderError
 from src.records import ViewState, WireOptions
-from provider_fixture import provider_patch
+from provider_fixture import LIMITED, limited_host, provider_patch
+from src.providers.registry import PROVIDERS
 from src.bubbles import format_statistics
 from src.app_context import AppContext
 from src.tab import GenerationTab
@@ -62,6 +63,37 @@ class UITests(unittest.TestCase):
         self.stack.close()
         self.temp.cleanup()
 
+    def test_single_responses_are_blocked_where_the_host_lacks_them(self):
+        def select(tab, host):
+            index = next(i for i, h in enumerate(tab.options_panel.host_list) if h['id'] == host['id'])
+            tab.options_panel.host_dropdown.set_selected(index)
+            wait_for_model(tab)
+        with patch.dict(PROVIDERS, LIMITED), provider_patch('generate') as generate:
+            local = self.storage.get_all_hosts()[0]
+            limited = limited_host(self.storage)
+            single = GenerationTab(mode='generate', context=self.context)
+            chat = self.make_tab()
+            self.tabs.append(single)
+            wait_for_model(single)
+            for tab in (single, chat):
+                self.assertTrue(tab.chat_input.send_button.get_sensitive())
+                select(tab, limited)
+            notice = single.chat_input.capability_notice
+            self.assertFalse(single.chat_input.send_button.get_sensitive())
+            self.assertTrue(notice.get_visible())
+            self.assertIn('single responses', notice.get_text())
+            # Enter reaches the controller, which refuses and says why.
+            single.chat_input.entry.set_text('hello')
+            single.on_send_clicked()
+            self.assertIsNone(single.request)
+            generate.assert_not_called()
+            # A chat on the same host is unaffected.
+            self.assertTrue(chat.chat_input.send_button.get_sensitive())
+            self.assertNotIn('single responses', chat.chat_input.capability_notice.get_text())
+            select(single, local)
+            self.assertTrue(single.chat_input.send_button.get_sensitive())
+            self.assertNotIn('single responses', notice.get_text())
+
     def make_tab(self):
         chat = self.storage.create_chat()
         tab = GenerationTab(mode='chat', chat_id=chat['id'], context=self.context)
@@ -78,6 +110,8 @@ class UITests(unittest.TestCase):
         self.assertEqual(widget._thinking_values, [None, 'low', 'medium', 'high'])
         widget._set_thinking_options({'capabilities': ['completion']})
         self.assertEqual(widget._thinking_values, [None])
+        widget._set_thinking_options({'thinking_levels': ['low', 'medium', 'high']})
+        self.assertEqual(widget._thinking_values, [None, 'low', 'medium', 'high'])
         widget._set_thinking_options(None)
         self.assertIn(False, widget._thinking_values)
         self.assertIsNone(widget.get_thinking_value())
@@ -151,14 +185,101 @@ class UITests(unittest.TestCase):
         self.assertEqual(len(widget.restored_images), 1)
 
     def test_statistics_distinguish_missing_zero_and_speed(self):
-        absent = format_statistics({'eval_duration': 0})
-        self.assertIn('Cached: Unavailable', absent)
-        self.assertIn('Tokens/s: Unavailable', absent)
+        # A zero duration is reported, but gives no rate; a missing count is left out, a zero one is not.
+        self.assertEqual(format_statistics({'eval_duration': 0}), 'Generation: 0.00s')
         present = format_statistics({'prompt_eval_cached_count': 0, 'eval_count': 20,
                                      'eval_duration': 2_000_000_000, 'done_reason': 'stop'})
-        self.assertIn('Cached: 0', present)
-        self.assertIn('Tokens/s: 10.00', present)
-        self.assertIn('Finish: stop', present)
+        self.assertEqual(present, 'Cached: 0 tokens | Generated: 20 tokens | Generation: 2.00s | '
+                                  'Tokens/s: 10.00 | Finish: stop')
+
+    def test_statistics_show_what_was_reported_and_local_timing_otherwise(self):
+        full = dict(total_duration=5_000_000_000, load_duration=1_000_000_000, prompt_eval_count=12,
+                    prompt_eval_cached_count=4, prompt_eval_duration=500_000_000, eval_count=20,
+                    eval_duration=2_000_000_000, done_reason='stop')
+        line = ('Total: 5.00s | Load: 1.00s | Prompt: 12 tokens | Cached: 4 tokens | Prompt evaluation: 0.50s | '
+                'Generated: 20 tokens | Generation: 2.00s | Tokens/s: 10.00 | Finish: stop')
+        self.assertEqual(format_statistics(full), line)
+        # The server's own durations are never mixed with the local clock.
+        self.assertEqual(format_statistics(full, 9.0, 1.0), line)
+        counts = dict(prompt_eval_count=7, eval_count=30, prompt_eval_cached_count=3, done_reason='stop')
+        self.assertEqual(format_statistics(counts, 4.0, 1.0),
+                         'Total (measured locally): 4.00s | Prompt: 7 tokens | Cached: 3 tokens | '
+                         'Generated: 30 tokens | Tokens/s (measured locally): 10.00 | Finish: stop')
+        # A message saved before the first-token time was recorded uses the whole request.
+        self.assertIn('Tokens/s (measured locally): 7.50', format_statistics(counts, 4.0))
+        self.assertEqual(format_statistics(counts),
+                         'Prompt: 7 tokens | Cached: 3 tokens | Generated: 30 tokens | Finish: stop')
+        self.assertEqual(format_statistics({}), '')
+        self.assertEqual(format_statistics({}, 2.0, 0.5), 'Total (measured locally): 2.00s')
+        for line in (format_statistics(counts, 4.0, 1.0), format_statistics(counts), format_statistics({'eval_count': None})):
+            self.assertNotIn('Unavailable', line)
+
+    def test_statistics_line_holds_the_local_total_only_without_server_durations(self):
+        from src.bubbles import AiBubble
+        def shown(metadata):
+            bubble = AiBubble(model_name='test')
+            bubble.show_response_metadata(metadata)
+            texts, child = [], bubble.bubble_box.get_first_child()
+            while child:
+                if isinstance(child, Gtk.Label):
+                    texts.append(child.get_text())
+                child = child.get_next_sibling()
+            return bubble, texts
+        local, texts = shown(dict(metrics=dict(eval_count=10), elapsed_seconds=2.0, first_token_seconds=1.0))
+        self.assertEqual(local._stats_label.get_text(),
+                         'Total (measured locally): 2.00s | Generated: 10 tokens | Tokens/s (measured locally): 10.00')
+        self.assertIn('network delay', local._stats_label.get_tooltip_text())
+        self.assertNotIn('Elapsed: 2.0s', texts)
+        server, texts = shown(dict(metrics=dict(eval_count=10, eval_duration=1_000_000_000), elapsed_seconds=2.0))
+        self.assertEqual(server._stats_label.get_text(), 'Generated: 10 tokens | Generation: 1.00s | Tokens/s: 10.00')
+        self.assertIsNone(server._stats_label.get_tooltip_text())
+        self.assertIn('Elapsed: 2.0s', texts)
+        # A stopped request has no metrics, and still says how long it ran.
+        stopped, texts = shown(dict(status='stopped', elapsed_seconds=2.0))
+        self.assertFalse(hasattr(stopped, '_stats_label'))
+        self.assertIn('Elapsed: 2.0s', texts)
+
+    def test_response_header_names_the_host_and_the_model(self):
+        from src.bubbles import AiBubble
+        def headers(tab):
+            found, row = [], tab.message_list.list_box.get_first_child()
+            while row:
+                if isinstance(row, AiBubble):
+                    found.append(row.header.get_label() if row.header.get_visible() else None)
+                row = row.get_next_sibling()
+            return found
+        host = self.storage.get_all_hosts()[0]
+        self.storage.update_host(host['id'], 'Study box', host['hostname'], True)
+        tab = self.make_tab()
+        with provider_patch('chat', side_effect=lambda **kw: iter([{'message': {'content': 'hi'}, 'done': True}])):
+            tab.chat_input.entry.set_text('first')
+            tab.on_send_clicked()
+            pump_until(lambda: tab.request is None and self.storage.writer.idle)
+        self.assertEqual(headers(tab), ['Study box (test)'])
+        history = self.storage.get_chat(tab.strategy.chat_id)['messages']
+        details = history[-1]['api_details']
+        self.assertEqual((details['host_id'], details['host_name'], details['host']),
+                         (host['id'], 'Study box', host['hostname']))
+        self.assertGreaterEqual(history[-1]['response_metadata']['elapsed_seconds'],
+                                history[-1]['response_metadata']['first_token_seconds'])
+
+        # The name recorded with a response outlives a rename; older records find their host.
+        self.storage.update_host(host['id'], 'Renamed', host['hostname'], True)
+        def reply(**details):
+            return dict(role='assistant', content='old', model='test', api_details=details)
+        history += [
+            reply(host=host['hostname'], model='test'),                        # Before this field: by address.
+            reply(host=host['hostname'] + '/', model='test'),
+            reply(host='http://gone.example:1234', model='test'),              # No such host any more.
+            reply(host='http://gone.example:1234', host_id=host['id']),        # By id before address.
+            reply(host=host['hostname'], host_id='removed', host_name='Then'),
+            dict(role='assistant', content='oldest', model='test')]
+        restored = GenerationTab(mode='chat', chat_id=tab.strategy.chat_id, initial_history=history,
+                                 context=self.context)
+        self.tabs.append(restored)
+        self.assertEqual(headers(restored), ['Study box (test)', 'Renamed (test)', 'Renamed (test)', 'test',
+                                             'Renamed (test)', 'Then (test)', 'test'])
+        self.assertEqual(AiBubble(host_name='Nameless').title, '')
 
     def test_duplicate_send_stop_and_restore_partial(self):
         fixture = Server('stall')
@@ -343,8 +464,8 @@ class UITests(unittest.TestCase):
         widget.services = self.context.services
         self.addCleanup(widget.cancel_fetches)
         responses = {
-            'qwen3-embedding:0.6b': {'capabilities': ['embedding']},
-            'custom-search-model': {'capabilities': ['embedding', 'vision']},
+            'a-qwen3-embedding:0.6b': {'capabilities': ['embedding']},
+            'b-custom-search-model': {'capabilities': ['embedding', 'vision']},
             'chat-embedding-helper': {'capabilities': ['completion', 'vision', 'tools']},
             'dual-purpose': {'capabilities': ['completion', 'embedding']},
             'legacy': {},
@@ -421,7 +542,7 @@ class UITests(unittest.TestCase):
                 release.wait(2)
                 return {'capabilities': ['embedding']}
             return {'capabilities': ['completion', 'vision']}
-        with provider_patch('list_models', return_value=['same-name', 'next-model']), \
+        with provider_patch('list_models', return_value=['same-name', 'then-model']), \
                 provider_patch('show_model', side_effect=details) as show:
             try:
                 widget.fetch_models(OllamaProvider('http://old'))
@@ -585,7 +706,7 @@ class UITests(unittest.TestCase):
             self.assertIn('images', requests[-1][0])
         tab.chat_input.set_model_details(None)
         self.assertTrue(tab.chat_input.attach_button.get_sensitive())
-        self.assertIn('unknown', tab.chat_input.capability_notice.get_text())
+        self.assertFalse(tab.chat_input.capability_notice.get_visible())
 
     def test_native_tabs_sidebar_actions_and_deferred_close(self):
         window, first = self.make_window()

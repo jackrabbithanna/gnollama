@@ -44,7 +44,7 @@ class AppContextTests(unittest.TestCase):
     def stalled(self, context, fixture):
         """Start a streamed request that stays open; return its outcome list."""
         outcome = []
-        provider = context.providers.local(fixture.host)
+        provider = context.providers.ollama_at(fixture.host)
 
         def read():
             try:
@@ -69,7 +69,7 @@ class AppContextTests(unittest.TestCase):
         self.assertIsInstance(stopped[0], RequestCancelled)
         self.assertFalse(running, 'the other context keeps its request')
         with self.assertRaises(RequestCancelled):
-            first.providers.local(slow.host).version()
+            first.providers.ollama_at(slow.host).version()
         self.assertTrue(first.knowledge.closed)
         self.assertFalse(second.knowledge.closed)
 
@@ -81,7 +81,7 @@ class AppContextTests(unittest.TestCase):
         self.assertFalse(first.knowledge.closed)
         ready = self.server('json')
         ready.server.payload = {'version': '1.0'}
-        self.assertEqual(first.providers.local(ready.host).version(), '1.0')
+        self.assertEqual(first.providers.ollama_at(ready.host).version(), '1.0')
 
     def test_shutdown_stops_active_inference(self):
         context = self.open()

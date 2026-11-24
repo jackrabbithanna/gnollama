@@ -229,7 +229,7 @@ class GnollamaWindow(Adw.ApplicationWindow):
             if not tab.request:
                 continue
             states = tab.request.states.values() if hasattr(tab.request, 'states') else [tab.request]
-            if any(model_key(state.settings.target.url, state.settings.target.model) == key for state in states):
+            if any(model_key(state.connection, state.settings.target.model) == key for state in states):
                 return True
         return False
 

@@ -28,7 +28,8 @@ class CollectionDialog(IndexDialog):
                     callback(id)
                     self.close()
             self.context.knowledge.create_collection(self.name.get_text(), *self.settings(),
-                                                      document_ids=self.document_ids, callback=done)
+                                                      document_ids=self.document_ids, callback=done,
+                                                      kind=self.host_models.kind())
             self.start.set_sensitive(False)
         except (ValueError, TypeError) as exc:
             self.show_error(exc)

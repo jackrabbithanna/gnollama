@@ -1,0 +1,175 @@
+{
+ "data": [
+  {
+   "id": "cohere/embed-5-fast",
+   "canonical_slug": "cohere/embed-5-fast-20261029",
+   "hugging_face_id": null,
+   "name": "Cohere: Embed 5 Fast",
+   "created": 1793739025,
+   "context_length": 128000,
+   "architecture": {
+    "modality": "text+image->embeddings",
+    "input_modalities": [
+     "text",
+     "image"
+    ],
+    "output_modalities": [
+     "embeddings"
+    ],
+    "tokenizer": "Cohere",
+    "instruct_type": null
+   },
+   "pricing": {
+    "prompt": "0.00000008",
+    "completion": "0",
+    "image_token": "0.0000004"
+   },
+   "top_provider": {
+    "context_length": 128000,
+    "max_completion_tokens": null,
+    "is_moderated": true
+   },
+   "per_request_limits": null,
+   "supported_parameters": [],
+   "default_parameters": {},
+   "supported_voices": null,
+   "knowledge_cutoff": null,
+   "expiration_date": null,
+   "links": {
+    "details": "/api/v1/models/cohere/embed-5-fast-20261029/endpoints"
+   },
+   "endpoints": [
+    "/api/v1/embeddings"
+   ]
+  },
+  {
+   "id": "nvidia/nemotron-3.5-embed-1b:free",
+   "canonical_slug": "nvidia/nemotron-3.5-embed-1b-20261021",
+   "hugging_face_id": null,
+   "name": "NVIDIA: Nemotron 3.5 Embed 1B (free)",
+   "created": 1792591670,
+   "context_length": 32768,
+   "architecture": {
+    "modality": "text+image->embeddings",
+    "input_modalities": [
+     "text",
+     "image"
+    ],
+    "output_modalities": [
+     "embeddings"
+    ],
+    "tokenizer": "Other",
+    "instruct_type": null
+   },
+   "pricing": {
+    "prompt": "0",
+    "completion": "0"
+   },
+   "top_provider": {
+    "context_length": 32768,
+    "max_completion_tokens": null,
+    "is_moderated": false
+   },
+   "per_request_limits": null,
+   "supported_parameters": [],
+   "default_parameters": {},
+   "supported_voices": null,
+   "knowledge_cutoff": null,
+   "expiration_date": null,
+   "links": {
+    "details": "/api/v1/models/nvidia/nemotron-3.5-embed-1b-20261021/endpoints"
+   },
+   "endpoints": [
+    "/api/v1/embeddings"
+   ]
+  },
+  {
+   "id": "mongodb/voyage-4-lite",
+   "canonical_slug": "voyageai/voyage-4-lite-20260727",
+   "hugging_face_id": null,
+   "name": "VoyageAI by MongoDB: voyage-4-lite",
+   "created": 1785188627,
+   "context_length": 32000,
+   "architecture": {
+    "modality": "text->embeddings",
+    "input_modalities": [
+     "text"
+    ],
+    "output_modalities": [
+     "embeddings"
+    ],
+    "tokenizer": "Other",
+    "instruct_type": null
+   },
+   "pricing": {
+    "prompt": "0.00000002",
+    "completion": "0"
+   },
+   "top_provider": {
+    "context_length": 32000,
+    "max_completion_tokens": null,
+    "is_moderated": false
+   },
+   "per_request_limits": null,
+   "supported_parameters": [],
+   "default_parameters": {},
+   "supported_voices": null,
+   "knowledge_cutoff": null,
+   "expiration_date": null,
+   "links": {
+    "details": "/api/v1/models/voyageai/voyage-4-lite-20260727/endpoints"
+   },
+   "endpoints": [
+    "/api/v1/embeddings"
+   ]
+  },
+  {
+   "id": "baai/bge-m3",
+   "canonical_slug": "baai/bge-m3-20251117",
+   "hugging_face_id": "BAAI/bge-m3",
+   "name": "BAAI: bge-m3",
+   "created": 1763424372,
+   "context_length": 8194,
+   "architecture": {
+    "modality": "text->embeddings",
+    "input_modalities": [
+     "text"
+    ],
+    "output_modalities": [
+     "embeddings"
+    ],
+    "tokenizer": "Other",
+    "instruct_type": null
+   },
+   "pricing": {
+    "prompt": "0.00000001",
+    "completion": "0"
+   },
+   "top_provider": {
+    "context_length": 8194,
+    "max_completion_tokens": 8194,
+    "is_moderated": false
+   },
+   "per_request_limits": null,
+   "supported_parameters": [],
+   "default_parameters": {
+    "temperature": null,
+    "top_p": null,
+    "frequency_penalty": null
+   },
+   "supported_voices": null,
+   "knowledge_cutoff": null,
+   "expiration_date": null,
+   "links": {
+    "details": "/api/v1/models/baai/bge-m3-20251117/endpoints"
+   },
+   "endpoints": [
+    "/api/v1/embeddings"
+   ]
+  }
+ ],
+ "total_count": 4,
+ "links": {
+  "next": null
+ }
+}

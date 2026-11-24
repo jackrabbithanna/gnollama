@@ -4,7 +4,7 @@ import copy
 import uuid
 from dataclasses import dataclass, field
 from gi.repository import Gio
-from .providers import ProviderError, RequestCancelled, validate_url
+from .providers import ProviderError, RequestCancelled, supports, validate_url
 from .knowledge import augmented_messages, validate_rag
 from dataclasses import replace
 from .context import estimate_context
@@ -56,16 +56,17 @@ def prepare_run(context, active, prompt, images, settings, targets, draft_id, re
         if caps is not None:
             if 'embedding' in caps and 'completion' not in caps:
                 raise ValueError(_('Embedding models cannot generate comparisons.'))
-            if images and 'vision' not in caps:
-                raise ValueError(_('Every target must support the shared images.'))
             if wire.thinking not in (None, False) and 'thinking' not in caps:
                 raise ValueError(_('Every target must support the selected thinking option.'))
-        limits = connection.capabilities
-        if ((wire.format is not None and not limits.structured_output)
-                or (wire.keep_alive is not None and not limits.keep_alive)):
-            raise ValueError(_('Cloud targets do not support shared structured output or model retention.'))
+        # Asked apart from the list: some servers report capabilities one by one.
+        if images and supports(details, 'vision') is False:
+            raise ValueError(_('Every target must support the shared images.'))
+        connection.check(wire, host, target['model'], details)
         family = (details or {}).get('details', {}).get('family', '').replace('-', '').lower()
         if family == 'gptoss' and wire.thinking not in (None, 'low', 'medium', 'high'):
+            raise ValueError(_('The selected thinking level is incompatible with a target.'))
+        levels = (details or {}).get('thinking_levels')
+        if levels is not None and wire.thinking is not None and wire.thinking not in levels:
             raise ValueError(_('The selected thinking level is incompatible with a target.'))
         resolved.append((target, host, connection))
     retrieval = None
@@ -83,7 +84,7 @@ def prepare_run(context, active, prompt, images, settings, targets, draft_id, re
     for target, host, connection in resolved:
         id = str(uuid.uuid4())
         effective = replace(settings, endpoint='chat', target=ModelTarget(
-            host['id'], validate_url(host['hostname']), target['model']))
+            host['id'], validate_url(host['hostname']), target['model'], host.get('name')))
         state = RequestState(effective, prompt, images, messages=copy.deepcopy(sent), connection=connection, retrieval=copy.deepcopy(retrieval))
         state.metadata['retrieval'] = copy.deepcopy(retrieval)
         state.metadata['context_estimate'] = estimate_context(messages, wire, retrieval)

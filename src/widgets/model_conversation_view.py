@@ -6,6 +6,7 @@ from types import SimpleNamespace
 from gi.repository import Gtk, Adw, GObject, GLib, Pango
 from ..drafts import DraftController
 from ..model_conversation import ModelConversationController
+from ..session import response_host_name
 from ..bubbles import AiBubble
 from ..context import describe_context
 from ..markdown_view import MarkdownView
@@ -251,16 +252,18 @@ class ModelConversationTab(Gtk.Box):
         if message['role'] == 'user':
             self.message_list.add_user_message(message['content'])
             return
-        bubble = AiBubble(model_name=message.get('model'))
         participant = message.get('participant', 0)
         settings = self.controller.participants[participant]
+        details = message.get('api_details') or settings.api_details()
+        bubble = AiBubble(model_name=settings.target.model,
+                          host_name=response_host_name(details, self.storage.get_all_hosts))
         label = _('Model A') if participant == 0 else _('Model B')
-        bubble.header.set_text(_('Round {0} · {1} · Attempt {2}').format(message.get('turn', 0) // 2 + 1, label, message.get('attempt', 1)) + ' · ' + settings.target.model)
+        bubble.header.set_text(_('Round {0} · {1} · Attempt {2}').format(message.get('turn', 0) // 2 + 1, label, message.get('attempt', 1)) + ' · ' + bubble.title)
         bubble.header.set_tooltip_text(settings.target.url)
         host_label = Gtk.Label(label=settings.target.url, xalign=0, wrap=True, wrap_mode=Pango.WrapMode.WORD_CHAR,
                                selectable=True, css_classes=['dim-label', 'caption'])
         bubble.bubble_box.insert_child_after(host_label, bubble.header)
-        bubble.set_api_details(message.get('api_details') or settings.api_details())
+        bubble.set_api_details(details)
         bubble.append_text(message.get('content', ''))
         bubble.append_thinking(message.get('thinking_content', ''))
         metadata = message.get('response_metadata', {})

@@ -381,12 +381,6 @@ msgstr "Malengo yote lazima yaunge mkono picha zinazoshirikiwa."
 msgid "Every target must support the selected thinking option."
 msgstr "Malengo yote lazima yaunge mkono chaguo la kufikiri lililochaguliwa."
 
-#: src/comparison.py:52
-msgid "Cloud targets do not support shared structured output or model retention."
-msgstr ""
-"Malengo ya wingu hayaungi mkono matokeo yenye muundo yanayoshirikiwa wala kuhifadhi "
-"modeli ikiwa imepakiwa."
-
 #: src/comparison.py:55
 msgid "The selected thinking level is incompatible with a target."
 msgstr "Kiwango cha kufikiri kilichochaguliwa hakiendani na lengo fulani."
@@ -634,10 +628,6 @@ msgstr "Kufuta kumeshindwa"
 #: src/host_manager.ui:6 src/host_manager.ui:17
 msgid "Manage Hosts"
 msgstr "Dhibiti seva"
-
-#: src/host_manager.ui:35
-msgid "Ollama Servers"
-msgstr "Seva za Ollama"
 
 #: src/host_manager.ui:36
 msgid "Select a server to edit its name or address."
@@ -1190,10 +1180,6 @@ msgstr "Modeli kwenye kumbukumbu"
 msgid "Ollama Cloud requires https://ollama.com."
 msgstr "Ollama Cloud inahitaji https://ollama.com."
 
-#: src/ollama.py:80
-msgid "Enter a valid http:// or https:// Ollama host URL."
-msgstr "Weka URL halali ya seva ya Ollama yenye http:// au https://."
-
 #: src/ollama.py:89 src/ollama.py:104 src/ollama.py:137
 msgid "Request stopped"
 msgstr "Ombi limesimamishwa"
@@ -1213,14 +1199,6 @@ msgstr ""
 #: src/ollama.py:126
 msgid "Ollama Cloud usage or rate limit reached. Try again later."
 msgstr "Kikomo cha matumizi au maombi ya Ollama Cloud kimefikiwa. Jaribu tena baadaye."
-
-#: src/ollama.py:163
-msgid "Invalid JSON received from Ollama"
-msgstr "JSON isiyo halali imepokelewa kutoka Ollama"
-
-#: src/ollama.py:165
-msgid "Expected a JSON object from Ollama"
-msgstr "Ilitarajiwa objekti ya JSON kutoka Ollama"
 
 #: src/ollama.py:222
 msgid "Enter nonempty text to embed."
@@ -1758,9 +1736,6 @@ msgstr "Modeli hii haichakati picha."
 msgid "Earlier images remain saved; only text history will be sent."
 msgstr "Picha za awali zimehifadhiwa; historia ya maandishi pekee ndiyo itakayotumwa."
 
-#: src/widgets/chat_input.py:125
-msgid "Image support unknown."
-msgstr "Uwezo wa kuchakata picha haujulikani."
 
 #: src/widgets/chat_input.py:137
 msgid "Select a chat model"
@@ -3498,10 +3473,6 @@ msgstr "Modeli za upachikaji haziwezi kushiriki katika mazungumzo."
 msgid "A participant does not support the selected thinking option."
 msgstr "Mshiriki haungi mkono chaguo la kufikiri lililochaguliwa."
 
-#: src/model_conversation.py:67
-msgid "Cloud targets manage model retention automatically."
-msgstr "Malengo ya wingu husimamia uhifadhi wa modeli kiotomatiki."
-
 #: src/model_conversation.py:121
 msgid "Enter an opening prompt and choose 1–100 rounds."
 msgstr "Ingiza ujumbe wa kuanza na uchague raundi 1–100."
@@ -3643,3 +3614,279 @@ msgstr "Ruhusu modeli mbili zizungumze"
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in
 msgid "Organize documents into knowledge collections"
 msgstr "Panga hati katika makusanyo ya maarifa"
+
+#: src/widgets/options_panel.py
+msgid "Not available on this server."
+msgstr "Haipatikani kwenye seva hii."
+
+#: src/chat_controller.py
+msgid "This server does not offer single responses. Open a chat to use it."
+msgstr "Seva hii haitoi majibu ya mara moja. Fungua mazungumzo ili kuitumia."
+
+#: src/providers/base.py
+msgid "{host} does not support: {options}."
+msgstr "{host} haitumii: {options}."
+
+#: src/providers/base.py
+msgid "Structured output"
+msgstr "Matokeo yenye muundo"
+
+#: src/host_manager.py
+msgid "Remove the saved key"
+msgstr "Ondoa ufunguo uliohifadhiwa"
+
+#: src/host_manager.py
+msgid "Optional. Stored securely in your desktop keyring."
+msgstr "Si lazima. Huhifadhiwa kwa usalama kwenye hifadhi ya funguo ya eneo-kazi lako."
+
+#: src/host_manager.ui
+msgid "Servers"
+msgstr "Seva"
+
+#: src/providers/openai.py
+msgid "OpenAI-Compatible Server"
+msgstr "Seva inayooana na OpenAI"
+
+#: src/providers/openai.py
+msgid "This server type does not report what its models support, so thinking, image, and tool support are not checked."
+msgstr "Aina hii ya seva haielezi kile ambacho modeli zake zinaweza kufanya, kwa hivyo uwezo wa kufikiri, picha na zana haukaguliwi."
+
+#: src/providers/openai.py
+msgid "This server does not accept: {0}."
+msgstr "Seva hii haikubali: {0}."
+
+#: src/providers/openai.py
+msgid "This server accepts only the Low, Medium, and High thinking levels."
+msgstr "Seva hii inakubali viwango vya kufikiri vya Chini, Wastani na Juu pekee."
+
+#: src/providers/transport.py
+msgid "Invalid JSON received from the server"
+msgstr "JSON batili imepokelewa kutoka kwa seva"
+
+#: src/providers/openai.py
+msgid "The server rejected the API key, or requires one. Edit this host to check its API key."
+msgstr "Seva imekataa ufunguo wa API, au inahitaji ufunguo. Hariri mwenyeji huyu ili kukagua ufunguo wake wa API."
+
+#: src/providers/openai.py
+msgid "The server reported a usage or rate limit. Try again later."
+msgstr "Seva imeripoti kikomo cha matumizi au cha kasi. Jaribu tena baadaye."
+
+#: src/providers/openai.py
+msgid "The server did not return a model list."
+msgstr "Seva haikurudisha orodha ya modeli."
+
+#: src/providers/openai.py
+msgid "Connected\nAvailable models: {0}"
+msgstr "Imeunganishwa\nModeli zinazopatikana: {0}"
+
+#: src/providers/transport.py
+msgid "Enter a valid http:// or https:// server URL."
+msgstr "Weka URL sahihi ya seva inayoanza na http:// au https://."
+
+#: src/providers/transport.py
+msgid "Expected a JSON object from the server"
+msgstr "Kipengee cha JSON kilitarajiwa kutoka kwa seva"
+
+#: src/widgets/chat_input.py
+msgid "No models found on this server. Load one there, then refresh."
+msgstr "Hakuna modeli zilizopatikana kwenye seva hii. Pakia moja huko, kisha onyesha upya."
+
+#: src/providers/openai.py
+msgid "For example: Local Server"
+msgstr "Kwa mfano: Seva ya ndani"
+
+#: src/bubbles.py
+msgid "Total (measured locally): {0}"
+msgstr "Jumla (imepimwa hapa): {0}"
+
+#: src/bubbles.py
+msgid "Tokens/s (measured locally): {0}"
+msgstr "Tokeni/s (imepimwa hapa): {0}"
+
+#: src/bubbles.py
+msgid "Timed by Gnollama, not reported by the server. The total includes network delay and model loading."
+msgstr "Imepimwa na Gnollama, haikuripotiwa na seva. Jumla inajumuisha ucheleweshaji wa mtandao na upakiaji wa modeli."
+
+#: src/providers/lmstudio.py
+msgid "LM Studio"
+msgstr "LM Studio"
+
+#: src/providers/openrouter.py
+msgid "OpenRouter"
+msgstr "OpenRouter"
+
+#: src/providers/openrouter.py
+msgid "OpenRouter requires {0}."
+msgstr "OpenRouter inahitaji {0}."
+
+#: src/providers/vercel.py
+msgid "Vercel AI Gateway"
+msgstr "Vercel AI Gateway"
+
+#: src/providers/vercel.py
+msgid "Vercel AI Gateway requires {0}."
+msgstr "Vercel AI Gateway inahitaji {0}."
+
+#: src/model_manager.py
+msgid "Context Length"
+msgstr "Urefu wa muktadha"
+
+#: src/model_manager.py
+msgid "Max Context Length"
+msgstr "Urefu wa juu wa muktadha"
+
+#: src/model_summary.py
+msgid "Free"
+msgstr "Bila malipo"
+
+#: src/model_summary.py
+msgid "${0} / ${1} per 1M tokens"
+msgstr "${0} / ${1} kwa tokeni milioni 1"
+
+#: src/model_summary.py
+msgid "No images"
+msgstr "Hakuna picha"
+
+#: src/model_summary.py
+msgid "Tools"
+msgstr "Zana"
+
+#: src/model_summary.py
+msgid "No tools"
+msgstr "Hakuna zana"
+
+#: src/model_summary.py
+msgid "No thinking"
+msgstr "Hakuna kufikiri"
+
+#: src/model_summary.py
+msgid "Not trained for tools"
+msgstr "Haijafunzwa kutumia zana"
+
+#: src/model_summary.py
+msgid "{0}M"
+msgstr "{0}M"
+
+#: src/model_summary.py
+msgid "{0}K"
+msgstr "{0}K"
+
+#: src/model_summary.py
+msgid "{0} context"
+msgstr "Muktadha {0}"
+
+#: src/model_summary.py
+msgid "{0} context max"
+msgstr "Muktadha wa juu {0}"
+
+#: src/model_summary.py
+msgid "Prompt: ${0} per 1M tokens"
+msgstr "Ingizo: ${0} kwa tokeni milioni 1"
+
+#: src/model_summary.py
+msgid "Completion: ${0} per 1M tokens"
+msgstr "Tokeo: ${0} kwa tokeni milioni 1"
+
+#: src/model_summary.py
+msgid "Cache read: ${0} per 1M tokens"
+msgstr "Kusoma akiba: ${0} kwa tokeni milioni 1"
+
+#: src/model_summary.py
+msgid "Cache write: ${0} per 1M tokens"
+msgstr "Kuandika akiba: ${0} kwa tokeni milioni 1"
+
+#: src/model_summary.py
+msgid "Cache write, kept one hour: ${0} per 1M tokens"
+msgstr "Kuandika akiba, huhifadhiwa saa moja: ${0} kwa tokeni milioni 1"
+
+#: src/model_summary.py
+msgid "Reasoning: ${0} per 1M tokens"
+msgstr "Kufikiri: ${0} kwa tokeni milioni 1"
+
+#: src/model_summary.py
+msgid "Image input: ${0} per 1M tokens"
+msgstr "Ingizo la picha: ${0} kwa tokeni milioni 1"
+
+#: src/model_summary.py
+msgid "Audio input: ${0} per 1M tokens"
+msgstr "Ingizo la sauti: ${0} kwa tokeni milioni 1"
+
+#: src/model_summary.py
+msgid "Cached audio input: ${0} per 1M tokens"
+msgstr "Ingizo la sauti lililo kwenye akiba: ${0} kwa tokeni milioni 1"
+
+#: src/model_summary.py
+msgid "Image output: ${0} per 1M tokens"
+msgstr "Tokeo la picha: ${0} kwa tokeni milioni 1"
+
+#: src/model_summary.py
+msgid "Audio output: ${0} per 1M tokens"
+msgstr "Tokeo la sauti: ${0} kwa tokeni milioni 1"
+
+#: src/model_summary.py
+msgid "Web search: ${0} per search"
+msgstr "Utafutaji wa wavuti: ${0} kwa utafutaji"
+
+#: src/model_summary.py
+msgid "Request: ${0} per request"
+msgstr "Ombi: ${0} kwa ombi"
+
+#: src/model_summary.py
+msgid "{0}: ${1}"
+msgstr "{0}: ${1}"
+
+#: src/model_summary.py
+msgid "Prices are as listed when this was read; they can change."
+msgstr "Bei ni kama zilivyoorodheshwa wakati wa kusomwa; zinaweza kubadilika."
+
+#: src/widgets/chat_input.py
+msgid "Prompt and completion prices in US dollars per million tokens, as listed when the model list was read."
+msgstr "Bei za ingizo na tokeo kwa dola za Marekani kwa tokeni milioni, kama zilivyoorodheshwa orodha ya modeli iliposomwa."
+
+#: src/model_manager.py
+msgid "Pricing"
+msgstr "Bei"
+
+#: src/model_manager.py
+msgid "Supported Parameters"
+msgstr "Vigezo vinavyotumika"
+
+#: src/model_manager.py
+msgid "Max Completion Tokens"
+msgstr "Tokeni za juu za tokeo"
+
+#: src/model_manager.py
+msgid "Reasoning"
+msgstr "Kufikiri"
+
+#: src/widgets/options_panel.py
+msgid "Not available for this model."
+msgstr "Haipatikani kwa modeli hii."
+
+#: src/widgets/comparison_view.py
+msgid "Not available for every target."
+msgstr "Haipatikani kwa kila lengo."
+
+#: src/providers/base.py
+msgid "The server returned {0} dimensions where {1} were requested. It may not support choosing dimensions for this model."
+msgstr "Seva ilirudisha vipimo {0} ilhali {1} viliombwa. Huenda haitumii uchaguzi wa vipimo kwa modeli hii."
+
+#: src/knowledge.py
+msgid "A chunk is estimated at {0} tokens. The embedding model accepts {1}, and this server shortens longer text without notice. The estimate is rough, so nothing above {2} is sent. Use a smaller chunk size."
+msgstr "Kipande kinakadiriwa kuwa tokeni {0}. Modeli ya embedding hupokea {1}, na seva hii hufupisha maandishi marefu zaidi bila taarifa. Makadirio ni ya takriban, kwa hivyo hakuna kinachotumwa zaidi ya {2}. Tumia ukubwa mdogo wa kipande."
+
+#: src/knowledge.py
+msgid "The search query is estimated at {0} tokens. The embedding model accepts {1}, and this server shortens longer text without notice. The estimate is rough, so nothing above {2} is sent. Shorten the query."
+msgstr "Hoja ya utafutaji inakadiriwa kuwa tokeni {0}. Modeli ya embedding hupokea {1}, na seva hii hufupisha maandishi marefu zaidi bila taarifa. Makadirio ni ya takriban, kwa hivyo hakuna kinachotumwa zaidi ya {2}. Fupisha hoja."
+
+#: src/widgets/knowledge_common.py
+msgid "This model cannot be fully verified: it is recognized by what the server reports about it, not by its contents, so a replacement that reports the same would go unnoticed."
+msgstr "Modeli hii haiwezi kuthibitishwa kikamilifu: inatambuliwa kwa kile seva inachoripoti kuihusu, si kwa maudhui yake, kwa hivyo mbadala unaoripoti vivyo hivyo haungegunduliwa."
+
+#: src/widgets/knowledge_common.py
+msgid "No embedding models are available. Try refreshing later."
+msgstr "Hakuna modeli za embedding zinazopatikana. Jaribu kuonyesha upya baadaye."
+
+#: src/widgets/knowledge_common.py
+msgid "No embedding models found on this server. Load one there, then refresh."
+msgstr "Hakuna modeli za embedding zilizopatikana kwenye seva hii. Pakia moja huko, kisha onyesha upya."

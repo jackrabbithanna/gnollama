@@ -73,7 +73,8 @@ class SourcePicker(WorkDialog):
                 break
         if self.options['config_id'] and not any(c['id'] == self.options['config_id'] for c in self.configs):
             self.config_dropdown.set_selected(Gtk.INVALID_LIST_POSITION)
-        self.host_models = HostModels(context, self.options['host'], self.options['model'])
+        self.host_models = HostModels(context, self.options['host'], self.options['model'],
+                                      kind=self.options['host_kind'])
         self.search_settings.append(self.host_models)
         self.connect('closed', lambda *args: self.host_models.stop())
         self.search_settings.append(label(_('The query must use the same embedding configuration as the selected collections. A compatible server can be chosen here.')))
@@ -216,10 +217,7 @@ class SourcePicker(WorkDialog):
                 self.config_dropdown.set_selected(next(n for n, c in enumerate(self.configs) if c['id'] == collection['config_id']))
                 self._refreshing = False
                 self.host_models.desired_model = collection['model']
-                for n, host in enumerate(self.host_models.hosts):
-                    if host['hostname'].rstrip('/') == collection['host'].rstrip('/'):
-                        self.host_models.host_dropdown.set_selected(n)
-                        break
+                self.host_models.select_host(collection['host'], collection['host_kind'])
                 self.host_models.refresh()
         else:
             self.collection_ids.discard(collection['id'])
@@ -236,7 +234,8 @@ class SourcePicker(WorkDialog):
     def current_options(self):
         config, model = self.config(), self.host_models.model()
         options = dict(enabled=True, config_id=config['id'] if config else None,
-                       host=self.host_models.host(), model=model['name'] if model else '', selection={},
+                       host=self.host_models.host(), host_kind=self.host_models.kind(),
+                       model=model['name'] if model else '', selection={},
                        collection_ids=sorted(self.collection_ids),
                        count=self.count.get_value_as_int(), budget=self.budget.get_value_as_int(),
                        metric=self.metric(), minimum=None, maximum=None)

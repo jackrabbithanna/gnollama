@@ -1,7 +1,9 @@
 from typing import Any, Dict, List, Optional
 from gettext import gettext as _, ngettext
 from gi.repository import Gtk, GObject, Gio, GLib, Gdk, Pango
-from ..providers import RequestCancelled
+from ..model_summary import prices, summary_parts
+from ..providers import RequestCancelled, supports
+from .search import searchable
 from .composer import Composer  # noqa: F401 - registers the type chat_input.ui names
 
 @Gtk.Template(resource_path='/io/github/jackrabbithanna/Gnollama/widgets/chat_input.ui')
@@ -13,6 +15,8 @@ class ChatInput(Gtk.Box):
     connection_box = Gtk.Template.Child()
     model_dropdown: Gtk.DropDown = Gtk.Template.Child()
     thinking_dropdown: Gtk.DropDown = Gtk.Template.Child()
+    model_summary: Gtk.Label = Gtk.Template.Child()
+    model_summary_cell = Gtk.Template.Child()
     entry: Gtk.Entry = Gtk.Template.Child()
     send_button: Gtk.Button = Gtk.Template.Child()
     
@@ -52,12 +56,13 @@ class ChatInput(Gtk.Box):
         self.tool_support = None
         self.awaiting_tools = False
         self.capabilities_loading = False
+        self.unavailable = ''  # Why this host cannot be sent to at all, if it cannot.
         self.has_history_images = False
         factory = Gtk.SignalListItemFactory()
         factory.connect('setup', lambda f, item: item.set_child(Gtk.Label(ellipsize=Pango.EllipsizeMode.END, max_width_chars=24, xalign=0)))
         factory.connect('bind', lambda f, item: item.get_child().set_text(item.get_item().get_string()))
         self.model_dropdown.set_factory(factory)
-        self.model_dropdown.set_enable_search(True)
+        searchable(self.model_dropdown)
         click = Gtk.GestureClick(button=1)
         click.set_propagation_phase(Gtk.PropagationPhase.CAPTURE)
         click.connect('pressed', self._retry_empty_models)
@@ -88,10 +93,14 @@ class ChatInput(Gtk.Box):
         labels = [_('Model default'), _('Off'), _('On'), _('Low'), _('Medium'), _('High'), _('Max')]
         if details is not None:
             family = details.get('details', {}).get('family', '').replace('-', '').lower()
-            if family == 'gptoss':
+            if details.get('thinking_levels') is not None:
+                offered = [(value, label) for value, label in zip(values, labels)
+                           if value is None or value in details['thinking_levels']]
+                values, labels = [v for v, _label in offered], [label for _v, label in offered]
+            elif family == 'gptoss':
                 values = [None, 'low', 'medium', 'high']
                 labels = [_('Model default'), _('Low'), _('Medium'), _('High')]
-            elif 'capabilities' in details and 'thinking' not in details['capabilities']:
+            elif supports(details, 'thinking') is False:
                 values, labels = [None], [_('Model default')]
         self._setting_thinking = True
         desired = self._desired_thinking
@@ -122,37 +131,54 @@ class ChatInput(Gtk.Box):
         self._running = running
         self.send_button.set_icon_name('media-playback-stop-symbolic' if running else 'system-search-symbolic')
         self.send_button.set_tooltip_text(_('Stop response') if running else _('Send Message'))
-        blocked = (self.pending_imports or self.capabilities_loading or
+        blocked = (self.pending_imports or self.capabilities_loading or self.unavailable or
                    (self.image_support is False and self.has_draft_images()))
         self.send_button.set_sensitive(running or (self.get_selected_model() is not None and not blocked and not self.awaiting_tools))
         self.entry.set_sensitive(not self.awaiting_tools)
 
+    def set_unavailable(self, reason):
+        """Block sending with an explanation, or allow it again with ''."""
+        self.unavailable = reason
+        self.update_capability_controls()
+
     def set_model_details(self, details, loading=False):
         self.capabilities_loading = loading
-        capabilities = details.get('capabilities') if isinstance(details, dict) else None
-        self.image_support = ('vision' in capabilities) if isinstance(capabilities, list) else None
-        self.tool_support = ('tools' in capabilities) if isinstance(capabilities, list) else None
+        # None where the server did not say.
+        self.image_support = supports(details, 'vision')
+        self.tool_support = supports(details, 'tools')
         self._set_thinking_options(details)
+        self._show_summary('' if loading else ' · '.join(summary_parts(details)), bool(prices(details)))
         self.update_capability_controls()
         self.emit('capabilities-changed')
+
+    def _show_summary(self, text, priced):
+        """The line beside the selector that describes the selected model; gone when there is nothing to say."""
+        self.model_summary.set_text(text)
+        self.model_summary.set_tooltip_text(
+            _('Prompt and completion prices in US dollars per million tokens, as listed when the model list was read.')
+            if text and priced else None)
+        self.model_summary_cell.set_visible(bool(text))
+        # Read out with the selector, which is where the focus is.
+        self.model_dropdown.update_property([Gtk.AccessibleProperty.DESCRIPTION], [text])
 
     def update_capability_controls(self):
         self.attach_button.set_sensitive(self.get_selected_model() is not None and
                                          not self.capabilities_loading and self.image_support is not False and not self.awaiting_tools)
-        if not self.get_selected_model():
+        if self.unavailable:
+            notice = self.unavailable
+        elif not self.get_selected_model():
             notice = self._model_list_notice
         elif self.capabilities_loading:
             notice = _('Checking image support…')
         elif self.image_support is False:
-            notice = _('This model does not support images.')
-            if self.has_draft_images():
-                notice += ' ' + _('Remove draft images or select a vision model to send.')
-            if self.has_history_images:
-                notice += ' ' + _('Earlier images remain saved; only text history will be sent.')
-        elif self.image_support is None:
-            notice = _('Image support unknown.') if self.get_selected_model() else ''
+            # The summary beside the selector says the model takes no images; this says what that stops.
+            needed = ([_('Remove draft images or select a vision model to send.')] if self.has_draft_images() else []) + \
+                     ([_('Earlier images remain saved; only text history will be sent.')] if self.has_history_images else [])
+            notice = ' '.join([_('This model does not support images.')] + needed) if needed else ''
         else:
             notice = ''
+        refused = self.image_support is False and not self.capabilities_loading and self.get_selected_model()
+        self.attach_button.set_tooltip_text(_('This model does not support images.') if refused else _('Attach Image'))
         self.capability_notice.set_text(notice)
         self.capability_notice.set_visible(bool(notice))
         self.set_running(self._running)
@@ -209,8 +235,12 @@ class ChatInput(Gtk.Box):
         return isinstance(caps, list) and 'embedding' in caps and 'completion' not in caps
 
     def _empty_model_notice(self):
-        return (_('No cloud models are available. Try refreshing later.') if self._host is not None and not self._host.capabilities.model_management else
-                _('No chat models found. Pull one in Manage Models, then refresh.'))
+        if self._host is None or self._host.capabilities.model_management:
+            return _('No chat models found. Pull one in Manage Models, then refresh.')
+        # A hosted service, whose models the user cannot add to.
+        if self._host.fixed_url:
+            return _('No cloud models are available. Try refreshing later.')
+        return _('No models found on this server. Load one there, then refresh.')
 
     def fetch_models(self, host, refresh=False, host_id=None):
         if not self.discovery_enabled:
@@ -249,7 +279,8 @@ class ChatInput(Gtk.Box):
                 for tag in future.result():
                     model = tag['name'] if isinstance(tag, dict) else tag
                     info = self.services.catalog.cached_details(host, model)
-                    if self._embedding_only(info):
+                    # Some servers say so in the list itself.
+                    if self._embedding_only(info) or self._embedding_only(tag):
                         continue
                     models.append(model)
                     if info is not None:
@@ -258,7 +289,8 @@ class ChatInput(Gtk.Box):
                 return
             except Exception as exc:
                 error = str(exc)
-            GLib.idle_add(deliver, models, details, error)
+            # By name, whatever order the server lists them in.
+            GLib.idle_add(deliver, sorted(models, key=str.casefold), details, error)
         future = self.services.catalog.request_models(host, cancel, refresh)
         future.add_done_callback(finished)
 

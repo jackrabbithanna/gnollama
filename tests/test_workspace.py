@@ -9,7 +9,8 @@ from unittest.mock import patch
 from gi.repository import Gtk, Gdk, Gio
 from src.app_context import AppContext
 from src.providers import OllamaProvider, ProviderError, RequestCancelled
-from provider_fixture import provider_patch
+from provider_fixture import LIMITED, limited_host, provider_patch
+from src.providers.registry import PROVIDERS
 from src.context import estimate_context
 from src.records import RequestSettings, ViewState, WireOptions
 from src.export import export_json, export_markdown
@@ -194,6 +195,21 @@ class WorkspaceTests(unittest.TestCase):
             self.assertEqual(a['request']['messages'][-1]['images'], ['aW1hZ2U='])
             snapshot['hits'][0]['text'] = 'changed later'
             self.assertNotIn('changed later', json.dumps(a['request']))
+
+    def test_comparison_refuses_shared_options_a_target_lacks(self):
+        local = self.storage.get_all_hosts()[0]
+        models = [(name, {'capabilities': ['completion']}) for name in ('one', 'two')]
+        with patch.dict(PROVIDERS, LIMITED), patch.object(self.context.services.catalog, 'models', return_value=models):
+            limited = limited_host(self.storage)
+            targets = [dict(host_id=local['id'], model='one'), dict(host_id=limited['id'], model='two')]
+            def prepare(**wire):
+                return prepare_run(self.context, ComparisonRun(), 'question', [],
+                                   RequestSettings(wire=WireOptions(**wire)), targets, None, 0)
+            for wire, name in ((dict(options={'top_k': 5}), 'Top K'), (dict(options={'num_ctx': 2048}), 'Context size'),
+                               (dict(logprobs=True), 'Return token probabilities')):
+                with self.subTest(wire=wire), self.assertRaisesRegex(ValueError, 'Limited does not support: ' + name):
+                    prepare(**wire)
+            self.assertEqual(len(prepare(options={'temperature': 0.5})['targets']), 2)
 
     def test_comparison_stop_all_saves_stopped_outcomes(self):
         host = self.storage.get_all_hosts()[0]
@@ -426,10 +442,26 @@ class WorkflowTests(unittest.TestCase):
             self.assertEqual(calls[0]['messages'], calls[1]['messages'])
             snapshot = self.storage.export_snapshot(tab.strategy.chat_id)
             self.assertEqual({t['status'] for t in snapshot['targets']}, {'complete', 'failed'})
+            host = self.storage.get_all_hosts()[0]
+            titles = [host['name'] + ' (test)', host['name'] + ' (two)']
+            self.assertEqual([r[1].header.get_label() for r in tab.results.values()], titles)
+            self.assertEqual({t['settings']['host_name'] for t in snapshot['targets']}, {host['name']})
             reopened = ComparisonTab(self.context, saved=snapshot)
             self.tabs.append(reopened)
             self.assertEqual(len(reopened.results), 2)
             self.assertEqual(api.call_count, 2)
+            # A renamed host keeps the name each result was run under; an older result finds its host.
+            self.storage.update_host(host['id'], 'Renamed', host['hostname'], True)
+            older = copy.deepcopy(snapshot)
+            del older['targets'][0]['settings']['host_name']
+            del older['targets'][1]['settings']['host_name']
+            older['targets'][1]['settings'].update(host_id='removed', host='http://gone.example:1234')
+            reopened = ComparisonTab(self.context, saved=older)
+            self.tabs.append(reopened)
+            self.assertEqual([r[1].header.get_label() for r in reopened.results.values()], ['Renamed (test)', 'two'])
+            reopened = ComparisonTab(self.context, saved=snapshot)
+            self.tabs.append(reopened)
+            self.assertEqual([r[1].header.get_label() for r in reopened.results.values()], titles)
 
     def test_comparison_duplicate_targets_preserves_draft(self):
         from src.widgets.comparison_view import ComparisonTab

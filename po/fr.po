@@ -387,12 +387,6 @@ msgstr "Toutes les cibles doivent prendre en charge les images partagées."
 msgid "Every target must support the selected thinking option."
 msgstr "Toutes les cibles doivent prendre en charge l’option de réflexion sélectionnée."
 
-#: src/comparison.py:52
-msgid "Cloud targets do not support shared structured output or model retention."
-msgstr ""
-"Les cibles cloud ne prennent pas en charge la sortie structurée partagée ni la "
-"conservation du modèle."
-
 #: src/comparison.py:55
 msgid "The selected thinking level is incompatible with a target."
 msgstr "Le niveau de réflexion sélectionné est incompatible avec une cible."
@@ -640,10 +634,6 @@ msgstr "Échec de la suppression"
 #: src/host_manager.ui:6 src/host_manager.ui:17
 msgid "Manage Hosts"
 msgstr "Gérer les hôtes"
-
-#: src/host_manager.ui:35
-msgid "Ollama Servers"
-msgstr "Serveurs Ollama"
 
 #: src/host_manager.ui:36
 msgid "Select a server to edit its name or address."
@@ -1210,10 +1200,6 @@ msgstr "Modèles en mémoire"
 msgid "Ollama Cloud requires https://ollama.com."
 msgstr "Ollama Cloud nécessite https://ollama.com."
 
-#: src/ollama.py:80
-msgid "Enter a valid http:// or https:// Ollama host URL."
-msgstr "Saisissez une URL d’hôte Ollama valide commençant par http:// ou https://."
-
 #: src/ollama.py:89 src/ollama.py:104 src/ollama.py:137
 msgid "Request stopped"
 msgstr "Requête arrêtée"
@@ -1235,14 +1221,6 @@ msgid "Ollama Cloud usage or rate limit reached. Try again later."
 msgstr ""
 "La limite d’utilisation ou de requêtes d’Ollama Cloud est atteinte. Réessayez plus "
 "tard."
-
-#: src/ollama.py:163
-msgid "Invalid JSON received from Ollama"
-msgstr "JSON invalide reçu d’Ollama"
-
-#: src/ollama.py:165
-msgid "Expected a JSON object from Ollama"
-msgstr "Un objet JSON était attendu d’Ollama"
 
 #: src/ollama.py:222
 msgid "Enter nonempty text to embed."
@@ -1780,9 +1758,6 @@ msgstr "Ce modèle ne prend pas en charge les images."
 msgid "Earlier images remain saved; only text history will be sent."
 msgstr "Les images précédentes restent enregistrées ; seul l’historique textuel sera envoyé."
 
-#: src/widgets/chat_input.py:125
-msgid "Image support unknown."
-msgstr "Prise en charge des images inconnue."
 
 #: src/widgets/chat_input.py:137
 msgid "Select a chat model"
@@ -3542,10 +3517,6 @@ msgstr "Les modèles de plongement ne peuvent pas participer à une conversation
 msgid "A participant does not support the selected thinking option."
 msgstr "Un participant ne prend pas en charge l’option de réflexion sélectionnée."
 
-#: src/model_conversation.py:67
-msgid "Cloud targets manage model retention automatically."
-msgstr "Les cibles cloud gèrent automatiquement la conservation des modèles."
-
 #: src/model_conversation.py:121
 msgid "Enter an opening prompt and choose 1–100 rounds."
 msgstr "Saisissez un message initial et choisissez entre 1 et 100 tours."
@@ -3687,3 +3658,279 @@ msgstr "Laisser deux modèles dialoguer entre eux"
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in
 msgid "Organize documents into knowledge collections"
 msgstr "Organiser les documents en collections de connaissances"
+
+#: src/widgets/options_panel.py
+msgid "Not available on this server."
+msgstr "Indisponible sur ce serveur."
+
+#: src/chat_controller.py
+msgid "This server does not offer single responses. Open a chat to use it."
+msgstr "Ce serveur ne propose pas de réponses uniques. Ouvrez une discussion pour l’utiliser."
+
+#: src/providers/base.py
+msgid "{host} does not support: {options}."
+msgstr "{host} ne prend pas en charge : {options}."
+
+#: src/providers/base.py
+msgid "Structured output"
+msgstr "Sortie structurée"
+
+#: src/host_manager.py
+msgid "Remove the saved key"
+msgstr "Supprimer la clé enregistrée"
+
+#: src/host_manager.py
+msgid "Optional. Stored securely in your desktop keyring."
+msgstr "Facultatif. Enregistrée de manière sécurisée dans le trousseau de votre bureau."
+
+#: src/host_manager.ui
+msgid "Servers"
+msgstr "Serveurs"
+
+#: src/providers/openai.py
+msgid "OpenAI-Compatible Server"
+msgstr "Serveur compatible OpenAI"
+
+#: src/providers/openai.py
+msgid "This server type does not report what its models support, so thinking, image, and tool support are not checked."
+msgstr "Ce type de serveur n’indique pas ce que ses modèles prennent en charge ; la prise en charge de la réflexion, des images et des outils n’est donc pas vérifiée."
+
+#: src/providers/openai.py
+msgid "This server does not accept: {0}."
+msgstr "Ce serveur n’accepte pas : {0}."
+
+#: src/providers/openai.py
+msgid "This server accepts only the Low, Medium, and High thinking levels."
+msgstr "Ce serveur n’accepte que les niveaux de réflexion Faible, Moyen et Élevé."
+
+#: src/providers/transport.py
+msgid "Invalid JSON received from the server"
+msgstr "JSON invalide reçu du serveur"
+
+#: src/providers/openai.py
+msgid "The server rejected the API key, or requires one. Edit this host to check its API key."
+msgstr "Le serveur a refusé la clé d’API ou en exige une. Modifiez cet hôte pour vérifier sa clé d’API."
+
+#: src/providers/openai.py
+msgid "The server reported a usage or rate limit. Try again later."
+msgstr "Le serveur a signalé une limite d’utilisation ou de débit. Réessayez plus tard."
+
+#: src/providers/openai.py
+msgid "The server did not return a model list."
+msgstr "Le serveur n’a pas renvoyé de liste de modèles."
+
+#: src/providers/openai.py
+msgid "Connected\nAvailable models: {0}"
+msgstr "Connecté\nModèles disponibles : {0}"
+
+#: src/providers/transport.py
+msgid "Enter a valid http:// or https:// server URL."
+msgstr "Saisissez une URL de serveur valide commençant par http:// ou https://."
+
+#: src/providers/transport.py
+msgid "Expected a JSON object from the server"
+msgstr "Un objet JSON était attendu du serveur"
+
+#: src/widgets/chat_input.py
+msgid "No models found on this server. Load one there, then refresh."
+msgstr "Aucun modèle trouvé sur ce serveur. Chargez-en un sur le serveur, puis actualisez."
+
+#: src/providers/openai.py
+msgid "For example: Local Server"
+msgstr "Par exemple : Serveur local"
+
+#: src/bubbles.py
+msgid "Total (measured locally): {0}"
+msgstr "Total (mesuré localement) : {0}"
+
+#: src/bubbles.py
+msgid "Tokens/s (measured locally): {0}"
+msgstr "Jetons/s (mesuré localement) : {0}"
+
+#: src/bubbles.py
+msgid "Timed by Gnollama, not reported by the server. The total includes network delay and model loading."
+msgstr "Mesuré par Gnollama, non communiqué par le serveur. Le total comprend le délai réseau et le chargement du modèle."
+
+#: src/providers/lmstudio.py
+msgid "LM Studio"
+msgstr "LM Studio"
+
+#: src/providers/openrouter.py
+msgid "OpenRouter"
+msgstr "OpenRouter"
+
+#: src/providers/openrouter.py
+msgid "OpenRouter requires {0}."
+msgstr "OpenRouter nécessite {0}."
+
+#: src/providers/vercel.py
+msgid "Vercel AI Gateway"
+msgstr "Vercel AI Gateway"
+
+#: src/providers/vercel.py
+msgid "Vercel AI Gateway requires {0}."
+msgstr "Vercel AI Gateway nécessite {0}."
+
+#: src/model_manager.py
+msgid "Context Length"
+msgstr "Longueur du contexte"
+
+#: src/model_manager.py
+msgid "Max Context Length"
+msgstr "Longueur maximale du contexte"
+
+#: src/model_summary.py
+msgid "Free"
+msgstr "Gratuit"
+
+#: src/model_summary.py
+msgid "${0} / ${1} per 1M tokens"
+msgstr "${0} / ${1} par million de jetons"
+
+#: src/model_summary.py
+msgid "No images"
+msgstr "Pas d’images"
+
+#: src/model_summary.py
+msgid "Tools"
+msgstr "Outils"
+
+#: src/model_summary.py
+msgid "No tools"
+msgstr "Pas d’outils"
+
+#: src/model_summary.py
+msgid "No thinking"
+msgstr "Pas de réflexion"
+
+#: src/model_summary.py
+msgid "Not trained for tools"
+msgstr "Non entraîné pour les outils"
+
+#: src/model_summary.py
+msgid "{0}M"
+msgstr "{0} M"
+
+#: src/model_summary.py
+msgid "{0}K"
+msgstr "{0}K"
+
+#: src/model_summary.py
+msgid "{0} context"
+msgstr "Contexte {0}"
+
+#: src/model_summary.py
+msgid "{0} context max"
+msgstr "Contexte max. {0}"
+
+#: src/model_summary.py
+msgid "Prompt: ${0} per 1M tokens"
+msgstr "Entrée : ${0} par million de jetons"
+
+#: src/model_summary.py
+msgid "Completion: ${0} per 1M tokens"
+msgstr "Sortie : ${0} par million de jetons"
+
+#: src/model_summary.py
+msgid "Cache read: ${0} per 1M tokens"
+msgstr "Lecture du cache : ${0} par million de jetons"
+
+#: src/model_summary.py
+msgid "Cache write: ${0} per 1M tokens"
+msgstr "Écriture du cache : ${0} par million de jetons"
+
+#: src/model_summary.py
+msgid "Cache write, kept one hour: ${0} per 1M tokens"
+msgstr "Écriture du cache, conservée une heure : ${0} par million de jetons"
+
+#: src/model_summary.py
+msgid "Reasoning: ${0} per 1M tokens"
+msgstr "Réflexion : ${0} par million de jetons"
+
+#: src/model_summary.py
+msgid "Image input: ${0} per 1M tokens"
+msgstr "Entrée image : ${0} par million de jetons"
+
+#: src/model_summary.py
+msgid "Audio input: ${0} per 1M tokens"
+msgstr "Entrée audio : ${0} par million de jetons"
+
+#: src/model_summary.py
+msgid "Cached audio input: ${0} per 1M tokens"
+msgstr "Entrée audio en cache : ${0} par million de jetons"
+
+#: src/model_summary.py
+msgid "Image output: ${0} per 1M tokens"
+msgstr "Sortie image : ${0} par million de jetons"
+
+#: src/model_summary.py
+msgid "Audio output: ${0} per 1M tokens"
+msgstr "Sortie audio : ${0} par million de jetons"
+
+#: src/model_summary.py
+msgid "Web search: ${0} per search"
+msgstr "Recherche web : ${0} par recherche"
+
+#: src/model_summary.py
+msgid "Request: ${0} per request"
+msgstr "Requête : ${0} par requête"
+
+#: src/model_summary.py
+msgid "{0}: ${1}"
+msgstr "{0} : ${1}"
+
+#: src/model_summary.py
+msgid "Prices are as listed when this was read; they can change."
+msgstr "Prix tels qu’indiqués lors de la lecture ; ils peuvent changer."
+
+#: src/widgets/chat_input.py
+msgid "Prompt and completion prices in US dollars per million tokens, as listed when the model list was read."
+msgstr "Prix d’entrée et de sortie en dollars américains par million de jetons, tels qu’indiqués lors de la lecture de la liste des modèles."
+
+#: src/model_manager.py
+msgid "Pricing"
+msgstr "Tarifs"
+
+#: src/model_manager.py
+msgid "Supported Parameters"
+msgstr "Paramètres pris en charge"
+
+#: src/model_manager.py
+msgid "Max Completion Tokens"
+msgstr "Jetons de sortie maximum"
+
+#: src/model_manager.py
+msgid "Reasoning"
+msgstr "Réflexion"
+
+#: src/widgets/options_panel.py
+msgid "Not available for this model."
+msgstr "Non disponible pour ce modèle."
+
+#: src/widgets/comparison_view.py
+msgid "Not available for every target."
+msgstr "Non disponible pour toutes les cibles."
+
+#: src/providers/base.py
+msgid "The server returned {0} dimensions where {1} were requested. It may not support choosing dimensions for this model."
+msgstr "Le serveur a renvoyé {0} dimensions alors que {1} étaient demandées. Il ne permet peut-être pas de choisir les dimensions pour ce modèle."
+
+#: src/knowledge.py
+msgid "A chunk is estimated at {0} tokens. The embedding model accepts {1}, and this server shortens longer text without notice. The estimate is rough, so nothing above {2} is sent. Use a smaller chunk size."
+msgstr "Un fragment est estimé à {0} jetons. Le modèle d’embedding en accepte {1}, et ce serveur raccourcit sans prévenir un texte plus long. L’estimation est approximative ; rien n’est donc envoyé au-delà de {2}. Utilisez une taille de fragment plus petite."
+
+#: src/knowledge.py
+msgid "The search query is estimated at {0} tokens. The embedding model accepts {1}, and this server shortens longer text without notice. The estimate is rough, so nothing above {2} is sent. Shorten the query."
+msgstr "La requête de recherche est estimée à {0} jetons. Le modèle d’embedding en accepte {1}, et ce serveur raccourcit sans prévenir un texte plus long. L’estimation est approximative ; rien n’est donc envoyé au-delà de {2}. Raccourcissez la requête."
+
+#: src/widgets/knowledge_common.py
+msgid "This model cannot be fully verified: it is recognized by what the server reports about it, not by its contents, so a replacement that reports the same would go unnoticed."
+msgstr "Ce modèle ne peut pas être entièrement vérifié : il est reconnu d’après ce que le serveur en dit, non d’après son contenu ; un remplacement déclarant la même chose passerait donc inaperçu."
+
+#: src/widgets/knowledge_common.py
+msgid "No embedding models are available. Try refreshing later."
+msgstr "Aucun modèle d’embedding n’est disponible. Réessayez d’actualiser plus tard."
+
+#: src/widgets/knowledge_common.py
+msgid "No embedding models found on this server. Load one there, then refresh."
+msgstr "Aucun modèle d’embedding trouvé sur ce serveur. Chargez-en un sur celui-ci, puis actualisez."

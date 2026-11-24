@@ -13,7 +13,8 @@ from pypdf.generic import DecodedStreamObject, DictionaryObject, NameObject
 
 from src.providers import OllamaProvider, ProviderError, RequestCancelled
 
-from provider_fixture import provider_patch
+from provider_fixture import LIMITED, provider_patch
+from src.providers.registry import PROVIDERS
 from src.database import DatabaseManager
 from src.knowledge import (DEFAULT_RAG, chunk_text, extract_document,
                            make_document, new_config, vector_blob)
@@ -202,7 +203,13 @@ class KnowledgeTests(unittest.TestCase):
         with provider_patch('list_models', return_value=[TAG]), provider_patch('embed', side_effect=stalled):
             second = self.context.knowledge.create_index(document['id'], 'http://embed:11434', TAG['name'], config)
             pump_until(started.is_set)
-            self.assertTrue(self.context.knowledge.busy('http://embed:11434', TAG['name']))
+            host = next(h for h in self.storage.get_all_hosts() if h['hostname'] == 'http://embed:11434')
+            self.assertTrue(self.context.knowledge.busy(host, TAG['name']))
+            self.assertTrue(self.context.knowledge.busy(dict(host, hostname='http://embed:11434/'), 'embed'))
+            # A host of another type at the same address is not held up by the job, whether or not it embeds.
+            with patch.dict(PROVIDERS, LIMITED):
+                for kind in ('limited', 'openai'):
+                    self.assertFalse(self.context.knowledge.busy(dict(host, provider=kind), TAG['name']))
             second['cancel'].cancel()
             release.set()
             pump_until(lambda: second['done'] and self.storage.writer.idle)

@@ -110,8 +110,12 @@ class ChatStorage:
             self.credentials.forget_session(host_id)
 
     def save_host(self, name, hostname, is_default=False, *, host_id=None,
-                  provider='ollama', api_key='', session_only=False):
-        """Save from a worker; a keyring failure leaves the host unchanged."""
+                  provider='ollama', api_key='', session_only=False, clear_key=False):
+        """Save from a worker; a keyring failure leaves the host unchanged.
+
+        A blank `api_key` keeps the key the host has, where `Provider.keeps_key`
+        allows. `clear_key` removes it from a host whose type works without one.
+        """
         self.hosts_changed()
         with self._host_lock:
             previous = self.get_host(host_id) if host_id else None
@@ -123,16 +127,19 @@ class ChatStorage:
             kind = provider_class(provider)
             if not name.strip():
                 raise ValueError(_('Enter a name for this server.'))
-            if kind.requires_key:
-                kind.check_url(hostname)
-                if api_key:
-                    api_key = self.credentials.validate(api_key)
-                    if not session_only:
-                        reference = reference or str(uuid.uuid4())
-                        self.credentials.save(reference, api_key)
-                elif not reference and not self.credentials.has_session(host_id):
-                    raise CredentialError(_('An API key is required. Edit this host to enter one.'))
-            else:
+            kind.check_url(hostname)
+            keyed = kind.requires_key or kind.key_optional
+            api_key = self.credentials.validate(api_key) if keyed and api_key else ''
+            # A key follows a host to another type only at the same address.
+            drop = (not keyed or (clear_key and kind.key_optional) or
+                    previous is not None and not kind.keeps_key(previous, hostname))
+            if kind.requires_key and not api_key and (
+                    drop or not reference and not self.credentials.has_session(host_id)):
+                raise CredentialError(_('An API key is required. Edit this host to enter one.'))
+            if api_key and not session_only:
+                reference = reference or str(uuid.uuid4())
+                self.credentials.save(reference, api_key)
+            elif drop:
                 self.credentials.clear(reference)
                 reference = None
             if previous:
@@ -144,9 +151,9 @@ class ChatStorage:
                     if reference:
                         self.credentials.clear(reference)
                     raise
-            if kind.requires_key and api_key and session_only:
+            if api_key and session_only:
                 self.credentials.set_session(host_id, api_key)
-            elif not kind.requires_key or api_key:
+            elif drop or api_key:
                 self.credentials.forget_session(host_id)
             if is_default:
                 self.db.chats.set_default_host(host_id)

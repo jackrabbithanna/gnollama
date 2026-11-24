@@ -42,6 +42,13 @@ from .session import ChatStrategy, GenerationStrategy, RequestState
 PAGE_SIZE = 50
 
 
+def unavailable(capabilities, mode):
+    """Why a session of this mode cannot use a host with these capabilities, or ''."""
+    if mode != 'chat' and not capabilities.raw_generate:
+        return _('This server does not offer single responses. Open a chat to use it.')
+    return ''
+
+
 @dataclass(frozen=True)
 class ComposerInput:
     """What the composer and its options held when Send was pressed."""
@@ -59,6 +66,8 @@ class ComposerInput:
     show_stats: bool = True
     knowledge: dict = field(default_factory=dict)
     query_override: str = ''
+    # Values the panel holds for options the host or model lacks: stored, never sent.
+    unsent: dict = field(default_factory=dict)
     # None while unknown; False when the model cannot read images.
     image_support: bool | None = None
     capabilities_loading: bool = False
@@ -70,7 +79,7 @@ class ComposerInput:
         The result shares nothing with the widgets it was read from.
         """
         request = self.request
-        target = ModelTarget(self.host['id'], url, self.model) if self.host else None
+        target = ModelTarget(self.host['id'], url, self.model, self.host.get('name')) if self.host else None
         wire = WireOptions(options=self.options, system=self.system, thinking=self.thinking,
                            format=request.get('format'), keep_alive=request.get('keep_alive'),
                            tools=request.get('tools'), logprobs=self.logprobs,
@@ -80,14 +89,44 @@ class ComposerInput:
                          tools_enabled=request.get('tools_enabled', False),
                          tools_text=request.get('tools_text', ''), knowledge=self.knowledge,
                          query_override=self.query_override, draft_settings=draft_settings or {},
+                         unsent=self.unsent,
                          extra=extra or {})
         return copy.deepcopy(RequestSettings(target, wire, view, endpoint, history_images_omitted))
+
+
+class ModelLimits:
+    """What a host's models can be sent, from the details the catalog holds.
+
+    A view and the validation behind it ask the same instance. The catalog
+    forgets details after a minute, so the last ones seen are kept here and a
+    request is checked against what the options panel was showing.
+    """
+    def __init__(self, context):
+        self.context = context
+        self._seen: tuple = (None, None)
+
+    def of(self, host, model):
+        """The record for `model` on the host record `host`; the provider's own while details are unknown."""
+        if not host or not model:
+            return self.context.capabilities(host)
+        connection = self.context.connection(host)
+        try:
+            key = model_key(host, model)
+        except ValueError:  # An address that cannot be used; sending says so.
+            return connection.capabilities
+        details = self.context.services.catalog.cached_details(connection, model)
+        if details is not None:
+            self._seen = (key, details)
+        elif self._seen[0] == key:
+            details = self._seen[1]
+        return connection.model_capabilities(details)
 
 
 class ChatController:
     def __init__(self, context, view, mode='generate', chat_id=None, initial_history=None, chat_data=None):
         self.context, self.view, self.mode = context, view, mode
         self.storage, self.services = context.storage, context.services
+        self.limits = ModelLimits(context)
         self.strategy: Any
         if mode == 'chat':
             self.strategy = ChatStrategy(self.storage, chat_id=chat_id, initial_history=initial_history)
@@ -154,7 +193,7 @@ class ChatController:
         hostname = validate_url(host['hostname'])
         if not model:
             raise ValueError(_('Select an available model before sending.'))
-        if model_key(hostname, model) in self.services.models.reserved:
+        if model_key(host, model) in self.services.models.reserved:
             raise ValueError(_('Wait for this model to finish unloading before sending.'))
         return hostname
 
@@ -163,6 +202,10 @@ class ChatController:
         if not self.can_send(continuation):
             return False
         hostname = self.check_target(input.host, input.model)
+        limits = self.context.capabilities(input.host)
+        reason = unavailable(limits, self.mode)
+        if reason:
+            raise ValueError(reason)
         images = [] if continuation else list(input.images)
         if input.capabilities_loading and (images or self.has_history_images):
             raise ValueError(_('Wait for image support to be checked before sending.'))
@@ -171,6 +214,8 @@ class ChatController:
         settings = input.settings(
             hostname, self.mode, extra=self.extra,
             history_images_omitted=input.image_support is False and self.has_history_images)
+        limits.require(settings.wire, input.host)
+        self.limits.of(input.host, input.model).require(settings.wire, input.host, input.model)
         knowledge = settings.view.knowledge
         retrieve = (self.mode == 'chat' and knowledge.get('enabled') and
                     not continuation and not without_knowledge)

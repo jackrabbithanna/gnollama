@@ -10,6 +10,7 @@ from contextlib import contextmanager
 from pathlib import Path
 from unittest.mock import patch
 
+from legacy_schema import begin_index
 from src import database
 from src.database import DatabaseManager, DatabaseUpgradeError
 from src.knowledge import make_document, new_config, PRESETS
@@ -22,9 +23,11 @@ def add_index(db, id='index', vectors=None, config=None, status='complete'):
     document = make_document(id, ''.join('Passage %03d. ' % n for n in range(len(vectors))))
     db.knowledge.add_knowledge_document(document)
     db.knowledge.add_embedding_config(config)
-    db.knowledge.begin_knowledge_index(dict(id=id, document_id=document['id'], config_id=config['id'],
-                                 host='http://localhost:11434', model=config['model'], chunk_size=1600,
-                                 overlap=200, created_at=0))
+    with db._get_conn() as conn:
+        current = 'host_kind' in [r['name'] for r in conn.execute('PRAGMA table_info(knowledge_indexes)')]
+    (db.knowledge.begin_knowledge_index if current else lambda index: begin_index(db, index))(
+        dict(id=id, document_id=document['id'], config_id=config['id'], host='http://localhost:11434',
+             model=config['model'], chunk_size=1600, overlap=200, created_at=0))
     chunks = [dict(id=id + '-%05d' % n, ordinal=n, start=n*13, end=(n+1)*13,
                    vector=vector_blob(v)) for n, v in enumerate(vectors)]
     db.knowledge.save_embedding_batch(id, config['id'], len(vectors[0]), chunks)
@@ -42,9 +45,9 @@ def legacy_database(path, dimensions=2, raw=None):
     db.knowledge.add_knowledge_document(doc)
     db.knowledge.add_embedding_config(config)
     for id, status in [('complete', 'complete'), ('partial', 'interrupted')]:
-        db.knowledge.begin_knowledge_index(dict(id=id, document_id=doc['id'], config_id=config['id'],
-                                     host='http://old:11434', model=config['model'], chunk_size=1600,
-                                     overlap=200, created_at=0))
+        begin_index(db, dict(id=id, document_id=doc['id'], config_id=config['id'],
+                             host='http://old:11434', model=config['model'], chunk_size=1600,
+                             overlap=200, created_at=0))
         with db._get_conn() as conn:
             conn.execute('INSERT INTO knowledge_chunks VALUES (?, ?, 0, 0, 25, ?)',
                          (id+'-chunk', id, raw if raw is not None else vector_blob([1, 0])))
@@ -89,7 +92,7 @@ class VectorStorageTests(unittest.TestCase):
         self.assertEqual({i['status'] for i in upgraded.knowledge.knowledge_indexes()}, {'complete', 'interrupted'})
         self.assertEqual(upgraded.knowledge.embedding_config(config['id']), config)
         with upgraded._get_conn() as conn:
-            self.assertEqual(conn.execute('PRAGMA user_version').fetchone()[0], 12)
+            self.assertEqual(conn.execute('PRAGMA user_version').fetchone()[0], 13)
             self.assertNotIn('vector', [r['name'] for r in conn.execute('PRAGMA table_info(knowledge_chunks)')])
             self.assertEqual(conn.execute(f'SELECT count(*) FROM {vector_table(config["id"])}').fetchone()[0], 2)
         with sqlite3.connect(upgraded.backup_path) as backup:

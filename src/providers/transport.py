@@ -31,7 +31,7 @@ def validate_url(url):
     except (ValueError, AttributeError, TypeError):
         valid = False
     if not valid:
-        raise ProviderError(_('Enter a valid http:// or https:// Ollama host URL.'))
+        raise ProviderError(_('Enter a valid http:// or https:// server URL.'))
     return url.rstrip('/')
 
 
@@ -44,13 +44,20 @@ def read_all(stream, cancellable):
         chunks.append(chunk)
 
 
+def error_text(detail):
+    """The message of an error that may be an object, a string, or absent."""
+    if isinstance(detail, dict):
+        detail = detail.get('message') or json.dumps(detail)
+    return str(detail) if detail else None
+
+
 def json_object(raw):
     try:
         result = json.loads(raw)
     except (ValueError, UnicodeError) as exc:
-        raise ProviderError(_('Invalid JSON received from Ollama')) from exc
+        raise ProviderError(_('Invalid JSON received from the server')) from exc
     if not isinstance(result, dict):
-        raise ProviderError(_('Expected a JSON object from Ollama'))
+        raise ProviderError(_('Expected a JSON object from the server'))
     return result
 
 
@@ -139,8 +146,8 @@ class Transport:
         with self.response(url, data, method, timeout, cancellable, **hooks) as (stream, cancel):
             raw = read_all(stream, cancel)
             result = json_object(raw) if raw.strip() else {}
-            if 'error' in result:
-                raise ProviderError(str(result['error']))
+            if result.get('error'):
+                raise ProviderError(error_text(result['error']))
             return result
 
     def stream_lines(self, url, data, timeout=300, cancellable=None, decode=None, **hooks):

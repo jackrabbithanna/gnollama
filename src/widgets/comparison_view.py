@@ -6,6 +6,7 @@ from gi.repository import Gtk, GObject, GLib, Pango
 from ..tab import GenerationTab
 from ..chat_controller import ComposerInput
 from ..records import RequestSettings
+from ..session import response_host_name
 from ..comparison import ComparisonRun, ComparisonController, prepare_run
 from ..drafts import DraftController
 from ..context import describe_context
@@ -138,7 +139,16 @@ class ComparisonTab(Gtk.Box):
 
     def _targets_changed(self):
         self.draft.changed()
+        self._show_limits()
         self._update_send()
+
+    def _show_limits(self):
+        """One request goes to every target, so the shared panel offers what all of them take."""
+        records = [record for record in (picker.capabilities() for picker in self.targets) if record is not None]
+        shared = records[0] if records else self.context.capabilities(None)
+        for record in records[1:]:
+            shared = shared.both(record)
+        self.options_panel.set_capabilities(shared, reason=_('Not available for every target.'))
 
     def _update_send(self):
         self.add_target_button.set_sensitive(len(self.targets) < 4 and not self.request)
@@ -163,8 +173,9 @@ class ComparisonTab(Gtk.Box):
             settings = ComposerInput(
                 request=panel.get_request_settings(), options=panel.get_options_from_ui(),
                 system=panel.system_prompt_entry.read_draft() or None,
-                thinking=self.chat_input.get_thinking_value(), logprobs=panel.logprobs_check.get_active(),
+                thinking=self.chat_input.get_thinking_value(), logprobs=panel.logprobs_enabled(),
                 top_logprobs=panel.get_logprobs(), show_stats=panel.stats_check.get_active(),
+                unsent=panel.get_unsent(),
                 knowledge=self.knowledge_control.options, query_override=self.knowledge_control.query.get_text(),
             ).settings(draft_settings=self.editor.read_draft()['settings'])
             images = self.chat_input.get_images()
@@ -250,8 +261,10 @@ class ComparisonTab(Gtk.Box):
         title = Gtk.Label(label=model + '\n' + settings.target.url, wrap=True,
                           wrap_mode=Pango.WrapMode.WORD_CHAR, selectable=True)
         box.append(title)
-        bubble = AiBubble(model_name=model, output_format=settings.wire.format, hexpand=True)
-        bubble.set_api_details(settings.api_details())
+        details = settings.api_details()
+        bubble = AiBubble(model_name=model, output_format=settings.wire.format, hexpand=True,
+                          host_name=response_host_name(details, self.storage.get_all_hosts))
+        bubble.set_api_details(details)
         box.append(bubble)
         stop = Gtk.Button(label=_('Stop response'))
         stop.connect('clicked', lambda *args: self.request.states[id].cancellable.cancel() if self.request else None)

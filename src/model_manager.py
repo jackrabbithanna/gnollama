@@ -1,13 +1,14 @@
 from gettext import gettext as _
 from typing import Any, List, Dict, Optional
 from gi.repository import Adw, Gtk, GLib
-from .providers import ProviderError, RequestCancelled, validate_url
+from .providers import ProviderError, RequestCancelled
 from .session import ViewRequests
 import json
 from datetime import datetime
 
 
-from .services import model_key
+from .model_summary import capability_parts, price_lines
+from .services import host_key, model_key
 
 
 def running_model_subtitle(model):
@@ -174,7 +175,7 @@ class ModelManagerDialog(Adw.Dialog):
             if error:
                 self.running_status.set_text(_('Could not refresh running models: {0}').format(error))
                 return
-            self.update_running_models(host['hostname'], models)
+            self.update_running_models(host, models)
         def fetch():
             try:
                 models = self.context.connection(host).running(cancellable=cancel)
@@ -183,7 +184,7 @@ class ModelManagerDialog(Adw.Dialog):
                 self.requests.deliver(completed, [], str(exc), cancellable=cancel)
         self.context.services.control.submit(fetch)
 
-    def update_running_models(self, hostname, models):
+    def update_running_models(self, host, models):
         for row, _host, _model, _button in self._running_rows:
             self.running_group.remove(row)
         self._running_rows.clear()
@@ -195,10 +196,10 @@ class ModelManagerDialog(Adw.Dialog):
             row = Adw.ActionRow(title=name, subtitle=running_model_subtitle(model), use_markup=False)
             button = Gtk.Button(label=_('Unload'), valign=Gtk.Align.CENTER,
                                 tooltip_text=_('Release this model from memory; keep its downloaded files.'))
-            button.connect('clicked', self.on_unload_clicked, hostname, name)
+            button.connect('clicked', self.on_unload_clicked, host, name)
             row.add_suffix(button)
             self.running_group.add(row)
-            self._running_rows.append((row, hostname, name, button))
+            self._running_rows.append((row, host, name, button))
         self.update_unload_buttons()
 
     def update_unload_buttons(self):
@@ -224,7 +225,7 @@ class ModelManagerDialog(Adw.Dialog):
                 return False
             self.update_unload_buttons()
             selected = self.get_selected_host()
-            if selected and validate_url(selected['hostname']) == key[0]:
+            if selected and host_key(selected) == key[0]:
                 if error and not cancel.is_cancelled():
                     self.show_error(_('Could not unload model'), error)
                 if self._running_cancel:
@@ -235,7 +236,7 @@ class ModelManagerDialog(Adw.Dialog):
         def unload():
             error = None
             try:
-                self.context.providers.local(host).unload(model, cancellable=cancel)
+                self.context.providers.ollama_at(host['hostname']).unload(model, cancellable=cancel)
             except ProviderError as exc:
                 error = str(exc)
             finally:
@@ -305,7 +306,7 @@ class ModelManagerDialog(Adw.Dialog):
         if not cloud and isinstance(size, (int, float)) and size >= 0:
             parts.insert(1, GLib.format_size(int(size)))
         row.set_subtitle(' | '.join(str(part) for part in parts if part) or
-                         (_('Ollama Cloud') if cloud else _('Unavailable')))
+                         (_(self.context.providers.connection(self.get_selected_host()).label) if cloud else _('Unavailable')))
         
         info_btn = Gtk.Button.new_from_icon_name("dialog-information-symbolic")
         info_btn.set_valign(Gtk.Align.CENTER)
@@ -368,7 +369,7 @@ class ModelManagerDialog(Adw.Dialog):
         host = self.get_selected_host()
         if not host or not self._capabilities().model_management:
             return
-        if self.is_model_busy(host['hostname'], model['name']) or model_key(host['hostname'], model['name']) in self.context.services.models.reserved:
+        if self.is_model_busy(host, model['name']) or model_key(host, model['name']) in self.context.services.models.reserved:
             self.show_error(_('Model Is Busy'), _('Wait for active chats and embedding jobs before deleting this model.'))
             return
         usage = self.storage.library.model_embedding_usage(model.get('digest', ''))
@@ -396,10 +397,10 @@ class ModelManagerDialog(Adw.Dialog):
                 if delete_vectors and self.context.knowledge.indexing_digest(model['digest']):
                     self.show_error(_('Model Is Busy'), _('Wait for all indexing jobs using this model before deleting its vectors.'))
                     return
-                if not self.context.knowledge.reserve_model(host['hostname'], model['name'], self.is_model_busy):
+                if not self.context.knowledge.reserve_model(host, model['name'], self.is_model_busy):
                     self.show_error(_('Model Is Busy'), _('Wait for active chats and embedding jobs before deleting this model.'))
                     return
-                key = model_key(host['hostname'], model['name'])
+                key = model_key(host, model['name'])
                 cancel = self.requests.new_cancel()
                 def thread_func() -> None:
                     try:
@@ -498,13 +499,23 @@ class ModelManagerDialog(Adw.Dialog):
                 label = k.replace("_", " ").title()
                 add_field(_(label), show_data[k])
 
+        # Shapes the application reads, not text: said in words, or left to the fields that hold the same.
+        worded = {'pricing': (_('Pricing'), '\n'.join(price_lines(show_data)))}
+        if isinstance(show_data.get('supports'), dict) and 'capabilities' not in show_data:
+            worded['supports'] = (_('Capabilities'), ', '.join(capability_parts(show_data)))
+        parameters = show_data.get('supported_parameters')
+        if isinstance(parameters, list) and all(isinstance(name, str) for name in parameters):
+            worded['supported_parameters'] = (_('Supported Parameters'), ', '.join(parameters))
+        for label, value in worded.values():
+            add_field(label, value)
+
         # Add everything else from both sources that hasn't been added yet
         merged = tag_data.copy()
         merged.update(show_data)
         
         # We'll also handle the collapsible ones later
         collapsible_keys = ["template", "license", "modelfile", "model_info"]
-        already_added = set(tag_keys) | set(show_keys) | set(collapsible_keys) | {"details", "tensors"}
+        already_added = set(tag_keys) | set(show_keys) | set(collapsible_keys) | {"details", "tensors", "advisory", "thinking_levels"} | set(worded)
         
         for k, v in merged.items():
             if k not in already_added:
@@ -539,7 +550,7 @@ class PullModelDialog(Adw.Dialog):
         # The model manager that opened this dialog, refreshed after a download.
         self.owner = owner
         self.services = owner.context.services
-        self.connection = owner.context.providers.local(hostname)
+        self.connection = owner.context.providers.ollama_at(hostname)
         self.hostname: str = hostname
         self.pulling: bool = False
         self.pull_future: Optional[Any] = None
@@ -654,3 +665,7 @@ def _dummy_extractions():
     _("License")
     _("Modelfile")
     _("Model Info")
+    _("Context Length")
+    _("Max Context Length")
+    _("Max Completion Tokens")
+    _("Reasoning")

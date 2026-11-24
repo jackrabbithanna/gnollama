@@ -4,6 +4,7 @@ import json
 import tempfile
 import time
 import unittest
+from dataclasses import replace
 
 from gi.repository import Gdk
 
@@ -45,9 +46,16 @@ PARTICIPANT = dict(
 
 FUTURE = {'future_option': {'nested': [1, 2]}}
 
-# Anything a provider is sent besides the wire options.
+# What a panel held for a host that took none of it, as OptionsPanel.get_unsent gives it.
+UNSENT = dict(top_k='40', min_p='0.05', num_ctx='8192', keep_alive=300, output_mode='schema',
+              tools_enabled=True, logprobs=True, top_logprobs='3', seed='7', stop='END, STOP')
+
+# Anything a provider is sent besides the wire options, and the names those take, for each API.
 ENVELOPE = {'model', 'messages', 'prompt', 'stream', 'images'}
 WIRE_NAMES = {'options', 'system', 'think', 'format', 'keep_alive', 'tools', 'logprobs', 'top_logprobs'}
+OPENAI_ENVELOPE = {'model', 'messages', 'stream', 'stream_options'}
+OPENAI_WIRE_NAMES = {'temperature', 'max_tokens', 'reasoning_effort', 'response_format', 'tools', 'logprobs',
+                     'top_logprobs'}
 
 
 class RecordingTransport:
@@ -55,9 +63,12 @@ class RecordingTransport:
     def __init__(self):
         self.bodies = []
 
-    def stream_lines(self, url, data, *args, **kwargs):
+    def stream_lines(self, url, data, timeout=300, cancellable=None, decode=None, **hooks):
         self.bodies.append(data())
-        return iter([{'message': {'content': 'ok'}, 'response': 'ok', 'done': True}])
+        if decode is None:
+            yield {'message': {'content': 'ok'}, 'response': 'ok', 'done': True}
+        else:
+            yield decode(b'data: {"choices": [{"delta": {"content": "ok"}, "finish_reason": "stop"}]}')
 
     stream_json = stream_lines
 
@@ -69,11 +80,45 @@ class StoredSettingsTests(unittest.TestCase):
                 settings = RequestSettings.from_stored(stored)
                 self.assertEqual(settings.to_stored(sparse=sparse), stored)
                 self.assertEqual(RequestSettings.from_stored(settings.to_stored()), settings)
+        # A record from before the host name was kept loads without one and is written back unchanged.
+        self.assertIsNone(RequestSettings.from_stored(PARTICIPANT).target.host_name)
+        self.assertNotIn('host_name', RequestSettings.from_stored(COMPARISON_TARGET).to_stored())
+        named = dict(COMPARISON_TARGET, host_name='Study box')
+        settings = RequestSettings.from_stored(named)
+        self.assertEqual(settings.target, ModelTarget('host-id', 'http://localhost:11434', 'one', 'Study box'))
+        self.assertEqual(settings.to_stored(), named)
+        self.assertEqual(settings.view.extra, {})
         settings = RequestSettings.from_chat_options(CHAT_OPTIONS)
         self.assertEqual(settings.to_chat_options(), CHAT_OPTIONS)
         self.assertEqual(settings.wire.options, {'temperature': 0.2, 'num_ctx': 4096, 'stop': ['END']})
         self.assertEqual(settings.wire.thinking, 'high')
         self.assertFalse(settings.view.show_stats)
+        # Records from before unsent values were kept have none, and gain no key for them.
+        self.assertEqual(settings.view.unsent, {})
+        for stored in (COMPARISON_TARGET, PARTICIPANT):
+            self.assertEqual(RequestSettings.from_stored(stored).view.unsent, {})
+
+    def test_values_held_for_a_lacking_host_are_stored_apart_and_never_sent(self):
+        settings = RequestSettings.from_chat_options(dict(CHAT_OPTIONS, unsent=UNSENT, **FUTURE))
+        self.assertEqual(settings.view.unsent, UNSENT)
+        self.assertEqual(settings.view.extra, FUTURE)
+        # What is sent is as it was without them.
+        self.assertEqual(settings.wire, RequestSettings.from_chat_options(CHAT_OPTIONS).wire)
+        self.assertEqual(settings.to_chat_options(), dict(CHAT_OPTIONS, unsent=UNSENT, **FUTURE))
+        self.assertEqual(RequestSettings.from_chat_options(settings.to_chat_options()), settings)
+        self.assertEqual(settings.api_details(), RequestSettings.from_chat_options(CHAT_OPTIONS).api_details())
+        # A stored null or empty table is none, and is not written back.
+        for empty in (None, {}):
+            self.assertEqual(RequestSettings.from_chat_options(dict(CHAT_OPTIONS, unsent=empty)).to_chat_options(),
+                             CHAT_OPTIONS)
+        for stored, sparse in ((COMPARISON_TARGET, False), (PARTICIPANT, True)):
+            flat = RequestSettings.from_stored(dict(stored, unsent=UNSENT))
+            self.assertEqual(flat.view.unsent, UNSENT)
+            self.assertEqual(flat.to_stored(sparse=sparse), dict(stored, unsent=UNSENT))
+            self.assertEqual(flat.api_details(), RequestSettings.from_stored(stored).api_details())
+        composed = ComposerInput(host={'id': 'host-id'}, model='one', options={'seed': 1}, unsent=UNSENT)
+        self.assertEqual(composed.settings('http://localhost:11434').view.unsent, UNSENT)
+        self.assertEqual(composed.settings('http://localhost:11434').wire.options, {'seed': 1})
 
     def test_unknown_stored_keys_survive_and_are_never_sent(self):
         chat = RequestSettings.from_chat_options(dict(CHAT_OPTIONS, **FUTURE))
@@ -94,9 +139,13 @@ class StoredSettingsTests(unittest.TestCase):
 
     def test_details_are_the_destination_and_wire_options_only(self):
         details = RequestSettings.from_stored(COMPARISON_TARGET).api_details()
-        self.assertEqual(set(details), {'host', 'model', 'endpoint'} | {f for f in WireOptions.__dataclass_fields__})
+        self.assertEqual(set(details), {'host', 'host_id', 'host_name', 'model', 'endpoint'}
+                         | {f for f in WireOptions.__dataclass_fields__})
         self.assertEqual(details['format'], SCHEMA)
         self.assertEqual(details['host'], 'http://localhost:11434')
+        self.assertEqual((details['host_id'], details['host_name']), ('host-id', None))
+        named = RequestSettings.from_stored(dict(COMPARISON_TARGET, host_name='Study box')).api_details()
+        self.assertEqual(named['host_name'], 'Study box')
 
     def test_composer_values_are_sorted_once_and_copied(self):
         knowledge, options = dict(DEFAULT_RAG, enabled=True), {'seed': 1}
@@ -112,28 +161,75 @@ class StoredSettingsTests(unittest.TestCase):
             show_stats=False, output_mode='schema', schema_text='source', tools_enabled=True, tools_text='tools',
             knowledge=dict(DEFAULT_RAG, enabled=True), query_override='query', extra=FUTURE))
         self.assertEqual(settings.target, ModelTarget('host-id', 'http://localhost:11434', 'one'))
+        named = replace(input, host={'id': 'host-id', 'name': 'Study box'}).settings('http://localhost:11434')
+        self.assertEqual(named.target.host_name, 'Study box')
+
+    def test_capabilities_name_what_a_provider_cannot_be_sent(self):
+        from src.providers import Capabilities, OllamaCloudProvider, OllamaProvider
+        wire = WireOptions(options=dict(temperature=0.5, top_k=5, min_p=0.1, num_ctx=4096, seed=1, stop=['x']),
+                           system='Be brief.', thinking='high', format=SCHEMA, keep_alive=60, tools=TOOLS,
+                           logprobs=True, top_logprobs=2)
+        self.assertEqual(OllamaProvider.capabilities.unsupported(wire), [])
+        self.assertEqual(OllamaCloudProvider.capabilities.unsupported(wire), ['Structured output', 'Model Retention'])
+        self.assertEqual(Capabilities().unsupported(wire), [
+            'Top K', 'Min P', 'Context size (tokens)', 'Structured output', 'Model Retention', 'Tool Calling',
+            'Return token probabilities (logprobs)'])
+        self.assertEqual(Capabilities().unsupported(WireOptions(options=dict(temperature=0.5, seed=1), system='x')), [])
+        with self.assertRaisesRegex(ValueError, '^Mine does not support: Top K, Min P.$'):
+            Capabilities(context_size=True).require(WireOptions(options=dict(top_k=1, min_p=0, num_ctx=1)),
+                                                    dict(name='Mine'))
+        OllamaProvider.capabilities.require(wire, dict(name='Local'))
 
     def test_request_bodies_hold_only_wire_options(self):
         view = ViewState(output_mode='schema', schema_text='VIEW-schema', tools_enabled=True,
                          tools_text='VIEW-tools', knowledge={'note': 'VIEW-knowledge'},
                          query_override='VIEW-query', draft_settings={'note': 'VIEW-draft'},
                          extra={'VIEW-key': 'VIEW-extra'})
-        wire = WireOptions(options={'temperature': 0.5}, system='Be brief.', thinking=True, format=SCHEMA,
-                           keep_alive=60, tools=TOOLS, logprobs=True, top_logprobs=2)
+        wire = WireOptions(options={'temperature': 0.5, 'num_predict': 64}, system='Be brief.', thinking=True,
+                           format=SCHEMA, keep_alive=60, tools=TOOLS, logprobs=True, top_logprobs=2)
+        ollama = dict(strategies=(ChatStrategy(None), GenerationStrategy()), wire=wire, names=ENVELOPE | WIRE_NAMES,
+                      sent=dict(options=wire.options, think=True, logprobs=True, top_logprobs=2))
+        # Each provider is sent what its capabilities take, under its own API's names.
+        openai = dict(
+            strategies=(ChatStrategy(None),), wire=replace(wire, thinking='high', keep_alive=None),
+            names=OPENAI_ENVELOPE | OPENAI_WIRE_NAMES,
+            sent=dict(temperature=0.5, max_tokens=64, reasoning_effort='high', tools=TOOLS, logprobs=True,
+                      top_logprobs=2, response_format={'type': 'json_schema', 'json_schema': {
+                          'name': 'response', 'schema': SCHEMA}}))
+        # The named types also take Top K and Min P, and every thinking setting in their own form.
+        extras = replace(wire, keep_alive=None, options=dict(wire.options, top_k=5, min_p=0.1))
+        lmstudio = dict(openai, wire=extras, names=openai['names'] | {'top_k', 'min_p'},
+                        sent=dict(openai['sent'], top_k=5, min_p=0.1, reasoning_effort='medium'))
+        # It also names how the service may route, so no upstream leaves out an option sent.
+        openrouter = dict(lmstudio, names=lmstudio['names'] - {'reasoning_effort'} | {'reasoning', 'provider'},
+                          sent=dict(lmstudio['sent'], reasoning={'enabled': True},
+                                    provider={'require_parameters': True}))
+        del openrouter['sent']['reasoning_effort']
+        # The gateway takes the same reasoning object, with no routing rule, Top K, Min P, or logprobs.
+        vercel = dict(openai, wire=replace(wire, keep_alive=None, logprobs=False, top_logprobs=None),
+                      names=openai['names'] - {'reasoning_effort', 'logprobs', 'top_logprobs'} | {'reasoning'},
+                      sent=dict(temperature=0.5, max_tokens=64, reasoning={'enabled': True}, tools=TOOLS,
+                                response_format=openai['sent']['response_format']))
+        cases = dict(ollama=ollama, ollama_cloud=ollama, openai=openai, lmstudio=lmstudio, openrouter=openrouter,
+                     vercel=vercel)
+        self.assertEqual(set(cases), set(PROVIDERS), 'every provider has a case here')
         for kind, cls in PROVIDERS.items():
-            for strategy in (ChatStrategy(None), GenerationStrategy()):
+            case = cases[kind]
+            self.assertEqual(cls.capabilities.unsupported(replace(case['wire'], format=None, keep_alive=None)), [])
+            for strategy in case['strategies']:
                 with self.subTest(provider=kind, strategy=type(strategy).__name__):
                     transport = RecordingTransport()
                     provider = cls(cls.fixed_url or 'http://localhost:11434', 'host', transport=transport)
-                    settings = RequestSettings(ModelTarget('VIEW-host-id', provider.url, 'test'), wire, view,
+                    settings = RequestSettings(ModelTarget('VIEW-host-id', provider.url, 'test'), case['wire'], view,
                                                history_images_omitted=True)
                     state = RequestState(settings, 'hello', connection=provider,
                                          messages=[{'role': 'user', 'content': 'hello'}])
-                    list(strategy.process(state))
+                    chunks = list(strategy.process(state))
+                    self.assertTrue(chunks[-1]['done'])
                     body, = transport.bodies
-                    self.assertLessEqual(set(body), ENVELOPE | WIRE_NAMES)
-                    self.assertEqual(body['options'], wire.options)
-                    self.assertEqual(body['think'], True)
+                    self.assertLessEqual(set(body), case['names'])
+                    for name, value in case['sent'].items():
+                        self.assertEqual(body[name], value, name)
                     self.assertNotIn('VIEW-', json.dumps(body))
 
 

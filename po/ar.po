@@ -373,10 +373,6 @@ msgstr "يجب أن تدعم جميع الأهداف الصور المشتركة
 msgid "Every target must support the selected thinking option."
 msgstr "يجب أن تدعم جميع الأهداف خيار التفكير المحدد."
 
-#: src/comparison.py:52
-msgid "Cloud targets do not support shared structured output or model retention."
-msgstr "لا تدعم الأهداف السحابية الإخراج المنظم المشترك أو الاحتفاظ بالنموذج."
-
 #: src/comparison.py:55
 msgid "The selected thinking level is incompatible with a target."
 msgstr "مستوى التفكير المحدد غير متوافق مع أحد الأهداف."
@@ -614,10 +610,6 @@ msgstr "فشل الحذف"
 #: src/host_manager.ui:6 src/host_manager.ui:17
 msgid "Manage Hosts"
 msgstr "إدارة المضيفين"
-
-#: src/host_manager.ui:35
-msgid "Ollama Servers"
-msgstr "خوادم Ollama"
 
 #: src/host_manager.ui:36
 msgid "Select a server to edit its name or address."
@@ -1151,10 +1143,6 @@ msgstr "النماذج في الذاكرة"
 msgid "Ollama Cloud requires https://ollama.com."
 msgstr "يتطلب Ollama Cloud العنوان https://ollama.com."
 
-#: src/ollama.py:80
-msgid "Enter a valid http:// or https:// Ollama host URL."
-msgstr "أدخل عنوان URL صالحًا لمضيف Ollama يبدأ بـ http:// أو https://."
-
 #: src/ollama.py:89 src/ollama.py:104 src/ollama.py:137
 msgid "Request stopped"
 msgstr "أُوقف الطلب"
@@ -1174,14 +1162,6 @@ msgstr ""
 #: src/ollama.py:126
 msgid "Ollama Cloud usage or rate limit reached. Try again later."
 msgstr "تم بلوغ حد الاستخدام أو معدل الطلبات في Ollama Cloud. حاول مجددًا لاحقًا."
-
-#: src/ollama.py:163
-msgid "Invalid JSON received from Ollama"
-msgstr "ورد JSON غير صالح من Ollama"
-
-#: src/ollama.py:165
-msgid "Expected a JSON object from Ollama"
-msgstr "كان المتوقع كائن JSON من Ollama"
 
 #: src/ollama.py:222
 msgid "Enter nonempty text to embed."
@@ -1701,9 +1681,6 @@ msgstr "لا يدعم هذا النموذج الصور."
 msgid "Earlier images remain saved; only text history will be sent."
 msgstr "تبقى الصور السابقة محفوظة؛ سيُرسل السجل النصي فقط."
 
-#: src/widgets/chat_input.py:125
-msgid "Image support unknown."
-msgstr "دعم الصور غير معروف."
 
 #: src/widgets/chat_input.py:137
 msgid "Select a chat model"
@@ -3417,10 +3394,6 @@ msgstr "لا يمكن لنماذج التضمين المشاركة في محاد
 msgid "A participant does not support the selected thinking option."
 msgstr "أحد المشاركين لا يدعم خيار التفكير المحدد."
 
-#: src/model_conversation.py:67
-msgid "Cloud targets manage model retention automatically."
-msgstr "تدير الوجهات السحابية الاحتفاظ بالنماذج تلقائيًا."
-
 #: src/model_conversation.py:121
 msgid "Enter an opening prompt and choose 1–100 rounds."
 msgstr "أدخل رسالة افتتاحية واختر من 1 إلى 100 جولة."
@@ -3562,3 +3535,279 @@ msgstr "دع نموذجين يتحاوران"
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in
 msgid "Organize documents into knowledge collections"
 msgstr "نظّم المستندات في مجموعات معرفية"
+
+#: src/widgets/options_panel.py
+msgid "Not available on this server."
+msgstr "غير متاح على هذا الخادم."
+
+#: src/chat_controller.py
+msgid "This server does not offer single responses. Open a chat to use it."
+msgstr "لا يقدّم هذا الخادم ردودًا منفردة. افتح دردشة لاستخدامه."
+
+#: src/providers/base.py
+msgid "{host} does not support: {options}."
+msgstr "{host} لا يدعم: {options}."
+
+#: src/providers/base.py
+msgid "Structured output"
+msgstr "مخرجات منظَّمة"
+
+#: src/host_manager.py
+msgid "Remove the saved key"
+msgstr "إزالة المفتاح المحفوظ"
+
+#: src/host_manager.py
+msgid "Optional. Stored securely in your desktop keyring."
+msgstr "اختياري. يُحفظ بأمان في حلقة مفاتيح سطح المكتب."
+
+#: src/host_manager.ui
+msgid "Servers"
+msgstr "الخوادم"
+
+#: src/providers/openai.py
+msgid "OpenAI-Compatible Server"
+msgstr "خادم متوافق مع OpenAI"
+
+#: src/providers/openai.py
+msgid "This server type does not report what its models support, so thinking, image, and tool support are not checked."
+msgstr "هذا النوع من الخوادم لا يُبلغ عمّا تدعمه نماذجه، لذا لا يُتحقق من دعم التفكير والصور والأدوات."
+
+#: src/providers/openai.py
+msgid "This server does not accept: {0}."
+msgstr "هذا الخادم لا يقبل: {0}."
+
+#: src/providers/openai.py
+msgid "This server accepts only the Low, Medium, and High thinking levels."
+msgstr "هذا الخادم يقبل مستويات التفكير منخفض ومتوسط ومرتفع فقط."
+
+#: src/providers/transport.py
+msgid "Invalid JSON received from the server"
+msgstr "تم استلام JSON غير صالح من الخادم"
+
+#: src/providers/openai.py
+msgid "The server rejected the API key, or requires one. Edit this host to check its API key."
+msgstr "رفض الخادم مفتاح API أو أنه يتطلب مفتاحًا. حرّر هذا المضيف للتحقق من مفتاح API."
+
+#: src/providers/openai.py
+msgid "The server reported a usage or rate limit. Try again later."
+msgstr "أبلغ الخادم عن بلوغ حد الاستخدام أو المعدل. حاول مرة أخرى لاحقًا."
+
+#: src/providers/openai.py
+msgid "The server did not return a model list."
+msgstr "لم يُرجع الخادم قائمة نماذج."
+
+#: src/providers/openai.py
+msgid "Connected\nAvailable models: {0}"
+msgstr "تم الاتصال\nالنماذج المتاحة: {0}"
+
+#: src/providers/transport.py
+msgid "Enter a valid http:// or https:// server URL."
+msgstr "أدخل عنوان URL صالحًا للخادم يبدأ بـ http:// أو https://."
+
+#: src/providers/transport.py
+msgid "Expected a JSON object from the server"
+msgstr "كان المتوقع كائن JSON من الخادم"
+
+#: src/widgets/chat_input.py
+msgid "No models found on this server. Load one there, then refresh."
+msgstr "لم يُعثر على نماذج على هذا الخادم. حمّل نموذجًا هناك ثم حدّث."
+
+#: src/providers/openai.py
+msgid "For example: Local Server"
+msgstr "مثال: خادم محلي"
+
+#: src/bubbles.py
+msgid "Total (measured locally): {0}"
+msgstr "الإجمالي (قياس محلي): {0}"
+
+#: src/bubbles.py
+msgid "Tokens/s (measured locally): {0}"
+msgstr "وحدات النص/ثانية (قياس محلي): {0}"
+
+#: src/bubbles.py
+msgid "Timed by Gnollama, not reported by the server. The total includes network delay and model loading."
+msgstr "قاسه Gnollama ولم يُبلغ عنه الخادم. يشمل الإجمالي تأخير الشبكة وتحميل النموذج."
+
+#: src/providers/lmstudio.py
+msgid "LM Studio"
+msgstr "LM Studio"
+
+#: src/providers/openrouter.py
+msgid "OpenRouter"
+msgstr "OpenRouter"
+
+#: src/providers/openrouter.py
+msgid "OpenRouter requires {0}."
+msgstr "يتطلب OpenRouter العنوان {0}."
+
+#: src/providers/vercel.py
+msgid "Vercel AI Gateway"
+msgstr "Vercel AI Gateway"
+
+#: src/providers/vercel.py
+msgid "Vercel AI Gateway requires {0}."
+msgstr "يتطلب Vercel AI Gateway العنوان {0}."
+
+#: src/model_manager.py
+msgid "Context Length"
+msgstr "طول السياق"
+
+#: src/model_manager.py
+msgid "Max Context Length"
+msgstr "أقصى طول للسياق"
+
+#: src/model_summary.py
+msgid "Free"
+msgstr "مجاني"
+
+#: src/model_summary.py
+msgid "${0} / ${1} per 1M tokens"
+msgstr "${0} / ${1} لكل مليون وحدة نصية"
+
+#: src/model_summary.py
+msgid "No images"
+msgstr "لا يدعم الصور"
+
+#: src/model_summary.py
+msgid "Tools"
+msgstr "الأدوات"
+
+#: src/model_summary.py
+msgid "No tools"
+msgstr "لا يدعم الأدوات"
+
+#: src/model_summary.py
+msgid "No thinking"
+msgstr "بلا تفكير"
+
+#: src/model_summary.py
+msgid "Not trained for tools"
+msgstr "غير مدرَّب على الأدوات"
+
+#: src/model_summary.py
+msgid "{0}M"
+msgstr "{0} مليون"
+
+#: src/model_summary.py
+msgid "{0}K"
+msgstr "{0} ألف"
+
+#: src/model_summary.py
+msgid "{0} context"
+msgstr "سياق {0}"
+
+#: src/model_summary.py
+msgid "{0} context max"
+msgstr "سياق أقصاه {0}"
+
+#: src/model_summary.py
+msgid "Prompt: ${0} per 1M tokens"
+msgstr "الإدخال: ${0} لكل مليون وحدة نصية"
+
+#: src/model_summary.py
+msgid "Completion: ${0} per 1M tokens"
+msgstr "الإخراج: ${0} لكل مليون وحدة نصية"
+
+#: src/model_summary.py
+msgid "Cache read: ${0} per 1M tokens"
+msgstr "قراءة الذاكرة المؤقتة: ${0} لكل مليون وحدة نصية"
+
+#: src/model_summary.py
+msgid "Cache write: ${0} per 1M tokens"
+msgstr "كتابة الذاكرة المؤقتة: ${0} لكل مليون وحدة نصية"
+
+#: src/model_summary.py
+msgid "Cache write, kept one hour: ${0} per 1M tokens"
+msgstr "كتابة الذاكرة المؤقتة، تُحفظ ساعة واحدة: ${0} لكل مليون وحدة نصية"
+
+#: src/model_summary.py
+msgid "Reasoning: ${0} per 1M tokens"
+msgstr "التفكير: ${0} لكل مليون وحدة نصية"
+
+#: src/model_summary.py
+msgid "Image input: ${0} per 1M tokens"
+msgstr "إدخال الصور: ${0} لكل مليون وحدة نصية"
+
+#: src/model_summary.py
+msgid "Audio input: ${0} per 1M tokens"
+msgstr "إدخال الصوت: ${0} لكل مليون وحدة نصية"
+
+#: src/model_summary.py
+msgid "Cached audio input: ${0} per 1M tokens"
+msgstr "إدخال الصوت المخزَّن مؤقتًا: ${0} لكل مليون وحدة نصية"
+
+#: src/model_summary.py
+msgid "Image output: ${0} per 1M tokens"
+msgstr "إخراج الصور: ${0} لكل مليون وحدة نصية"
+
+#: src/model_summary.py
+msgid "Audio output: ${0} per 1M tokens"
+msgstr "إخراج الصوت: ${0} لكل مليون وحدة نصية"
+
+#: src/model_summary.py
+msgid "Web search: ${0} per search"
+msgstr "بحث الويب: ${0} لكل بحث"
+
+#: src/model_summary.py
+msgid "Request: ${0} per request"
+msgstr "الطلب: ${0} لكل طلب"
+
+#: src/model_summary.py
+msgid "{0}: ${1}"
+msgstr "{0}: ${1}"
+
+#: src/model_summary.py
+msgid "Prices are as listed when this was read; they can change."
+msgstr "الأسعار كما كانت مدرجة عند قراءتها، وقد تتغير."
+
+#: src/widgets/chat_input.py
+msgid "Prompt and completion prices in US dollars per million tokens, as listed when the model list was read."
+msgstr "أسعار الإدخال والإخراج بالدولار الأمريكي لكل مليون وحدة نصية، كما كانت مدرجة عند قراءة قائمة النماذج."
+
+#: src/model_manager.py
+msgid "Pricing"
+msgstr "التسعير"
+
+#: src/model_manager.py
+msgid "Supported Parameters"
+msgstr "المعاملات المدعومة"
+
+#: src/model_manager.py
+msgid "Max Completion Tokens"
+msgstr "الحد الأقصى لوحدات الإخراج"
+
+#: src/model_manager.py
+msgid "Reasoning"
+msgstr "التفكير"
+
+#: src/widgets/options_panel.py
+msgid "Not available for this model."
+msgstr "غير متاح لهذا النموذج."
+
+#: src/widgets/comparison_view.py
+msgid "Not available for every target."
+msgstr "غير متاح لكل الأهداف."
+
+#: src/providers/base.py
+msgid "The server returned {0} dimensions where {1} were requested. It may not support choosing dimensions for this model."
+msgstr "أعاد الخادم {0} بُعدًا بينما طُلب {1}. ربما لا يدعم اختيار الأبعاد لهذا النموذج."
+
+#: src/knowledge.py
+msgid "A chunk is estimated at {0} tokens. The embedding model accepts {1}, and this server shortens longer text without notice. The estimate is rough, so nothing above {2} is sent. Use a smaller chunk size."
+msgstr "يُقدَّر المقطع بـ {0} وحدة نصية. نموذج التضمين يقبل {1}، وهذا الخادم يقصّر النص الأطول دون إشعار. التقدير تقريبي، لذا لا يُرسل ما يزيد على {2}. استخدم حجم مقطع أصغر."
+
+#: src/knowledge.py
+msgid "The search query is estimated at {0} tokens. The embedding model accepts {1}, and this server shortens longer text without notice. The estimate is rough, so nothing above {2} is sent. Shorten the query."
+msgstr "يُقدَّر استعلام البحث بـ {0} وحدة نصية. نموذج التضمين يقبل {1}، وهذا الخادم يقصّر النص الأطول دون إشعار. التقدير تقريبي، لذا لا يُرسل ما يزيد على {2}. قصّر الاستعلام."
+
+#: src/widgets/knowledge_common.py
+msgid "This model cannot be fully verified: it is recognized by what the server reports about it, not by its contents, so a replacement that reports the same would go unnoticed."
+msgstr "لا يمكن التحقق من هذا النموذج بالكامل: يُتعرَّف عليه بما يذكره الخادم عنه لا بمحتواه، ولذلك لن يُلاحَظ استبداله بنموذج يذكر المعلومات نفسها."
+
+#: src/widgets/knowledge_common.py
+msgid "No embedding models are available. Try refreshing later."
+msgstr "لا توجد نماذج تضمين متاحة. حاول التحديث لاحقًا."
+
+#: src/widgets/knowledge_common.py
+msgid "No embedding models found on this server. Load one there, then refresh."
+msgstr "لم يُعثر على نماذج تضمين على هذا الخادم. حمّل واحدًا هناك ثم حدّث."

@@ -51,14 +51,17 @@ class AiBubble(Gtk.ListBoxRow):
     # The text view that shows log probabilities, once any have arrived.
     active_logprobs_label: Optional[Gtk.TextView] = None
 
-    def __init__(self, model_name: Optional[str] = None, output_format=None, **kwargs: Any) -> None:
+    def __init__(self, model_name: Optional[str] = None, output_format=None,
+                 host_name: Optional[str] = None, **kwargs: Any) -> None:
         from .widgets.json_view import JsonResponseView
         super().__init__(**kwargs)
         self.init_template()
-        
-        if model_name:
+
+        # "host name (model)"; the model alone when the host is not known.
+        self.title = f'{host_name} ({model_name})' if host_name and model_name else model_name or ''
+        if self.title:
             self.header.set_visible(True)
-            self.header.set_label(f"Ollama ({model_name})")
+            self.header.set_label(self.title)
         
         self.api_markdown_view = MarkdownView(wrap_code=True)
         self.api_expander.set_child(self.api_markdown_view)
@@ -106,13 +109,15 @@ class AiBubble(Gtk.ListBoxRow):
         self.thinking_text += text
         self.thinking_label.set_label(self.thinking_text)
 
-    def show_stats(self, stats):
+    def show_stats(self, stats, elapsed=None, first_token=None):
         if not hasattr(self, '_stats_label'):
             self._stats_label = Gtk.Label(xalign=0, wrap=True, selectable=True)
             self._stats_label.add_css_class('dim-label')
             expander = Gtk.Expander(label=_('Response Statistics'), child=self._stats_label)
             self.bubble_box.append(expander)
-        self._stats_label.set_text(format_statistics(stats))
+        self._stats_label.set_text(format_statistics(stats, elapsed, first_token))
+        self._stats_label.set_tooltip_text(None if server_timed(stats) or not _measured(elapsed) else _(
+            'Timed by Gnollama, not reported by the server. The total includes network delay and model loading.'))
 
     def show_response_metadata(self, metadata, show_stats=True):
         # One complete render, so a finished response looks the same as one loaded from history.
@@ -137,9 +142,12 @@ class AiBubble(Gtk.ListBoxRow):
             label.set_text(title + (': ' + error if error else ''))
             label.add_css_class('dim-label')
             self.bubble_box.append(label)
-        if show_stats and metadata.get('metrics'):
-            self.show_stats(metadata['metrics'])
-        if show_stats and metadata.get('elapsed_seconds') is not None:
+        metrics, elapsed = metadata.get('metrics') or {}, metadata.get('elapsed_seconds')
+        line = format_statistics(metrics, elapsed, metadata.get('first_token_seconds')) if metrics else ''
+        if show_stats and line:
+            self.show_stats(metrics, elapsed, metadata.get('first_token_seconds'))
+        # The statistics line already holds the local total when the server sent no durations.
+        if show_stats and elapsed is not None and (not line or server_timed(metrics)):
             self.bubble_box.append(Gtk.Label(label=_('Elapsed: {0}s').format(round(metadata['elapsed_seconds'], 2)),
                                             xalign=0, wrap=True, css_classes=['dim-label']))
 
@@ -192,31 +200,51 @@ class AiBubble(Gtk.ListBoxRow):
         buffer.insert(end_iter, text_chunk)
 
 
-def format_statistics(stats):
-    """Format optional API metrics without treating missing values as zero."""
-    unavailable = _('Unavailable')
-    def count(key):
-        value = stats.get(key)
-        return str(value) if isinstance(value, (int, float)) and value >= 0 else unavailable
+DURATION_KEYS = ('total_duration', 'load_duration', 'prompt_eval_duration', 'eval_duration')
 
-    def duration(key):
-        value = stats.get(key)
-        return f'{value / 1e9:.2f}s' if isinstance(value, (int, float)) and value >= 0 else unavailable
 
-    tokens, elapsed = stats.get('eval_count'), stats.get('eval_duration')
-    speed = (f'{tokens * 1e9 / elapsed:.2f}'
-             if isinstance(tokens, (int, float)) and tokens >= 0
-             and isinstance(elapsed, (int, float)) and elapsed > 0 else unavailable)
-    fields = [
-        _('Total: {0}').format(duration('total_duration')),
-        _('Load: {0}').format(duration('load_duration')),
-        _('Prompt: {0} tokens').format(count('prompt_eval_count')),
-        _('Cached: {0} tokens').format(count('prompt_eval_cached_count')),
-        _('Prompt evaluation: {0}').format(duration('prompt_eval_duration')),
-        _('Generated: {0} tokens').format(count('eval_count')),
-        _('Generation: {0}').format(duration('eval_duration')),
-        _('Tokens/s: {0}').format(speed),
-    ]
+def _measured(value):
+    return isinstance(value, (int, float)) and not isinstance(value, bool) and value >= 0
+
+
+def server_timed(stats):
+    """Whether the server reported any duration of its own."""
+    return any(_measured(stats.get(key)) for key in DURATION_KEYS)
+
+
+def format_statistics(stats, elapsed=None, first_token=None):
+    """Format the metrics a server reported, leaving out what it did not.
+
+    `elapsed` and `first_token` are seconds on this application's clock, from
+    sending the request. They are shown only when the server sent no durations.
+    """
+    fields = []
+
+    def add(key, text, shown=str):
+        if _measured(stats.get(key)):
+            fields.append(text.format(shown(stats[key])))
+
+    def duration(value):
+        return f'{value / 1e9:.2f}s'
+
+    tokens = stats.get('eval_count')
+    local = not server_timed(stats) and _measured(elapsed)
+    if local:
+        fields.append(_('Total (measured locally): {0}').format(f'{elapsed:.2f}s'))
+    add('total_duration', _('Total: {0}'), duration)
+    add('load_duration', _('Load: {0}'), duration)
+    add('prompt_eval_count', _('Prompt: {0} tokens'))
+    add('prompt_eval_cached_count', _('Cached: {0} tokens'))
+    add('prompt_eval_duration', _('Prompt evaluation: {0}'), duration)
+    add('eval_count', _('Generated: {0} tokens'))
+    add('eval_duration', _('Generation: {0}'), duration)
+    if _measured(tokens) and _measured(stats.get('eval_duration')) and stats['eval_duration'] > 0:
+        fields.append(_('Tokens/s: {0}').format(f"{tokens * 1e9 / stats['eval_duration']:.2f}"))
+    elif local and _measured(tokens):
+        # Generation starts at the first token; without that time the whole request is all there is.
+        span = elapsed - first_token if _measured(first_token) and first_token < elapsed else elapsed
+        if span > 0:
+            fields.append(_('Tokens/s (measured locally): {0}').format(f'{tokens / span:.2f}'))
     if stats.get('done_reason'):
         fields.append(_('Finish: {0}').format(stats['done_reason']))
     return ' | '.join(fields)

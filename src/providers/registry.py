@@ -2,8 +2,13 @@
 from gettext import gettext as _
 
 from .ollama import OllamaCloudProvider, OllamaProvider
+from .lmstudio import LMStudioProvider
+from .openai import OpenAICompatibleProvider
+from .openrouter import OpenRouterProvider
+from .vercel import VercelProvider
 
-PROVIDERS = {cls.kind: cls for cls in (OllamaProvider, OllamaCloudProvider)}
+PROVIDERS = {cls.kind: cls for cls in (OllamaProvider, OllamaCloudProvider, OpenAICompatibleProvider,
+                                       LMStudioProvider, OpenRouterProvider, VercelProvider)}
 
 
 def provider_class(kind):
@@ -27,7 +32,7 @@ class ProviderRegistry:
         return provider_class(host.get('provider'))(host['hostname'], host['id'], host.get('credential_id'),
                                                     credentials=self.credentials, transport=self.transport)
 
-    def local(self, url):
+    def ollama_at(self, url):
         """An Ollama server known only by its URL, such as a stored embedding host."""
         return OllamaProvider(url, transport=self.transport)
 

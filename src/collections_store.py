@@ -49,6 +49,12 @@ BEGIN SELECT RAISE(ABORT, 'Incompatible collection index'); END;
 """
 
 
+def index_values(index):
+    """A new index row's values; an index that names no host type was built on an Ollama host."""
+    return (*(index[k] for k in ('id', 'document_id', 'config_id', 'host', 'model', 'chunk_size', 'overlap', 'created_at')),
+            index.get('host_kind') or 'ollama')
+
+
 class CollectionDatabase(Repository):
     def knowledge_collections(self):
         with self._get_conn() as conn:
@@ -97,9 +103,10 @@ class CollectionDatabase(Repository):
                 if not conn.execute('SELECT 1 FROM knowledge_documents WHERE id=?', (document_id,)).fetchone():
                     raise ValueError(_('A document was deleted. Choose documents again.'))
             conn.execute('''INSERT INTO knowledge_collections
-                (id, name, config_id, host, model, chunk_size, overlap, created_at, updated_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)''', tuple(collection[k] for k in
-                ('id', 'name', 'config_id', 'host', 'model', 'chunk_size', 'overlap', 'created_at', 'updated_at')))
+                (id, name, config_id, host, model, chunk_size, overlap, created_at, updated_at, host_kind)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''', (*(collection[k] for k in
+                ('id', 'name', 'config_id', 'host', 'model', 'chunk_size', 'overlap', 'created_at', 'updated_at')),
+                collection.get('host_kind') or 'ollama'))
             conn.executemany('''INSERT INTO knowledge_collection_documents(collection_id, document_id)
                 VALUES (?, ?)''', [(collection['id'], id) for id in dict.fromkeys(document_ids)])
             conn.commit()
@@ -111,15 +118,15 @@ class CollectionDatabase(Repository):
             conn.execute('UPDATE knowledge_collections SET name=?, updated_at=? WHERE id=?', (name.strip(), time.time(), id))
             conn.commit()
 
-    def update_collection_endpoint(self, id, host, model, digest):
+    def update_collection_endpoint(self, id, host, model, digest, host_kind='ollama'):
         with self._get_conn() as conn:
             conn.execute('BEGIN IMMEDIATE')
             row = conn.execute('''SELECT e.digest FROM knowledge_collections c
                 JOIN embedding_configs e ON e.id=c.config_id WHERE c.id=?''', (id,)).fetchone()
             if row is None or row['digest'] != digest:
                 raise ValueError(_('Choose a model with the collection’s original digest.'))
-            conn.execute('UPDATE knowledge_collections SET host=?, model=?, updated_at=? WHERE id=?',
-                         (host, model, time.time(), id))
+            conn.execute('UPDATE knowledge_collections SET host=?, host_kind=?, model=?, updated_at=? WHERE id=?',
+                         (host, host_kind, model, time.time(), id))
             conn.commit()
 
     def delete_knowledge_collection(self, id):
@@ -156,9 +163,8 @@ class CollectionDatabase(Repository):
                     WHERE collection_id=? AND document_id=?''', (id, index['document_id'])).fetchone():
                     continue
                 conn.execute('''INSERT OR IGNORE INTO knowledge_indexes
-                    (id, document_id, config_id, host, model, chunk_size, overlap, status, created_at)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, 'indexing', ?)''', tuple(index[k] for k in
-                    ('id', 'document_id', 'config_id', 'host', 'model', 'chunk_size', 'overlap', 'created_at')))
+                    (id, document_id, config_id, host, model, chunk_size, overlap, status, created_at, host_kind)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, 'indexing', ?, ?)''', index_values(index))
             jobs = []
             for member in self._collection_documents(conn, id):
                 if queued_indexes is not None and member['status'] == 'indexing' and not any(
@@ -179,14 +185,15 @@ class CollectionDatabase(Repository):
                 else:
                     index_id = member['index_id'] or str(uuid.uuid4())
                     index = dict(id=index_id, document_id=member['id'], config_id=collection['config_id'],
-                                 host=collection['host'], model=collection['model'], chunk_size=collection['chunk_size'],
+                                 host=collection['host'], host_kind=collection['host_kind'],
+                                 model=collection['model'], chunk_size=collection['chunk_size'],
                                  overlap=collection['overlap'], created_at=time.time(), title=member['title'])
                     conn.execute('''INSERT INTO knowledge_indexes
-                        (id, document_id, config_id, host, model, chunk_size, overlap, status, created_at)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, 'indexing', ?)
+                        (id, document_id, config_id, host, model, chunk_size, overlap, status, created_at, host_kind)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, 'indexing', ?, ?)
                         ON CONFLICT(id) DO UPDATE SET status='indexing', error=NULL, completed_at=NULL,
-                            host=excluded.host, model=excluded.model''', tuple(index[k] for k in
-                        ('id', 'document_id', 'config_id', 'host', 'model', 'chunk_size', 'overlap', 'created_at')))
+                            host=excluded.host, host_kind=excluded.host_kind, model=excluded.model''',
+                        index_values(index))
                     jobs.append(index)
                 conn.execute('''UPDATE knowledge_collection_documents SET index_id=?
                     WHERE collection_id=? AND document_id=?''', (index_id, id, member['id']))

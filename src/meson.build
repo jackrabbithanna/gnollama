@@ -71,6 +71,8 @@ gnollama_sources = [
   'request_runner.py',
   'drafts.py',
   'context.py',
+  'app_context.py',
+  'chat_controller.py',
   'export.py',
   'comparison.py',
   'model_conversation.py',
@@ -83,7 +85,6 @@ gnollama_sources = [
   'collections_store.py',
   'web_store.py',
   'web_import.py',
-  'ollama.py',
   'credentials.py',
   'storage.py',
   'writer.py',
@@ -119,3 +120,13 @@ gnollama_widget_sources = [
 ]
 
 install_data(gnollama_widget_sources, install_dir: moduledir / 'widgets')
+
+gnollama_provider_sources = [
+  'providers/__init__.py',
+  'providers/base.py',
+  'providers/ollama.py',
+  'providers/registry.py',
+  'providers/transport.py',
+]
+
+install_data(gnollama_provider_sources, install_dir: moduledir / 'providers')

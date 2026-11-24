@@ -5,10 +5,8 @@ import time
 from gettext import ngettext
 from gi.repository import Adw, Gtk, Gio, GLib, Pango
 
-from .. import ollama
 from ..knowledge import (DEFAULT_RAG, PRESETS, canonical_model, check_cancel, extract_document, make_document,
                          model_identity, new_config, validate_rag)
-from ..session import worker
 from ..vectors import SEARCH_METRICS
 from .json_view import TextEditor, buffer_text
 
@@ -50,13 +48,14 @@ class SourcesView(Gtk.Expander):
 
 
 class SourcePicker(WorkDialog):
-    def __init__(self, storage, options, on_apply=None):
+    def __init__(self, context, options, on_apply=None):
         super().__init__(_('Knowledge Sources') if on_apply else _('Test Search'))
-        self.storage, self.on_apply = storage, on_apply
+        self.context, self.on_apply = context, on_apply
+        self.storage = context.storage
         self.options = dict(copy.deepcopy(DEFAULT_RAG), **copy.deepcopy(options))
         self.collection_ids = set(self.options['collection_ids'])
-        self.collections = storage.library.knowledge_collections()
-        self.configs = [c for c in storage.library.embedding_configs() if any(group['config_id'] == c['id'] for group in self.collections)]
+        self.collections = context.storage.library.knowledge_collections()
+        self.configs = [c for c in context.storage.library.embedding_configs() if any(group['config_id'] == c['id'] for group in self.collections)]
         self._refreshing = False
         self.collection_search = Gtk.SearchEntry(placeholder_text=_('Search collections'))
         self.collection_search.connect('search-changed', lambda *args: self._render_sources())
@@ -73,7 +72,7 @@ class SourcePicker(WorkDialog):
                 break
         if self.options['config_id'] and not any(c['id'] == self.options['config_id'] for c in self.configs):
             self.config_dropdown.set_selected(Gtk.INVALID_LIST_POSITION)
-        self.host_models = HostModels(storage, self.options['host'], self.options['model'])
+        self.host_models = HostModels(context, self.options['host'], self.options['model'])
         self.search_settings.append(self.host_models)
         self.connect('closed', lambda *args: self.host_models.stop())
         self.search_settings.append(label(_('The query must use the same embedding configuration as the selected collections. A compatible server can be chosen here.')))
@@ -114,12 +113,12 @@ class SourcePicker(WorkDialog):
             self.header.pack_end(apply)
         self.config_dropdown.connect('notify::selected', self._config_changed)
         self._render_sources()
-        self.storage.knowledge.listeners.append(self._refresh_sources)
+        self.context.knowledge.listeners.append(self._refresh_sources)
         self.connect('closed', self._disconnect_sources)
 
     def _disconnect_sources(self, *args):
-        if self._refresh_sources in self.storage.knowledge.listeners:
-            self.storage.knowledge.listeners.remove(self._refresh_sources)
+        if self._refresh_sources in self.context.knowledge.listeners:
+            self.context.knowledge.listeners.remove(self._refresh_sources)
 
     def _refresh_sources(self):
         if self.closed:
@@ -276,13 +275,14 @@ class SourcePicker(WorkDialog):
                 view = SourcesView(snapshot)
                 view.set_expanded(True)
                 self.results.append(view)
-        self.run(lambda cancel: self.storage.knowledge.retrieve(options, query, cancel), completed)
+        self.run(lambda cancel: self.context.knowledge.retrieve(options, query, cancel), completed)
 
 
 class ChunkPicker(WorkDialog):
-    def __init__(self, storage, index, selected=None, on_apply=None):
+    def __init__(self, context, index, selected=None, on_apply=None):
         super().__init__(_('Document Chunks'))
-        self.storage, self.index = storage, index
+        self.context, self.index = context, index
+        self.storage = context.storage
         self.selected = None if selected is None else set(selected)
         self.on_apply = on_apply
         self.all_ids = None
@@ -376,9 +376,10 @@ class ChunkPicker(WorkDialog):
 
 
 class KnowledgeControl(Gtk.Box):
-    def __init__(self, storage, on_change):
+    def __init__(self, context, on_change):
         super().__init__(orientation=Gtk.Orientation.VERTICAL, spacing=4, margin_start=12, margin_end=12)
-        self.storage, self.on_change = storage, on_change
+        self.context, self.on_change = context, on_change
+        self.storage = context.storage
         self.options = copy.deepcopy(DEFAULT_RAG)
         self.dialog = None
         self.restoring = False
@@ -392,7 +393,7 @@ class KnowledgeControl(Gtk.Box):
         self.query_options = Gtk.Expander(label=_('Search Query Override'), child=self.query, visible=False)
         self.append(self.query_options)
         self.toggle.connect('toggled', self._changed)
-        self.storage.knowledge.listeners.append(self._notice)
+        self.context.knowledge.listeners.append(self._notice)
         self.load({})
 
     def load(self, options):
@@ -400,6 +401,9 @@ class KnowledgeControl(Gtk.Box):
         self.options = dict(copy.deepcopy(DEFAULT_RAG), **copy.deepcopy(options))
         self.toggle.set_active(self.options['enabled'])
         self.restoring = False
+        self._notice()
+
+    def refresh_notice(self):
         self._notice()
 
     def _notice(self):
@@ -434,13 +438,13 @@ class KnowledgeControl(Gtk.Box):
         def apply(options):
             self.load(options)
             self.on_change()
-        self.dialog = SourcePicker(self.storage, self.options, apply)
+        self.dialog = SourcePicker(self.context, self.options, apply)
         self.dialog.connect('closed', lambda *args: setattr(self, 'dialog', None))
         self.dialog.present(self.get_root())
 
     def close_dialog(self, dispose=False):
-        if dispose and self._notice in self.storage.knowledge.listeners:
-            self.storage.knowledge.listeners.remove(self._notice)
+        if dispose and self._notice in self.context.knowledge.listeners:
+            self.context.knowledge.listeners.remove(self._notice)
         if self.dialog:
             self.dialog.close()
 

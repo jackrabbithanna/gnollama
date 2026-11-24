@@ -76,5 +76,3 @@ print(json.dumps({
     'options_min_width': options.measure(Gtk.Orientation.HORIZONTAL, -1).minimum,
     'settings_min_width': options.settings_content.measure(Gtk.Orientation.HORIZONTAL, -1).minimum,
 }))
-from src.session import worker
-worker.shutdown()

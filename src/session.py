@@ -1,12 +1,10 @@
 from .records import RequestSettings
 """Per-request generation state and conversation persistence."""
 import copy
-from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
-from threading import Lock
 
 from gi.repository import Gio
-from . import ollama
+from .providers import ProviderError
 from .structured import validate_response
 from .tool_calling import inspect_calls, wire_calls, result_messages
 from .knowledge import augmented_messages
@@ -16,8 +14,6 @@ def display_chat_title(title):
     """Localize the database's automatic-title marker only when displaying it."""
     return _('New Chat') if title == 'New Chat' else title
 
-
-from .services import WorkerPool as NetworkWorker, worker_monitor as worker
 
 METRIC_KEYS = ('total_duration', 'load_duration', 'prompt_eval_count',
                'prompt_eval_cached_count', 'prompt_eval_duration', 'eval_count',
@@ -42,6 +38,8 @@ class RequestState:
     connection: object = field(default=None, repr=False)
     draft_id: str | None = None
     draft_revision: int | None = None
+    # Whatever the view uses to show this request; opaque to controllers.
+    presentation: object = field(default=None, repr=False)
 
     def __post_init__(self):
         self.settings = copy.deepcopy(self.settings)
@@ -49,7 +47,7 @@ class RequestState:
 
     def consume(self, chunk):
         if 'error' in chunk:
-            raise ollama.OllamaError(str(chunk['error']))
+            raise ProviderError(str(chunk['error']))
         message = chunk.get('message') or {}
         content = message.get('content') or chunk.get('response', '')
         thinking = message.get('thinking') or chunk.get('thinking', '')
@@ -115,10 +113,9 @@ class GenerationStrategy:
 
     def process(self, state):
         args = {k: state.settings[k] for k in
-                ('host', 'model', 'options', 'thinking', 'logprobs', 'top_logprobs')}
+                ('model', 'options', 'thinking', 'logprobs', 'top_logprobs')}
         args.update(format=state.settings.get('format'), keep_alive=state.settings.get('keep_alive'))
-        args['host'] = state.connection or args['host']
-        return ollama.generate(**args, prompt=state.prompt, system=state.settings['system'],
+        return state.connection.generate(**args, prompt=state.prompt, system=state.settings['system'],
                                images=state.images, cancellable=state.cancellable)
 
     def save(self, state, on_done=None):
@@ -173,10 +170,9 @@ class ChatStrategy(GenerationStrategy):
 
     def process(self, state):
         args = {k: state.settings[k] for k in
-                ('host', 'model', 'options', 'thinking', 'logprobs', 'top_logprobs')}
+                ('model', 'options', 'thinking', 'logprobs', 'top_logprobs')}
         args.update(format=state.settings.get('format'), keep_alive=state.settings.get('keep_alive'))
-        args['host'] = state.connection or args['host']
-        return ollama.chat(**args, messages=state.messages, cancellable=state.cancellable,
+        return state.connection.chat(**args, messages=state.messages, cancellable=state.cancellable,
                            tools=state.settings.get('tools'))
 
     def save(self, state, on_done=None):

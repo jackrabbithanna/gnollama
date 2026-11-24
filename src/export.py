@@ -52,7 +52,7 @@ def export_markdown(snapshot):
     return '\n'.join(parts)
 
 
-def choose_export(parent, storage, chat_id, format):
+def choose_export(parent, context, chat_id, format):
     from gi.repository import Gtk, Gio, GLib
     from gettext import gettext as _
     from .widgets.feedback import toast
@@ -66,7 +66,7 @@ def choose_export(parent, storage, chat_id, format):
         def ready():
             def write():
                 try:
-                    snapshot = storage.export_snapshot(chat_id)
+                    snapshot = context.storage.export_snapshot(chat_id)
                     if snapshot is None:
                         raise ValueError(_('Conversation no longer exists.'))
                     text = export_json(snapshot) if format == 'json' else export_markdown(snapshot)
@@ -74,6 +74,6 @@ def choose_export(parent, storage, chat_id, format):
                     GLib.idle_add(toast, parent, _('Conversation exported'))
                 except Exception as exc:
                     GLib.idle_add(toast, parent, str(exc))
-            storage.services.control.submit(write)
-        storage._submit(lambda: None, on_done=ready)
+            context.services.control.submit(write)
+        context.storage.after_pending_writes(ready)
     dialog.save(parent, None, chosen)

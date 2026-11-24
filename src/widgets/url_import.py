@@ -10,10 +10,11 @@ from .knowledge_view import CollectionDestination, WorkDialog, actions, button, 
 
 
 class URLImportDialog(WorkDialog):
-    def __init__(self, storage, collection_id=None, url=''):
+    def __init__(self, context, collection_id=None, url=''):
         super().__init__(_('Add URLs'), width=800, height=760)
-        self.storage = storage
-        self.collections = storage.library.knowledge_collections()
+        self.context = context
+        self.storage = context.storage
+        self.collections = context.storage.library.knowledge_collections()
         self.collection_id = None
         self.items = []
         self.current = None
@@ -22,7 +23,7 @@ class URLImportDialog(WorkDialog):
         self.connect('closed', self._stop)
         self.setup = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
         self.box.append(self.setup)
-        self.destination_picker = CollectionDestination(storage, self, collection_id)
+        self.destination_picker = CollectionDestination(context, self, collection_id)
         self.destination = self.destination_picker.dropdown
         self.setup.append(self.destination_picker)
         self.setup.append(label(_('Paste up to 20 URLs, one per line. Review each page before saving.')))
@@ -72,7 +73,7 @@ class URLImportDialog(WorkDialog):
             getattr(self.footer, 'set_margin_' + side)(12)
         self.footer.set_visible(False)
         self.toolbar.add_bottom_bar(self.footer)
-        self.storage.knowledge.listeners.append(self.update_saved)
+        self.context.knowledge.listeners.append(self.update_saved)
 
     def start(self, *args):
         try:
@@ -189,7 +190,7 @@ class URLImportDialog(WorkDialog):
                 self._render()
             self._schedule()
         try:
-            item['job'] = self.storage.knowledge.submit(_('Import URL: {0}').format(item['url']), task, completed, importing=True)
+            item['job'] = self.context.knowledge.submit(_('Import URL: {0}').format(item['url']), task, completed, importing=True)
         except ValueError as exc:
             self.active -= 1
             item['reserved'] = 0
@@ -319,7 +320,7 @@ class URLImportDialog(WorkDialog):
                 self.update_saved()
                 self._schedule()
             try:
-                item['job'] = self.storage.knowledge.save_web_document(document, source, self.collection_id, item['expected'], done)
+                item['job'] = self.context.knowledge.save_web_document(document, source, self.collection_id, item['expected'], done)
                 self.error.set_visible(False)
                 self._status(item, 'saving')
                 self._render()
@@ -353,8 +354,8 @@ class URLImportDialog(WorkDialog):
             item['status_label'].set_text(_('Ready to Search') if ready else _('Added to Collection — Needs Attention') if failed else _('Added to Collection — Preparing'))
 
     def _stop(self, *args):
-        if self.update_saved in self.storage.knowledge.listeners:
-            self.storage.knowledge.listeners.remove(self.update_saved)
+        if self.update_saved in self.context.knowledge.listeners:
+            self.context.knowledge.listeners.remove(self.update_saved)
         for item in self.items:
             if item['job'] and item['status'] in ('fetching', 'extracting'):
                 item['job']['cancel'].cancel()

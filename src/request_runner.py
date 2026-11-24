@@ -2,7 +2,7 @@
 import threading
 import time
 from gi.repository import GLib
-from . import ollama
+from .providers import ProviderError, RequestCancelled
 from .structured import validate_response
 from .tool_calling import inspect_calls
 
@@ -45,18 +45,18 @@ class RequestRunner:
         delivery = StreamDelivery(on_chunk)
         try:
             if state.cancellable.is_cancelled():
-                raise ollama.RequestCancelled()
+                raise RequestCancelled()
             with self.services.models.using(state.settings['host'], state.settings['model']):
                 for chunk in strategy.process(state):
                     if state.cancellable.is_cancelled():
-                        raise ollama.RequestCancelled()
+                        raise RequestCancelled()
                     delivery.append(*state.consume(chunk))
                     if chunk.get('done'):
                         status = 'complete'
                         break
                 else:
-                    raise ollama.OllamaError(_('Response ended before completion.'))
-        except ollama.RequestCancelled:
+                    raise ProviderError(_('Response ended before completion.'))
+        except RequestCancelled:
             status = 'stopped'
         except Exception as exc:
             error = str(exc)

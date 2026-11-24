@@ -5,10 +5,8 @@ import time
 from gettext import ngettext
 from gi.repository import Adw, Gtk, Gio, GLib, Pango
 
-from .. import ollama
 from ..knowledge import (DEFAULT_RAG, PRESETS, canonical_model, check_cancel, extract_document, make_document,
                          model_identity, new_config, validate_rag)
-from ..session import worker
 from ..vectors import SEARCH_METRICS
 from .json_view import TextEditor, buffer_text
 
@@ -16,14 +14,14 @@ from .json_view import TextEditor, buffer_text
 from .knowledge_common import *
 
 class CollectionDialog(IndexDialog):
-    def __init__(self, storage, on_created, collection=None):
-        super().__init__(storage, dict(title=_('An embedding model makes documents searchable. It can differ from the model used for chat.')), on_created, collection)
+    def __init__(self, context, on_created, collection=None):
+        super().__init__(context, dict(title=_('An embedding model makes documents searchable. It can differ from the model used for chat.')), on_created, collection)
         self.set_title(_('Copy Collection with New Settings') if collection else _('Create Collection'))
         self.name = Gtk.Entry(placeholder_text=_('Collection name'),
                               text=_('{0} (copy)').format(collection['name']) if collection else '')
         self.box.prepend(self.name)
         self.box.prepend(label(_('Collection name'), selectable=False, mnemonic_widget=self.name))
-        self.document_ids = [m['id'] for m in storage.library.collection_documents(collection['id'])] if collection else []
+        self.document_ids = [m['id'] for m in context.storage.library.collection_documents(collection['id'])] if collection else []
 
     def _start(self, callback):
         try:
@@ -36,7 +34,7 @@ class CollectionDialog(IndexDialog):
                 else:
                     callback(id)
                     self.close()
-            self.storage.knowledge.create_collection(self.name.get_text(), *self.settings(),
+            self.context.knowledge.create_collection(self.name.get_text(), *self.settings(),
                                                       document_ids=self.document_ids, callback=done)
             self.start.set_sensitive(False)
         except (ValueError, TypeError) as exc:
@@ -45,9 +43,10 @@ class CollectionDialog(IndexDialog):
 
 class CollectionDestination(Gtk.Box):
     """Explicit destination shared by all import dialogs, with in-place creation."""
-    def __init__(self, storage, owner, collection_id=None):
+    def __init__(self, context, owner, collection_id=None):
         super().__init__(orientation=Gtk.Orientation.VERTICAL, spacing=6)
-        self.storage, self.owner = storage, owner
+        self.context, self.owner = context, owner
+        self.storage = context.storage
         self.dropdown = dropdown([])
         field(self, _('Destination collection'), self.dropdown)
         self.create = button(_('New Collection…'), self.new_collection)
@@ -72,14 +71,15 @@ class CollectionDestination(Gtk.Box):
         return collection
 
     def new_collection(self, *args):
-        dialog = CollectionDialog(self.storage, self.refresh)
+        dialog = CollectionDialog(self.context, self.refresh)
         dialog.present(self.owner)
 
 
 class DocumentPicker(WorkDialog):
-    def __init__(self, storage, collection_id, on_added):
+    def __init__(self, context, collection_id, on_added):
         super().__init__(_('Add Existing Documents'))
-        self.storage, self.collection_id, self.on_added = storage, collection_id, on_added
+        self.context, self.collection_id, self.on_added = context, collection_id, on_added
+        self.storage = context.storage
         self.selected = set()
         self.documents = []
         self._load_generation = 0
@@ -140,7 +140,7 @@ class DocumentPicker(WorkDialog):
 
     def _add(self, *args):
         try:
-            self.storage.knowledge.build_collection(self.collection_id, sorted(self.selected))
+            self.context.knowledge.build_collection(self.collection_id, sorted(self.selected))
             self.on_added()
             self.close()
         except ValueError as exc:

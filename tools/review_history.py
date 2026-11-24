@@ -60,17 +60,19 @@ with tempfile.TemporaryDirectory(prefix='gnollama-history-review-') as temporary
     Gtk.Settings.get_default().set_property('gtk-enable-animations', False)
     Gtk.Widget.set_default_direction(Gtk.TextDirection.RTL if args.language == 'ar' else Gtk.TextDirection.LTR)
     Gio.Resource.load(args.resource)._register()
-    from src.storage import ChatStorage
+    from src.app_context import AppContext
     from src.window import GnollamaWindow
     from src.history import CATEGORIES
-    from src import ollama
-    storage = ChatStorage(temporary)
+    from src.providers import OllamaProvider
+    from tests.provider_fixture import provider_patch
+    context = AppContext(temporary)
+    storage = context.storage
     app = Adw.Application(application_id='io.github.jackrabbithanna.Gnollama.HistoryReview', flags=Gio.ApplicationFlags.NON_UNIQUE)
     app.register(None)
-    with patch.object(ollama, 'fetch_models', return_value=['cedar:8b']), patch.object(ollama, 'show_model', return_value={'capabilities': ['completion']}):
-        window = GnollamaWindow(application=app, storage=storage)
+    with provider_patch('list_models', return_value=['cedar:8b']), provider_patch('show_model', return_value={'capabilities': ['completion']}):
+        window = GnollamaWindow(application=app, context=context)
         window.present()
-        pump(lambda: storage.services.idle and storage.writer.idle and not window.history.pending)
+        pump(lambda: context.services.idle and storage.writer.idle and not window.history.pending)
         titles = dict(chat='Chat', comparison='Comparison', model_conversation='Model conversation', pinned='Pinned')
         with storage.db._get_conn() as conn:
             for key in CATEGORIES[1:]:

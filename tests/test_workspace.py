@@ -7,9 +7,10 @@ import threading
 import unittest
 from unittest.mock import patch
 from gi.repository import Gtk, Gdk, Gio
-from src.storage import ChatStorage
+from src.app_context import AppContext
 from src.services import Services, ModelCatalog
-from src import ollama
+from src.providers import OllamaProvider, ProviderError, RequestCancelled
+from provider_fixture import provider_patch
 from src.context import estimate_context
 from src.export import export_json, export_markdown
 from src.comparison import ComparisonRun, prepare_run, ComparisonController
@@ -21,15 +22,16 @@ from test_ui import pump_until
 class WorkspaceTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
-        self.storage = ChatStorage(self.temp.name)
+        self.context = AppContext(self.temp.name)
+        self.storage = self.context.storage
         self.chat = self.storage.create_chat()
         self.storage.writer.flush().result(5)
 
     def tearDown(self):
         self.storage.writer.flush().result(5)
-        self.storage.writer.shutdown()
-        self.storage.services.shutdown()
-        self.storage.knowledge.shutdown()
+        self.context.shutdown()
+        self.context.services.shutdown()
+        self.context.knowledge.shutdown()
         self.temp.cleanup()
 
     def test_incremental_retry_preserves_row_and_attachment_identity(self):
@@ -96,7 +98,7 @@ class WorkspaceTests(unittest.TestCase):
         self.assertEqual(page['messages'][10]['uid'], '15')
 
     def test_inference_saturation_does_not_block_control_or_transfers(self):
-        services = self.storage.services
+        services = self.context.services
         gate = threading.Event()
         entered = [threading.Event() for _ in range(4)]
         def busy(event):
@@ -120,7 +122,7 @@ class WorkspaceTests(unittest.TestCase):
         self.assertEqual(settings, before)
 
     def test_catalog_shares_fetch_and_cancels_subscribers_independently(self):
-        catalog = self.storage.services.catalog
+        catalog = self.context.services.catalog
         started, release = threading.Event(), threading.Event()
         first, second = Gio.Cancellable(), Gio.Cancellable()
         def fetch(*args, **kwargs):
@@ -128,10 +130,10 @@ class WorkspaceTests(unittest.TestCase):
             release.wait(3)
             self.assertFalse(kwargs['cancellable'].is_cancelled())
             return [{'name': 'model', 'digest': 'one'}]
-        with patch.object(ollama, 'fetch_models', side_effect=fetch) as tags, patch.object(ollama, 'show_model', return_value={'capabilities': ['completion']}) as show:
-            a = self.storage.services.control.submit(catalog.models, 'http://localhost:11434', first)
+        with provider_patch('list_models', side_effect=fetch) as tags, provider_patch('show_model', return_value={'capabilities': ['completion']}) as show:
+            a = self.context.services.control.submit(catalog.models, OllamaProvider('http://localhost:11434'), first)
             self.assertTrue(started.wait(1))
-            b = self.storage.services.control.submit(catalog.models, 'http://localhost:11434', second)
+            b = self.context.services.control.submit(catalog.models, OllamaProvider('http://localhost:11434'), second)
             import time
             deadline = time.monotonic() + 2
             while time.monotonic() < deadline:
@@ -143,14 +145,14 @@ class WorkspaceTests(unittest.TestCase):
                 first.cancel()
             finally:
                 release.set()
-            with self.assertRaises(ollama.RequestCancelled):
+            with self.assertRaises(RequestCancelled):
                 a.result(2)
             self.assertEqual(b.result(2)[0][0], 'model')
-            catalog.models('http://localhost:11434')
+            catalog.models(OllamaProvider('http://localhost:11434'))
             self.assertEqual(tags.call_count, 1)
             self.assertEqual(show.call_count, 0)
             catalog.invalidate()
-            catalog.models('http://localhost:11434')
+            catalog.models(OllamaProvider('http://localhost:11434'))
             self.assertEqual(tags.call_count, 2)
 
     def test_catalog_abandoned_lookup_cancels_transport(self):
@@ -163,12 +165,12 @@ class WorkspaceTests(unittest.TestCase):
             while not kwargs['cancellable'].is_cancelled() and time.monotonic() < deadline:
                 time.sleep(.005)
             self.assertTrue(kwargs['cancellable'].is_cancelled())
-            raise ollama.RequestCancelled()
-        with patch.object(ollama, 'fetch_models', side_effect=fetch):
-            future = self.storage.services.control.submit(self.storage.services.catalog.models, 'http://localhost:11434', cancel)
+            raise RequestCancelled()
+        with provider_patch('list_models', side_effect=fetch):
+            future = self.context.services.control.submit(self.context.services.catalog.models, OllamaProvider('http://localhost:11434'), cancel)
             self.assertTrue(started.wait(1))
             cancel.cancel()
-            with self.assertRaises(ollama.RequestCancelled):
+            with self.assertRaises(RequestCancelled):
                 future.result(2)
 
     def test_comparison_resolves_sources_once_and_keeps_shared_options(self):
@@ -180,9 +182,9 @@ class WorkspaceTests(unittest.TestCase):
                            model='embed', collection_ids=['source']))
         snapshot = dict(query='question', hits=[dict(title='Reference', text='A shared passage.', id='passage')])
         targets = [dict(host_id=host['id'], model=name) for name in ('one', 'two')]
-        with patch.object(self.storage.services.catalog, 'models', return_value=[(name, {'capabilities': ['completion', 'vision', 'thinking']}) for name in ('one', 'two')]), patch.object(self.storage.knowledge, 'retrieve', return_value=snapshot) as retrieve:
+        with patch.object(self.context.services.catalog, 'models', return_value=[(name, {'capabilities': ['completion', 'vision', 'thinking']}) for name in ('one', 'two')]), patch.object(self.context.knowledge, 'retrieve', return_value=snapshot) as retrieve:
             active = ComparisonRun()
-            run = prepare_run(self.storage, active, 'question', ['aW1hZ2U='], settings, targets, None, 0)
+            run = prepare_run(self.context, active, 'question', ['aW1hZ2U='], settings, targets, None, 0)
             self.assertEqual(retrieve.call_count, 1)
             a, b = run['targets']
             self.assertEqual(a['request']['messages'], b['request']['messages'])
@@ -197,13 +199,13 @@ class WorkspaceTests(unittest.TestCase):
         settings = dict(options={}, system=None, thinking=None, format=None, keep_alive=None,
                         logprobs=False, top_logprobs=None, show_stats=True, knowledge={})
         targets = [dict(host_id=host['id'], model=name) for name in ('one', 'two')]
-        with patch.object(self.storage.services.catalog, 'models', return_value=[(name, None) for name in ('one', 'two')]):
+        with patch.object(self.context.services.catalog, 'models', return_value=[(name, None) for name in ('one', 'two')]):
             active = ComparisonRun()
-            run = prepare_run(self.storage, active, 'question', [], settings, targets, None, 0)
+            run = prepare_run(self.context, active, 'question', [], settings, targets, None, 0)
         self.storage.db.create_comparison(run)
         active.cancellable.cancel()
-        with patch.object(ollama, 'chat') as api:
-            ComparisonController(self.storage, active).dispatch(lambda *args: None, lambda *args: None)
+        with provider_patch('chat') as api:
+            ComparisonController(self.context, active).dispatch(lambda *args: None, lambda *args: None)
             pump_until(lambda: not active.pending and self.storage.writer.idle)
             self.assertFalse(api.called)
         saved = self.storage.export_snapshot(active.id)
@@ -291,7 +293,7 @@ class WorkflowTests(unittest.TestCase):
             with self.subTest(mode=create.__name__):
                 tab = create()
                 self.tabs.append(tab)
-                pump_until(lambda: self.storage.services.idle)
+                pump_until(lambda: self.context.services.idle)
                 tab.chat_input.entry.restore_draft('Saved draft')
                 tab.draft.flush()
                 pump_until(lambda: self.storage.writer.idle)
@@ -316,7 +318,7 @@ class WorkflowTests(unittest.TestCase):
             with self.subTest(mode=create.__name__):
                 tab = create()
                 self.tabs.append(tab)
-                pump_until(lambda: self.storage.services.idle)
+                pump_until(lambda: self.context.services.idle)
                 tab.chat_input.entry.restore_draft('Recover after closing')
                 draft_id = tab.draft.id
                 window.close_tab(tab)
@@ -347,7 +349,7 @@ class WorkflowTests(unittest.TestCase):
         path.write_bytes(raw)
         for mode in ('chat', 'generate', 'comparison'):
             with self.subTest(mode=mode):
-                tab = self.make_tab() if mode == 'chat' else ComparisonTab(self.storage) if mode == 'comparison' else GenerationTab(storage=self.storage)
+                tab = self.make_tab() if mode == 'chat' else ComparisonTab(self.context) if mode == 'comparison' else GenerationTab(context=self.context)
                 if tab not in self.tabs:
                     self.tabs.append(tab)
                 entered, release = threading.Event(), threading.Event()
@@ -402,8 +404,8 @@ class WorkflowTests(unittest.TestCase):
 
     def test_comparison_mixed_results_reopen_without_requests(self):
         from src.widgets.comparison_view import ComparisonTab
-        self.stack.enter_context(patch.object(ollama, 'fetch_models', return_value=['test', 'two']))
-        self.storage.services.catalog.invalidate()
+        self.stack.enter_context(provider_patch('list_models', return_value=['test', 'two']))
+        self.context.services.catalog.invalidate()
         window, first = self.make_window()
         tab = window.new_comparison_tab()
         self.tabs.append(tab)
@@ -415,27 +417,27 @@ class WorkflowTests(unittest.TestCase):
         def chat(**kwargs):
             calls.append(kwargs)
             if kwargs['model'] == 'two':
-                raise ollama.OllamaError('target failed')
+                raise ProviderError('target failed')
             yield dict(message={'content': 'answer'}, done=True, eval_count=3)
-        with patch.object(ollama, 'chat', side_effect=chat) as api:
+        with provider_patch('chat', side_effect=chat) as api:
             tab.send_or_stop()
             pump_until(lambda: tab.request is None and self.storage.writer.idle)
             self.assertEqual(len(calls), 2)
             self.assertEqual(calls[0]['messages'], calls[1]['messages'])
             snapshot = self.storage.export_snapshot(tab.strategy.chat_id)
             self.assertEqual({t['status'] for t in snapshot['targets']}, {'complete', 'failed'})
-            reopened = ComparisonTab(self.storage, saved=snapshot)
+            reopened = ComparisonTab(self.context, saved=snapshot)
             self.tabs.append(reopened)
             self.assertEqual(len(reopened.results), 2)
             self.assertEqual(api.call_count, 2)
 
     def test_comparison_duplicate_targets_preserves_draft(self):
         from src.widgets.comparison_view import ComparisonTab
-        tab = ComparisonTab(self.storage)
+        tab = ComparisonTab(self.context)
         self.tabs.append(tab)
         pump_until(lambda: all(p.input.get_selected_model() and not p.input.capabilities_loading for p in tab.targets))
         tab.chat_input.entry.restore_draft('keep me')
-        with patch.object(ollama, 'chat') as api:
+        with provider_patch('chat') as api:
             tab.send_or_stop()
             pump_until(lambda: tab.request is None)
             self.assertEqual(tab.chat_input.entry.read_draft(), 'keep me')

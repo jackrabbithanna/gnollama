@@ -72,7 +72,7 @@ class ResponseLayoutTests(unittest.TestCase):
             dict(id=id, settings=settings, status='complete') for id in ('one', 'two')], messages=[
             dict(uid='one', content='```python\n' + code + '\n```'),
             dict(uid='two', content='A short answer.')])
-        tab = window._add_tab(ComparisonTab(self.storage, saved=saved))
+        tab = window._add_tab(ComparisonTab(self.context, saved=saved))
         self.tabs.append(tab)
         self.resize(window, 900)
         bubbles = [value[1] for value in tab.results.values()]

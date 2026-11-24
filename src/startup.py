@@ -2,7 +2,7 @@
 import threading
 from gettext import gettext as _
 from gi.repository import Adw, Gtk, GLib
-from .storage import ChatStorage
+from .app_context import AppContext
 
 
 class StartupWindow(Adw.ApplicationWindow):
@@ -30,13 +30,6 @@ class StartupWindow(Adw.ApplicationWindow):
         self.connect('close-request', self._close_requested)
         self.start()
 
-    @staticmethod
-    def dispose_storage(storage):
-        storage.knowledge.cancel_all()
-        storage.knowledge.shutdown()
-        storage.writer.shutdown()
-        storage.services.shutdown(wait=False)
-
     def _close_requested(self, *args):
         if self.busy:
             self.closing = True
@@ -61,30 +54,30 @@ class StartupWindow(Adw.ApplicationWindow):
                 return False
             GLib.idle_add(deliver)
 
-        def open_storage():
-            storage, error = None, None
+        def open_context():
+            context, error = None, None
             try:
-                storage = ChatStorage(progress=progress)
+                context = AppContext(progress=progress)
             except Exception as exc:
                 error = exc
-            GLib.idle_add(self._completed, storage, error)
+            GLib.idle_add(self._completed, context, error)
 
-        threading.Thread(target=open_storage, name='GnollamaStartup', daemon=False).start()
+        threading.Thread(target=open_context, name='GnollamaStartup', daemon=False).start()
 
-    def _completed(self, storage, error):
+    def _completed(self, context, error):
         self.busy = False
         if self.closing:
-            if storage is not None:
-                self.dispose_storage(storage)
+            if context is not None:
+                context.shutdown()
             self.destroy()
             return False
         if error is None:
             try:
-                self.on_ready(storage)
+                self.on_ready(context)
                 self.destroy()
                 return False
             except Exception as exc:
-                self.dispose_storage(storage)
+                context.shutdown()
                 error = exc
         self.spinner.set_visible(False)
         self.retry.set_visible(True)

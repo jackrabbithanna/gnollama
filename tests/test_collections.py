@@ -9,10 +9,12 @@ from pathlib import Path
 from unittest.mock import patch
 
 from gi.repository import Adw, Gdk, Gio, Gtk
-from src import database, ollama, session
+from src import database, session
+from src.providers import OllamaProvider, ProviderError
+from provider_fixture import provider_patch
 from src.database import DatabaseManager, DatabaseUpgradeError
 from src.knowledge import DEFAULT_RAG, make_document, new_config
-from src.storage import ChatStorage
+from src.app_context import AppContext
 from src.widgets.knowledge_view import CollectionDialog, DocumentPicker, KnowledgeControl, KnowledgeView, SourcePicker
 from test_knowledge import TAG, indexed
 from test_ui import pump_until
@@ -29,15 +31,14 @@ def collection(db, name, config, size=1600, overlap=200):
 
 class CollectionTests(unittest.TestCase):
     def setUp(self):
-        ollama.resume()
         self.temp = tempfile.TemporaryDirectory()
-        self.storage = ChatStorage(self.temp.name)
+        self.context = AppContext(self.temp.name)
+        self.storage = self.context.storage
         self.storage.add_host('Embedding host', 'http://embed:11434')
         self.config = new_config(TAG['name'], TAG['digest'])
-        self.patches = [patch.object(ollama, 'fetch_model_details', return_value=[TAG]),
-                        patch.object(ollama, 'fetch_models', return_value=['chat']),
-                        patch.object(ollama, 'show_model', return_value={'capabilities': ['embedding', 'completion']}),
-                        patch.object(ollama, 'embed', side_effect=lambda host, model, inputs, **kw:
+        self.patches = [provider_patch('list_models', return_value=[TAG]),
+                        provider_patch('show_model', return_value={'capabilities': ['embedding', 'completion']}),
+                        provider_patch('embed', side_effect=lambda host, model, inputs, **kw:
                                      {'embeddings': [[1., 0.] for _ in ([inputs] if isinstance(inputs, str) else inputs)]})]
         for p in self.patches:
             p.start()
@@ -56,10 +57,10 @@ class CollectionTests(unittest.TestCase):
             elif isinstance(widget, CollectionDialog):
                 widget.host_models.stop()
                 widget._closed()
-        self.storage.knowledge.cancel_all()
-        pump_until(lambda: self.storage.knowledge.idle and self.storage.writer.idle and session.worker.idle, timeout=10)
-        self.storage.knowledge.shutdown()
-        self.storage.writer.shutdown()
+        self.context.knowledge.cancel_all()
+        pump_until(lambda: self.context.knowledge.idle and self.storage.writer.idle and self.context.services.idle, timeout=10)
+        self.context.knowledge.shutdown()
+        self.context.shutdown()
         for p in reversed(self.patches):
             p.stop()
         self.temp.cleanup()
@@ -70,7 +71,7 @@ class CollectionTests(unittest.TestCase):
         return doc
 
     def drain(self):
-        pump_until(lambda: self.storage.knowledge.idle and self.storage.writer.idle, timeout=10)
+        pump_until(lambda: self.context.knowledge.idle and self.storage.writer.idle, timeout=10)
 
     def options(self, *ids):
         return dict(copy.deepcopy(DEFAULT_RAG), enabled=True, config_id=self.config['id'],
@@ -122,8 +123,8 @@ class CollectionTests(unittest.TestCase):
 
     def test_automatic_builds_share_pending_work_and_copy_keeps_original(self):
         doc = self.document()
-        a = self.storage.knowledge.create_collection('A', 'http://embed:11434', TAG['name'], self.config, document_ids=[doc['id']])
-        b = self.storage.knowledge.create_collection('B', 'http://embed:11434', TAG['name'], self.config, document_ids=[doc['id']])
+        a = self.context.knowledge.create_collection('A', 'http://embed:11434', TAG['name'], self.config, document_ids=[doc['id']])
+        b = self.context.knowledge.create_collection('B', 'http://embed:11434', TAG['name'], self.config, document_ids=[doc['id']])
         self.drain()
         self.assertIsNone(a['error'])
         self.assertIsNone(b['error'])
@@ -131,7 +132,7 @@ class CollectionTests(unittest.TestCase):
         self.assertEqual(members[0]['index_id'], members[1]['index_id'])
         self.assertEqual(len(self.storage.db.knowledge_indexes()), 1)
         new_config_value = new_config(TAG['name'], TAG['digest'], 'custom', query_prefix='Find: ')
-        c = self.storage.knowledge.create_collection('New settings', 'http://embed:11434', TAG['name'], new_config_value,
+        c = self.context.knowledge.create_collection('New settings', 'http://embed:11434', TAG['name'], new_config_value,
                                                       document_ids=[doc['id']])
         self.drain()
         self.assertIsNone(c['error'])
@@ -141,8 +142,8 @@ class CollectionTests(unittest.TestCase):
     def test_failed_and_cancelled_builds_retry_without_losing_membership(self):
         doc = self.document()
         collection(self.storage.db, 'Retry', self.config)
-        with patch.object(ollama, 'embed', side_effect=ollama.OllamaError('Test failure')):
-            self.storage.knowledge.build_collection('Retry', [doc['id']])
+        with provider_patch('embed', side_effect=ProviderError('Test failure')):
+            self.context.knowledge.build_collection('Retry', [doc['id']])
             self.drain()
         self.assertEqual(self.storage.db.collection_documents('Retry')[0]['status'], 'failed')
         entered, release = threading.Event(), threading.Event()
@@ -150,15 +151,15 @@ class CollectionTests(unittest.TestCase):
             entered.set()
             release.wait(5)
             return {'embeddings': [[1., 0.]]}
-        with patch.object(ollama, 'embed', side_effect=held):
-            self.storage.knowledge.build_collection('Retry')
+        with provider_patch('embed', side_effect=held):
+            self.context.knowledge.build_collection('Retry')
             pump_until(entered.is_set)
-            job = next(j for j in self.storage.knowledge.jobs.values() if not j['done'] and j.get('index_id'))
+            job = next(j for j in self.context.knowledge.jobs.values() if not j['done'] and j.get('index_id'))
             job['cancel'].cancel()
             release.set()
             self.drain()
         self.assertEqual(self.storage.db.collection_documents('Retry')[0]['status'], 'interrupted')
-        self.storage.knowledge.build_collection('Retry')
+        self.context.knowledge.build_collection('Retry')
         self.drain()
         self.assertEqual(self.storage.db.collection_documents('Retry')[0]['status'], 'complete')
         self.assertEqual(len(self.storage.db.knowledge_indexes()), 1)
@@ -166,9 +167,9 @@ class CollectionTests(unittest.TestCase):
     def test_deleted_collection_during_queued_preparation_does_not_pause_writer(self):
         collection(self.storage.db, 'Gone', self.config)
         entered, release = threading.Event(), threading.Event()
-        self.storage.knowledge.submit('Hold queue', lambda *args: entered.set() or release.wait(5), preparation=True)
+        self.context.knowledge.submit('Hold queue', lambda *args: entered.set() or release.wait(5), preparation=True)
         pump_until(entered.is_set)
-        job = self.storage.knowledge.build_collection('Gone', [self.document()['id']])
+        job = self.context.knowledge.build_collection('Gone', [self.document()['id']])
         self.storage.db.delete_knowledge_collection('Gone')
         release.set()
         self.drain()
@@ -178,7 +179,7 @@ class CollectionTests(unittest.TestCase):
 
     def test_deleted_copy_member_does_not_leave_a_half_created_collection(self):
         doc = self.document()
-        job = self.storage.knowledge.create_collection('Copy', 'http://embed:11434', TAG['name'], self.config,
+        job = self.context.knowledge.create_collection('Copy', 'http://embed:11434', TAG['name'], self.config,
                                                        document_ids=[doc['id'], 'deleted-document'])
         self.drain()
         self.assertIn('deleted', str(job['error']))
@@ -189,10 +190,10 @@ class CollectionTests(unittest.TestCase):
         doc = self.document()
         collection(self.storage.db, 'Queued', self.config)
         entered, release = threading.Event(), threading.Event()
-        self.storage.knowledge.submit('Hold embeddings', lambda *args: entered.set() or release.wait(5))
+        self.context.knowledge.submit('Hold embeddings', lambda *args: entered.set() or release.wait(5))
         pump_until(entered.is_set)
         try:
-            prepare = self.storage.knowledge.build_collection('Queued', [doc['id']])
+            prepare = self.context.knowledge.build_collection('Queued', [doc['id']])
             pump_until(lambda: prepare['done'])
             member = self.storage.db.collection_documents('Queued')[0]
             self.storage.db.delete_knowledge_index(member['index_id'])
@@ -207,18 +208,18 @@ class CollectionTests(unittest.TestCase):
         doc = self.document()
         collection(self.storage.db, 'Queued', self.config)
         entered, release = threading.Event(), threading.Event()
-        self.storage.knowledge.submit('Hold embeddings', lambda *args: entered.set() or release.wait(5))
+        self.context.knowledge.submit('Hold embeddings', lambda *args: entered.set() or release.wait(5))
         pump_until(entered.is_set)
         try:
-            ordinary = self.storage.knowledge.create_index(doc['id'], 'http://embed:11434', TAG['name'], self.config)
-            prepare = self.storage.knowledge.build_collection('Queued', [doc['id']])
+            ordinary = self.context.knowledge.create_index(doc['id'], 'http://embed:11434', TAG['name'], self.config)
+            prepare = self.context.knowledge.build_collection('Queued', [doc['id']])
             pump_until(lambda: prepare['done'])
             self.assertIsNone(prepare['error'])
             member = self.storage.db.collection_documents('Queued')[0]
             self.assertEqual(member['index_id'], ordinary['index_id'])
             self.assertEqual(member['status'], 'indexing')
             with self.assertRaisesRegex(ValueError, 'not ready'):
-                self.storage.knowledge.retrieve(self.options('Queued'), 'Question', Gio.Cancellable())
+                self.context.knowledge.retrieve(self.options('Queued'), 'Question', Gio.Cancellable())
         finally:
             release.set()
         self.drain()
@@ -229,18 +230,18 @@ class CollectionTests(unittest.TestCase):
         doc = self.document()
         collection(self.storage.db, 'Queued', self.config)
         entered, release = threading.Event(), threading.Event()
-        self.storage.knowledge.submit('Hold embeddings', lambda *args: entered.set() or release.wait(5))
+        self.context.knowledge.submit('Hold embeddings', lambda *args: entered.set() or release.wait(5))
         pump_until(entered.is_set)
         try:
-            prepare = self.storage.knowledge.build_collection('Queued', [doc['id']])
+            prepare = self.context.knowledge.build_collection('Queued', [doc['id']])
             pump_until(lambda: prepare['done'])
-            job = next(j for j in self.storage.knowledge.jobs.values() if j.get('index_id') and not j['done'])
+            job = next(j for j in self.context.knowledge.jobs.values() if j.get('index_id') and not j['done'])
             job['cancel'].cancel()
         finally:
             release.set()
         self.drain()
         self.assertEqual(self.storage.db.collection_documents('Queued')[0]['status'], 'interrupted')
-        self.storage.knowledge.build_collection('Queued')
+        self.context.knowledge.build_collection('Queued')
         self.drain()
         self.assertEqual(self.storage.db.knowledge_collections()[0]['ready'], 1)
 
@@ -252,17 +253,17 @@ class CollectionTests(unittest.TestCase):
             entered.set()
             release.wait(5)
             return {'embeddings': [[1., 0.]]}
-        with patch.object(ollama, 'embed', side_effect=held):
-            self.storage.knowledge.build_collection('Bulk', [d['id'] for d in docs])
+        with provider_patch('embed', side_effect=held):
+            self.context.knowledge.build_collection('Bulk', [d['id'] for d in docs])
             pump_until(entered.is_set)
-            self.storage.knowledge.cancel_all()
+            self.context.knowledge.cancel_all()
             release.set()
             self.drain()
         members = self.storage.db.collection_documents('Bulk')
         self.assertEqual(len(members), len(docs))
         self.assertTrue(all(m['status'] == 'interrupted' for m in members), members)
         with self.assertRaisesRegex(ValueError, 'closing'):
-            self.storage.knowledge.build_collection('Bulk')
+            self.context.knowledge.build_collection('Bulk')
 
     def test_collection_union_partial_overlap_and_live_membership_snapshot(self):
         doc, config, index, opts = indexed(self.storage)
@@ -272,7 +273,7 @@ class CollectionTests(unittest.TestCase):
             self.storage.db.prepare_collection_indexes(name, [doc['id']])
         options = self.options('A', 'B')
         options['selection'] = {'index': ['index0']}
-        snapshot = self.storage.knowledge.retrieve(options, 'Question', Gio.Cancellable())
+        snapshot = self.context.knowledge.retrieve(options, 'Question', Gio.Cancellable())
         self.assertEqual(len(snapshot['hits']), 2)
         self.assertEqual(len({h['id'] for h in snapshot['hits']}), 2)
         self.assertEqual(snapshot['selection'], {'index': None})
@@ -283,7 +284,7 @@ class CollectionTests(unittest.TestCase):
         self.storage.db.prepare_collection_indexes('A', [other['id']])
         self.storage.db.remove_collection_document('B', doc['id'])
         options['collection_ids'] = ['A']
-        updated = self.storage.knowledge.retrieve(options, 'Question', Gio.Cancellable())
+        updated = self.context.knowledge.retrieve(options, 'Question', Gio.Cancellable())
         self.assertEqual(len(updated['collections'][0]['members']), 2)
         self.storage.db.rename_knowledge_collection('A', 'Renamed')
         self.assertEqual(self.storage.db.get_messages('saved')[0]['response_metadata']['retrieval'], original)
@@ -293,17 +294,17 @@ class CollectionTests(unittest.TestCase):
         collection(self.storage.db, 'A', config)
         for ids, message in [(['A'], 'empty'), (['missing'], 'deleted')]:
             with self.assertRaisesRegex(ValueError, message):
-                self.storage.knowledge.retrieve(self.options(*ids), 'Question', Gio.Cancellable())
+                self.context.knowledge.retrieve(self.options(*ids), 'Question', Gio.Cancellable())
         self.storage.db.prepare_collection_indexes('A', [doc['id']])
         self.storage.db.prepare_collection_indexes('A', [self.document('Pending')['id']])
-        with patch.object(ollama, 'embed') as embed:
+        with provider_patch('embed') as embed:
             with self.assertRaisesRegex(ValueError, 'Pending'):
-                self.storage.knowledge.retrieve(self.options('A'), 'Question', Gio.Cancellable())
+                self.context.knowledge.retrieve(self.options('A'), 'Question', Gio.Cancellable())
             embed.assert_not_called()
         different = new_config(TAG['name'], 'other-digest')
         collection(self.storage.db, 'Different', different)
         with self.assertRaisesRegex(ValueError, 'different embedding'):
-            self.storage.knowledge.retrieve(self.options('Different'), 'Question', Gio.Cancellable())
+            self.context.knowledge.retrieve(self.options('Different'), 'Question', Gio.Cancellable())
 
     def test_membership_resolves_in_search_snapshot_during_concurrent_changes(self):
         doc, config, index, opts = indexed(self.storage)
@@ -340,24 +341,24 @@ class CollectionTests(unittest.TestCase):
     def test_library_bulk_picker_and_chat_sources_keep_collection_ids(self):
         doc, config, index, opts = indexed(self.storage)
         collection(self.storage.db, 'Manuals', config)
-        view = KnowledgeView(self.storage)
+        view = KnowledgeView(self.context)
         self.widgets.append(view)
         view.open_collection('Manuals')
         pump_until(lambda: view.detail_page.get_title() == 'Manuals')
-        picker = DocumentPicker(self.storage, 'Manuals', view.refresh)
+        picker = DocumentPicker(self.context, 'Manuals', view.refresh)
         picker.selected.add(doc['id'])
         with patch.object(picker, 'close'):
             picker._add()
         self.drain()
         pump_until(lambda: 'Manuals' in view._library_choices)
         options = self.options('Manuals')
-        source = SourcePicker(self.storage, options, lambda result: None)
+        source = SourcePicker(self.context, options, lambda result: None)
         self.widgets.append(source)
         pump_until(lambda: source.host_models.model() is not None)
         chosen = source.current_options()
         self.assertEqual(chosen['collection_ids'], ['Manuals'])
         self.assertEqual(chosen['selection'], {})
-        control = KnowledgeControl(self.storage, lambda: None)
+        control = KnowledgeControl(self.context, lambda: None)
         self.widgets.append(control)
         control.load(chosen)
         self.assertIn('1/1 ready', control.notice.get_text())
@@ -368,7 +369,7 @@ class CollectionTests(unittest.TestCase):
         self.assertEqual(restored['collection_ids'], ['Manuals'])
         control.load(restored)
         self.storage.db.delete_knowledge_collection('Manuals')
-        self.storage.knowledge.changed()
+        self.context.knowledge.changed()
         pump_until(lambda: 'deleted' in control.notice.get_text())
         self.assertEqual(source.collection_ids, {'Manuals'})
 
@@ -377,13 +378,13 @@ class CollectionTests(unittest.TestCase):
         doc, config, index, opts = indexed(self.storage)
         original = collection(self.storage.db, 'Original', config)
         self.storage.db.prepare_collection_indexes('Original', [doc['id']])
-        dialog = CollectionDialog(self.storage, lambda id: None, original)
+        dialog = CollectionDialog(self.context, lambda id: None, original)
         self.widgets.append(dialog)
         pump_until(lambda: dialog.host_models.model() is not None)
         self.assertEqual(dialog.document_ids, [doc['id']])
         self.assertEqual(dialog.settings()[2]['id'], config['id'])
         collection(self.storage.db, 'Destination', config)
-        view = KnowledgeView(self.storage)
+        view = KnowledgeView(self.context)
         self.widgets.append(view)
         with patch.object(view, 'present_dialog') as present:
             view._save_document(make_document('Duplicate', doc['text']), 'Destination')
@@ -400,7 +401,7 @@ class CollectionTests(unittest.TestCase):
         collection(self.storage.db, 'Manuals', config)
         self.storage.db.prepare_collection_indexes('Manuals', [doc['id']])
         original = copy.deepcopy(options)
-        picker = SourcePicker(self.storage, options, lambda result: None)
+        picker = SourcePicker(self.context, options, lambda result: None)
         self.widgets.append(picker)
         pump_until(lambda: picker.host_models.model() is not None)
         with self.assertRaisesRegex(ValueError, 'Select at least one collection'):
@@ -435,11 +436,11 @@ class CollectionTests(unittest.TestCase):
         self.storage.save_tool_state(chat['id'], options={'knowledge': chosen})
         self.drain()
         saved = self.storage.get_chat(chat['id'])['options']['knowledge']
-        restored = SourcePicker(self.storage, saved, lambda result: None)
+        restored = SourcePicker(self.context, saved, lambda result: None)
         self.widgets.append(restored)
         self.assertEqual(restored.metric(), 'manhattan')
         self.assertEqual(restored.threshold.get_text(), '1.25')
-        snapshot = self.storage.knowledge.retrieve(chosen, 'Question', Gio.Cancellable())
+        snapshot = self.context.knowledge.retrieve(chosen, 'Question', Gio.Cancellable())
         self.assertEqual(snapshot['metric'], 'manhattan')
         self.assertTrue(all(h['score'] <= 1.25 for h in snapshot['hits']))
         self.storage.db.save_messages(chat['id'], [{'role': 'assistant', 'content': 'Answer', 'response_metadata': {'retrieval': snapshot}}])

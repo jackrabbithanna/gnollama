@@ -11,11 +11,15 @@ from gi.repository import Gdk, Gio
 from pypdf import PdfWriter
 from pypdf.generic import DecodedStreamObject, DictionaryObject, NameObject
 
-from src import ollama, session
+from src import session
+
+from src.providers import OllamaProvider, ProviderError, RequestCancelled
+
+from provider_fixture import provider_patch
 from src.database import DatabaseManager
 from src.knowledge import (DEFAULT_RAG, augmented_messages, chunk_text, extract_document,
                            make_document, new_config, vector_blob)
-from src.storage import ChatStorage
+from src.app_context import AppContext
 from src.tab import GenerationTab
 from src.widgets.knowledge_view import ChunkPicker, IndexDialog, SourcePicker, SourcesView
 from test_transport import Server
@@ -50,38 +54,38 @@ def indexed(storage, id='index', text='Alpha reference.\n\nBeta reference.', vec
 
 class KnowledgeTests(unittest.TestCase):
     def setUp(self):
-        ollama.resume()
         self.temp = tempfile.TemporaryDirectory()
-        self.storage = ChatStorage(self.temp.name)
+        self.context = AppContext(self.temp.name)
+        self.storage = self.context.storage
         self.storage.add_host('Embedding host', 'http://embed:11434')
 
     def tearDown(self):
-        self.storage.knowledge.cancel_all()
-        pump_until(lambda: self.storage.knowledge.idle and self.storage.writer.idle)
-        self.storage.knowledge.shutdown()
-        self.storage.writer.shutdown()
+        self.context.knowledge.cancel_all()
+        pump_until(lambda: self.context.knowledge.idle and self.storage.writer.idle)
+        self.context.knowledge.shutdown()
+        self.context.shutdown()
         self.temp.cleanup()
 
     def test_embedding_transport_validates_response_and_cancels(self):
         fixture = Server('json')
         self.addCleanup(fixture.close)
         fixture.server.payload = {'embeddings': [[1., 0.], [0., 1.]], 'model': TAG['name']}
-        response = ollama.embed(fixture.host, TAG['name'], ['one', 'two'], dimensions=2, keep_alive=0)
+        response = OllamaProvider(fixture.host).embed(TAG['name'], ['one', 'two'], dimensions=2, keep_alive=0)
         self.assertEqual(len(response['embeddings']), 2)
         path, payload = fixture.server.received[-1]
         self.assertEqual(path, '/api/embed')
         self.assertEqual(payload, dict(model=TAG['name'], input=['one', 'two'], dimensions=2, keep_alive=0, truncate=False))
         for vectors in ([], [[1, 0]], [[0, 0], [1, 0]], [[1, 0], [1, 2, 3]], [[float('nan'), 0], [1, 0]], [[True, 1], [1, 0]]):
             fixture.server.payload = {'embeddings': vectors}
-            with self.assertRaises(ollama.OllamaError):
-                ollama.embed(fixture.host, TAG['name'], ['one', 'two'])
+            with self.assertRaises(ProviderError):
+                OllamaProvider(fixture.host).embed(TAG['name'], ['one', 'two'])
         cancel = Gio.Cancellable()
         cancel.cancel()
-        with self.assertRaises(ollama.RequestCancelled):
-            ollama.embed(fixture.host, TAG['name'], 'one', cancellable=cancel)
+        with self.assertRaises(RequestCancelled):
+            OllamaProvider(fixture.host).embed(TAG['name'], 'one', cancellable=cancel)
         fixture.server.mode = 'error'
-        with self.assertRaisesRegex(ollama.OllamaError, 'pull this model'):
-            ollama.embed(fixture.host, TAG['name'], 'one')
+        with self.assertRaisesRegex(ProviderError, 'pull this model'):
+            OllamaProvider(fixture.host).embed(TAG['name'], 'one')
 
     def test_extraction_pdf_pages_unicode_and_rejections(self):
         text = 'Café 🌻\r\nsource'
@@ -150,15 +154,15 @@ class KnowledgeTests(unittest.TestCase):
 
     def test_model_changes_and_snapshot_survive_cleanup(self):
         doc, config, index, options = indexed(self.storage)
-        with patch.object(ollama, 'fetch_model_details', return_value=[TAG]), patch.object(ollama, 'embed', return_value={'embeddings': [[1, 0]]}):
-            snapshot = self.storage.knowledge.retrieve(options, 'Question', Gio.Cancellable())
-        with patch.object(ollama, 'fetch_model_details', return_value=[dict(TAG, digest='changed')]), patch.object(ollama, 'embed') as embed:
+        with provider_patch('list_models', return_value=[TAG]), provider_patch('embed', return_value={'embeddings': [[1, 0]]}):
+            snapshot = self.context.knowledge.retrieve(options, 'Question', Gio.Cancellable())
+        with provider_patch('list_models', return_value=[dict(TAG, digest='changed')]), provider_patch('embed') as embed:
             with self.assertRaisesRegex(ValueError, 'changed'):
-                self.storage.knowledge.retrieve(options, 'Question', Gio.Cancellable())
+                self.context.knowledge.retrieve(options, 'Question', Gio.Cancellable())
             embed.assert_not_called()
-        with patch.object(ollama, 'fetch_model_details', side_effect=[[TAG], [dict(TAG, digest='changed')]]), patch.object(ollama, 'embed', return_value={'embeddings': [[1, 0]]}):
+        with provider_patch('list_models', side_effect=[[TAG], [dict(TAG, digest='changed')]]), provider_patch('embed', return_value={'embeddings': [[1, 0]]}):
             with self.assertRaisesRegex(ValueError, 'changed'):
-                self.storage.knowledge.retrieve(options, 'Question', Gio.Cancellable())
+                self.context.knowledge.retrieve(options, 'Question', Gio.Cancellable())
         self.storage.db.create_chat('chat', 'Sources', 0, 0, 'model')
         self.storage.db.save_messages('chat', [{'role': 'assistant', 'content': 'Answer [S1]', 'response_metadata': {'retrieval': snapshot}}])
         self.assertEqual(self.storage.db.model_embedding_usage(TAG['digest'])['vectors'], 2)
@@ -178,10 +182,10 @@ class KnowledgeTests(unittest.TestCase):
             inputs = [input] if isinstance(input, str) else input
             seen.extend(inputs)
             if any(len(t) > 400 for t in inputs):
-                raise ollama.OllamaError('input length exceeds context length')
+                raise ProviderError('input length exceeds context length')
             return {'embeddings': [[1, 0] for t in inputs]}
-        with patch.object(ollama, 'fetch_model_details', return_value=[TAG]), patch.object(ollama, 'embed', side_effect=embed):
-            job = self.storage.knowledge.create_index(document['id'], 'http://embed:11434', TAG['name'], config)
+        with provider_patch('list_models', return_value=[TAG]), provider_patch('embed', side_effect=embed):
+            job = self.context.knowledge.create_index(document['id'], 'http://embed:11434', TAG['name'], config)
             pump_until(lambda: job['done'] and self.storage.writer.idle, timeout=8)
         self.assertIsNone(job['error'])
         index = self.storage.db.knowledge_indexes()[0]
@@ -193,20 +197,20 @@ class KnowledgeTests(unittest.TestCase):
             started.set()
             release.wait(3)
             if kwargs['cancellable'].is_cancelled():
-                raise ollama.RequestCancelled('stopped')
+                raise RequestCancelled('stopped')
             return {'embeddings': [[1, 0]]}
-        with patch.object(ollama, 'fetch_model_details', return_value=[TAG]), patch.object(ollama, 'embed', side_effect=stalled):
-            second = self.storage.knowledge.create_index(document['id'], 'http://embed:11434', TAG['name'], config)
+        with provider_patch('list_models', return_value=[TAG]), provider_patch('embed', side_effect=stalled):
+            second = self.context.knowledge.create_index(document['id'], 'http://embed:11434', TAG['name'], config)
             pump_until(started.is_set)
-            self.assertTrue(self.storage.knowledge.busy('http://embed:11434', TAG['name']))
+            self.assertTrue(self.context.knowledge.busy('http://embed:11434', TAG['name']))
             second['cancel'].cancel()
             release.set()
             pump_until(lambda: second['done'] and self.storage.writer.idle)
         interrupted = next(i for i in self.storage.db.knowledge_indexes() if i['id'] == second['index_id'])
         self.assertEqual(interrupted['status'], 'interrupted')
         self.assertEqual(next(i for i in self.storage.db.knowledge_indexes() if i['id'] == index['id'])['status'], 'complete')
-        with patch.object(ollama, 'fetch_model_details', return_value=[TAG]), patch.object(ollama, 'embed', side_effect=embed):
-            retry = self.storage.knowledge.create_index(document['id'], interrupted['host'], TAG['name'], config, index_id=interrupted['id'])
+        with provider_patch('list_models', return_value=[TAG]), provider_patch('embed', side_effect=embed):
+            retry = self.context.knowledge.create_index(document['id'], interrupted['host'], TAG['name'], config, index_id=interrupted['id'])
             pump_until(lambda: retry['done'] and self.storage.writer.idle, timeout=8)
         self.assertIsNone(retry['error'])
         self.assertEqual(len(self.storage.db.knowledge_indexes()), 2)
@@ -243,8 +247,8 @@ class KnowledgeTests(unittest.TestCase):
             if fail[0]:
                 raise OSError('disk full')
             return original(*args)
-        with patch.object(ollama, 'fetch_model_details', return_value=[TAG]), patch.object(ollama, 'embed', return_value={'embeddings': [[1, 0]]}) as embed, patch.object(self.storage.db, 'save_embedding_batch', side_effect=write):
-            job = self.storage.knowledge.create_index(document['id'], 'http://embed:11434', TAG['name'], config)
+        with provider_patch('list_models', return_value=[TAG]), provider_patch('embed', return_value={'embeddings': [[1, 0]]}) as embed, patch.object(self.storage.db, 'save_embedding_batch', side_effect=write):
+            job = self.context.knowledge.create_index(document['id'], 'http://embed:11434', TAG['name'], config)
             pump_until(lambda: self.storage.writer.error is not None)
             self.assertFalse(job['done'])
             self.assertEqual(self.storage.db.knowledge_indexes()[0]['status'], 'indexing')
@@ -254,8 +258,8 @@ class KnowledgeTests(unittest.TestCase):
         self.assertIsNone(job['error'])
         self.assertEqual(embed.call_count, 1)
         self.assertEqual(self.storage.db.knowledge_indexes()[0]['chunks'], 1)
-        with patch.object(ollama, 'fetch_model_details', side_effect=[[TAG], [dict(TAG, digest='replacement')]]), patch.object(ollama, 'embed', return_value={'embeddings': [[1, 0]]}):
-            changed = self.storage.knowledge.create_index(document['id'], 'http://embed:11434', TAG['name'], config)
+        with provider_patch('list_models', side_effect=[[TAG], [dict(TAG, digest='replacement')]]), provider_patch('embed', return_value={'embeddings': [[1, 0]]}):
+            changed = self.context.knowledge.create_index(document['id'], 'http://embed:11434', TAG['name'], config)
             pump_until(lambda: changed['done'] and self.storage.writer.idle)
         self.assertIn('changed', changed['error'])
         statuses = {i['id']: i['status'] for i in self.storage.db.knowledge_indexes()}
@@ -270,9 +274,9 @@ class KnowledgeUITests(unittest.TestCase):
     make_window = test_ui.UITests.make_window
 
     def tearDown(self):
-        self.storage.knowledge.cancel_all()
-        pump_until(lambda: self.storage.knowledge.idle)
-        self.storage.knowledge.shutdown()
+        self.context.knowledge.cancel_all()
+        pump_until(lambda: self.context.knowledge.idle)
+        self.context.knowledge.shutdown()
         test_ui.UITests.tearDown(self)
 
     def test_rag_chat_json_tools_and_restored_continuation(self):
@@ -294,11 +298,11 @@ class KnowledgeUITests(unittest.TestCase):
         def chat(**kwargs):
             payloads.append(kwargs)
             return iter([{'message': {'tool_calls': calls}, 'done': True}])
-        with patch.object(ollama, 'fetch_model_details', return_value=[TAG]), patch.object(ollama, 'embed', return_value={'embeddings': [[1, 0]]}) as embed, patch.object(ollama, 'chat', side_effect=chat):
+        with provider_patch('list_models', return_value=[TAG]), provider_patch('embed', return_value={'embeddings': [[1, 0]]}) as embed, provider_patch('chat', side_effect=chat):
             tab.on_send_clicked()
-            pump_until(lambda: tab.request is None and not tab._tool_busy and self.storage.writer.idle)
+            pump_until(lambda: tab.request is None and not tab.controller.tool_busy and self.storage.writer.idle)
         self.assertEqual(embed.call_args.args[2], 'standalone query')
-        self.assertEqual(payloads[0]['host'], 'http://localhost:11434')
+        self.assertEqual(payloads[0]['host'].url, 'http://localhost:11434')
         self.assertEqual(payloads[0]['format'], {'type': 'object'})
         self.assertTrue(payloads[0]['messages'][0]['content'].startswith('My system instructions.'))
         self.assertIn('<reference_passages>', payloads[0]['messages'][-1]['content'])
@@ -306,16 +310,16 @@ class KnowledgeUITests(unittest.TestCase):
         self.assertEqual(tab.knowledge_control.query.get_text(), '')
         snapshot = tab.strategy.history[-1]['response_metadata']['retrieval']
         self.assertEqual(snapshot['collections'][0]['id'], collection['id'])
-        tab._save_tool_result(tab.strategy.pending_round, 0, 'result')
-        pump_until(lambda: not tab._tool_busy and self.storage.writer.idle)
+        tab.controller.save_tool_result(tab.strategy.pending_round, 0, 'result')
+        pump_until(lambda: not tab.controller.tool_busy and self.storage.writer.idle)
         saved = self.storage.get_chat(tab.strategy.chat_id)
         self.storage.db.delete_knowledge_document(doc['id'])
-        restored = GenerationTab(mode='chat', storage=self.storage, chat_id=saved['id'], initial_history=saved['messages'])
+        restored = GenerationTab(mode='chat', context=self.context, chat_id=saved['id'], initial_history=saved['messages'])
         self.tabs.append(restored)
-        pump_until(lambda: session.worker.idle)
-        with patch.object(ollama, 'embed') as embed, patch.object(ollama, 'chat', return_value=iter([{'message': {'content': '{}'}, 'done': True}])) as chat:
+        pump_until(lambda: self.context.services.idle)
+        with provider_patch('embed') as embed, provider_patch('chat', return_value=iter([{'message': {'content': '{}'}, 'done': True}])) as chat:
             restored.on_send_clicked(continuation=True)
-            pump_until(lambda: restored.request is None and not restored._tool_busy and self.storage.writer.idle)
+            pump_until(lambda: restored.request is None and not restored.controller.tool_busy and self.storage.writer.idle)
         embed.assert_not_called()
         self.assertIn('<reference_passages>', next(m['content'] for m in chat.call_args.kwargs['messages'] if m['role'] == 'user'))
         self.assertEqual(restored.strategy.history[-1]['response_metadata']['retrieval'], snapshot)
@@ -326,13 +330,13 @@ class KnowledgeUITests(unittest.TestCase):
         window, tab = self.make_window()
         tab.knowledge_control.load(options)
         tab.chat_input.entry.set_text('Keep this prompt')
-        with patch.object(ollama, 'fetch_model_details', return_value=[]), patch.object(ollama, 'chat') as chat:
+        with provider_patch('list_models', return_value=[]), provider_patch('chat') as chat:
             tab.on_send_clicked()
             pump_until(lambda: tab.request is None)
         chat.assert_not_called()
         self.assertEqual(tab.chat_input.entry.get_text(), 'Keep this prompt')
         self.assertEqual(tab.strategy.history, [])
-        with patch.object(ollama, 'chat', return_value=iter([{'message': {'content': 'answer'}, 'done': True}])) as chat:
+        with provider_patch('chat', return_value=iter([{'message': {'content': 'answer'}, 'done': True}])) as chat:
             tab._retrieval_dialog.emit('response', 'without')
             pump_until(lambda: tab.request is None and self.storage.writer.idle)
         self.assertNotIn('<reference_passages>', chat.call_args.kwargs['messages'][-1]['content'])
@@ -342,8 +346,8 @@ class KnowledgeUITests(unittest.TestCase):
         def retrieve(*args):
             started.set()
             release.wait(3)
-            raise ollama.RequestCancelled('stopped')
-        with patch.object(self.storage.knowledge, 'retrieve', side_effect=retrieve), patch.object(ollama, 'chat') as chat:
+            raise RequestCancelled('stopped')
+        with patch.object(self.context.knowledge, 'retrieve', side_effect=retrieve), provider_patch('chat') as chat:
             tab.on_send_clicked()
             pump_until(started.is_set)
             tab.on_send_or_stop()
@@ -359,32 +363,32 @@ class KnowledgeUITests(unittest.TestCase):
         self.storage.db.prepare_collection_indexes('sources', [doc['id']])
         options.update(selection={}, collection_ids=['sources'])
         window, tab = self.make_window()
-        with patch.object(ollama, 'fetch_model_details', return_value=[TAG]), patch.object(ollama, 'show_model', return_value={'capabilities': ['embedding']}):
-            picker = SourcePicker(self.storage, options, lambda value: None)
+        with provider_patch('list_models', return_value=[TAG]), provider_patch('show_model', return_value={'capabilities': ['embedding']}):
+            picker = SourcePicker(self.context, options, lambda value: None)
             picker.present(window)
-            pump_until(lambda: session.worker.idle)
+            pump_until(lambda: self.context.services.idle)
             current = picker.current_options()
             self.assertEqual(current['selection'], {})
             self.assertEqual(current['collection_ids'], ['sources'])
             index_row = self.storage.db.knowledge_indexes()[0]
             selected = []
-            chunks = ChunkPicker(self.storage, index_row, [], selected.append)
+            chunks = ChunkPicker(self.context, index_row, [], selected.append)
             chunks.present(picker)
             chunks._all(True)
             chunks._apply()
             self.assertEqual(selected, [None])
             picker.query.set_text('Alpha')
-            with patch.object(ollama, 'embed', return_value={'embeddings': [[1, 0]]}):
+            with provider_patch('embed', return_value={'embeddings': [[1, 0]]}):
                 picker._search()
-                pump_until(lambda: picker.search_button.get_sensitive() and session.worker.idle)
+                pump_until(lambda: picker.search_button.get_sensitive() and self.context.services.idle)
             self.assertIsInstance(picker.results.get_first_child(), SourcesView)
             picker.host_models.models[0] = dict(TAG, digest='wrong')
             with self.assertRaisesRegex(ValueError, 'digest'):
                 picker.current_options()
             picker.close()
-            creator = IndexDialog(self.storage, doc, lambda: None)
+            creator = IndexDialog(self.context, doc, lambda: None)
             creator.present(window)
-            pump_until(lambda: session.worker.idle)
+            pump_until(lambda: self.context.services.idle)
             creator.preset.set_selected(1)
             self.assertEqual(creator.query_prefix.get_text(), 'task: search result | query: ')
             creator.host_models.models = [dict(TAG, name='qwen3-embedding:0.6b')]
@@ -406,9 +410,9 @@ class KnowledgeUITests(unittest.TestCase):
         def block():
             blocked.set()
             release.wait(3)
-        self.storage._submit(block)
+        self.storage.submit(block)
         pump_until(blocked.is_set)
-        with patch.object(ollama, 'fetch_model_details', return_value=[TAG]), patch.object(ollama, 'embed', return_value={'embeddings': [[1, 0]]}), patch.object(ollama, 'chat') as chat:
+        with provider_patch('list_models', return_value=[TAG]), provider_patch('embed', return_value={'embeddings': [[1, 0]]}), provider_patch('chat') as chat:
             tab.on_send_clicked()
             pump_until(lambda: tab.request is not None and tab.request.retrieval is not None and tab.chat_input.entry.get_text() == '')
             chat.assert_not_called()
@@ -424,31 +428,31 @@ class KnowledgeUITests(unittest.TestCase):
     def test_model_delete_keeps_data_by_default_and_cleans_only_on_success(self):
         from src.model_manager import ModelManagerDialog
         doc, config, index, options = indexed(self.storage)
-        self.stack.enter_context(patch.object(ollama, 'fetch_model_details', return_value=[]))
+        self.stack.enter_context(provider_patch('list_models', return_value=[]))
         self.stack.enter_context(patch('src.model_manager.Adw.AlertDialog.close'))
-        manager = ModelManagerDialog(self.storage)
+        manager = ModelManagerDialog(self.context)
         dialogs = []
-        with patch('src.model_manager.Adw.AlertDialog.present', lambda d, parent: dialogs.append(d)), patch.object(ollama, 'delete_model', return_value=True):
+        with patch('src.model_manager.Adw.AlertDialog.present', lambda d, parent: dialogs.append(d)), provider_patch('delete', return_value=True):
             manager.on_model_delete_clicked(None, TAG)
             dialog = dialogs[-1]
             self.assertIn('2 vectors', dialog.get_body())
             self.assertFalse(dialog.get_extra_child().get_active())
             dialog.emit('response', 'delete')
-            pump_until(lambda: session.worker.idle and self.storage.writer.idle)
+            pump_until(lambda: self.context.services.idle and self.storage.writer.idle)
         self.assertEqual(self.storage.db.model_embedding_usage(TAG['digest'])['vectors'], 2)
-        with patch('src.model_manager.Adw.AlertDialog.present', lambda d, parent: dialogs.append(d)), patch.object(ollama, 'delete_model', side_effect=ollama.OllamaError('offline')):
+        with patch('src.model_manager.Adw.AlertDialog.present', lambda d, parent: dialogs.append(d)), provider_patch('delete', side_effect=ProviderError('offline')):
             manager.on_model_delete_clicked(None, TAG)
             dialog = dialogs[-1]
             dialog.get_extra_child().set_active(True)
             dialog.emit('response', 'delete')
-            pump_until(lambda: session.worker.idle and self.storage.writer.idle)
+            pump_until(lambda: self.context.services.idle and self.storage.writer.idle)
         self.assertEqual(self.storage.db.model_embedding_usage(TAG['digest'])['vectors'], 2)
-        with patch('src.model_manager.Adw.AlertDialog.present', lambda d, parent: dialogs.append(d)), patch.object(ollama, 'delete_model', return_value=True):
+        with patch('src.model_manager.Adw.AlertDialog.present', lambda d, parent: dialogs.append(d)), provider_patch('delete', return_value=True):
             manager.on_model_delete_clicked(None, TAG)
             dialog = dialogs[-1]
             dialog.get_extra_child().set_active(True)
             dialog.emit('response', 'delete')
-            pump_until(lambda: session.worker.idle and self.storage.writer.idle)
+            pump_until(lambda: self.context.services.idle and self.storage.writer.idle)
         self.assertEqual(self.storage.db.model_embedding_usage(TAG['digest'])['vectors'], 0)
         self.assertIsNotNone(self.storage.db.knowledge_document(doc['id']))
         manager.requests.close()

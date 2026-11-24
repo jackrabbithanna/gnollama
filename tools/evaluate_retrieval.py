@@ -14,14 +14,14 @@ gettext.install('gnollama')
 from src.database import DatabaseManager
 from src.knowledge import make_document, new_config, augmented_messages, model_identity
 from src.vectors import vector_blob
-from src import ollama
+from src.providers import OllamaProvider
 
 
 def evaluate(host=None, model=None, answer_model=None):
     fixture = json.loads((ROOT / 'tests/fixtures/retrieval_reference.json').read_text())
-    identity = model_identity(host, model) if host else {'digest': 'recorded-fixture-v1'}
+    identity = model_identity(OllamaProvider(host), model) if host else {'digest': 'recorded-fixture-v1'}
     def vectors(texts, recorded):
-        return ollama.embed(host, model, texts)['embeddings'] if host else recorded
+        return OllamaProvider(host).embed(model, texts)['embeddings'] if host else recorded
     passages = fixture['passages']
     embeddings = vectors([p['text'] for p in passages], [p['vector'] for p in passages])
     queries = vectors([c['query'] for c in fixture['cases']], [c['vector'] for c in fixture['cases']])
@@ -48,7 +48,7 @@ def evaluate(host=None, model=None, answer_model=None):
                 citation_support='requires human review', answer_correctness='requires human review')
             if answer_model:
                 messages = augmented_messages([dict(role='user', content=case['query'])], dict(hits=hits, query=case['query']))
-                report['answer'] = ''.join(chunk.get('message', {}).get('content', '') for chunk in ollama.chat(host, answer_model, messages))
+                report['answer'] = ''.join(chunk.get('message', {}).get('content', '') for chunk in OllamaProvider(host).chat(answer_model, messages))
             reports.append(report)
     scored = [r for r in reports if r['recall_at_6'] is not None]
     return dict(mode='live' if host else 'recorded', embedding_identity=identity,

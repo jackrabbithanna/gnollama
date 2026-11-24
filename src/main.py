@@ -52,15 +52,16 @@ class GnollamaApplication(Adw.Application):
         """
         win = self.props.active_window
         if not win:
-            win = StartupWindow(application=self, on_ready=self._storage_ready)
+            win = StartupWindow(application=self, on_ready=self._context_ready)
         win.present()
 
-    def _storage_ready(self, storage):
-        win = GnollamaWindow(application=self, storage=storage)
+    def _context_ready(self, context):
+        win = GnollamaWindow(application=self, context=context)
         win.present()
-        if storage.db.backup_path:
+        storage = context.storage
+        if storage.backup_path:
             dialog = Adw.AlertDialog(heading=_('Database Upgraded'),
-                                    body=_('Your data is ready. A backup of the previous database was saved at:\n{0}').format(storage.db.backup_path))
+                                    body=_('Your data is ready. A backup of the previous database was saved at:\n{0}').format(storage.backup_path))
             dialog.add_response('close', _('Close'))
             dialog.present(win)
 

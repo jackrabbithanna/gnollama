@@ -10,15 +10,15 @@ from gi.repository import GLib
 from .database import DatabaseManager
 from .writer import OrderedWriter
 from .credentials import CredentialStore, CredentialError
-from . import ollama
-from .services import Services
+from .providers import provider_class, validate_url
 
 class ChatStorage:
     """Handles persistence for chat history and host configurations using SQLite."""
 
     def __init__(self, storage_dir=None, progress=None, credentials=None) -> None:
         self.credentials = credentials if credentials is not None else CredentialStore()
-        self.services = Services()
+        # Called after any host record changes, so discovery caches can be dropped.
+        self.hosts_changed = lambda: None
         self._host_lock = RLock()
         self.storage_dir: str = storage_dir or os.path.join(GLib.get_user_data_dir(), "gnollama")
         if not os.path.exists(self.storage_dir):
@@ -32,15 +32,13 @@ class ChatStorage:
         self.db = DatabaseManager(self.db_path, progress=progress)
 
         from .library_repository import LibraryRepository
-        self.library = LibraryRepository(self.db)
+        self.library = LibraryRepository(self.db, self.submit, self.get_all_hosts)
         self.on_error = None
         self.pending_callbacks = 0
         self.writer = OrderedWriter(self._write_failed)
         self.db.interrupt_knowledge_indexes()
         self.db.interrupt_comparisons()
         self.db.interrupt_model_conversations()
-        from .knowledge import KnowledgeService
-        self.knowledge = KnowledgeService(self)
 
         # Detect legacy JSON files and rename them
         self._handle_legacy_json()
@@ -86,7 +84,7 @@ class ChatStorage:
 
     def add_host(self, name: str, hostname: str, is_default: bool = False) -> Dict[str, Any]:
         """Adds a new host configuration."""
-        self.services.catalog.invalidate()
+        self.hosts_changed()
         host_id = str(uuid.uuid4())
         self.db.add_host(host_id, name, hostname, is_default)
         if is_default:
@@ -95,7 +93,7 @@ class ChatStorage:
 
     def update_host(self, host_id: str, name: str, hostname: str, is_default: bool = False) -> Optional[Dict[str, Any]]:
         """Updates an existing host configuration."""
-        self.services.catalog.invalidate()
+        self.hosts_changed()
         self.db.update_host(host_id, name, hostname, is_default)
         if is_default:
             self.db.set_default_host(host_id)
@@ -103,7 +101,7 @@ class ChatStorage:
 
     def delete_host(self, host_id: str) -> None:
         """Deletes a host configuration."""
-        self.services.catalog.invalidate()
+        self.hosts_changed()
         with self._host_lock:
             host = self.get_host(host_id)
             if host:
@@ -111,31 +109,22 @@ class ChatStorage:
             self.db.delete_host(host_id)
             self.credentials.forget_session(host_id)
 
-    def connection(self, host):
-        """Snapshot a host's destination without retrieving its secret."""
-        if ollama.is_cloud(host):
-            return ollama.Connection(host['hostname'], host['id'], host.get('credential_id'),
-                                     credentials=self.credentials)
-        return host['hostname']
-
     def save_host(self, name, hostname, is_default=False, *, host_id=None,
                   provider='ollama', api_key='', session_only=False):
         """Save from a worker; a keyring failure leaves the host unchanged."""
-        self.services.catalog.invalidate()
+        self.hosts_changed()
         with self._host_lock:
             previous = self.get_host(host_id) if host_id else None
             if host_id and previous is None:
                 raise ValueError(_('This host was removed.'))
             host_id = host_id or str(uuid.uuid4())
             reference = previous.get('credential_id') if previous else None
-            hostname = ollama.validate_host(hostname)
-            if provider not in ('ollama', 'ollama_cloud'):
-                raise ValueError(_('Invalid host type.'))
+            hostname = validate_url(hostname)
+            kind = provider_class(provider)
             if not name.strip():
                 raise ValueError(_('Enter a name for this server.'))
-            if provider == 'ollama_cloud':
-                if hostname != ollama.CLOUD_URL:
-                    raise ValueError(_('Ollama Cloud requires https://ollama.com.'))
+            if kind.requires_key:
+                kind.check_url(hostname)
                 if api_key:
                     api_key = self.credentials.validate(api_key)
                     if not session_only:
@@ -155,9 +144,9 @@ class ChatStorage:
                     if reference:
                         self.credentials.clear(reference)
                     raise
-            if provider == 'ollama_cloud' and api_key and session_only:
+            if kind.requires_key and api_key and session_only:
                 self.credentials.set_session(host_id, api_key)
-            elif provider != 'ollama_cloud' or api_key:
+            elif not kind.requires_key or api_key:
                 self.credentials.forget_session(host_id)
             if is_default:
                 self.db.set_default_host(host_id)
@@ -192,10 +181,10 @@ class ChatStorage:
         return self.db.get_draft(id)
 
     def save_draft(self, draft, on_done=None):
-        return self._submit(self.db.save_draft, copy.deepcopy(draft), on_done=on_done)
+        return self.submit(self.db.save_draft, copy.deepcopy(draft), on_done=on_done)
 
     def delete_draft(self, id, revision=None, on_done=None):
-        return self._submit(self.db.delete_draft, id, revision, on_done=on_done)
+        return self.submit(self.db.delete_draft, id, revision, on_done=on_done)
 
     def get_messages(self, id, limit=None, offset=0, include_ids=False):
         return self.db.get_messages(id, limit, offset, include_ids)
@@ -204,7 +193,7 @@ class ChatStorage:
         snapshot = copy.deepcopy(messages)
         for message in snapshot:
             message.setdefault('uid', str(uuid.uuid4()))
-        return self._submit(self.db.save_chat, chat_id, snapshot, start=start, draft_id=draft_id,
+        return self.submit(self.db.save_chat, chat_id, snapshot, start=start, draft_id=draft_id,
                             draft_revision=draft_revision, on_done=on_done, **copy.deepcopy(settings))
 
     def get_chat(self, chat_id: str) -> Optional[Dict[str, Any]]:
@@ -218,7 +207,7 @@ class ChatStorage:
             return False
         GLib.idle_add(notify)
 
-    def _submit(self, fn, *args, on_done=None, **kwargs):
+    def submit(self, fn, *args, on_done=None, **kwargs):
         def job():
             result = fn(*args, **kwargs)
             if on_done:
@@ -233,36 +222,44 @@ class ChatStorage:
             return result
         return self.writer.submit(job)
 
+    def after_pending_writes(self, callback):
+        """Call back on the main context once every earlier write has been saved."""
+        return self.submit(lambda: None, on_done=callback)
+
+    @property
+    def backup_path(self):
+        return self.db.backup_path
+
     def create_chat(self, model=''):
         chat_id = str(uuid.uuid4())
         timestamp = time.time()
-        self._submit(self.db.create_chat, chat_id, 'New Chat', timestamp, timestamp, model)
+        self.submit(self.db.create_chat, chat_id, 'New Chat', timestamp, timestamp, model)
         return {'id': chat_id, 'title': 'New Chat', 'created_at': timestamp,
                 'updated_at': timestamp, 'model': model, 'messages': [], 'options': {}}
 
     def save_chat(self, chat_id, messages, model=None, options=None, system=None,
                   host=None, on_done=None):
-        return self._submit(self.db.save_chat, chat_id, copy.deepcopy(messages), model,
+        return self.submit(self.db.save_chat, chat_id, copy.deepcopy(messages), model,
                             copy.deepcopy(options), system, host, on_done=on_done)
 
     def update_title(self, chat_id, title, on_done=None):
-        return self._submit(self.db.update_chat_title, chat_id, title, time.time(), on_done=on_done)
+        return self.submit(self.db.update_chat_title, chat_id, title, time.time(), on_done=on_done)
 
     def save_tool_state(self, chat_id, messages=None, options=None, on_done=None):
-        return self._submit(self.db.save_tool_state, chat_id, copy.deepcopy(messages),
+        return self.submit(self.db.save_tool_state, chat_id, copy.deepcopy(messages),
                             copy.deepcopy(options), on_done=on_done)
 
     def update_chat_pinned(self, chat_id, is_pinned, on_done=None):
-        return self._submit(self.db.update_chat_pinned, chat_id, is_pinned, on_done=on_done)
+        return self.submit(self.db.update_chat_pinned, chat_id, is_pinned, on_done=on_done)
 
     def delete_chat(self, chat_id, on_done=None):
-        return self._submit(self.db.delete_chat, chat_id, on_done=on_done)
+        return self.submit(self.db.delete_chat, chat_id, on_done=on_done)
 
     def cleanup_empty_chats(self, on_done=None):
-        return self._submit(self.db.cleanup_empty_chats, on_done=on_done)
+        return self.submit(self.db.cleanup_empty_chats, on_done=on_done)
 
     def cleanup_empty_chat(self, chat_id, on_done=None):
-        return self._submit(self.db.cleanup_empty_chats, chat_id, on_done=on_done)
+        return self.submit(self.db.cleanup_empty_chats, chat_id, on_done=on_done)
 
     def clear_all_chats(self, on_done=None):
-        return self._submit(self.db.clear_all_chats, on_done=on_done)
+        return self.submit(self.db.clear_all_chats, on_done=on_done)

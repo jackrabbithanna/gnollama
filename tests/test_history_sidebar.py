@@ -4,7 +4,7 @@ import threading
 import unittest
 from unittest.mock import patch
 from gi.repository import Gtk, Gdk
-from src.storage import ChatStorage
+from src.app_context import AppContext
 from src.history import CATEGORIES
 from src.widgets.history_sidebar import ICONS
 import test_ui
@@ -29,14 +29,15 @@ def seed(storage, count=9):
 class SidebarStorageTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
-        self.storage = ChatStorage(self.temp.name)
+        self.context = AppContext(self.temp.name)
+        self.storage = self.context.storage
         seed(self.storage)
 
     def tearDown(self):
         self.storage.writer.flush().result(4)
-        self.storage.writer.shutdown()
-        self.storage.services.shutdown()
-        self.storage.knowledge.shutdown()
+        self.context.shutdown()
+        self.context.services.shutdown()
+        self.context.knowledge.shutdown()
         self.temp.cleanup()
 
     def test_each_category_gets_its_own_limit_and_full_expansion(self):
@@ -159,7 +160,7 @@ class SidebarUITests(unittest.TestCase):
             pump_until(entered.is_set)
             self.query(window, 'lunar')
             release.set()
-            pump_until(lambda: self.storage.services.idle)
+            pump_until(lambda: self.context.services.idle)
             self.assertTrue(all('Lunar' in r.get_title() for r in window.chat_rows.values()))
         self.query(window, 'nonexistent keyword')
         self.assertEqual(window.chat_rows, {})
@@ -187,7 +188,7 @@ class SidebarUITests(unittest.TestCase):
     def test_rapid_changes_coalesce_reads_and_only_apply_the_latest_filter(self):
         window, _ = self.sidebar()
         jobs = []
-        with patch.object(self.storage.services.control, 'submit', side_effect=jobs.append):
+        with patch.object(self.context.services.control, 'submit', side_effect=jobs.append):
             for query in ('solar', 'lunar', 'pinned', 'chat', 'comparison'):
                 window.history_search.set_text(query)
                 window.history.reload()

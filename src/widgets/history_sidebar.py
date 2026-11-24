@@ -14,6 +14,7 @@ ICONS = dict(drafts='gnollama-draft-symbolic', pinned='pin-active-symbolic',
 class HistorySidebar:
     def __init__(self, window):
         self.window, self.storage, self.sidebar = window, window.storage, window.history_sidebar
+        self.context = window.context
         self.chat_rows = window.chat_rows
         self.draft_rows = {}
         self.sections, self.footers = {}, {}
@@ -137,7 +138,7 @@ class HistorySidebar:
                 return False
             self._apply(result, query, expanded, generation)
             return False
-        self.storage.services.control.submit(read)
+        self.context.services.control.submit(read)
         return False
 
     def _apply(self, result, query, expanded, generation):
@@ -218,7 +219,7 @@ class HistorySidebar:
     def add_chat(self, chat):
         # New tabs enter the same limited, sorted query as all other records.
         self.invalidate()
-        self.storage._submit(lambda: None, on_done=self.reload)
+        self.storage.after_pending_writes(self.reload)
 
     def section(self, chat):
         return self.sections[category(chat)]

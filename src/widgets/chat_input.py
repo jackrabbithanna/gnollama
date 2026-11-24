@@ -2,7 +2,7 @@ from typing import List, Optional, Any, Dict, Callable
 from gettext import ngettext
 from gi.repository import Gtk, GObject, Gio, GLib, Gdk, Pango
 import threading
-from .. import ollama
+from ..providers import RequestCancelled
 from .composer import Composer
 
 @Gtk.Template(resource_path='/io/github/jackrabbithanna/Gnollama/widgets/chat_input.ui')
@@ -79,6 +79,10 @@ class ChatInput(Gtk.Box):
 
     def _thinking_changed(self, *args):
         self._desired_thinking = self.get_thinking_value()
+
+    def reset_thinking_options(self):
+        """Offer every thinking level, as before a model's details are known."""
+        self._set_thinking_options(None)
 
     def _set_thinking_options(self, details):
         values = [None, False, True, 'low', 'medium', 'high', 'max']
@@ -198,13 +202,13 @@ class ChatInput(Gtk.Box):
         return isinstance(caps, list) and 'embedding' in caps and 'completion' not in caps
 
     def _empty_model_notice(self):
-        return (_('No cloud models are available. Try refreshing later.') if ollama.is_cloud(self._host) else
+        return (_('No cloud models are available. Try refreshing later.') if self._host is not None and not self._host.capabilities.model_management else
                 _('No chat models found. Pull one in Manage Models, then refresh.'))
 
     def fetch_models(self, host, refresh=False, host_id=None):
         if not self.discovery_enabled:
             return
-        identity = host_id or (host.host_id if isinstance(host, ollama.Connection) else host)
+        identity = host_id or (host.key if host else None)
         if identity == self._host_identity and not getattr(self, 'pending_model_selection', None):
             self.pending_model_selection = self.get_selected_model()
         self.cancel_fetches()
@@ -237,22 +241,18 @@ class ChatInput(Gtk.Box):
             try:
                 for tag in future.result():
                     model = tag['name'] if isinstance(tag, dict) else tag
-                    info = self.services.catalog.cached_details(host, model) if self.services else None
+                    info = self.services.catalog.cached_details(host, model)
                     if self._embedding_only(info):
                         continue
                     models.append(model)
                     if info is not None:
                         details[model] = info
-            except ollama.RequestCancelled:
+            except RequestCancelled:
                 return
             except Exception as exc:
                 error = str(exc)
             GLib.idle_add(deliver, models, details, error)
-        if self.services:
-            future = self.services.catalog.request_models(host, cancel, refresh)
-        else:
-            from ..session import worker
-            future = worker.submit(ollama.fetch_models, host, cancellable=cancel)
+        future = self.services.catalog.request_models(host, cancel, refresh)
         future.add_done_callback(finished)
 
     def _model_changed(self, *args, preserve_selection=False):
@@ -266,10 +266,8 @@ class ChatInput(Gtk.Box):
         if model and not preserve_selection:
             self._selection_explicit = True
             self.pending_model_selection = None
-        cached = self._model_details.get(model)
-        if self.services:
-            cached = self.services.catalog.cached_details(host, model) if host and model else None
-        if cached is not None or (not self.services and model in self._model_details):
+        cached = self.services.catalog.cached_details(host, model) if host and model else None
+        if cached is not None:
             self.set_model_details(cached)
             return
         self.set_model_details(None, loading=bool(model and host))
@@ -296,16 +294,12 @@ class ChatInput(Gtk.Box):
         def finished(future):
             try:
                 details = future.result()
-            except ollama.RequestCancelled:
+            except RequestCancelled:
                 return
             except Exception:
                 details = None  # Older hosts retain manual controls.
             GLib.idle_add(deliver, details)
-        if self.services:
-            future = self.services.catalog.request_details(host, model, cancel)
-        else:
-            from ..session import worker
-            future = worker.submit(ollama.show_model, host, model, cancellable=cancel)
+        future = self.services.catalog.request_details(host, model, cancel)
         future.add_done_callback(finished)
 
     def on_attach_clicked(self, btn: Gtk.Button) -> None:
@@ -419,8 +413,7 @@ class ChatInput(Gtk.Box):
                     self._toast('\n'.join(errors))
                 return False
             GLib.idle_add(deliver)
-        from ..session import worker
-        (self.services.control if self.services else worker).submit(read)
+        self.services.control.submit(read)
 
     def get_images(self):
         import base64

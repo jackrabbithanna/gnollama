@@ -31,8 +31,6 @@ with tempfile.TemporaryDirectory(prefix='gnollama-tests-') as temp:
             raise RuntimeError('Required GTK display is unavailable')
     suite = unittest.defaultTestLoader.discover(str(root / 'tests'), pattern=os.environ.get('GNOLLAMA_TEST_PATTERN', 'test*.py'))
     result = unittest.TextTestRunner(verbosity=2).run(suite)
-    from src.session import worker
-    worker.shutdown()
     required_skips = os.environ.get('GNOLLAMA_REQUIRE_DISPLAY') == '1' and any(
         'display' in reason.lower() for test, reason in result.skipped)
     sys.exit(not result.wasSuccessful() or required_skips)

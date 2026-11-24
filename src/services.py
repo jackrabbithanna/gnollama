@@ -2,18 +2,17 @@
 import copy
 import threading
 import time
-import weakref
 from concurrent.futures import Future, ThreadPoolExecutor
 from contextlib import contextmanager
 from dataclasses import dataclass
 from gettext import gettext as _
 
 from gi.repository import Gio
-from . import ollama
+from .providers import RequestCancelled, validate_url
 
 
 def model_key(host, model):
-    return (ollama.validate_host(host), model.removesuffix(':latest'))
+    return (validate_url(host), model.removesuffix(':latest'))
 
 
 class WorkerPool:
@@ -102,8 +101,7 @@ class ModelCatalog:
 
     @staticmethod
     def connection_key(connection):
-        return ((connection.host_id, connection.url, connection.credential_id)
-                if isinstance(connection, ollama.Connection) else ollama.validate_host(connection))
+        return connection.key
 
     def _generation(self, key):
         return self._epoch, self._versions.get(key, 0)
@@ -125,7 +123,7 @@ class ModelCatalog:
         future = Future()
         with self._condition:
             if cancel is not None and cancel.is_cancelled():
-                future.set_exception(ollama.RequestCancelled())
+                future.set_exception(RequestCancelled())
                 return future
             if refresh:
                 current = self._pending.get(((key, kind, name, ''), self._generation(key)))
@@ -150,7 +148,7 @@ class ModelCatalog:
         def cancelled(*args):
             with self._condition:
                 if not future.done():
-                    future.set_exception(ollama.RequestCancelled())
+                    future.set_exception(RequestCancelled())
                 if all(m['future'].done() for m in job['members']):
                     job['cancel'].cancel()
         if cancel is not None:
@@ -162,16 +160,16 @@ class ModelCatalog:
             result, error = None, None
             try:
                 if job['cancel'].is_cancelled():
-                    raise ollama.RequestCancelled()
+                    raise RequestCancelled()
                 if kind == 'models':
-                    tags = ollama.fetch_models(connection, cancellable=job['cancel'], details=True)
+                    tags = connection.list_models(cancellable=job['cancel'])
                     result = []
                     for tag in tags:
                         tag = dict(tag) if isinstance(tag, dict) else dict(name=tag)
                         if isinstance(tag.get('name'), str) and tag['name']:
                             result.append(tag)
                 else:
-                    result = ollama.show_model(connection, name, cancellable=job['cancel'])
+                    result = connection.show_model(name, cancellable=job['cancel'])
             except Exception as exc:
                 error = exc
             with self._condition:
@@ -194,7 +192,7 @@ class ModelCatalog:
                     target = subscriber['future']
                     if not target.done():
                         if subscriber['cancel'] is not None and subscriber['cancel'].is_cancelled():
-                            target.set_exception(ollama.RequestCancelled())
+                            target.set_exception(RequestCancelled())
                         elif error is not None:
                             target.set_exception(error)
                         else:
@@ -232,7 +230,6 @@ class ModelCatalog:
 
 
 class Services:
-    instances = weakref.WeakSet()
 
     def __init__(self):
         self.inference = WorkerPool(4, 'Inference')
@@ -241,7 +238,6 @@ class Services:
         self.discovery = WorkerPool(2, 'Discovery')
         self.models = ModelUseRegistry()
         self.catalog = ModelCatalog(self.discovery, self.control)
-        self.instances.add(self)
 
     @property
     def idle(self):
@@ -252,26 +248,3 @@ class Services:
         for pool in (self.inference, self.control, self.transfer, self.discovery):
             pool.shutdown(wait)
 
-
-class WorkerMonitor:
-    """Compatibility monitor for standalone widgets and the regression harness."""
-    def __init__(self):
-        self._fallback = None
-
-    def submit(self, fn, *args, **kwargs):
-        if self._fallback is None or self._fallback.closed:
-            self._fallback = WorkerPool()
-        return self._fallback.submit(fn, *args, **kwargs)
-
-    @property
-    def idle(self):
-        return (self._fallback is None or self._fallback.idle) and all(s.idle for s in list(Services.instances))
-
-    def shutdown(self, wait=True):
-        if self._fallback is not None:
-            self._fallback.shutdown(wait)
-        for service in list(Services.instances):
-            service.shutdown(wait)
-
-
-worker_monitor = WorkerMonitor()

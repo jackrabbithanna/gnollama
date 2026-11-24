@@ -5,10 +5,8 @@ import time
 from gettext import ngettext
 from gi.repository import Adw, Gtk, Gio, GLib, Pango
 
-from .. import ollama
 from ..knowledge import (DEFAULT_RAG, PRESETS, canonical_model, check_cancel, extract_document, make_document,
                          model_identity, new_config, validate_rag)
-from ..session import worker
 from ..vectors import SEARCH_METRICS
 from .json_view import TextEditor, buffer_text
 
@@ -18,9 +16,10 @@ from .collection_views import CollectionDialog, CollectionDestination, DocumentP
 from .source_views import SourcesView, SourcePicker, ChunkPicker, KnowledgeControl
 
 class KnowledgeView(Gtk.Box):
-    def __init__(self, storage):
+    def __init__(self, context):
         super().__init__(orientation=Gtk.Orientation.VERTICAL, spacing=6)
-        self.storage = storage
+        self.context = context
+        self.storage = context.storage
         self.document_id = None
         self.collection_id = None
         self.library_scope = 'collections'
@@ -74,14 +73,14 @@ class KnowledgeView(Gtk.Box):
         self.jobs_expander.set_child(Gtk.ScrolledWindow(child=self.jobs_box, max_content_height=160, propagate_natural_height=True,
                                        hscrollbar_policy=Gtk.PolicyType.NEVER))
         self.append(self.jobs_expander)
-        self.storage.knowledge.listeners.append(self.refresh)
+        self.context.knowledge.listeners.append(self.refresh)
         self.connect('destroy', self._destroyed)
         self.refresh()
 
     def _destroyed(self, *args):
         self.closed = True
-        if self.refresh in self.storage.knowledge.listeners:
-            self.storage.knowledge.listeners.remove(self.refresh)
+        if self.refresh in self.context.knowledge.listeners:
+            self.context.knowledge.listeners.remove(self.refresh)
         self.close_dialogs()
 
     def close_dialogs(self):
@@ -221,7 +220,7 @@ class KnowledgeView(Gtk.Box):
                     self.refresh()
                 return False
             GLib.idle_add(deliver)
-        self.storage.services.control.submit(fetch)
+        self.context.services.control.submit(fetch)
 
     def refresh_models(self, *args):
         self.availability.clear()
@@ -244,7 +243,7 @@ class KnowledgeView(Gtk.Box):
         self.refresh()
 
     def new_collection(self, *args, collection=None):
-        self.present_dialog(CollectionDialog(self.storage, self.open_collection, collection))
+        self.present_dialog(CollectionDialog(self.context, self.open_collection, collection))
 
     def _show_collection(self, collection, members):
         clear(self.detail)
@@ -263,7 +262,7 @@ class KnowledgeView(Gtk.Box):
         self.detail.append(label(_('{0}/{1} documents ready').format(collection['ready'], collection['documents'])))
         self.detail.append(label(_('Add text, files, or URLs to this collection. Gnollama prepares the documents automatically so chats can search them.')))
         self.detail.append(self.import_actions())
-        self.detail.append(button(_('Add Existing Documents…'), lambda *args: self.present_dialog(DocumentPicker(self.storage, collection['id'], self.refresh))))
+        self.detail.append(button(_('Add Existing Documents…'), lambda *args: self.present_dialog(DocumentPicker(self.context, collection['id'], self.refresh))))
         if collection['documents'] and collection['ready'] == collection['documents']:
             use = button(_('Use in New Chat'), lambda *args: self.use_collection(collection))
             use.add_css_class('suggested-action')
@@ -300,8 +299,8 @@ class KnowledgeView(Gtk.Box):
             row.connect('activated', lambda row, id=member['id']: self.open_document(id))
             remove = Gtk.Button(icon_name='list-remove-symbolic', tooltip_text=_('Remove from Collection'), valign=Gtk.Align.CENTER)
             remove.add_css_class('flat')
-            remove.connect('clicked', lambda b, id=member['id']: self.storage._submit(
-                self.storage.library.remove_collection_document, collection['id'], id, on_done=self.storage.knowledge.changed))
+            remove.connect('clicked', lambda b, id=member['id']: self.storage.submit(
+                self.storage.library.remove_collection_document, collection['id'], id, on_done=self.context.knowledge.changed))
             row.add_suffix(remove)
             rows.append(row)
 
@@ -321,7 +320,7 @@ class KnowledgeView(Gtk.Box):
 
     def _build_collection(self, collection):
         try:
-            self.storage.knowledge.build_collection(collection['id'])
+            self.context.knowledge.build_collection(collection['id'])
         except ValueError as exc:
             self.error(exc)
 
@@ -333,8 +332,8 @@ class KnowledgeView(Gtk.Box):
         dialog.add_response('save', _('Save'))
         dialog.set_response_enabled('save', bool(entry.get_text().strip()))
         entry.connect('changed', lambda *args: dialog.set_response_enabled('save', bool(entry.get_text().strip())))
-        dialog.connect('response', lambda d, r: self.storage._submit(self.storage.library.rename_knowledge_collection,
-            collection['id'], entry.get_text().strip(), on_done=self.storage.knowledge.changed) if r == 'save' else None)
+        dialog.connect('response', lambda d, r: self.storage.submit(self.storage.library.rename_knowledge_collection,
+            collection['id'], entry.get_text().strip(), on_done=self.context.knowledge.changed) if r == 'save' else None)
         self.present_dialog(dialog)
 
     def _delete_collection(self, collection):
@@ -344,14 +343,14 @@ class KnowledgeView(Gtk.Box):
         dialog.set_response_appearance('delete', Adw.ResponseAppearance.DESTRUCTIVE)
         def response(d, choice):
             if choice == 'delete':
-                self.storage._submit(self.storage.library.delete_knowledge_collection, collection['id'],
-                                     on_done=self.storage.knowledge.changed)
+                self.storage.submit(self.storage.library.delete_knowledge_collection, collection['id'],
+                                     on_done=self.context.knowledge.changed)
         dialog.connect('response', response)
         self.present_dialog(dialog)
 
     def _collection_host(self, collection):
         dialog = WorkDialog(_('Change Embedding Model'))
-        hosts = HostModels(self.storage, collection['host'], collection['model'])
+        hosts = HostModels(self.context, collection['host'], collection['model'])
         dialog.box.append(hosts)
         dialog.box.append(label(_('Choose a host and embedding model matching the collection’s original model digest. Embedding settings stay the same.')))
         dialog.connect('closed', lambda *args: hosts.stop())
@@ -360,14 +359,14 @@ class KnowledgeView(Gtk.Box):
             if not model or model.get('digest') != collection['digest']:
                 dialog.show_error(_('Choose a model with the collection’s original digest.'))
                 return
-            self.storage._submit(self.storage.library.update_collection_endpoint, collection['id'], hosts.host(),
-                                 model['name'], model['digest'], on_done=self.storage.knowledge.changed)
+            self.storage.submit(self.storage.library.update_collection_endpoint, collection['id'], hosts.host(),
+                                 model['name'], model['digest'], on_done=self.context.knowledge.changed)
             dialog.close()
         dialog.header.pack_end(button(_('Save'), save))
         self.present_dialog(dialog)
 
     def _check_availability(self, indexes):
-        if self.storage.knowledge.closed:
+        if self.context.knowledge.closed:
             return
         hosts = {i['host'] for i in indexes if i['id'] not in self.availability}
         for host in hosts - self._availability_loading:
@@ -378,7 +377,7 @@ class KnowledgeView(Gtk.Box):
             def fetch(host=host, selected=selected, cancel=cancel):
                 states = {}
                 try:
-                    models = ollama.fetch_model_details(host, cancellable=cancel)
+                    models = self.context.knowledge.require_host(host).list_models(cancellable=cancel)
                     for index in selected:
                         match = next((m for m in models if canonical_model(m['name']) == canonical_model(index['model'])), None)
                         states[index['id']] = (_('Original model available') if match and match.get('digest') == index['digest']
@@ -394,7 +393,7 @@ class KnowledgeView(Gtk.Box):
                         self.refresh()
                     return False
                 GLib.idle_add(deliver)
-            self.storage.services.control.submit(fetch)
+            self.context.services.control.submit(fetch)
 
     def open_document(self, id):
         self.document_id = id
@@ -420,7 +419,7 @@ class KnowledgeView(Gtk.Box):
         if self.collection_id:
             self.detail.append(button(_('Back to Collection'), lambda *args: self.open_collection(self.collection_id)))
         self.detail.append(actions(button(_('Preview Text'), lambda *args: self._preview(document)),
-                                   button(_('Create Embeddings'), lambda *args: self.present_dialog(IndexDialog(self.storage, document, self.refresh))),
+                                   button(_('Create Embeddings'), lambda *args: self.present_dialog(IndexDialog(self.context, document, self.refresh))),
                                    button(_('Rename'), lambda *args: self._rename(document)),
                                    button(_('Delete Document'), lambda *args: self._delete(document=document))))
         self.detail.append(button(_('Add to Collection…'), lambda *args: self.assign_document(document)))
@@ -434,7 +433,7 @@ class KnowledgeView(Gtk.Box):
                                _('Chunks: {0}').format(index['chunks']))))
             if index['error']:
                 group.append(label(index['error']))
-            row_actions = [button(_('Inspect Chunks'), lambda *args, i=index: self.present_dialog(ChunkPicker(self.storage, i))),
+            row_actions = [button(_('Inspect Chunks'), lambda *args, i=index: self.present_dialog(ChunkPicker(self.context, i))),
                            button(_('Check Model'), lambda *args, i=index: self._check_model(i)),
                            button(_('Delete Index'), lambda *args, i=index: self._delete(index=i))]
             if index['status'] in ('failed', 'interrupted'):
@@ -444,13 +443,13 @@ class KnowledgeView(Gtk.Box):
 
     def assign_document(self, document):
         dialog = WorkDialog(_('Add to Collection'), height=320)
-        destination = CollectionDestination(self.storage, dialog, self.collection_id)
+        destination = CollectionDestination(self.context, dialog, self.collection_id)
         dialog.box.append(label(document['title']))
         dialog.box.append(destination)
         def add(*args):
             try:
                 target = destination.require()
-                self.storage.knowledge.build_collection(target['id'], [document['id']])
+                self.context.knowledge.build_collection(target['id'], [document['id']])
                 self.open_collection(target['id'])
                 dialog.close()
             except ValueError as exc:
@@ -460,7 +459,7 @@ class KnowledgeView(Gtk.Box):
 
     def _jobs(self):
         clear(self.jobs_box)
-        jobs = list(self.storage.knowledge.jobs.values())
+        jobs = list(self.context.knowledge.jobs.values())
         active = sum(not j['done'] for j in jobs)
         self.jobs_expander.set_visible(bool(jobs))
         self.jobs_expander.set_label(_('Background Tasks · {0} running').format(active) if active else _('Recent Background Tasks'))
@@ -496,7 +495,7 @@ class KnowledgeView(Gtk.Box):
 
     def add_text(self, *args):
         from .knowledge_import import TextImportDialog
-        self.present_dialog(TextImportDialog(self.storage, self.collection_id))
+        self.present_dialog(TextImportDialog(self.context, self.collection_id))
 
     def add_urls(self, *args, url='', document_id=None):
         from .url_import import URLImportDialog
@@ -505,7 +504,7 @@ class KnowledgeView(Gtk.Box):
             groups = self.storage.library.source_collections(document_id=document_id)
             if groups:
                 collection_id = groups[0]['id']
-        self.present_dialog(URLImportDialog(self.storage, collection_id, url))
+        self.present_dialog(URLImportDialog(self.context, collection_id, url))
 
     def _save_document(self, document, collection_id=None):
         existing = next((d for d in self.storage.library.knowledge_documents() if d['content_hash'] == document['content_hash']), None)
@@ -523,16 +522,16 @@ class KnowledgeView(Gtk.Box):
             dialog.connect('response', response)
             self.present_dialog(dialog)
             return
-        self.storage._submit(self.storage.library.add_knowledge_document, document,
+        self.storage.submit(self.storage.library.add_knowledge_document, document,
                              on_done=lambda: self._document_saved(document['id'], collection_id))
 
     def _document_saved(self, document_id, collection_id):
-        self.storage.knowledge.changed()
-        if self.closed or self.storage.knowledge.closed:
+        self.context.knowledge.changed()
+        if self.closed or self.context.knowledge.closed:
             return
         if collection_id:
             try:
-                self.storage.knowledge.build_collection(collection_id, [document_id])
+                self.context.knowledge.build_collection(collection_id, [document_id])
                 self.open_collection(collection_id)
             except ValueError as exc:
                 self.error(exc)
@@ -541,7 +540,7 @@ class KnowledgeView(Gtk.Box):
 
     def import_files(self, *args):
         from .knowledge_import import FileImportDialog
-        self.present_dialog(FileImportDialog(self.storage, self.collection_id))
+        self.present_dialog(FileImportDialog(self.context, self.collection_id))
 
     def test_search(self, *args):
         options = copy.deepcopy(DEFAULT_RAG)
@@ -549,7 +548,7 @@ class KnowledgeView(Gtk.Box):
         if collection:
             options.update(config_id=collection['config_id'], host=collection['host'], model=collection['model'],
                            collection_ids=[collection['id']])
-        self.present_dialog(SourcePicker(self.storage, options))
+        self.present_dialog(SourcePicker(self.context, options))
 
     def _rename(self, document):
         dialog = Adw.AlertDialog(heading=_('Rename Document'))
@@ -559,13 +558,13 @@ class KnowledgeView(Gtk.Box):
         dialog.add_response('save', _('Save'))
         def response(d, r):
             if r == 'save' and entry.get_text().strip():
-                self.storage._submit(self.storage.library.rename_knowledge_document, document['id'], entry.get_text().strip(), on_done=self.storage.knowledge.changed)
+                self.storage.submit(self.storage.library.rename_knowledge_document, document['id'], entry.get_text().strip(), on_done=self.context.knowledge.changed)
         dialog.connect('response', response)
         self.present_dialog(dialog)
 
     def _delete(self, document=None, index=None):
         if any(not j['done'] and (j.get('document_id') == (document or {}).get('id') if document else j.get('index_id') == index['id'])
-               for j in self.storage.knowledge.jobs.values()):
+               for j in self.context.knowledge.jobs.values()):
             self.error(_('Cancel this document’s indexing job before deleting it.'))
             return
         dialog = Adw.AlertDialog(heading=_('Delete Document?') if document else _('Delete Embedding Index?'),
@@ -581,16 +580,16 @@ class KnowledgeView(Gtk.Box):
         dialog.set_response_appearance('delete', Adw.ResponseAppearance.DESTRUCTIVE)
         def response(d, r):
             if r == 'delete':
-                self.storage._submit(self.storage.library.delete_knowledge_document if document else self.storage.library.delete_knowledge_index,
-                                     (document or index)['id'], on_done=self.storage.knowledge.changed)
+                self.storage.submit(self.storage.library.delete_knowledge_document if document else self.storage.library.delete_knowledge_index,
+                                     (document or index)['id'], on_done=self.context.knowledge.changed)
         dialog.connect('response', response)
         self.present_dialog(dialog)
 
     def _retry(self, index):
-        if any(not j['done'] and j.get('index_id') == index['id'] for j in self.storage.knowledge.jobs.values()):
+        if any(not j['done'] and j.get('index_id') == index['id'] for j in self.context.knowledge.jobs.values()):
             return
         config = self.storage.library.embedding_config(index['config_id'])
-        self.storage.knowledge.create_index(index['document_id'], index['host'], index['model'], config,
+        self.context.knowledge.create_index(index['document_id'], index['host'], index['model'], config,
                                              index['chunk_size'], index['overlap'], index_id=index['id'])
 
     def _check_model(self, index):

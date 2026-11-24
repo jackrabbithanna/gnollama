@@ -7,8 +7,9 @@ import unittest
 from contextlib import ExitStack
 from unittest.mock import patch
 from gi.repository import Gdk
-from src import ollama
-from src.storage import ChatStorage
+from src.providers import OllamaProvider, ProviderError, RequestCancelled
+from provider_fixture import provider_patch
+from src.app_context import AppContext
 from src.model_conversation import ModelConversationController, conversation_messages
 from src.export import export_json, export_markdown
 from test_ui import pump_until
@@ -17,24 +18,24 @@ import test_ui
 
 class ConversationTests(unittest.TestCase):
     def setUp(self):
-        ollama.resume()
         self.temp = tempfile.TemporaryDirectory()
-        self.storage = ChatStorage(self.temp.name)
+        self.context = AppContext(self.temp.name)
+        self.storage = self.context.storage
         self.stack = ExitStack()
-        self.stack.enter_context(patch.object(ollama, 'fetch_models', return_value=['one', 'two']))
-        self.stack.enter_context(patch.object(ollama, 'show_model', return_value={'capabilities': ['completion', 'thinking']}))
+        self.stack.enter_context(provider_patch('list_models', return_value=['one', 'two']))
+        self.stack.enter_context(provider_patch('show_model', return_value={'capabilities': ['completion', 'thinking']}))
         host = self.storage.get_all_hosts()[0]
         self.participants = [dict(host_id=host['id'], model=model, options={'temperature': index / 2},
             system='system ' + model, thinking=None, keep_alive=None, logprobs=False, top_logprobs=None,
             show_stats=True) for index, model in enumerate(('one', 'two'))]
-        self.controller = ModelConversationController(self.storage)
+        self.controller = ModelConversationController(self.context)
 
     def tearDown(self):
         self.controller.stop()
-        pump_until(lambda: not self.controller.busy and self.storage.services.idle and self.storage.writer.idle)
-        self.storage.writer.shutdown()
-        self.storage.services.shutdown()
-        self.storage.knowledge.shutdown()
+        pump_until(lambda: not self.controller.busy and self.context.services.idle and self.storage.writer.idle)
+        self.context.shutdown()
+        self.context.services.shutdown()
+        self.context.knowledge.shutdown()
         self.stack.close()
         self.temp.cleanup()
 
@@ -46,7 +47,7 @@ class ConversationTests(unittest.TestCase):
         def respond(**kwargs):
             calls.append(copy.deepcopy(kwargs['messages']))
             yield dict(message={'content': 'reply' + str(len(calls)), 'thinking': 'private'}, done=True)
-        with patch.object(ollama, 'chat', side_effect=chat or respond):
+        with provider_patch('chat', side_effect=chat or respond):
             self.controller.start('  opening\n```text\ncode\n```', rounds, self.participants)
             pump_until(lambda: not self.controller.busy)
         return calls
@@ -79,12 +80,12 @@ class ConversationTests(unittest.TestCase):
             calls.append(kwargs['model'])
             yield dict(message={'content': kwargs['model']}, done=True)
         self.controller.started = lambda *a: self.controller.pause()
-        with patch.object(ollama, 'chat', side_effect=respond):
+        with provider_patch('chat', side_effect=respond):
             self.controller.start('opening', 1, self.participants)
             pump_until(lambda: not self.controller.busy)
             self.assertEqual(calls, ['one'])
             self.assertEqual(self.snapshot()['run']['status'], 'paused')
-            controller = ModelConversationController(self.storage)
+            controller = ModelConversationController(self.context)
             controller.load(self.snapshot())
             self.controller = controller
             self.assertEqual(calls, ['one'])
@@ -98,9 +99,9 @@ class ConversationTests(unittest.TestCase):
         def respond(**kwargs):
             yield dict(message={'content': 'partial'})
             kwargs['cancellable'].cancel()
-            raise ollama.RequestCancelled()
+            raise RequestCancelled()
         self.controller.chunk = lambda *a: self.controller.stop()
-        with patch.object(ollama, 'chat', side_effect=respond) as api:
+        with provider_patch('chat', side_effect=respond) as api:
             self.controller.start('opening', 4, self.participants)
             pump_until(lambda: not self.controller.busy)
             self.controller.resume()
@@ -113,14 +114,14 @@ class ConversationTests(unittest.TestCase):
     def test_failed_attempt_is_preserved_and_excluded_from_retry_history(self):
         def fail(**kwargs):
             yield dict(message={'content': 'bad partial'})
-            raise ollama.OllamaError('offline')
+            raise ProviderError('offline')
         self.run_to_end(1, fail)
         self.assertEqual(self.snapshot()['run']['status'], 'failed')
         calls = []
         def respond(**kwargs):
             calls.append(copy.deepcopy(kwargs['messages']))
             yield dict(message={'content': 'good'}, done=True)
-        with patch.object(ollama, 'chat', side_effect=respond):
+        with provider_patch('chat', side_effect=respond):
             self.controller.resume()
             pump_until(lambda: not self.controller.busy)
         self.assertEqual(len(calls), 2)
@@ -150,7 +151,7 @@ class ConversationTests(unittest.TestCase):
         pump_until(lambda: not self.controller.busy)
         self.assertIsNotNone(self.storage.get_draft('draft'))
         self.assertIsNone(self.controller.id)
-        with patch.object(ollama, 'chat', return_value=iter([dict(message={'content': 'ok'}, done=True)])):
+        with provider_patch('chat', return_value=iter([dict(message={'content': 'ok'}, done=True)])):
             self.controller.start('opening', 1, self.participants, 'draft', 2)
             pump_until(lambda: not self.controller.busy)
         self.assertIsNone(self.storage.get_draft('draft'))
@@ -163,8 +164,7 @@ class ConversationTests(unittest.TestCase):
                 failed.set()
                 raise OSError('disk full')
             return original(*args)
-        with patch.object(self.storage.db, 'finish_model_conversation_attempt', side_effect=fail_once), patch.object(
-                ollama, 'chat', side_effect=lambda **kw: iter([dict(message={'content': 'ok'}, done=True)])) as api:
+        with patch.object(self.storage.db, 'finish_model_conversation_attempt', side_effect=fail_once), provider_patch('chat', side_effect=lambda **kw: iter([dict(message={'content': 'ok'}, done=True)])) as api:
             self.controller.start('opening', 1, self.participants)
             pump_until(lambda: self.storage.writer.error is not None)
             self.assertEqual(api.call_count, 1)
@@ -208,14 +208,14 @@ class ConversationTests(unittest.TestCase):
         self.run_to_end(1)
         host = self.storage.get_all_hosts()[0]
         self.storage.update_host(host['id'], host['name'], 'http://different.test:11434')
-        with patch.object(ollama, 'chat') as api:
+        with provider_patch('chat') as api:
             self.controller.resume()
             pump_until(lambda: not self.controller.busy)
             self.assertFalse(api.called)
         self.assertIn('server address changed', self.controller.error)
 
     def test_pause_during_preparation_starts_no_requests(self):
-        with patch.object(ollama, 'chat') as api:
+        with provider_patch('chat') as api:
             self.controller.start('opening', 2, self.participants)
             self.controller.pause()
             pump_until(lambda: not self.controller.busy)
@@ -224,7 +224,7 @@ class ConversationTests(unittest.TestCase):
         self.assertEqual(self.snapshot()['attempts'], [])
 
     def test_paused_run_can_be_stopped_without_a_new_request(self):
-        with patch.object(ollama, 'chat') as api:
+        with provider_patch('chat') as api:
             self.controller.start('opening', 2, self.participants)
             self.controller.pause()
             pump_until(lambda: not self.controller.busy)
@@ -240,7 +240,7 @@ class ConversationTests(unittest.TestCase):
             entered.set()
             release.wait(3)
             return original(*args)
-        with patch.object(self.storage.db, 'start_model_conversation_attempt', side_effect=blocked), patch.object(ollama, 'chat') as api:
+        with patch.object(self.storage.db, 'start_model_conversation_attempt', side_effect=blocked), provider_patch('chat') as api:
             self.controller.start('opening', 1, self.participants)
             pump_until(entered.is_set)
             self.controller.pause()
@@ -260,8 +260,8 @@ class ConversationTests(unittest.TestCase):
             yield dict(message={'content': 'partial'})
             while not kwargs['cancellable'].is_cancelled():
                 threading.Event().wait(.005)
-            raise ollama.RequestCancelled()
-        with patch.object(ollama, 'chat', side_effect=stalled) as api:
+            raise RequestCancelled()
+        with provider_patch('chat', side_effect=stalled) as api:
             self.controller.start('opening', 1, self.participants)
             pump_until(lambda: any(s.content for s in self.controller.states.values()))
             self.controller.stop(interrupted=True)
@@ -270,9 +270,9 @@ class ConversationTests(unittest.TestCase):
         snapshot = self.snapshot()
         self.assertEqual(snapshot['run']['status'], 'interrupted')
         self.assertEqual(snapshot['messages'][1]['content'], 'partial')
-        self.controller = ModelConversationController(self.storage)
+        self.controller = ModelConversationController(self.context)
         self.controller.load(snapshot)
-        with patch.object(ollama, 'chat', side_effect=lambda **kw: iter([dict(message={'content': 'answer'}, done=True)])) as api:
+        with provider_patch('chat', side_effect=lambda **kw: iter([dict(message={'content': 'answer'}, done=True)])) as api:
             self.controller.resume()
             pump_until(lambda: not self.controller.busy)
             self.assertEqual(api.call_count, 2)
@@ -323,7 +323,7 @@ class ConversationUITests(unittest.TestCase):
         pump_until(lambda: self.storage.writer.idle)
         draft = self.storage.get_draft(tab.draft.id)
         self.assertEqual(draft['targets'][0]['panel']['fields']['system_prompt_entry'], 'A system\nline two')
-        with patch.object(ollama, 'chat', side_effect=lambda **kw: iter([dict(message={'content': 'answer'}, done=True)])) as api:
+        with provider_patch('chat', side_effect=lambda **kw: iter([dict(message={'content': 'answer'}, done=True)])) as api:
             tab.start()
             tab.start()
             pump_until(lambda: tab.request is None and tab.controller.run is not None)
@@ -333,7 +333,7 @@ class ConversationUITests(unittest.TestCase):
             pump_until(lambda: tab.controller.id in window.chat_rows)
             self.assertEqual(window.chat_rows[tab.controller.id].get_section(), window.recent_model_conversations_section)
             snapshot = self.storage.conversation_page(tab.controller.id)
-            reopened = ModelConversationTab(self.storage, saved=snapshot)
+            reopened = ModelConversationTab(self.context, saved=snapshot)
             self.tabs.append(reopened)
             self.assertEqual(len(reopened.targets), 0)
             self.assertEqual(len(reopened.bubbles), 2)
@@ -355,7 +355,7 @@ class ConversationUITests(unittest.TestCase):
         tab.close_session(lambda: done.append(True))
         pump_until(lambda: bool(done))
         draft = self.storage.get_draft(tab.draft.id)
-        restored = ModelConversationTab(self.storage, draft=draft)
+        restored = ModelConversationTab(self.context, draft=draft)
         self.tabs.append(restored)
         self.assertEqual(restored.targets[1].system_entry.read_draft(), 'second role')
         self.assertEqual(restored.targets[0].panel.temperature_entry.get_text(), '0.2')
@@ -366,7 +366,7 @@ class ConversationUITests(unittest.TestCase):
         tab.chat_input.entry.restore_draft('seed')
         tab.rounds.set_value(1)
         tab.controller.chunk = lambda *args: None
-        with patch.object(ollama, 'chat', side_effect=lambda **kw: iter([
+        with provider_patch('chat', side_effect=lambda **kw: iter([
                 dict(message={'content': 'complete answer', 'thinking': 'private thought'}, done=True)])):
             tab.start()
             pump_until(lambda: tab.request is None and len(tab.bubbles) == 2)
@@ -378,14 +378,14 @@ class ConversationUITests(unittest.TestCase):
         window, tab = self.make_conversation()
         tab.chat_input.entry.restore_draft('seed')
         tab.rounds.set_value(30)
-        with patch.object(ollama, 'chat', side_effect=lambda **kw: iter([dict(message={'content': 'answer'}, done=True)])) as api:
+        with provider_patch('chat', side_effect=lambda **kw: iter([dict(message={'content': 'answer'}, done=True)])) as api:
             tab.start()
             pump_until(lambda: tab.request is None and tab.controller.run is not None, timeout=15)
             self.assertEqual(api.call_count, 60)
         page = self.storage.conversation_page(tab.controller.id)
         self.assertEqual(len(page['messages']), 50)
         self.assertEqual(page['message_offset'], 11)
-        saved = ModelConversationTab(self.storage, saved=page)
+        saved = ModelConversationTab(self.context, saved=page)
         self.tabs.append(saved)
         self.assertEqual(len(saved.bubbles), 50)
         first = page['attempts'][0]['id']
@@ -406,7 +406,7 @@ class ConversationUITests(unittest.TestCase):
         tab.targets[0].system_entry.restore_draft('Long instructions ' * 300)
         tab.chat_input.entry.restore_draft('seed')
         tab.rounds.set_value(1)
-        with patch.object(ollama, 'chat', side_effect=lambda **kw: iter([dict(message={'content': '```python\nresult = compute(value)\n```'}, done=True)])):
+        with provider_patch('chat', side_effect=lambda **kw: iter([dict(message={'content': '```python\nresult = compute(value)\n```'}, done=True)])):
             tab.start()
             pump_until(lambda: tab.request is None and len(tab.bubbles) == 2)
         bubble = next(iter(tab.bubbles.values()))

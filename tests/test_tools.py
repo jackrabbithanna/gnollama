@@ -6,7 +6,9 @@ from pathlib import Path
 from unittest.mock import Mock, patch
 
 from gi.repository import Gdk, Gio, Gtk
-from src import ollama, session
+from src import session
+from src.providers import OllamaProvider, ProviderError, RequestCancelled
+from provider_fixture import provider_patch
 from src.database import DatabaseManager
 from src.session import RequestState, api_messages
 from src.tab import GenerationTab
@@ -75,13 +77,13 @@ class ToolProtocolTests(unittest.TestCase):
         tools = parse_tools(EXAMPLE_TOOLS)
         original = copy.deepcopy(tools)
         messages = [{'role': 'user', 'content': 'weather'}]
-        list(ollama.chat(fixture.host, 'test', messages, tools=tools, format={'type': 'object'}, thinking=True))
+        list(OllamaProvider(fixture.host).chat('test', messages, tools=tools, format={'type': 'object'}, thinking=True))
         path, payload = fixture.server.received[-1]
         self.assertEqual(path, '/api/chat')
         self.assertEqual(payload['tools'], original)
         self.assertEqual(payload['format'], {'type': 'object'})
         self.assertEqual(tools, original)
-        list(ollama.chat(fixture.host, 'test', messages))
+        list(OllamaProvider(fixture.host).chat('test', messages))
         self.assertNotIn('tools', fixture.server.received[-1][1])
 
 
@@ -93,14 +95,14 @@ class ToolUITests(unittest.TestCase):
     make_window = test_ui.UITests.make_window
 
     def settle(self, tab):
-        test_ui.pump_until(lambda: tab.request is None and not tab._tool_busy and self.storage.writer.idle and session.worker.idle)
+        test_ui.pump_until(lambda: tab.request is None and not tab.controller.tool_busy and self.storage.writer.idle and self.context.services.idle)
 
     def tool_tab(self, calls=None):
         tab = self.make_tab()
         tab.options_panel.tools_text = EXAMPLE_TOOLS
         tab.options_panel.tools_check.set_active(True)
         tab.chat_input.entry.set_text('weather')
-        with patch.object(ollama, 'chat', return_value=iter([
+        with provider_patch('chat', return_value=iter([
             {'message': {'thinking': 'look up', 'tool_calls': calls if calls is not None else [call(id='a'), call('tests/test_calculator.py')]}, 'done': True}
         ])):
             tab.on_send_clicked()
@@ -113,20 +115,20 @@ class ToolUITests(unittest.TestCase):
         self.assertIsNotNone(pending)
         self.assertIsNone(tab.request)
         self.assertFalse(tab.chat_input.send_button.get_sensitive())
-        self.assertTrue(session.worker.idle)
-        tab._save_tool_result(pending, 0, '')
+        self.assertTrue(self.context.services.idle)
+        tab.controller.save_tool_result(pending, 0, '')
         self.settle(tab)
         self.assertFalse(tab._tool_views[0].continue_button.get_sensitive())
         closed = []
         tab.close_session(lambda: closed.append(True))
         test_ui.pump_until(lambda: bool(closed))
         saved = self.storage.get_chat(tab.strategy.chat_id)
-        restored = GenerationTab(mode='chat', chat_id=tab.strategy.chat_id, initial_history=saved['messages'], storage=self.storage)
+        restored = GenerationTab(mode='chat', chat_id=tab.strategy.chat_id, initial_history=saved['messages'], context=self.context)
         self.tabs.append(restored)
         test_ui.wait_for_model(restored)
         self.assertEqual(restored.options_panel.tools_text, EXAMPLE_TOOLS)
         self.assertEqual(restored.strategy.pending_round['response_metadata']['tool_round']['results'], ['', None])
-        restored._save_tool_result(restored.strategy.pending_round, 1, '{"temperature": 18}')
+        restored.controller.save_tool_result(restored.strategy.pending_round, 1, '{"temperature": 18}')
         self.settle(restored)
         self.assertTrue(restored._tool_views[0].continue_button.get_sensitive())
         host = self.storage.add_host('other', 'http://other.example:11434')
@@ -141,13 +143,13 @@ class ToolUITests(unittest.TestCase):
         restored.options_panel.schema_text = '{"type":"object","required":["summary"]}'
         restored.options_panel.tools_check.set_active(False)
         restored.chat_input.entry.set_text('draft stays')
-        with patch.object(ollama, 'chat', return_value=iter([{'message': {'content': '{"summary":"done"}'}, 'done': True}])) as chat:
+        with provider_patch('chat', return_value=iter([{'message': {'content': '{"summary":"done"}'}, 'done': True}])) as chat:
             restored.on_send_clicked(continuation=True)
             restored.on_send_clicked(continuation=True)
             self.settle(restored)
         chat.assert_called_once()
         args = chat.call_args.kwargs
-        self.assertEqual(args['host'], 'http://other.example:11434')
+        self.assertEqual(args['host'].url, 'http://other.example:11434')
         self.assertEqual(args['model'], 'other-model')
         self.assertEqual(args['options']['temperature'], 0.2)
         self.assertIsNone(args['tools'])
@@ -165,7 +167,7 @@ class ToolUITests(unittest.TestCase):
     def test_continue_waits_for_selected_model_capabilities_to_reach_ui(self):
         tab = self.tool_tab([call()])
         pending = tab.strategy.pending_round
-        tab._save_tool_result(pending, 0, '20')
+        tab.controller.save_tool_result(pending, 0, '20')
         self.settle(tab)
         view = tab._tool_views[0]
         self.assertTrue(view.continue_button.get_sensitive())
@@ -174,15 +176,15 @@ class ToolUITests(unittest.TestCase):
         self.assertTrue(view.buttons[0].get_sensitive())
         self.assertTrue(view.cancel_button.get_sensitive())
         details = Future()
-        with patch.object(self.storage.services.catalog, 'request_details', return_value=details):
+        with patch.object(self.context.services.catalog, 'request_details', return_value=details):
             tab.chat_input.set_models(['other-model'])
             details.set_result({'capabilities': ['completion', 'tools']})
             # The request is finished, but its main-loop delivery is pending.
-            self.assertTrue(session.worker.idle)
+            self.assertTrue(self.context.services.idle)
             self.assertTrue(tab.chat_input.capabilities_loading)
             self.assertFalse(view.continue_button.get_sensitive())
             self.assertTrue(view.buttons[0].get_sensitive())
-            with patch.object(ollama, 'chat', return_value=iter([
+            with provider_patch('chat', return_value=iter([
                 {'message': {'content': 'done'}, 'done': True}
             ])) as chat:
                 tab.on_send_clicked(continuation=True)
@@ -197,10 +199,10 @@ class ToolUITests(unittest.TestCase):
 
     def test_successive_rounds_and_cancellation_results(self):
         tab = self.tool_tab([call(123), call(name='missing')])
-        tab._save_tool_result(tab.strategy.pending_round, 0, 'first')
+        tab.controller.save_tool_result(tab.strategy.pending_round, 0, 'first')
         self.settle(tab)
-        with patch.object(ollama, 'chat') as chat:
-            tab._cancel_tool_round()
+        with provider_patch('chat') as chat:
+            tab.controller.cancel_tool_round()
             self.settle(tab)
             chat.assert_not_called()
         history = self.storage.get_chat(tab.strategy.chat_id)['messages']
@@ -210,12 +212,12 @@ class ToolUITests(unittest.TestCase):
         self.assertIsNone(tab.strategy.pending_round)
         self.assertTrue(tab.chat_input.entry.get_sensitive())
         tab.chat_input.entry.set_text('try again')
-        with patch.object(ollama, 'chat', return_value=iter([{'message': {'tool_calls': [call()]}, 'done': True}])):
+        with provider_patch('chat', return_value=iter([{'message': {'tool_calls': [call()]}, 'done': True}])):
             tab.on_send_clicked()
             self.settle(tab)
-        tab._save_tool_result(tab.strategy.pending_round, 0, '20')
+        tab.controller.save_tool_result(tab.strategy.pending_round, 0, '20')
         self.settle(tab)
-        with patch.object(ollama, 'chat', return_value=iter([{'message': {'tool_calls': [call('src/main.py')]}, 'done': True}])):
+        with provider_patch('chat', return_value=iter([{'message': {'tool_calls': [call('src/main.py')]}, 'done': True}])):
             tab.on_send_clicked(continuation=True)
             self.settle(tab)
         self.assertEqual(tab.strategy.pending_round['tool_calls'][0]['function']['arguments']['path'], 'src/main.py')
@@ -280,13 +282,13 @@ class ToolUITests(unittest.TestCase):
         other = self.make_tab()
         self.assertFalse(other.options_panel.tools_check.get_active())
         self.assertEqual(other.options_panel.tools_text, '')
-        response = GenerationTab(mode='generate', storage=self.storage)
+        response = GenerationTab(mode='generate', context=self.context)
         self.tabs.append(response)
         self.assertFalse(response.options_panel.tools_box.get_visible())
 
     def test_save_failure_blocks_continuation_and_retry_does_not_duplicate(self):
         tab = self.tool_tab([call()])
-        tab._save_tool_result(tab.strategy.pending_round, 0, '20')
+        tab.controller.save_tool_result(tab.strategy.pending_round, 0, '20')
         self.settle(tab)
         save = self.storage.db.save_chat
         blocked = True
@@ -294,7 +296,7 @@ class ToolUITests(unittest.TestCase):
             if blocked:
                 raise OSError('disk full')
             return save(*args, **kwargs)
-        with patch.object(self.storage.db, 'save_chat', side_effect=saving), patch.object(ollama, 'chat', return_value=iter([{'message': {'content': 'done'}, 'done': True}])) as chat:
+        with patch.object(self.storage.db, 'save_chat', side_effect=saving), provider_patch('chat', return_value=iter([{'message': {'content': 'done'}, 'done': True}])) as chat:
             try:
                 tab.on_send_clicked(continuation=True)
                 test_ui.pump_until(lambda: self.storage.writer.error is not None)
@@ -319,8 +321,8 @@ class ToolUITests(unittest.TestCase):
         tab.chat_input.entry.set_text('weather')
         def interrupted(**kwargs):
             yield {'message': {'content': 'partial', 'tool_calls': [call()]}}
-            raise ollama.RequestCancelled()
-        with patch.object(ollama, 'chat', side_effect=interrupted):
+            raise RequestCancelled()
+        with provider_patch('chat', side_effect=interrupted):
             tab.on_send_clicked()
             self.settle(tab)
         self.assertIsNone(tab.strategy.pending_round)
@@ -328,15 +330,15 @@ class ToolUITests(unittest.TestCase):
         wire = api_messages(tab.strategy.history)
         self.assertNotIn('tool_calls', wire[-1])
         tab.chat_input.entry.set_text('again')
-        with patch.object(ollama, 'chat', return_value=iter([{'message': {'tool_calls': [{}]}, 'done': True}])):
+        with provider_patch('chat', return_value=iter([{'message': {'tool_calls': [{}]}, 'done': True}])):
             tab.on_send_clicked()
             self.settle(tab)
         self.assertIsNone(tab.strategy.pending_round)
         self.assertEqual(tab._tool_views[-1].message['response_metadata']['tool_round']['state'], 'invalid')
         another = self.tool_tab([call()])
-        another._save_tool_result(another.strategy.pending_round, 0, '20')
+        another.controller.save_tool_result(another.strategy.pending_round, 0, '20')
         self.settle(another)
-        with patch.object(ollama, 'chat', side_effect=ollama.OllamaError('server rejected combination')):
+        with provider_patch('chat', side_effect=ProviderError('server rejected combination')):
             another.on_send_clicked(continuation=True)
             self.settle(another)
         self.assertIsNone(another.strategy.pending_round)
@@ -375,12 +377,12 @@ class ToolUITests(unittest.TestCase):
     def test_stop_and_close_while_results_wait_for_storage(self):
         import threading
         tab = self.tool_tab([call()])
-        tab._save_tool_result(tab.strategy.pending_round, 0, '20')
+        tab.controller.save_tool_result(tab.strategy.pending_round, 0, '20')
         self.settle(tab)
         release = threading.Event()
-        self.storage._submit(lambda: release.wait(3))
+        self.storage.submit(lambda: release.wait(3))
         closed = []
-        with patch.object(ollama, 'chat') as chat:
+        with provider_patch('chat') as chat:
             try:
                 tab.on_send_clicked(continuation=True)
                 tab.on_send_or_stop()
@@ -402,7 +404,7 @@ class ToolUITests(unittest.TestCase):
         tab.options_panel.tools_check.set_active(True)
         test_ui.pump_until(lambda: self.storage.writer.idle)
         window.close_tab(tab)
-        test_ui.pump_until(lambda: tab._disposed)
+        test_ui.pump_until(lambda: tab.controller.disposed)
         self.storage.cleanup_empty_chats().result(2)
         saved = self.storage.get_chat(tab.strategy.chat_id)
         self.assertEqual(saved['options']['tools_text'], EXAMPLE_TOOLS)

@@ -18,9 +18,10 @@ class ModelConversationTab(Gtk.Box):
                     'request-changed': (GObject.SignalFlags.RUN_FIRST, None, ())}
     title = GObject.Property(type=str, default='')
 
-    def __init__(self, storage, saved=None, draft=None):
+    def __init__(self, context, saved=None, draft=None):
         super().__init__(orientation=Gtk.Orientation.VERTICAL, spacing=8)
-        self.storage, self.mode = storage, 'model_conversation'
+        self.context, self.mode = context, 'model_conversation'
+        self.storage = context.storage
         self.strategy = SimpleNamespace(chat_id=saved['id'] if saved else None, deleted=False)
         self.title = saved['title'] if saved else _('New Model to Model Conversation')
         self.closing = self._disposed = self._close_saving = False
@@ -32,8 +33,8 @@ class ModelConversationTab(Gtk.Box):
         self._page_loading = False
         self.bubbles, self.attempts, self.targets = {}, [], []
         self._setup_values = None
-        self.controller = ModelConversationController(storage, self._changed, self._started, self._chunk, self._finished)
-        self.draft = DraftController(storage, self.mode, self.read_draft, id=draft['id'] if draft else None)
+        self.controller = ModelConversationController(context, self._changed, self._started, self._chunk, self._finished)
+        self.draft = DraftController(context.storage, self.mode, self.read_draft, id=draft['id'] if draft else None)
         self.draft.restoring = True
         self.setup = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12,
                              margin_start=12, margin_end=12, margin_top=12, margin_bottom=12)
@@ -96,7 +97,7 @@ class ModelConversationTab(Gtk.Box):
         else:
             values = (draft or {}).get('targets') or [None, None]
             for index in range(2):
-                picker = TargetPicker(storage, self._draft_changed, values[index], participant=True)
+                picker = TargetPicker(context, self._draft_changed, values[index], participant=True)
                 picker.panel.settings_title = (_('Model A') if index == 0 else _('Model B')) + ' · ' + _('Advanced settings…')
                 card = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8, hexpand=True)
                 card.append(Gtk.Label(label=_('Model A') if index == 0 else _('Model B'), xalign=0, css_classes=['title-3']))
@@ -283,7 +284,7 @@ class ModelConversationTab(Gtk.Box):
         self._render(dict(self.controller._message(attempt['id'], state), participant=attempt['turn'] % 2,
                           turn=attempt['turn'], attempt=attempt['attempt'], content='', thinking_content='',
                           response_metadata=dict(state.metadata, status='running')))
-        if not self.message_list._user_scrolling:
+        if self.message_list.following:
             while True:
                 rows = []
                 row = self.message_list.list_box.get_first_child()
@@ -345,23 +346,16 @@ class ModelConversationTab(Gtk.Box):
             self._page_loading = False
             if self._disposed:
                 return False
-            adj = self.message_list.get_vadjustment()
-            old_upper, old_value = adj.get_upper(), adj.get_value()
-            self.message_list._insert_index = 0
-            self.message_list._user_scrolling = True
-            for message in messages:
-                self._render(message)
-            self.message_list._insert_index = None
+            self.message_list.prepend_page(lambda: [self._render(message) for message in messages], delay=None)
             self._offset = offset
             self.older.set_visible(offset > 0)
-            GLib.idle_add(lambda: (adj.set_value(old_value + adj.get_upper() - old_upper), False)[1])
             return False
-        self.storage.services.control.submit(work)
+        self.context.services.control.submit(work)
 
     def show_message(self, uid):
         bubble = self.bubbles.get(uid)
         if bubble:
-            self.message_list._user_scrolling = True
+            self.message_list.hold_position()
             def scroll():
                 valid, bounds = bubble.compute_bounds(self.message_list.list_box)
                 if valid:
@@ -400,7 +394,7 @@ class ModelConversationTab(Gtk.Box):
                 self.controller.error = error
                 self._changed()
             return False
-        self.storage.services.control.submit(work)
+        self.context.services.control.submit(work)
 
     def resume(self, *args):
         if not self.controller.busy and not self.closing and not getattr(self.get_root(), '_shutting_down', False):
@@ -409,7 +403,7 @@ class ModelConversationTab(Gtk.Box):
     def run_again(self, *args):
         if self.controller.busy or not self.controller.id:
             return
-        self.get_root()._add_tab(ModelConversationTab(self.storage, draft=dict(copy.deepcopy(self._setup_values),
+        self.get_root()._add_tab(ModelConversationTab(self.context, draft=dict(copy.deepcopy(self._setup_values),
             id=str(uuid.uuid4()), mode=self.mode, revision=0)))
 
     def update_hosts(self):
@@ -437,4 +431,4 @@ class ModelConversationTab(Gtk.Box):
                 self._disposed = True
                 callback, self._close_callback = self._close_callback, None
                 callback()
-            self.storage._submit(lambda: None, on_done=saved)
+            self.storage.after_pending_writes(saved)

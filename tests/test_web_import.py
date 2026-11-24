@@ -10,7 +10,10 @@ from pathlib import Path
 from unittest.mock import patch
 
 from gi.repository import Gdk, Gio
-from src import database, ollama, session
+from src.app_context import AppContext
+from src import database, session
+from src.providers import OllamaProvider, ProviderError, RequestCancelled
+from provider_fixture import provider_patch
 from src.database import DatabaseManager, DatabaseUpgradeError
 from src.knowledge import augmented_messages, make_document
 from src.web_import import extract_download, extract_html, fetch_url, normalize_url, parse_urls
@@ -174,7 +177,7 @@ class ExtractionTests(unittest.TestCase):
             timer = threading.Timer(.1, cancel.cancel)
             timer.start()
             try:
-                with self.assertRaises(ollama.RequestCancelled):
+                with self.assertRaises(RequestCancelled):
                     fetch_url(fixture.host+'/stall', temp, cancel)
             finally:
                 timer.join()
@@ -208,10 +211,9 @@ class ExtractionTests(unittest.TestCase):
 
 class WebKnowledgeTests(unittest.TestCase):
     def setUp(self):
-        from src.storage import ChatStorage
-        ollama.resume()
         self.temp = tempfile.TemporaryDirectory()
-        self.storage = ChatStorage(self.temp.name)
+        self.context = AppContext(self.temp.name)
+        self.storage = self.context.storage
         self.doc, self.config, self.index, self.options = indexed(self.storage)
         for id in ('a', 'b'):
             self.storage.db.create_knowledge_collection(dict(id=id, name='Collection '+id, config_id=self.config['id'],
@@ -225,10 +227,10 @@ class WebKnowledgeTests(unittest.TestCase):
             conn.commit()
 
     def tearDown(self):
-        self.storage.knowledge.cancel_all()
-        pump_until(lambda: self.storage.knowledge.idle and self.storage.writer.idle and session.worker.idle, timeout=10)
-        self.storage.knowledge.shutdown()
-        self.storage.writer.shutdown()
+        self.context.knowledge.cancel_all()
+        pump_until(lambda: self.context.knowledge.idle and self.storage.writer.idle and self.context.services.idle, timeout=10)
+        self.context.knowledge.shutdown()
+        self.context.shutdown()
         self.temp.cleanup()
 
     def test_replacement_invalidates_all_shared_vectors_and_preserves_history(self):
@@ -268,16 +270,16 @@ class WebKnowledgeTests(unittest.TestCase):
 
     def test_service_rebuilds_and_rejects_busy_documents(self):
         done = []
-        with patch.object(ollama, 'fetch_model_details', return_value=[TAG]), \
-             patch.object(ollama, 'embed', side_effect=lambda host, model, texts, **kw: {'embeddings': [[1, 0] for _ in texts]}):
-            job = self.storage.knowledge.save_web_document(make_document('Updated', 'New article information.'),
+        with provider_patch('list_models', return_value=[TAG]), \
+             provider_patch('embed', side_effect=lambda host, model, texts, **kw: {'embeddings': [[1, 0] for _ in texts]}):
+            job = self.context.knowledge.save_web_document(make_document('Updated', 'New article information.'),
                 self.source, 'a', self.storage.db.web_document(self.source['source_url']), lambda r, e: done.append((r,e)))
             with self.assertRaisesRegex(ValueError, 'Wait for'):
-                self.storage.knowledge.save_web_document(self.doc, self.source, 'b', self.doc)
-            pump_until(lambda: bool(done) and self.storage.knowledge.idle and self.storage.writer.idle)
+                self.context.knowledge.save_web_document(self.doc, self.source, 'b', self.doc)
+            pump_until(lambda: bool(done) and self.context.knowledge.idle and self.storage.writer.idle)
             self.assertIsNone(done[0][1])
             self.assertTrue(all(c['ready'] == 1 for c in self.storage.db.knowledge_collections()))
-            self.assertFalse(self.storage.knowledge._document_updates)
+            self.assertFalse(self.context.knowledge._document_updates)
             self.assertEqual(len(self.storage.db.knowledge_indexes()), 1)
 
     def test_migration_rollback_and_backup(self):
@@ -318,12 +320,12 @@ class WebKnowledgeTests(unittest.TestCase):
 
     def test_failed_rebuild_can_retry_and_preserves_standalone_settings(self):
         db = self.storage.db
-        service = self.storage.knowledge
+        service = self.context.knowledge
         second = dict(self.index, id='standalone', chunk_size=250, overlap=25)
         db.begin_knowledge_index(second)
         db.finish_knowledge_index(second['id'], 'interrupted')
-        with patch.object(ollama, 'fetch_model_details', return_value=[TAG]), \
-             patch.object(ollama, 'embed', side_effect=ollama.OllamaError('offline')):
+        with provider_patch('list_models', return_value=[TAG]), \
+             provider_patch('embed', side_effect=ProviderError('offline')):
             service.save_web_document(make_document('Updated', 'New reference text.'), self.source, 'a',
                                        db.web_document(self.source['source_url']))
             pump_until(lambda: service.idle and self.storage.writer.idle)
@@ -332,15 +334,15 @@ class WebKnowledgeTests(unittest.TestCase):
         self.assertEqual({(i['id'], i['chunk_size'], i['overlap']) for i in indexes},
                           {(self.index['id'], 1600, 200), ('standalone', 250, 25)})
         self.assertTrue(all(c['ready'] == 0 for c in db.knowledge_collections()))
-        with patch.object(ollama, 'fetch_model_details', return_value=[TAG]), \
-             patch.object(ollama, 'embed', side_effect=lambda h,m,t,**kw: {'embeddings':[[1,0] for _ in t]}):
+        with provider_patch('list_models', return_value=[TAG]), \
+             provider_patch('embed', side_effect=lambda h,m,t,**kw: {'embeddings':[[1,0] for _ in t]}):
             service.build_collection('a')
             pump_until(lambda: service.idle and self.storage.writer.idle)
         self.assertTrue(all(c['ready'] == 1 for c in db.knowledge_collections()))
         self.assertTrue(db.search_knowledge(self.config['id'], {}, [1, 0], collection_ids=['b']))
 
     def test_queued_replacement_guards_new_builds_and_cancellation_releases_reservation(self):
-        service = self.storage.knowledge
+        service = self.context.knowledge
         release = threading.Event()
         started = threading.Event()
         def wait(cancel, progress):
@@ -369,9 +371,9 @@ class URLDialogTests(unittest.TestCase):
     make_window = test_ui.UITests.make_window
 
     def tearDown(self):
-        self.storage.knowledge.cancel_all()
-        pump_until(lambda: self.storage.knowledge.idle)
-        self.storage.knowledge.shutdown()
+        self.context.knowledge.cancel_all()
+        pump_until(lambda: self.context.knowledge.idle)
+        self.context.knowledge.shutdown()
         test_ui.UITests.tearDown(self)
     def test_batch_preview_selector_edit_save_and_mixed_failure(self):
         fixture = WebServer()
@@ -381,7 +383,7 @@ class URLDialogTests(unittest.TestCase):
             host=index['host'], model=index['model'], chunk_size=1600, overlap=200, created_at=0, updated_at=0))
         window, tab = self.make_window()
         window.present()
-        dialog = URLImportDialog(self.storage, 'web')
+        dialog = URLImportDialog(self.context, 'web')
         dialog.present(window)
         dialog.urls.get_buffer().set_text(fixture.host+'/guide\n'+fixture.host+'/error')
         dialog.start()
@@ -404,10 +406,10 @@ class URLDialogTests(unittest.TestCase):
         pump_until(lambda: dialog.active == 0)
         dialog.title_entry.set_text('Edited page')
         dialog.editor.get_buffer().set_text('My reviewed text for the collection.')
-        with patch.object(ollama, 'fetch_model_details', return_value=[TAG]), \
-                patch.object(ollama, 'embed', side_effect=lambda h,m,t,**kw: {'embeddings':[[1,0] for _ in t]}):
+        with provider_patch('list_models', return_value=[TAG]), \
+                provider_patch('embed', side_effect=lambda h,m,t,**kw: {'embeddings':[[1,0] for _ in t]}):
             dialog.save()
-            pump_until(lambda: dialog.items[0]['status'] == 'saved' and self.storage.knowledge.idle and self.storage.writer.idle)
+            pump_until(lambda: dialog.items[0]['status'] == 'saved' and self.context.knowledge.idle and self.storage.writer.idle)
         saved = self.storage.db.web_document(fixture.host+'/guide')
         self.assertEqual(saved['title'], 'Edited page')
         self.assertEqual(saved['text'], 'My reviewed text for the collection.')
@@ -421,7 +423,7 @@ class URLDialogTests(unittest.TestCase):
         from test_collections import collection
         document, config, index, options = indexed(self.storage)
         collection(self.storage.db, 'Web', config)
-        dialog = URLImportDialog(self.storage, 'Web', urls)
+        dialog = URLImportDialog(self.context, 'Web', urls)
         window, tab = self.make_window()
         window.present()
         dialog.present(window)
@@ -482,11 +484,11 @@ class URLDialogTests(unittest.TestCase):
         prompts[0].emit('response', 'cancel')
         self.assertEqual(self.storage.db.knowledge_document(saved['id'])['text'], old['text'])
         with patch('src.widgets.url_import.Adw.AlertDialog.present', lambda d, parent: prompts.append(d)), \
-             patch.object(ollama, 'fetch_model_details', return_value=[TAG]), \
-             patch.object(ollama, 'embed', side_effect=lambda h,m,t,**kw: {'embeddings':[[1,0] for _ in t]}):
+             provider_patch('list_models', return_value=[TAG]), \
+             provider_patch('embed', side_effect=lambda h,m,t,**kw: {'embeddings':[[1,0] for _ in t]}):
             dialog.save()
             prompts[-1].emit('response', 'replace')
-            pump_until(lambda: item['status'] == 'saved' and self.storage.knowledge.idle and self.storage.writer.idle)
+            pump_until(lambda: item['status'] == 'saved' and self.context.knowledge.idle and self.storage.writer.idle)
         self.assertEqual(self.storage.db.web_document(item['url'])['id'], old['id'])
         self.assertEqual(self.storage.db.knowledge_document(old['id'])['text'], 'A replacement page reviewed by the user.')
         dialog.close()

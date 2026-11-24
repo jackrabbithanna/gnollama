@@ -1,19 +1,18 @@
 """Shared host/model selection with optional participant settings."""
 from gi.repository import Gtk
-from .. import ollama
 from .chat_input import ChatInput
 from .options_panel import OptionsPanel
 
 
 class TargetPicker(Gtk.Box):
-    def __init__(self, storage, changed, target=None, participant=False):
+    def __init__(self, context, changed, target=None, participant=False):
         super().__init__(orientation=Gtk.Orientation.VERTICAL, spacing=6, hexpand=True)
         self.participant = participant
         self.panel = OptionsPanel()
-        self.panel.storage = storage
+        self.panel.storage = context.storage
         self.panel.update_hosts()
         self.input = ChatInput()
-        self.input.services = storage.services
+        self.input.services = context.services
         self.input.connection_box.get_parent().remove(self.input.connection_box)
         self.input.connection_box.prepend(self.panel.host_row)
         self.input.thinking_dropdown.get_parent().set_visible(participant)
@@ -34,8 +33,8 @@ class TargetPicker(Gtk.Box):
         def refresh(*args):
             host = self.panel.get_selected_host()
             if participant:
-                self.panel.set_cloud(bool(host and ollama.is_cloud(host)))
-            self.input.fetch_models(storage.connection(host) if host else None,
+                self.panel.set_capabilities(context.capabilities(host))
+            self.input.fetch_models(context.connection(host) if host else None,
                                     host_id=host['id'] if host else None)
             changed()
         if target:
@@ -69,5 +68,4 @@ class TargetPicker(Gtk.Box):
 
     def close(self):
         self.input.cancel_fetches()
-        if self.panel._settings_dialog:
-            self.panel._settings_dialog.close()
+        self.panel.close_dialogs()

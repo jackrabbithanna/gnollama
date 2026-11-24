@@ -3,7 +3,7 @@ import copy
 import uuid
 from dataclasses import dataclass, field
 from gi.repository import Gio, GLib
-from . import ollama
+from .providers import ProviderError, RequestCancelled, validate_url
 from .knowledge import augmented_messages, validate_rag
 from .context import estimate_context
 from .session import RequestState, ChatStrategy
@@ -21,7 +21,7 @@ class ComparisonRun:
         self.cancellable.connect(lambda *args: [state.cancellable.cancel() for state in list(self.states.values())])
 
 
-def prepare_run(storage, active, prompt, images, settings, targets, draft_id, revision):
+def prepare_run(context, active, prompt, images, settings, targets, draft_id, revision):
     settings, images, targets = copy.deepcopy((settings, images, targets))
     if not 2 <= len(targets) <= 4:
         raise ValueError(_('Choose two to four targets.'))
@@ -31,21 +31,21 @@ def prepare_run(storage, active, prompt, images, settings, targets, draft_id, re
     resolved = []
     for target in targets:
         if active.cancellable.is_cancelled():
-            raise ollama.RequestCancelled()
-        host = storage.get_host(target['host_id'])
+            raise RequestCancelled()
+        host = context.storage.get_host(target['host_id'])
         if host is None or not target['model']:
             raise ValueError(_('Select an available model before sending.'))
-        connection = storage.connection(host)
-        models = dict(storage.services.catalog.models(connection, active.cancellable))
+        connection = context.connection(host)
+        models = dict(context.services.catalog.models(connection, active.cancellable))
         if target['model'] not in models:
             raise ValueError(_('Selected model is no longer available.'))
         details = models[target['model']]
         if details is None:
             try:
-                details = storage.services.catalog.details(connection, target['model'], active.cancellable)
-            except ollama.RequestCancelled:
+                details = context.services.catalog.details(connection, target['model'], active.cancellable)
+            except RequestCancelled:
                 raise
-            except ollama.OllamaError:
+            except ProviderError:
                 details = None
         caps = details.get('capabilities') if details else None
         if caps is not None:
@@ -55,7 +55,9 @@ def prepare_run(storage, active, prompt, images, settings, targets, draft_id, re
                 raise ValueError(_('Every target must support the shared images.'))
             if settings.get('thinking') not in (None, False) and 'thinking' not in caps:
                 raise ValueError(_('Every target must support the selected thinking option.'))
-        if ollama.is_cloud(host) and (settings.get('format') is not None or settings.get('keep_alive') is not None):
+        limits = connection.capabilities
+        if ((settings.get('format') is not None and not limits.structured_output)
+                or (settings.get('keep_alive') is not None and not limits.keep_alive)):
             raise ValueError(_('Cloud targets do not support shared structured output or model retention.'))
         family = (details or {}).get('details', {}).get('family', '').replace('-', '').lower()
         if family == 'gptoss' and settings.get('thinking') not in (None, 'low', 'medium', 'high'):
@@ -64,7 +66,7 @@ def prepare_run(storage, active, prompt, images, settings, targets, draft_id, re
     retrieval = None
     if settings.get('knowledge', {}).get('enabled'):
         validate_rag(settings['knowledge'])
-        retrieval = copy.deepcopy(storage.knowledge.retrieve(settings['knowledge'], settings.get('query_override') or prompt, active.cancellable))
+        retrieval = copy.deepcopy(context.knowledge.retrieve(settings['knowledge'], settings.get('query_override') or prompt, active.cancellable))
     messages = [{'role': 'user', 'content': prompt}]
     if images:
         messages[0]['images'] = copy.deepcopy(images)
@@ -75,7 +77,7 @@ def prepare_run(storage, active, prompt, images, settings, targets, draft_id, re
                message_uid=str(uuid.uuid4()), targets=[], draft_id=draft_id, draft_revision=revision)
     for target, host, connection in resolved:
         id = str(uuid.uuid4())
-        effective = dict(settings, host=ollama.validate_host(host['hostname']), host_id=host['id'],
+        effective = dict(settings, host=validate_url(host['hostname']), host_id=host['id'],
                          model=target['model'], endpoint='chat')
         state = RequestState(effective, prompt, images, messages=copy.deepcopy(wire), connection=connection, retrieval=copy.deepcopy(retrieval))
         state.metadata['retrieval'] = copy.deepcopy(retrieval)
@@ -84,22 +86,23 @@ def prepare_run(storage, active, prompt, images, settings, targets, draft_id, re
         run['targets'].append(dict(id=id, settings=effective, request=dict(messages=copy.deepcopy(wire),
             **{k: effective.get(k) for k in ('model', 'options', 'thinking', 'format', 'keep_alive', 'logprobs', 'top_logprobs')})))
     if active.cancellable.is_cancelled():
-        raise ollama.RequestCancelled()
+        raise RequestCancelled()
     active.pending = set(active.states)
     return run
 
 
 class ComparisonController:
-    def __init__(self, storage, active):
-        self.storage, self.active = storage, active
+    def __init__(self, context, active):
+        self.context, self.active = context, active
+        self.storage = context.storage
 
     def dispatch(self, chunk, done):
         for id, state in self.active.states.items():
             def work(id=id, state=state):
-                self.storage._submit(self.storage.db.start_comparison_target, id)
-                RequestRunner(self.storage.services).run(ChatStrategy(self.storage), state,
+                self.storage.submit(self.storage.library.start_comparison_target, id)
+                RequestRunner(self.context.services).run(ChatStrategy(self.storage), state,
                     lambda *parts: chunk(id, *parts), lambda status, error: finished(id, state, status, error))
-            self.storage.services.inference.submit(work)
+            self.context.services.inference.submit(work)
 
         def finished(id, state, status, error):
             state.finish(status, error)
@@ -108,4 +111,4 @@ class ComparisonController:
             def saved():
                 self.active.pending.discard(id)
                 done(id, state)
-            self.storage._submit(self.storage.db.finish_comparison_target, id, copy.deepcopy(message), on_done=saved)
+            self.storage.submit(self.storage.library.finish_comparison_target, id, copy.deepcopy(message), on_done=saved)

@@ -1,7 +1,6 @@
 from typing import Any, List, Dict, Optional, Union, Callable
 from gi.repository import Adw, Gtk, Gio, GLib, GObject
-from .storage import ChatStorage
-from . import ollama
+from .providers import ProviderError, RequestCancelled, validate_url
 from .session import ViewRequests
 import threading
 import json
@@ -48,10 +47,11 @@ class ModelManagerDialog(Adw.Dialog):
     running_group = Gtk.Template.Child()
     running_status = Gtk.Template.Child()
 
-    def __init__(self, storage: ChatStorage, is_model_busy=None, **kwargs: Any) -> None:
+    def __init__(self, context, is_model_busy=None, **kwargs: Any) -> None:
         super().__init__(**kwargs)
         self.requests = ViewRequests(self)
-        self.storage: ChatStorage = storage
+        self.context = context
+        self.storage = context.storage
         self.model_rows: List[Adw.ActionRow] = []
         self.host_list: List[Dict[str, Any]] = []
         self._fetch_cancel = None
@@ -71,7 +71,7 @@ class ModelManagerDialog(Adw.Dialog):
         self.update_hosts()
 
     def update_hosts(self) -> None:
-        """Reloads the host list from storage."""
+        """Reloads the host list from context."""
         selected = self.get_selected_host()
         hosts = self.storage.get_all_hosts()
         self.host_list = hosts
@@ -108,8 +108,11 @@ class ModelManagerDialog(Adw.Dialog):
         self._reset_running()
         self.refresh_running()
 
+    def _capabilities(self):
+        return self.context.capabilities(self.get_selected_host())
+
     def on_refresh_clicked(self, btn: Gtk.Button) -> None:
-        self.storage.services.catalog.invalidate()
+        self.context.services.catalog.invalidate()
         """Callback for the 'Refresh' button."""
         if self.model_stack.get_visible_child_name() == 'running':
             self.refresh_running()
@@ -117,7 +120,7 @@ class ModelManagerDialog(Adw.Dialog):
             self.fetch_models_for_selected_host()
 
     def _mapped(self, *args):
-        if self._poll_id is None and not ollama.is_cloud(self.get_selected_host()):
+        if self._poll_id is None and self._capabilities().running_models:
             self._poll_id = GLib.timeout_add_seconds(5, self._poll_running)
         self.refresh_running()
 
@@ -129,7 +132,7 @@ class ModelManagerDialog(Adw.Dialog):
 
     def _view_changed(self, *args):
         running = self.model_stack.get_visible_child_name() == 'running'
-        self.pull_button.set_visible(not running and not ollama.is_cloud(self.get_selected_host()))
+        self.pull_button.set_visible(not running and self._capabilities().model_management)
         if running:
             self.refresh_running()
         else:
@@ -145,7 +148,7 @@ class ModelManagerDialog(Adw.Dialog):
         self.running_status.set_text('')
 
     def _poll_running(self):
-        if ollama.is_cloud(self.get_selected_host()):
+        if not self._capabilities().running_models:
             self._poll_id = None
             return False
         self.update_unload_buttons()
@@ -157,7 +160,7 @@ class ModelManagerDialog(Adw.Dialog):
                 or self._running_pending):
             return
         host = self.get_selected_host()
-        if ollama.is_cloud(host):
+        if not self._capabilities().running_models:
             return
         if not host:
             self.running_status.set_text(_('No host configured.'))
@@ -174,12 +177,11 @@ class ModelManagerDialog(Adw.Dialog):
             self.update_running_models(host['hostname'], models)
         def fetch():
             try:
-                models = ollama.fetch_running_models(host['hostname'], cancellable=cancel)
+                models = self.context.connection(host).running(cancellable=cancel)
                 self.requests.deliver(completed, models, None, cancellable=cancel)
-            except ollama.OllamaError as exc:
+            except ProviderError as exc:
                 self.requests.deliver(completed, [], str(exc), cancellable=cancel)
-        from .session import worker
-        self.storage.services.control.submit(fetch)
+        self.context.services.control.submit(fetch)
 
     def update_running_models(self, hostname, models):
         for row, _host, _model, _button in self._running_rows:
@@ -202,27 +204,27 @@ class ModelManagerDialog(Adw.Dialog):
     def update_unload_buttons(self):
         for _row, host, model, button in self._running_rows:
             busy = self.is_model_busy(host, model)
-            unloading = model_key(host, model) in self.storage.services.models.reserved
+            unloading = model_key(host, model) in self.context.services.models.reserved
             button.set_sensitive(not busy and not unloading)
             button.set_label(_('Unloading…') if unloading else _('Unload'))
             button.set_tooltip_text(_('A chat or embedding job is using this model in Gnollama.') if busy else
                                     _('Release this model from memory; keep its downloaded files.'))
 
     def on_unload_clicked(self, button, host, model):
-        if ollama.is_cloud(self.get_selected_host()):
+        if not self._capabilities().running_models:
             return
         key = model_key(host, model)
-        if self.requests.closed or not self.storage.knowledge.reserve_model(host, model, self.is_model_busy):
+        if self.requests.closed or not self.context.knowledge.reserve_model(host, model, self.is_model_busy):
             return
         self.update_unload_buttons()
         cancel = self.requests.new_cancel()
         def completed(error):
-            self.storage.services.models.reserved.discard(key)
+            self.context.services.models.reserved.discard(key)
             if self.requests.closed:
                 return False
             self.update_unload_buttons()
             selected = self.get_selected_host()
-            if selected and ollama.validate_host(selected['hostname']) == key[0]:
+            if selected and validate_url(selected['hostname']) == key[0]:
                 if error and not cancel.is_cancelled():
                     self.show_error(_('Could not unload model'), error)
                 if self._running_cancel:
@@ -233,18 +235,17 @@ class ModelManagerDialog(Adw.Dialog):
         def unload():
             error = None
             try:
-                ollama.unload_model(host, model, cancellable=cancel)
-            except ollama.OllamaError as exc:
+                self.context.providers.local(host).unload(model, cancellable=cancel)
+            except ProviderError as exc:
                 error = str(exc)
             finally:
                 GLib.idle_add(completed, error)
-        from .session import worker
-        self.storage.services.control.submit(unload)
+        self.context.services.control.submit(unload)
 
     def on_pull_clicked(self, btn: Gtk.Button) -> None:
         """Callback for the 'Pull' button."""
         host = self.get_selected_host()
-        if not host or ollama.is_cloud(host):
+        if not host or not self._capabilities().model_management:
             return
         dialog = PullModelDialog(self, host['hostname'])
         dialog.present(self)
@@ -255,7 +256,8 @@ class ModelManagerDialog(Adw.Dialog):
             self._fetch_cancel.cancel()
         self.update_models_list([])
         host = self.get_selected_host()
-        cloud = ollama.is_cloud(host)
+        caps = self._capabilities()
+        cloud = not caps.running_models
         running_page = self.model_stack.get_page(self.model_stack.get_child_by_name('running'))
         if cloud:
             self.model_stack.set_visible_child_name('installed')
@@ -265,7 +267,7 @@ class ModelManagerDialog(Adw.Dialog):
                 self._poll_id = None
         running_page.set_visible(not cloud)
         self.model_stack.get_page(self.model_stack.get_child_by_name('installed')).set_title(
-            _('Available Models') if cloud else _('Installed'))
+            _('Installed') if caps.model_management else _('Available Models'))
         self._view_changed()
         if self.get_mapped() and not cloud:
             self._mapped()
@@ -275,13 +277,12 @@ class ModelManagerDialog(Adw.Dialog):
 
         def thread_func() -> None:
             try:
-                models = ollama.fetch_model_details(self.storage.connection(host), cancellable=cancel)
+                models = self.context.connection(host).list_models(cancellable=cancel)
                 self.requests.deliver(self.update_models_list, models, cancellable=cancel)
-            except ollama.OllamaError as e:
+            except ProviderError as e:
                 self.requests.deliver(self.show_error, _("Connection Error"), str(e), cancellable=cancel)
             
-        from .session import worker
-        self.storage.services.control.submit(thread_func)
+        self.context.services.control.submit(thread_func)
 
     def update_models_list(self, models: List[Dict[str, Any]]) -> None:
         """Updates the UI with a new list of models."""
@@ -297,7 +298,7 @@ class ModelManagerDialog(Adw.Dialog):
         row = Adw.ActionRow()
         row.set_title(model['name'])
         
-        cloud = ollama.is_cloud(self.get_selected_host())
+        cloud = not self._capabilities().model_management
         details = model.get('details') or {}
         parts = [details.get('parameter_size'), details.get('format')]
         size = model.get('size')
@@ -344,15 +345,14 @@ class ModelManagerDialog(Adw.Dialog):
 
         def thread_func() -> None:
             try:
-                data = ollama.show_model(self.storage.connection(host), model['name'], cancellable=cancel)
+                data = self.context.connection(host).show_model(model['name'], cancellable=cancel)
                 view.requests.deliver(view.main_box.remove, spinner, cancellable=cancel)
                 view.requests.deliver(self.populate_model_details, view, data, model, cancellable=cancel)
-            except ollama.OllamaError as e:
+            except ProviderError as e:
                 view.requests.deliver(view.close, cancellable=cancel)
                 self.requests.deliver(self.show_error, _("Failed to fetch details"), str(e), cancellable=cancel)
                 
-        from .session import worker
-        self.storage.services.control.submit(thread_func)
+        self.context.services.control.submit(thread_func)
 
     def show_error(self, title: str, msg: str) -> None:
         """Displays an error message dialog."""
@@ -366,12 +366,12 @@ class ModelManagerDialog(Adw.Dialog):
     def on_model_delete_clicked(self, btn: Gtk.Button, model: Dict[str, Any]) -> None:
         """Handles delete button click to remove a model."""
         host = self.get_selected_host()
-        if not host or ollama.is_cloud(host):
+        if not host or not self._capabilities().model_management:
             return
-        if self.is_model_busy(host['hostname'], model['name']) or model_key(host['hostname'], model['name']) in self.storage.services.models.reserved:
+        if self.is_model_busy(host['hostname'], model['name']) or model_key(host['hostname'], model['name']) in self.context.services.models.reserved:
             self.show_error(_('Model Is Busy'), _('Wait for active chats and embedding jobs before deleting this model.'))
             return
-        usage = self.storage.db.model_embedding_usage(model.get('digest', ''))
+        usage = self.storage.library.model_embedding_usage(model.get('digest', ''))
         body = _('Are you sure you want to delete {0}?').format(model['name'])
         cleanup = Gtk.CheckButton(label=_('Also delete matching vectors; keep source text'))
         if usage['indexes']:
@@ -393,29 +393,28 @@ class ModelManagerDialog(Adw.Dialog):
         def on_response(d: Adw.AlertDialog, response: str) -> None:
             if response == "delete":
                 delete_vectors = cleanup.get_active()
-                if delete_vectors and self.storage.knowledge.indexing_digest(model['digest']):
+                if delete_vectors and self.context.knowledge.indexing_digest(model['digest']):
                     self.show_error(_('Model Is Busy'), _('Wait for all indexing jobs using this model before deleting its vectors.'))
                     return
-                if not self.storage.knowledge.reserve_model(host['hostname'], model['name'], self.is_model_busy):
+                if not self.context.knowledge.reserve_model(host['hostname'], model['name'], self.is_model_busy):
                     self.show_error(_('Model Is Busy'), _('Wait for active chats and embedding jobs before deleting this model.'))
                     return
                 key = model_key(host['hostname'], model['name'])
                 cancel = self.requests.new_cancel()
                 def thread_func() -> None:
                     try:
-                        self.storage.services.catalog.invalidate()
-                        ollama.delete_model(host['hostname'], model['name'], cancellable=cancel)
+                        self.context.services.catalog.invalidate()
+                        self.context.connection(host).delete(model['name'], cancellable=cancel)
                         if delete_vectors:
-                            self.storage._submit(self.storage.db.delete_model_embeddings, model['digest'],
-                                                 on_done=self.storage.knowledge.changed)
-                        self.storage.knowledge.changed()
+                            self.storage.submit(self.storage.library.delete_model_embeddings, model['digest'],
+                                                 on_done=self.context.knowledge.changed)
+                        self.context.knowledge.changed()
                         self.requests.deliver(self.fetch_models_for_selected_host)
-                    except ollama.OllamaError as e:
+                    except ProviderError as e:
                         self.requests.deliver(self.show_error, _("Delete Failed"), str(e), cancellable=cancel)
                     finally:
-                        self.storage.services.models.reserved.discard(key)
-                from .session import worker
-                self.storage.services.control.submit(thread_func)
+                        self.context.services.models.reserved.discard(key)
+                self.context.services.control.submit(thread_func)
             d.close()
             
         dialog.connect("response", on_response)
@@ -538,8 +537,8 @@ class PullModelDialog(Adw.Dialog):
         self.requests = ViewRequests(self)
         # The model manager that opened this dialog, refreshed after a download.
         self.owner = owner
-        from .services import Services
-        self.services = owner.storage.services if hasattr(owner, 'storage') else Services()
+        self.services = owner.context.services
+        self.connection = owner.context.providers.local(hostname)
         self.hostname: str = hostname
         self.pulling: bool = False
         self.pull_future: Optional[Any] = None
@@ -573,18 +572,17 @@ class PullModelDialog(Adw.Dialog):
         buffer.set_text("")
         self.status_label.set_text(_("Starting download…"))
         
-        from .session import worker
         self.pull_future = self.services.transfer.submit(self.pull_task, model_name, self.insecure_check.get_active())
 
     def pull_task(self, model_name: str, insecure: bool) -> None:
         """Thread worker to stream pull status."""
         try:
-            for response in ollama.pull(self.hostname, model_name, insecure, cancellable=self._pull_cancel):
+            for response in self.connection.pull(model_name, insecure, cancellable=self._pull_cancel):
                 if not self.pulling:
                     break
                 self.requests.deliver(self.update_status, response)
             self.requests.deliver(self.pull_finished)
-        except ollama.RequestCancelled:
+        except RequestCancelled:
             pass
         except Exception as e:
             self.requests.deliver(self.update_status, {"error": str(e)})

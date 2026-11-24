@@ -49,11 +49,14 @@
   </screenshots>
 
   <releases>
-    <release version="0.18.0" date="2026-11-23">
+    <release version="0.18.0" date="2026-11-24">
       <url type="details">https://github.com/jackrabbithanna/gnollama/releases/tag/0.18.0</url>
       <description translate="no">
         <p>Numbered lists in answers keep their numbers, and nested lists are indented.</p>
         <p>Tables in answers are shown as real tables with aligned columns, and can be copied.</p>
+        <p>Math written in TeX is typeset as equations that follow the text colour and size.</p>
+        <p>Paste a copied image or screenshot into the prompt to attach it.</p>
+        <p>Long answers stay responsive while they are being written.</p>
       </description>
     </release>
     <release version="0.17.0" date="2026-11-23">

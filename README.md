@@ -258,7 +258,7 @@ Enter an opening prompt for A. Its completed answer becomes B's first prompt, an
 
 Completed turns are saved before the next request starts. Graceful closure preserves partial output; after an abrupt crash, completed turns survive but unsaved streaming text may be lost. Full history is sent on each turn without application-side trimming. The approximate context warning is advisory, so the server may still truncate context or reject an oversized request.
 
-Model conversations support drafts, search, pinning, rename, deletion, and Markdown/JSON export. See the [implementation and validation notes](docs/model-to-model-conversation.md).
+Model conversations support drafts, search, pinning, rename, deletion, and Markdown/JSON export. Earlier attempts at a retried turn stay visible in the transcript, but only the successful attempt advances the conversation. Saved host and model selections are checked again before **Resume** or **Retry turn**; a missing model or changed server address blocks continuation instead of substituting another destination. Long transcripts open on the latest 50 messages and load earlier ones on request.
 
 ![Model conversation setup](screenshots/gnollama-model-conversation-setup.png)
 
@@ -270,7 +270,9 @@ Model conversations support drafts, search, pinning, rename, deletion, and Markd
 
 `Services` owns four inference workers, two control/read workers, two discovery workers, and two transfer workers. Model lists and selected-model capabilities use separate shared requests with a 60-second cache and digest-based capability identities. Subscribers do not occupy workers while waiting for another subscriber's request. Empty lists are not cached, and interacting with an empty selector refreshes discovery. Knowledge processing retains its bounded queues. An ordered writer serializes retryable transactions on one long-lived SQLite connection, and each worker thread keeps its own read connection; submitted prompts consume only their matching draft revision. Message writes append or update changed records and retain unchanged attachment rows.
 
-See [the implementation plan](docs/stabilization-improvement-plan.md) and [validation notes](docs/stabilization-validation.md). Reproduce the isolated performance and retrieval fixtures in the configured Python/SDK environment:
+History and library lists load in pages of 100 and conversation messages in pages of 50. Streaming updates are coalesced to at most 20 per second.
+
+The performance fixture creates and removes its own database of 10,000 conversations, 10,000 documents, a 1,000-message conversation with attachments, and 50,000 vectors, and asserts bounded page reads and writes proportional to changed messages. Its timings are machine-dependent comparison artifacts, not performance guarantees. The retrieval fixture ranks a versioned corpus of answerable, unanswerable, follow-up, misleading-source, and untrusted-document cases with recorded embeddings, so it checks the stored-vector retrieval path rather than the quality of a live model. The layout review renders real GTK widgets from fixture data with mocked responses; add `--language ar` for right-to-left captures. Reproduce them in the configured Python/SDK environment:
 
 ```bash
 python3 tools/benchmark_workspace.py --output workspace-benchmark.json

@@ -66,8 +66,6 @@ class AiBubble(Gtk.ListBoxRow):
         
         self.full_text: str = ""
         self.thinking_text: str = ""
-        self._update_scheduled: bool = False
-        self._update_source = None
         self.copy_button = Gtk.Button(label=_('Copy Answer'), halign=Gtk.Align.END)
         from .widgets.feedback import copy_text
         self.copy_button.connect('clicked', lambda button: copy_text(button, self.full_text))
@@ -82,26 +80,19 @@ class AiBubble(Gtk.ListBoxRow):
         self.api_markdown_view.update(md_text)
 
     def append_text(self, text: str) -> None:
-        """Appends a chunk of text to the main markdown response."""
+        """Appends a chunk of text to the main markdown response.
+        Callers deliver streamed chunks already coalesced, so each one is shown at once."""
+        if not text:
+            return
         self.full_text += text
-        
-        if not self._update_scheduled:
-            self._update_scheduled = True
-            self._update_source = GLib.timeout_add(50, self._flush_update)
-            
-    def _flush_update(self) -> bool:
-        """Flushes the accumulated text to the MarkdownView."""
-        self._update_source = None
-        self.markdown_view.update(self.full_text)
-        self._update_scheduled = False
-        return False
+        self._show_text(streaming=True)
 
-    def cancel_delivery(self):
-        if self._update_source is not None:
-            GLib.source_remove(self._update_source)
-            self._update_source = None
-        self._update_scheduled = False
-        
+    def _show_text(self, streaming: bool = False) -> None:
+        if isinstance(self.markdown_view, MarkdownView):
+            self.markdown_view.update(self.full_text, streaming=streaming)
+        else:
+            self.markdown_view.update(self.full_text)
+
     def append_thinking(self, text: str) -> None:
         """Appends text to the thinking section."""
         if not text:
@@ -121,8 +112,8 @@ class AiBubble(Gtk.ListBoxRow):
         self._stats_label.set_text(format_statistics(stats))
 
     def show_response_metadata(self, metadata, show_stats=True):
-        self.cancel_delivery()
-        self._flush_update()
+        # One complete render, so a finished response looks the same as one loaded from history.
+        self._show_text()
         if metadata.get('tool_round') and self.json_view is not None:
             self.bubble_box.remove(self.json_view)
             self.json_view = None

@@ -108,14 +108,6 @@ class MessageList(Gtk.Overlay):
             self._insert_index += 1
         self._last_row = row if isinstance(row, Gtk.ListBoxRow) else row.get_parent()
 
-    def cancel_deliveries(self):
-        child = self.list_box.get_first_child()
-        while child:
-            bubble = child if isinstance(child, AiBubble) else child.get_child()
-            if isinstance(bubble, AiBubble):
-                bubble.cancel_delivery()
-            child = child.get_next_sibling()
-
     def clear(self) -> None:
         """Clears all messages."""
         child = self.list_box.get_first_child()

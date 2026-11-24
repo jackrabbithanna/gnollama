@@ -632,7 +632,6 @@ class GenerationTab(Gtk.Box):
         self.closing = True
         self._close_callback = on_done
         self.chat_input.cancel_fetches()
-        self.message_list.cancel_deliveries()
         self.knowledge_control.close_dialog(dispose=True)
         if self._retrieval_dialog:
             self._retrieval_dialog.close()

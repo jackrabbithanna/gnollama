@@ -9,6 +9,13 @@ from .tool_view import ToolsEditor
 from ..tool_calling import parse_tools, InvalidTools
 from .composer import Composer
 
+# The field of each sampling option, and the capability that some fields need.
+OPTION_FIELDS = {'seed': 'seed_entry', 'temperature': 'temperature_entry', 'top_k': 'top_k_entry',
+                 'top_p': 'top_p_entry', 'min_p': 'min_p_entry', 'num_ctx': 'num_ctx_entry',
+                 'num_predict': 'num_predict_entry', 'stop': 'stop_entry'}
+FIELD_FLAGS = {'top_k_entry': 'sampling_extras', 'min_p_entry': 'sampling_extras', 'num_ctx_entry': 'context_size',
+               'top_logprobs_entry': 'logprobs'}
+
 @Gtk.Template(resource_path='/io/github/jackrabbithanna/Gnollama/widgets/options_panel.ui')
 class OptionsPanel(Gtk.Box):
     """Common controls and reusable, adaptive chat settings."""
@@ -26,6 +33,7 @@ class OptionsPanel(Gtk.Box):
     def __init__(self, **kwargs: Any) -> None:
         super().__init__(**kwargs)
         self.capabilities = capabilities(None)
+        self._provider = self._reason = None
         self._settings_dialog = None
         self._build_settings()
         self.settings_button.connect('clicked', self.open_settings)
@@ -55,20 +63,75 @@ class OptionsPanel(Gtk.Box):
         self.provider_notice = Gtk.Label(xalign=0, wrap=True, visible=False)
         self.append(self.provider_notice)
 
-    def set_capabilities(self, capabilities):
-        """Disable what the selected host's provider lacks, and say why."""
+    def set_capabilities(self, capabilities, provider=None, reason=None):
+        """Disable what the selected host or model lacks, and say why.
+
+        `provider` is the host's own record where `capabilities` is one model's.
+        `reason` replaces the explanation, for a panel that serves several targets.
+        """
         self.capabilities = capabilities
+        self._provider, self._reason = provider, reason
         self.output_dropdown.set_sensitive(capabilities.structured_output)
+        self.output_dropdown.set_tooltip_text(None if capabilities.structured_output else self._why('structured_output'))
         self.memory_group.set_sensitive(capabilities.keep_alive)
-        for names, offered in ((('top_k_entry', 'min_p_entry'), capabilities.sampling_extras),
-                               (('num_ctx_entry',), capabilities.context_size)):
-            for name in names:
-                label, hint = self.field_hints[name]
-                label.set_text(hint if offered else _('Not available on this server.'))
+        for name in {*OPTION_FIELDS.values(), *FIELD_FLAGS}:
+            label, hint = self.field_hints[name]
+            offered = self._offered(name)
+            label.set_text(hint if offered else self._why(FIELD_FLAGS.get(name)))
+            if name != 'top_logprobs_entry':
                 getattr(self, name).get_parent().set_sensitive(offered)
+        self.logprobs_check.set_sensitive(capabilities.logprobs)
+        self._logprobs_changed()
+        for widget in (self.tools_check, self.tools_button):
+            widget.set_sensitive(capabilities.tools)
+        self.update_tools_notice()
         self.provider_notice.set_text(_(capabilities.options_notice) if capabilities.options_notice else '')
         self.provider_notice.set_visible(bool(capabilities.options_notice))
         self._format_changed()
+
+    def _offered(self, name):
+        """Whether the value of the field `name` can be sent to the selected host and model."""
+        if name in FIELD_FLAGS:
+            return getattr(self.capabilities, FIELD_FLAGS[name])
+        return all(OPTION_FIELDS[key] != name for key in self.capabilities.left_out)
+
+    def _why(self, flag):
+        if self._reason:
+            return self._reason
+        # The host's type takes it, so it is this model that does not.
+        if self._provider is not None and getattr(self._provider, flag or '', True):
+            return _('Not available for this model.')
+        return _('Not available on this server.')
+
+    def _logprobs_changed(self, *args):
+        self.top_logprobs_entry.get_parent().set_sensitive(self.logprobs_enabled())
+
+    def logprobs_enabled(self):
+        return self.capabilities.logprobs and self.logprobs_check.get_active()
+
+    def output_mode(self):
+        """The output mode a request is sent with."""
+        return self.output_modes[self.output_dropdown.get_selected()] if self.capabilities.structured_output else 'text'
+
+    def get_unsent(self):
+        """What the panel holds for options the host or model lacks, as typed.
+
+        Stored with the chat and never sent or checked; `load_options` puts it back.
+        """
+        limits = self.capabilities
+        held = {key: getattr(self, name).get_text().strip() for key, name in OPTION_FIELDS.items()
+                if not self._offered(name)}
+        if not limits.logprobs and self.logprobs_check.get_active():
+            held.update(logprobs=True, top_logprobs=self.top_logprobs_entry.get_text().strip())
+        if not limits.structured_output:
+            held['output_mode'] = self.output_modes[self.output_dropdown.get_selected()]
+        if not limits.keep_alive:
+            value = self.keep_alive_values[self.keep_alive_dropdown.get_selected()]
+            held['keep_alive'] = self.keep_alive_entry.get_text().strip() if value == 'custom' else value
+        if self.tools_available and not limits.tools and self.tools_check.get_active():
+            held['tools_enabled'] = True
+        # Zero is a retention time; the rest are the defaults of an untouched panel.
+        return {key: value for key, value in held.items() if value not in ('', None, 'text')}
 
     def snapshot_draft(self):
         return dict(fields={name: getattr(self, name).get_text() for name in self.field_errors},
@@ -177,8 +240,8 @@ class OptionsPanel(Gtk.Box):
         diagnostics.add(self.stats_check)
         diagnostics.add(self.logprobs_check)
         field(diagnostics, 'top_logprobs_entry', _('Top logprobs'), _('Number of alternative token probabilities, from 0 to 20.'))
-        self.logprobs_check.connect('toggled', lambda w: self.top_logprobs_entry.get_parent().set_sensitive(w.get_active()))
-        self.top_logprobs_entry.get_parent().set_sensitive(False)
+        self.logprobs_check.connect('toggled', self._logprobs_changed)
+        self._logprobs_changed()
 
     def field_error(self, name, message):
         widget = getattr(self, name)
@@ -238,7 +301,7 @@ class OptionsPanel(Gtk.Box):
 
     def get_logprobs(self):
         text = self.top_logprobs_entry.get_text().strip()
-        if not self.logprobs_check.get_active() or not text:
+        if not self.logprobs_enabled() or not text:
             return None
         try:
             value = int(text)
@@ -256,7 +319,7 @@ class OptionsPanel(Gtk.Box):
                 GLib.idle_add(self._open_missing_tools)
 
     def _open_missing_tools(self):
-        if (self.tools_available and self.get_mapped() and self.tools_check.get_active()
+        if (self.get_tools_options()['tools_enabled'] and self.get_mapped()
                 and not self.tools_text.strip() and self._tools_dialog is None):
             self.edit_tools()
         return False
@@ -268,7 +331,10 @@ class OptionsPanel(Gtk.Box):
             count = 0
         enabled = self.tools_check.get_active()
         notice = _('Enabled tools: {0}. Results are supplied manually.').format(count) if enabled else _('Tool calling is off.')
-        if enabled:
+        if not self.capabilities.tools:
+            # Shown whether or not the box is ticked: it is why the box cannot be.
+            notice, enabled = self._why('tools'), True
+        elif enabled:
             if self.tools_loading:
                 notice += ' ' + _('Checking tool support…')
             elif self.tool_support is False:
@@ -292,7 +358,8 @@ class OptionsPanel(Gtk.Box):
         self._tools_dialog.present(self)
 
     def get_tools_options(self):
-        return {'tools_enabled': self.tools_available and self.tools_check.get_active(), 'tools_text': self.tools_text}
+        enabled = self.tools_available and self.capabilities.tools and self.tools_check.get_active()
+        return {'tools_enabled': enabled, 'tools_text': self.tools_text}
 
     def _format_changed(self, *args):
         schema_mode = self.capabilities.structured_output and self.output_dropdown.get_selected() == 2
@@ -324,7 +391,7 @@ class OptionsPanel(Gtk.Box):
         self._schema_dialog.present(self)
 
     def get_request_settings(self):
-        mode = 'text' if not self.capabilities.structured_output else self.output_modes[self.output_dropdown.get_selected()]
+        mode = self.output_mode()
         output_format = request_format(mode, self.schema_text)
         keep_alive = self.get_keep_alive()
         tools_options = self.get_tools_options()
@@ -373,9 +440,10 @@ class OptionsPanel(Gtk.Box):
     def get_options_from_ui(self) -> Dict[str, Any]:
         """Extracts Ollama generation options from the UI input fields."""
         options = {}
-        key_names = {'seed': 'seed_entry', 'temperature': 'temperature_entry', 'top_k': 'top_k_entry', 'top_p': 'top_p_entry', 'min_p': 'min_p_entry', 'num_ctx': 'num_ctx_entry', 'num_predict': 'num_predict_entry'}
+        key_names = OPTION_FIELDS
         def add_option(entry: Gtk.Entry, key: str, type_func: Callable[[str], Any]) -> None:
-            text = entry.get_text().strip()
+            # What the host or model lacks stays in its field, unchecked, and is left out of the request.
+            text = entry.get_text().strip() if self._offered(key_names[key]) else ''
             if text:
                 try:
                     val = type_func(text)
@@ -387,16 +455,13 @@ class OptionsPanel(Gtk.Box):
         
         add_option(self.seed_entry, 'seed', int)
         add_option(self.temperature_entry, 'temperature', float)
-        # What the host lacks stays in its field and is left out of the request.
-        if self.capabilities.sampling_extras:
-            add_option(self.top_k_entry, 'top_k', int)
-            add_option(self.min_p_entry, 'min_p', float)
+        add_option(self.top_k_entry, 'top_k', int)
+        add_option(self.min_p_entry, 'min_p', float)
         add_option(self.top_p_entry, 'top_p', float)
-        if self.capabilities.context_size:
-            add_option(self.num_ctx_entry, 'num_ctx', int)
+        add_option(self.num_ctx_entry, 'num_ctx', int)
         add_option(self.num_predict_entry, 'num_predict', int)
         
-        stop_text = self.stop_entry.get_text().strip()
+        stop_text = self.stop_entry.get_text().strip() if self._offered('stop_entry') else ''
         if stop_text:
             stops = [s.strip() for s in stop_text.split(',') if s.strip()]
             if stops:
@@ -415,17 +480,21 @@ class OptionsPanel(Gtk.Box):
         return options
 
     def load_options(self, wire, view) -> None:
-        """Populates the panel from stored WireOptions and ViewState."""
-        mode = view.output_mode
-        options = wire.options
+        """Populates the panel from stored WireOptions and ViewState.
+
+        What was held and not sent goes back in its field, whatever the host takes now.
+        """
+        held = view.unsent
+        mode = held.get('output_mode', view.output_mode)
+        options = {**wire.options, **{key: held[key] for key in OPTION_FIELDS if key in held}}
         self._restoring_options = True
         self.tools_text = view.tools_text
-        self.tools_check.set_active(view.tools_enabled)
+        self.tools_check.set_active(view.tools_enabled or held.get('tools_enabled') is True)
         self.update_tools_notice()
         self.schema_text = view.schema_text
         self.output_dropdown.set_selected(self.output_modes.index(mode) if mode in self.output_modes else 0)
         self._restoring_options = False
-        keep_alive = wire.keep_alive
+        keep_alive = held.get('keep_alive', wire.keep_alive)
         if keep_alive in self.keep_alive_values:
             self.keep_alive_dropdown.set_selected(self.keep_alive_values.index(keep_alive))
         else:
@@ -448,6 +517,7 @@ class OptionsPanel(Gtk.Box):
         else:
             self.stop_entry.set_text("")
             
-        self.logprobs_check.set_active(wire.logprobs)
-        if wire.top_logprobs is not None:
-            self.top_logprobs_entry.set_text(str(wire.top_logprobs))
+        self.logprobs_check.set_active(wire.logprobs or held.get('logprobs') is True)
+        top_logprobs = held.get('top_logprobs', wire.top_logprobs)
+        if top_logprobs is not None:
+            self.top_logprobs_entry.set_text(str(top_logprobs))

@@ -1747,9 +1747,6 @@ msgstr "Este modelo no admite imágenes."
 msgid "Earlier images remain saved; only text history will be sent."
 msgstr "Las imágenes anteriores siguen guardadas; solo se enviará el historial de texto."
 
-#: src/widgets/chat_input.py:125
-msgid "Image support unknown."
-msgstr "Se desconoce la compatibilidad con imágenes."
 
 #: src/widgets/chat_input.py:137
 msgid "Select a chat model"
@@ -3745,3 +3742,135 @@ msgstr "Longitud del contexto"
 #: src/model_manager.py
 msgid "Max Context Length"
 msgstr "Longitud máxima del contexto"
+
+#: src/model_summary.py
+msgid "Free"
+msgstr "Gratis"
+
+#: src/model_summary.py
+msgid "${0} / ${1} per 1M tokens"
+msgstr "${0} / ${1} por 1 M de tokens"
+
+#: src/model_summary.py
+msgid "No images"
+msgstr "Sin imágenes"
+
+#: src/model_summary.py
+msgid "Tools"
+msgstr "Herramientas"
+
+#: src/model_summary.py
+msgid "No tools"
+msgstr "Sin herramientas"
+
+#: src/model_summary.py
+msgid "No thinking"
+msgstr "Sin razonamiento"
+
+#: src/model_summary.py
+msgid "Not trained for tools"
+msgstr "No entrenado para herramientas"
+
+#: src/model_summary.py
+msgid "{0}M"
+msgstr "{0} M"
+
+#: src/model_summary.py
+msgid "{0}K"
+msgstr "{0}K"
+
+#: src/model_summary.py
+msgid "{0} context"
+msgstr "{0} de contexto"
+
+#: src/model_summary.py
+msgid "{0} context max"
+msgstr "{0} de contexto máx."
+
+#: src/model_summary.py
+msgid "Prompt: ${0} per 1M tokens"
+msgstr "Entrada: ${0} por 1 M de tokens"
+
+#: src/model_summary.py
+msgid "Completion: ${0} per 1M tokens"
+msgstr "Salida: ${0} por 1 M de tokens"
+
+#: src/model_summary.py
+msgid "Cache read: ${0} per 1M tokens"
+msgstr "Lectura de caché: ${0} por 1 M de tokens"
+
+#: src/model_summary.py
+msgid "Cache write: ${0} per 1M tokens"
+msgstr "Escritura de caché: ${0} por 1 M de tokens"
+
+#: src/model_summary.py
+msgid "Cache write, kept one hour: ${0} per 1M tokens"
+msgstr "Escritura de caché, conservada una hora: ${0} por 1 M de tokens"
+
+#: src/model_summary.py
+msgid "Reasoning: ${0} per 1M tokens"
+msgstr "Razonamiento: ${0} por 1 M de tokens"
+
+#: src/model_summary.py
+msgid "Image input: ${0} per 1M tokens"
+msgstr "Entrada de imagen: ${0} por 1 M de tokens"
+
+#: src/model_summary.py
+msgid "Audio input: ${0} per 1M tokens"
+msgstr "Entrada de audio: ${0} por 1 M de tokens"
+
+#: src/model_summary.py
+msgid "Cached audio input: ${0} per 1M tokens"
+msgstr "Entrada de audio en caché: ${0} por 1 M de tokens"
+
+#: src/model_summary.py
+msgid "Image output: ${0} per 1M tokens"
+msgstr "Salida de imagen: ${0} por 1 M de tokens"
+
+#: src/model_summary.py
+msgid "Audio output: ${0} per 1M tokens"
+msgstr "Salida de audio: ${0} por 1 M de tokens"
+
+#: src/model_summary.py
+msgid "Web search: ${0} per search"
+msgstr "Búsqueda web: ${0} por búsqueda"
+
+#: src/model_summary.py
+msgid "Request: ${0} per request"
+msgstr "Solicitud: ${0} por solicitud"
+
+#: src/model_summary.py
+msgid "{0}: ${1}"
+msgstr "{0}: ${1}"
+
+#: src/model_summary.py
+msgid "Prices are as listed when this was read; they can change."
+msgstr "Precios según figuraban al consultarlos; pueden cambiar."
+
+#: src/widgets/chat_input.py
+msgid "Prompt and completion prices in US dollars per million tokens, as listed when the model list was read."
+msgstr "Precios de entrada y salida en dólares estadounidenses por millón de tokens, según figuraban al leer la lista de modelos."
+
+#: src/model_manager.py
+msgid "Pricing"
+msgstr "Precios"
+
+#: src/model_manager.py
+msgid "Supported Parameters"
+msgstr "Parámetros admitidos"
+
+#: src/model_manager.py
+msgid "Max Completion Tokens"
+msgstr "Máximo de tokens de salida"
+
+#: src/model_manager.py
+msgid "Reasoning"
+msgstr "Razonamiento"
+
+#: src/widgets/options_panel.py
+msgid "Not available for this model."
+msgstr "No disponible para este modelo."
+
+#: src/widgets/comparison_view.py
+msgid "Not available for every target."
+msgstr "No disponible para todos los destinos."

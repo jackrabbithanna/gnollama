@@ -1,6 +1,7 @@
 from typing import Any, Dict, List, Optional
 from gettext import gettext as _, ngettext
 from gi.repository import Gtk, GObject, Gio, GLib, Gdk, Pango
+from ..model_summary import prices, summary_parts
 from ..providers import RequestCancelled, supports
 from .composer import Composer  # noqa: F401 - registers the type chat_input.ui names
 
@@ -13,6 +14,8 @@ class ChatInput(Gtk.Box):
     connection_box = Gtk.Template.Child()
     model_dropdown: Gtk.DropDown = Gtk.Template.Child()
     thinking_dropdown: Gtk.DropDown = Gtk.Template.Child()
+    model_summary: Gtk.Label = Gtk.Template.Child()
+    model_summary_cell = Gtk.Template.Child()
     entry: Gtk.Entry = Gtk.Template.Child()
     send_button: Gtk.Button = Gtk.Template.Child()
     
@@ -143,8 +146,19 @@ class ChatInput(Gtk.Box):
         self.image_support = supports(details, 'vision')
         self.tool_support = supports(details, 'tools')
         self._set_thinking_options(details)
+        self._show_summary('' if loading else ' · '.join(summary_parts(details)), bool(prices(details)))
         self.update_capability_controls()
         self.emit('capabilities-changed')
+
+    def _show_summary(self, text, priced):
+        """The line beside the selector that describes the selected model; gone when there is nothing to say."""
+        self.model_summary.set_text(text)
+        self.model_summary.set_tooltip_text(
+            _('Prompt and completion prices in US dollars per million tokens, as listed when the model list was read.')
+            if text and priced else None)
+        self.model_summary_cell.set_visible(bool(text))
+        # Read out with the selector, which is where the focus is.
+        self.model_dropdown.update_property([Gtk.AccessibleProperty.DESCRIPTION], [text])
 
     def update_capability_controls(self):
         self.attach_button.set_sensitive(self.get_selected_model() is not None and
@@ -156,15 +170,14 @@ class ChatInput(Gtk.Box):
         elif self.capabilities_loading:
             notice = _('Checking image support…')
         elif self.image_support is False:
-            notice = _('This model does not support images.')
-            if self.has_draft_images():
-                notice += ' ' + _('Remove draft images or select a vision model to send.')
-            if self.has_history_images:
-                notice += ' ' + _('Earlier images remain saved; only text history will be sent.')
-        elif self.image_support is None:
-            notice = _('Image support unknown.') if self.get_selected_model() else ''
+            # The summary beside the selector says the model takes no images; this says what that stops.
+            needed = ([_('Remove draft images or select a vision model to send.')] if self.has_draft_images() else []) + \
+                     ([_('Earlier images remain saved; only text history will be sent.')] if self.has_history_images else [])
+            notice = ' '.join([_('This model does not support images.')] + needed) if needed else ''
         else:
             notice = ''
+        refused = self.image_support is False and not self.capabilities_loading and self.get_selected_model()
+        self.attach_button.set_tooltip_text(_('This model does not support images.') if refused else _('Attach Image'))
         self.capability_notice.set_text(notice)
         self.capability_notice.set_visible(bool(notice))
         self.set_running(self._running)

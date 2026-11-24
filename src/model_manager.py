@@ -7,6 +7,7 @@ import json
 from datetime import datetime
 
 
+from .model_summary import capability_parts, price_lines
 from .services import host_key, model_key
 
 
@@ -498,13 +499,23 @@ class ModelManagerDialog(Adw.Dialog):
                 label = k.replace("_", " ").title()
                 add_field(_(label), show_data[k])
 
+        # Shapes the application reads, not text: said in words, or left to the fields that hold the same.
+        worded = {'pricing': (_('Pricing'), '\n'.join(price_lines(show_data)))}
+        if isinstance(show_data.get('supports'), dict) and 'capabilities' not in show_data:
+            worded['supports'] = (_('Capabilities'), ', '.join(capability_parts(show_data)))
+        parameters = show_data.get('supported_parameters')
+        if isinstance(parameters, list) and all(isinstance(name, str) for name in parameters):
+            worded['supported_parameters'] = (_('Supported Parameters'), ', '.join(parameters))
+        for label, value in worded.values():
+            add_field(label, value)
+
         # Add everything else from both sources that hasn't been added yet
         merged = tag_data.copy()
         merged.update(show_data)
         
         # We'll also handle the collapsible ones later
         collapsible_keys = ["template", "license", "modelfile", "model_info"]
-        already_added = set(tag_keys) | set(show_keys) | set(collapsible_keys) | {"details", "tensors"}
+        already_added = set(tag_keys) | set(show_keys) | set(collapsible_keys) | {"details", "tensors", "advisory", "thinking_levels"} | set(worded)
         
         for k, v in merged.items():
             if k not in already_added:
@@ -656,3 +667,5 @@ def _dummy_extractions():
     _("Model Info")
     _("Context Length")
     _("Max Context Length")
+    _("Max Completion Tokens")
+    _("Reasoning")

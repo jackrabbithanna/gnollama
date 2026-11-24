@@ -70,6 +70,9 @@ class ViewState:
     knowledge: dict = field(default_factory=dict)
     query_override: str = ''
     draft_settings: dict = field(default_factory=dict)
+    # What the panel holds for options the host or model lacks, as typed and under the names a chat's
+    # options use. Kept so it applies again on a host and model that take it.
+    unsent: dict = field(default_factory=dict)
     # Stored keys this version does not know, kept so they survive a save.
     extra: dict = field(default_factory=dict)
 
@@ -106,6 +109,8 @@ class RequestSettings:
         data.update(_values(self.wire))
         view = _values(self.view)
         del view['extra']
+        if not view['unsent']:
+            del view['unsent']  # A record from before these were kept is written back unchanged.
         if sparse:
             defaults = _values(ViewState())
             view = {k: v for k, v in view.items() if k == 'show_stats' or v != defaults[k]}
@@ -129,7 +134,8 @@ class RequestSettings:
 
     # A chat stores sampling options at the top level beside the panel state.
     # The output format and tool definitions are not stored; the panel derives
-    # them from the schema and tools text when a request is sent.
+    # them from the schema and tools text when a request is sent. Values that
+    # were not sent are stored apart, under `unsent`.
 
     def to_chat_options(self):
         data = copy.deepcopy(self.view.extra)
@@ -139,6 +145,8 @@ class RequestSettings:
                     output_mode=self.view.output_mode, schema_text=self.view.schema_text,
                     keep_alive=self.wire.keep_alive, tools_enabled=self.view.tools_enabled,
                     tools_text=self.view.tools_text, knowledge=copy.deepcopy(self.view.knowledge))
+        if self.view.unsent:
+            data['unsent'] = copy.deepcopy(self.view.unsent)
         return data
 
     @classmethod
@@ -148,7 +156,7 @@ class RequestSettings:
         thinking = data.pop('thinking_val', None)
         wire = _known(WireOptions, data, ('keep_alive', 'logprobs', 'top_logprobs'))
         view = _known(ViewState, data, ('show_stats', 'output_mode', 'schema_text', 'tools_enabled',
-                                        'tools_text', 'knowledge'))
+                                        'tools_text', 'knowledge', 'unsent'))
         return cls(None, WireOptions(options=options, thinking=thinking, **wire), ViewState(**view, extra=data))
 
 

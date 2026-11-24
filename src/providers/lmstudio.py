@@ -45,12 +45,16 @@ def describe(model):
     # Training for tool use is advice for the user; a model without it still takes tools.
     known = {name: reported[field] for name, field in (('vision', 'vision'), ('tools', 'trained_for_tool_use'))
              if isinstance(reported.get(field), bool)}
-    if known:
-        result['supports'] = known
+    if known.get('tools') is False:
+        result['advisory'] = ['tools']
     options = table(reported.get('reasoning')).get('allowed_options')
     if isinstance(options, list):
         result['thinking_levels'] = [LEVELS[option] for option in options
                                      if isinstance(option, str) and option in LEVELS]
+        # A model whose only option is off does not think.
+        known['thinking'] = any(level is not False for level in result['thinking_levels'])
+    if known:
+        result['supports'] = known
     loaded = model.get('loaded_instances')
     lengths = dict(context_length=table(table(loaded[0]).get('config')).get('context_length')
                    if isinstance(loaded, list) and loaded else None,

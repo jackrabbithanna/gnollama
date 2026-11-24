@@ -1712,9 +1712,6 @@ msgstr "Bu model görüntüleri desteklemiyor."
 msgid "Earlier images remain saved; only text history will be sent."
 msgstr "Önceki görüntüler kayıtlı kalır; yalnızca metin geçmişi gönderilir."
 
-#: src/widgets/chat_input.py:125
-msgid "Image support unknown."
-msgstr "Görüntü desteği bilinmiyor."
 
 #: src/widgets/chat_input.py:137
 msgid "Select a chat model"
@@ -3694,3 +3691,135 @@ msgstr "Bağlam uzunluğu"
 #: src/model_manager.py
 msgid "Max Context Length"
 msgstr "En fazla bağlam uzunluğu"
+
+#: src/model_summary.py
+msgid "Free"
+msgstr "Ücretsiz"
+
+#: src/model_summary.py
+msgid "${0} / ${1} per 1M tokens"
+msgstr "1 M token başına ${0} / ${1}"
+
+#: src/model_summary.py
+msgid "No images"
+msgstr "Görüntü yok"
+
+#: src/model_summary.py
+msgid "Tools"
+msgstr "Araçlar"
+
+#: src/model_summary.py
+msgid "No tools"
+msgstr "Araç yok"
+
+#: src/model_summary.py
+msgid "No thinking"
+msgstr "Düşünme yok"
+
+#: src/model_summary.py
+msgid "Not trained for tools"
+msgstr "Araçlar için eğitilmemiş"
+
+#: src/model_summary.py
+msgid "{0}M"
+msgstr "{0} M"
+
+#: src/model_summary.py
+msgid "{0}K"
+msgstr "{0}K"
+
+#: src/model_summary.py
+msgid "{0} context"
+msgstr "{0} bağlam"
+
+#: src/model_summary.py
+msgid "{0} context max"
+msgstr "En fazla {0} bağlam"
+
+#: src/model_summary.py
+msgid "Prompt: ${0} per 1M tokens"
+msgstr "Girdi: 1 M token başına ${0}"
+
+#: src/model_summary.py
+msgid "Completion: ${0} per 1M tokens"
+msgstr "Çıktı: 1 M token başına ${0}"
+
+#: src/model_summary.py
+msgid "Cache read: ${0} per 1M tokens"
+msgstr "Önbellek okuma: 1 M token başına ${0}"
+
+#: src/model_summary.py
+msgid "Cache write: ${0} per 1M tokens"
+msgstr "Önbellek yazma: 1 M token başına ${0}"
+
+#: src/model_summary.py
+msgid "Cache write, kept one hour: ${0} per 1M tokens"
+msgstr "Önbellek yazma, bir saat saklanır: 1 M token başına ${0}"
+
+#: src/model_summary.py
+msgid "Reasoning: ${0} per 1M tokens"
+msgstr "Düşünme: 1 M token başına ${0}"
+
+#: src/model_summary.py
+msgid "Image input: ${0} per 1M tokens"
+msgstr "Görüntü girdisi: 1 M token başına ${0}"
+
+#: src/model_summary.py
+msgid "Audio input: ${0} per 1M tokens"
+msgstr "Ses girdisi: 1 M token başına ${0}"
+
+#: src/model_summary.py
+msgid "Cached audio input: ${0} per 1M tokens"
+msgstr "Önbellekteki ses girdisi: 1 M token başına ${0}"
+
+#: src/model_summary.py
+msgid "Image output: ${0} per 1M tokens"
+msgstr "Görüntü çıktısı: 1 M token başına ${0}"
+
+#: src/model_summary.py
+msgid "Audio output: ${0} per 1M tokens"
+msgstr "Ses çıktısı: 1 M token başına ${0}"
+
+#: src/model_summary.py
+msgid "Web search: ${0} per search"
+msgstr "Web araması: arama başına ${0}"
+
+#: src/model_summary.py
+msgid "Request: ${0} per request"
+msgstr "İstek: istek başına ${0}"
+
+#: src/model_summary.py
+msgid "{0}: ${1}"
+msgstr "{0}: ${1}"
+
+#: src/model_summary.py
+msgid "Prices are as listed when this was read; they can change."
+msgstr "Fiyatlar okunduğu andaki listeye göredir; değişebilir."
+
+#: src/widgets/chat_input.py
+msgid "Prompt and completion prices in US dollars per million tokens, as listed when the model list was read."
+msgstr "Girdi ve çıktı fiyatları, model listesi okunduğunda listelendiği şekliyle, milyon token başına ABD doları olarak."
+
+#: src/model_manager.py
+msgid "Pricing"
+msgstr "Fiyatlandırma"
+
+#: src/model_manager.py
+msgid "Supported Parameters"
+msgstr "Desteklenen parametreler"
+
+#: src/model_manager.py
+msgid "Max Completion Tokens"
+msgstr "En fazla çıktı tokeni"
+
+#: src/model_manager.py
+msgid "Reasoning"
+msgstr "Düşünme"
+
+#: src/widgets/options_panel.py
+msgid "Not available for this model."
+msgstr "Bu model için kullanılamaz."
+
+#: src/widgets/comparison_view.py
+msgid "Not available for every target."
+msgstr "Her hedef için kullanılamaz."

@@ -14,7 +14,7 @@ PERSISTENCE = {'storage.py', 'database.py', 'library_repository.py', 'history.py
 HEADLESS = ['app_context.py', 'chat_controller.py', 'chat_store.py', 'collections_store.py', 'comparison.py',
             'connections.py', 'context.py', 'credentials.py', 'database.py', 'drafts.py', 'export.py',
             'history.py', 'knowledge.py', 'knowledge_store.py', 'library_repository.py',
-            'model_conversation.py', 'model_conversation_store.py', 'records.py', 'request_runner.py',
+            'model_conversation.py', 'model_conversation_store.py', 'model_summary.py', 'records.py', 'request_runner.py',
             'services.py', 'session.py', 'storage.py', 'store_common.py', 'structured.py', 'tool_calling.py',
             'vectors.py', 'web_import.py', 'web_store.py', 'workspace_store.py', 'writer.py',
             'providers/__init__.py', 'providers/base.py', 'providers/lmstudio.py', 'providers/ollama.py',

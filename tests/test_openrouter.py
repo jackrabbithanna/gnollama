@@ -14,8 +14,8 @@ from test_openai import USER, Handler
 PNG = 'iVBORw0KGgoAAAAAAAAAAAAAAAAAAAAA'
 TEXT, VISION, EFFORTS = 'inference-net/schematron-v2-turbo', 'mistralai/pixtral-large-2502', 'thinkingmachines/inkling-2-mini'
 MANDATORY, ALWAYS, SWITCH = 'google/gemini-4-neon', 'liquid/lfm-3-1.7b', 'tencent/hy4-flash'
-AUDIO, ROUTER = 'google/lyria-3-pro-preview', 'openrouter/auto'
-LISTED = [TEXT, VISION, EFFORTS, MANDATORY, ALWAYS, SWITCH, AUDIO, ROUTER]
+AUDIO, ROUTER, FREE = 'google/lyria-3-pro-preview', 'openrouter/auto', 'nvidia/nemotron-3.5-lightning:free'
+LISTED = [TEXT, VISION, EFFORTS, MANDATORY, ALWAYS, SWITCH, AUDIO, ROUTER, FREE]
 
 
 class Catalog(Loopback):
@@ -50,14 +50,16 @@ class ModelTests(Catalog, KeyChecks, unittest.TestCase):
                          [name for name in LISTED if name not in (AUDIO, VISION)])
         with self.assertRaisesRegex(ProviderError, 'no longer available'):
             self.provider().show_model(VISION)
-        self.assertEqual(self.provider().probe(), 'Connected\nAvailable models: 6')
+        self.assertEqual(self.provider().probe(), 'Connected\nAvailable models: 7')
 
     def test_details_are_a_complete_capability_list(self):
         show = self.provider().show_model
         text = show(TEXT)
         self.assertEqual(text, {'capabilities': ['completion'], 'reasoning': None, 'context_length': 128000,
                                 'max_completion_tokens': 8192,
-                                'supported_parameters': self.entry(TEXT)['supported_parameters']})
+                                'supported_parameters': self.entry(TEXT)['supported_parameters'],
+                                'pricing': {'prompt': '0.00000003', 'completion': '0.00000015',
+                                            'input_cache_read': '0.00000003'}})
         self.assertEqual([supports(text, name) for name in ('vision', 'tools', 'thinking')], [False] * 3)
         self.assertEqual(show(VISION)['capabilities'], ['completion', 'vision'])
         efforts = show(EFFORTS)
@@ -196,8 +198,10 @@ class HostTests(Catalog, HostFixture, unittest.TestCase):
     def test_composer_shows_what_the_catalog_says(self):
         tab = self.make_tab(TEXT)
         self.assertEqual(self.server.received[0], ('/api/v1/models', None, 'Bearer sk-or-test'))
-        without = 'This model does not support images.'
+        # The summary beside the selector says what the model lacks; the notice is for what stops a send.
+        without = ''
         self.assertEqual(self.shown(tab.chat_input), (False, False, without, False, [None]))
+        self.assertEqual(tab.chat_input.attach_button.get_tooltip_text(), 'This model does not support images.')
         self.assertFalse(tab.chat_input.thinking_dropdown.get_sensitive())
         self.assertFalse(tab.options_panel.provider_notice.get_visible())
         for model, shown in ((VISION, (True, False, '', True, [None])),
@@ -236,7 +240,25 @@ class HostTests(Catalog, HostFixture, unittest.TestCase):
                 check(self.targets(EFFORTS, MANDATORY), thinking='max')
         with self.assertRaisesRegex(ValueError, 'must support the shared images'):
             self.prepare(self.targets(VISION, TEXT), images=[PNG])
-        self.prepare(self.targets(VISION, EFFORTS), images=[PNG], options={'top_k': 5}, format='json')
+        self.prepare(self.targets(SWITCH, EFFORTS), images=[PNG], options={'top_k': 5}, format='json')
+
+
+class PricingTests(Catalog, unittest.TestCase):
+    def test_prices_arrive_as_the_catalog_gave_them(self):
+        show = self.provider().show_model
+        self.assertEqual(show(EFFORTS)['pricing'], {'prompt': '0.000000075', 'completion': '0.0000003',
+                                                    'input_cache_read': '0.000000015'})
+        self.assertEqual(show(FREE)['pricing'], {'prompt': '0', 'completion': '0'})
+        self.assertEqual(show(ROUTER)['pricing'], {'prompt': '-1', 'completion': '-1'})
+        self.assertEqual(show(MANDATORY)['pricing'], self.entry(MANDATORY)['pricing'])
+        # Prices at another size of prompt are a list, not a price, and are left out with anything else that is not text.
+        self.entry(TEXT)['pricing'].update(overrides=[{'min_prompt_tokens': 272000, 'prompt': '0.000016'}],
+                                           request=0.5, image=None)
+        self.assertEqual(set(show(TEXT)['pricing']), {'prompt', 'completion', 'input_cache_read'})
+        for absent in (None, [], {}, {'overrides': []}):
+            with self.subTest(pricing=absent):
+                self.entry(TEXT)['pricing'] = absent
+                self.assertNotIn('pricing', show(TEXT))
 
 
 if __name__ == '__main__':

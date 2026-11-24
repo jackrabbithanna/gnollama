@@ -46,6 +46,10 @@ PARTICIPANT = dict(
 
 FUTURE = {'future_option': {'nested': [1, 2]}}
 
+# What a panel held for a host that took none of it, as OptionsPanel.get_unsent gives it.
+UNSENT = dict(top_k='40', min_p='0.05', num_ctx='8192', keep_alive=300, output_mode='schema',
+              tools_enabled=True, logprobs=True, top_logprobs='3', seed='7', stop='END, STOP')
+
 # Anything a provider is sent besides the wire options, and the names those take, for each API.
 ENVELOPE = {'model', 'messages', 'prompt', 'stream', 'images'}
 WIRE_NAMES = {'options', 'system', 'think', 'format', 'keep_alive', 'tools', 'logprobs', 'top_logprobs'}
@@ -89,6 +93,32 @@ class StoredSettingsTests(unittest.TestCase):
         self.assertEqual(settings.wire.options, {'temperature': 0.2, 'num_ctx': 4096, 'stop': ['END']})
         self.assertEqual(settings.wire.thinking, 'high')
         self.assertFalse(settings.view.show_stats)
+        # Records from before unsent values were kept have none, and gain no key for them.
+        self.assertEqual(settings.view.unsent, {})
+        for stored in (COMPARISON_TARGET, PARTICIPANT):
+            self.assertEqual(RequestSettings.from_stored(stored).view.unsent, {})
+
+    def test_values_held_for_a_lacking_host_are_stored_apart_and_never_sent(self):
+        settings = RequestSettings.from_chat_options(dict(CHAT_OPTIONS, unsent=UNSENT, **FUTURE))
+        self.assertEqual(settings.view.unsent, UNSENT)
+        self.assertEqual(settings.view.extra, FUTURE)
+        # What is sent is as it was without them.
+        self.assertEqual(settings.wire, RequestSettings.from_chat_options(CHAT_OPTIONS).wire)
+        self.assertEqual(settings.to_chat_options(), dict(CHAT_OPTIONS, unsent=UNSENT, **FUTURE))
+        self.assertEqual(RequestSettings.from_chat_options(settings.to_chat_options()), settings)
+        self.assertEqual(settings.api_details(), RequestSettings.from_chat_options(CHAT_OPTIONS).api_details())
+        # A stored null or empty table is none, and is not written back.
+        for empty in (None, {}):
+            self.assertEqual(RequestSettings.from_chat_options(dict(CHAT_OPTIONS, unsent=empty)).to_chat_options(),
+                             CHAT_OPTIONS)
+        for stored, sparse in ((COMPARISON_TARGET, False), (PARTICIPANT, True)):
+            flat = RequestSettings.from_stored(dict(stored, unsent=UNSENT))
+            self.assertEqual(flat.view.unsent, UNSENT)
+            self.assertEqual(flat.to_stored(sparse=sparse), dict(stored, unsent=UNSENT))
+            self.assertEqual(flat.api_details(), RequestSettings.from_stored(stored).api_details())
+        composed = ComposerInput(host={'id': 'host-id'}, model='one', options={'seed': 1}, unsent=UNSENT)
+        self.assertEqual(composed.settings('http://localhost:11434').view.unsent, UNSENT)
+        self.assertEqual(composed.settings('http://localhost:11434').wire.options, {'seed': 1})
 
     def test_unknown_stored_keys_survive_and_are_never_sent(self):
         chat = RequestSettings.from_chat_options(dict(CHAT_OPTIONS, **FUTURE))
@@ -170,8 +200,10 @@ class StoredSettingsTests(unittest.TestCase):
         extras = replace(wire, keep_alive=None, options=dict(wire.options, top_k=5, min_p=0.1))
         lmstudio = dict(openai, wire=extras, names=openai['names'] | {'top_k', 'min_p'},
                         sent=dict(openai['sent'], top_k=5, min_p=0.1, reasoning_effort='medium'))
-        openrouter = dict(lmstudio, names=lmstudio['names'] - {'reasoning_effort'} | {'reasoning'},
-                          sent=dict(lmstudio['sent'], reasoning={'enabled': True}))
+        # It also names how the service may route, so no upstream leaves out an option sent.
+        openrouter = dict(lmstudio, names=lmstudio['names'] - {'reasoning_effort'} | {'reasoning', 'provider'},
+                          sent=dict(lmstudio['sent'], reasoning={'enabled': True},
+                                    provider={'require_parameters': True}))
         del openrouter['sent']['reasoning_effort']
         cases = dict(ollama=ollama, ollama_cloud=ollama, openai=openai, lmstudio=lmstudio, openrouter=openrouter)
         self.assertEqual(set(cases), set(PROVIDERS), 'every provider has a case here')

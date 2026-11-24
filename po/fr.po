@@ -1758,9 +1758,6 @@ msgstr "Ce modèle ne prend pas en charge les images."
 msgid "Earlier images remain saved; only text history will be sent."
 msgstr "Les images précédentes restent enregistrées ; seul l’historique textuel sera envoyé."
 
-#: src/widgets/chat_input.py:125
-msgid "Image support unknown."
-msgstr "Prise en charge des images inconnue."
 
 #: src/widgets/chat_input.py:137
 msgid "Select a chat model"
@@ -3773,3 +3770,135 @@ msgstr "Longueur du contexte"
 #: src/model_manager.py
 msgid "Max Context Length"
 msgstr "Longueur maximale du contexte"
+
+#: src/model_summary.py
+msgid "Free"
+msgstr "Gratuit"
+
+#: src/model_summary.py
+msgid "${0} / ${1} per 1M tokens"
+msgstr "${0} / ${1} par million de jetons"
+
+#: src/model_summary.py
+msgid "No images"
+msgstr "Pas d’images"
+
+#: src/model_summary.py
+msgid "Tools"
+msgstr "Outils"
+
+#: src/model_summary.py
+msgid "No tools"
+msgstr "Pas d’outils"
+
+#: src/model_summary.py
+msgid "No thinking"
+msgstr "Pas de réflexion"
+
+#: src/model_summary.py
+msgid "Not trained for tools"
+msgstr "Non entraîné pour les outils"
+
+#: src/model_summary.py
+msgid "{0}M"
+msgstr "{0} M"
+
+#: src/model_summary.py
+msgid "{0}K"
+msgstr "{0}K"
+
+#: src/model_summary.py
+msgid "{0} context"
+msgstr "Contexte {0}"
+
+#: src/model_summary.py
+msgid "{0} context max"
+msgstr "Contexte max. {0}"
+
+#: src/model_summary.py
+msgid "Prompt: ${0} per 1M tokens"
+msgstr "Entrée : ${0} par million de jetons"
+
+#: src/model_summary.py
+msgid "Completion: ${0} per 1M tokens"
+msgstr "Sortie : ${0} par million de jetons"
+
+#: src/model_summary.py
+msgid "Cache read: ${0} per 1M tokens"
+msgstr "Lecture du cache : ${0} par million de jetons"
+
+#: src/model_summary.py
+msgid "Cache write: ${0} per 1M tokens"
+msgstr "Écriture du cache : ${0} par million de jetons"
+
+#: src/model_summary.py
+msgid "Cache write, kept one hour: ${0} per 1M tokens"
+msgstr "Écriture du cache, conservée une heure : ${0} par million de jetons"
+
+#: src/model_summary.py
+msgid "Reasoning: ${0} per 1M tokens"
+msgstr "Réflexion : ${0} par million de jetons"
+
+#: src/model_summary.py
+msgid "Image input: ${0} per 1M tokens"
+msgstr "Entrée image : ${0} par million de jetons"
+
+#: src/model_summary.py
+msgid "Audio input: ${0} per 1M tokens"
+msgstr "Entrée audio : ${0} par million de jetons"
+
+#: src/model_summary.py
+msgid "Cached audio input: ${0} per 1M tokens"
+msgstr "Entrée audio en cache : ${0} par million de jetons"
+
+#: src/model_summary.py
+msgid "Image output: ${0} per 1M tokens"
+msgstr "Sortie image : ${0} par million de jetons"
+
+#: src/model_summary.py
+msgid "Audio output: ${0} per 1M tokens"
+msgstr "Sortie audio : ${0} par million de jetons"
+
+#: src/model_summary.py
+msgid "Web search: ${0} per search"
+msgstr "Recherche web : ${0} par recherche"
+
+#: src/model_summary.py
+msgid "Request: ${0} per request"
+msgstr "Requête : ${0} par requête"
+
+#: src/model_summary.py
+msgid "{0}: ${1}"
+msgstr "{0} : ${1}"
+
+#: src/model_summary.py
+msgid "Prices are as listed when this was read; they can change."
+msgstr "Prix tels qu’indiqués lors de la lecture ; ils peuvent changer."
+
+#: src/widgets/chat_input.py
+msgid "Prompt and completion prices in US dollars per million tokens, as listed when the model list was read."
+msgstr "Prix d’entrée et de sortie en dollars américains par million de jetons, tels qu’indiqués lors de la lecture de la liste des modèles."
+
+#: src/model_manager.py
+msgid "Pricing"
+msgstr "Tarifs"
+
+#: src/model_manager.py
+msgid "Supported Parameters"
+msgstr "Paramètres pris en charge"
+
+#: src/model_manager.py
+msgid "Max Completion Tokens"
+msgstr "Jetons de sortie maximum"
+
+#: src/model_manager.py
+msgid "Reasoning"
+msgstr "Réflexion"
+
+#: src/widgets/options_panel.py
+msgid "Not available for this model."
+msgstr "Non disponible pour ce modèle."
+
+#: src/widgets/comparison_view.py
+msgid "Not available for every target."
+msgstr "Non disponible pour toutes les cibles."

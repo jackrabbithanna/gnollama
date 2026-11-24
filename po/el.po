@@ -1751,9 +1751,6 @@ msgstr "Αυτό το μοντέλο δεν υποστηρίζει εικόνε�
 msgid "Earlier images remain saved; only text history will be sent."
 msgstr "Οι προηγούμενες εικόνες παραμένουν αποθηκευμένες· θα σταλεί μόνο το ιστορικό κειμένου."
 
-#: src/widgets/chat_input.py:125
-msgid "Image support unknown."
-msgstr "Άγνωστη υποστήριξη εικόνων."
 
 #: src/widgets/chat_input.py:137
 msgid "Select a chat model"
@@ -3753,3 +3750,135 @@ msgstr "Μήκος συμφραζομένων"
 #: src/model_manager.py
 msgid "Max Context Length"
 msgstr "Μέγιστο μήκος συμφραζομένων"
+
+#: src/model_summary.py
+msgid "Free"
+msgstr "Δωρεάν"
+
+#: src/model_summary.py
+msgid "${0} / ${1} per 1M tokens"
+msgstr "${0} / ${1} ανά 1 εκ. token"
+
+#: src/model_summary.py
+msgid "No images"
+msgstr "Χωρίς εικόνες"
+
+#: src/model_summary.py
+msgid "Tools"
+msgstr "Εργαλεία"
+
+#: src/model_summary.py
+msgid "No tools"
+msgstr "Χωρίς εργαλεία"
+
+#: src/model_summary.py
+msgid "No thinking"
+msgstr "Χωρίς σκέψη"
+
+#: src/model_summary.py
+msgid "Not trained for tools"
+msgstr "Δεν έχει εκπαιδευτεί για εργαλεία"
+
+#: src/model_summary.py
+msgid "{0}M"
+msgstr "{0} εκ."
+
+#: src/model_summary.py
+msgid "{0}K"
+msgstr "{0}K"
+
+#: src/model_summary.py
+msgid "{0} context"
+msgstr "Συμφραζόμενα {0}"
+
+#: src/model_summary.py
+msgid "{0} context max"
+msgstr "Μέγ. συμφραζόμενα {0}"
+
+#: src/model_summary.py
+msgid "Prompt: ${0} per 1M tokens"
+msgstr "Είσοδος: ${0} ανά 1 εκ. token"
+
+#: src/model_summary.py
+msgid "Completion: ${0} per 1M tokens"
+msgstr "Έξοδος: ${0} ανά 1 εκ. token"
+
+#: src/model_summary.py
+msgid "Cache read: ${0} per 1M tokens"
+msgstr "Ανάγνωση κρυφής μνήμης: ${0} ανά 1 εκ. token"
+
+#: src/model_summary.py
+msgid "Cache write: ${0} per 1M tokens"
+msgstr "Εγγραφή κρυφής μνήμης: ${0} ανά 1 εκ. token"
+
+#: src/model_summary.py
+msgid "Cache write, kept one hour: ${0} per 1M tokens"
+msgstr "Εγγραφή κρυφής μνήμης, διατήρηση μία ώρα: ${0} ανά 1 εκ. token"
+
+#: src/model_summary.py
+msgid "Reasoning: ${0} per 1M tokens"
+msgstr "Σκέψη: ${0} ανά 1 εκ. token"
+
+#: src/model_summary.py
+msgid "Image input: ${0} per 1M tokens"
+msgstr "Είσοδος εικόνας: ${0} ανά 1 εκ. token"
+
+#: src/model_summary.py
+msgid "Audio input: ${0} per 1M tokens"
+msgstr "Είσοδος ήχου: ${0} ανά 1 εκ. token"
+
+#: src/model_summary.py
+msgid "Cached audio input: ${0} per 1M tokens"
+msgstr "Είσοδος ήχου από κρυφή μνήμη: ${0} ανά 1 εκ. token"
+
+#: src/model_summary.py
+msgid "Image output: ${0} per 1M tokens"
+msgstr "Έξοδος εικόνας: ${0} ανά 1 εκ. token"
+
+#: src/model_summary.py
+msgid "Audio output: ${0} per 1M tokens"
+msgstr "Έξοδος ήχου: ${0} ανά 1 εκ. token"
+
+#: src/model_summary.py
+msgid "Web search: ${0} per search"
+msgstr "Αναζήτηση ιστού: ${0} ανά αναζήτηση"
+
+#: src/model_summary.py
+msgid "Request: ${0} per request"
+msgstr "Αίτημα: ${0} ανά αίτημα"
+
+#: src/model_summary.py
+msgid "{0}: ${1}"
+msgstr "{0}: ${1}"
+
+#: src/model_summary.py
+msgid "Prices are as listed when this was read; they can change."
+msgstr "Οι τιμές είναι όπως αναγράφονταν κατά την ανάγνωση· μπορεί να αλλάξουν."
+
+#: src/widgets/chat_input.py
+msgid "Prompt and completion prices in US dollars per million tokens, as listed when the model list was read."
+msgstr "Τιμές εισόδου και εξόδου σε δολάρια ΗΠΑ ανά εκατομμύριο token, όπως αναγράφονταν όταν διαβάστηκε η λίστα μοντέλων."
+
+#: src/model_manager.py
+msgid "Pricing"
+msgstr "Τιμές"
+
+#: src/model_manager.py
+msgid "Supported Parameters"
+msgstr "Υποστηριζόμενες παράμετροι"
+
+#: src/model_manager.py
+msgid "Max Completion Tokens"
+msgstr "Μέγιστα token εξόδου"
+
+#: src/model_manager.py
+msgid "Reasoning"
+msgstr "Σκέψη"
+
+#: src/widgets/options_panel.py
+msgid "Not available for this model."
+msgstr "Δεν διατίθεται για αυτό το μοντέλο."
+
+#: src/widgets/comparison_view.py
+msgid "Not available for every target."
+msgstr "Δεν διατίθεται για όλους τους στόχους."

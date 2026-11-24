@@ -1,7 +1,7 @@
 """Shared host/model selection with optional participant settings."""
 from gettext import gettext as _
 from gi.repository import Gtk
-from ..chat_controller import ComposerInput
+from ..chat_controller import ComposerInput, ModelLimits
 from .chat_input import ChatInput
 from .options_panel import OptionsPanel
 
@@ -10,6 +10,7 @@ class TargetPicker(Gtk.Box):
     def __init__(self, context, changed, target=None, participant=False):
         super().__init__(orientation=Gtk.Orientation.VERTICAL, spacing=6, hexpand=True)
         self.participant = participant
+        self.context, self.limits = context, ModelLimits(context)
         self.panel = OptionsPanel()
         self.panel.storage = context.storage
         self.panel.update_hosts()
@@ -34,8 +35,6 @@ class TargetPicker(Gtk.Box):
             self.input.thinking_dropdown.connect('notify::selected', changed)
         def refresh(*args):
             host = self.panel.get_selected_host()
-            if participant:
-                self.panel.set_capabilities(context.capabilities(host))
             self.input.fetch_models(context.connection(host) if host else None,
                                     host_id=host['id'] if host else None)
             changed()
@@ -51,8 +50,18 @@ class TargetPicker(Gtk.Box):
             self.input.pending_model_selection = target.get('model')
         self.panel.host_dropdown.connect('notify::selected-item', refresh)
         self.input.model_dropdown.connect('notify::selected', lambda *args: changed())
-        self.input.connect('capabilities-changed', lambda *args: changed())
+        def limits_changed(*args):
+            if participant:
+                self.panel.set_capabilities(self.capabilities(), context.capabilities(self.panel.get_selected_host()))
+            changed()
+        # Emitted for every change of host or model, and again when a model's details arrive.
+        self.input.connect('capabilities-changed', limits_changed)
         refresh()
+
+    def capabilities(self):
+        """What the selected model can be sent, or None with no host; validation checks the same record."""
+        host = self.panel.get_selected_host()
+        return self.limits.of(host, self.input.get_selected_model()) if host else None
 
     def value(self):
         host = self.panel.get_selected_host()
@@ -67,8 +76,13 @@ class TargetPicker(Gtk.Box):
             host=self.panel.get_selected_host(), model=self.input.get_selected_model(),
             system=self.system_entry.read_draft() or None, options=self.panel.get_options_from_ui(),
             thinking=self.input.get_thinking_value(), request=dict(keep_alive=self.panel.get_keep_alive()),
-            logprobs=self.panel.logprobs_check.get_active(), top_logprobs=self.panel.get_logprobs(),
-            show_stats=self.panel.stats_check.get_active()).settings()
+            logprobs=self.panel.logprobs_enabled(), top_logprobs=self.panel.get_logprobs(),
+            show_stats=self.panel.stats_check.get_active(), unsent=self.held()).settings()
+
+    def held(self):
+        # A participant has no output mode or tools to hold.
+        return {key: value for key, value in self.panel.get_unsent().items()
+                if key not in ('output_mode', 'tools_enabled')}
 
     def close(self):
         self.input.cancel_fetches()

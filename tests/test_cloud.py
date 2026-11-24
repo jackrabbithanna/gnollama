@@ -563,7 +563,14 @@ class CloudUITests(CloudStorageFixture, unittest.TestCase):
         settings = options.get_request_settings()
         self.assertIsNone(settings['format'])
         self.assertIsNone(settings['keep_alive'])
+        # Both are kept for the chat's stored options, apart from what is sent.
+        self.assertEqual(options.get_unsent(), dict(output_mode='schema', keep_alive=-1))
+        options.keep_alive_dropdown.set_selected(5)
+        options.keep_alive_entry.set_text('45')
+        self.assertEqual(options.get_unsent(), dict(output_mode='schema', keep_alive='45'))
+        options.keep_alive_dropdown.set_selected(4)
         options.set_capabilities(OllamaProvider.capabilities)
+        self.assertEqual(options.get_unsent(), {})
         self.assertEqual(options.get_request_settings()['format'], {'type': 'object'})
         self.assertEqual(options.get_keep_alive(), -1)
 
@@ -590,6 +597,23 @@ class CloudUITests(CloudStorageFixture, unittest.TestCase):
         options.top_k_entry.set_text('not a number')
         self.assertEqual(options.get_options_from_ui(), {'top_p': 0.9})
         options.top_k_entry.set_text('40')
+        # Tool calling and logprobs are disabled the same way, and what was ticked is held, not sent.
+        options.tools_available = True
+        options.tools_check.set_active(True)
+        options.logprobs_check.set_active(True)
+        options.top_logprobs_entry.set_text('3')
+        options.set_capabilities(Capabilities())
+        for widget in (options.tools_check, options.tools_button, options.logprobs_check,
+                       options.top_logprobs_entry.get_parent()):
+            self.assertFalse(widget.get_sensitive())
+        self.assertEqual((options.tools_notice.get_text(), options.field_hints['top_logprobs_entry'][0].get_text()),
+                         ('Not available on this server.',) * 2)
+        self.assertEqual((options.get_tools_options()['tools_enabled'], options.logprobs_enabled(),
+                          options.get_logprobs()), (False, False, None))
+        self.assertEqual(options.get_unsent(), dict(top_k='40', min_p='0.05', num_ctx='8192', logprobs=True,
+                                                    top_logprobs='3', tools_enabled=True))
+        options.tools_check.set_active(False)
+        options.logprobs_check.set_active(False)
         options.set_capabilities(OllamaProvider.capabilities)
         self.assertEqual(options.get_options_from_ui(), dict(top_k=40, min_p=0.05, num_ctx=8192, top_p=0.9))
         self.assertEqual({name: options.field_hints[name][0].get_text() for name in fields}, hints)

@@ -110,16 +110,18 @@ class GenerationTab(Gtk.Box):
         self.options_box.prepend(self.chat_input.detach_thinking())
         def summary(*args):
             active = []
+            # Only what a request is sent with; a held value for an option the model lacks is not active.
             mode = self.options_panel.output_dropdown.get_selected_item()
-            if mode and self.options_panel.output_dropdown.get_selected():
+            if mode and self.options_panel.output_mode() != 'text':
                 active.append(mode.get_string())
-            if self.options_panel.tools_check.get_active():
+            if self.options_panel.get_tools_options()['tools_enabled']:
                 active.append(_('Tool Calling'))
             if self.chat_input.get_thinking_value() is not None:
                 active.append(_('Thinking'))
             self.advanced.set_label(_('Options') + (': ' + ', '.join(active) if active else ''))
         self.options_panel.watch_draft(summary)
         self.chat_input.thinking_dropdown.connect('notify::selected', summary)
+        self._summary = summary
         summary()
 
     # The window and tests read these; the controller owns them.
@@ -268,11 +270,20 @@ class GenerationTab(Gtk.Box):
         if not self.chat_input.discovery_enabled:
             return
         host = self.options_panel.get_selected_host()
-        limits = self.context.capabilities(host)
-        self.options_panel.set_capabilities(limits)
-        self.chat_input.set_unavailable(unavailable(limits, self.mode) if host else '')
+        self._show_limits()
+        self.chat_input.set_unavailable(unavailable(self.context.capabilities(host), self.mode) if host else '')
         self.chat_input.fetch_models(self.context.connection(host) if host else None,
                                      host_id=host['id'] if host else None)
+
+    def _show_limits(self):
+        """Offer in the panel what the selected host and model take; sending checks the same record."""
+        if not self.chat_input.discovery_enabled:
+            return  # Another view sets the panel for its own targets.
+        host = self.options_panel.get_selected_host()
+        self.options_panel.set_capabilities(self.controller.limits.of(host, self.chat_input.get_selected_model()),
+                                            self.context.capabilities(host))
+        if hasattr(self, '_summary'):
+            self._summary()
 
     def update_hosts(self):
         self.options_panel.update_hosts()
@@ -296,6 +307,7 @@ class GenerationTab(Gtk.Box):
             host = self.options_panel.get_selected_host()
             model = self.chat_input.get_selected_model()
             self.controller.check_target(host, model)
+            self._show_limits()
             self.controller.send(self._read_input(prompt, host, model, continuation),
                                  continuation=continuation, without_knowledge=without_knowledge)
         except InvalidTools as exc:
@@ -314,10 +326,10 @@ class GenerationTab(Gtk.Box):
             prompt=prompt, images=images, host=host, model=model,
             thinking=self.chat_input.get_thinking_value(), options=options, request=request,
             system=panel.system_prompt_entry.get_text().strip() or None,
-            logprobs=panel.logprobs_check.get_active(), top_logprobs=panel.get_logprobs(),
+            logprobs=panel.logprobs_enabled(), top_logprobs=panel.get_logprobs(),
             show_stats=panel.stats_check.get_active(),
             knowledge=copy.deepcopy(self.knowledge_control.options),
-            query_override=self.knowledge_control.query.get_text().strip(),
+            query_override=self.knowledge_control.query.get_text().strip(), unsent=panel.get_unsent(),
             image_support=self.chat_input.image_support,
             capabilities_loading=self.chat_input.capabilities_loading)
 
@@ -415,6 +427,7 @@ class GenerationTab(Gtk.Box):
         return bool(self.chat_input.pending_imports)
 
     def _tool_capabilities_changed(self, *args):
+        self._show_limits()
         self.options_panel.tool_support = self.chat_input.tool_support
         self.options_panel.tools_loading = self.chat_input.capabilities_loading
         self.options_panel.update_tools_notice()
@@ -425,7 +438,9 @@ class GenerationTab(Gtk.Box):
         self.controller.persist_options()
 
     def local_options(self):
-        return dict(self.options_panel.get_tools_options(), knowledge=copy.deepcopy(self.knowledge_control.options))
+        # With what is held and not sent, or a ticked box the model cannot take would be stored as cleared.
+        return dict(self.options_panel.get_tools_options(), knowledge=copy.deepcopy(self.knowledge_control.options),
+                    unsent=self.options_panel.get_unsent())
 
     def _add_tool_view(self, message, bubble):
         if not message or bubble is None or not (message.get('response_metadata') or {}).get('tool_round'):

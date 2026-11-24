@@ -1,5 +1,5 @@
 """What every model provider offers, and what each one can do."""
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, fields, replace
 from gettext import gettext as _
 from typing import Any, ClassVar
 from urllib.parse import urlsplit
@@ -24,6 +24,8 @@ class Capabilities:
     thinking_text: bool = False    # returns what the model thought
     timing_stats: bool = False     # load, prompt, and generation durations
     model_verification: bool = False  # a content digest, not a fingerprint
+    # Sampling options one model does not take, by the names in a WireOptions. No provider lacks them.
+    left_out: tuple = ()
     # Untranslated; shown beside the options this provider lacks.
     options_notice: str = ''
 
@@ -38,15 +40,27 @@ class Capabilities:
             (self.keep_alive, wire.keep_alive is not None, _('Model Retention')),
             (self.tools, bool(wire.tools), _('Tool Calling')),
             (self.logprobs, bool(wire.logprobs), _('Return token probabilities (logprobs)')),
-        ]
+        ] + [(False, name in options, _(label)) for name, label in OPTION_LABELS.items() if name in self.left_out]
         return [name for offered, used, name in checks if used and not offered]
 
-    def require(self, wire, host):
-        """Raise naming what `wire` asks of the host record `host` that it cannot do."""
+    def require(self, wire, host, model=None):
+        """Raise naming what `wire` asks of the host record `host`, or of `model` on it, that it cannot do."""
         missing = self.unsupported(wire)
         if missing:
+            name = host.get('name') or host.get('hostname', '')
             raise ValueError(_('{host} does not support: {options}.').format(
-                host=host.get('name') or host.get('hostname', ''), options=', '.join(missing)))
+                host=f'{name} ({model})' if model else name, options=', '.join(missing)))
+
+    def both(self, other):
+        """What this record and `other` both offer, for one request sent to a model of each."""
+        flags = {f.name: getattr(self, f.name) and getattr(other, f.name) for f in fields(self) if f.type is bool}
+        return replace(self, **flags, left_out=tuple(dict.fromkeys(self.left_out + other.left_out)),
+                       options_notice='')
+
+
+# The sampling options without a flag, and the names the options panel gives them.
+OPTION_LABELS = {'temperature': 'Temperature', 'top_p': 'Top P', 'seed': 'Seed', 'stop': 'Stop sequences',
+                 'num_predict': 'Maximum output tokens'}
 
 
 def supports(details, name):
@@ -63,6 +77,16 @@ def supports(details, name):
         return known[name]
     listed = details.get('capabilities')
     return name in listed if isinstance(listed, list) else None
+
+
+def advisory(details, name):
+    """Whether the False that `supports` gives for `name` is the server's advice, not a refusal.
+
+    A provider lists such names under `advisory`. The model still accepts what
+    they name, so nothing is blocked; only the wording differs.
+    """
+    listed = details.get('advisory') if isinstance(details, dict) else None
+    return isinstance(listed, list) and name in listed
 
 
 def _address(url, suffix):
@@ -144,6 +168,22 @@ class Provider:
 
     def _unavailable(self, *args, **kwargs):
         raise NotImplementedError(f'{type(self).__name__} does not offer this operation')
+
+    def model_capabilities(self, details):
+        """What one model can be sent, given what `show_model` returned for it.
+
+        Never more than the provider's own record, which also stands while the
+        details are loading or could not be read (None).
+        """
+        return self.capabilities
+
+    def check(self, wire, host, model, details):
+        """Raise naming what `wire` asks that the host record `host`, or `model` on it, cannot do.
+
+        Every path that sends a request asks here, with the details the options panel was shown.
+        """
+        self.capabilities.require(wire, host)
+        self.model_capabilities(details).require(wire, host, model)
 
     list_models = show_model = chat = generate = embed = _unavailable
     pull = delete = running = unload = probe = _unavailable

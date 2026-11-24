@@ -61,8 +61,7 @@ def prepare_run(context, active, prompt, images, settings, targets, draft_id, re
         # Asked apart from the list: some servers report capabilities one by one.
         if images and supports(details, 'vision') is False:
             raise ValueError(_('Every target must support the shared images.'))
-        limits = connection.capabilities
-        limits.require(wire, host)
+        connection.check(wire, host, target['model'], details)
         family = (details or {}).get('details', {}).get('family', '').replace('-', '').lower()
         if family == 'gptoss' and wire.thinking not in (None, 'low', 'medium', 'high'):
             raise ValueError(_('The selected thinking level is incompatible with a target.'))

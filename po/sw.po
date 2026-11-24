@@ -1736,9 +1736,6 @@ msgstr "Modeli hii haichakati picha."
 msgid "Earlier images remain saved; only text history will be sent."
 msgstr "Picha za awali zimehifadhiwa; historia ya maandishi pekee ndiyo itakayotumwa."
 
-#: src/widgets/chat_input.py:125
-msgid "Image support unknown."
-msgstr "Uwezo wa kuchakata picha haujulikani."
 
 #: src/widgets/chat_input.py:137
 msgid "Select a chat model"
@@ -3729,3 +3726,135 @@ msgstr "Urefu wa muktadha"
 #: src/model_manager.py
 msgid "Max Context Length"
 msgstr "Urefu wa juu wa muktadha"
+
+#: src/model_summary.py
+msgid "Free"
+msgstr "Bila malipo"
+
+#: src/model_summary.py
+msgid "${0} / ${1} per 1M tokens"
+msgstr "${0} / ${1} kwa tokeni milioni 1"
+
+#: src/model_summary.py
+msgid "No images"
+msgstr "Hakuna picha"
+
+#: src/model_summary.py
+msgid "Tools"
+msgstr "Zana"
+
+#: src/model_summary.py
+msgid "No tools"
+msgstr "Hakuna zana"
+
+#: src/model_summary.py
+msgid "No thinking"
+msgstr "Hakuna kufikiri"
+
+#: src/model_summary.py
+msgid "Not trained for tools"
+msgstr "Haijafunzwa kutumia zana"
+
+#: src/model_summary.py
+msgid "{0}M"
+msgstr "{0}M"
+
+#: src/model_summary.py
+msgid "{0}K"
+msgstr "{0}K"
+
+#: src/model_summary.py
+msgid "{0} context"
+msgstr "Muktadha {0}"
+
+#: src/model_summary.py
+msgid "{0} context max"
+msgstr "Muktadha wa juu {0}"
+
+#: src/model_summary.py
+msgid "Prompt: ${0} per 1M tokens"
+msgstr "Ingizo: ${0} kwa tokeni milioni 1"
+
+#: src/model_summary.py
+msgid "Completion: ${0} per 1M tokens"
+msgstr "Tokeo: ${0} kwa tokeni milioni 1"
+
+#: src/model_summary.py
+msgid "Cache read: ${0} per 1M tokens"
+msgstr "Kusoma akiba: ${0} kwa tokeni milioni 1"
+
+#: src/model_summary.py
+msgid "Cache write: ${0} per 1M tokens"
+msgstr "Kuandika akiba: ${0} kwa tokeni milioni 1"
+
+#: src/model_summary.py
+msgid "Cache write, kept one hour: ${0} per 1M tokens"
+msgstr "Kuandika akiba, huhifadhiwa saa moja: ${0} kwa tokeni milioni 1"
+
+#: src/model_summary.py
+msgid "Reasoning: ${0} per 1M tokens"
+msgstr "Kufikiri: ${0} kwa tokeni milioni 1"
+
+#: src/model_summary.py
+msgid "Image input: ${0} per 1M tokens"
+msgstr "Ingizo la picha: ${0} kwa tokeni milioni 1"
+
+#: src/model_summary.py
+msgid "Audio input: ${0} per 1M tokens"
+msgstr "Ingizo la sauti: ${0} kwa tokeni milioni 1"
+
+#: src/model_summary.py
+msgid "Cached audio input: ${0} per 1M tokens"
+msgstr "Ingizo la sauti lililo kwenye akiba: ${0} kwa tokeni milioni 1"
+
+#: src/model_summary.py
+msgid "Image output: ${0} per 1M tokens"
+msgstr "Tokeo la picha: ${0} kwa tokeni milioni 1"
+
+#: src/model_summary.py
+msgid "Audio output: ${0} per 1M tokens"
+msgstr "Tokeo la sauti: ${0} kwa tokeni milioni 1"
+
+#: src/model_summary.py
+msgid "Web search: ${0} per search"
+msgstr "Utafutaji wa wavuti: ${0} kwa utafutaji"
+
+#: src/model_summary.py
+msgid "Request: ${0} per request"
+msgstr "Ombi: ${0} kwa ombi"
+
+#: src/model_summary.py
+msgid "{0}: ${1}"
+msgstr "{0}: ${1}"
+
+#: src/model_summary.py
+msgid "Prices are as listed when this was read; they can change."
+msgstr "Bei ni kama zilivyoorodheshwa wakati wa kusomwa; zinaweza kubadilika."
+
+#: src/widgets/chat_input.py
+msgid "Prompt and completion prices in US dollars per million tokens, as listed when the model list was read."
+msgstr "Bei za ingizo na tokeo kwa dola za Marekani kwa tokeni milioni, kama zilivyoorodheshwa orodha ya modeli iliposomwa."
+
+#: src/model_manager.py
+msgid "Pricing"
+msgstr "Bei"
+
+#: src/model_manager.py
+msgid "Supported Parameters"
+msgstr "Vigezo vinavyotumika"
+
+#: src/model_manager.py
+msgid "Max Completion Tokens"
+msgstr "Tokeni za juu za tokeo"
+
+#: src/model_manager.py
+msgid "Reasoning"
+msgstr "Kufikiri"
+
+#: src/widgets/options_panel.py
+msgid "Not available for this model."
+msgstr "Haipatikani kwa modeli hii."
+
+#: src/widgets/comparison_view.py
+msgid "Not available for every target."
+msgstr "Haipatikani kwa kila lengo."

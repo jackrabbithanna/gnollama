@@ -97,6 +97,7 @@ gnollama_sources = [
   'bubbles.py',
   'host_manager.py',
   'model_manager.py',
+  'model_summary.py',
 ]
 
 install_data(gnollama_sources, install_dir: moduledir)

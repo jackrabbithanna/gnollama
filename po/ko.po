@@ -1636,9 +1636,6 @@ msgstr "이 모델은 이미지를 지원하지 않습니다."
 msgid "Earlier images remain saved; only text history will be sent."
 msgstr "이전 이미지는 저장된 상태로 유지되며 텍스트 기록만 전송됩니다."
 
-#: src/widgets/chat_input.py:125
-msgid "Image support unknown."
-msgstr "이미지 지원 여부를 알 수 없습니다."
 
 #: src/widgets/chat_input.py:137
 msgid "Select a chat model"
@@ -3570,3 +3567,135 @@ msgstr "컨텍스트 길이"
 #: src/model_manager.py
 msgid "Max Context Length"
 msgstr "최대 컨텍스트 길이"
+
+#: src/model_summary.py
+msgid "Free"
+msgstr "무료"
+
+#: src/model_summary.py
+msgid "${0} / ${1} per 1M tokens"
+msgstr "100만 토큰당 ${0} / ${1}"
+
+#: src/model_summary.py
+msgid "No images"
+msgstr "이미지 미지원"
+
+#: src/model_summary.py
+msgid "Tools"
+msgstr "도구"
+
+#: src/model_summary.py
+msgid "No tools"
+msgstr "도구 미지원"
+
+#: src/model_summary.py
+msgid "No thinking"
+msgstr "사고 없음"
+
+#: src/model_summary.py
+msgid "Not trained for tools"
+msgstr "도구용으로 학습되지 않음"
+
+#: src/model_summary.py
+msgid "{0}M"
+msgstr "{0}M"
+
+#: src/model_summary.py
+msgid "{0}K"
+msgstr "{0}K"
+
+#: src/model_summary.py
+msgid "{0} context"
+msgstr "컨텍스트 {0}"
+
+#: src/model_summary.py
+msgid "{0} context max"
+msgstr "최대 컨텍스트 {0}"
+
+#: src/model_summary.py
+msgid "Prompt: ${0} per 1M tokens"
+msgstr "입력: 100만 토큰당 ${0}"
+
+#: src/model_summary.py
+msgid "Completion: ${0} per 1M tokens"
+msgstr "출력: 100만 토큰당 ${0}"
+
+#: src/model_summary.py
+msgid "Cache read: ${0} per 1M tokens"
+msgstr "캐시 읽기: 100만 토큰당 ${0}"
+
+#: src/model_summary.py
+msgid "Cache write: ${0} per 1M tokens"
+msgstr "캐시 쓰기: 100만 토큰당 ${0}"
+
+#: src/model_summary.py
+msgid "Cache write, kept one hour: ${0} per 1M tokens"
+msgstr "캐시 쓰기(1시간 보관): 100만 토큰당 ${0}"
+
+#: src/model_summary.py
+msgid "Reasoning: ${0} per 1M tokens"
+msgstr "사고: 100만 토큰당 ${0}"
+
+#: src/model_summary.py
+msgid "Image input: ${0} per 1M tokens"
+msgstr "이미지 입력: 100만 토큰당 ${0}"
+
+#: src/model_summary.py
+msgid "Audio input: ${0} per 1M tokens"
+msgstr "오디오 입력: 100만 토큰당 ${0}"
+
+#: src/model_summary.py
+msgid "Cached audio input: ${0} per 1M tokens"
+msgstr "캐시된 오디오 입력: 100만 토큰당 ${0}"
+
+#: src/model_summary.py
+msgid "Image output: ${0} per 1M tokens"
+msgstr "이미지 출력: 100만 토큰당 ${0}"
+
+#: src/model_summary.py
+msgid "Audio output: ${0} per 1M tokens"
+msgstr "오디오 출력: 100만 토큰당 ${0}"
+
+#: src/model_summary.py
+msgid "Web search: ${0} per search"
+msgstr "웹 검색: 검색당 ${0}"
+
+#: src/model_summary.py
+msgid "Request: ${0} per request"
+msgstr "요청: 요청당 ${0}"
+
+#: src/model_summary.py
+msgid "{0}: ${1}"
+msgstr "{0}: ${1}"
+
+#: src/model_summary.py
+msgid "Prices are as listed when this was read; they can change."
+msgstr "가격은 읽은 시점에 게시된 값이며 변경될 수 있습니다."
+
+#: src/widgets/chat_input.py
+msgid "Prompt and completion prices in US dollars per million tokens, as listed when the model list was read."
+msgstr "입력 및 출력 가격(100만 토큰당 미국 달러)이며, 모델 목록을 읽은 시점에 게시된 값입니다."
+
+#: src/model_manager.py
+msgid "Pricing"
+msgstr "가격"
+
+#: src/model_manager.py
+msgid "Supported Parameters"
+msgstr "지원되는 매개변수"
+
+#: src/model_manager.py
+msgid "Max Completion Tokens"
+msgstr "최대 출력 토큰"
+
+#: src/model_manager.py
+msgid "Reasoning"
+msgstr "사고"
+
+#: src/widgets/options_panel.py
+msgid "Not available for this model."
+msgstr "이 모델에서는 사용할 수 없습니다."
+
+#: src/widgets/comparison_view.py
+msgid "Not available for every target."
+msgstr "일부 대상에서는 사용할 수 없습니다."

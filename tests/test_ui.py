@@ -706,7 +706,7 @@ class UITests(unittest.TestCase):
             self.assertIn('images', requests[-1][0])
         tab.chat_input.set_model_details(None)
         self.assertTrue(tab.chat_input.attach_button.get_sensitive())
-        self.assertIn('unknown', tab.chat_input.capability_notice.get_text())
+        self.assertFalse(tab.chat_input.capability_notice.get_visible())
 
     def test_native_tabs_sidebar_actions_and_deferred_close(self):
         window, first = self.make_window()

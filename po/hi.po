@@ -1696,9 +1696,6 @@ msgstr "यह मॉडल चित्रों का समर्थन न�
 msgid "Earlier images remain saved; only text history will be sent."
 msgstr "पहले के चित्र सहेजे रहेंगे; केवल टेक्स्ट इतिहास भेजा जाएगा।"
 
-#: src/widgets/chat_input.py:125
-msgid "Image support unknown."
-msgstr "चित्र समर्थन अज्ञात है।"
 
 #: src/widgets/chat_input.py:137
 msgid "Select a chat model"
@@ -3675,3 +3672,135 @@ msgstr "कॉन्टेक्स्ट की लंबाई"
 #: src/model_manager.py
 msgid "Max Context Length"
 msgstr "कॉन्टेक्स्ट की अधिकतम लंबाई"
+
+#: src/model_summary.py
+msgid "Free"
+msgstr "मुफ़्त"
+
+#: src/model_summary.py
+msgid "${0} / ${1} per 1M tokens"
+msgstr "${0} / ${1} प्रति 10 लाख टोकन"
+
+#: src/model_summary.py
+msgid "No images"
+msgstr "छवियाँ नहीं"
+
+#: src/model_summary.py
+msgid "Tools"
+msgstr "टूल"
+
+#: src/model_summary.py
+msgid "No tools"
+msgstr "टूल नहीं"
+
+#: src/model_summary.py
+msgid "No thinking"
+msgstr "सोच नहीं"
+
+#: src/model_summary.py
+msgid "Not trained for tools"
+msgstr "टूल के लिए प्रशिक्षित नहीं"
+
+#: src/model_summary.py
+msgid "{0}M"
+msgstr "{0}M"
+
+#: src/model_summary.py
+msgid "{0}K"
+msgstr "{0}K"
+
+#: src/model_summary.py
+msgid "{0} context"
+msgstr "{0} कॉन्टेक्स्ट"
+
+#: src/model_summary.py
+msgid "{0} context max"
+msgstr "अधिकतम {0} कॉन्टेक्स्ट"
+
+#: src/model_summary.py
+msgid "Prompt: ${0} per 1M tokens"
+msgstr "इनपुट: ${0} प्रति 10 लाख टोकन"
+
+#: src/model_summary.py
+msgid "Completion: ${0} per 1M tokens"
+msgstr "आउटपुट: ${0} प्रति 10 लाख टोकन"
+
+#: src/model_summary.py
+msgid "Cache read: ${0} per 1M tokens"
+msgstr "कैश पढ़ना: ${0} प्रति 10 लाख टोकन"
+
+#: src/model_summary.py
+msgid "Cache write: ${0} per 1M tokens"
+msgstr "कैश लिखना: ${0} प्रति 10 लाख टोकन"
+
+#: src/model_summary.py
+msgid "Cache write, kept one hour: ${0} per 1M tokens"
+msgstr "कैश लिखना, एक घंटे तक रखा गया: ${0} प्रति 10 लाख टोकन"
+
+#: src/model_summary.py
+msgid "Reasoning: ${0} per 1M tokens"
+msgstr "सोच: ${0} प्रति 10 लाख टोकन"
+
+#: src/model_summary.py
+msgid "Image input: ${0} per 1M tokens"
+msgstr "छवि इनपुट: ${0} प्रति 10 लाख टोकन"
+
+#: src/model_summary.py
+msgid "Audio input: ${0} per 1M tokens"
+msgstr "ऑडियो इनपुट: ${0} प्रति 10 लाख टोकन"
+
+#: src/model_summary.py
+msgid "Cached audio input: ${0} per 1M tokens"
+msgstr "कैश किया गया ऑडियो इनपुट: ${0} प्रति 10 लाख टोकन"
+
+#: src/model_summary.py
+msgid "Image output: ${0} per 1M tokens"
+msgstr "छवि आउटपुट: ${0} प्रति 10 लाख टोकन"
+
+#: src/model_summary.py
+msgid "Audio output: ${0} per 1M tokens"
+msgstr "ऑडियो आउटपुट: ${0} प्रति 10 लाख टोकन"
+
+#: src/model_summary.py
+msgid "Web search: ${0} per search"
+msgstr "वेब खोज: ${0} प्रति खोज"
+
+#: src/model_summary.py
+msgid "Request: ${0} per request"
+msgstr "अनुरोध: ${0} प्रति अनुरोध"
+
+#: src/model_summary.py
+msgid "{0}: ${1}"
+msgstr "{0}: ${1}"
+
+#: src/model_summary.py
+msgid "Prices are as listed when this was read; they can change."
+msgstr "कीमतें पढ़े जाने के समय की सूची के अनुसार हैं; ये बदल सकती हैं।"
+
+#: src/widgets/chat_input.py
+msgid "Prompt and completion prices in US dollars per million tokens, as listed when the model list was read."
+msgstr "इनपुट और आउटपुट की कीमतें अमेरिकी डॉलर में प्रति दस लाख टोकन, जैसी मॉडल सूची पढ़े जाने के समय सूचीबद्ध थीं।"
+
+#: src/model_manager.py
+msgid "Pricing"
+msgstr "मूल्य"
+
+#: src/model_manager.py
+msgid "Supported Parameters"
+msgstr "समर्थित पैरामीटर"
+
+#: src/model_manager.py
+msgid "Max Completion Tokens"
+msgstr "अधिकतम आउटपुट टोकन"
+
+#: src/model_manager.py
+msgid "Reasoning"
+msgstr "सोच"
+
+#: src/widgets/options_panel.py
+msgid "Not available for this model."
+msgstr "इस मॉडल के लिए उपलब्ध नहीं।"
+
+#: src/widgets/comparison_view.py
+msgid "Not available for every target."
+msgstr "हर लक्ष्य के लिए उपलब्ध नहीं।"

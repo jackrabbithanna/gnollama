@@ -46,6 +46,16 @@ def common_params(data, options, thinking, logprobs, top_logprobs, format=None, 
         data['options'] = copy.deepcopy(options)
 
 
+def context_length(info):
+    """The most context a model takes, which `/api/show` files under the name of its architecture."""
+    if not isinstance(info, dict):
+        return None
+    endings = [key for key in info if isinstance(key, str) and key.endswith('.context_length')]
+    named = f"{info.get('general.architecture')}.context_length"
+    key = named if named in info else endings[0] if len(endings) == 1 else None
+    return info[key] if key and type(info[key]) is int and info[key] > 0 else None
+
+
 @dataclass(frozen=True)
 class OllamaProvider(Provider):
     kind = 'ollama'
@@ -91,7 +101,10 @@ class OllamaProvider(Provider):
         return self._request('/api/tags', timeout=timeout, cancellable=cancellable).get('models', [])
 
     def show_model(self, name, timeout=10, cancellable=None):
-        return self._request('/api/show', {'model': name, 'verbose': False}, 'POST', timeout, cancellable)
+        details = self._request('/api/show', {'model': name, 'verbose': False}, 'POST', timeout, cancellable)
+        length = context_length(details.get('model_info')) if isinstance(details, dict) else None
+        # Under the key the other providers use; the server's own answer wins if it ever has one.
+        return details if length is None else {'context_length': length, **details}
 
     def version(self, timeout=5, cancellable=None):
         return self._request('/api/version', timeout=timeout, cancellable=cancellable).get('version', 'Unknown')

@@ -476,7 +476,8 @@ class HostTests(unittest.TestCase):
         composer = tab.chat_input
         self.assertEqual(self.server.received[0][0], '/v1/models')
         self.assertEqual(composer._thinking_values, [None, 'low', 'medium', 'high'])
-        self.assertEqual(composer.capability_notice.get_text(), 'Image support unknown.')
+        # Nothing is known about the model, so nothing is said and nothing is blocked.
+        self.assertFalse(composer.capability_notice.get_visible() or composer.model_summary_cell.get_visible())
         self.assertIsNone(composer.tool_support)
         self.assertTrue(composer.attach_button.get_sensitive())
         composer.thinking_dropdown.set_selected(3)

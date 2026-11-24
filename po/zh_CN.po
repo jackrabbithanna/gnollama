@@ -1634,9 +1634,6 @@ msgstr "此模型不支持图片。"
 msgid "Earlier images remain saved; only text history will be sent."
 msgstr "之前的图片仍然保留；仅发送文本历史记录。"
 
-#: src/widgets/chat_input.py:125
-msgid "Image support unknown."
-msgstr "图片支持情况未知。"
 
 #: src/widgets/chat_input.py:137
 msgid "Select a chat model"
@@ -3562,3 +3559,135 @@ msgstr "上下文长度"
 #: src/model_manager.py
 msgid "Max Context Length"
 msgstr "最大上下文长度"
+
+#: src/model_summary.py
+msgid "Free"
+msgstr "免费"
+
+#: src/model_summary.py
+msgid "${0} / ${1} per 1M tokens"
+msgstr "每百万词元 ${0} / ${1}"
+
+#: src/model_summary.py
+msgid "No images"
+msgstr "不支持图像"
+
+#: src/model_summary.py
+msgid "Tools"
+msgstr "工具"
+
+#: src/model_summary.py
+msgid "No tools"
+msgstr "不支持工具"
+
+#: src/model_summary.py
+msgid "No thinking"
+msgstr "不支持思考"
+
+#: src/model_summary.py
+msgid "Not trained for tools"
+msgstr "未针对工具训练"
+
+#: src/model_summary.py
+msgid "{0}M"
+msgstr "{0}M"
+
+#: src/model_summary.py
+msgid "{0}K"
+msgstr "{0}K"
+
+#: src/model_summary.py
+msgid "{0} context"
+msgstr "上下文 {0}"
+
+#: src/model_summary.py
+msgid "{0} context max"
+msgstr "最大上下文 {0}"
+
+#: src/model_summary.py
+msgid "Prompt: ${0} per 1M tokens"
+msgstr "输入：每百万词元 ${0}"
+
+#: src/model_summary.py
+msgid "Completion: ${0} per 1M tokens"
+msgstr "输出：每百万词元 ${0}"
+
+#: src/model_summary.py
+msgid "Cache read: ${0} per 1M tokens"
+msgstr "缓存读取：每百万词元 ${0}"
+
+#: src/model_summary.py
+msgid "Cache write: ${0} per 1M tokens"
+msgstr "缓存写入：每百万词元 ${0}"
+
+#: src/model_summary.py
+msgid "Cache write, kept one hour: ${0} per 1M tokens"
+msgstr "缓存写入（保留一小时）：每百万词元 ${0}"
+
+#: src/model_summary.py
+msgid "Reasoning: ${0} per 1M tokens"
+msgstr "思考：每百万词元 ${0}"
+
+#: src/model_summary.py
+msgid "Image input: ${0} per 1M tokens"
+msgstr "图像输入：每百万词元 ${0}"
+
+#: src/model_summary.py
+msgid "Audio input: ${0} per 1M tokens"
+msgstr "音频输入：每百万词元 ${0}"
+
+#: src/model_summary.py
+msgid "Cached audio input: ${0} per 1M tokens"
+msgstr "缓存的音频输入：每百万词元 ${0}"
+
+#: src/model_summary.py
+msgid "Image output: ${0} per 1M tokens"
+msgstr "图像输出：每百万词元 ${0}"
+
+#: src/model_summary.py
+msgid "Audio output: ${0} per 1M tokens"
+msgstr "音频输出：每百万词元 ${0}"
+
+#: src/model_summary.py
+msgid "Web search: ${0} per search"
+msgstr "网络搜索：每次搜索 ${0}"
+
+#: src/model_summary.py
+msgid "Request: ${0} per request"
+msgstr "请求：每次请求 ${0}"
+
+#: src/model_summary.py
+msgid "{0}: ${1}"
+msgstr "{0}：${1}"
+
+#: src/model_summary.py
+msgid "Prices are as listed when this was read; they can change."
+msgstr "价格为读取时列出的价格，可能会变动。"
+
+#: src/widgets/chat_input.py
+msgid "Prompt and completion prices in US dollars per million tokens, as listed when the model list was read."
+msgstr "输入和输出价格，以每百万词元的美元计，为读取模型列表时列出的价格。"
+
+#: src/model_manager.py
+msgid "Pricing"
+msgstr "定价"
+
+#: src/model_manager.py
+msgid "Supported Parameters"
+msgstr "支持的参数"
+
+#: src/model_manager.py
+msgid "Max Completion Tokens"
+msgstr "最大输出词元数"
+
+#: src/model_manager.py
+msgid "Reasoning"
+msgstr "思考"
+
+#: src/widgets/options_panel.py
+msgid "Not available for this model."
+msgstr "此模型不可用。"
+
+#: src/widgets/comparison_view.py
+msgid "Not available for every target."
+msgstr "并非每个目标都可用。"

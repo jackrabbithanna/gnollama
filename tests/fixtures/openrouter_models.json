@@ -18,6 +18,11 @@
     "tokenizer": "Other",
     "instruct_type": null
    },
+   "pricing": {
+    "prompt": "0.00000003",
+    "completion": "0.00000015",
+    "input_cache_read": "0.00000003"
+   },
    "top_provider": {
     "context_length": 128000,
     "max_completion_tokens": 8192,
@@ -62,6 +67,10 @@
     "tokenizer": "Mistral",
     "instruct_type": null
    },
+   "pricing": {
+    "prompt": "0.000002",
+    "completion": "0.000006"
+   },
    "top_provider": {
     "context_length": 128000,
     "max_completion_tokens": 102400,
@@ -97,6 +106,11 @@
     ],
     "tokenizer": "Other",
     "instruct_type": null
+   },
+   "pricing": {
+    "prompt": "0.000000075",
+    "completion": "0.0000003",
+    "input_cache_read": "0.000000015"
    },
    "top_provider": {
     "context_length": 1048576,
@@ -166,6 +180,17 @@
     "tokenizer": "Gemini",
     "instruct_type": null
    },
+   "pricing": {
+    "prompt": "0.000003",
+    "completion": "0.000015",
+    "image": "0.000003",
+    "audio": "0.000003",
+    "input_audio_cache": "0.00000015",
+    "web_search": "0.014",
+    "internal_reasoning": "0.000015",
+    "input_cache_read": "0.00000015",
+    "input_cache_write": "0.0000000833333333333333"
+   },
    "top_provider": {
     "context_length": 1048576,
     "max_completion_tokens": 943718,
@@ -217,6 +242,11 @@
     ],
     "tokenizer": "Other",
     "instruct_type": null
+   },
+   "pricing": {
+    "prompt": "0.00000008",
+    "completion": "0.0000002",
+    "input_cache_read": "0.00000002"
    },
    "top_provider": {
     "context_length": 262144,
@@ -270,6 +300,11 @@
     ],
     "tokenizer": "Other",
     "instruct_type": null
+   },
+   "pricing": {
+    "prompt": "0.000000035",
+    "completion": "0.0000001405",
+    "input_cache_read": "0.0000000015"
    },
    "top_provider": {
     "context_length": 1048576,
@@ -327,6 +362,10 @@
     "tokenizer": "Other",
     "instruct_type": null
    },
+   "pricing": {
+    "prompt": "0",
+    "completion": "0"
+   },
    "top_provider": {
     "context_length": 1048576,
     "max_completion_tokens": 65536,
@@ -367,6 +406,10 @@
     "tokenizer": "Router",
     "instruct_type": null
    },
+   "pricing": {
+    "prompt": "-1",
+    "completion": "-1"
+   },
    "top_provider": {
     "context_length": null,
     "max_completion_tokens": null,
@@ -401,6 +444,51 @@
    "supported_voices": null,
    "knowledge_cutoff": null,
    "expiration_date": null
+  },
+  {
+   "id": "nvidia/nemotron-3.5-lightning:free",
+   "canonical_slug": "nvidia/nemotron-3.5-lightning-20260807",
+   "hugging_face_id": "nvidia/NVIDIA-Nemotron-3.5-Lightning-30B-A3B-BF16",
+   "name": "NVIDIA: Nemotron 3.5 Lightning (free)",
+   "created": 1786452751,
+   "context_length": 1000000,
+   "architecture": {
+    "modality": "text->text",
+    "input_modalities": [
+     "text"
+    ],
+    "output_modalities": [
+     "text"
+    ],
+    "tokenizer": "Other",
+    "instruct_type": null
+   },
+   "pricing": {
+    "prompt": "0",
+    "completion": "0"
+   },
+   "top_provider": {
+    "context_length": 1000000,
+    "max_completion_tokens": 65536,
+    "is_moderated": false
+   },
+   "per_request_limits": null,
+   "supported_parameters": [
+    "include_reasoning",
+    "max_tokens",
+    "reasoning",
+    "seed",
+    "temperature",
+    "tool_choice",
+    "tools",
+    "top_p"
+   ],
+   "supported_voices": null,
+   "knowledge_cutoff": null,
+   "expiration_date": null,
+   "reasoning": {
+    "mandatory": false
+   }
   }
  ]
 }

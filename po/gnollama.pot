@@ -1630,9 +1630,6 @@ msgstr ""
 msgid "Earlier images remain saved; only text history will be sent."
 msgstr ""
 
-#: src/widgets/chat_input.py:125
-msgid "Image support unknown."
-msgstr ""
 
 #: src/widgets/chat_input.py:137
 msgid "Select a chat model"
@@ -3557,4 +3554,136 @@ msgstr ""
 
 #: src/model_manager.py
 msgid "Max Context Length"
+msgstr ""
+
+#: src/model_summary.py
+msgid "Free"
+msgstr ""
+
+#: src/model_summary.py
+msgid "${0} / ${1} per 1M tokens"
+msgstr ""
+
+#: src/model_summary.py
+msgid "No images"
+msgstr ""
+
+#: src/model_summary.py
+msgid "Tools"
+msgstr ""
+
+#: src/model_summary.py
+msgid "No tools"
+msgstr ""
+
+#: src/model_summary.py
+msgid "No thinking"
+msgstr ""
+
+#: src/model_summary.py
+msgid "Not trained for tools"
+msgstr ""
+
+#: src/model_summary.py
+msgid "{0}M"
+msgstr ""
+
+#: src/model_summary.py
+msgid "{0}K"
+msgstr ""
+
+#: src/model_summary.py
+msgid "{0} context"
+msgstr ""
+
+#: src/model_summary.py
+msgid "{0} context max"
+msgstr ""
+
+#: src/model_summary.py
+msgid "Prompt: ${0} per 1M tokens"
+msgstr ""
+
+#: src/model_summary.py
+msgid "Completion: ${0} per 1M tokens"
+msgstr ""
+
+#: src/model_summary.py
+msgid "Cache read: ${0} per 1M tokens"
+msgstr ""
+
+#: src/model_summary.py
+msgid "Cache write: ${0} per 1M tokens"
+msgstr ""
+
+#: src/model_summary.py
+msgid "Cache write, kept one hour: ${0} per 1M tokens"
+msgstr ""
+
+#: src/model_summary.py
+msgid "Reasoning: ${0} per 1M tokens"
+msgstr ""
+
+#: src/model_summary.py
+msgid "Image input: ${0} per 1M tokens"
+msgstr ""
+
+#: src/model_summary.py
+msgid "Audio input: ${0} per 1M tokens"
+msgstr ""
+
+#: src/model_summary.py
+msgid "Cached audio input: ${0} per 1M tokens"
+msgstr ""
+
+#: src/model_summary.py
+msgid "Image output: ${0} per 1M tokens"
+msgstr ""
+
+#: src/model_summary.py
+msgid "Audio output: ${0} per 1M tokens"
+msgstr ""
+
+#: src/model_summary.py
+msgid "Web search: ${0} per search"
+msgstr ""
+
+#: src/model_summary.py
+msgid "Request: ${0} per request"
+msgstr ""
+
+#: src/model_summary.py
+msgid "{0}: ${1}"
+msgstr ""
+
+#: src/model_summary.py
+msgid "Prices are as listed when this was read; they can change."
+msgstr ""
+
+#: src/widgets/chat_input.py
+msgid "Prompt and completion prices in US dollars per million tokens, as listed when the model list was read."
+msgstr ""
+
+#: src/model_manager.py
+msgid "Pricing"
+msgstr ""
+
+#: src/model_manager.py
+msgid "Supported Parameters"
+msgstr ""
+
+#: src/model_manager.py
+msgid "Max Completion Tokens"
+msgstr ""
+
+#: src/model_manager.py
+msgid "Reasoning"
+msgstr ""
+
+#: src/widgets/options_panel.py
+msgid "Not available for this model."
+msgstr ""
+
+#: src/widgets/comparison_view.py
+msgid "Not available for every target."
 msgstr ""

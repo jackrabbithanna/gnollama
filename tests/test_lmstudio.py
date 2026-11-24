@@ -174,11 +174,11 @@ class ModelTests(Loopback, KeyChecks, unittest.TestCase):
         show = self.provider().show_model
         self.assertEqual(show(GEMMA), {
             'details': {'format': 'gguf', 'family': 'gemma4', 'parameter_size': '12B', 'quantization_level': 'Q4_0'},
-            'supports': {'vision': True, 'tools': True}, 'thinking_levels': [False, True],
+            'supports': {'vision': True, 'tools': True, 'thinking': True}, 'thinking_levels': [False, True],
             'max_context_length': 262144})
         self.assertEqual(self.server.received[-1][0], '/api/v1/models')
         loaded = show(K2)
-        self.assertEqual(loaded['supports'], {'vision': False, 'tools': False})
+        self.assertEqual(loaded['supports'], {'vision': False, 'tools': False, 'thinking': True})
         # A loaded model has the size it was loaded with, beside the most it could have.
         self.assertEqual((loaded['context_length'], loaded['max_context_length']), (67584, 524288))
         self.assertNotIn('capabilities', loaded)
@@ -300,8 +300,9 @@ class HostTests(HostFixture, unittest.TestCase):
         tab = self.make_tab(GEMMA)
         self.assertEqual(self.server.received[0][0], '/api/v1/models')
         self.assertEqual(self.shown(tab.chat_input), (True, True, '', True, [None, False, True]))
-        self.assertEqual(self.shown(self.select(tab, K2)),
-                         (False, False, 'This model does not support images.', False, [None, False, True]))
+        # The summary says what a model lacks, and the disabled button says why.
+        self.assertEqual(self.shown(self.select(tab, K2)), (False, False, '', False, [None, False, True]))
+        self.assertEqual(tab.chat_input.attach_button.get_tooltip_text(), 'This model does not support images.')
         # Reporting no training for tools is advice: the option stays, with a notice.
         panel = tab.options_panel
         self.assertIs(panel.tool_support, False)
@@ -311,7 +312,8 @@ class HostTests(HostFixture, unittest.TestCase):
         self.assertTrue(panel.tools_check.get_sensitive())
         panel.tools_check.set_active(False)
         self.assertFalse(panel.provider_notice.get_visible())
-        self.assertEqual(self.shown(self.select(tab, PLAIN)), (None, None, 'Image support unknown.', True, ALL_LEVELS))
+        self.assertEqual(self.shown(self.select(tab, PLAIN)), (None, None, '', True, ALL_LEVELS))
+        self.assertEqual(tab.chat_input.attach_button.get_tooltip_text(), 'Attach Image')
         self.assertIsNone(panel.tool_support)
 
     def test_embedding_models_are_never_in_the_chat_list(self):

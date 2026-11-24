@@ -942,6 +942,10 @@ msgstr "Kodu Kopyala"
 msgid "Copy Table"
 msgstr "Tabloyu Kopyala"
 
+#: src/markdown_view.py
+msgid "Copy TeX"
+msgstr "TeX'i Kopyala"
+
 #: src/markdown_view.py:422
 msgid "Preview Markdown"
 msgstr "Markdown Önizlemesi"

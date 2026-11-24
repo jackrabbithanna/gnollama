@@ -974,6 +974,10 @@ msgstr "Code kopieren"
 msgid "Copy Table"
 msgstr "Tabelle kopieren"
 
+#: src/markdown_view.py
+msgid "Copy TeX"
+msgstr "TeX kopieren"
+
 #: src/markdown_view.py:422
 msgid "Preview Markdown"
 msgstr "Markdown-Vorschau"

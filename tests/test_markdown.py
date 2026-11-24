@@ -1,14 +1,18 @@
 """Markdown text blocks rendered as Pango markup."""
 import unittest
 
+from unittest import mock
+
 from gi.repository import Adw, Gdk, Gtk
-from src.markdown_view import MarkdownView, TableBlock, table_data
+from src import math_render
+from src.markdown_view import MarkdownView, MathBlock, TableBlock, table_data
 from test_ui import pump_until
 
 
 class Label:
     def set_markup(self, markup):
-        self.markup = markup
+        # Inline equations as the text shown when they cannot be drawn.
+        self.markup = math_render.to_text(markup)
 
 
 def render(text):
@@ -81,6 +85,134 @@ class TableParsingTests(unittest.TestCase):
 
     def test_table_data_rejects_text_that_is_not_one_table(self):
         self.assertIsNone(table_data('just text'))
+
+
+class MathParsingTests(unittest.TestCase):
+    def test_display_math_is_split_from_surrounding_text(self):
+        self.assertEqual(blocks('Intro:\n\\[\n x = \\frac{1}{2}\n\\]\nAfter'),
+                         [('text', 'Intro:\n'), ('math', 'x = \\frac{1}{2}'), ('text', '\nAfter')])
+        self.assertEqual(blocks('a $$E=mc^2$$ b'), [('text', 'a '), ('math', 'E=mc^2'), ('text', ' b')])
+        self.assertEqual(blocks('\\[a\\]\n\n\\[b\\]'), [('math', 'a'), ('math', 'b')])
+
+    def test_display_math_in_code_or_still_open_stays_as_it_is(self):
+        self.assertEqual(blocks('```\n\\[x\\]\n```'), [('code', '\\[x\\]')])
+        for text in ('`\\[x\\]` code', 'open \\[ x = 1', 'open $$ x = 1', '$$ $$'):
+            self.assertEqual(blocks(text), [('text', text)])
+
+    def test_equations_without_delimiters_are_display_math(self):
+        integral = 'f(x) = \\int_{0}^{x} f(t) \\, dt'
+        self.assertEqual(blocks(integral), [('math', integral)])
+        self.assertEqual(blocks('So:\n' + integral + '\nDone.'), [('text', 'So:'), ('math', integral), ('text', 'Done.')])
+        aligned = '\\begin{aligned}\na &= b \\\\\nc &= \\frac{1}{2}\n\\end{aligned}'
+        self.assertEqual(blocks('Then\n' + aligned), [('text', 'Then\n'), ('math', aligned)])
+        for text in ('The integral \\int_0^1 x dx is simple', '1. \\frac{a}{b}', 'C:\\Users\\int\\file',
+                     'a \\(\\frac{1}{2}\\) b', '| \\frac{a}{b} | c |'):
+            self.assertEqual(blocks(text), [('text', text)])
+
+    def test_inline_math_is_not_read_as_markdown(self):
+        self.assertEqual(render('$a_1 * b_2$ and $c_3 * d_4$'),
+                         '<i>a</i><sub>1</sub> * <i>b</i><sub>2</sub> and <i>c</i><sub>3</sub> * <i>d</i><sub>4</sub>')
+        self.assertEqual(render('\\(x\\_y\\)'), '<i>x</i>_<i>y</i>')
+        self.assertEqual(render('**so \\(E = mc^2\\)**'), '<b>so <i>E</i> = <i>mc</i><sup>2</sup></b>')
+
+    def test_simple_inline_math_becomes_unicode(self):
+        self.assertEqual(render('$\\frac{a+b}{2}$, $\\sqrt{x}$, $\\alpha \\leq \\beta$'),
+                         '(<i>a</i>+<i>b</i>)/2, √<i>x</i>, α ≤ β')
+        self.assertEqual(render('$\\sum_{i=1}^{n} x_i \\in \\mathbb{R}$'),
+                         '∑<sub><i>i</i>=1</sub><sup><i>n</i></sup> <i>x</i><sub><i>i</i></sub> ∈ ℝ')
+        self.assertEqual(render('$\\text{rate} = \\mathbf{v} \\cdot t - \\sin x$'),
+                         'rate = <b>v</b> · <i>t</i> − sin <i>x</i>')
+
+    def test_other_inline_math_is_shown_as_source(self):
+        self.assertEqual(render('$\\begin{pmatrix}a & b\\end{pmatrix}$'),
+                         '<tt>\\begin{pmatrix}a &amp; b\\end{pmatrix}</tt>')
+        self.assertEqual(render('$\\frac{a}{b$'), '<tt>\\frac{a}{b</tt>')
+        self.assertEqual(render('tail \\[ \\frac{a}{b'), 'tail <tt>\\[ \\frac{a}{b</tt>')
+
+    def test_money_code_and_urls_are_not_math(self):
+        self.assertEqual(render('It costs $5 and $10, or $5/$10.'), 'It costs $5 and $10, or $5/$10.')
+        self.assertEqual(render('`$x_1$` code'), '<tt>$x_1$</tt> code')
+        self.assertEqual(render('[l](http://a?b=$x$)'), "<a href='http://a?b=$x$'>l</a>")
+        self.assertEqual(render('$5x^2$'), '5<i>x</i><sup>2</sup>')
+
+    def test_inline_math_in_table_cells(self):
+        rows = table_data('| a | b |\n|---|---|\n| $x_1$ | \\(y^2\\) |')['rows']
+        self.assertEqual([[math_render.to_text(cell) for cell in row] for row in rows],
+                         [['<i>x</i><sub>1</sub>', '<i>y</i><sup>2</sup>']])
+
+
+@unittest.skipUnless(Gdk.Display.get_default(), 'GTK tests require a display')
+class MathWidgetTests(unittest.TestCase):
+    def children(self, view):
+        found, child = [], view.get_first_child()
+        while child:
+            found.append(child)
+            child = child.get_next_sibling()
+        return found
+
+    def test_streamed_equation_becomes_one_math_block(self):
+        text = 'Intro:\n\\[\nx = \\frac{-b}{2a}\n\\]\nAfter'
+        view = MarkdownView('')
+        for end in range(1, len(text) + 1):
+            view.update(text[:end])
+            if end == 6:
+                intro = self.children(view)[0]
+        before, block, after = self.children(view)
+        self.assertIs(before, intro)
+        self.assertIsInstance(block, MathBlock)
+        self.assertEqual(block.tex, 'x = \\frac{-b}{2a}')
+        self.assertIsInstance(after, Gtk.Label)
+        view.update(text + ' text')
+        self.assertEqual(self.children(view)[:2], [before, block])
+
+    def test_equation_is_drawn_at_its_own_size(self):
+        try:
+            import ziamath
+        except ImportError:
+            self.skipTest('ziamath is not installed')
+        block = MathBlock('x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}')
+        self.assertTrue(block.scrolled.get_visible())
+        self.assertFalse(block.source.get_visible())
+        window = Gtk.Window(child=block, default_width=600, default_height=200)
+        self.addCleanup(window.destroy)
+        window.present()
+        pump_until(lambda: block.picture.get_width() > 0)
+        width, height = block.picture.get_width(), block.picture.get_height()
+        self.assertTrue(80 < width < 400 and 20 < height < 100, (width, height))
+        block.set_tex('x')
+        pump_until(lambda: 0 < block.picture.get_width() < width)
+
+    def test_inline_equations_are_drawn_inside_the_text(self):
+        try:
+            import ziamath
+        except ImportError:
+            self.skipTest('ziamath is not installed')
+        view = MarkdownView('Here \\(\\frac{dx}{dt} = kx\\) and $x_0$.\n\n'
+                            '| a |\n|---|\n| $\\begin{cases} a \\\\[4pt] b \\end{cases}$ |')
+        label, table = self.children(view)
+        self.assertEqual(label.get_text(), 'Here ￼ and ￼.')
+        self.assertEqual([index for index, image in label._equations], [5, 13])
+        plain = MarkdownView('Here \\(x\\).').get_first_child()
+        window = Gtk.Window(child=view, default_width=500, default_height=300)
+        self.addCleanup(window.destroy)
+        window.present()
+        pump_until(lambda: label.get_height() > 0 and table.view.get_last_child().get_first_child())
+        # The fraction makes its line taller than a line of plain text.
+        self.assertGreater(label.get_height(), plain.measure(Gtk.Orientation.VERTICAL, -1)[1])
+        view.update('Here plain.\n\n| a |\n|---|\n| b |')
+        self.assertEqual((label.get_text(), label._equations), ('Here plain.', []))
+
+    def test_inline_equations_fall_back_to_text(self):
+        with mock.patch.object(math_render, 'render', return_value=None):
+            label = MarkdownView('Here \\(x^2\\).').get_first_child()
+        self.assertEqual(label.get_label(), 'Here <i>x</i><sup>2</sup>.')
+
+    def test_equation_that_cannot_be_rendered_shows_its_source(self):
+        with mock.patch.object(math_render, 'render', return_value=None):
+            block = MathBlock('\\frac{a}{b}')
+        self.assertFalse(block.scrolled.get_visible())
+        self.assertTrue(block.source.get_visible())
+        self.assertEqual(block.source.get_text(), '\\frac{a}{b}')
 
 
 @unittest.skipUnless(Gdk.Display.get_default(), 'GTK tests require a display')

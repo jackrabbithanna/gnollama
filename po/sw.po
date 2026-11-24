@@ -960,6 +960,10 @@ msgstr "Nakili Msimbo"
 msgid "Copy Table"
 msgstr "Nakili Jedwali"
 
+#: src/markdown_view.py
+msgid "Copy TeX"
+msgstr "Nakili TeX"
+
 #: src/markdown_view.py:422
 msgid "Preview Markdown"
 msgstr "Hakiki Markdown"

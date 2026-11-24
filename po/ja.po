@@ -885,6 +885,10 @@ msgstr "コードをコピー"
 msgid "Copy Table"
 msgstr "表をコピー"
 
+#: src/markdown_view.py
+msgid "Copy TeX"
+msgstr "TeX をコピー"
+
 #: src/markdown_view.py:422
 msgid "Preview Markdown"
 msgstr "Markdownをプレビュー"

@@ -929,6 +929,10 @@ msgstr "कोड कॉपी करें"
 msgid "Copy Table"
 msgstr "तालिका कॉपी करें"
 
+#: src/markdown_view.py
+msgid "Copy TeX"
+msgstr "TeX कॉपी करें"
+
 #: src/markdown_view.py:422
 msgid "Preview Markdown"
 msgstr "Markdown पूर्वावलोकन"

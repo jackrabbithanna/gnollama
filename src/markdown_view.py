@@ -3,7 +3,9 @@ import math
 import re
 from typing import List, Dict, Any, Optional, Tuple, Union
 from html.parser import HTMLParser
-from gi.repository import Gtk, Gdk, Gio, GLib, Pango, GObject, Adw
+from gi.repository import Gtk, Gdk, Gio, GLib, Graphene, Gsk, Pango, GObject, Adw
+
+from . import math_render
 
 try:
     import markdown
@@ -284,6 +286,7 @@ def table_data(text: str) -> Optional[Dict[str, Any]]:
     if not markdown:
         return None
     try:
+        text, spans = math_render.protect(text)
         parser = PangoMarkupParser(collect_tables=True)
         parser.feed(markdown.markdown(text, extensions=MARKDOWN_EXTENSIONS))
     except Exception:
@@ -294,12 +297,101 @@ def table_data(text: str) -> Optional[Dict[str, Any]]:
     # A header without rows comes back with one empty row.
     if len(table['rows']) == 1 and not any(table['rows'][0]):
         table['rows'] = []
+    table['header'] = [math_render.restore(cell, spans) for cell in table['header']]
+    table['rows'] = [[math_render.restore(cell, spans) for cell in row] for row in table['rows']]
     return table
 
 
 # Before GTK 4.24 column view rows stay one line tall and cut off wrapped text,
 # so cells stay on one line there and wide tables scroll sideways.
 WRAP_TABLE_CELLS = Gtk.check_version(4, 24, 0) is None
+
+
+def font_pixels(widget: Gtk.Widget) -> float:
+    """The size of the widget's font in logical pixels."""
+    font = widget.get_pango_context().get_font_description()
+    size = font.get_size() / Pango.SCALE or 11
+    if not font.get_size_is_absolute():
+        dpi = widget.get_settings().get_property('gtk-xft-dpi') / 1024
+        size *= (dpi if dpi > 0 else 96) / 72
+    return size
+
+
+def snapshot_equation(snapshot: Gtk.Snapshot, texture: Gdk.Texture, bounds: Graphene.Rect, color: Gdk.RGBA) -> None:
+    """Draws an equation in the given colour. Its texture is only a mask."""
+    snapshot.push_mask(Gsk.MaskMode.ALPHA)
+    snapshot.append_texture(texture, bounds)
+    snapshot.pop()
+    snapshot.append_color(color, bounds)
+    snapshot.pop()
+
+
+class MathLabel(Gtk.Label):
+    """A label that draws the inline equations in its markup as images on the text's baseline.
+    Equations that cannot be rendered are shown as text."""
+    __gtype_name__ = 'GnollamaMathLabel'
+    OBJECT = '￼'  # Stands in the text where an equation is drawn.
+
+    def __init__(self, **kwargs: Any) -> None:
+        super().__init__(**kwargs)
+        self._markup = ''
+        self._equations: List[Tuple[int, Tuple[Gdk.Texture, float, float, float]]] = []
+        self.connect('notify::scale-factor', lambda *args: self.set_markup(self._markup))
+
+    def set_markup(self, markup: str) -> None:
+        self._markup = markup
+        had_equations = bool(self._equations)
+        self._equations = []
+        if '' not in markup:
+            Gtk.Label.set_markup(self, markup)
+            if had_equations:
+                self.set_attributes(None)
+            return
+        size, scale = round(font_pixels(self)), self.get_scale_factor()
+        images = []
+
+        def convert(tex: str) -> str:
+            image = math_render.render(tex, size, scale, True)
+            if not image:
+                return math_render.inline_markup(tex)
+            images.append(image)
+            return self.OBJECT
+
+        Gtk.Label.set_markup(self, math_render.expand(markup.replace(self.OBJECT, ''), convert))
+        # Each stand-in character is given the size of its equation, so the text makes room for it.
+        attributes = Pango.AttrList()
+        index = 0
+        for image, before in zip(images, self.get_text().split(self.OBJECT)):
+            index += len(before.encode())
+            texture, width, height, ascent = image
+            shape = Pango.Rectangle()
+            shape.x, shape.y = 0, -round(ascent * Pango.SCALE)
+            shape.width, shape.height = round(width * Pango.SCALE), round(height * Pango.SCALE)
+            attribute = Pango.attr_shape_new(shape, shape)
+            attribute.start_index, attribute.end_index = index, index + len(self.OBJECT.encode())
+            attributes.insert(attribute)
+            self._equations.append((index, image))
+            index += len(self.OBJECT.encode())
+        self.set_attributes(attributes)
+
+    def do_snapshot(self, snapshot: Gtk.Snapshot) -> None:
+        Gtk.Label.do_snapshot(self, snapshot)
+        if not self._equations:
+            return
+        layout = self.get_layout()
+        left, top = self.get_layout_offsets()
+        baselines = []
+        lines = layout.get_iter()
+        while True:
+            baselines.append(lines.get_baseline())
+            if not lines.next_line():
+                break
+        color = self.get_color()
+        for index, (texture, width, height, ascent) in self._equations:
+            line = layout.index_to_line_x(index, False)[0]
+            x = left + layout.index_to_pos(index).x / Pango.SCALE
+            y = top + baselines[line] / Pango.SCALE - ascent
+            snapshot_equation(snapshot, texture, Graphene.Rect().init(round(x), round(y), width, height), color)
 
 
 class TableRow(GObject.Object):
@@ -328,7 +420,7 @@ class TableBlock(Gtk.Box):
             factory.connect('setup', self._setup_cell, self.align[index] if index < len(self.align) else 0.0)
             factory.connect('bind', self._bind_cell, index)
             # Column titles are plain text.
-            plain = html.unescape(re.sub(r'<[^>]+>', '', title))
+            plain = html.unescape(re.sub(r'<[^>]+>', '', math_render.to_text(title)))
             self.view.append_column(Gtk.ColumnViewColumn(title=plain, factory=factory, expand=True))
         self.scrolled = Gtk.ScrolledWindow(child=self.view, propagate_natural_width=True, propagate_natural_height=True)
         self.scrolled.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.NEVER)
@@ -345,7 +437,7 @@ class TableBlock(Gtk.Box):
 
     def _setup_cell(self, factory: Any, item: Any, xalign: float) -> None:
         justify = Gtk.Justification.RIGHT if xalign == 1.0 else Gtk.Justification.CENTER if xalign == 0.5 else Gtk.Justification.LEFT
-        item.set_child(Gtk.Label(use_markup=True, selectable=True, wrap=WRAP_TABLE_CELLS, wrap_mode=Pango.WrapMode.WORD_CHAR,
+        item.set_child(MathLabel(use_markup=True, selectable=True, wrap=WRAP_TABLE_CELLS, wrap_mode=Pango.WrapMode.WORD_CHAR,
                                  xalign=xalign, yalign=0, justify=justify))
 
     def _bind_cell(self, factory: Any, item: Any, index: int) -> None:
@@ -397,6 +489,71 @@ class TableBlock(Gtk.Box):
         if abs(want - scrolled.get_height()) > 1:
             scrolled.set_size_request(-1, want)
         return False
+
+
+class MathPicture(Gtk.Widget):
+    """A rendered equation, drawn in the text colour and sized to match the text."""
+    __gtype_name__ = 'GnollamaMathPicture'
+
+    def __init__(self) -> None:
+        super().__init__(halign=Gtk.Align.CENTER, valign=Gtk.Align.CENTER)
+        self._tex = ''
+        self._image: Optional[Tuple[Gdk.Texture, float, float, float]] = None
+        self.connect('notify::scale-factor', lambda *args: self.set_tex(self._tex))
+
+    def set_tex(self, tex: str) -> bool:
+        """Renders the equation. Returns False if it cannot be rendered."""
+        self._tex = tex
+        # Display equations read best a little larger than the text around them.
+        self._image = math_render.render(tex, round(font_pixels(self) * 1.2), self.get_scale_factor())
+        self.queue_resize()
+        return self._image is not None
+
+    def do_measure(self, orientation: Gtk.Orientation, for_size: int) -> Tuple[int, int, int, int]:
+        size = 0
+        if self._image:
+            size = math.ceil(self._image[1 if orientation == Gtk.Orientation.HORIZONTAL else 2])
+        return size, size, -1, -1
+
+    def do_snapshot(self, snapshot: Gtk.Snapshot) -> None:
+        if not self._image:
+            return
+        texture, width, height, ascent = self._image
+        snapshot_equation(snapshot, texture, Graphene.Rect().init(0, 0, width, height), self.get_color())
+
+
+class MathBlock(Gtk.Box):
+    """A display equation, with its TeX source shown instead when it cannot be rendered."""
+    __gtype_name__ = 'GnollamaMathBlock'
+
+    def __init__(self, tex: str) -> None:
+        super().__init__(spacing=6)
+        self.add_css_class("math-block")
+        self.tex: Optional[str] = None
+        self.picture = MathPicture()
+        self.scrolled = Gtk.ScrolledWindow(child=self.picture, hexpand=True,
+                                           propagate_natural_width=True, propagate_natural_height=True)
+        self.scrolled.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.NEVER)
+        self.append(self.scrolled)
+        self.source = Gtk.Label(selectable=True, wrap=True, wrap_mode=Pango.WrapMode.WORD_CHAR, xalign=0, hexpand=True)
+        self.source.add_css_class("monospace")
+        self.append(self.source)
+        copy_button = Gtk.Button(icon_name='edit-copy-symbolic', tooltip_text=_('Copy TeX'), valign=Gtk.Align.CENTER)
+        copy_button.add_css_class("flat")
+        from .widgets.feedback import copy_text
+        copy_button.connect('clicked', lambda button: copy_text(button, self.tex))
+        self.append(copy_button)
+        self.set_tex(tex)
+
+    def set_tex(self, tex: str) -> None:
+        if tex == self.tex:
+            return
+        self.tex = tex
+        rendered = self.picture.set_tex(tex)
+        self.scrolled.set_visible(rendered)
+        self.source.set_visible(not rendered)
+        self.source.set_text(tex)
+        self.picture.update_property([Gtk.AccessibleProperty.LABEL], [tex])
 
 
 class MarkdownView(Gtk.Box):
@@ -515,10 +672,8 @@ class MarkdownView(Gtk.Box):
                 i += 1
             
             if text_buffer:
-                blocks.append({
-                    'type': 'text',
-                    'content': "\n".join(text_buffer)
-                })
+                for kind, content in math_render.split_display("\n".join(text_buffer)):
+                    blocks.append({'type': kind, 'content': content})
 
             if i < n and _table_start(lines, i):
                 end = i + 2
@@ -551,6 +706,9 @@ class MarkdownView(Gtk.Box):
                     curr_child.raw = block['content']
                     curr_child.set_rows(block['data']['rows'])
                     match = True
+                elif block['type'] == 'math' and isinstance(curr_child, MathBlock):
+                    curr_child.set_tex(block['content'])
+                    match = True
             
             if match and curr_child:
                 prev_child = curr_child
@@ -573,7 +731,7 @@ class MarkdownView(Gtk.Box):
     def _create_widget_for_block(self, block: Dict[str, Any]) -> Gtk.Widget:
         """Creates an appropriate widget for a given block type."""
         if block['type'] == 'text':
-             label = Gtk.Label()
+             label = MathLabel()
              label.set_wrap(True)
              label.set_wrap_mode(Pango.WrapMode.WORD_CHAR)
              label.set_xalign(0)
@@ -582,6 +740,8 @@ class MarkdownView(Gtk.Box):
              return label
         elif block['type'] == 'table':
              return TableBlock(block['data'], block['content'])
+        elif block['type'] == 'math':
+             return MathBlock(block['content'])
         else: # code
              return self._create_code_widget(block['lang'], block['content'])
 
@@ -667,6 +827,7 @@ class MarkdownView(Gtk.Box):
             return
         
         try:
+            text, spans = math_render.protect(text)
             text = re.sub(r'~~(.*?)~~', r'<s>\1</s>', text)
             if markdown:
                 html_text = markdown.markdown(text, extensions=MARKDOWN_EXTENSIONS)
@@ -674,9 +835,9 @@ class MarkdownView(Gtk.Box):
                 html_text = html.escape(text)
             parser = PangoMarkupParser()
             parser.feed(html_text)
-            markup = parser.get_markup()
+            markup = math_render.restore(parser.get_markup(), spans)
         except Exception:
-            markup = html.escape(text)
+            markup = html.escape(label._raw_md)
             
         label.set_markup(markup)
 

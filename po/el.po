@@ -968,6 +968,10 @@ msgstr "Αντιγραφή κώδικα"
 msgid "Copy Table"
 msgstr "Αντιγραφή πίνακα"
 
+#: src/markdown_view.py
+msgid "Copy TeX"
+msgstr "Αντιγραφή TeX"
+
 #: src/markdown_view.py:422
 msgid "Preview Markdown"
 msgstr "Προεπισκόπηση Markdown"

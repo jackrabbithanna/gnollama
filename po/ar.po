@@ -926,6 +926,10 @@ msgstr "نسخ الشيفرة"
 msgid "Copy Table"
 msgstr "نسخ الجدول"
 
+#: src/markdown_view.py
+msgid "Copy TeX"
+msgstr "نسخ TeX"
+
 #: src/markdown_view.py:422
 msgid "Preview Markdown"
 msgstr "معاينة Markdown"

@@ -451,4 +451,4 @@ class KnowledgeUITests(unittest.TestCase):
             pump_until(lambda: session.worker.idle and self.storage.writer.idle)
         self.assertEqual(self.storage.db.model_embedding_usage(TAG['digest'])['vectors'], 0)
         self.assertIsNotNone(self.storage.db.knowledge_document(doc['id']))
-        manager.close()
+        manager.requests.close()

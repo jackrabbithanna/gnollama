@@ -164,15 +164,17 @@ class HostModels(Gtk.Box):
         root = self.get_root()
         if not isinstance(root, Gtk.Window):
             return
-        manager = root.on_manage_models() if hasattr(root, 'on_manage_models') else ModelManagerDialog(
-            self.storage, is_model_busy=self.storage.knowledge.busy, transient_for=root)
+        managed = hasattr(root, 'on_manage_models')
+        manager = root.on_manage_models() if managed else ModelManagerDialog(
+            self.storage, is_model_busy=self.storage.knowledge.busy)
         for n, host in enumerate(manager.host_list):
             if host['hostname'].rstrip('/') == self.host().rstrip('/'):
                 manager.host_dropdown.set_selected(n)
                 break
         # Refresh after a model has been downloaded without requiring the picker to close.
-        manager.connect('close-request', lambda *args: (self.refresh() if self.get_mapped() else None) or False)
-        manager.present()
+        manager.connect('closed', lambda *args: self.refresh() if self.get_mapped() else None)
+        if not managed:
+            manager.present(root)
 
     def stop(self):
         self.generation += 1

@@ -381,7 +381,6 @@ class UITests(unittest.TestCase):
         parent = Gtk.Window()
         self.windows.append(parent)
         dialog = PullModelDialog(parent, fixture.host)
-        self.windows.append(dialog)
         fixture.server.mode = 'headers'
         fixture.server.started.clear()
         dialog.model_name_entry.set_text('test')
@@ -567,7 +566,6 @@ class UITests(unittest.TestCase):
         self.stack.enter_context(patch.object(ollama, 'fetch_running_models', side_effect=running))
         busy = True
         manager = ModelManagerDialog(self.storage, is_model_busy=lambda host, model: busy)
-        self.windows.append(manager)
         manager.model_stack.set_visible_child_name('running')
         manager.present()
         pump_until(lambda: bool(manager._running_rows))
@@ -610,7 +608,6 @@ class UITests(unittest.TestCase):
             return [{'name': 'new'}]
         with patch.object(ollama, 'fetch_running_models', side_effect=running):
             manager = ModelManagerDialog(self.storage)
-            self.windows.append(manager)
             manager.model_stack.set_visible_child_name('running')
             manager.present()
             pump_until(started.is_set)
@@ -622,6 +619,38 @@ class UITests(unittest.TestCase):
             pump_until(lambda: session.worker.idle)
             self.assertEqual(manager._running_rows[0][2], 'new')
             manager.close()
+
+    def test_manager_dialogs_attach_to_window_and_close_on_shutdown(self):
+        from gi.repository import Adw
+        from src.host_manager import HostManagerDialog
+        from src.model_manager import ModelDetailsView, PullModelDialog
+        self.stack.enter_context(patch.object(ollama, 'fetch_model_details', return_value=[{'name': 'test', 'details': None}]))
+        self.stack.enter_context(patch.object(ollama, 'fetch_running_models', return_value=[]))
+        window, tab = self.make_window()
+        window.present()
+        pump_until(window.get_mapped)
+        window.on_manage_hosts()
+        hosts = window.get_visible_dialog()
+        self.assertIsInstance(hosts, HostManagerDialog)
+        hosts.close()
+        pump_until(lambda: hosts.requests.closed)
+        models = window.on_manage_models()
+        self.assertIsInstance(models, Adw.Dialog)
+        pump_until(lambda: session.worker.idle and window.get_visible_dialog() is models)
+        models.on_pull_clicked(None)
+        pull = window.get_visible_dialog()
+        self.assertIsInstance(pull, PullModelDialog)
+        self.assertIs(pull.owner, models)
+        pull.on_cancel_clicked(None)
+        pump_until(lambda: pull.requests.closed and window.get_visible_dialog() is models)
+        models.on_model_info_clicked(None, {'name': 'test'})
+        details = window.get_visible_dialog()
+        self.assertIsInstance(details, ModelDetailsView)
+        with patch.object(self.storage.services, 'shutdown'):
+            window.request_shutdown()
+            pump_until(lambda: models.requests.closed and details.requests.closed)
+            self.assertNotIn(models, window.model_managers)
+            pump_until(lambda: window._allow_close)
 
     def test_adaptive_window_shortcuts_and_schema_layout(self):
         from gi.repository import Adw

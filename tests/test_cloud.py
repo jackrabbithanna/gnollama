@@ -245,10 +245,10 @@ class CloudUITests(CloudStorageFixture, unittest.TestCase):
 
     def test_editor_preserves_fields_on_keyring_failure_and_session_save(self):
         self.keys.unavailable = True
-        manager = HostManagerDialog(self.storage, transient_for=self.window)
-        manager.present()
+        manager = HostManagerDialog(self.storage)
+        manager.present(self.window)
         manager.show_edit_dialog()
-        dialog = manager.get_visible_dialog()
+        dialog = self.window.get_visible_dialog()
         self.assertIsInstance(dialog, HostEditDialog)
         dialog.provider_dropdown.set_selected(1)
         self.assertEqual(dialog.hostname_entry.get_text(), ollama.CLOUD_URL)
@@ -263,7 +263,7 @@ class CloudUITests(CloudStorageFixture, unittest.TestCase):
         pump_until(lambda: not dialog.busy)
         host = next(h for h in self.storage.get_all_hosts() if ollama.is_cloud(h))
         self.assertTrue(self.keys.has_session(host['id']))
-        manager.destroy()
+        manager.force_close()
 
     def test_cloud_options_preserve_local_settings(self):
         options = OptionsPanel()
@@ -285,8 +285,8 @@ class CloudUITests(CloudStorageFixture, unittest.TestCase):
         with patch.object(ollama, 'fetch_model_details', return_value=[{'name': 'cloud-model', 'details': None}]), \
              patch.object(ollama, 'show_model', return_value={'capabilities': ['completion']}), \
              patch.object(ollama, 'fetch_running_models') as running:
-            manager = ModelManagerDialog(self.storage, transient_for=self.window)
-            manager.present()
+            manager = ModelManagerDialog(self.storage)
+            manager.present(self.window)
             pump_until(lambda: session.worker.idle)
             self.assertFalse(manager.pull_button.get_visible())
             page = manager.model_stack.get_page(manager.model_stack.get_child_by_name('running'))
@@ -297,7 +297,7 @@ class CloudUITests(CloudStorageFixture, unittest.TestCase):
             picker = HostModels(self.storage)
             self.assertNotIn(cloud['id'], [h['id'] for h in picker.hosts])
             picker.stop()
-            manager.destroy()
+            manager.force_close()
 
     def test_chat_and_response_tabs_use_independent_cloud_connections(self):
         from src.tab import GenerationTab

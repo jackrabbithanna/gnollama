@@ -5,9 +5,10 @@ from .ollama import OllamaCloudProvider, OllamaProvider
 from .lmstudio import LMStudioProvider
 from .openai import OpenAICompatibleProvider
 from .openrouter import OpenRouterProvider
+from .vercel import VercelProvider
 
 PROVIDERS = {cls.kind: cls for cls in (OllamaProvider, OllamaCloudProvider, OpenAICompatibleProvider,
-                                       LMStudioProvider, OpenRouterProvider)}
+                                       LMStudioProvider, OpenRouterProvider, VercelProvider)}
 
 
 def provider_class(kind):

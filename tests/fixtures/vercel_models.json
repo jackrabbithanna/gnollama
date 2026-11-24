@@ -1,0 +1,660 @@
+{
+ "object": "list",
+ "data": [
+  {
+   "id": "alibaba/qwen3.7-flash",
+   "object": "model",
+   "created": 1755815280,
+   "released": 1785196800,
+   "owned_by": "alibaba",
+   "name": "Qwen 3.7 Flash",
+   "description": "The Qwen3.7 native vision-language Flash model series delive",
+   "context_window": 991000,
+   "max_tokens": 64000,
+   "type": "language",
+   "zdr": "all",
+   "no_training": "all",
+   "tags": [
+    "reasoning",
+    "tool-use",
+    "implicit-caching",
+    "file-input",
+    "vision",
+    "explicit-caching",
+    "structured-output"
+   ],
+   "supported_specifications": [
+    "v2",
+    "v3",
+    "v4"
+   ],
+   "modalities": {
+    "input": [
+     "text",
+     "image",
+     "pdf"
+    ],
+    "output": [
+     "text"
+    ]
+   },
+   "supported_parameters": [
+    "max_tokens",
+    "temperature",
+    "stop",
+    "tools",
+    "tool_choice",
+    "reasoning",
+    "include_reasoning",
+    "response_format",
+    "structured_outputs"
+   ],
+   "temperature": true,
+   "reasoning_options": [
+    {
+     "type": "toggle"
+    },
+    {
+     "type": "effort",
+     "values": [
+      "none",
+      "minimal",
+      "low",
+      "medium",
+      "high",
+      "xhigh",
+      "max"
+     ]
+    },
+    {
+     "type": "budget_tokens"
+    }
+   ],
+   "pricing": {
+    "input": "0.00000003",
+    "input_tiers": [
+     {
+      "cost": "0.00000003",
+      "min": 0,
+      "max": 32000
+     },
+     {
+      "cost": "0.0000001",
+      "min": 32000,
+      "max": 256000
+     },
+     {
+      "cost": "0.0000002",
+      "min": 256000
+     }
+    ],
+    "output": "0.00000013",
+    "output_tiers": [
+     {
+      "cost": "0.00000013",
+      "min": 0,
+      "max": 32000
+     },
+     {
+      "cost": "0.0000004",
+      "min": 32000,
+      "max": 256000
+     },
+     {
+      "cost": "0.0000008",
+      "min": 256000
+     }
+    ],
+    "input_cache_read": "0.000000006",
+    "input_cache_read_tiers": [
+     {
+      "cost": "0.000000006",
+      "min": 0,
+      "max": 32000
+     },
+     {
+      "cost": "0.00000002",
+      "min": 32000,
+      "max": 256000
+     },
+     {
+      "cost": "0.00000004",
+      "min": 256000
+     }
+    ],
+    "input_cache_write": "0.000000038",
+    "input_cache_write_tiers": [
+     {
+      "cost": "0.000000038",
+      "min": 0,
+      "max": 32000
+     },
+     {
+      "cost": "0.000000125",
+      "min": 32000,
+      "max": 256000
+     },
+     {
+      "cost": "0.00000025",
+      "min": 256000
+     }
+    ]
+   }
+  },
+  {
+   "id": "nvidia/nemotron-3.5-lightning-free",
+   "object": "model",
+   "created": 1755815280,
+   "released": 1791936000,
+   "owned_by": "nvidia",
+   "name": "Nemotron 3.5 Lightning Free",
+   "description": "Nemotron 3.5 Lightning is an open-weight reasoning and chat ",
+   "context_window": 1000000,
+   "max_tokens": 65000,
+   "type": "language",
+   "zdr": "none",
+   "no_training": "none",
+   "tags": [
+    "reasoning",
+    "tool-use",
+    "structured-output",
+    "implicit-caching",
+    "open-weights"
+   ],
+   "supported_specifications": [
+    "v2",
+    "v3",
+    "v4"
+   ],
+   "modalities": {
+    "input": [
+     "text"
+    ],
+    "output": [
+     "text"
+    ]
+   },
+   "supported_parameters": [
+    "max_tokens",
+    "temperature",
+    "stop",
+    "tools",
+    "tool_choice",
+    "reasoning",
+    "include_reasoning",
+    "response_format",
+    "structured_outputs"
+   ],
+   "temperature": true,
+   "reasoning_options": [
+    {
+     "type": "toggle"
+    },
+    {
+     "type": "effort",
+     "values": [
+      "none",
+      "low",
+      "medium",
+      "high"
+     ]
+    }
+   ],
+   "pricing": {
+    "input": "0",
+    "output": "0"
+   }
+  },
+  {
+   "id": "reflection/beam-free",
+   "object": "model",
+   "created": 1755815280,
+   "released": 1792108800,
+   "owned_by": "reflection",
+   "name": "Beam 1.0 (Free)",
+   "description": "Beam is Reflection’s reasoning model for coding and agentic ",
+   "context_window": 1048576,
+   "max_tokens": 131072,
+   "type": "language",
+   "zdr": "none",
+   "no_training": "none",
+   "tags": [
+    "implicit-caching",
+    "reasoning",
+    "structured-output",
+    "tool-use",
+    "free",
+    "open-weights"
+   ],
+   "supported_specifications": [
+    "v2",
+    "v3",
+    "v4"
+   ],
+   "modalities": {
+    "input": [
+     "text"
+    ],
+    "output": [
+     "text"
+    ]
+   },
+   "supported_parameters": [
+    "max_tokens",
+    "temperature",
+    "stop",
+    "tools",
+    "tool_choice",
+    "reasoning",
+    "include_reasoning",
+    "response_format",
+    "structured_outputs"
+   ],
+   "temperature": true,
+   "reasoning_options": [
+    {
+     "type": "effort",
+     "values": [
+      "low",
+      "medium",
+      "high",
+      "xhigh",
+      "max"
+     ]
+    }
+   ],
+   "interleaved": {
+    "field": "reasoning_content"
+   },
+   "pricing": {
+    "input": "0",
+    "output": "0"
+   }
+  },
+  {
+   "id": "stealth/glyph-cluster",
+   "object": "model",
+   "created": 1755815280,
+   "released": 1791331200,
+   "owned_by": "stealth",
+   "name": "Glyph Cluster",
+   "description": "Glyph Cluster is an anonymous reasoning model in early acces",
+   "context_window": 256000,
+   "max_tokens": 256000,
+   "type": "language",
+   "zdr": "none",
+   "no_training": "none",
+   "tags": [
+    "reasoning",
+    "tool-use",
+    "implicit-caching"
+   ],
+   "supported_specifications": [
+    "v2",
+    "v3",
+    "v4"
+   ],
+   "modalities": {
+    "input": [
+     "text"
+    ],
+    "output": [
+     "text"
+    ]
+   },
+   "supported_parameters": [
+    "max_tokens",
+    "temperature",
+    "stop",
+    "tools",
+    "tool_choice",
+    "reasoning",
+    "include_reasoning"
+   ],
+   "temperature": true,
+   "reasoning_options": [
+    {
+     "type": "effort",
+     "values": [
+      "low",
+      "medium",
+      "high",
+      "xhigh"
+     ]
+    }
+   ],
+   "pricing": {
+    "input": "0",
+    "output": "0"
+   }
+  },
+  {
+   "id": "inclusionai/ling-3.0-flash",
+   "object": "model",
+   "created": 1755815280,
+   "released": 1785974400,
+   "owned_by": "inclusionai",
+   "name": "Ling 3.0 Flash",
+   "description": "Ling 3.0 Flash is designed with token efficiency and product",
+   "context_window": 256000,
+   "max_tokens": 32000,
+   "type": "language",
+   "zdr": "none",
+   "no_training": "none",
+   "tags": [
+    "reasoning",
+    "tool-use",
+    "implicit-caching",
+    "open-weights"
+   ],
+   "supported_specifications": [
+    "v2",
+    "v3",
+    "v4"
+   ],
+   "modalities": {
+    "input": [
+     "text"
+    ],
+    "output": [
+     "text"
+    ]
+   },
+   "supported_parameters": [
+    "max_tokens",
+    "temperature",
+    "stop",
+    "tools",
+    "tool_choice",
+    "reasoning",
+    "include_reasoning"
+   ],
+   "temperature": true,
+   "reasoning_options": [
+    {
+     "type": "toggle"
+    }
+   ],
+   "pricing": {
+    "input": "0.000000021",
+    "output": "0.000000063",
+    "input_cache_read": "0.0000000042"
+   }
+  },
+  {
+   "id": "mistral/mistral-nemo",
+   "object": "model",
+   "created": 1755815280,
+   "released": 1721260800,
+   "owned_by": "mistral",
+   "name": "Mistral Nemo 12B",
+   "description": "12B model trained jointly by Mistral AI and NVIDIA, it signi",
+   "context_window": 131072,
+   "max_tokens": 131072,
+   "type": "language",
+   "zdr": "none",
+   "no_training": "all",
+   "tags": [
+    "tool-use",
+    "structured-output",
+    "open-weights"
+   ],
+   "supported_specifications": [
+    "v2",
+    "v3",
+    "v4"
+   ],
+   "modalities": {
+    "input": [
+     "text"
+    ],
+    "output": [
+     "text"
+    ]
+   },
+   "supported_parameters": [
+    "max_tokens",
+    "temperature",
+    "stop",
+    "tools",
+    "tool_choice",
+    "response_format",
+    "structured_outputs"
+   ],
+   "temperature": true,
+   "knowledge": "2024-04",
+   "pricing": {
+    "input": "0.000000029",
+    "output": "0.00000003"
+   }
+  },
+  {
+   "id": "deepseek/deepseek-r1",
+   "object": "model",
+   "created": 1755815280,
+   "released": 1737331200,
+   "owned_by": "deepseek",
+   "name": "DeepSeek-R1",
+   "description": "DeepSeek-R1 provides customers a state-of-the-art reasoning ",
+   "context_window": 128000,
+   "max_tokens": 8192,
+   "type": "language",
+   "zdr": "all",
+   "no_training": "all",
+   "tags": [
+    "reasoning",
+    "tool-use",
+    "open-weights"
+   ],
+   "supported_specifications": [
+    "v2",
+    "v3",
+    "v4"
+   ],
+   "modalities": {
+    "input": [
+     "text"
+    ],
+    "output": [
+     "text"
+    ]
+   },
+   "supported_parameters": [
+    "max_tokens",
+    "temperature",
+    "stop",
+    "tools",
+    "tool_choice",
+    "reasoning",
+    "include_reasoning"
+   ],
+   "temperature": true,
+   "knowledge": "2024-07",
+   "pricing": {
+    "input": "0.00000135",
+    "output": "0.0000054"
+   }
+  },
+  {
+   "id": "anthropic/claude-fable-5",
+   "object": "model",
+   "created": 1755815280,
+   "released": 1782864000,
+   "owned_by": "anthropic",
+   "name": "Claude Fable 5",
+   "description": "Claude Fable 5 is a Mythos-class model with robust safeguard",
+   "context_window": 1000000,
+   "max_tokens": 128000,
+   "type": "language",
+   "zdr": "none",
+   "no_training": "all",
+   "tags": [
+    "reasoning",
+    "tool-use",
+    "explicit-caching",
+    "file-input",
+    "vision",
+    "structured-output",
+    "web-search"
+   ],
+   "regions": [
+    "us"
+   ],
+   "supported_specifications": [
+    "v2",
+    "v3",
+    "v4"
+   ],
+   "modalities": {
+    "input": [
+     "text",
+     "image",
+     "pdf"
+    ],
+    "output": [
+     "text"
+    ]
+   },
+   "supported_parameters": [
+    "max_tokens",
+    "stop",
+    "tools",
+    "tool_choice",
+    "reasoning",
+    "include_reasoning",
+    "response_format",
+    "structured_outputs"
+   ],
+   "temperature": false,
+   "reasoning_options": [
+    {
+     "type": "effort",
+     "values": [
+      "low",
+      "medium",
+      "high",
+      "xhigh",
+      "max"
+     ]
+    }
+   ],
+   "knowledge": "2026-01-31",
+   "pricing": {
+    "input": "0.00001",
+    "output": "0.00005",
+    "input_cache_read": "0.000001",
+    "input_cache_write": "0.0000125",
+    "web_search": "10",
+    "regional": {
+     "us": {
+      "input": "0.000011",
+      "output": "0.000055",
+      "input_cache_read": "0.0000011",
+      "input_cache_write": "0.00001375"
+     }
+    }
+   }
+  },
+  {
+   "id": "scaledown/scaledown-summarize-1",
+   "object": "model",
+   "created": 1755815280,
+   "released": 1792454400,
+   "owned_by": "scaledown",
+   "name": "Summarize-1",
+   "description": "ScaleDown Summarize-1 is a task-specific language model for ",
+   "context_window": 1000000,
+   "max_tokens": 1000,
+   "type": "language",
+   "zdr": "none",
+   "no_training": "none",
+   "supported_specifications": [
+    "v2",
+    "v3",
+    "v4"
+   ],
+   "modalities": {
+    "input": [
+     "text"
+    ],
+    "output": [
+     "text"
+    ]
+   },
+   "supported_parameters": [
+    "max_tokens",
+    "temperature",
+    "stop"
+   ],
+   "temperature": true,
+   "pricing": {
+    "input": "0.00000005",
+    "output": "0"
+   }
+  },
+  {
+   "id": "alibaba/qwen3-embedding-0.6b",
+   "object": "model",
+   "created": 1755815280,
+   "released": 1763078400,
+   "owned_by": "alibaba",
+   "name": "Qwen3 Embedding 0.6B",
+   "description": "The Qwen3 Embedding model series is the latest proprietary m",
+   "context_window": 32768,
+   "max_tokens": 32768,
+   "type": "embedding",
+   "zdr": "none",
+   "no_training": "all",
+   "tags": [
+    "open-weights"
+   ],
+   "supported_specifications": [
+    "v2",
+    "v3",
+    "v4"
+   ],
+   "modalities": {
+    "input": [
+     "text"
+    ],
+    "output": [
+     "text"
+    ]
+   },
+   "pricing": {
+    "input": "0.00000001"
+   }
+  },
+  {
+   "id": "bfl/flux-2-flex",
+   "object": "model",
+   "created": 1755815280,
+   "released": 1764028800,
+   "owned_by": "bfl",
+   "name": "FLUX.2 [flex]",
+   "description": "FLUX.2 is a completely new base model trained for visual int",
+   "context_window": 0,
+   "max_tokens": 0,
+   "type": "image",
+   "zdr": "none",
+   "no_training": "none",
+   "tags": [
+    "image-generation"
+   ],
+   "supported_specifications": [
+    "v2",
+    "v3",
+    "v4"
+   ],
+   "modalities": {
+    "input": [
+     "text"
+    ],
+    "output": [
+     "image"
+    ]
+   },
+   "pricing": {}
+  }
+ ]
+}

@@ -135,6 +135,7 @@ gnollama_provider_sources = [
   'providers/openrouter.py',
   'providers/registry.py',
   'providers/transport.py',
+  'providers/vercel.py',
 ]
 
 install_data(gnollama_provider_sources, install_dir: moduledir / 'providers')

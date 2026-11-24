@@ -9,7 +9,7 @@ from gi.repository import Gdk
 from provider_fixture import provider_patch
 from src.chat_controller import ChatController, ComposerInput, ModelLimits
 from src.drafts import DraftController
-from src.providers import PROVIDERS, Capabilities, OpenRouterProvider
+from src.providers import PROVIDERS, Capabilities, OpenAICompatibleProvider, OpenRouterProvider
 from src.records import WireOptions
 from src.tab import GenerationTab
 from test_chat_controller import RecordingView
@@ -80,10 +80,13 @@ class NarrowingTests(unittest.TestCase):
             with self.subTest(details=details):
                 self.assertIs(provider.model_capabilities(details), OpenRouterProvider.capabilities)
 
-    def test_other_types_give_every_model_the_providers_record(self):
+    def test_only_hosted_catalogs_narrow_and_other_types_give_every_model_the_providers_record(self):
+        # An OpenAI-compatible service at a fixed address lists each model's parameters; no other type's list does.
         for kind, cls in PROVIDERS.items():
-            if kind != 'openrouter':
-                with self.subTest(kind=kind):
+            with self.subTest(kind=kind):
+                if issubclass(cls, OpenAICompatibleProvider) and cls.fixed_url:
+                    self.assertEqual(record(['temperature'], cls).left_out, ('top_p', 'seed', 'stop', 'num_predict'))
+                else:
                     self.assertIs(record(['temperature'], cls), cls.capabilities)
 
     def test_a_record_names_and_refuses_what_its_model_lacks(self):

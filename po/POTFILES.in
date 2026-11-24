@@ -27,6 +27,7 @@ src/providers/ollama.py
 src/providers/openai.py
 src/providers/lmstudio.py
 src/providers/openrouter.py
+src/providers/vercel.py
 src/providers/transport.py
 src/pull_model_dialog.ui
 src/request_runner.py

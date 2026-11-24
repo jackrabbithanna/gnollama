@@ -18,7 +18,8 @@ HEADLESS = ['app_context.py', 'chat_controller.py', 'chat_store.py', 'collection
             'services.py', 'session.py', 'storage.py', 'store_common.py', 'structured.py', 'tool_calling.py',
             'vectors.py', 'web_import.py', 'web_store.py', 'workspace_store.py', 'writer.py',
             'providers/__init__.py', 'providers/base.py', 'providers/lmstudio.py', 'providers/ollama.py',
-            'providers/openai.py', 'providers/openrouter.py', 'providers/registry.py', 'providers/transport.py']
+            'providers/openai.py', 'providers/openrouter.py', 'providers/registry.py', 'providers/transport.py',
+            'providers/vercel.py']
 # These open a dialog on request, importing GTK only inside that function.
 LAZY_VIEWS = {'export.py', 'session.py'}
 

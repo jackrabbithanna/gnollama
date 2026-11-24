@@ -205,7 +205,13 @@ class StoredSettingsTests(unittest.TestCase):
                           sent=dict(lmstudio['sent'], reasoning={'enabled': True},
                                     provider={'require_parameters': True}))
         del openrouter['sent']['reasoning_effort']
-        cases = dict(ollama=ollama, ollama_cloud=ollama, openai=openai, lmstudio=lmstudio, openrouter=openrouter)
+        # The gateway takes the same reasoning object, with no routing rule, Top K, Min P, or logprobs.
+        vercel = dict(openai, wire=replace(wire, keep_alive=None, logprobs=False, top_logprobs=None),
+                      names=openai['names'] - {'reasoning_effort', 'logprobs', 'top_logprobs'} | {'reasoning'},
+                      sent=dict(temperature=0.5, max_tokens=64, reasoning={'enabled': True}, tools=TOOLS,
+                                response_format=openai['sent']['response_format']))
+        cases = dict(ollama=ollama, ollama_cloud=ollama, openai=openai, lmstudio=lmstudio, openrouter=openrouter,
+                     vercel=vercel)
         self.assertEqual(set(cases), set(PROVIDERS), 'every provider has a case here')
         for kind, cls in PROVIDERS.items():
             case = cases[kind]

@@ -3552,6 +3552,14 @@ msgstr "OpenRouter"
 msgid "OpenRouter requires {0}."
 msgstr "OpenRouter 需要 {0}。"
 
+#: src/providers/vercel.py
+msgid "Vercel AI Gateway"
+msgstr "Vercel AI Gateway"
+
+#: src/providers/vercel.py
+msgid "Vercel AI Gateway requires {0}."
+msgstr "Vercel AI Gateway 需要 {0}。"
+
 #: src/model_manager.py
 msgid "Context Length"
 msgstr "上下文长度"

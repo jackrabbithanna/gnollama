@@ -1,28 +1,15 @@
 """OpenRouter: the OpenAI-compatible chat API at one address, with a catalog that describes each model."""
-from dataclasses import dataclass, replace
+from dataclasses import dataclass
 from gettext import gettext as _
 
 from .base import Capabilities, named
-from .openai import OpenAICompatibleProvider, effort, find, fingerprint, table
+from .openai import OpenAICompatibleProvider, effort, find, fingerprint, narrowed, table
 from .transport import ProviderError
 
 URL = 'https://openrouter.ai/api'
 
 # The thinking settings as `reasoning.effort` takes them. On has no effort of its own.
 EFFORTS = {False: 'none', 'low': 'low', 'medium': 'medium', 'high': 'high', 'max': 'max'}
-
-# What a model's `supported_parameters` must list for each capability to stand, and for each
-# sampling option to be sent: every name of a tuple, or any name of a set.
-FLAG_PARAMETERS = dict(sampling_extras=('top_k', 'min_p'), logprobs=('logprobs',),
-                       structured_output={'structured_outputs', 'response_format'}, tools=('tools',),
-                       thinking_levels={'reasoning', 'reasoning_effort'},
-                       thinking_text={'include_reasoning', 'reasoning'})
-OPTION_PARAMETERS = dict(temperature=('temperature',), top_p=('top_p',), seed=('seed',), stop=('stop',),
-                         num_predict={'max_tokens', 'max_completion_tokens'})
-
-
-def _listed(names, parameters):
-    return bool(names & parameters) if isinstance(names, set) else parameters.issuperset(names)
 
 
 def _extracted():
@@ -111,15 +98,7 @@ class OpenRouterProvider(OpenAICompatibleProvider):
         return super()._address(endpoint)
 
     def model_capabilities(self, details):
-        parameters = details.get('supported_parameters') if isinstance(details, dict) else None
-        if not isinstance(parameters, list) or not parameters:
-            return self.capabilities  # The catalog said nothing about this model.
-        parameters = {name for name in parameters if isinstance(name, str)}
-        own = self.capabilities
-        # Only ever narrower: a flag the type lacks stays off whatever the model lists.
-        flags = {flag: getattr(own, flag) and _listed(names, parameters) for flag, names in FLAG_PARAMETERS.items()}
-        return replace(own, **flags, left_out=tuple(
-            option for option, names in OPTION_PARAMETERS.items() if not _listed(names, parameters)))
+        return narrowed(self.capabilities, details)
 
     def request_body(self, *settings, **named):
         # Left to itself the service may route to an upstream provider that lacks an option sent, which

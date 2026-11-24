@@ -10,6 +10,7 @@ from src.providers.base import advisory
 from provider_fixture import provider_patch
 from test_lmstudio import GEMMA, K2, Loopback
 from test_openrouter import EFFORTS, FREE, MANDATORY, ROUTER, TEXT, Catalog
+from test_vercel import LIGHTNING, QWEN, SCALEDOWN, Gateway
 from test_transport import Server
 import test_ui
 from test_ui import pump_until, wait_for_model
@@ -172,6 +173,17 @@ class OpenRouterTests(Catalog, unittest.TestCase):
         self.assertEqual(summary_parts(show(FREE)), ['Free', 'No images', 'Tools', 'Thinking', '1M context'])
         # The router's price depends on where it sends the request.
         self.assertEqual(summary_parts(show(ROUTER))[0], 'Images')
+
+
+class GatewayTests(Gateway, unittest.TestCase):
+    def test_summary_of_recorded_models(self):
+        show = self.provider().show_model
+        self.assertEqual(summary_parts(show(QWEN)),
+                         ['$0.03 / $0.13 per 1M tokens', 'Images', 'Tools', 'Thinking', '991K context'])
+        self.assertEqual(summary_parts(show(LIGHTNING)), ['Free', 'No images', 'Tools', 'Thinking', '1M context'])
+        # It has no tags, so nothing is said about images.
+        self.assertEqual(summary_parts(show(SCALEDOWN)), ['$0.05 / $0 per 1M tokens', 'No tools', 'No thinking',
+                                                          '1M context'])
 
 
 @unittest.skipUnless(Gdk.Display.get_default(), 'GTK smoke tests require a display')

@@ -3,7 +3,7 @@ import base64
 import copy
 import hashlib
 import json
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from gettext import gettext as _
 
 from gi.repository import Soup
@@ -25,6 +25,15 @@ OPTION_NAMES = {'temperature': 'temperature', 'top_p': 'top_p', 'seed': 'seed', 
 # More that some servers take, where `Capabilities.sampling_extras` says so.
 EXTRA_NAMES = {'top_k': 'top_k', 'min_p': 'min_p'}
 JSON_OBJECT: dict = {'type': 'json_object'}
+
+# For a service whose list names each model's `supported_parameters`: what it must list for each
+# capability to stand, and for each sampling option to be sent: every name of a tuple, or any name of a set.
+FLAG_PARAMETERS = dict(sampling_extras=('top_k', 'min_p'), logprobs=('logprobs',),
+                       structured_output={'structured_outputs', 'response_format'}, tools=('tools',),
+                       thinking_levels={'reasoning', 'reasoning_effort'},
+                       thinking_text={'include_reasoning', 'reasoning'})
+OPTION_PARAMETERS = dict(temperature=('temperature',), top_p=('top_p',), seed=('seed',), stop=('stop',),
+                         num_predict={'max_tokens', 'max_completion_tokens'})
 
 IMAGE_TYPES = ((b'\x89PNG', 'image/png'), (b'\xff\xd8\xff', 'image/jpeg'), (b'GIF8', 'image/gif'))
 
@@ -128,6 +137,23 @@ def find(entries, field, name):
         if entry.get(field) == name:
             return entry
     raise ProviderError(_('Selected model is no longer available.'))
+
+
+def accepts(names, parameters):
+    return bool(names & parameters) if isinstance(names, set) else parameters.issuperset(names)
+
+
+def narrowed(capabilities, details):
+    """A type's capabilities for one model, by the `supported_parameters` in its details."""
+    parameters = details.get('supported_parameters') if isinstance(details, dict) else None
+    if not isinstance(parameters, list) or not parameters:
+        return capabilities  # The list said nothing about this model.
+    parameters = {name for name in parameters if isinstance(name, str)}
+    # Only ever narrower: a flag the type lacks stays off whatever the model lists.
+    flags = {flag: getattr(capabilities, flag) and accepts(names, parameters)
+             for flag, names in FLAG_PARAMETERS.items()}
+    return replace(capabilities, **flags, left_out=tuple(
+        option for option, names in OPTION_PARAMETERS.items() if not accepts(names, parameters)))
 
 
 def chat_body(model, messages, options=None, thinking=None, logprobs=False, top_logprobs=None,

@@ -3665,6 +3665,14 @@ msgstr "OpenRouter"
 msgid "OpenRouter requires {0}."
 msgstr "OpenRouter के लिए {0} आवश्यक है।"
 
+#: src/providers/vercel.py
+msgid "Vercel AI Gateway"
+msgstr "Vercel AI Gateway"
+
+#: src/providers/vercel.py
+msgid "Vercel AI Gateway requires {0}."
+msgstr "Vercel AI Gateway के लिए {0} आवश्यक है।"
+
 #: src/model_manager.py
 msgid "Context Length"
 msgstr "कॉन्टेक्स्ट की लंबाई"

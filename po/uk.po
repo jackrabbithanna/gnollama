@@ -3641,3 +3641,19 @@ msgstr "Дозвольте двом моделям спілкуватися мі
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in
 msgid "Organize documents into knowledge collections"
 msgstr "Упорядковуйте документи в колекції знань"
+
+#: src/widgets/options_panel.py
+msgid "Not available on this server."
+msgstr "Недоступно на цьому сервері."
+
+#: src/chat_controller.py
+msgid "This server does not offer single responses. Open a chat to use it."
+msgstr "Цей сервер не надає окремих відповідей. Відкрийте чат, щоб користуватися ним."
+
+#: src/providers/base.py
+msgid "{host} does not support: {options}."
+msgstr "{host} не підтримує: {options}."
+
+#: src/providers/base.py
+msgid "Structured output"
+msgstr "Структурований вивід"

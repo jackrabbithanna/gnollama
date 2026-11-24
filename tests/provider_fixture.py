@@ -1,7 +1,21 @@
-"""Replace a provider operation for every connection, including Ollama Cloud."""
+"""Replace a provider operation for every connection, and a provider that lacks most options."""
 from unittest.mock import MagicMock, patch
 
-from src.providers import OllamaProvider
+from src.providers import Capabilities, OllamaProvider
+
+
+class LimitedProvider(OllamaProvider):
+    """Chat with tools and nothing else, as a provider that lacks most options."""
+    kind = 'limited'
+    capabilities = Capabilities(tools=True)
+
+
+def limited_host(storage):
+    """A saved host of LimitedProvider. Call inside `patch.dict(PROVIDERS, LIMITED)`."""
+    return storage.save_host('Limited', 'http://localhost:11434', provider='limited')
+
+
+LIMITED = {'limited': LimitedProvider}
 
 
 class provider_patch:

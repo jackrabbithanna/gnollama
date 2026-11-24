@@ -64,6 +64,7 @@ def prepare_run(context, active, prompt, images, settings, targets, draft_id, re
         if ((wire.format is not None and not limits.structured_output)
                 or (wire.keep_alive is not None and not limits.keep_alive)):
             raise ValueError(_('Cloud targets do not support shared structured output or model retention.'))
+        limits.require(wire, host)
         family = (details or {}).get('details', {}).get('family', '').replace('-', '').lower()
         if family == 'gptoss' and wire.thinking not in (None, 'low', 'medium', 'high'):
             raise ValueError(_('The selected thinking level is incompatible with a target.'))

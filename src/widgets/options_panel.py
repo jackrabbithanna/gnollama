@@ -60,6 +60,12 @@ class OptionsPanel(Gtk.Box):
         self.capabilities = capabilities
         self.output_dropdown.set_sensitive(capabilities.structured_output)
         self.memory_group.set_sensitive(capabilities.keep_alive)
+        for names, offered in ((('top_k_entry', 'min_p_entry'), capabilities.sampling_extras),
+                               (('num_ctx_entry',), capabilities.context_size)):
+            for name in names:
+                label, hint = self.field_hints[name]
+                label.set_text(hint if offered else _('Not available on this server.'))
+                getattr(self, name).get_parent().set_sensitive(offered)
         self.provider_notice.set_text(_(capabilities.options_notice) if capabilities.options_notice else '')
         self.provider_notice.set_visible(bool(capabilities.options_notice))
         self._format_changed()
@@ -98,6 +104,7 @@ class OptionsPanel(Gtk.Box):
         self.settings_content = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=24,
                                        margin_start=12, margin_end=12, margin_top=12, margin_bottom=12)
         self.field_errors = {}
+        self.field_hints = {}
         self.host_dropdown = Gtk.DropDown(enable_search=True, hexpand=True)
         factory = Gtk.SignalListItemFactory()
         factory.connect('setup', lambda f, item: item.set_child(Gtk.Label(xalign=0, ellipsize=Pango.EllipsizeMode.END, max_width_chars=20)))
@@ -126,6 +133,7 @@ class OptionsPanel(Gtk.Box):
             box.append(entry)
             help_label = Gtk.Label(label=hint, xalign=0, wrap=True)
             box.append(help_label)
+            self.field_hints[name] = (help_label, hint)
             error = Gtk.Label(xalign=0, wrap=True, visible=False)
             error.add_css_class('error')
             box.append(error)
@@ -379,10 +387,13 @@ class OptionsPanel(Gtk.Box):
         
         add_option(self.seed_entry, 'seed', int)
         add_option(self.temperature_entry, 'temperature', float)
-        add_option(self.top_k_entry, 'top_k', int)
+        # What the host lacks stays in its field and is left out of the request.
+        if self.capabilities.sampling_extras:
+            add_option(self.top_k_entry, 'top_k', int)
+            add_option(self.min_p_entry, 'min_p', float)
         add_option(self.top_p_entry, 'top_p', float)
-        add_option(self.min_p_entry, 'min_p', float)
-        add_option(self.num_ctx_entry, 'num_ctx', int)
+        if self.capabilities.context_size:
+            add_option(self.num_ctx_entry, 'num_ctx', int)
         add_option(self.num_predict_entry, 'num_predict', int)
         
         stop_text = self.stop_entry.get_text().strip()

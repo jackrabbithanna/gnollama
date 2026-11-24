@@ -3562,3 +3562,19 @@ msgstr "دع نموذجين يتحاوران"
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in
 msgid "Organize documents into knowledge collections"
 msgstr "نظّم المستندات في مجموعات معرفية"
+
+#: src/widgets/options_panel.py
+msgid "Not available on this server."
+msgstr "غير متاح على هذا الخادم."
+
+#: src/chat_controller.py
+msgid "This server does not offer single responses. Open a chat to use it."
+msgstr "لا يقدّم هذا الخادم ردودًا منفردة. افتح دردشة لاستخدامه."
+
+#: src/providers/base.py
+msgid "{host} does not support: {options}."
+msgstr "{host} لا يدعم: {options}."
+
+#: src/providers/base.py
+msgid "Structured output"
+msgstr "مخرجات منظَّمة"

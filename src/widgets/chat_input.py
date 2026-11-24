@@ -52,6 +52,7 @@ class ChatInput(Gtk.Box):
         self.tool_support = None
         self.awaiting_tools = False
         self.capabilities_loading = False
+        self.unavailable = ''  # Why this host cannot be sent to at all, if it cannot.
         self.has_history_images = False
         factory = Gtk.SignalListItemFactory()
         factory.connect('setup', lambda f, item: item.set_child(Gtk.Label(ellipsize=Pango.EllipsizeMode.END, max_width_chars=24, xalign=0)))
@@ -122,10 +123,15 @@ class ChatInput(Gtk.Box):
         self._running = running
         self.send_button.set_icon_name('media-playback-stop-symbolic' if running else 'system-search-symbolic')
         self.send_button.set_tooltip_text(_('Stop response') if running else _('Send Message'))
-        blocked = (self.pending_imports or self.capabilities_loading or
+        blocked = (self.pending_imports or self.capabilities_loading or self.unavailable or
                    (self.image_support is False and self.has_draft_images()))
         self.send_button.set_sensitive(running or (self.get_selected_model() is not None and not blocked and not self.awaiting_tools))
         self.entry.set_sensitive(not self.awaiting_tools)
+
+    def set_unavailable(self, reason):
+        """Block sending with an explanation, or allow it again with ''."""
+        self.unavailable = reason
+        self.update_capability_controls()
 
     def set_model_details(self, details, loading=False):
         self.capabilities_loading = loading
@@ -139,7 +145,9 @@ class ChatInput(Gtk.Box):
     def update_capability_controls(self):
         self.attach_button.set_sensitive(self.get_selected_model() is not None and
                                          not self.capabilities_loading and self.image_support is not False and not self.awaiting_tools)
-        if not self.get_selected_model():
+        if self.unavailable:
+            notice = self.unavailable
+        elif not self.get_selected_model():
             notice = self._model_list_notice
         elif self.capabilities_loading:
             notice = _('Checking image support…')

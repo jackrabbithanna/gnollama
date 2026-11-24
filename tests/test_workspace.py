@@ -9,7 +9,8 @@ from unittest.mock import patch
 from gi.repository import Gtk, Gdk, Gio
 from src.app_context import AppContext
 from src.providers import OllamaProvider, ProviderError, RequestCancelled
-from provider_fixture import provider_patch
+from provider_fixture import LIMITED, limited_host, provider_patch
+from src.providers.registry import PROVIDERS
 from src.context import estimate_context
 from src.records import RequestSettings, ViewState, WireOptions
 from src.export import export_json, export_markdown
@@ -194,6 +195,21 @@ class WorkspaceTests(unittest.TestCase):
             self.assertEqual(a['request']['messages'][-1]['images'], ['aW1hZ2U='])
             snapshot['hits'][0]['text'] = 'changed later'
             self.assertNotIn('changed later', json.dumps(a['request']))
+
+    def test_comparison_refuses_shared_options_a_target_lacks(self):
+        local = self.storage.get_all_hosts()[0]
+        models = [(name, {'capabilities': ['completion']}) for name in ('one', 'two')]
+        with patch.dict(PROVIDERS, LIMITED), patch.object(self.context.services.catalog, 'models', return_value=models):
+            limited = limited_host(self.storage)
+            targets = [dict(host_id=local['id'], model='one'), dict(host_id=limited['id'], model='two')]
+            def prepare(**wire):
+                return prepare_run(self.context, ComparisonRun(), 'question', [],
+                                   RequestSettings(wire=WireOptions(**wire)), targets, None, 0)
+            for wire, name in ((dict(options={'top_k': 5}), 'Top K'), (dict(options={'num_ctx': 2048}), 'Context size'),
+                               (dict(logprobs=True), 'Return token probabilities')):
+                with self.subTest(wire=wire), self.assertRaisesRegex(ValueError, 'Limited does not support: ' + name):
+                    prepare(**wire)
+            self.assertEqual(len(prepare(options={'temperature': 0.5})['targets']), 2)
 
     def test_comparison_stop_all_saves_stopped_outcomes(self):
         host = self.storage.get_all_hosts()[0]

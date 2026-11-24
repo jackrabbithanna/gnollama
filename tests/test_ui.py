@@ -8,7 +8,8 @@ from unittest.mock import patch
 from gi.repository import Gdk, GLib, Gtk
 from src.providers import OllamaProvider, ProviderError
 from src.records import ViewState, WireOptions
-from provider_fixture import provider_patch
+from provider_fixture import LIMITED, limited_host, provider_patch
+from src.providers.registry import PROVIDERS
 from src.bubbles import format_statistics
 from src.app_context import AppContext
 from src.tab import GenerationTab
@@ -61,6 +62,37 @@ class UITests(unittest.TestCase):
             window.destroy()
         self.stack.close()
         self.temp.cleanup()
+
+    def test_single_responses_are_blocked_where_the_host_lacks_them(self):
+        def select(tab, host):
+            index = next(i for i, h in enumerate(tab.options_panel.host_list) if h['id'] == host['id'])
+            tab.options_panel.host_dropdown.set_selected(index)
+            wait_for_model(tab)
+        with patch.dict(PROVIDERS, LIMITED), provider_patch('generate') as generate:
+            local = self.storage.get_all_hosts()[0]
+            limited = limited_host(self.storage)
+            single = GenerationTab(mode='generate', context=self.context)
+            chat = self.make_tab()
+            self.tabs.append(single)
+            wait_for_model(single)
+            for tab in (single, chat):
+                self.assertTrue(tab.chat_input.send_button.get_sensitive())
+                select(tab, limited)
+            notice = single.chat_input.capability_notice
+            self.assertFalse(single.chat_input.send_button.get_sensitive())
+            self.assertTrue(notice.get_visible())
+            self.assertIn('single responses', notice.get_text())
+            # Enter reaches the controller, which refuses and says why.
+            single.chat_input.entry.set_text('hello')
+            single.on_send_clicked()
+            self.assertIsNone(single.request)
+            generate.assert_not_called()
+            # A chat on the same host is unaffected.
+            self.assertTrue(chat.chat_input.send_button.get_sensitive())
+            self.assertNotIn('single responses', chat.chat_input.capability_notice.get_text())
+            select(single, local)
+            self.assertTrue(single.chat_input.send_button.get_sensitive())
+            self.assertNotIn('single responses', notice.get_text())
 
     def make_tab(self):
         chat = self.storage.create_chat()

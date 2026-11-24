@@ -3608,3 +3608,19 @@ msgstr "İki modelin birbiriyle konuşmasını sağlayın"
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in
 msgid "Organize documents into knowledge collections"
 msgstr "Belgeleri bilgi koleksiyonlarında düzenleyin"
+
+#: src/widgets/options_panel.py
+msgid "Not available on this server."
+msgstr "Bu sunucuda kullanılamaz."
+
+#: src/chat_controller.py
+msgid "This server does not offer single responses. Open a chat to use it."
+msgstr "Bu sunucu tek seferlik yanıt sunmuyor. Kullanmak için bir sohbet açın."
+
+#: src/providers/base.py
+msgid "{host} does not support: {options}."
+msgstr "{host} şunları desteklemiyor: {options}."
+
+#: src/providers/base.py
+msgid "Structured output"
+msgstr "Yapılandırılmış çıktı"

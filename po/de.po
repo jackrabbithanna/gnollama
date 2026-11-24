@@ -3679,3 +3679,19 @@ msgstr "Zwei Modelle miteinander sprechen lassen"
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in
 msgid "Organize documents into knowledge collections"
 msgstr "Dokumente in Wissenssammlungen organisieren"
+
+#: src/widgets/options_panel.py
+msgid "Not available on this server."
+msgstr "Auf diesem Server nicht verfügbar."
+
+#: src/chat_controller.py
+msgid "This server does not offer single responses. Open a chat to use it."
+msgstr "Dieser Server bietet keine Einzelantworten. Öffnen Sie einen Chat, um ihn zu verwenden."
+
+#: src/providers/base.py
+msgid "{host} does not support: {options}."
+msgstr "{host} unterstützt nicht: {options}."
+
+#: src/providers/base.py
+msgid "Structured output"
+msgstr "Strukturierte Ausgabe"

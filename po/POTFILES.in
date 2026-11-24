@@ -21,6 +21,7 @@ src/markdown_view.py
 src/model_details_view.ui
 src/model_manager.py
 src/model_manager.ui
+src/providers/base.py
 src/providers/registry.py
 src/providers/ollama.py
 src/providers/transport.py

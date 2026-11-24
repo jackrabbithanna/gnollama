@@ -3482,3 +3482,19 @@ msgstr "두 모델이 서로 대화하게 하기"
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in
 msgid "Organize documents into knowledge collections"
 msgstr "문서를 지식 컬렉션으로 정리"
+
+#: src/widgets/options_panel.py
+msgid "Not available on this server."
+msgstr "이 서버에서는 사용할 수 없습니다."
+
+#: src/chat_controller.py
+msgid "This server does not offer single responses. Open a chat to use it."
+msgstr "이 서버는 단일 응답을 제공하지 않습니다. 사용하려면 채팅을 여세요."
+
+#: src/providers/base.py
+msgid "{host} does not support: {options}."
+msgstr "{host}에서 지원하지 않는 항목: {options}."
+
+#: src/providers/base.py
+msgid "Structured output"
+msgstr "구조화된 출력"

@@ -2,7 +2,7 @@ from gettext import gettext as _
 from typing import List, Optional, Any, Dict
 from gi.repository import Adw, Gtk, GLib, GObject
 import copy
-from .chat_controller import ChatController, ComposerInput
+from .chat_controller import ChatController, ComposerInput, unavailable
 from .drafts import DraftController
 from .providers import ProviderError
 from .records import RequestSettings, WireOptions
@@ -266,7 +266,9 @@ class GenerationTab(Gtk.Box):
         if not self.chat_input.discovery_enabled:
             return
         host = self.options_panel.get_selected_host()
-        self.options_panel.set_capabilities(self.context.capabilities(host))
+        limits = self.context.capabilities(host)
+        self.options_panel.set_capabilities(limits)
+        self.chat_input.set_unavailable(unavailable(limits, self.mode) if host else '')
         self.chat_input.fetch_models(self.context.connection(host) if host else None,
                                      host_id=host['id'] if host else None)
 

@@ -1,5 +1,6 @@
 """What every model provider offers, and what each one can do."""
 from dataclasses import dataclass, field
+from gettext import gettext as _
 from typing import Any
 
 from .transport import Transport
@@ -16,9 +17,35 @@ class Capabilities:
     tools: bool = False
     logprobs: bool = False
     keep_alive: bool = False
-    raw_generate: bool = False
+    raw_generate: bool = False     # single responses outside a chat
+    sampling_extras: bool = False  # top_k and min_p
+    context_size: bool = False     # num_ctx
+    thinking_text: bool = False    # returns what the model thought
+    timing_stats: bool = False     # load, prompt, and generation durations
+    model_verification: bool = False  # a content digest, not a fingerprint
     # Untranslated; shown beside the options this provider lacks.
     options_notice: str = ''
+
+    def unsupported(self, wire):
+        """Names of the settings in a WireOptions that this provider cannot be sent."""
+        options = wire.options or {}
+        checks = [
+            (self.sampling_extras, 'top_k' in options, _('Top K')),
+            (self.sampling_extras, 'min_p' in options, _('Min P')),
+            (self.context_size, 'num_ctx' in options, _('Context size (tokens)')),
+            (self.structured_output, wire.format is not None, _('Structured output')),
+            (self.keep_alive, wire.keep_alive is not None, _('Model Retention')),
+            (self.tools, bool(wire.tools), _('Tool Calling')),
+            (self.logprobs, bool(wire.logprobs), _('Return token probabilities (logprobs)')),
+        ]
+        return [name for offered, used, name in checks if used and not offered]
+
+    def require(self, wire, host):
+        """Raise naming what `wire` asks of the host record `host` that it cannot do."""
+        missing = self.unsupported(wire)
+        if missing:
+            raise ValueError(_('{host} does not support: {options}.').format(
+                host=host.get('name') or host.get('hostname', ''), options=', '.join(missing)))
 
 
 @dataclass(frozen=True)
@@ -39,6 +66,7 @@ class Provider:
     capabilities = Capabilities()
     fixed_url: str | None = None  # The only URL this provider accepts, if any.
     requires_key = False
+    key_optional = False  # Takes a key but works without one.
 
     @classmethod
     def check_url(cls, url):

@@ -3474,3 +3474,19 @@ msgstr "让两个模型相互对话"
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in
 msgid "Organize documents into knowledge collections"
 msgstr "将文档整理到知识集合中"
+
+#: src/widgets/options_panel.py
+msgid "Not available on this server."
+msgstr "此服务器不提供该选项。"
+
+#: src/chat_controller.py
+msgid "This server does not offer single responses. Open a chat to use it."
+msgstr "此服务器不提供单次回复。请打开聊天来使用它。"
+
+#: src/providers/base.py
+msgid "{host} does not support: {options}."
+msgstr "{host} 不支持：{options}。"
+
+#: src/providers/base.py
+msgid "Structured output"
+msgstr "结构化输出"

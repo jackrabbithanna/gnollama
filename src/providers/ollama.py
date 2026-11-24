@@ -48,7 +48,9 @@ class OllamaProvider(Provider):
     kind = 'ollama'
     capabilities = Capabilities(model_management=True, running_models=True, embeddings=True,
                                 thinking_levels=True, structured_output=True, tools=True,
-                                logprobs=True, keep_alive=True, raw_generate=True)
+                                logprobs=True, keep_alive=True, raw_generate=True,
+                                sampling_extras=True, context_size=True, thinking_text=True,
+                                timing_stats=True, model_verification=True)
 
     @property
     def key(self):
@@ -167,7 +169,8 @@ class OllamaCloudProvider(OllamaProvider):
     """One fixed origin, bearer authentication, and no model management."""
     kind = 'ollama_cloud'
     capabilities = Capabilities(thinking_levels=True, tools=True, logprobs=True, raw_generate=True,
-        options_notice=CLOUD_NOTICE)
+        sampling_extras=True, context_size=True, thinking_text=True, timing_stats=True,
+        model_verification=True, options_notice=CLOUD_NOTICE)
     fixed_url = CLOUD_URL
     requires_key = True
     endpoints = ('/api/tags', '/api/show', '/api/chat', '/api/generate')

@@ -3665,3 +3665,19 @@ msgstr "Αφήστε δύο μοντέλα να συνομιλήσουν μετ�
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in
 msgid "Organize documents into knowledge collections"
 msgstr "Οργάνωση εγγράφων σε συλλογές γνώσης"
+
+#: src/widgets/options_panel.py
+msgid "Not available on this server."
+msgstr "Δεν διατίθεται σε αυτόν τον διακομιστή."
+
+#: src/chat_controller.py
+msgid "This server does not offer single responses. Open a chat to use it."
+msgstr "Αυτός ο διακομιστής δεν παρέχει μεμονωμένες απαντήσεις. Ανοίξτε μια συνομιλία για να τον χρησιμοποιήσετε."
+
+#: src/providers/base.py
+msgid "{host} does not support: {options}."
+msgstr "Ο διακομιστής {host} δεν υποστηρίζει: {options}."
+
+#: src/providers/base.py
+msgid "Structured output"
+msgstr "Δομημένη έξοδος"

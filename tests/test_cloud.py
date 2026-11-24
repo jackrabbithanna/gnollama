@@ -7,7 +7,7 @@ from unittest.mock import patch
 
 from gi.repository import Adw, Gdk, Gio, Gtk
 from src import session
-from src.providers import CLOUD_URL, OllamaCloudProvider, OllamaProvider, ProviderError, RequestCancelled, transport
+from src.providers import Capabilities, CLOUD_URL, OllamaCloudProvider, OllamaProvider, ProviderError, RequestCancelled, transport
 from provider_fixture import provider_patch
 from src.credentials import CredentialStore, CredentialError
 from src import credentials
@@ -280,6 +280,33 @@ class CloudUITests(CloudStorageFixture, unittest.TestCase):
         options.set_capabilities(OllamaProvider.capabilities)
         self.assertEqual(options.get_request_settings()['format'], {'type': 'object'})
         self.assertEqual(options.get_keep_alive(), -1)
+
+    def test_options_a_host_lacks_are_disabled_explained_and_not_sent(self):
+        options = OptionsPanel()
+        fields = dict(top_k_entry='40', min_p_entry='0.05', num_ctx_entry='8192', top_p_entry='0.9')
+        for name, text in fields.items():
+            getattr(options, name).set_text(text)
+        hints = {name: options.field_hints[name][0].get_text() for name in fields}
+        for missing, names in (('sampling_extras', ('top_k_entry', 'min_p_entry')), ('context_size', ('num_ctx_entry',))):
+            with self.subTest(missing=missing):
+                options.set_capabilities(replace(OllamaProvider.capabilities, **{missing: False}))
+                sent = options.get_options_from_ui()
+                for name in fields:
+                    lacking = name in names
+                    self.assertEqual(getattr(options, name).get_parent().get_sensitive(), not lacking)
+                    self.assertEqual(name.removesuffix('_entry') in sent, not lacking)
+                    self.assertEqual(options.field_hints[name][0].get_text(),
+                                     'Not available on this server.' if lacking else hints[name])
+                    # The value waits in its field for a host that takes it.
+                    self.assertEqual(getattr(options, name).get_text(), fields[name])
+        # An invalid value in a field the host lacks does not block sending.
+        options.set_capabilities(Capabilities())
+        options.top_k_entry.set_text('not a number')
+        self.assertEqual(options.get_options_from_ui(), {'top_p': 0.9})
+        options.top_k_entry.set_text('40')
+        options.set_capabilities(OllamaProvider.capabilities)
+        self.assertEqual(options.get_options_from_ui(), dict(top_k=40, min_p=0.05, num_ctx=8192, top_p=0.9))
+        self.assertEqual({name: options.field_hints[name][0].get_text() for name in fields}, hints)
 
     def test_cloud_model_manager_and_embedding_hosts(self):
         cloud = self.cloud(is_default=True)

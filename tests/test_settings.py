@@ -113,6 +113,22 @@ class StoredSettingsTests(unittest.TestCase):
             knowledge=dict(DEFAULT_RAG, enabled=True), query_override='query', extra=FUTURE))
         self.assertEqual(settings.target, ModelTarget('host-id', 'http://localhost:11434', 'one'))
 
+    def test_capabilities_name_what_a_provider_cannot_be_sent(self):
+        from src.providers import Capabilities, OllamaCloudProvider, OllamaProvider
+        wire = WireOptions(options=dict(temperature=0.5, top_k=5, min_p=0.1, num_ctx=4096, seed=1, stop=['x']),
+                           system='Be brief.', thinking='high', format=SCHEMA, keep_alive=60, tools=TOOLS,
+                           logprobs=True, top_logprobs=2)
+        self.assertEqual(OllamaProvider.capabilities.unsupported(wire), [])
+        self.assertEqual(OllamaCloudProvider.capabilities.unsupported(wire), ['Structured output', 'Model Retention'])
+        self.assertEqual(Capabilities().unsupported(wire), [
+            'Top K', 'Min P', 'Context size (tokens)', 'Structured output', 'Model Retention', 'Tool Calling',
+            'Return token probabilities (logprobs)'])
+        self.assertEqual(Capabilities().unsupported(WireOptions(options=dict(temperature=0.5, seed=1), system='x')), [])
+        with self.assertRaisesRegex(ValueError, '^Mine does not support: Top K, Min P.$'):
+            Capabilities(context_size=True).require(WireOptions(options=dict(top_k=1, min_p=0, num_ctx=1)),
+                                                    dict(name='Mine'))
+        OllamaProvider.capabilities.require(wire, dict(name='Local'))
+
     def test_request_bodies_hold_only_wire_options(self):
         view = ViewState(output_mode='schema', schema_text='VIEW-schema', tools_enabled=True,
                          tools_text='VIEW-tools', knowledge={'note': 'VIEW-knowledge'},

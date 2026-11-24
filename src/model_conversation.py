@@ -72,6 +72,7 @@ def validate_participants(context, participants, cancel):
             raise ValueError(_('The selected thinking level is incompatible with a target.'))
         if wire.keep_alive is not None and not connection.capabilities.keep_alive:
             raise ValueError(_('Cloud targets manage model retention automatically.'))
+        connection.capabilities.require(replace(wire, format=None, tools=None), host)
         resolved.append(replace(settings, endpoint='chat', target=replace(target, url=destination),
                                 wire=replace(wire, format=None, tools=None)))
         connections.append(connection)

@@ -938,6 +938,10 @@ msgstr "Yapay zekâ destekli çeviri"
 msgid "Copy Code"
 msgstr "Kodu Kopyala"
 
+#: src/markdown_view.py
+msgid "Copy Table"
+msgstr "Tabloyu Kopyala"
+
 #: src/markdown_view.py:422
 msgid "Preview Markdown"
 msgstr "Markdown Önizlemesi"

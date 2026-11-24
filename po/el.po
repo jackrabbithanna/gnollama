@@ -964,6 +964,10 @@ msgstr "Μετάφραση με τη βοήθεια τεχνητής νοημο�
 msgid "Copy Code"
 msgstr "Αντιγραφή κώδικα"
 
+#: src/markdown_view.py
+msgid "Copy Table"
+msgstr "Αντιγραφή πίνακα"
+
 #: src/markdown_view.py:422
 msgid "Preview Markdown"
 msgstr "Προεπισκόπηση Markdown"

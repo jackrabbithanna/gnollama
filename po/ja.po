@@ -881,6 +881,10 @@ msgstr "AI 支援による翻訳"
 msgid "Copy Code"
 msgstr "コードをコピー"
 
+#: src/markdown_view.py
+msgid "Copy Table"
+msgstr "表をコピー"
+
 #: src/markdown_view.py:422
 msgid "Preview Markdown"
 msgstr "Markdownをプレビュー"

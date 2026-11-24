@@ -925,6 +925,10 @@ msgstr "AI की सहायता से अनुवाद"
 msgid "Copy Code"
 msgstr "कोड कॉपी करें"
 
+#: src/markdown_view.py
+msgid "Copy Table"
+msgstr "तालिका कॉपी करें"
+
 #: src/markdown_view.py:422
 msgid "Preview Markdown"
 msgstr "Markdown पूर्वावलोकन"

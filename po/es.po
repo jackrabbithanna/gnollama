@@ -966,6 +966,10 @@ msgstr "Jackrabbithanna"
 msgid "Copy Code"
 msgstr "Copiar código"
 
+#: src/markdown_view.py
+msgid "Copy Table"
+msgstr "Copiar tabla"
+
 #: src/markdown_view.py:422
 msgid "Preview Markdown"
 msgstr "Vista previa de Markdown"

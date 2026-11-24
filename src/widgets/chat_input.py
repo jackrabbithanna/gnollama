@@ -89,7 +89,11 @@ class ChatInput(Gtk.Box):
         labels = [_('Model default'), _('Off'), _('On'), _('Low'), _('Medium'), _('High'), _('Max')]
         if details is not None:
             family = details.get('details', {}).get('family', '').replace('-', '').lower()
-            if family == 'gptoss':
+            if details.get('thinking_levels') is not None:
+                offered = [(value, label) for value, label in zip(values, labels)
+                           if value is None or value in details['thinking_levels']]
+                values, labels = [v for v, _label in offered], [label for _v, label in offered]
+            elif family == 'gptoss':
                 values = [None, 'low', 'medium', 'high']
                 labels = [_('Model default'), _('Low'), _('Medium'), _('High')]
             elif 'capabilities' in details and 'thinking' not in details['capabilities']:
@@ -217,8 +221,12 @@ class ChatInput(Gtk.Box):
         return isinstance(caps, list) and 'embedding' in caps and 'completion' not in caps
 
     def _empty_model_notice(self):
-        return (_('No cloud models are available. Try refreshing later.') if self._host is not None and not self._host.capabilities.model_management else
-                _('No chat models found. Pull one in Manage Models, then refresh.'))
+        if self._host is None or self._host.capabilities.model_management:
+            return _('No chat models found. Pull one in Manage Models, then refresh.')
+        # A hosted service, whose models the user cannot add to.
+        if self._host.fixed_url:
+            return _('No cloud models are available. Try refreshing later.')
+        return _('No models found on this server. Load one there, then refresh.')
 
     def fetch_models(self, host, refresh=False, host_id=None):
         if not self.discovery_enabled:

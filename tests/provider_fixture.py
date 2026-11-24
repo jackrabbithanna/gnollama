@@ -1,4 +1,4 @@
-"""Replace a provider operation for every connection, and a provider that lacks most options."""
+"""Replace a provider operation for every connection, and providers that differ from Ollama."""
 from unittest.mock import MagicMock, patch
 
 from src.providers import Capabilities, OllamaProvider
@@ -16,6 +16,17 @@ def limited_host(storage):
 
 
 LIMITED = {'limited': LimitedProvider}
+
+
+class OptionalKeyProvider(OllamaProvider):
+    """Takes an API key but works without one, at a suggested address."""
+    kind = 'optional_key'
+    label = 'Optional Key Server'
+    key_optional = True
+    default_url = 'http://localhost:1234'
+
+
+OPTIONAL_KEY = {'optional_key': OptionalKeyProvider}
 
 
 class provider_patch:

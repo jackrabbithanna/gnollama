@@ -376,12 +376,6 @@ msgstr "Tutte le destinazioni devono supportare le immagini condivise."
 msgid "Every target must support the selected thinking option."
 msgstr "Tutte le destinazioni devono supportare l’opzione di ragionamento selezionata."
 
-#: src/comparison.py:52
-msgid "Cloud targets do not support shared structured output or model retention."
-msgstr ""
-"Le destinazioni cloud non supportano l’output strutturato condiviso né il "
-"mantenimento del modello."
-
 #: src/comparison.py:55
 msgid "The selected thinking level is incompatible with a target."
 msgstr "Il livello di ragionamento selezionato è incompatibile con una destinazione."
@@ -629,10 +623,6 @@ msgstr "Eliminazione non riuscita"
 #: src/host_manager.ui:6 src/host_manager.ui:17
 msgid "Manage Hosts"
 msgstr "Gestisci server"
-
-#: src/host_manager.ui:35
-msgid "Ollama Servers"
-msgstr "Server Ollama"
 
 #: src/host_manager.ui:36
 msgid "Select a server to edit its name or address."
@@ -1196,10 +1186,6 @@ msgstr "Modelli in memoria"
 msgid "Ollama Cloud requires https://ollama.com."
 msgstr "Ollama Cloud richiede https://ollama.com."
 
-#: src/ollama.py:80
-msgid "Enter a valid http:// or https:// Ollama host URL."
-msgstr "Inserisci un URL valido del server Ollama che inizi con http:// o https://."
-
 #: src/ollama.py:89 src/ollama.py:104 src/ollama.py:137
 msgid "Request stopped"
 msgstr "Richiesta interrotta"
@@ -1219,14 +1205,6 @@ msgstr ""
 #: src/ollama.py:126
 msgid "Ollama Cloud usage or rate limit reached. Try again later."
 msgstr "Limite di utilizzo o di richieste di Ollama Cloud raggiunto. Riprova più tardi."
-
-#: src/ollama.py:163
-msgid "Invalid JSON received from Ollama"
-msgstr "Ricevuto JSON non valido da Ollama"
-
-#: src/ollama.py:165
-msgid "Expected a JSON object from Ollama"
-msgstr "Era atteso un oggetto JSON da Ollama"
 
 #: src/ollama.py:222
 msgid "Enter nonempty text to embed."
@@ -3505,10 +3483,6 @@ msgstr "I modelli di embedding non possono partecipare a una conversazione."
 msgid "A participant does not support the selected thinking option."
 msgstr "Un partecipante non supporta l’opzione di ragionamento selezionata."
 
-#: src/model_conversation.py:67
-msgid "Cloud targets manage model retention automatically."
-msgstr "Le destinazioni cloud gestiscono automaticamente la permanenza dei modelli in memoria."
-
 #: src/model_conversation.py:121
 msgid "Enter an opening prompt and choose 1–100 rounds."
 msgstr "Inserisci un messaggio iniziale e scegli da 1 a 100 cicli."
@@ -3666,3 +3640,63 @@ msgstr "{host} non supporta: {options}."
 #: src/providers/base.py
 msgid "Structured output"
 msgstr "Output strutturato"
+
+#: src/host_manager.py
+msgid "Remove the saved key"
+msgstr "Rimuovi la chiave salvata"
+
+#: src/host_manager.py
+msgid "Optional. Stored securely in your desktop keyring."
+msgstr "Facoltativa. Conservata in modo sicuro nel portachiavi del desktop."
+
+#: src/host_manager.ui
+msgid "Servers"
+msgstr "Server"
+
+#: src/providers/openai.py
+msgid "OpenAI-Compatible Server"
+msgstr "Server compatibile con OpenAI"
+
+#: src/providers/openai.py
+msgid "This server type does not report what its models support, so thinking, image, and tool support are not checked."
+msgstr "Questo tipo di server non indica che cosa supportano i suoi modelli, quindi il supporto per ragionamento, immagini e strumenti non viene verificato."
+
+#: src/providers/openai.py
+msgid "This server does not accept: {0}."
+msgstr "Questo server non accetta: {0}."
+
+#: src/providers/openai.py
+msgid "This server accepts only the Low, Medium, and High thinking levels."
+msgstr "Questo server accetta solo i livelli di ragionamento Basso, Medio e Alto."
+
+#: src/providers/transport.py
+msgid "Invalid JSON received from the server"
+msgstr "JSON non valido ricevuto dal server"
+
+#: src/providers/openai.py
+msgid "The server rejected the API key, or requires one. Edit this host to check its API key."
+msgstr "Il server ha rifiutato la chiave API o ne richiede una. Modifica questo host per controllare la chiave API."
+
+#: src/providers/openai.py
+msgid "The server reported a usage or rate limit. Try again later."
+msgstr "Il server ha segnalato un limite di utilizzo o di frequenza. Riprova più tardi."
+
+#: src/providers/openai.py
+msgid "The server did not return a model list."
+msgstr "Il server non ha restituito un elenco di modelli."
+
+#: src/providers/openai.py
+msgid "Connected\nAvailable models: {0}"
+msgstr "Connesso\nModelli disponibili: {0}"
+
+#: src/providers/transport.py
+msgid "Enter a valid http:// or https:// server URL."
+msgstr "Inserisci un URL del server valido che inizi con http:// o https://."
+
+#: src/providers/transport.py
+msgid "Expected a JSON object from the server"
+msgstr "Era previsto un oggetto JSON dal server"
+
+#: src/widgets/chat_input.py
+msgid "No models found on this server. Load one there, then refresh."
+msgstr "Nessun modello trovato su questo server. Caricane uno lì, poi aggiorna."

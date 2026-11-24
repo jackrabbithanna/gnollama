@@ -381,12 +381,6 @@ msgstr "Malengo yote lazima yaunge mkono picha zinazoshirikiwa."
 msgid "Every target must support the selected thinking option."
 msgstr "Malengo yote lazima yaunge mkono chaguo la kufikiri lililochaguliwa."
 
-#: src/comparison.py:52
-msgid "Cloud targets do not support shared structured output or model retention."
-msgstr ""
-"Malengo ya wingu hayaungi mkono matokeo yenye muundo yanayoshirikiwa wala kuhifadhi "
-"modeli ikiwa imepakiwa."
-
 #: src/comparison.py:55
 msgid "The selected thinking level is incompatible with a target."
 msgstr "Kiwango cha kufikiri kilichochaguliwa hakiendani na lengo fulani."
@@ -634,10 +628,6 @@ msgstr "Kufuta kumeshindwa"
 #: src/host_manager.ui:6 src/host_manager.ui:17
 msgid "Manage Hosts"
 msgstr "Dhibiti seva"
-
-#: src/host_manager.ui:35
-msgid "Ollama Servers"
-msgstr "Seva za Ollama"
 
 #: src/host_manager.ui:36
 msgid "Select a server to edit its name or address."
@@ -1190,10 +1180,6 @@ msgstr "Modeli kwenye kumbukumbu"
 msgid "Ollama Cloud requires https://ollama.com."
 msgstr "Ollama Cloud inahitaji https://ollama.com."
 
-#: src/ollama.py:80
-msgid "Enter a valid http:// or https:// Ollama host URL."
-msgstr "Weka URL halali ya seva ya Ollama yenye http:// au https://."
-
 #: src/ollama.py:89 src/ollama.py:104 src/ollama.py:137
 msgid "Request stopped"
 msgstr "Ombi limesimamishwa"
@@ -1213,14 +1199,6 @@ msgstr ""
 #: src/ollama.py:126
 msgid "Ollama Cloud usage or rate limit reached. Try again later."
 msgstr "Kikomo cha matumizi au maombi ya Ollama Cloud kimefikiwa. Jaribu tena baadaye."
-
-#: src/ollama.py:163
-msgid "Invalid JSON received from Ollama"
-msgstr "JSON isiyo halali imepokelewa kutoka Ollama"
-
-#: src/ollama.py:165
-msgid "Expected a JSON object from Ollama"
-msgstr "Ilitarajiwa objekti ya JSON kutoka Ollama"
 
 #: src/ollama.py:222
 msgid "Enter nonempty text to embed."
@@ -3498,10 +3476,6 @@ msgstr "Modeli za upachikaji haziwezi kushiriki katika mazungumzo."
 msgid "A participant does not support the selected thinking option."
 msgstr "Mshiriki haungi mkono chaguo la kufikiri lililochaguliwa."
 
-#: src/model_conversation.py:67
-msgid "Cloud targets manage model retention automatically."
-msgstr "Malengo ya wingu husimamia uhifadhi wa modeli kiotomatiki."
-
 #: src/model_conversation.py:121
 msgid "Enter an opening prompt and choose 1–100 rounds."
 msgstr "Ingiza ujumbe wa kuanza na uchague raundi 1–100."
@@ -3659,3 +3633,63 @@ msgstr "{host} haitumii: {options}."
 #: src/providers/base.py
 msgid "Structured output"
 msgstr "Matokeo yenye muundo"
+
+#: src/host_manager.py
+msgid "Remove the saved key"
+msgstr "Ondoa ufunguo uliohifadhiwa"
+
+#: src/host_manager.py
+msgid "Optional. Stored securely in your desktop keyring."
+msgstr "Si lazima. Huhifadhiwa kwa usalama kwenye hifadhi ya funguo ya eneo-kazi lako."
+
+#: src/host_manager.ui
+msgid "Servers"
+msgstr "Seva"
+
+#: src/providers/openai.py
+msgid "OpenAI-Compatible Server"
+msgstr "Seva inayooana na OpenAI"
+
+#: src/providers/openai.py
+msgid "This server type does not report what its models support, so thinking, image, and tool support are not checked."
+msgstr "Aina hii ya seva haielezi kile ambacho modeli zake zinaweza kufanya, kwa hivyo uwezo wa kufikiri, picha na zana haukaguliwi."
+
+#: src/providers/openai.py
+msgid "This server does not accept: {0}."
+msgstr "Seva hii haikubali: {0}."
+
+#: src/providers/openai.py
+msgid "This server accepts only the Low, Medium, and High thinking levels."
+msgstr "Seva hii inakubali viwango vya kufikiri vya Chini, Wastani na Juu pekee."
+
+#: src/providers/transport.py
+msgid "Invalid JSON received from the server"
+msgstr "JSON batili imepokelewa kutoka kwa seva"
+
+#: src/providers/openai.py
+msgid "The server rejected the API key, or requires one. Edit this host to check its API key."
+msgstr "Seva imekataa ufunguo wa API, au inahitaji ufunguo. Hariri mwenyeji huyu ili kukagua ufunguo wake wa API."
+
+#: src/providers/openai.py
+msgid "The server reported a usage or rate limit. Try again later."
+msgstr "Seva imeripoti kikomo cha matumizi au cha kasi. Jaribu tena baadaye."
+
+#: src/providers/openai.py
+msgid "The server did not return a model list."
+msgstr "Seva haikurudisha orodha ya modeli."
+
+#: src/providers/openai.py
+msgid "Connected\nAvailable models: {0}"
+msgstr "Imeunganishwa\nModeli zinazopatikana: {0}"
+
+#: src/providers/transport.py
+msgid "Enter a valid http:// or https:// server URL."
+msgstr "Weka URL sahihi ya seva inayoanza na http:// au https://."
+
+#: src/providers/transport.py
+msgid "Expected a JSON object from the server"
+msgstr "Kipengee cha JSON kilitarajiwa kutoka kwa seva"
+
+#: src/widgets/chat_input.py
+msgid "No models found on this server. Load one there, then refresh."
+msgstr "Hakuna modeli zilizopatikana kwenye seva hii. Pakia moja huko, kisha onyesha upya."

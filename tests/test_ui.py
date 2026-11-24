@@ -110,6 +110,8 @@ class UITests(unittest.TestCase):
         self.assertEqual(widget._thinking_values, [None, 'low', 'medium', 'high'])
         widget._set_thinking_options({'capabilities': ['completion']})
         self.assertEqual(widget._thinking_values, [None])
+        widget._set_thinking_options({'thinking_levels': ['low', 'medium', 'high']})
+        self.assertEqual(widget._thinking_values, [None, 'low', 'medium', 'high'])
         widget._set_thinking_options(None)
         self.assertIn(False, widget._thinking_values)
         self.assertIsNone(widget.get_thinking_value())

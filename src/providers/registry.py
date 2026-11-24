@@ -2,8 +2,9 @@
 from gettext import gettext as _
 
 from .ollama import OllamaCloudProvider, OllamaProvider
+from .openai import OpenAICompatibleProvider
 
-PROVIDERS = {cls.kind: cls for cls in (OllamaProvider, OllamaCloudProvider)}
+PROVIDERS = {cls.kind: cls for cls in (OllamaProvider, OllamaCloudProvider, OpenAICompatibleProvider)}
 
 
 def provider_class(kind):
@@ -27,7 +28,7 @@ class ProviderRegistry:
         return provider_class(host.get('provider'))(host['hostname'], host['id'], host.get('credential_id'),
                                                     credentials=self.credentials, transport=self.transport)
 
-    def local(self, url):
+    def ollama_at(self, url):
         """An Ollama server known only by its URL, such as a stored embedding host."""
         return OllamaProvider(url, transport=self.transport)
 

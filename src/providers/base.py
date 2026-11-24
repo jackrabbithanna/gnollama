@@ -1,7 +1,7 @@
 """What every model provider offers, and what each one can do."""
 from dataclasses import dataclass, field
 from gettext import gettext as _
-from typing import Any
+from typing import Any, ClassVar
 
 from .transport import Transport
 
@@ -64,9 +64,14 @@ class Provider:
 
     kind = ''
     capabilities = Capabilities()
-    fixed_url: str | None = None  # The only URL this provider accepts, if any.
+    fixed_url: ClassVar[str | None] = None  # The only URL this provider accepts, if any.
     requires_key = False
     key_optional = False  # Takes a key but works without one.
+    # What the host editor shows for this type. Label and name are untranslated.
+    label = ''
+    default_url = ''   # Suggested for a new host.
+    default_name = ''  # Suggested while the name is empty.
+    key_url = ''       # Where the user creates an API key.
 
     @classmethod
     def check_url(cls, url):

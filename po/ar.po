@@ -373,10 +373,6 @@ msgstr "يجب أن تدعم جميع الأهداف الصور المشتركة
 msgid "Every target must support the selected thinking option."
 msgstr "يجب أن تدعم جميع الأهداف خيار التفكير المحدد."
 
-#: src/comparison.py:52
-msgid "Cloud targets do not support shared structured output or model retention."
-msgstr "لا تدعم الأهداف السحابية الإخراج المنظم المشترك أو الاحتفاظ بالنموذج."
-
 #: src/comparison.py:55
 msgid "The selected thinking level is incompatible with a target."
 msgstr "مستوى التفكير المحدد غير متوافق مع أحد الأهداف."
@@ -614,10 +610,6 @@ msgstr "فشل الحذف"
 #: src/host_manager.ui:6 src/host_manager.ui:17
 msgid "Manage Hosts"
 msgstr "إدارة المضيفين"
-
-#: src/host_manager.ui:35
-msgid "Ollama Servers"
-msgstr "خوادم Ollama"
 
 #: src/host_manager.ui:36
 msgid "Select a server to edit its name or address."
@@ -1151,10 +1143,6 @@ msgstr "النماذج في الذاكرة"
 msgid "Ollama Cloud requires https://ollama.com."
 msgstr "يتطلب Ollama Cloud العنوان https://ollama.com."
 
-#: src/ollama.py:80
-msgid "Enter a valid http:// or https:// Ollama host URL."
-msgstr "أدخل عنوان URL صالحًا لمضيف Ollama يبدأ بـ http:// أو https://."
-
 #: src/ollama.py:89 src/ollama.py:104 src/ollama.py:137
 msgid "Request stopped"
 msgstr "أُوقف الطلب"
@@ -1174,14 +1162,6 @@ msgstr ""
 #: src/ollama.py:126
 msgid "Ollama Cloud usage or rate limit reached. Try again later."
 msgstr "تم بلوغ حد الاستخدام أو معدل الطلبات في Ollama Cloud. حاول مجددًا لاحقًا."
-
-#: src/ollama.py:163
-msgid "Invalid JSON received from Ollama"
-msgstr "ورد JSON غير صالح من Ollama"
-
-#: src/ollama.py:165
-msgid "Expected a JSON object from Ollama"
-msgstr "كان المتوقع كائن JSON من Ollama"
 
 #: src/ollama.py:222
 msgid "Enter nonempty text to embed."
@@ -3417,10 +3397,6 @@ msgstr "لا يمكن لنماذج التضمين المشاركة في محاد
 msgid "A participant does not support the selected thinking option."
 msgstr "أحد المشاركين لا يدعم خيار التفكير المحدد."
 
-#: src/model_conversation.py:67
-msgid "Cloud targets manage model retention automatically."
-msgstr "تدير الوجهات السحابية الاحتفاظ بالنماذج تلقائيًا."
-
 #: src/model_conversation.py:121
 msgid "Enter an opening prompt and choose 1–100 rounds."
 msgstr "أدخل رسالة افتتاحية واختر من 1 إلى 100 جولة."
@@ -3578,3 +3554,63 @@ msgstr "{host} لا يدعم: {options}."
 #: src/providers/base.py
 msgid "Structured output"
 msgstr "مخرجات منظَّمة"
+
+#: src/host_manager.py
+msgid "Remove the saved key"
+msgstr "إزالة المفتاح المحفوظ"
+
+#: src/host_manager.py
+msgid "Optional. Stored securely in your desktop keyring."
+msgstr "اختياري. يُحفظ بأمان في حلقة مفاتيح سطح المكتب."
+
+#: src/host_manager.ui
+msgid "Servers"
+msgstr "الخوادم"
+
+#: src/providers/openai.py
+msgid "OpenAI-Compatible Server"
+msgstr "خادم متوافق مع OpenAI"
+
+#: src/providers/openai.py
+msgid "This server type does not report what its models support, so thinking, image, and tool support are not checked."
+msgstr "هذا النوع من الخوادم لا يُبلغ عمّا تدعمه نماذجه، لذا لا يُتحقق من دعم التفكير والصور والأدوات."
+
+#: src/providers/openai.py
+msgid "This server does not accept: {0}."
+msgstr "هذا الخادم لا يقبل: {0}."
+
+#: src/providers/openai.py
+msgid "This server accepts only the Low, Medium, and High thinking levels."
+msgstr "هذا الخادم يقبل مستويات التفكير منخفض ومتوسط ومرتفع فقط."
+
+#: src/providers/transport.py
+msgid "Invalid JSON received from the server"
+msgstr "تم استلام JSON غير صالح من الخادم"
+
+#: src/providers/openai.py
+msgid "The server rejected the API key, or requires one. Edit this host to check its API key."
+msgstr "رفض الخادم مفتاح API أو أنه يتطلب مفتاحًا. حرّر هذا المضيف للتحقق من مفتاح API."
+
+#: src/providers/openai.py
+msgid "The server reported a usage or rate limit. Try again later."
+msgstr "أبلغ الخادم عن بلوغ حد الاستخدام أو المعدل. حاول مرة أخرى لاحقًا."
+
+#: src/providers/openai.py
+msgid "The server did not return a model list."
+msgstr "لم يُرجع الخادم قائمة نماذج."
+
+#: src/providers/openai.py
+msgid "Connected\nAvailable models: {0}"
+msgstr "تم الاتصال\nالنماذج المتاحة: {0}"
+
+#: src/providers/transport.py
+msgid "Enter a valid http:// or https:// server URL."
+msgstr "أدخل عنوان URL صالحًا للخادم يبدأ بـ http:// أو https://."
+
+#: src/providers/transport.py
+msgid "Expected a JSON object from the server"
+msgstr "كان المتوقع كائن JSON من الخادم"
+
+#: src/widgets/chat_input.py
+msgid "No models found on this server. Load one there, then refresh."
+msgstr "لم يُعثر على نماذج على هذا الخادم. حمّل نموذجًا هناك ثم حدّث."

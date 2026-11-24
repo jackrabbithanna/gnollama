@@ -70,8 +70,9 @@ def validate_participants(context, participants, cancel):
         family = (details or {}).get('details', {}).get('family', '').replace('-', '').lower()
         if family == 'gptoss' and wire.thinking not in (None, 'low', 'medium', 'high'):
             raise ValueError(_('The selected thinking level is incompatible with a target.'))
-        if wire.keep_alive is not None and not connection.capabilities.keep_alive:
-            raise ValueError(_('Cloud targets manage model retention automatically.'))
+        levels = (details or {}).get('thinking_levels')
+        if levels is not None and wire.thinking is not None and wire.thinking not in levels:
+            raise ValueError(_('The selected thinking level is incompatible with a target.'))
         connection.capabilities.require(replace(wire, format=None, tools=None), host)
         resolved.append(replace(settings, endpoint='chat', target=replace(target, url=destination),
                                 wire=replace(wire, format=None, tools=None)))

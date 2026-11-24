@@ -338,10 +338,6 @@ msgstr "所有目标都必须支持共享图片。"
 msgid "Every target must support the selected thinking option."
 msgstr "所有目标都必须支持所选思考选项。"
 
-#: src/comparison.py:52
-msgid "Cloud targets do not support shared structured output or model retention."
-msgstr "云端目标不支持共享的结构化输出或模型保留设置。"
-
 #: src/comparison.py:55
 msgid "The selected thinking level is incompatible with a target."
 msgstr "所选思考级别与某个目标不兼容。"
@@ -575,10 +571,6 @@ msgstr "删除失败"
 #: src/host_manager.ui:6 src/host_manager.ui:17
 msgid "Manage Hosts"
 msgstr "管理主机"
-
-#: src/host_manager.ui:35
-msgid "Ollama Servers"
-msgstr "Ollama 服务器"
 
 #: src/host_manager.ui:36
 msgid "Select a server to edit its name or address."
@@ -1106,10 +1098,6 @@ msgstr "内存中的模型"
 msgid "Ollama Cloud requires https://ollama.com."
 msgstr "Ollama Cloud 必须使用 https://ollama.com。"
 
-#: src/ollama.py:80
-msgid "Enter a valid http:// or https:// Ollama host URL."
-msgstr "请输入有效的 http:// 或 https:// Ollama 主机 URL。"
-
 #: src/ollama.py:89 src/ollama.py:104 src/ollama.py:137
 msgid "Request stopped"
 msgstr "请求已停止"
@@ -1127,14 +1115,6 @@ msgstr "Ollama Cloud 拒绝了 API 密钥或账户访问。请编辑此服务器
 #: src/ollama.py:126
 msgid "Ollama Cloud usage or rate limit reached. Try again later."
 msgstr "已达到 Ollama Cloud 使用量或请求频率限制。请稍后重试。"
-
-#: src/ollama.py:163
-msgid "Invalid JSON received from Ollama"
-msgstr "从 Ollama 收到的 JSON 无效"
-
-#: src/ollama.py:165
-msgid "Expected a JSON object from Ollama"
-msgstr "预期从 Ollama 收到 JSON 对象"
 
 #: src/ollama.py:222
 msgid "Enter nonempty text to embed."
@@ -3329,10 +3309,6 @@ msgstr "嵌入模型无法参与对话。"
 msgid "A participant does not support the selected thinking option."
 msgstr "参与者不支持所选的思考选项。"
 
-#: src/model_conversation.py:67
-msgid "Cloud targets manage model retention automatically."
-msgstr "云端目标会自动管理模型保留。"
-
 #: src/model_conversation.py:121
 msgid "Enter an opening prompt and choose 1–100 rounds."
 msgstr "请输入开场提示词并选择 1–100 轮。"
@@ -3490,3 +3466,63 @@ msgstr "{host} 不支持：{options}。"
 #: src/providers/base.py
 msgid "Structured output"
 msgstr "结构化输出"
+
+#: src/host_manager.py
+msgid "Remove the saved key"
+msgstr "移除已保存的密钥"
+
+#: src/host_manager.py
+msgid "Optional. Stored securely in your desktop keyring."
+msgstr "可选。安全地保存在桌面密钥环中。"
+
+#: src/host_manager.ui
+msgid "Servers"
+msgstr "服务器"
+
+#: src/providers/openai.py
+msgid "OpenAI-Compatible Server"
+msgstr "OpenAI 兼容服务器"
+
+#: src/providers/openai.py
+msgid "This server type does not report what its models support, so thinking, image, and tool support are not checked."
+msgstr "此类服务器不报告其模型支持的功能，因此不会检查思考、图片和工具支持。"
+
+#: src/providers/openai.py
+msgid "This server does not accept: {0}."
+msgstr "此服务器不接受：{0}。"
+
+#: src/providers/openai.py
+msgid "This server accepts only the Low, Medium, and High thinking levels."
+msgstr "此服务器仅接受低、中和高思考级别。"
+
+#: src/providers/transport.py
+msgid "Invalid JSON received from the server"
+msgstr "从服务器收到无效的 JSON"
+
+#: src/providers/openai.py
+msgid "The server rejected the API key, or requires one. Edit this host to check its API key."
+msgstr "服务器拒绝了 API 密钥，或需要密钥。请编辑此主机以检查其 API 密钥。"
+
+#: src/providers/openai.py
+msgid "The server reported a usage or rate limit. Try again later."
+msgstr "服务器报告已达到用量或速率限制。请稍后重试。"
+
+#: src/providers/openai.py
+msgid "The server did not return a model list."
+msgstr "服务器未返回模型列表。"
+
+#: src/providers/openai.py
+msgid "Connected\nAvailable models: {0}"
+msgstr "已连接\n可用模型：{0}"
+
+#: src/providers/transport.py
+msgid "Enter a valid http:// or https:// server URL."
+msgstr "请输入以 http:// 或 https:// 开头的有效服务器 URL。"
+
+#: src/providers/transport.py
+msgid "Expected a JSON object from the server"
+msgstr "应从服务器收到 JSON 对象"
+
+#: src/widgets/chat_input.py
+msgid "No models found on this server. Load one there, then refresh."
+msgstr "在此服务器上未找到模型。请在服务器上加载一个模型，然后刷新。"

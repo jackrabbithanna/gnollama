@@ -338,10 +338,6 @@ msgstr "すべての比較対象が共有画像に対応している必要があ
 msgid "Every target must support the selected thinking option."
 msgstr "すべての比較対象が選択した思考オプションに対応している必要があります。"
 
-#: src/comparison.py:52
-msgid "Cloud targets do not support shared structured output or model retention."
-msgstr "クラウドの比較対象は共有の構造化出力やモデル保持に対応していません。"
-
 #: src/comparison.py:55
 msgid "The selected thinking level is incompatible with a target."
 msgstr "選択した思考レベルに対応していない比較対象があります。"
@@ -575,10 +571,6 @@ msgstr "削除に失敗しました"
 #: src/host_manager.ui:6 src/host_manager.ui:17
 msgid "Manage Hosts"
 msgstr "ホストを管理"
-
-#: src/host_manager.ui:35
-msgid "Ollama Servers"
-msgstr "Ollama サーバー"
 
 #: src/host_manager.ui:36
 msgid "Select a server to edit its name or address."
@@ -1108,10 +1100,6 @@ msgstr "メモリー内のモデル"
 msgid "Ollama Cloud requires https://ollama.com."
 msgstr "Ollama Cloud には https://ollama.com が必要です。"
 
-#: src/ollama.py:80
-msgid "Enter a valid http:// or https:// Ollama host URL."
-msgstr "http:// または https:// で始まる有効な Ollama ホストの URL を入力してください。"
-
 #: src/ollama.py:89 src/ollama.py:104 src/ollama.py:137
 msgid "Request stopped"
 msgstr "リクエストを停止しました"
@@ -1129,14 +1117,6 @@ msgstr "Ollama Cloud が API キーまたはアカウントへのアクセスを
 #: src/ollama.py:126
 msgid "Ollama Cloud usage or rate limit reached. Try again later."
 msgstr "Ollama Cloud の使用量またはリクエスト頻度の上限に達しました。後でもう一度お試しください。"
-
-#: src/ollama.py:163
-msgid "Invalid JSON received from Ollama"
-msgstr "Ollama から無効な JSON を受信しました"
-
-#: src/ollama.py:165
-msgid "Expected a JSON object from Ollama"
-msgstr "Ollama から JSON オブジェクトを受信する必要があります"
 
 #: src/ollama.py:222
 msgid "Enter nonempty text to embed."
@@ -3335,10 +3315,6 @@ msgstr "埋め込みモデルは会話に参加できません。"
 msgid "A participant does not support the selected thinking option."
 msgstr "選択した思考オプションに対応していない参加者がいます。"
 
-#: src/model_conversation.py:67
-msgid "Cloud targets manage model retention automatically."
-msgstr "クラウドの接続先ではモデルの保持が自動管理されます。"
-
 #: src/model_conversation.py:121
 msgid "Enter an opening prompt and choose 1–100 rounds."
 msgstr "開始メッセージを入力し、1～100ラウンドを選択してください。"
@@ -3496,3 +3472,63 @@ msgstr "{host} は次に対応していません: {options}。"
 #: src/providers/base.py
 msgid "Structured output"
 msgstr "構造化出力"
+
+#: src/host_manager.py
+msgid "Remove the saved key"
+msgstr "保存済みのキーを削除"
+
+#: src/host_manager.py
+msgid "Optional. Stored securely in your desktop keyring."
+msgstr "任意。デスクトップのキーリングに安全に保存されます。"
+
+#: src/host_manager.ui
+msgid "Servers"
+msgstr "サーバー"
+
+#: src/providers/openai.py
+msgid "OpenAI-Compatible Server"
+msgstr "OpenAI 互換サーバー"
+
+#: src/providers/openai.py
+msgid "This server type does not report what its models support, so thinking, image, and tool support are not checked."
+msgstr "この種類のサーバーはモデルの対応機能を報告しないため、思考・画像・ツールへの対応は確認されません。"
+
+#: src/providers/openai.py
+msgid "This server does not accept: {0}."
+msgstr "このサーバーは次を受け付けません: {0}。"
+
+#: src/providers/openai.py
+msgid "This server accepts only the Low, Medium, and High thinking levels."
+msgstr "このサーバーが受け付ける思考レベルは低・中・高のみです。"
+
+#: src/providers/transport.py
+msgid "Invalid JSON received from the server"
+msgstr "サーバーから無効な JSON を受信しました"
+
+#: src/providers/openai.py
+msgid "The server rejected the API key, or requires one. Edit this host to check its API key."
+msgstr "サーバーが API キーを拒否したか、キーを必要としています。このホストを編集して API キーを確認してください。"
+
+#: src/providers/openai.py
+msgid "The server reported a usage or rate limit. Try again later."
+msgstr "サーバーが使用量またはレートの上限を報告しました。しばらくしてからもう一度お試しください。"
+
+#: src/providers/openai.py
+msgid "The server did not return a model list."
+msgstr "サーバーがモデル一覧を返しませんでした。"
+
+#: src/providers/openai.py
+msgid "Connected\nAvailable models: {0}"
+msgstr "接続しました\n利用可能なモデル: {0}"
+
+#: src/providers/transport.py
+msgid "Enter a valid http:// or https:// server URL."
+msgstr "http:// または https:// で始まる有効なサーバー URL を入力してください。"
+
+#: src/providers/transport.py
+msgid "Expected a JSON object from the server"
+msgstr "サーバーから JSON オブジェクトが返される必要があります"
+
+#: src/widgets/chat_input.py
+msgid "No models found on this server. Load one there, then refresh."
+msgstr "このサーバーにモデルが見つかりません。サーバー側で読み込んでから更新してください。"

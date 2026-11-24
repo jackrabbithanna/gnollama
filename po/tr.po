@@ -379,12 +379,6 @@ msgstr "Tüm hedefler paylaşılan görüntüleri desteklemelidir."
 msgid "Every target must support the selected thinking option."
 msgstr "Tüm hedefler seçilen düşünme seçeneğini desteklemelidir."
 
-#: src/comparison.py:52
-msgid "Cloud targets do not support shared structured output or model retention."
-msgstr ""
-"Bulut hedefleri paylaşılan yapılandırılmış çıktıyı veya modeli bellekte tutmayı "
-"desteklemez."
-
 #: src/comparison.py:55
 msgid "The selected thinking level is incompatible with a target."
 msgstr "Seçilen düşünme düzeyi bir hedefle uyumsuz."
@@ -626,10 +620,6 @@ msgstr "Silme başarısız"
 #: src/host_manager.ui:6 src/host_manager.ui:17
 msgid "Manage Hosts"
 msgstr "Sunucuları yönet"
-
-#: src/host_manager.ui:35
-msgid "Ollama Servers"
-msgstr "Ollama sunucuları"
 
 #: src/host_manager.ui:36
 msgid "Select a server to edit its name or address."
@@ -1170,10 +1160,6 @@ msgstr "Bellekteki modeller"
 msgid "Ollama Cloud requires https://ollama.com."
 msgstr "Ollama Cloud, https://ollama.com adresini gerektirir."
 
-#: src/ollama.py:80
-msgid "Enter a valid http:// or https:// Ollama host URL."
-msgstr "http:// veya https:// ile başlayan geçerli bir Ollama sunucu URL’si girin."
-
 #: src/ollama.py:89 src/ollama.py:104 src/ollama.py:137
 msgid "Request stopped"
 msgstr "İstek durduruldu"
@@ -1193,14 +1179,6 @@ msgstr ""
 #: src/ollama.py:126
 msgid "Ollama Cloud usage or rate limit reached. Try again later."
 msgstr "Ollama Cloud kullanım veya istek sınırına ulaşıldı. Daha sonra yeniden deneyin."
-
-#: src/ollama.py:163
-msgid "Invalid JSON received from Ollama"
-msgstr "Ollama’dan geçersiz JSON alındı"
-
-#: src/ollama.py:165
-msgid "Expected a JSON object from Ollama"
-msgstr "Ollama’dan bir JSON nesnesi bekleniyordu"
 
 #: src/ollama.py:222
 msgid "Enter nonempty text to embed."
@@ -3463,10 +3441,6 @@ msgstr "Gömme modelleri bir konuşmaya katılamaz."
 msgid "A participant does not support the selected thinking option."
 msgstr "Bir katılımcı seçilen düşünme seçeneğini desteklemiyor."
 
-#: src/model_conversation.py:67
-msgid "Cloud targets manage model retention automatically."
-msgstr "Bulut hedefleri modelin bellekte tutulmasını otomatik yönetir."
-
 #: src/model_conversation.py:121
 msgid "Enter an opening prompt and choose 1–100 rounds."
 msgstr "Bir açılış iletisi girin ve 1–100 tur seçin."
@@ -3624,3 +3598,63 @@ msgstr "{host} şunları desteklemiyor: {options}."
 #: src/providers/base.py
 msgid "Structured output"
 msgstr "Yapılandırılmış çıktı"
+
+#: src/host_manager.py
+msgid "Remove the saved key"
+msgstr "Kayıtlı anahtarı kaldır"
+
+#: src/host_manager.py
+msgid "Optional. Stored securely in your desktop keyring."
+msgstr "İsteğe bağlı. Masaüstü anahtarlığınızda güvenle saklanır."
+
+#: src/host_manager.ui
+msgid "Servers"
+msgstr "Sunucular"
+
+#: src/providers/openai.py
+msgid "OpenAI-Compatible Server"
+msgstr "OpenAI uyumlu sunucu"
+
+#: src/providers/openai.py
+msgid "This server type does not report what its models support, so thinking, image, and tool support are not checked."
+msgstr "Bu sunucu türü modellerinin neyi desteklediğini bildirmez; bu nedenle düşünme, görüntü ve araç desteği denetlenmez."
+
+#: src/providers/openai.py
+msgid "This server does not accept: {0}."
+msgstr "Bu sunucu şunları kabul etmiyor: {0}."
+
+#: src/providers/openai.py
+msgid "This server accepts only the Low, Medium, and High thinking levels."
+msgstr "Bu sunucu yalnızca Düşük, Orta ve Yüksek düşünme düzeylerini kabul eder."
+
+#: src/providers/transport.py
+msgid "Invalid JSON received from the server"
+msgstr "Sunucudan geçersiz JSON alındı"
+
+#: src/providers/openai.py
+msgid "The server rejected the API key, or requires one. Edit this host to check its API key."
+msgstr "Sunucu API anahtarını reddetti veya bir anahtar gerektiriyor. API anahtarını denetlemek için bu ana makineyi düzenleyin."
+
+#: src/providers/openai.py
+msgid "The server reported a usage or rate limit. Try again later."
+msgstr "Sunucu bir kullanım veya hız sınırı bildirdi. Daha sonra yeniden deneyin."
+
+#: src/providers/openai.py
+msgid "The server did not return a model list."
+msgstr "Sunucu bir model listesi döndürmedi."
+
+#: src/providers/openai.py
+msgid "Connected\nAvailable models: {0}"
+msgstr "Bağlandı\nKullanılabilir modeller: {0}"
+
+#: src/providers/transport.py
+msgid "Enter a valid http:// or https:// server URL."
+msgstr "http:// veya https:// ile başlayan geçerli bir sunucu URL’si girin."
+
+#: src/providers/transport.py
+msgid "Expected a JSON object from the server"
+msgstr "Sunucudan bir JSON nesnesi bekleniyordu"
+
+#: src/widgets/chat_input.py
+msgid "No models found on this server. Load one there, then refresh."
+msgstr "Bu sunucuda model bulunamadı. Orada bir model yükleyin, sonra yenileyin."

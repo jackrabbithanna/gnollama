@@ -128,6 +128,7 @@ gnollama_provider_sources = [
   'providers/__init__.py',
   'providers/base.py',
   'providers/ollama.py',
+  'providers/openai.py',
   'providers/registry.py',
   'providers/transport.py',
 ]

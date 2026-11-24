@@ -235,7 +235,7 @@ class ModelManagerDialog(Adw.Dialog):
         def unload():
             error = None
             try:
-                self.context.providers.local(host).unload(model, cancellable=cancel)
+                self.context.providers.ollama_at(host).unload(model, cancellable=cancel)
             except ProviderError as exc:
                 error = str(exc)
             finally:
@@ -305,7 +305,7 @@ class ModelManagerDialog(Adw.Dialog):
         if not cloud and isinstance(size, (int, float)) and size >= 0:
             parts.insert(1, GLib.format_size(int(size)))
         row.set_subtitle(' | '.join(str(part) for part in parts if part) or
-                         (_('Ollama Cloud') if cloud else _('Unavailable')))
+                         (_(self.context.providers.connection(self.get_selected_host()).label) if cloud else _('Unavailable')))
         
         info_btn = Gtk.Button.new_from_icon_name("dialog-information-symbolic")
         info_btn.set_valign(Gtk.Align.CENTER)
@@ -539,7 +539,7 @@ class PullModelDialog(Adw.Dialog):
         # The model manager that opened this dialog, refreshed after a download.
         self.owner = owner
         self.services = owner.context.services
-        self.connection = owner.context.providers.local(hostname)
+        self.connection = owner.context.providers.ollama_at(hostname)
         self.hostname: str = hostname
         self.pulling: bool = False
         self.pull_future: Optional[Any] = None

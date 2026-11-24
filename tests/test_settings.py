@@ -4,6 +4,7 @@ import json
 import tempfile
 import time
 import unittest
+from dataclasses import replace
 
 from gi.repository import Gdk
 
@@ -45,9 +46,12 @@ PARTICIPANT = dict(
 
 FUTURE = {'future_option': {'nested': [1, 2]}}
 
-# Anything a provider is sent besides the wire options.
+# Anything a provider is sent besides the wire options, and the names those take, for each API.
 ENVELOPE = {'model', 'messages', 'prompt', 'stream', 'images'}
 WIRE_NAMES = {'options', 'system', 'think', 'format', 'keep_alive', 'tools', 'logprobs', 'top_logprobs'}
+OPENAI_ENVELOPE = {'model', 'messages', 'stream', 'stream_options'}
+OPENAI_WIRE_NAMES = {'temperature', 'max_tokens', 'reasoning_effort', 'response_format', 'tools', 'logprobs',
+                     'top_logprobs'}
 
 
 class RecordingTransport:
@@ -55,9 +59,12 @@ class RecordingTransport:
     def __init__(self):
         self.bodies = []
 
-    def stream_lines(self, url, data, *args, **kwargs):
+    def stream_lines(self, url, data, timeout=300, cancellable=None, decode=None, **hooks):
         self.bodies.append(data())
-        return iter([{'message': {'content': 'ok'}, 'response': 'ok', 'done': True}])
+        if decode is None:
+            yield {'message': {'content': 'ok'}, 'response': 'ok', 'done': True}
+        else:
+            yield decode(b'data: {"choices": [{"delta": {"content": "ok"}, "finish_reason": "stop"}]}')
 
     stream_json = stream_lines
 
@@ -134,22 +141,35 @@ class StoredSettingsTests(unittest.TestCase):
                          tools_text='VIEW-tools', knowledge={'note': 'VIEW-knowledge'},
                          query_override='VIEW-query', draft_settings={'note': 'VIEW-draft'},
                          extra={'VIEW-key': 'VIEW-extra'})
-        wire = WireOptions(options={'temperature': 0.5}, system='Be brief.', thinking=True, format=SCHEMA,
-                           keep_alive=60, tools=TOOLS, logprobs=True, top_logprobs=2)
+        wire = WireOptions(options={'temperature': 0.5, 'num_predict': 64}, system='Be brief.', thinking=True,
+                           format=SCHEMA, keep_alive=60, tools=TOOLS, logprobs=True, top_logprobs=2)
+        ollama = dict(strategies=(ChatStrategy(None), GenerationStrategy()), wire=wire, names=ENVELOPE | WIRE_NAMES,
+                      sent=dict(options=wire.options, think=True, logprobs=True, top_logprobs=2))
+        # Each provider is sent what its capabilities take, under its own API's names.
+        cases = dict(ollama=ollama, ollama_cloud=ollama, openai=dict(
+            strategies=(ChatStrategy(None),), wire=replace(wire, thinking='high', keep_alive=None),
+            names=OPENAI_ENVELOPE | OPENAI_WIRE_NAMES,
+            sent=dict(temperature=0.5, max_tokens=64, reasoning_effort='high', tools=TOOLS, logprobs=True,
+                      top_logprobs=2, response_format={'type': 'json_schema', 'json_schema': {
+                          'name': 'response', 'schema': SCHEMA}})))
+        self.assertEqual(set(cases), set(PROVIDERS), 'every provider has a case here')
         for kind, cls in PROVIDERS.items():
-            for strategy in (ChatStrategy(None), GenerationStrategy()):
+            case = cases[kind]
+            self.assertEqual(cls.capabilities.unsupported(replace(case['wire'], format=None, keep_alive=None)), [])
+            for strategy in case['strategies']:
                 with self.subTest(provider=kind, strategy=type(strategy).__name__):
                     transport = RecordingTransport()
                     provider = cls(cls.fixed_url or 'http://localhost:11434', 'host', transport=transport)
-                    settings = RequestSettings(ModelTarget('VIEW-host-id', provider.url, 'test'), wire, view,
+                    settings = RequestSettings(ModelTarget('VIEW-host-id', provider.url, 'test'), case['wire'], view,
                                                history_images_omitted=True)
                     state = RequestState(settings, 'hello', connection=provider,
                                          messages=[{'role': 'user', 'content': 'hello'}])
-                    list(strategy.process(state))
+                    chunks = list(strategy.process(state))
+                    self.assertTrue(chunks[-1]['done'])
                     body, = transport.bodies
-                    self.assertLessEqual(set(body), ENVELOPE | WIRE_NAMES)
-                    self.assertEqual(body['options'], wire.options)
-                    self.assertEqual(body['think'], True)
+                    self.assertLessEqual(set(body), case['names'])
+                    for name, value in case['sent'].items():
+                        self.assertEqual(body[name], value, name)
                     self.assertNotIn('VIEW-', json.dumps(body))
 
 

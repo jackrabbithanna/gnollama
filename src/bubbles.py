@@ -58,7 +58,7 @@ class AiBubble(Gtk.ListBoxRow):
         
         if model_name:
             self.header.set_visible(True)
-            self.header.set_label(f"Ollama ({model_name})")
+            self.header.set_label(model_name)
         
         self.api_markdown_view = MarkdownView(wrap_code=True)
         self.api_expander.set_child(self.api_markdown_view)

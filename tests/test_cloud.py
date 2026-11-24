@@ -7,8 +7,9 @@ from unittest.mock import patch
 
 from gi.repository import Adw, Gdk, Gio, Gtk
 from src import session
-from src.providers import Capabilities, CLOUD_URL, OllamaCloudProvider, OllamaProvider, ProviderError, RequestCancelled, transport
-from provider_fixture import provider_patch
+from src.providers import (Capabilities, CLOUD_URL, OllamaCloudProvider, OllamaProvider, PROVIDERS, ProviderError,
+                           RequestCancelled, transport)
+from provider_fixture import OPTIONAL_KEY, OptionalKeyProvider, provider_patch
 from src.credentials import CredentialStore, CredentialError
 from src import credentials
 from src.app_context import AppContext
@@ -150,6 +151,114 @@ class CloudStorageTests(CloudStorageFixture, unittest.TestCase):
         with upgraded.db._get_conn() as conn:
             self.assertEqual(conn.execute('PRAGMA user_version').fetchone()[0], 12)
         self.assertIsNotNone(upgraded.db.backup_path)
+
+
+class OptionalKeyFixture(CloudStorageFixture):
+    URL = OptionalKeyProvider.default_url
+
+    def setUp(self):
+        super().setUp()
+        registered = patch.dict(PROVIDERS, OPTIONAL_KEY)
+        registered.start()
+        self.addCleanup(registered.stop)
+
+    def optional(self, api_key='', host_id=None, **kwargs):
+        return self.storage.save_host('Optional', self.URL, provider='optional_key', api_key=api_key,
+                                      host_id=host_id, **kwargs)
+
+
+class OptionalKeyStorageTests(OptionalKeyFixture, unittest.TestCase):
+    def test_key_is_never_demanded_and_is_kept_out_of_the_database(self):
+        bare = self.optional()
+        self.assertIsNone(bare['credential_id'])
+        self.assertEqual(bare['provider'], 'optional_key')
+        self.assertEqual(self.keys.saved, {})
+        with self.assertRaises(CredentialError):
+            self.optional('not a key')
+        keyed = self.optional('test-secret')
+        self.assertEqual(self.keys.saved, {keyed['credential_id']: 'test-secret'})
+        with self.storage.db._get_conn() as conn:
+            self.assertNotIn('test-secret', '\n'.join(conn.iterdump()))
+        added = self.optional('added-later', host_id=bare['id'])
+        self.assertEqual(self.keys.saved[added['credential_id']], 'added-later')
+        self.storage.delete_host(keyed['id'])
+        self.assertEqual(list(self.keys.saved), [added['credential_id']])
+
+    def test_blank_keeps_the_key_and_only_removal_clears_it(self):
+        host = self.optional('test-secret')
+        renamed = self.storage.save_host('Renamed', 'http://localhost:4321', host_id=host['id'], provider='optional_key')
+        self.assertEqual(renamed['credential_id'], host['credential_id'])
+        self.assertEqual(self.keys.saved[host['credential_id']], 'test-secret')
+        self.optional('replacement', host_id=host['id'])
+        self.assertEqual(self.keys.saved, {host['credential_id']: 'replacement'})
+        removed = self.optional(host_id=host['id'], clear_key=True)
+        self.assertIsNone(removed['credential_id'])
+        self.assertEqual(self.keys.saved, {})
+        # Removing a key that is not there is not an error.
+        self.assertIsNone(self.optional(host_id=host['id'], clear_key=True)['credential_id'])
+
+    def test_removal_is_ignored_where_a_key_is_required(self):
+        host = self.cloud()
+        saved = self.storage.save_host('Cloud', CLOUD_URL, host_id=host['id'], provider='ollama_cloud', clear_key=True)
+        self.assertEqual(saved['credential_id'], host['credential_id'])
+        self.assertEqual(self.keys.saved[host['credential_id']], 'test-secret')
+
+    def test_session_only_key(self):
+        self.keys.unavailable = True
+        before = self.storage.get_all_hosts()
+        with self.assertRaises(CredentialError):
+            self.optional('test-secret')
+        self.assertEqual(self.storage.get_all_hosts(), before)
+        host = self.optional('test-secret', session_only=True)
+        self.assertIsNone(host['credential_id'])
+        self.assertEqual(self.keys.lookup(host['id'], None), 'test-secret')
+        self.assertEqual(self.keys.saved, {})
+        # A blank save keeps it; removal forgets it.
+        self.optional(host_id=host['id'])
+        self.assertTrue(self.keys.has_session(host['id']))
+        self.optional(host_id=host['id'], clear_key=True)
+        self.assertFalse(self.keys.has_session(host['id']))
+
+    def test_keyring_failure_leaves_the_host_unchanged(self):
+        host = self.optional('test-secret')
+        self.keys.unavailable = True
+        for change in (dict(api_key='new-key'), dict(clear_key=True)):
+            with self.subTest(change=change), self.assertRaises(CredentialError):
+                self.storage.save_host('Changed', 'http://localhost:4321', host_id=host['id'],
+                                       provider='optional_key', **change)
+        with self.assertRaises(CredentialError):
+            self.storage.save_host('Changed', self.URL, host_id=host['id'])
+        self.assertEqual(self.storage.get_host(host['id']), host)
+        self.assertEqual(self.keys.saved, {host['credential_id']: 'test-secret'})
+        # Without a keyring a host can still be saved with no key, or a session one.
+        self.assertIsNone(self.optional()['credential_id'])
+        self.optional('temporary', host_id=host['id'], session_only=True)
+        self.assertEqual(self.keys.lookup(host['id'], host['credential_id']), 'temporary')
+
+    def test_changing_type_never_carries_a_key_to_another_server(self):
+        host = self.optional('test-secret')
+        local = self.storage.save_host('Local', self.URL, host_id=host['id'])
+        self.assertIsNone(local['credential_id'])
+        self.assertEqual(self.keys.saved, {})
+        # Back to the optional type: nothing to restore, nothing demanded.
+        self.assertIsNone(self.optional(host_id=host['id'])['credential_id'])
+        # To a type that requires a key: the old one does not count.
+        self.optional('test-secret', host_id=host['id'])
+        with self.assertRaises(CredentialError):
+            self.storage.save_host('Cloud', CLOUD_URL, host_id=host['id'], provider='ollama_cloud')
+        self.assertEqual(self.storage.get_host(host['id'])['provider'], 'optional_key')
+        self.assertEqual(list(self.keys.saved.values()), ['test-secret'])
+        cloud = self.storage.save_host('Cloud', CLOUD_URL, host_id=host['id'], provider='ollama_cloud', api_key='cloud-secret')
+        self.assertEqual(self.keys.saved, {cloud['credential_id']: 'cloud-secret'})
+        # And from it: the cloud key is not sent to the other server.
+        back = self.optional(host_id=host['id'])
+        self.assertIsNone(back['credential_id'])
+        self.assertEqual(self.keys.saved, {})
+        self.keys.set_session(host['id'], 'session-secret')
+        self.storage.save_host('Cloud', CLOUD_URL, host_id=host['id'], provider='ollama_cloud',
+                               api_key='cloud-secret', session_only=True)
+        self.optional(host_id=host['id'])
+        self.assertFalse(self.keys.has_session(host['id']))
 
 
 class CloudTransportTests(unittest.TestCase):
@@ -360,3 +469,178 @@ class CloudUITests(CloudStorageFixture, unittest.TestCase):
             for tab in (chat, response):
                 tab.chat_input.cancel_fetches()
                 tab.knowledge_control.close_dialog(dispose=True)
+
+
+@unittest.skipUnless(Gdk.Display.get_default(), 'GTK smoke tests require a display')
+class HostEditorTests(OptionalKeyFixture, unittest.TestCase):
+    def setUp(self):
+        super().setUp()
+        self.window = Adw.Window()
+        self.window.set_content(Gtk.Box())
+        self.window.present()
+
+    def tearDown(self):
+        self.window.destroy()
+        pump_until(lambda: self.context.services.idle)
+        super().tearDown()
+
+    def select(self, dialog, kind):
+        dialog.provider_dropdown.set_selected(list(PROVIDERS).index(kind))
+
+    def shown(self, dialog):
+        return dict(key=dialog.key_box.get_visible(), link=dialog.key_link.get_visible(),
+                    remove=dialog.remove_key_check.get_visible(), hint=dialog.key_hint.get_text(),
+                    editable=dialog.hostname_entry.get_editable(), save=dialog.get_response_enabled('save'))
+
+    def edit(self, manager, host=None):
+        manager.show_edit_dialog(host)
+        dialog = self.window.get_visible_dialog()
+        self.assertIsInstance(dialog, HostEditDialog)
+        return dialog
+
+    def test_fields_follow_the_selected_type(self):
+        dialog = HostEditDialog()
+        model = dialog.provider_dropdown.get_model()
+        labels = [model.get_string(i) for i in range(model.get_n_items())]
+        self.assertEqual(labels, [kind.label for kind in PROVIDERS.values()])  # In registration order.
+        self.assertEqual(labels[:2] + labels[-1:], ['Ollama Server', 'Ollama Cloud', 'Optional Key Server'])
+        self.assertEqual(dialog.provider, 'ollama')
+        self.assertEqual(self.shown(dialog), dict(key=False, link=False, remove=False, editable=True, save=False,
+                                                  hint=dialog.key_hint.get_text()))
+        self.assertEqual(dialog.hostname_entry.get_text(), '')
+
+        self.select(dialog, 'optional_key')
+        self.assertEqual(dialog.hostname_entry.get_text(), self.URL)
+        self.assertEqual(dialog.name_entry.get_text(), '')
+        self.assertEqual(self.shown(dialog), dict(key=True, link=False, remove=False, editable=True, save=False,
+                                                  hint='Optional. Stored securely in your desktop keyring.'))
+        dialog.name_entry.set_text('LAN')
+        self.assertTrue(dialog.get_response_enabled('save'))  # No key is demanded.
+        dialog.api_key_entry.set_text('not a key')
+        self.assertFalse(dialog.get_response_enabled('save'))
+        dialog.api_key_entry.set_text('test-secret')
+        self.assertTrue(dialog.get_response_enabled('save'))
+
+        self.select(dialog, 'ollama_cloud')
+        self.assertEqual(dialog.hostname_entry.get_text(), CLOUD_URL)
+        self.assertEqual(dialog.name_entry.get_text(), 'LAN')
+        self.assertEqual(dialog.key_link.get_uri(), 'https://ollama.com/settings/keys')
+        self.assertEqual(self.shown(dialog), dict(key=True, link=True, remove=False, editable=False, save=True,
+                                                  hint='Stored securely in your desktop keyring.'))
+        dialog.api_key_entry.set_text('')
+        self.assertFalse(dialog.get_response_enabled('save'))
+
+        # A suggested address gives way to the next type; a typed one is remembered.
+        self.select(dialog, 'ollama')
+        self.assertEqual(dialog.hostname_entry.get_text(), '')
+        self.assertEqual(dialog.api_key, '')
+        dialog.hostname_entry.set_text('http://gpu.lan:8000')
+        for kind in ('ollama_cloud', 'optional_key', 'ollama_cloud', 'ollama'):
+            self.select(dialog, kind)
+        self.assertEqual(dialog.hostname_entry.get_text(), 'http://gpu.lan:8000')
+        self.assertTrue(dialog.hostname_entry.get_editable())
+
+        named = HostEditDialog()
+        self.select(named, 'ollama_cloud')
+        self.assertEqual(named.name_entry.get_text(), 'Ollama Cloud')
+
+    def test_existing_ollama_hosts_edit_as_before(self):
+        local = self.storage.get_all_hosts()[0]
+        dialog = HostEditDialog(host=local)
+        self.assertEqual((dialog.provider, dialog.name_entry.get_text(), dialog.hostname_entry.get_text()),
+                         ('ollama', local['name'], local['hostname']))
+        self.assertEqual(self.shown(dialog), dict(key=False, link=False, remove=False, editable=True, save=True,
+                                                  hint=dialog.key_hint.get_text()))
+        self.select(dialog, 'ollama_cloud')
+        self.assertFalse(dialog.get_response_enabled('save'))
+        self.select(dialog, 'ollama')
+        self.assertEqual(dialog.hostname_entry.get_text(), local['hostname'])
+
+        cloud = self.cloud()
+        dialog = HostEditDialog(host=cloud)
+        self.assertEqual((dialog.provider, dialog.name_entry.get_text(), dialog.hostname_entry.get_text()),
+                         ('ollama_cloud', 'Cloud', CLOUD_URL))
+        self.assertEqual(self.shown(dialog), dict(key=True, link=True, remove=False, editable=False, save=True,
+                                                  hint='Leave blank to keep the existing key.'))
+        self.assertFalse(dialog.clear_key)
+        # Its key is not offered to another type, and is still there on coming back.
+        self.select(dialog, 'optional_key')
+        self.assertEqual(self.shown(dialog)['hint'], 'Optional. Stored securely in your desktop keyring.')
+        self.assertFalse(dialog.remove_key_check.get_visible())
+        self.select(dialog, 'ollama_cloud')
+        self.assertEqual(self.shown(dialog)['hint'], 'Leave blank to keep the existing key.')
+        self.assertTrue(dialog.get_response_enabled('save'))
+        session = HostEditDialog(host=dict(cloud, credential_id=None), has_session=True)
+        self.assertTrue(session.get_response_enabled('save'))
+        self.assertFalse(HostEditDialog(host=dict(cloud, credential_id=None)).get_response_enabled('save'))
+
+    def test_optional_key_is_saved_kept_and_removed_through_the_editor(self):
+        manager = HostManagerDialog(self.context)
+        manager.present(self.window)
+        dialog = self.edit(manager)
+        self.select(dialog, 'optional_key')
+        dialog.name_entry.set_text('LAN')
+        dialog.save_button.emit('clicked')
+        pump_until(lambda: any(h['name'] == 'LAN' for h in self.storage.get_all_hosts()))
+        pump_until(lambda: not dialog.busy)
+        host = next(h for h in self.storage.get_all_hosts() if h['name'] == 'LAN')
+        self.assertEqual((host['provider'], host['hostname'], host['credential_id']),
+                         ('optional_key', self.URL, None))
+
+        dialog = self.edit(manager, host)
+        self.assertEqual(dialog.provider, 'optional_key')
+        self.assertFalse(dialog.remove_key_check.get_visible())
+        dialog.api_key_entry.set_text('test-secret')
+        dialog.save_button.emit('clicked')
+        pump_until(lambda: self.keys.saved)
+        pump_until(lambda: not dialog.busy)
+        host = self.storage.get_host(host['id'])
+        self.assertEqual(self.keys.saved, {host['credential_id']: 'test-secret'})
+
+        dialog = self.edit(manager, host)
+        self.assertEqual(self.shown(dialog), dict(key=True, link=False, remove=True, editable=True, save=True,
+                                                  hint='Leave blank to keep the existing key.'))
+        dialog.name_entry.set_text('Renamed')
+        dialog.save_button.emit('clicked')
+        pump_until(lambda: self.storage.get_host(host['id'])['name'] == 'Renamed')
+        pump_until(lambda: not dialog.busy)
+        self.assertEqual(self.keys.saved, {host['credential_id']: 'test-secret'})
+
+        dialog = self.edit(manager, self.storage.get_host(host['id']))
+        dialog.api_key_entry.set_text('not a key')
+        self.assertFalse(dialog.get_response_enabled('save'))
+        dialog.remove_key_check.set_active(True)
+        self.assertFalse(dialog.api_key_entry.get_sensitive())
+        self.assertTrue(dialog.get_response_enabled('save'))  # What was typed is not used.
+        dialog.save_button.emit('clicked')
+        pump_until(lambda: not self.keys.saved)
+        pump_until(lambda: not dialog.busy)
+        self.assertIsNone(self.storage.get_host(host['id'])['credential_id'])
+        manager.force_close()
+
+    def test_optional_key_falls_back_to_the_session_on_keyring_failure(self):
+        self.keys.unavailable = True
+        manager = HostManagerDialog(self.context)
+        manager.present(self.window)
+        dialog = self.edit(manager)
+        self.select(dialog, 'optional_key')
+        dialog.name_entry.set_text('LAN')
+        dialog.api_key_entry.set_text('session-secret')
+        dialog.save_button.emit('clicked')
+        pump_until(lambda: dialog.session_button.get_visible())
+        self.assertEqual(dialog.api_key_entry.get_text(), 'session-secret')
+        self.assertFalse(any(h['name'] == 'LAN' for h in self.storage.get_all_hosts()))
+        dialog.session_button.emit('clicked')
+        pump_until(lambda: any(h['name'] == 'LAN' for h in self.storage.get_all_hosts()))
+        pump_until(lambda: not dialog.busy)
+        host = next(h for h in self.storage.get_all_hosts() if h['name'] == 'LAN')
+        self.assertIsNone(host['credential_id'])
+        self.assertEqual(self.keys.lookup(host['id'], None), 'session-secret')
+        # The session key counts as a key the host has, and can be removed.
+        dialog = self.edit(manager, host)
+        self.assertTrue(dialog.remove_key_check.get_visible())
+        dialog.remove_key_check.set_active(True)
+        dialog.save_button.emit('clicked')
+        pump_until(lambda: not self.keys.has_session(host['id']))
+        pump_until(lambda: not dialog.busy)
+        manager.force_close()

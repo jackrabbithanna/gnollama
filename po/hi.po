@@ -374,10 +374,6 @@ msgstr "सभी लक्ष्यों को साझा छवियो�
 msgid "Every target must support the selected thinking option."
 msgstr "सभी लक्ष्यों को चुने गए चिंतन विकल्प का समर्थन करना चाहिए।"
 
-#: src/comparison.py:52
-msgid "Cloud targets do not support shared structured output or model retention."
-msgstr "क्लाउड लक्ष्य साझा संरचित आउटपुट या मॉडल को लोड रखे जाने का समर्थन नहीं करते।"
-
 #: src/comparison.py:55
 msgid "The selected thinking level is incompatible with a target."
 msgstr "चुना गया चिंतन स्तर किसी लक्ष्य के साथ संगत नहीं है।"
@@ -619,10 +615,6 @@ msgstr "हटाना विफल"
 #: src/host_manager.ui:6 src/host_manager.ui:17
 msgid "Manage Hosts"
 msgstr "होस्ट प्रबंधित करें"
-
-#: src/host_manager.ui:35
-msgid "Ollama Servers"
-msgstr "Ollama सर्वर"
 
 #: src/host_manager.ui:36
 msgid "Select a server to edit its name or address."
@@ -1154,10 +1146,6 @@ msgstr "मेमोरी में मॉडल"
 msgid "Ollama Cloud requires https://ollama.com."
 msgstr "Ollama Cloud के लिए https://ollama.com आवश्यक है।"
 
-#: src/ollama.py:80
-msgid "Enter a valid http:// or https:// Ollama host URL."
-msgstr "मान्य http:// या https:// Ollama होस्ट URL दर्ज करें।"
-
 #: src/ollama.py:89 src/ollama.py:104 src/ollama.py:137
 msgid "Request stopped"
 msgstr "अनुरोध रोक दिया गया"
@@ -1179,14 +1167,6 @@ msgid "Ollama Cloud usage or rate limit reached. Try again later."
 msgstr ""
 "Ollama Cloud के उपयोग या अनुरोध की दर की सीमा पूरी हो गई है। बाद में फिर से प्रयास "
 "करें।"
-
-#: src/ollama.py:163
-msgid "Invalid JSON received from Ollama"
-msgstr "Ollama से अमान्य JSON मिला"
-
-#: src/ollama.py:165
-msgid "Expected a JSON object from Ollama"
-msgstr "Ollama से JSON ऑब्जेक्ट अपेक्षित था"
 
 #: src/ollama.py:222
 msgid "Enter nonempty text to embed."
@@ -3442,10 +3422,6 @@ msgstr "एम्बेडिंग मॉडल बातचीत में �
 msgid "A participant does not support the selected thinking option."
 msgstr "एक प्रतिभागी चुने गए सोच विकल्प का समर्थन नहीं करता।"
 
-#: src/model_conversation.py:67
-msgid "Cloud targets manage model retention automatically."
-msgstr "क्लाउड लक्ष्य मॉडल को मेमोरी में रखने का प्रबंधन अपने आप करते हैं।"
-
 #: src/model_conversation.py:121
 msgid "Enter an opening prompt and choose 1–100 rounds."
 msgstr "प्रारंभिक संदेश लिखें और 1–100 चक्र चुनें।"
@@ -3603,3 +3579,63 @@ msgstr "{host} इनका समर्थन नहीं करता: {optio
 #: src/providers/base.py
 msgid "Structured output"
 msgstr "संरचित आउटपुट"
+
+#: src/host_manager.py
+msgid "Remove the saved key"
+msgstr "सहेजी गई कुंजी हटाएँ"
+
+#: src/host_manager.py
+msgid "Optional. Stored securely in your desktop keyring."
+msgstr "वैकल्पिक। आपके डेस्कटॉप कीरिंग में सुरक्षित रूप से संग्रहीत।"
+
+#: src/host_manager.ui
+msgid "Servers"
+msgstr "सर्वर"
+
+#: src/providers/openai.py
+msgid "OpenAI-Compatible Server"
+msgstr "OpenAI-संगत सर्वर"
+
+#: src/providers/openai.py
+msgid "This server type does not report what its models support, so thinking, image, and tool support are not checked."
+msgstr "इस प्रकार का सर्वर यह नहीं बताता कि इसके मॉडल क्या समर्थन करते हैं, इसलिए सोच, चित्र और टूल समर्थन की जाँच नहीं की जाती।"
+
+#: src/providers/openai.py
+msgid "This server does not accept: {0}."
+msgstr "यह सर्वर इन्हें स्वीकार नहीं करता: {0}।"
+
+#: src/providers/openai.py
+msgid "This server accepts only the Low, Medium, and High thinking levels."
+msgstr "यह सर्वर केवल कम, मध्यम और अधिक सोच स्तर स्वीकार करता है।"
+
+#: src/providers/transport.py
+msgid "Invalid JSON received from the server"
+msgstr "सर्वर से अमान्य JSON प्राप्त हुआ"
+
+#: src/providers/openai.py
+msgid "The server rejected the API key, or requires one. Edit this host to check its API key."
+msgstr "सर्वर ने API कुंजी अस्वीकार कर दी, या उसे कुंजी चाहिए। इसकी API कुंजी जाँचने के लिए इस होस्ट को संपादित करें।"
+
+#: src/providers/openai.py
+msgid "The server reported a usage or rate limit. Try again later."
+msgstr "सर्वर ने उपयोग या दर सीमा की सूचना दी। बाद में पुनः प्रयास करें।"
+
+#: src/providers/openai.py
+msgid "The server did not return a model list."
+msgstr "सर्वर ने मॉडल सूची नहीं लौटाई।"
+
+#: src/providers/openai.py
+msgid "Connected\nAvailable models: {0}"
+msgstr "कनेक्ट हो गया\nउपलब्ध मॉडल: {0}"
+
+#: src/providers/transport.py
+msgid "Enter a valid http:// or https:// server URL."
+msgstr "http:// या https:// से शुरू होने वाला मान्य सर्वर URL दर्ज करें।"
+
+#: src/providers/transport.py
+msgid "Expected a JSON object from the server"
+msgstr "सर्वर से JSON ऑब्जेक्ट अपेक्षित था"
+
+#: src/widgets/chat_input.py
+msgid "No models found on this server. Load one there, then refresh."
+msgstr "इस सर्वर पर कोई मॉडल नहीं मिला। वहाँ एक लोड करें, फिर रीफ़्रेश करें।"

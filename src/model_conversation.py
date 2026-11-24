@@ -74,7 +74,8 @@ def validate_participants(context, participants, cancel):
         if levels is not None and wire.thinking is not None and wire.thinking not in levels:
             raise ValueError(_('The selected thinking level is incompatible with a target.'))
         connection.capabilities.require(replace(wire, format=None, tools=None), host)
-        resolved.append(replace(settings, endpoint='chat', target=replace(target, url=destination),
+        resolved.append(replace(settings, endpoint='chat',
+                                target=replace(target, url=destination, host_name=host.get('name')),
                                 wire=replace(wire, format=None, tools=None)))
         connections.append(connection)
     return resolved, connections

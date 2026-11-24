@@ -76,6 +76,14 @@ class StoredSettingsTests(unittest.TestCase):
                 settings = RequestSettings.from_stored(stored)
                 self.assertEqual(settings.to_stored(sparse=sparse), stored)
                 self.assertEqual(RequestSettings.from_stored(settings.to_stored()), settings)
+        # A record from before the host name was kept loads without one and is written back unchanged.
+        self.assertIsNone(RequestSettings.from_stored(PARTICIPANT).target.host_name)
+        self.assertNotIn('host_name', RequestSettings.from_stored(COMPARISON_TARGET).to_stored())
+        named = dict(COMPARISON_TARGET, host_name='Study box')
+        settings = RequestSettings.from_stored(named)
+        self.assertEqual(settings.target, ModelTarget('host-id', 'http://localhost:11434', 'one', 'Study box'))
+        self.assertEqual(settings.to_stored(), named)
+        self.assertEqual(settings.view.extra, {})
         settings = RequestSettings.from_chat_options(CHAT_OPTIONS)
         self.assertEqual(settings.to_chat_options(), CHAT_OPTIONS)
         self.assertEqual(settings.wire.options, {'temperature': 0.2, 'num_ctx': 4096, 'stop': ['END']})
@@ -101,9 +109,13 @@ class StoredSettingsTests(unittest.TestCase):
 
     def test_details_are_the_destination_and_wire_options_only(self):
         details = RequestSettings.from_stored(COMPARISON_TARGET).api_details()
-        self.assertEqual(set(details), {'host', 'model', 'endpoint'} | {f for f in WireOptions.__dataclass_fields__})
+        self.assertEqual(set(details), {'host', 'host_id', 'host_name', 'model', 'endpoint'}
+                         | {f for f in WireOptions.__dataclass_fields__})
         self.assertEqual(details['format'], SCHEMA)
         self.assertEqual(details['host'], 'http://localhost:11434')
+        self.assertEqual((details['host_id'], details['host_name']), ('host-id', None))
+        named = RequestSettings.from_stored(dict(COMPARISON_TARGET, host_name='Study box')).api_details()
+        self.assertEqual(named['host_name'], 'Study box')
 
     def test_composer_values_are_sorted_once_and_copied(self):
         knowledge, options = dict(DEFAULT_RAG, enabled=True), {'seed': 1}
@@ -119,6 +131,8 @@ class StoredSettingsTests(unittest.TestCase):
             show_stats=False, output_mode='schema', schema_text='source', tools_enabled=True, tools_text='tools',
             knowledge=dict(DEFAULT_RAG, enabled=True), query_override='query', extra=FUTURE))
         self.assertEqual(settings.target, ModelTarget('host-id', 'http://localhost:11434', 'one'))
+        named = replace(input, host={'id': 'host-id', 'name': 'Study box'}).settings('http://localhost:11434')
+        self.assertEqual(named.target.host_name, 'Study box')
 
     def test_capabilities_name_what_a_provider_cannot_be_sent(self):
         from src.providers import Capabilities, OllamaCloudProvider, OllamaProvider

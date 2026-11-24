@@ -9,7 +9,8 @@ from gi.repository import Adw, Gdk, Gio, Gtk
 from src import session
 from src.providers import (Capabilities, CLOUD_URL, OllamaCloudProvider, OllamaProvider, PROVIDERS, ProviderError,
                            RequestCancelled, transport)
-from provider_fixture import OPTIONAL_KEY, OptionalKeyProvider, provider_patch
+from provider_fixture import KEYED, OPTIONAL_KEY, OptionalKeyProvider, provider_patch
+from src.providers.base import same_address
 from src.credentials import CredentialStore, CredentialError
 from src import credentials
 from src.app_context import AppContext
@@ -155,15 +156,21 @@ class CloudStorageTests(CloudStorageFixture, unittest.TestCase):
 
 class OptionalKeyFixture(CloudStorageFixture):
     URL = OptionalKeyProvider.default_url
+    OTHER = 'http://other.lan:1234'
+    KINDS = OPTIONAL_KEY
 
     def setUp(self):
         super().setUp()
-        registered = patch.dict(PROVIDERS, OPTIONAL_KEY)
+        registered = patch.dict(PROVIDERS, self.KINDS)
         registered.start()
         self.addCleanup(registered.stop)
 
     def optional(self, api_key='', host_id=None, **kwargs):
         return self.storage.save_host('Optional', self.URL, provider='optional_key', api_key=api_key,
+                                      host_id=host_id, **kwargs)
+
+    def required(self, host_id, url=None, **kwargs):
+        return self.storage.save_host('Required', url or self.URL, provider='required_key',
                                       host_id=host_id, **kwargs)
 
 
@@ -235,7 +242,8 @@ class OptionalKeyStorageTests(OptionalKeyFixture, unittest.TestCase):
         self.optional('temporary', host_id=host['id'], session_only=True)
         self.assertEqual(self.keys.lookup(host['id'], host['credential_id']), 'temporary')
 
-    def test_changing_type_never_carries_a_key_to_another_server(self):
+    def test_changing_type_never_carries_a_key_to_another_address(self):
+        # To a type without a key, then between types whose addresses differ.
         host = self.optional('test-secret')
         local = self.storage.save_host('Local', self.URL, host_id=host['id'])
         self.assertIsNone(local['credential_id'])
@@ -259,6 +267,145 @@ class OptionalKeyStorageTests(OptionalKeyFixture, unittest.TestCase):
                                api_key='cloud-secret', session_only=True)
         self.optional(host_id=host['id'])
         self.assertFalse(self.keys.has_session(host['id']))
+
+
+class KeyOnTypeChangeTests(OptionalKeyFixture, unittest.TestCase):
+    KINDS = KEYED
+
+    def test_addresses_are_the_same_only_when_that_is_certain(self):
+        for first, second in (('http://h:1234', 'http://h:1234/'), ('HTTP://Host.LAN:1234', 'http://host.lan:1234'),
+                              ('http://h', 'http://h:80'), ('https://h:443/', 'https://h'),
+                              ('http://h/api/', 'http://h/api'), ('http://[::1]:1234', 'http://[::1]:1234/')):
+            with self.subTest(first=first, second=second):
+                self.assertTrue(same_address(first, second))
+                self.assertTrue(same_address(second, first))
+        for first, second in (('http://h:1234', 'http://h:1234/v1'), ('http://h:1234', 'https://h:1234'),
+                              ('http://h:1234', 'http://h:4321'), ('http://h', 'http://h:8080'),
+                              ('http://h/API', 'http://h/api'), ('http://user@h', 'http://h'),
+                              ('http://h', 'http://h.lan'), ('http://localhost', 'http://127.0.0.1'),
+                              ('', ''), ('not a url', 'not a url'), ('ftp://h', 'ftp://h'),
+                              ('http://h:bad', 'http://h:bad'), ('http://h?a=1', 'http://h?a=1'),
+                              (None, 'http://h'), (None, None)):
+            with self.subTest(first=first, second=second):
+                self.assertFalse(same_address(first, second))
+                self.assertFalse(same_address(second, first))
+
+    def test_stored_key_follows_the_host_to_a_keyed_type_at_the_same_address(self):
+        host = self.optional('test-secret')
+        kept = {host['credential_id']: 'test-secret'}
+        required = self.required(host['id'])  # Not demanded again.
+        self.assertEqual((required['provider'], required['credential_id']), ('required_key', host['credential_id']))
+        self.assertEqual(self.keys.saved, kept)
+        self.assertEqual(self.optional(host_id=host['id'])['credential_id'], host['credential_id'])
+        # A trailing slash, the case of the host name, and a default port are the same address.
+        slashed = self.required(host['id'], self.URL + '/')
+        self.assertEqual((slashed['hostname'], slashed['credential_id']), (self.URL, host['credential_id']))
+        self.optional(host_id=host['id'])
+        self.assertEqual(self.required(host['id'], 'http://LOCALHOST:1234')['credential_id'], host['credential_id'])
+        self.assertEqual(self.keys.saved, kept)
+        connection = self.context.connection(self.storage.get_host(host['id']))
+        self.assertEqual(self.keys.lookup(connection.host_id, connection.credential_id), 'test-secret')
+
+    def test_session_key_follows_the_host_to_a_keyed_type_at_the_same_address(self):
+        host = self.optional('session-secret', session_only=True)
+        required = self.required(host['id'])
+        self.assertEqual((required['provider'], required['credential_id']), ('required_key', None))
+        self.assertEqual(self.keys.lookup(host['id'], None), 'session-secret')
+        self.optional(host_id=host['id'])
+        self.assertTrue(self.keys.has_session(host['id']))
+        self.assertEqual(self.keys.saved, {})
+
+    def test_key_is_dropped_for_a_type_that_takes_none(self):
+        host = self.optional('test-secret')
+        self.keys.set_session(host['id'], 'session-secret')
+        local = self.storage.save_host('Local', self.URL, host_id=host['id'])
+        self.assertEqual((local['provider'], local['credential_id']), ('ollama', None))
+        self.assertEqual(self.keys.saved, {})
+        self.assertFalse(self.keys.has_session(host['id']))
+        # Nothing is left to follow it back.
+        with self.assertRaisesRegex(CredentialError, 'An API key is required'):
+            self.required(host['id'])
+        self.assertEqual(self.storage.get_host(host['id']), local)
+
+    def test_key_is_dropped_when_the_address_changes_with_the_type(self):
+        for other in (self.OTHER, self.URL + '/v1', self.URL.replace('http:', 'https:')):
+            with self.subTest(other=other):
+                host = self.required(None, api_key='test-secret')
+                self.keys.set_session(host['id'], 'session-secret')
+                moved = self.storage.save_host('Moved', other, host_id=host['id'], provider='optional_key')
+                self.assertEqual((moved['provider'], moved['hostname'], moved['credential_id']),
+                                 ('optional_key', other, None))
+                self.assertEqual(self.keys.saved, {})
+                self.assertFalse(self.keys.has_session(host['id']))
+        # A type that requires a key does not count the one left at the old address.
+        for session_only in (False, True):
+            with self.subTest(session_only=session_only):
+                host = self.optional('test-secret', session_only=session_only)
+                saved = dict(self.keys.saved)
+                with self.assertRaisesRegex(CredentialError, 'An API key is required'):
+                    self.required(host['id'], self.OTHER)
+                self.assertEqual(self.storage.get_host(host['id']), host)
+                self.assertEqual(self.keys.saved, saved)
+                self.assertEqual(self.keys.lookup(host['id'], host['credential_id']), 'test-secret')
+                self.storage.delete_host(host['id'])
+
+    def test_new_key_replaces_the_old_one_on_a_type_change(self):
+        host = self.optional('test-secret')
+        same = self.required(host['id'], api_key='second-secret')
+        self.assertEqual(self.keys.saved, {same['credential_id']: 'second-secret'})
+        moved = self.storage.save_host('Moved', self.OTHER, host_id=host['id'], provider='optional_key',
+                                       api_key='third-secret')
+        self.assertEqual(self.keys.saved, {moved['credential_id']: 'third-secret'})
+        # A session key entered on moving leaves no stored key for the old address.
+        session = self.required(host['id'], api_key='fourth-secret', session_only=True)
+        self.assertIsNone(session['credential_id'])
+        self.assertEqual(self.keys.saved, {})
+        self.assertEqual(self.keys.lookup(host['id'], None), 'fourth-secret')
+        # A stored key replaces a session key that followed the host.
+        stored = self.optional('fifth-secret', host_id=host['id'])
+        self.assertFalse(self.keys.has_session(host['id']))
+        self.assertEqual(self.keys.saved, {stored['credential_id']: 'fifth-secret'})
+
+    def test_required_type_demands_a_key_from_a_host_that_has_none(self):
+        local = self.storage.get_all_hosts()[0]
+        bare = self.optional()
+        for host in (local, bare):
+            with self.subTest(provider=host['provider']):
+                with self.assertRaisesRegex(CredentialError, 'An API key is required'):
+                    self.required(host['id'], host['hostname'])
+                self.assertEqual(self.storage.get_host(host['id']), host)
+        self.assertEqual(self.keys.saved, {})
+        keyed = self.required(bare['id'], api_key='test-secret')
+        self.assertEqual(self.keys.saved, {keyed['credential_id']: 'test-secret'})
+
+    def test_removal_still_applies_on_a_type_change(self):
+        host = self.optional('test-secret')
+        # Ignored where the new type requires a key, as for an unchanged type.
+        self.assertEqual(self.required(host['id'], clear_key=True)['credential_id'], host['credential_id'])
+        removed = self.optional(host_id=host['id'], clear_key=True)
+        self.assertIsNone(removed['credential_id'])
+        self.assertEqual(self.keys.saved, {})
+
+    def test_keyring_failure_on_a_type_change_leaves_the_host_unchanged(self):
+        host = self.optional('test-secret')
+        other = self.required(None, api_key='other-secret')
+        self.keys.unavailable = True
+        for change in (dict(provider='required_key', api_key='new-key'),             # replaced
+                       dict(provider='required_key', api_key='new-key', url=self.OTHER),
+                       dict(provider='ollama'),                                      # dropped: no key taken
+                       dict(provider='optional_key', clear_key=True)):
+            with self.subTest(change=change), self.assertRaises(CredentialError):
+                self.storage.save_host('Changed', change.pop('url', self.URL), host_id=host['id'], **change)
+        self.assertEqual(self.storage.get_host(host['id']), host)
+        with self.assertRaises(CredentialError):  # Dropped with the address, which needs the keyring.
+            self.storage.save_host('Changed', self.OTHER, host_id=other['id'], provider='optional_key')
+        self.assertEqual(self.storage.get_host(other['id']), other)
+        saved = {host['credential_id']: 'test-secret', other['credential_id']: 'other-secret'}
+        self.assertEqual(self.keys.saved, saved)
+        # A kept key does not touch the keyring, so the change is saved.
+        self.assertEqual(self.required(host['id'])['credential_id'], host['credential_id'])
+        self.assertEqual(self.optional(host_id=other['id'])['credential_id'], other['credential_id'])
+        self.assertEqual(self.keys.saved, saved)
 
 
 class CloudTransportTests(unittest.TestCase):
@@ -473,6 +620,8 @@ class CloudUITests(CloudStorageFixture, unittest.TestCase):
 
 @unittest.skipUnless(Gdk.Display.get_default(), 'GTK smoke tests require a display')
 class HostEditorTests(OptionalKeyFixture, unittest.TestCase):
+    KINDS = KEYED
+
     def setUp(self):
         super().setUp()
         self.window = Adw.Window()
@@ -563,7 +712,7 @@ class HostEditorTests(OptionalKeyFixture, unittest.TestCase):
         self.assertEqual(self.shown(dialog), dict(key=True, link=True, remove=False, editable=False, save=True,
                                                   hint='Leave blank to keep the existing key.'))
         self.assertFalse(dialog.clear_key)
-        # Its key is not offered to another type, and is still there on coming back.
+        # Its key is not offered to a type at another address, and is still there on coming back.
         self.select(dialog, 'optional_key')
         self.assertEqual(self.shown(dialog)['hint'], 'Optional. Stored securely in your desktop keyring.')
         self.assertFalse(dialog.remove_key_check.get_visible())
@@ -573,6 +722,117 @@ class HostEditorTests(OptionalKeyFixture, unittest.TestCase):
         session = HostEditDialog(host=dict(cloud, credential_id=None), has_session=True)
         self.assertTrue(session.get_response_enabled('save'))
         self.assertFalse(HostEditDialog(host=dict(cloud, credential_id=None)).get_response_enabled('save'))
+
+    def test_kept_key_follows_the_type_and_the_address(self):
+        keep = 'Leave blank to keep the existing key.'
+        host = self.optional('test-secret')
+        dialog = HostEditDialog(host=host)
+        self.assertEqual(self.shown(dialog), dict(key=True, link=False, remove=True, editable=True, save=True, hint=keep))
+        # Another keyed type at the same address keeps the key and demands none.
+        self.select(dialog, 'required_key')
+        self.assertEqual(dialog.hostname_entry.get_text(), self.URL)
+        self.assertTrue(dialog.keeps_key)
+        self.assertEqual(self.shown(dialog), dict(key=True, link=False, remove=False, editable=True, save=True, hint=keep))
+        # The address is part of the rule, as it is typed.
+        dialog.hostname_entry.set_text(self.OTHER)
+        self.assertFalse(dialog.keeps_key)
+        self.assertEqual(self.shown(dialog), dict(key=True, link=False, remove=False, editable=True, save=False,
+                                                  hint='Stored securely in your desktop keyring.'))
+        dialog.api_key_entry.set_text('new-secret')
+        self.assertTrue(dialog.get_response_enabled('save'))
+        dialog.api_key_entry.set_text('')
+        self.assertFalse(dialog.get_response_enabled('save'))
+        for same in (self.URL + '/', 'http://LOCALHOST:1234', self.URL):
+            dialog.hostname_entry.set_text(same)
+            self.assertEqual(self.shown(dialog), dict(key=True, link=False, remove=False, editable=True, save=True, hint=keep))
+        dialog.hostname_entry.set_text(self.URL + '/v1')
+        self.assertFalse(dialog.get_response_enabled('save'))
+        # The saved type keeps its key at any address, as storage does.
+        self.select(dialog, 'optional_key')
+        self.assertEqual(self.shown(dialog), dict(key=True, link=False, remove=True, editable=True, save=True, hint=keep))
+        # A fixed address elsewhere, and a type without a key.
+        self.select(dialog, 'ollama_cloud')
+        self.assertEqual(self.shown(dialog), dict(key=True, link=True, remove=False, editable=False, save=False,
+                                                  hint='Stored securely in your desktop keyring.'))
+        self.select(dialog, 'ollama')
+        self.assertFalse(dialog.keeps_key)
+        self.assertFalse(dialog.key_box.get_visible())
+
+        # Removal is offered for an optional type the key would follow the host to.
+        host = self.required(host['id'])
+        dialog = HostEditDialog(host=host)
+        self.assertEqual(self.shown(dialog), dict(key=True, link=False, remove=False, editable=True, save=True, hint=keep))
+        self.select(dialog, 'optional_key')
+        self.assertEqual(self.shown(dialog), dict(key=True, link=False, remove=True, editable=True, save=True, hint=keep))
+        dialog.remove_key_check.set_active(True)
+        self.assertTrue(dialog.clear_key)
+        self.assertFalse(dialog.api_key_entry.get_sensitive())
+        dialog.hostname_entry.set_text(self.OTHER)
+        self.assertEqual(self.shown(dialog), dict(key=True, link=False, remove=False, editable=True, save=True,
+                                                  hint='Optional. Stored securely in your desktop keyring.'))
+        self.assertFalse(dialog.clear_key)
+        self.assertTrue(dialog.api_key_entry.get_sensitive())
+        dialog.hostname_entry.set_text(self.URL)
+        self.assertTrue(dialog.remove_key_check.get_visible())
+        self.assertFalse(dialog.remove_key_check.get_active())
+
+        # A session key counts as a stored one does; a host without a key has none to keep.
+        session = HostEditDialog(host=dict(host, provider='optional_key', credential_id=None), has_session=True)
+        self.select(session, 'required_key')
+        self.assertEqual(self.shown(session)['hint'], keep)
+        self.assertTrue(session.get_response_enabled('save'))
+        session.hostname_entry.set_text(self.OTHER)
+        self.assertFalse(session.get_response_enabled('save'))
+        bare = HostEditDialog(host=dict(host, provider='optional_key', credential_id=None))
+        self.select(bare, 'required_key')
+        self.assertEqual(self.shown(bare), dict(key=True, link=False, remove=False, editable=True, save=False,
+                                                hint='Stored securely in your desktop keyring.'))
+
+    def test_type_change_through_the_editor_keeps_the_key_storage_keeps(self):
+        host = self.optional('test-secret')
+        manager = HostManagerDialog(self.context)
+        manager.present(self.window)
+        dialog = self.edit(manager, host)
+        self.select(dialog, 'required_key')
+        self.assertTrue(dialog.get_response_enabled('save'))
+        dialog.save_button.emit('clicked')
+        pump_until(lambda: self.storage.get_host(host['id'])['provider'] == 'required_key')
+        pump_until(lambda: not dialog.busy)
+        saved = self.storage.get_host(host['id'])
+        self.assertEqual(self.keys.saved, {saved['credential_id']: 'test-secret'})
+        self.assertEqual(saved['credential_id'], host['credential_id'])
+
+        # At another address the editor asks for a key, and the old one is replaced.
+        dialog = self.edit(manager, saved)
+        self.select(dialog, 'optional_key')
+        dialog.hostname_entry.set_text(self.OTHER)
+        self.assertFalse(dialog.remove_key_check.get_visible())
+        dialog.save_button.emit('clicked')
+        pump_until(lambda: self.storage.get_host(host['id'])['provider'] == 'optional_key')
+        pump_until(lambda: not dialog.busy)
+        self.assertEqual((self.storage.get_host(host['id'])['hostname'], self.storage.get_host(host['id'])['credential_id']),
+                         (self.OTHER, None))
+        self.assertEqual(self.keys.saved, {})
+        manager.force_close()
+
+    def test_placeholders_follow_the_selected_type(self):
+        dialog = HostEditDialog()
+        expected = dict(ollama=('For example: Local Ollama', 'http://localhost:11434'),
+                        ollama_cloud=('Ollama Cloud', ''),
+                        openai=('For example: Local Server', 'http://localhost:8080'),
+                        required_key=('For example: Local Ollama', 'http://localhost:11434'),  # Inherited.
+                        optional_key=('', ''))
+        self.assertEqual(set(expected), set(PROVIDERS))
+        for kind in list(expected) + ['ollama']:
+            with self.subTest(kind=kind):
+                self.select(dialog, kind)
+                self.assertEqual((dialog.name_entry.get_placeholder_text() or '',
+                                  dialog.hostname_entry.get_placeholder_text() or ''), expected[kind])
+                self.assertEqual((PROVIDERS[kind].name_example, PROVIDERS[kind].url_example), expected[kind])
+        # An existing host shows its own type's examples.
+        cloud = HostEditDialog(host=self.cloud())
+        self.assertEqual(cloud.name_entry.get_placeholder_text(), 'Ollama Cloud')
+        self.assertFalse(cloud.hostname_entry.get_placeholder_text())
 
     def test_optional_key_is_saved_kept_and_removed_through_the_editor(self):
         manager = HostManagerDialog(self.context)

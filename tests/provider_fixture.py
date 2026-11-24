@@ -24,9 +24,21 @@ class OptionalKeyProvider(OllamaProvider):
     label = 'Optional Key Server'
     key_optional = True
     default_url = 'http://localhost:1234'
+    name_example = url_example = ''
 
 
 OPTIONAL_KEY = {'optional_key': OptionalKeyProvider}
+
+
+class RequiredKeyProvider(OllamaProvider):
+    """Needs an API key, at any address."""
+    kind = 'required_key'
+    label = 'Required Key Server'
+    requires_key = True
+
+
+# Two keyed types that can share an address. The optional one stays last.
+KEYED = {'required_key': RequiredKeyProvider, **OPTIONAL_KEY}
 
 
 class provider_patch:

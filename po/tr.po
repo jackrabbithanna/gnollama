@@ -3658,3 +3658,19 @@ msgstr "Sunucudan bir JSON nesnesi bekleniyordu"
 #: src/widgets/chat_input.py
 msgid "No models found on this server. Load one there, then refresh."
 msgstr "Bu sunucuda model bulunamadı. Orada bir model yükleyin, sonra yenileyin."
+
+#: src/providers/openai.py
+msgid "For example: Local Server"
+msgstr "Örneğin: Yerel sunucu"
+
+#: src/bubbles.py
+msgid "Total (measured locally): {0}"
+msgstr "Toplam (yerel ölçüm): {0}"
+
+#: src/bubbles.py
+msgid "Tokens/s (measured locally): {0}"
+msgstr "Token/sn (yerel ölçüm): {0}"
+
+#: src/bubbles.py
+msgid "Timed by Gnollama, not reported by the server. The total includes network delay and model loading."
+msgstr "Sunucu bildirmedi; Gnollama tarafından ölçüldü. Toplam, ağ gecikmesini ve model yüklemesini içerir."

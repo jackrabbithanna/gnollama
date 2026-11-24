@@ -3522,3 +3522,19 @@ msgstr ""
 #: src/widgets/chat_input.py
 msgid "No models found on this server. Load one there, then refresh."
 msgstr ""
+
+#: src/providers/openai.py
+msgid "For example: Local Server"
+msgstr ""
+
+#: src/bubbles.py
+msgid "Total (measured locally): {0}"
+msgstr ""
+
+#: src/bubbles.py
+msgid "Tokens/s (measured locally): {0}"
+msgstr ""
+
+#: src/bubbles.py
+msgid "Timed by Gnollama, not reported by the server. The total includes network delay and model loading."
+msgstr ""

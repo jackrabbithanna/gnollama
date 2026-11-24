@@ -3731,3 +3731,19 @@ msgstr "Vom Server wurde ein JSON-Objekt erwartet"
 #: src/widgets/chat_input.py
 msgid "No models found on this server. Load one there, then refresh."
 msgstr "Auf diesem Server wurden keine Modelle gefunden. Laden Sie dort eines und aktualisieren Sie dann."
+
+#: src/providers/openai.py
+msgid "For example: Local Server"
+msgstr "Zum Beispiel: Lokaler Server"
+
+#: src/bubbles.py
+msgid "Total (measured locally): {0}"
+msgstr "Gesamt (lokal gemessen): {0}"
+
+#: src/bubbles.py
+msgid "Tokens/s (measured locally): {0}"
+msgstr "Tokens/s (lokal gemessen): {0}"
+
+#: src/bubbles.py
+msgid "Timed by Gnollama, not reported by the server. The total includes network delay and model loading."
+msgstr "Von Gnollama gemessen, nicht vom Server gemeldet. Die Gesamtzeit enthält Netzwerkverzögerung und das Laden des Modells."

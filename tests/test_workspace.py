@@ -442,10 +442,26 @@ class WorkflowTests(unittest.TestCase):
             self.assertEqual(calls[0]['messages'], calls[1]['messages'])
             snapshot = self.storage.export_snapshot(tab.strategy.chat_id)
             self.assertEqual({t['status'] for t in snapshot['targets']}, {'complete', 'failed'})
+            host = self.storage.get_all_hosts()[0]
+            titles = [host['name'] + ' (test)', host['name'] + ' (two)']
+            self.assertEqual([r[1].header.get_label() for r in tab.results.values()], titles)
+            self.assertEqual({t['settings']['host_name'] for t in snapshot['targets']}, {host['name']})
             reopened = ComparisonTab(self.context, saved=snapshot)
             self.tabs.append(reopened)
             self.assertEqual(len(reopened.results), 2)
             self.assertEqual(api.call_count, 2)
+            # A renamed host keeps the name each result was run under; an older result finds its host.
+            self.storage.update_host(host['id'], 'Renamed', host['hostname'], True)
+            older = copy.deepcopy(snapshot)
+            del older['targets'][0]['settings']['host_name']
+            del older['targets'][1]['settings']['host_name']
+            older['targets'][1]['settings'].update(host_id='removed', host='http://gone.example:1234')
+            reopened = ComparisonTab(self.context, saved=older)
+            self.tabs.append(reopened)
+            self.assertEqual([r[1].header.get_label() for r in reopened.results.values()], ['Renamed (test)', 'two'])
+            reopened = ComparisonTab(self.context, saved=snapshot)
+            self.tabs.append(reopened)
+            self.assertEqual([r[1].header.get_label() for r in reopened.results.values()], titles)
 
     def test_comparison_duplicate_targets_preserves_draft(self):
         from src.widgets.comparison_view import ComparisonTab

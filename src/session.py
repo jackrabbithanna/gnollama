@@ -17,6 +17,29 @@ def display_chat_title(title):
     return _('New Chat') if title == 'New Chat' else title
 
 
+def response_host_name(details, hosts):
+    """The host name to show for a response, from its `api_details`.
+
+    The name recorded with the response comes first, since that is what the host
+    was called then. `hosts` returns the configured hosts and is called only for
+    a response without one: it is matched by id, then by address.
+    """
+    details = details or {}
+    if details.get('host_name'):
+        return details['host_name']
+    host_id, url = details.get('host_id'), str(details.get('host') or '').rstrip('/')
+    if not host_id and not url:
+        return None
+    hosts = hosts()
+    for host in hosts:
+        if host_id and host.get('id') == host_id:
+            return host.get('name')
+    for host in hosts:
+        if url and str(host.get('hostname') or '').rstrip('/') == url:
+            return host.get('name')
+    return None
+
+
 METRIC_KEYS = ('total_duration', 'load_duration', 'prompt_eval_count',
                'prompt_eval_cached_count', 'prompt_eval_duration', 'eval_count',
                'eval_duration', 'done_reason')

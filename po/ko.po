@@ -3534,3 +3534,19 @@ msgstr "서버에서 JSON 객체가 와야 합니다"
 #: src/widgets/chat_input.py
 msgid "No models found on this server. Load one there, then refresh."
 msgstr "이 서버에서 모델을 찾을 수 없습니다. 서버에서 모델을 불러온 다음 새로 고치세요."
+
+#: src/providers/openai.py
+msgid "For example: Local Server"
+msgstr "예: 로컬 서버"
+
+#: src/bubbles.py
+msgid "Total (measured locally): {0}"
+msgstr "전체 (로컬 측정): {0}"
+
+#: src/bubbles.py
+msgid "Tokens/s (measured locally): {0}"
+msgstr "토큰/초 (로컬 측정): {0}"
+
+#: src/bubbles.py
+msgid "Timed by Gnollama, not reported by the server. The total includes network delay and model loading."
+msgstr "서버가 보고한 값이 아니라 Gnollama가 측정한 값입니다. 전체 시간에는 네트워크 지연과 모델 불러오기 시간이 포함됩니다."

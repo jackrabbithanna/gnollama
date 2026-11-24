@@ -3717,3 +3717,19 @@ msgstr "Αναμενόταν αντικείμενο JSON από τον διακ�
 #: src/widgets/chat_input.py
 msgid "No models found on this server. Load one there, then refresh."
 msgstr "Δεν βρέθηκαν μοντέλα σε αυτόν τον διακομιστή. Φορτώστε ένα εκεί και μετά ανανεώστε."
+
+#: src/providers/openai.py
+msgid "For example: Local Server"
+msgstr "Για παράδειγμα: Τοπικός διακομιστής"
+
+#: src/bubbles.py
+msgid "Total (measured locally): {0}"
+msgstr "Σύνολο (τοπική μέτρηση): {0}"
+
+#: src/bubbles.py
+msgid "Tokens/s (measured locally): {0}"
+msgstr "Token/δευτ. (τοπική μέτρηση): {0}"
+
+#: src/bubbles.py
+msgid "Timed by Gnollama, not reported by the server. The total includes network delay and model loading."
+msgstr "Μετρήθηκε από το Gnollama, δεν αναφέρθηκε από τον διακομιστή. Το σύνολο περιλαμβάνει την καθυστέρηση δικτύου και τη φόρτωση του μοντέλου."

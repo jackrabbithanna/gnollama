@@ -52,7 +52,7 @@ class HostEditDialog(Adw.Dialog):
         self.cancel_button.connect('clicked', lambda *_: self.close())
         self.session_button.connect('clicked', self._use_session)
         self.name_entry.connect('changed', self.validate_fields)
-        self.hostname_entry.connect('changed', self.validate_fields)
+        self.hostname_entry.connect('changed', self._address_changed)
         self.api_key_entry.connect('changed', self.validate_fields)
         self.remove_key_check.connect('toggled', self._remove_key_toggled)
         self.provider_dropdown.connect('notify::selected', self._provider_changed)
@@ -79,8 +79,9 @@ class HostEditDialog(Adw.Dialog):
 
     @property
     def keeps_key(self):
-        # A key saved for another type of host is not carried over to this one.
-        return self.has_key and self.provider == self._saved_kind
+        # As ChatStorage.save_host decides it, for what the fields hold now.
+        return bool(self.has_key and self.host and
+                    self.kind.keeps_key(self.host, self.hostname_entry.get_text().strip()))
 
     @property
     def clear_key(self):
@@ -101,17 +102,31 @@ class HostEditDialog(Adw.Dialog):
         if kind.default_name and not self.name_entry.get_text().strip():
             self.name_entry.set_text(_(kind.default_name))
         self.hostname_entry.set_editable(not kind.fixed_url)
+        self.name_entry.set_placeholder_text(_(kind.name_example) if kind.name_example else None)
+        self.hostname_entry.set_placeholder_text(kind.url_example or None)
         self.key_box.set_visible(self.takes_key)
-        self.key_hint.set_text(_('Leave blank to keep the existing key.') if self.keeps_key else
-                               _('Stored securely in your desktop keyring.') if kind.requires_key else
-                               _('Optional. Stored securely in your desktop keyring.'))
         self.remove_key_check.set_active(False)
-        self.remove_key_check.set_visible(kind.key_optional and self.keeps_key)
+        self._show_key_state()
         self.key_link.set_uri(kind.key_url)
         self.key_link.set_visible(bool(kind.key_url))
         self.session_button.set_visible(False)
         self.session_only = False
         self.validate_fields()
+
+    def _show_key_state(self):
+        kind, keeps = self.kind, self.keeps_key
+        self.key_hint.set_text(_('Leave blank to keep the existing key.') if keeps else
+                               _('Stored securely in your desktop keyring.') if kind.requires_key else
+                               _('Optional. Stored securely in your desktop keyring.'))
+        if not (kind.key_optional and keeps):
+            # A hidden check box must not leave the key field disabled.
+            self.remove_key_check.set_active(False)
+        self.remove_key_check.set_visible(kind.key_optional and keeps)
+
+    def _address_changed(self, *args):
+        # Whether the key is kept depends on the address as well as the type.
+        self._show_key_state()
+        self.validate_fields(*args)
 
     def _remove_key_toggled(self, *args):
         self.api_key_entry.set_sensitive(not self.remove_key_check.get_active())

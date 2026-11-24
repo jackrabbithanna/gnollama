@@ -51,7 +51,10 @@ class RequestRunner:
                 for chunk in strategy.process(state):
                     if state.cancellable.is_cancelled():
                         raise RequestCancelled()
-                    delivery.append(*state.consume(chunk))
+                    content, thinking, logprobs = state.consume(chunk)
+                    if (content or thinking) and 'first_token_seconds' not in state.metadata:
+                        state.metadata['first_token_seconds'] = time.monotonic() - started
+                    delivery.append(content, thinking, logprobs)
                     if chunk.get('done'):
                         status = 'complete'
                         break

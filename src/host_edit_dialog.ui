@@ -50,9 +50,7 @@
           </object>
         </child>
         <child>
-          <object class="GtkEntry" id="name_entry">
-            <property name="placeholder-text" translatable="yes">For example: Local Ollama</property>
-          </object>
+          <object class="GtkEntry" id="name_entry"/>
         </child>
         <child>
           <object class="GtkLabel">
@@ -62,9 +60,7 @@
           </object>
         </child>
         <child>
-          <object class="GtkEntry" id="hostname_entry">
-            <property name="placeholder-text">http://localhost:11434</property>
-          </object>
+          <object class="GtkEntry" id="hostname_entry"/>
         </child>
         <child>
           <object class="GtkCheckButton" id="default_check">

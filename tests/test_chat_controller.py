@@ -151,6 +151,11 @@ class ChatControllerTests(unittest.TestCase):
         self.assertEqual(chat.call_args.kwargs['messages'][-1], {'role': 'user', 'content': 'first question'})
         saved = self.storage.get_chat(controller.chat_id)
         self.assertEqual([m['content'] for m in saved['messages']], ['first question', 'hello'])
+        details, metadata = saved['messages'][-1]['api_details'], saved['messages'][-1]['response_metadata']
+        self.assertEqual((details['host_id'], details['host_name'], details['host']),
+                         (self.host['id'], self.host['name'], self.host['hostname']))
+        self.assertLessEqual(0, metadata['first_token_seconds'])
+        self.assertLessEqual(metadata['first_token_seconds'], metadata['elapsed_seconds'])
         self.assertIn('message_saved', view.names())
         self.assertEqual(view.events[view.names().index('title_changed')][1], controller.chat_id)
 

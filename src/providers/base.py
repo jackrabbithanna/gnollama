@@ -2,6 +2,7 @@
 from dataclasses import dataclass, field
 from gettext import gettext as _
 from typing import Any, ClassVar
+from urllib.parse import urlsplit
 
 from .transport import Transport
 
@@ -48,6 +49,26 @@ class Capabilities:
                 host=host.get('name') or host.get('hostname', ''), options=', '.join(missing)))
 
 
+def _address(url):
+    parts = urlsplit(url.strip())
+    port = parts.port if parts.port is not None else {'http': 80, 'https': 443}[parts.scheme]
+    if not parts.hostname or parts.query or parts.fragment:
+        raise ValueError(url)
+    return parts.scheme, parts.username, parts.password, parts.hostname, port, parts.path.rstrip('/')
+
+
+def same_address(first, second):
+    """Whether two URLs certainly name one server; any doubt means they differ.
+
+    The scheme and host name compare without case, a default port equals none,
+    and trailing slashes are ignored. The path counts, so a `/v1` suffix differs.
+    """
+    try:
+        return _address(first) == _address(second)
+    except (ValueError, KeyError, AttributeError, TypeError):
+        return False
+
+
 @dataclass(frozen=True)
 class Provider:
     """A request destination bound to its transport; never holds an API key.
@@ -67,11 +88,25 @@ class Provider:
     fixed_url: ClassVar[str | None] = None  # The only URL this provider accepts, if any.
     requires_key = False
     key_optional = False  # Takes a key but works without one.
-    # What the host editor shows for this type. Label and name are untranslated.
+    # What the host editor shows for this type. Label, name, and name example
+    # are untranslated.
     label = ''
     default_url = ''   # Suggested for a new host.
     default_name = ''  # Suggested while the name is empty.
     key_url = ''       # Where the user creates an API key.
+    name_example = ''  # Placeholder of the name field, a whole sentence; none if empty.
+    url_example = ''   # Placeholder of the address field; none if empty.
+
+    @classmethod
+    def keeps_key(cls, host, url):
+        """Whether the key of the host record `host` stays when it is saved as this type at `url`.
+
+        Storage and the host editor both ask here. A key follows a host to
+        another type only at the same address, so it reaches no other server.
+        """
+        if not (cls.requires_key or cls.key_optional):
+            return False
+        return (host.get('provider') or 'ollama') == cls.kind or same_address(host.get('hostname'), url)
 
     @classmethod
     def check_url(cls, url):

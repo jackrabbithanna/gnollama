@@ -360,6 +360,23 @@ class ConversationUITests(unittest.TestCase):
             self.assertEqual(len(reopened.targets), 0)
             self.assertEqual(len(reopened.bubbles), 2)
             self.assertEqual(api.call_count, 2)
+            host = self.storage.get_all_hosts()[0]
+            model = tab.controller.participants[0].target.model
+            titles = ['Round 1 · Model {0} · Attempt 1 · {1} ({2})'.format(name, host['name'], model) for name in 'AB']
+            for view in (tab, reopened):
+                self.assertEqual([b.header.get_text() for b in view.bubbles.values()], titles)
+            self.assertEqual(snapshot['messages'][-1]['api_details']['host_name'], host['name'])
+            # A run saved before the name was recorded finds its host by id, under its present name.
+            self.storage.update_host(host['id'], 'Renamed', host['hostname'], True)
+            older = copy.deepcopy(snapshot)
+            for record in older['messages'] + older['options']['participants']:
+                (record.get('api_details') or record).pop('host_name', None)
+            older['messages'][-1]['api_details'].update(host_id=None, host='http://gone.example:1234')
+            reopened = ModelConversationTab(self.context, saved=older)
+            self.tabs.append(reopened)
+            self.assertEqual([b.header.get_text() for b in reopened.bubbles.values()],
+                             ['Round 1 · Model A · Attempt 1 · Renamed ({0})'.format(model),
+                              'Round 1 · Model B · Attempt 1 · ' + model])
             self.assertTrue(reopened.summary.get_visible())
         tab.run_again()
         clone = window.tab_view.get_selected_page().get_child()

@@ -494,6 +494,15 @@ class HostTests(unittest.TestCase):
         self.assertEqual(body['reasoning_effort'], 'high')
         self.assertIsNone(authorization)
         self.assertFalse({'options', 'think', 'keep_alive', 'format'} & set(body))
+        # The header names the host, and the statistics hold only what was reported or measured here.
+        bubble = tab.message_list.list_box.get_last_child()
+        self.assertEqual(bubble.header.get_label(), 'Loopback ({0})'.format(composer.get_selected_model()))
+        self.assertEqual((answer['api_details']['host_id'], answer['api_details']['host_name']),
+                         (self.host['id'], 'Loopback'))
+        self.assertIn('first_token_seconds', answer['response_metadata'])
+        self.assertRegex(bubble._stats_label.get_text(),
+                         r'^Total \(measured locally\): \d+\.\d\ds \| Prompt: 7 tokens \| Cached: 3 tokens \| '
+                         r'Generated: 2 tokens \| Tokens/s \(measured locally\): \d+\.\d\d \| Finish: stop$')
 
         self.server.lines = ANSWER
         self.send(tab, 'second')

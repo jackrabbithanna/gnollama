@@ -6,7 +6,7 @@ from .chat_controller import ChatController, ComposerInput, unavailable
 from .drafts import DraftController
 from .providers import ProviderError
 from .records import RequestSettings, WireOptions
-from .session import display_chat_title
+from .session import display_chat_title, response_host_name
 from .structured import InvalidSchema
 from .tool_calling import InvalidTools
 from .widgets.tool_view import ToolCallsView
@@ -246,7 +246,9 @@ class GenerationTab(Gtk.Box):
                 self.message_list.add_user_message(content, images=images)
             elif role == 'assistant':
                 from .bubbles import AiBubble
-                bubble = AiBubble(model_name=msg.get('model', ''), output_format=(msg.get('api_details') or {}).get('format'))
+                details = msg.get('api_details') or {}
+                bubble = AiBubble(model_name=msg.get('model', ''), output_format=details.get('format'),
+                                  host_name=response_host_name(details, lambda: self.options_panel.host_list))
                 if 'thinking_content' in msg:
                     bubble.append_thinking(msg['thinking_content'])
                 bubble.append_text(content)
@@ -368,7 +370,8 @@ class GenerationTab(Gtk.Box):
             self.knowledge_control.query.set_text('')
             self.message_list.add_user_message(state.prompt, images=state.images)
         from .bubbles import AiBubble
-        bubble = AiBubble(model_name=state.settings.target.model, output_format=state.settings.wire.format)
+        bubble = AiBubble(model_name=state.settings.target.model, output_format=state.settings.wire.format,
+                          host_name=state.settings.target.host_name)
         bubble.set_api_details(state.api_details())
         self.message_list.add_ai_bubble(bubble)
         state.presentation = bubble

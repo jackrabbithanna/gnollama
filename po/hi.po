@@ -3639,3 +3639,19 @@ msgstr "सर्वर से JSON ऑब्जेक्ट अपेक्ष�
 #: src/widgets/chat_input.py
 msgid "No models found on this server. Load one there, then refresh."
 msgstr "इस सर्वर पर कोई मॉडल नहीं मिला। वहाँ एक लोड करें, फिर रीफ़्रेश करें।"
+
+#: src/providers/openai.py
+msgid "For example: Local Server"
+msgstr "उदाहरण के लिए: स्थानीय सर्वर"
+
+#: src/bubbles.py
+msgid "Total (measured locally): {0}"
+msgstr "कुल (स्थानीय रूप से मापा गया): {0}"
+
+#: src/bubbles.py
+msgid "Tokens/s (measured locally): {0}"
+msgstr "टोकन/सेकंड (स्थानीय रूप से मापा गया): {0}"
+
+#: src/bubbles.py
+msgid "Timed by Gnollama, not reported by the server. The total includes network delay and model loading."
+msgstr "Gnollama द्वारा मापा गया, सर्वर द्वारा नहीं बताया गया। कुल में नेटवर्क विलंब और मॉडल लोड होने का समय शामिल है।"

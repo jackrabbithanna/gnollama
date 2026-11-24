@@ -3526,3 +3526,19 @@ msgstr "应从服务器收到 JSON 对象"
 #: src/widgets/chat_input.py
 msgid "No models found on this server. Load one there, then refresh."
 msgstr "在此服务器上未找到模型。请在服务器上加载一个模型，然后刷新。"
+
+#: src/providers/openai.py
+msgid "For example: Local Server"
+msgstr "例如：本地服务器"
+
+#: src/bubbles.py
+msgid "Total (measured locally): {0}"
+msgstr "总计（本地测量）：{0}"
+
+#: src/bubbles.py
+msgid "Tokens/s (measured locally): {0}"
+msgstr "词元/秒（本地测量）：{0}"
+
+#: src/bubbles.py
+msgid "Timed by Gnollama, not reported by the server. The total includes network delay and model loading."
+msgstr "由 Gnollama 计时，并非服务器报告。总计包含网络延迟和模型加载时间。"

@@ -6,6 +6,7 @@ from gi.repository import Gtk, GObject, GLib, Pango
 from ..tab import GenerationTab
 from ..chat_controller import ComposerInput
 from ..records import RequestSettings
+from ..session import response_host_name
 from ..comparison import ComparisonRun, ComparisonController, prepare_run
 from ..drafts import DraftController
 from ..context import describe_context
@@ -250,8 +251,10 @@ class ComparisonTab(Gtk.Box):
         title = Gtk.Label(label=model + '\n' + settings.target.url, wrap=True,
                           wrap_mode=Pango.WrapMode.WORD_CHAR, selectable=True)
         box.append(title)
-        bubble = AiBubble(model_name=model, output_format=settings.wire.format, hexpand=True)
-        bubble.set_api_details(settings.api_details())
+        details = settings.api_details()
+        bubble = AiBubble(model_name=model, output_format=settings.wire.format, hexpand=True,
+                          host_name=response_host_name(details, self.storage.get_all_hosts))
+        bubble.set_api_details(details)
         box.append(bubble)
         stop = Gtk.Button(label=_('Stop response'))
         stop.connect('clicked', lambda *args: self.request.states[id].cancellable.cancel() if self.request else None)

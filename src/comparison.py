@@ -84,7 +84,7 @@ def prepare_run(context, active, prompt, images, settings, targets, draft_id, re
     for target, host, connection in resolved:
         id = str(uuid.uuid4())
         effective = replace(settings, endpoint='chat', target=ModelTarget(
-            host['id'], validate_url(host['hostname']), target['model']))
+            host['id'], validate_url(host['hostname']), target['model'], host.get('name')))
         state = RequestState(effective, prompt, images, messages=copy.deepcopy(sent), connection=connection, retrieval=copy.deepcopy(retrieval))
         state.metadata['retrieval'] = copy.deepcopy(retrieval)
         state.metadata['context_estimate'] = estimate_context(messages, wire, retrieval)

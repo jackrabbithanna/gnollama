@@ -37,6 +37,8 @@ class ModelTarget:
     host_id: str | None = None
     url: str | None = None
     model: str | None = None
+    # The host's name when the request was made; a response keeps it after a rename.
+    host_name: str | None = None
 
 
 @dataclass(frozen=True)
@@ -85,7 +87,8 @@ class RequestSettings:
         """What a response records about its request: the destination and wire options."""
         wire = _values(self.wire)
         target = self.target or ModelTarget()
-        return dict(host=target.url, model=target.model, options=wire['options'],
+        return dict(host=target.url, host_id=target.host_id, host_name=target.host_name,
+                    model=target.model, options=wire['options'],
                     thinking=wire['thinking'], system=wire['system'], logprobs=wire['logprobs'],
                     top_logprobs=wire['top_logprobs'], endpoint=self.endpoint, format=wire['format'],
                     keep_alive=wire['keep_alive'], tools=wire['tools'])
@@ -98,6 +101,8 @@ class RequestSettings:
         if self.target is not None:
             data.update(host=self.target.url, host_id=self.target.host_id,
                         model=self.target.model, endpoint=self.endpoint)
+            if self.target.host_name is not None:
+                data['host_name'] = self.target.host_name
         data.update(_values(self.wire))
         view = _values(self.view)
         del view['extra']
@@ -113,8 +118,9 @@ class RequestSettings:
     def from_stored(cls, data):
         data = copy.deepcopy(data)
         target = None
-        if any(key in data for key in ('host', 'host_id', 'model')):
-            target = ModelTarget(data.pop('host_id', None), data.pop('host', None), data.pop('model', None))
+        if any(key in data for key in ('host', 'host_id', 'model', 'host_name')):
+            target = ModelTarget(data.pop('host_id', None), data.pop('host', None), data.pop('model', None),
+                                 data.pop('host_name', None))
         endpoint = data.pop('endpoint', None) or 'chat'
         omitted = bool(data.pop('history_images_omitted', False))
         wire = WireOptions(**_known(WireOptions, data))

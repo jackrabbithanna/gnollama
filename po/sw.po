@@ -3693,3 +3693,19 @@ msgstr "Kipengee cha JSON kilitarajiwa kutoka kwa seva"
 #: src/widgets/chat_input.py
 msgid "No models found on this server. Load one there, then refresh."
 msgstr "Hakuna modeli zilizopatikana kwenye seva hii. Pakia moja huko, kisha onyesha upya."
+
+#: src/providers/openai.py
+msgid "For example: Local Server"
+msgstr "Kwa mfano: Seva ya ndani"
+
+#: src/bubbles.py
+msgid "Total (measured locally): {0}"
+msgstr "Jumla (imepimwa hapa): {0}"
+
+#: src/bubbles.py
+msgid "Tokens/s (measured locally): {0}"
+msgstr "Tokeni/s (imepimwa hapa): {0}"
+
+#: src/bubbles.py
+msgid "Timed by Gnollama, not reported by the server. The total includes network delay and model loading."
+msgstr "Imepimwa na Gnollama, haikuripotiwa na seva. Jumla inajumuisha ucheleweshaji wa mtandao na upakiaji wa modeli."

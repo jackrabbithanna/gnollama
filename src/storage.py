@@ -113,8 +113,8 @@ class ChatStorage:
                   provider='ollama', api_key='', session_only=False, clear_key=False):
         """Save from a worker; a keyring failure leaves the host unchanged.
 
-        A blank `api_key` keeps the key the host has. `clear_key` removes it
-        from a host whose type works without one.
+        A blank `api_key` keeps the key the host has, where `Provider.keeps_key`
+        allows. `clear_key` removes it from a host whose type works without one.
         """
         self.hosts_changed()
         with self._host_lock:
@@ -130,9 +130,9 @@ class ChatStorage:
             kind.check_url(hostname)
             keyed = kind.requires_key or kind.key_optional
             api_key = self.credentials.validate(api_key) if keyed and api_key else ''
-            # A key entered for one type of host is never sent to another.
+            # A key follows a host to another type only at the same address.
             drop = (not keyed or (clear_key and kind.key_optional) or
-                    previous is not None and (previous.get('provider') or 'ollama') != provider)
+                    previous is not None and not kind.keeps_key(previous, hostname))
             if kind.requires_key and not api_key and (
                     drop or not reference and not self.credentials.has_session(host_id)):
                 raise CredentialError(_('An API key is required. Edit this host to enter one.'))

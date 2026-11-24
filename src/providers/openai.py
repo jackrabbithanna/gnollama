@@ -30,6 +30,7 @@ DONE = object()
 def _extracted():
     """Marks text that is translated where it is displayed, not here."""
     _('OpenAI-Compatible Server')
+    _('For example: Local Server')
     _('This server type does not report what its models support, '
       'so thinking, image, and tool support are not checked.')
 
@@ -187,6 +188,8 @@ class OpenAICompatibleProvider(Provider):
     default_url = ''
     default_name = ''
     key_url = ''
+    name_example = 'For example: Local Server'
+    url_example = 'http://localhost:8080'
     key_optional = True
     capabilities = Capabilities(thinking_levels=True, structured_output=True, tools=True, logprobs=True,
                                 thinking_text=True, options_notice=NOTICE)

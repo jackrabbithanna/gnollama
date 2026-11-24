@@ -3614,3 +3614,19 @@ msgstr "كان المتوقع كائن JSON من الخادم"
 #: src/widgets/chat_input.py
 msgid "No models found on this server. Load one there, then refresh."
 msgstr "لم يُعثر على نماذج على هذا الخادم. حمّل نموذجًا هناك ثم حدّث."
+
+#: src/providers/openai.py
+msgid "For example: Local Server"
+msgstr "مثال: خادم محلي"
+
+#: src/bubbles.py
+msgid "Total (measured locally): {0}"
+msgstr "الإجمالي (قياس محلي): {0}"
+
+#: src/bubbles.py
+msgid "Tokens/s (measured locally): {0}"
+msgstr "وحدات النص/ثانية (قياس محلي): {0}"
+
+#: src/bubbles.py
+msgid "Timed by Gnollama, not reported by the server. The total includes network delay and model loading."
+msgstr "قاسه Gnollama ولم يُبلغ عنه الخادم. يشمل الإجمالي تأخير الشبكة وتحميل النموذج."

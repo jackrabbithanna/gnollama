@@ -20,6 +20,7 @@ def _extracted():
     _('Ollama Cloud uses text output and manages model retention automatically.')
     _('Ollama Server')
     _('Ollama Cloud')
+    _('For example: Local Ollama')
 
 
 def common_params(data, options, thinking, logprobs, top_logprobs, format=None, keep_alive=None):
@@ -49,6 +50,8 @@ def common_params(data, options, thinking, logprobs, top_logprobs, format=None, 
 class OllamaProvider(Provider):
     kind = 'ollama'
     label = 'Ollama Server'
+    name_example = 'For example: Local Ollama'
+    url_example = 'http://localhost:11434'
     capabilities = Capabilities(model_management=True, running_models=True, embeddings=True,
                                 thinking_levels=True, structured_output=True, tools=True,
                                 logprobs=True, keep_alive=True, raw_generate=True,
@@ -171,7 +174,8 @@ class OllamaProvider(Provider):
 class OllamaCloudProvider(OllamaProvider):
     """One fixed origin, bearer authentication, and no model management."""
     kind = 'ollama_cloud'
-    label = default_name = 'Ollama Cloud'
+    label = default_name = name_example = 'Ollama Cloud'
+    url_example = ''  # The address is fixed.
     key_url = 'https://ollama.com/settings/keys'
     capabilities = Capabilities(thinking_levels=True, tools=True, logprobs=True, raw_generate=True,
         sampling_extras=True, context_size=True, thinking_text=True, timing_stats=True,

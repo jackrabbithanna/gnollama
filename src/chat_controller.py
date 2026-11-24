@@ -77,7 +77,7 @@ class ComposerInput:
         The result shares nothing with the widgets it was read from.
         """
         request = self.request
-        target = ModelTarget(self.host['id'], url, self.model) if self.host else None
+        target = ModelTarget(self.host['id'], url, self.model, self.host.get('name')) if self.host else None
         wire = WireOptions(options=self.options, system=self.system, thinking=self.thinking,
                            format=request.get('format'), keep_alive=request.get('keep_alive'),
                            tools=request.get('tools'), logprobs=self.logprobs,

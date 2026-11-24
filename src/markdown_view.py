@@ -28,11 +28,18 @@ class PangoMarkupParser(HTMLParser):
     A simple HTML parser that converts a subset of HTML into Pango markup.
     Also handles ASCII table rendering for basic HTML tables.
     """
+    LIST_INDENT = "    "
+
     def __init__(self) -> None:
         super().__init__()
         self.output: List[str] = []
         self.tags: List[str] = []
-        
+
+        # List state: one entry per open list, None for bullets or the next
+        # number for ordered lists.
+        self.lists: List[Optional[int]] = []
+        self.item_start: bool = False  # Marker written, no item content yet
+
         # Table state
         self.in_table: bool = False
         self.table_rows: List[List[str]] = []
@@ -77,12 +84,36 @@ class PangoMarkupParser(HTMLParser):
             if self.in_table: self.cell_content += tag_str
             else: self.output.append(tag_str)
         elif tag == 'p':
-            if not self.in_table and self.output and not self.output[-1].endswith("\n\n"):
+            if self.lists:
+                if not self.item_start:
+                    # Later paragraphs of an item line up under its text.
+                    self._ensure_newline()
+                    self.output.append(self.LIST_INDENT * len(self.lists))
+            elif not self.in_table and self.output and not self.output[-1].endswith("\n\n"):
                 self.output.append("\n")
-        elif tag == 'ul':
-            self.output.append("\n")
+        elif tag in ['ul', 'ol']:
+            if self.lists:
+                self._ensure_newline()
+            else:
+                self.output.append("\n")
+            number: Optional[int] = None
+            if tag == 'ol':
+                try:
+                    number = int(dict(attrs).get('start') or 1)
+                except ValueError:
+                    number = 1
+            self.lists.append(number)
+            self.item_start = False
         elif tag == 'li':
-            self.output.append("• ")
+            self._ensure_newline()
+            indent = self.LIST_INDENT * max(len(self.lists) - 1, 0)
+            number = self.lists[-1] if self.lists else None
+            if number is None:
+                self.output.append(f"{indent}• ")
+            else:
+                self.output.append(f"{indent}{number}. ")
+                self.lists[-1] = number + 1
+            self.item_start = True
         elif tag == 'a':
             href = dict(attrs).get('href', '')
             tag_str = f"<a href='{html.escape(href)}'>"
@@ -133,13 +164,19 @@ class PangoMarkupParser(HTMLParser):
             if self.in_table: self.cell_content += tag_str
             else: self.output.append(tag_str)
         elif tag == 'p':
-            if not self.in_table: self.output.append("\n")
+            if self.lists: self._ensure_newline()
+            elif not self.in_table: self.output.append("\n")
         elif tag == 'a':
             tag_str = "</a>"
             if self.in_table: self.cell_content += tag_str
             else: self.output.append(tag_str)
         elif tag == 'li':
-            self.output.append("\n")
+            self._ensure_newline()
+            self.item_start = False
+        elif tag in ['ul', 'ol']:
+            if self.lists:
+                self.lists.pop()
+            self.item_start = False
         elif tag == 'blockquote':
             self.output.append("</i>\n")
         elif tag == 'pre':
@@ -149,8 +186,19 @@ class PangoMarkupParser(HTMLParser):
         if self.in_table and self.in_cell:
             self.cell_content += html.escape(data) 
         elif not self.in_table:
+            if self.lists:
+                # Line breaks between list tags are HTML formatting, not content.
+                if not data.strip() and (self.item_start or not self.output or self.output[-1].endswith("\n")):
+                    return
+                if self.item_start:
+                    data = data.lstrip()
+                self.item_start = False
             self.output.append(html.escape(data))
-    
+
+    def _ensure_newline(self) -> None:
+        if self.output and not self.output[-1].endswith("\n"):
+            self.output.append("\n")
+
     def render_ascii_table(self) -> None:
         """Renders the collected table rows as an ASCII table using Pango tags for styling."""
         if not self.table_rows:
@@ -446,7 +494,7 @@ class MarkdownView(Gtk.Box):
         try:
             text = re.sub(r'~~(.*?)~~', r'<s>\1</s>', text)
             if markdown:
-                html_text = markdown.markdown(text, extensions=['extra', 'fenced_code'])
+                html_text = markdown.markdown(text, extensions=['extra', 'fenced_code', 'sane_lists'])
             else:
                 html_text = html.escape(text)
             parser = PangoMarkupParser()

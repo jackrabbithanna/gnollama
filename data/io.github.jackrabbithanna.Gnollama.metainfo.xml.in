@@ -49,6 +49,12 @@
   </screenshots>
 
   <releases>
+    <release version="0.18.0" date="2026-11-23">
+      <url type="details">https://github.com/jackrabbithanna/gnollama/releases/tag/0.18.0</url>
+      <description translate="no">
+        <p>Numbered lists in answers keep their numbers, and nested lists are indented.</p>
+      </description>
+    </release>
     <release version="0.17.0" date="2026-11-23">
       <url type="details">https://github.com/jackrabbithanna/gnollama/releases/tag/0.17.0</url>
       <description translate="no">

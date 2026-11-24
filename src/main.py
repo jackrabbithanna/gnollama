@@ -13,7 +13,7 @@ from .startup import StartupWindow
 class GnollamaApplication(Adw.Application):
     """The main application singleton class."""
 
-    def __init__(self, version="0.15.0") -> None:
+    def __init__(self, version="0.17.0") -> None:
         super().__init__(application_id='io.github.jackrabbithanna.Gnollama',
                          flags=Gio.ApplicationFlags.DEFAULT_FLAGS,
                          resource_base_path='/io/github/jackrabbithanna/Gnollama')
@@ -66,7 +66,7 @@ class GnollamaApplication(Adw.Application):
 
     def on_about_action(self, *args: Any) -> None:
         """Callback for the app.about action."""
-        about = Adw.AboutDialog(application_name='gnollama',
+        about = Adw.AboutDialog(application_name='Gnollama',
                                 application_icon='io.github.jackrabbithanna.Gnollama',
                                 developer_name='Jackrabbithanna',
                                 version=self.version,

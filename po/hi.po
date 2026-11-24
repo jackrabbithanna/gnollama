@@ -4,7 +4,7 @@
 # AI-assisted translation; native-speaker review is welcome.
 msgid ""
 msgstr ""
-"Project-Id-Version: gnollama 0.15.0\n"
+"Project-Id-Version: gnollama 0.17.0\n"
 "Report-Msgid-Bugs-To: https://github.com/jackrabbithanna/gnollama/issues\n"
 "POT-Creation-Date: 2026-09-11 12:07-0600\n"
 "PO-Revision-Date: 2026-09-11 00:00+0000\n"
@@ -17,13 +17,9 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.18.0\n"
 
-#: data/io.github.jackrabbithanna.Gnollama.desktop.in:2
-msgid "gnollama"
-msgstr "gnollama"
-
 #: data/io.github.jackrabbithanna.Gnollama.desktop.in:8
-msgid "GTK;"
-msgstr "GTK;"
+msgid "Ollama;LLM;AI;Chat;Assistant;"
+msgstr "Ollama;LLM;AI;Chat;Assistant;"
 
 #: data/io.github.jackrabbithanna.Gnollama.gschema.xml:7
 msgid "Default Ollama Host"
@@ -33,6 +29,7 @@ msgstr "डिफ़ॉल्ट Ollama होस्ट"
 msgid "The default URL for the Ollama API server."
 msgstr "Ollama API सर्वर का डिफ़ॉल्ट URL।"
 
+#: data/io.github.jackrabbithanna.Gnollama.desktop.in:2
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:7 src/startup.py:10
 #: src/window.ui:5
 msgid "Gnollama"
@@ -134,6 +131,7 @@ msgstr ""
 "सेवा के अनुरूप नियंत्रणों के साथ क्लाउड मॉडल देखें और क्लाउड चैट में स्थानीय ज्ञान "
 "स्रोतों का उपयोग करें।"
 
+#: data/io.github.jackrabbithanna.Gnollama.desktop.in:2
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:72
 msgid ""
 "Add a Knowledge Library for text and PDF imports, local embedding indexes, and "
@@ -142,6 +140,7 @@ msgstr ""
 "टेक्स्ट और PDF आयात, स्थानीय एम्बेडिंग इंडेक्स और स्रोतों पर आधारित चैट के लिए ज्ञान "
 "पुस्तकालय जोड़ें।"
 
+#: data/io.github.jackrabbithanna.Gnollama.desktop.in:2
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:74
 msgid ""
 "Start with knowledge collections and add text, files, or URLs with explicit "
@@ -150,6 +149,7 @@ msgstr ""
 "ज्ञान संग्रह से शुरू करें और स्पष्ट गंतव्य तथा निर्देशित पूर्वावलोकन के साथ टेक्स्ट, "
 "फ़ाइलें या URL जोड़ें।"
 
+#: data/io.github.jackrabbithanna.Gnollama.desktop.in:2
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:75
 msgid ""
 "Choose collections before search settings, and use adaptive chat settings with "
@@ -158,10 +158,12 @@ msgstr ""
 "खोज सेटिंग से पहले संग्रह चुनें और स्पष्ट नियंत्रण तथा प्रतिक्रिया वाली अनुकूलनीय चैट"
 " सेटिंग इस्तेमाल करें।"
 
+#: data/io.github.jackrabbithanna.Gnollama.desktop.in:2
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:76
 msgid "Create and compare embeddings, inspect chunks and vectors, and test semantic searches."
 msgstr "एम्बेडिंग बनाएँ और तुलना करें, टेक्स्ट खंड तथा वेक्टर देखें और अर्थ-आधारित खोज परखें।"
 
+#: data/io.github.jackrabbithanna.Gnollama.desktop.in:2
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:77
 msgid ""
 "Select documents or chunks for chats, with independent embedding hosts and saved "
@@ -170,6 +172,7 @@ msgstr ""
 "चैट के लिए दस्तावेज़ या खंड चुनें, अलग एम्बेडिंग होस्ट इस्तेमाल करें और स्रोत अंश "
 "सहेजें।"
 
+#: data/io.github.jackrabbithanna.Gnollama.desktop.in:2
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:78
 msgid ""
 "Warn about stored embeddings when deleting models, with optional vector cleanup that "
@@ -178,6 +181,7 @@ msgstr ""
 "मॉडल हटाते समय सहेजी गई एम्बेडिंग की चेतावनी दें और स्रोत टेक्स्ट रखते हुए वेक्टर "
 "हटाने का विकल्प दें।"
 
+#: data/io.github.jackrabbithanna.Gnollama.desktop.in:2
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:79
 msgid ""
 "Search with sqlite-vec, automatically migrate existing vectors with a database "
@@ -3571,3 +3575,15 @@ msgstr "खोज सुझाव"
 #: src/widgets/history_sidebar.py:131
 msgid "No matching conversations"
 msgstr "कोई मेल खाती बातचीत नहीं"
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in
+msgid "Compare answers from two models"
+msgstr "दो मॉडलों के उत्तरों की तुलना करें"
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in
+msgid "Let two models talk to each other"
+msgstr "दो मॉडलों को आपस में बात करने दें"
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in
+msgid "Organize documents into knowledge collections"
+msgstr "दस्तावेज़ों को ज्ञान संग्रहों में व्यवस्थित करें"

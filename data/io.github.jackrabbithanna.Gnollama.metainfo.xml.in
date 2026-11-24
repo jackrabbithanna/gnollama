@@ -17,58 +17,59 @@
   <developer id="io.github.jackrabbithanna">
     <name>jackrabbithanna</name>
   </developer>
-
-  <!-- Required: Should be a link to the upstream homepage for the component -->
   <url type="homepage">https://github.com/jackrabbithanna/gnollama/</url>
-  <!-- Recommended: It is highly recommended for open-source projects to display the source code repository -->
   <url type="vcs-browser">https://github.com/jackrabbithanna/gnollama</url>
-  <!-- Should point to the software's bug tracking system, for users to report new bugs -->
   <url type="bugtracker">https://github.com/jackrabbithanna/gnollama/issues</url>
-  <!-- Should link a FAQ page for this software, to answer some of the most-asked questions in detail -->
-  <!-- URLs of this type should point to a webpage where users can submit or modify translations of the upstream project -->
 
   <translation type="gettext">gnollama</translation>
-  <!-- All graphical applications having a desktop file must have this tag in the MetaInfo.
-     If this is present, appstreamcli compose will pull icons, keywords and categories from the desktop file. -->
   <launchable type="desktop-id">io.github.jackrabbithanna.Gnollama.desktop</launchable>
-  <!-- Use the OARS website (https://hughsie.github.io/oars/generate.html) to generate these and make sure to use oars-1.1 -->
   <content_rating type="oars-1.1" />
-
-  <!-- Applications should set a brand color in both light and dark variants like so -->
   <branding>
-    <color type="primary" scheme_preference="light">#ff00ff</color>
-    <color type="primary" scheme_preference="dark">#993d3d</color>
+    <color type="primary" scheme_preference="light">#ffbe6f</color>
+    <color type="primary" scheme_preference="dark">#c64600</color>
   </branding>
 
   <screenshots>
     <screenshot type="default">
-      <image>https://github.com/jackrabbithanna/gnollama/blob/main/screenshots/gnollama-screenshot.png?raw=true</image>
+      <image>https://raw.githubusercontent.com/jackrabbithanna/gnollama/0.16.0/screenshots/gnollama-screenshot.png</image>
       <caption>Ollama chat with code highlighting</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://raw.githubusercontent.com/jackrabbithanna/gnollama/0.16.0/screenshots/gnollama-comparison.png</image>
+      <caption>Compare answers from two models</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://raw.githubusercontent.com/jackrabbithanna/gnollama/0.16.0/screenshots/gnollama-model-conversation.png</image>
+      <caption>Let two models talk to each other</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://raw.githubusercontent.com/jackrabbithanna/gnollama/0.16.0/screenshots/gnollama-rag-collections.png</image>
+      <caption>Organize documents into knowledge collections</caption>
     </screenshot>
   </screenshots>
 
   <releases>
+    <release version="0.17.0" date="2026-11-23">
+      <url type="details">https://github.com/jackrabbithanna/gnollama/releases/tag/0.17.0</url>
+      <description translate="no">
+        <p>Use the GNOME 51 runtime.</p>
+        <p>Find Gnollama more easily in app stores and launchers with search keywords, a chat category, and more screenshots.</p>
+      </description>
+    </release>
     <release version="0.16.0" date="2026-09-11">
-      <description>
-        <ul>
-          <li>New Model to Model Conversation</li>
-          <li>Recent model conversations</li>
-          <li>Pause</li>
-          <li>Resume</li>
-          <li>Retry turn</li>
-        </ul>
+      <url type="details">https://github.com/jackrabbithanna/gnollama/releases/tag/0.16.0</url>
+      <description translate="no">
+        <p>Start a conversation between two models and watch them reply to each other.</p>
+        <p>Pause, resume, or retry a turn, and reopen recent model conversations from the sidebar.</p>
+        <p>The history sidebar groups drafts, pinned chats, recent chats, comparisons, and model conversations.</p>
       </description>
     </release>
     <release version="0.15.0" date="2026-09-11">
-      <description>
-        <ul>
-          <li>New Comparison</li>
-          <li>Drafts</li>
-          <li>Search conversations</li>
-          <li>Export Markdown</li>
-          <li>Export JSON</li>
-          <li>Context estimate</li>
-        </ul>
+      <url type="details">https://github.com/jackrabbithanna/gnollama/releases/tag/0.15.0</url>
+      <description translate="no">
+        <p>Compare answers to the same prompt from different models side by side.</p>
+        <p>Unsent messages are kept as drafts, and saved conversations can be searched.</p>
+        <p>Export conversations as Markdown or JSON, and see an estimate of the context in use.</p>
       </description>
     </release>
     <release version="0.14.0" date="2026-09-10">

@@ -6,7 +6,7 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: gnollama 0.15.0\n"
+"Project-Id-Version: gnollama 0.17.0\n"
 "Report-Msgid-Bugs-To: https://github.com/jackrabbithanna/gnollama/issues\n"
 "POT-Creation-Date: 2026-09-11 12:07-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -17,12 +17,8 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.18.0\n"
 
-#: data/io.github.jackrabbithanna.Gnollama.desktop.in:2
-msgid "gnollama"
-msgstr ""
-
 #: data/io.github.jackrabbithanna.Gnollama.desktop.in:8
-msgid "GTK;"
+msgid "Ollama;LLM;AI;Chat;Assistant;"
 msgstr ""
 
 #: data/io.github.jackrabbithanna.Gnollama.gschema.xml:7
@@ -33,6 +29,7 @@ msgstr ""
 msgid "The default URL for the Ollama API server."
 msgstr ""
 
+#: data/io.github.jackrabbithanna.Gnollama.desktop.in:2
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:7 src/startup.py:10
 #: src/window.ui:5
 msgid "Gnollama"
@@ -122,40 +119,47 @@ msgid ""
 "sources in cloud chats."
 msgstr ""
 
+#: data/io.github.jackrabbithanna.Gnollama.desktop.in:2
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:72
 msgid ""
 "Add a Knowledge Library for text and PDF imports, local embedding indexes, and "
 "source-grounded chats."
 msgstr ""
 
+#: data/io.github.jackrabbithanna.Gnollama.desktop.in:2
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:74
 msgid ""
 "Start with knowledge collections and add text, files, or URLs with explicit "
 "destinations and guided previews."
 msgstr ""
 
+#: data/io.github.jackrabbithanna.Gnollama.desktop.in:2
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:75
 msgid ""
 "Choose collections before search settings, and use adaptive chat settings with "
 "clearer controls and feedback."
 msgstr ""
 
+#: data/io.github.jackrabbithanna.Gnollama.desktop.in:2
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:76
 msgid "Create and compare embeddings, inspect chunks and vectors, and test semantic searches."
 msgstr ""
 
+#: data/io.github.jackrabbithanna.Gnollama.desktop.in:2
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:77
 msgid ""
 "Select documents or chunks for chats, with independent embedding hosts and saved "
 "source passages."
 msgstr ""
 
+#: data/io.github.jackrabbithanna.Gnollama.desktop.in:2
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:78
 msgid ""
 "Warn about stored embeddings when deleting models, with optional vector cleanup that "
 "retains source text."
 msgstr ""
 
+#: data/io.github.jackrabbithanna.Gnollama.desktop.in:2
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:79
 msgid ""
 "Search with sqlite-vec, automatically migrate existing vectors with a database "
@@ -3455,4 +3459,16 @@ msgstr ""
 
 #: src/widgets/history_sidebar.py:131
 msgid "No matching conversations"
+msgstr ""
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in
+msgid "Compare answers from two models"
+msgstr ""
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in
+msgid "Let two models talk to each other"
+msgstr ""
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in
+msgid "Organize documents into knowledge collections"
 msgstr ""

@@ -4,7 +4,7 @@
 # Translated and reviewed with AI assistance, 2026.
 msgid ""
 msgstr ""
-"Project-Id-Version: gnollama 0.15.0\n"
+"Project-Id-Version: gnollama 0.17.0\n"
 "Report-Msgid-Bugs-To: https://github.com/jackrabbithanna/gnollama/issues\n"
 "POT-Creation-Date: 2026-09-11 12:07-0600\n"
 "PO-Revision-Date: 2026-09-11 00:00+0000\n"
@@ -17,13 +17,9 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.18.0\n"
 
-#: data/io.github.jackrabbithanna.Gnollama.desktop.in:2
-msgid "gnollama"
-msgstr "gnollama"
-
 #: data/io.github.jackrabbithanna.Gnollama.desktop.in:8
-msgid "GTK;"
-msgstr "GTK;"
+msgid "Ollama;LLM;AI;Chat;Assistant;"
+msgstr "Ollama;LLM;AI;Chat;Assistant;"
 
 #: data/io.github.jackrabbithanna.Gnollama.gschema.xml:7
 msgid "Default Ollama Host"
@@ -33,6 +29,7 @@ msgstr "既定の Ollama ホスト"
 msgid "The default URL for the Ollama API server."
 msgstr "Ollama API サーバーの既定の URL。"
 
+#: data/io.github.jackrabbithanna.Gnollama.desktop.in:2
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:7 src/startup.py:10
 #: src/window.ui:5
 msgid "Gnollama"
@@ -122,40 +119,47 @@ msgid ""
 "sources in cloud chats."
 msgstr "サービスに合わせた操作でクラウドモデルを参照し、クラウドチャットでローカルの知識ソースを使用できます。"
 
+#: data/io.github.jackrabbithanna.Gnollama.desktop.in:2
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:72
 msgid ""
 "Add a Knowledge Library for text and PDF imports, local embedding indexes, and "
 "source-grounded chats."
 msgstr "テキストと PDF のインポート、ローカルの埋め込みインデックス、出典に基づくチャットに対応したナレッジライブラリーを追加。"
 
+#: data/io.github.jackrabbithanna.Gnollama.desktop.in:2
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:74
 msgid ""
 "Start with knowledge collections and add text, files, or URLs with explicit "
 "destinations and guided previews."
 msgstr "ナレッジコレクションから始め、追加先の明示とプレビューの案内に従ってテキスト、ファイル、URL を追加。"
 
+#: data/io.github.jackrabbithanna.Gnollama.desktop.in:2
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:75
 msgid ""
 "Choose collections before search settings, and use adaptive chat settings with "
 "clearer controls and feedback."
 msgstr "検索設定の前にコレクションを選択。画面幅に合わせて調整されるチャット設定で、操作と状態表示をわかりやすく改善。"
 
+#: data/io.github.jackrabbithanna.Gnollama.desktop.in:2
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:76
 msgid "Create and compare embeddings, inspect chunks and vectors, and test semantic searches."
 msgstr "埋め込みを作成・比較し、チャンクとベクトルを確認してセマンティック検索をテスト。"
 
+#: data/io.github.jackrabbithanna.Gnollama.desktop.in:2
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:77
 msgid ""
 "Select documents or chunks for chats, with independent embedding hosts and saved "
 "source passages."
 msgstr "チャット用のドキュメントやチャンクを選択。埋め込み用に独立したホストを使用でき、出典の引用箇所を保存。"
 
+#: data/io.github.jackrabbithanna.Gnollama.desktop.in:2
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:78
 msgid ""
 "Warn about stored embeddings when deleting models, with optional vector cleanup that "
 "retains source text."
 msgstr "モデルの削除時に保存済みの埋め込みについて警告。元のテキストを残したまま、任意でベクトルを削除可能。"
 
+#: data/io.github.jackrabbithanna.Gnollama.desktop.in:2
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:79
 msgid ""
 "Search with sqlite-vec, automatically migrate existing vectors with a database "
@@ -3464,3 +3468,15 @@ msgstr "検索候補"
 #: src/widgets/history_sidebar.py:131
 msgid "No matching conversations"
 msgstr "一致する会話がありません"
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in
+msgid "Compare answers from two models"
+msgstr "2 つのモデルの回答を比較"
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in
+msgid "Let two models talk to each other"
+msgstr "2 つのモデル同士で会話させる"
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in
+msgid "Organize documents into knowledge collections"
+msgstr "ドキュメントをナレッジコレクションに整理"

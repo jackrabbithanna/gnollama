@@ -47,7 +47,7 @@ class RequestRunner:
         try:
             if state.cancellable.is_cancelled():
                 raise RequestCancelled()
-            with self.services.models.using(state.settings.target.url, state.settings.target.model):
+            with self.services.models.using(state.connection, state.settings.target.model):
                 for chunk in strategy.process(state):
                     if state.cancellable.is_cancelled():
                         raise RequestCancelled()

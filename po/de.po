@@ -3747,3 +3747,23 @@ msgstr "Tokens/s (lokal gemessen): {0}"
 #: src/bubbles.py
 msgid "Timed by Gnollama, not reported by the server. The total includes network delay and model loading."
 msgstr "Von Gnollama gemessen, nicht vom Server gemeldet. Die Gesamtzeit enthält Netzwerkverzögerung und das Laden des Modells."
+
+#: src/providers/lmstudio.py
+msgid "LM Studio"
+msgstr "LM Studio"
+
+#: src/providers/openrouter.py
+msgid "OpenRouter"
+msgstr "OpenRouter"
+
+#: src/providers/openrouter.py
+msgid "OpenRouter requires {0}."
+msgstr "OpenRouter erfordert {0}."
+
+#: src/model_manager.py
+msgid "Context Length"
+msgstr "Kontextlänge"
+
+#: src/model_manager.py
+msgid "Max Context Length"
+msgstr "Maximale Kontextlänge"

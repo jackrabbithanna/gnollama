@@ -7,9 +7,10 @@ from unittest.mock import patch
 
 from gi.repository import Adw, Gdk, Gio, Gtk
 from src import session
-from src.providers import (Capabilities, CLOUD_URL, OllamaCloudProvider, OllamaProvider, PROVIDERS, ProviderError,
+from src.providers import (Capabilities, CLOUD_URL, LMStudioProvider, OllamaCloudProvider, OllamaProvider,
+                           OpenAICompatibleProvider, OpenRouterProvider, PROVIDERS, ProviderError,
                            RequestCancelled, transport)
-from provider_fixture import KEYED, OPTIONAL_KEY, OptionalKeyProvider, provider_patch
+from provider_fixture import KEYED, OPTIONAL_KEY, OptionalKeyProvider, RequiredKeyProvider, provider_patch
 from src.providers.base import same_address
 from src.credentials import CredentialStore, CredentialError
 from src import credentials
@@ -289,6 +290,35 @@ class KeyOnTypeChangeTests(OptionalKeyFixture, unittest.TestCase):
             with self.subTest(first=first, second=second):
                 self.assertFalse(same_address(first, second))
                 self.assertFalse(same_address(second, first))
+
+    def test_v1_ending_is_one_address_only_between_types_that_add_it_themselves(self):
+        for first, second in (('http://h:1234', 'http://h:1234/v1'), ('http://h:1234/v1/', 'http://H:1234'),
+                              ('http://h/api/v1', 'http://h/api'), ('http://h/v1', 'http://h/v1')):
+            with self.subTest(first=first, second=second):
+                self.assertTrue(same_address(first, second, '/v1'))
+                self.assertTrue(same_address(second, first, '/v1'))
+        for first, second in (('http://h:1234', 'http://h:1234/v2'), ('http://h:1234/v1/v1', 'http://h:1234'),
+                              ('http://h:1234/V1', 'http://h:1234'), ('http://h:1234//v1', 'http://h:1234'),
+                              ('http://h:1234/v1', 'http://other:1234'), ('http://h/v1?a=1', 'http://h')):
+            with self.subTest(first=first, second=second):
+                self.assertFalse(same_address(first, second, '/v1'))
+                self.assertFalse(same_address(second, first, '/v1'))
+        generic = dict(provider='openai', hostname='http://h:1234/v1')
+        studio = dict(provider='lmstudio', hostname='http://h:1234')
+        self.assertTrue(LMStudioProvider.keeps_key(generic, 'http://h:1234'))
+        self.assertTrue(OpenAICompatibleProvider.keeps_key(studio, 'http://h:1234/v1/'))
+        self.assertFalse(LMStudioProvider.keeps_key(generic, 'http://h:4321'))
+        self.assertFalse(OpenRouterProvider.keeps_key(generic, OpenRouterProvider.fixed_url))
+        # To a type that sends the address as it is given, the ending is another place.
+        self.assertFalse(RequiredKeyProvider.keeps_key(generic, 'http://h:1234'))
+        for kind in ('required_key', 'gone', None):
+            with self.subTest(kind=kind):
+                self.assertFalse(LMStudioProvider.keeps_key(dict(generic, provider=kind), 'http://h:1234'))
+        host = self.storage.save_host('Generic', self.URL + '/v1', provider='openai', api_key='test-secret')
+        moved = self.storage.save_host('Studio', self.URL, host_id=host['id'], provider='lmstudio')
+        self.assertEqual((moved['provider'], moved['hostname'], moved['credential_id']),
+                         ('lmstudio', self.URL, host['credential_id']))
+        self.assertEqual(self.keys.saved, {host['credential_id']: 'test-secret'})
 
     def test_stored_key_follows_the_host_to_a_keyed_type_at_the_same_address(self):
         host = self.optional('test-secret')
@@ -820,6 +850,7 @@ class HostEditorTests(OptionalKeyFixture, unittest.TestCase):
         expected = dict(ollama=('For example: Local Ollama', 'http://localhost:11434'),
                         ollama_cloud=('Ollama Cloud', ''),
                         openai=('For example: Local Server', 'http://localhost:8080'),
+                        lmstudio=('LM Studio', 'http://localhost:1234'), openrouter=('OpenRouter', ''),
                         required_key=('For example: Local Ollama', 'http://localhost:11434'),  # Inherited.
                         optional_key=('', ''))
         self.assertEqual(set(expected), set(PROVIDERS))

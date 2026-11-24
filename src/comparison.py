@@ -4,7 +4,7 @@ import copy
 import uuid
 from dataclasses import dataclass, field
 from gi.repository import Gio
-from .providers import ProviderError, RequestCancelled, validate_url
+from .providers import ProviderError, RequestCancelled, supports, validate_url
 from .knowledge import augmented_messages, validate_rag
 from dataclasses import replace
 from .context import estimate_context
@@ -56,10 +56,11 @@ def prepare_run(context, active, prompt, images, settings, targets, draft_id, re
         if caps is not None:
             if 'embedding' in caps and 'completion' not in caps:
                 raise ValueError(_('Embedding models cannot generate comparisons.'))
-            if images and 'vision' not in caps:
-                raise ValueError(_('Every target must support the shared images.'))
             if wire.thinking not in (None, False) and 'thinking' not in caps:
                 raise ValueError(_('Every target must support the selected thinking option.'))
+        # Asked apart from the list: some servers report capabilities one by one.
+        if images and supports(details, 'vision') is False:
+            raise ValueError(_('Every target must support the shared images.'))
         limits = connection.capabilities
         limits.require(wire, host)
         family = (details or {}).get('details', {}).get('family', '').replace('-', '').lower()

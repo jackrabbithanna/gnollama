@@ -160,12 +160,20 @@ class StoredSettingsTests(unittest.TestCase):
         ollama = dict(strategies=(ChatStrategy(None), GenerationStrategy()), wire=wire, names=ENVELOPE | WIRE_NAMES,
                       sent=dict(options=wire.options, think=True, logprobs=True, top_logprobs=2))
         # Each provider is sent what its capabilities take, under its own API's names.
-        cases = dict(ollama=ollama, ollama_cloud=ollama, openai=dict(
+        openai = dict(
             strategies=(ChatStrategy(None),), wire=replace(wire, thinking='high', keep_alive=None),
             names=OPENAI_ENVELOPE | OPENAI_WIRE_NAMES,
             sent=dict(temperature=0.5, max_tokens=64, reasoning_effort='high', tools=TOOLS, logprobs=True,
                       top_logprobs=2, response_format={'type': 'json_schema', 'json_schema': {
-                          'name': 'response', 'schema': SCHEMA}})))
+                          'name': 'response', 'schema': SCHEMA}}))
+        # The named types also take Top K and Min P, and every thinking setting in their own form.
+        extras = replace(wire, keep_alive=None, options=dict(wire.options, top_k=5, min_p=0.1))
+        lmstudio = dict(openai, wire=extras, names=openai['names'] | {'top_k', 'min_p'},
+                        sent=dict(openai['sent'], top_k=5, min_p=0.1, reasoning_effort='medium'))
+        openrouter = dict(lmstudio, names=lmstudio['names'] - {'reasoning_effort'} | {'reasoning'},
+                          sent=dict(lmstudio['sent'], reasoning={'enabled': True}))
+        del openrouter['sent']['reasoning_effort']
+        cases = dict(ollama=ollama, ollama_cloud=ollama, openai=openai, lmstudio=lmstudio, openrouter=openrouter)
         self.assertEqual(set(cases), set(PROVIDERS), 'every provider has a case here')
         for kind, cls in PROVIDERS.items():
             case = cases[kind]

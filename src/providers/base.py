@@ -49,22 +49,40 @@ class Capabilities:
                 host=host.get('name') or host.get('hostname', ''), options=', '.join(missing)))
 
 
-def _address(url):
+def supports(details, name):
+    """Whether a model's details say it has a capability: True, False, or None where they are silent.
+
+    `capabilities` is a complete list, as Ollama gives it: a name it lacks is
+    not supported. `supports` holds what a server reported one by one, and a
+    name it lacks is unknown.
+    """
+    if not isinstance(details, dict):
+        return None
+    known = details.get('supports')
+    if isinstance(known, dict) and isinstance(known.get(name), bool):
+        return known[name]
+    listed = details.get('capabilities')
+    return name in listed if isinstance(listed, list) else None
+
+
+def _address(url, suffix):
     parts = urlsplit(url.strip())
     port = parts.port if parts.port is not None else {'http': 80, 'https': 443}[parts.scheme]
     if not parts.hostname or parts.query or parts.fragment:
         raise ValueError(url)
-    return parts.scheme, parts.username, parts.password, parts.hostname, port, parts.path.rstrip('/')
+    path = parts.path.rstrip('/')
+    return parts.scheme, parts.username, parts.password, parts.hostname, port, path.removesuffix(suffix)
 
 
-def same_address(first, second):
+def same_address(first, second, suffix=''):
     """Whether two URLs certainly name one server; any doubt means they differ.
 
     The scheme and host name compare without case, a default port equals none,
-    and trailing slashes are ignored. The path counts, so a `/v1` suffix differs.
+    and trailing slashes are ignored. The path counts, so a `/v1` suffix differs
+    unless it is given as a `suffix` that both ends leave out of the address.
     """
     try:
-        return _address(first) == _address(second)
+        return _address(first, suffix) == _address(second, suffix)
     except (ValueError, KeyError, AttributeError, TypeError):
         return False
 
@@ -96,6 +114,7 @@ class Provider:
     key_url = ''       # Where the user creates an API key.
     name_example = ''  # Placeholder of the name field, a whole sentence; none if empty.
     url_example = ''   # Placeholder of the address field; none if empty.
+    optional_suffix = ''  # A path ending this type adds itself, so an address may hold it or not.
 
     @classmethod
     def keeps_key(cls, host, url):
@@ -106,7 +125,13 @@ class Provider:
         """
         if not (cls.requires_key or cls.key_optional):
             return False
-        return (host.get('provider') or 'ollama') == cls.kind or same_address(host.get('hostname'), url)
+        kind = host.get('provider') or 'ollama'
+        if kind == cls.kind:
+            return True
+        from .registry import PROVIDERS
+        # Only where the type left behind ignores the ending too; to any other it is part of the address.
+        shared = cls.optional_suffix == getattr(PROVIDERS.get(kind), 'optional_suffix', None)
+        return same_address(host.get('hostname'), url, cls.optional_suffix if shared else '')
 
     @classmethod
     def check_url(cls, url):

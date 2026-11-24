@@ -12,8 +12,18 @@ from gi.repository import Gio
 from .providers import RequestCancelled, validate_url
 
 
+def host_key(host):
+    """Identify a server by provider type and address, from a host record or a connection.
+
+    Records of one type at one address are one server. Another type there is
+    not: it lists other models and describes them differently.
+    """
+    kind, url = (host.get('provider'), host['hostname']) if isinstance(host, dict) else (host.kind, host.url)
+    return (kind or 'ollama', validate_url(url))
+
+
 def model_key(host, model):
-    return (validate_url(host), model.removesuffix(':latest'))
+    return (host_key(host), model.removesuffix(':latest'))
 
 
 class WorkerPool:
@@ -102,7 +112,8 @@ class ModelCatalog:
 
     @staticmethod
     def connection_key(connection):
-        return connection.key
+        # Hosts of one type at one address still differ in the key they send.
+        return (*host_key(connection), connection.host_id, connection.credential_id)
 
     def _generation(self, key):
         return self._epoch, self._versions.get(key, 0)

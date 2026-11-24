@@ -127,8 +127,10 @@ install_data(gnollama_widget_sources, install_dir: moduledir / 'widgets')
 gnollama_provider_sources = [
   'providers/__init__.py',
   'providers/base.py',
+  'providers/lmstudio.py',
   'providers/ollama.py',
   'providers/openai.py',
+  'providers/openrouter.py',
   'providers/registry.py',
   'providers/transport.py',
 ]

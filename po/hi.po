@@ -3655,3 +3655,23 @@ msgstr "टोकन/सेकंड (स्थानीय रूप से म
 #: src/bubbles.py
 msgid "Timed by Gnollama, not reported by the server. The total includes network delay and model loading."
 msgstr "Gnollama द्वारा मापा गया, सर्वर द्वारा नहीं बताया गया। कुल में नेटवर्क विलंब और मॉडल लोड होने का समय शामिल है।"
+
+#: src/providers/lmstudio.py
+msgid "LM Studio"
+msgstr "LM Studio"
+
+#: src/providers/openrouter.py
+msgid "OpenRouter"
+msgstr "OpenRouter"
+
+#: src/providers/openrouter.py
+msgid "OpenRouter requires {0}."
+msgstr "OpenRouter के लिए {0} आवश्यक है।"
+
+#: src/model_manager.py
+msgid "Context Length"
+msgstr "कॉन्टेक्स्ट की लंबाई"
+
+#: src/model_manager.py
+msgid "Max Context Length"
+msgstr "कॉन्टेक्स्ट की अधिकतम लंबाई"

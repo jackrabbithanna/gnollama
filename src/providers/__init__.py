@@ -1,12 +1,15 @@
 """Model providers and the transport they share."""
-from .base import Capabilities, Provider
+from .base import Capabilities, Provider, supports
+from .lmstudio import LMStudioProvider
 from .ollama import CLOUD_URL, OllamaCloudProvider, OllamaProvider
 from .openai import OpenAICompatibleProvider
+from .openrouter import OpenRouterProvider
 from .registry import PROVIDERS, ProviderRegistry, capabilities, provider_class
 from .transport import ProviderError, RequestCancelled, Transport, validate_url
 
 __all__ = [
-    'CLOUD_URL', 'Capabilities', 'OllamaCloudProvider', 'OllamaProvider', 'OpenAICompatibleProvider',
-    'PROVIDERS', 'Provider', 'ProviderError', 'ProviderRegistry', 'RequestCancelled', 'Transport',
-    'capabilities', 'provider_class', 'validate_url',
+    'CLOUD_URL', 'Capabilities', 'LMStudioProvider', 'OllamaCloudProvider', 'OllamaProvider',
+    'OpenAICompatibleProvider', 'OpenRouterProvider', 'PROVIDERS', 'Provider', 'ProviderError',
+    'ProviderRegistry', 'RequestCancelled', 'Transport', 'capabilities', 'provider_class', 'supports',
+    'validate_url',
 ]

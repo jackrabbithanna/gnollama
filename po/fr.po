@@ -3753,3 +3753,23 @@ msgstr "Jetons/s (mesuré localement) : {0}"
 #: src/bubbles.py
 msgid "Timed by Gnollama, not reported by the server. The total includes network delay and model loading."
 msgstr "Mesuré par Gnollama, non communiqué par le serveur. Le total comprend le délai réseau et le chargement du modèle."
+
+#: src/providers/lmstudio.py
+msgid "LM Studio"
+msgstr "LM Studio"
+
+#: src/providers/openrouter.py
+msgid "OpenRouter"
+msgstr "OpenRouter"
+
+#: src/providers/openrouter.py
+msgid "OpenRouter requires {0}."
+msgstr "OpenRouter nécessite {0}."
+
+#: src/model_manager.py
+msgid "Context Length"
+msgstr "Longueur du contexte"
+
+#: src/model_manager.py
+msgid "Max Context Length"
+msgstr "Longueur maximale du contexte"

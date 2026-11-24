@@ -1,13 +1,13 @@
 from gettext import gettext as _
 from typing import Any, List, Dict, Optional
 from gi.repository import Adw, Gtk, GLib
-from .providers import ProviderError, RequestCancelled, validate_url
+from .providers import ProviderError, RequestCancelled
 from .session import ViewRequests
 import json
 from datetime import datetime
 
 
-from .services import model_key
+from .services import host_key, model_key
 
 
 def running_model_subtitle(model):
@@ -174,7 +174,7 @@ class ModelManagerDialog(Adw.Dialog):
             if error:
                 self.running_status.set_text(_('Could not refresh running models: {0}').format(error))
                 return
-            self.update_running_models(host['hostname'], models)
+            self.update_running_models(host, models)
         def fetch():
             try:
                 models = self.context.connection(host).running(cancellable=cancel)
@@ -183,7 +183,7 @@ class ModelManagerDialog(Adw.Dialog):
                 self.requests.deliver(completed, [], str(exc), cancellable=cancel)
         self.context.services.control.submit(fetch)
 
-    def update_running_models(self, hostname, models):
+    def update_running_models(self, host, models):
         for row, _host, _model, _button in self._running_rows:
             self.running_group.remove(row)
         self._running_rows.clear()
@@ -195,10 +195,10 @@ class ModelManagerDialog(Adw.Dialog):
             row = Adw.ActionRow(title=name, subtitle=running_model_subtitle(model), use_markup=False)
             button = Gtk.Button(label=_('Unload'), valign=Gtk.Align.CENTER,
                                 tooltip_text=_('Release this model from memory; keep its downloaded files.'))
-            button.connect('clicked', self.on_unload_clicked, hostname, name)
+            button.connect('clicked', self.on_unload_clicked, host, name)
             row.add_suffix(button)
             self.running_group.add(row)
-            self._running_rows.append((row, hostname, name, button))
+            self._running_rows.append((row, host, name, button))
         self.update_unload_buttons()
 
     def update_unload_buttons(self):
@@ -224,7 +224,7 @@ class ModelManagerDialog(Adw.Dialog):
                 return False
             self.update_unload_buttons()
             selected = self.get_selected_host()
-            if selected and validate_url(selected['hostname']) == key[0]:
+            if selected and host_key(selected) == key[0]:
                 if error and not cancel.is_cancelled():
                     self.show_error(_('Could not unload model'), error)
                 if self._running_cancel:
@@ -235,7 +235,7 @@ class ModelManagerDialog(Adw.Dialog):
         def unload():
             error = None
             try:
-                self.context.providers.ollama_at(host).unload(model, cancellable=cancel)
+                self.context.providers.ollama_at(host['hostname']).unload(model, cancellable=cancel)
             except ProviderError as exc:
                 error = str(exc)
             finally:
@@ -368,7 +368,7 @@ class ModelManagerDialog(Adw.Dialog):
         host = self.get_selected_host()
         if not host or not self._capabilities().model_management:
             return
-        if self.is_model_busy(host['hostname'], model['name']) or model_key(host['hostname'], model['name']) in self.context.services.models.reserved:
+        if self.is_model_busy(host, model['name']) or model_key(host, model['name']) in self.context.services.models.reserved:
             self.show_error(_('Model Is Busy'), _('Wait for active chats and embedding jobs before deleting this model.'))
             return
         usage = self.storage.library.model_embedding_usage(model.get('digest', ''))
@@ -396,10 +396,10 @@ class ModelManagerDialog(Adw.Dialog):
                 if delete_vectors and self.context.knowledge.indexing_digest(model['digest']):
                     self.show_error(_('Model Is Busy'), _('Wait for all indexing jobs using this model before deleting its vectors.'))
                     return
-                if not self.context.knowledge.reserve_model(host['hostname'], model['name'], self.is_model_busy):
+                if not self.context.knowledge.reserve_model(host, model['name'], self.is_model_busy):
                     self.show_error(_('Model Is Busy'), _('Wait for active chats and embedding jobs before deleting this model.'))
                     return
-                key = model_key(host['hostname'], model['name'])
+                key = model_key(host, model['name'])
                 cancel = self.requests.new_cancel()
                 def thread_func() -> None:
                     try:
@@ -654,3 +654,5 @@ def _dummy_extractions():
     _("License")
     _("Modelfile")
     _("Model Info")
+    _("Context Length")
+    _("Max Context Length")

@@ -3733,3 +3733,23 @@ msgstr "Token/δευτ. (τοπική μέτρηση): {0}"
 #: src/bubbles.py
 msgid "Timed by Gnollama, not reported by the server. The total includes network delay and model loading."
 msgstr "Μετρήθηκε από το Gnollama, δεν αναφέρθηκε από τον διακομιστή. Το σύνολο περιλαμβάνει την καθυστέρηση δικτύου και τη φόρτωση του μοντέλου."
+
+#: src/providers/lmstudio.py
+msgid "LM Studio"
+msgstr "LM Studio"
+
+#: src/providers/openrouter.py
+msgid "OpenRouter"
+msgstr "OpenRouter"
+
+#: src/providers/openrouter.py
+msgid "OpenRouter requires {0}."
+msgstr "Το OpenRouter απαιτεί {0}."
+
+#: src/model_manager.py
+msgid "Context Length"
+msgstr "Μήκος συμφραζομένων"
+
+#: src/model_manager.py
+msgid "Max Context Length"
+msgstr "Μέγιστο μήκος συμφραζομένων"

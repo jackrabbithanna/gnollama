@@ -2,9 +2,12 @@
 from gettext import gettext as _
 
 from .ollama import OllamaCloudProvider, OllamaProvider
+from .lmstudio import LMStudioProvider
 from .openai import OpenAICompatibleProvider
+from .openrouter import OpenRouterProvider
 
-PROVIDERS = {cls.kind: cls for cls in (OllamaProvider, OllamaCloudProvider, OpenAICompatibleProvider)}
+PROVIDERS = {cls.kind: cls for cls in (OllamaProvider, OllamaCloudProvider, OpenAICompatibleProvider,
+                                       LMStudioProvider, OpenRouterProvider)}
 
 
 def provider_class(kind):

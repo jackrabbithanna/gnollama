@@ -3550,3 +3550,23 @@ msgstr "토큰/초 (로컬 측정): {0}"
 #: src/bubbles.py
 msgid "Timed by Gnollama, not reported by the server. The total includes network delay and model loading."
 msgstr "서버가 보고한 값이 아니라 Gnollama가 측정한 값입니다. 전체 시간에는 네트워크 지연과 모델 불러오기 시간이 포함됩니다."
+
+#: src/providers/lmstudio.py
+msgid "LM Studio"
+msgstr "LM Studio"
+
+#: src/providers/openrouter.py
+msgid "OpenRouter"
+msgstr "OpenRouter"
+
+#: src/providers/openrouter.py
+msgid "OpenRouter requires {0}."
+msgstr "OpenRouter에는 {0}이(가) 필요합니다."
+
+#: src/model_manager.py
+msgid "Context Length"
+msgstr "컨텍스트 길이"
+
+#: src/model_manager.py
+msgid "Max Context Length"
+msgstr "최대 컨텍스트 길이"

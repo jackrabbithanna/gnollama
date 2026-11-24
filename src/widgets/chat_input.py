@@ -1,7 +1,7 @@
 from typing import Any, Dict, List, Optional
 from gettext import gettext as _, ngettext
 from gi.repository import Gtk, GObject, Gio, GLib, Gdk, Pango
-from ..providers import RequestCancelled
+from ..providers import RequestCancelled, supports
 from .composer import Composer  # noqa: F401 - registers the type chat_input.ui names
 
 @Gtk.Template(resource_path='/io/github/jackrabbithanna/Gnollama/widgets/chat_input.ui')
@@ -96,7 +96,7 @@ class ChatInput(Gtk.Box):
             elif family == 'gptoss':
                 values = [None, 'low', 'medium', 'high']
                 labels = [_('Model default'), _('Low'), _('Medium'), _('High')]
-            elif 'capabilities' in details and 'thinking' not in details['capabilities']:
+            elif supports(details, 'thinking') is False:
                 values, labels = [None], [_('Model default')]
         self._setting_thinking = True
         desired = self._desired_thinking
@@ -139,9 +139,9 @@ class ChatInput(Gtk.Box):
 
     def set_model_details(self, details, loading=False):
         self.capabilities_loading = loading
-        capabilities = details.get('capabilities') if isinstance(details, dict) else None
-        self.image_support = ('vision' in capabilities) if isinstance(capabilities, list) else None
-        self.tool_support = ('tools' in capabilities) if isinstance(capabilities, list) else None
+        # None where the server did not say.
+        self.image_support = supports(details, 'vision')
+        self.tool_support = supports(details, 'tools')
         self._set_thinking_options(details)
         self.update_capability_controls()
         self.emit('capabilities-changed')

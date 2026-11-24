@@ -1,6 +1,7 @@
 """The OpenAI-compatible chat API, as LM Studio, llama.cpp, vLLM, and others serve it."""
 import base64
 import copy
+import hashlib
 import json
 from dataclasses import dataclass
 from gettext import gettext as _
@@ -21,6 +22,9 @@ THINKING_LEVELS = ('low', 'medium', 'high')
 # Sampling options this API takes, by the name the application uses.
 OPTION_NAMES = {'temperature': 'temperature', 'top_p': 'top_p', 'seed': 'seed', 'stop': 'stop',
                 'num_predict': 'max_tokens'}
+# More that some servers take, where `Capabilities.sampling_extras` says so.
+EXTRA_NAMES = {'top_k': 'top_k', 'min_p': 'min_p'}
+JSON_OBJECT: dict = {'type': 'json_object'}
 
 IMAGE_TYPES = ((b'\x89PNG', 'image/png'), (b'\xff\xd8\xff', 'image/jpeg'), (b'GIF8', 'image/gif'))
 
@@ -100,30 +104,56 @@ def wire_messages(messages, images=None):
     return result
 
 
+def level_fields(thinking):
+    if thinking not in THINKING_LEVELS:
+        raise ProviderError(_('This server accepts only the Low, Medium, and High thinking levels.'))
+    return {'reasoning_effort': thinking}
+
+
+def effort(thinking, efforts):
+    """A server's name for a thinking setting, from the table of every setting it takes."""
+    # By type as well: 1 and 0 are not the settings True and False.
+    if type(thinking) not in (bool, str) or thinking not in efforts:
+        raise ProviderError(_('Invalid thinking setting'))
+    return efforts[thinking]
+
+
+def fingerprint(*fields):
+    """Stands where Ollama has a content digest; it changes when what the server reports does."""
+    return hashlib.sha256(json.dumps(fields).encode()).hexdigest()
+
+
+def find(entries, field, name):
+    for entry in entries:
+        if entry.get(field) == name:
+            return entry
+    raise ProviderError(_('Selected model is no longer available.'))
+
+
 def chat_body(model, messages, options=None, thinking=None, logprobs=False, top_logprobs=None,
-              images=None, format=None, keep_alive=None, tools=None):
+              images=None, format=None, keep_alive=None, tools=None, *, names=OPTION_NAMES,
+              thinking_fields=level_fields, json_mode=JSON_OBJECT):
+    """The request for the plain API; the keyword-only arguments are what a server type changes."""
     data = {'model': model, 'messages': wire_messages(messages, images), 'stream': True,
             'stream_options': {'include_usage': True}}
     # Capability checks stop these earlier; nothing is ever dropped without saying so.
-    refused = sorted(set(options or {}) - set(OPTION_NAMES)) + (['keep_alive'] if keep_alive is not None else [])
+    refused = sorted(set(options or {}) - set(names)) + (['keep_alive'] if keep_alive is not None else [])
     if refused:
         raise ProviderError(_('This server does not accept: {0}.').format(', '.join(refused)))
     for name, value in (options or {}).items():
         if name == 'num_predict' and isinstance(value, (int, float)) and value < 0:
             continue
-        data[OPTION_NAMES[name]] = copy.deepcopy(value)
+        data[names[name]] = copy.deepcopy(value)
     if format is not None:
         if format == 'json':
-            data['response_format'] = {'type': 'json_object'}
+            data['response_format'] = copy.deepcopy(json_mode)
         elif isinstance(format, dict):
             data['response_format'] = {'type': 'json_schema', 'json_schema': {
                 'name': 'response', 'schema': copy.deepcopy(format)}}
         else:
             raise ProviderError(_('Invalid output format'))
     if thinking is not None:
-        if thinking not in THINKING_LEVELS:
-            raise ProviderError(_('This server accepts only the Low, Medium, and High thinking levels.'))
-        data['reasoning_effort'] = thinking
+        data.update(thinking_fields(thinking))
     if logprobs:
         data['logprobs'] = True
         if top_logprobs is not None:
@@ -193,6 +223,17 @@ class OpenAICompatibleProvider(Provider):
     key_optional = True
     capabilities = Capabilities(thinking_levels=True, structured_output=True, tools=True, logprobs=True,
                                 thinking_text=True, options_notice=NOTICE)
+    optional_suffix = '/v1'
+    json_mode = JSON_OBJECT  # What asks for JSON without a schema.
+
+    def thinking_fields(self, thinking):
+        """Request fields for a thinking setting; raises for one this type cannot send."""
+        return level_fields(thinking)
+
+    def request_body(self, model, messages, *settings, **named):
+        names = OPTION_NAMES | (EXTRA_NAMES if self.capabilities.sampling_extras else {})
+        return chat_body(model, messages, *settings, **named, names=names,
+                         thinking_fields=self.thinking_fields, json_mode=self.json_mode)
 
     def _address(self, endpoint):
         return validate_url(self.url).removesuffix('/v1') + '/v1' + endpoint
@@ -221,14 +262,18 @@ class OpenAICompatibleProvider(Provider):
     def _hooks(self):
         return dict(prepare=self._prepare, explain=self._explain)
 
-    def list_models(self, timeout=10, cancellable=None):
-        result = self.transport.request(lambda: self._address('/models'), None, 'GET', timeout,
-                                        cancellable, **self._hooks())
-        models = result.get('data')
+    def _listed(self, address, field, name, timeout, cancellable):
+        """The model objects under `field` of the list at `address()` that have a name under `name`."""
+        result = self.transport.request(address, None, 'GET', timeout, cancellable, **self._hooks())
+        models = result.get(field)
         if not isinstance(models, list):
             raise ProviderError(_('The server did not return a model list.'))
-        return [{'name': model['id']} for model in models
-                if isinstance(model, dict) and isinstance(model.get('id'), str) and model['id']]
+        return [model for model in models
+                if isinstance(model, dict) and isinstance(model.get(name), str) and model[name]]
+
+    def list_models(self, timeout=10, cancellable=None):
+        return [{'name': model['id']} for model in self._listed(lambda: self._address('/models'), 'data', 'id',
+                                                                timeout, cancellable)]
 
     def show_model(self, name, timeout=10, cancellable=None):
         # The server reports nothing about a model, so its capabilities stay unknown.
@@ -240,8 +285,8 @@ class OpenAICompatibleProvider(Provider):
     def chat(self, model, messages, options=None, thinking=None, logprobs=False,
              top_logprobs=None, images=None, timeout=300, cancellable=None, format=None,
              keep_alive=None, tools=None):
-        data = chat_body(model, messages, options, thinking, logprobs, top_logprobs, images,
-                         format, keep_alive, tools)
+        data = self.request_body(model, messages, options, thinking, logprobs, top_logprobs, images,
+                                 format, keep_alive, tools)
         parts: dict = {}
         finish = None
         usage: dict = {}

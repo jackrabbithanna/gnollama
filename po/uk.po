@@ -3709,3 +3709,23 @@ msgstr "Токенів/с (виміряно локально): {0}"
 #: src/bubbles.py
 msgid "Timed by Gnollama, not reported by the server. The total includes network delay and model loading."
 msgstr "Виміряно Gnollama, а не повідомлено сервером. Загальний час включає мережеву затримку та завантаження моделі."
+
+#: src/providers/lmstudio.py
+msgid "LM Studio"
+msgstr "LM Studio"
+
+#: src/providers/openrouter.py
+msgid "OpenRouter"
+msgstr "OpenRouter"
+
+#: src/providers/openrouter.py
+msgid "OpenRouter requires {0}."
+msgstr "OpenRouter потребує {0}."
+
+#: src/model_manager.py
+msgid "Context Length"
+msgstr "Довжина контексту"
+
+#: src/model_manager.py
+msgid "Max Context Length"
+msgstr "Максимальна довжина контексту"

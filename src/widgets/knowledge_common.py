@@ -160,8 +160,10 @@ class HostModels(Gtk.Box):
         managed = hasattr(root, 'on_manage_models')
         manager = root.on_manage_models() if managed else ModelManagerDialog(
             self.context, is_model_busy=self.context.knowledge.busy)
+        i = self.host_dropdown.get_selected()
+        selected = self.hosts[i]['id'] if i < len(self.hosts) else None
         for n, host in enumerate(manager.host_list):
-            if host['hostname'].rstrip('/') == self.host().rstrip('/'):
+            if host['id'] == selected:
                 manager.host_dropdown.set_selected(n)
                 break
         # Refresh after a model has been downloaded without requiring the picker to close.

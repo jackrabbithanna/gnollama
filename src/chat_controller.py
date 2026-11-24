@@ -161,7 +161,7 @@ class ChatController:
         hostname = validate_url(host['hostname'])
         if not model:
             raise ValueError(_('Select an available model before sending.'))
-        if model_key(hostname, model) in self.services.models.reserved:
+        if model_key(host, model) in self.services.models.reserved:
             raise ValueError(_('Wait for this model to finish unloading before sending.'))
         return hostname
 

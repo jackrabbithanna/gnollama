@@ -14,6 +14,7 @@ from gettext import gettext as _
 
 from gi.repository import Gio, GLib
 from .providers import ProviderError, RequestCancelled, validate_url
+from .services import host_key
 from .vectors import vector_blob, validate_dimensions, validate_search_metric
 
 
@@ -200,11 +201,15 @@ class KnowledgeService:
             return not self._active and all(j['done'] for j in self.jobs.values())
 
     def busy(self, host, model):
-        key = (host.rstrip('/'), canonical_model(model))
+        """Whether an embedding call or a waiting job uses `model` on a host record or connection."""
+        (kind, url), name = host_key(host), canonical_model(model)
         with self._lock:
-            return key in self._active or any(not j['done'] and j.get('host') == key[0]
-                                              and canonical_model(j.get('model', '')) == key[1]
-                                              for j in self.jobs.values())
+            if ((kind, url), name) in self._active:
+                return True
+            # A job knows only its address, which names the host there that can embed.
+            return self.providers.capabilities(dict(provider=kind)).embeddings and any(
+                not j['done'] and j.get('host') == url and canonical_model(j.get('model', '')) == name
+                for j in self.jobs.values())
 
     def reserve_model(self, host, model, is_busy):
         """Serialize destructive model operations against newly starting embedding calls."""
@@ -216,9 +221,9 @@ class KnowledgeService:
             return any(not j['done'] and j.get('digest') == digest for j in self.jobs.values())
 
     @contextmanager
-    def using(self, host, model, cancel):
-        key = (host.rstrip('/'), canonical_model(model))
-        with self.services.models.using(host, model):
+    def using(self, connection, model, cancel):
+        key = (host_key(connection), canonical_model(model))
+        with self.services.models.using(connection, model):
             with self._lock:
                 if self.closed:
                     raise ValueError(_('The Knowledge Library is closing.'))
@@ -253,10 +258,16 @@ class KnowledgeService:
         return value
 
     def require_host(self, host):
-        """Return the connection of a configured host that can embed."""
-        for record in self.library.hosts():
-            if record['hostname'].rstrip('/') == host.rstrip('/') and self.providers.capabilities(record).embeddings:
-                return self.providers.connection(record)
+        """Return the connection of the configured host at the address `host` that can embed.
+
+        A host of another type at that address neither answers for it nor hides it.
+        """
+        records = [r for r in self.library.hosts()
+                   if r['hostname'].rstrip('/') == host.rstrip('/') and self.providers.capabilities(r).embeddings]
+        # Collections store the address alone, and every one so far was built on an Ollama host.
+        records.sort(key=lambda r: (r.get('provider') or 'ollama') != 'ollama')
+        if records:
+            return self.providers.connection(records[0])
         raise ValueError(_('The embedding host was removed. Choose a configured host before continuing.'))
 
     def submit(self, title, function, callback=None, host='', model='', index_id=None, document_id=None,
@@ -448,7 +459,7 @@ class KnowledgeService:
                              chunk_size=size, overlap=overlap, created_at=time.time())
                 self._write(self.library.begin_knowledge_index, index, prepared, cancel=cancel)
                 connection = self.require_host(host)
-                with self.using(host, model, cancel):
+                with self.using(connection, model, cancel):
                     identity = model_identity(connection, model, cancel, config['digest'])
                     queue, ordinal = list(chunks), 0
                     while queue:
@@ -518,7 +529,7 @@ class KnowledgeService:
             raise ValueError(_('Enter a search query.'))
         host, model = options['host'], options['model']
         connection = self.require_host(host)
-        with self.using(host, model, cancel):
+        with self.using(connection, model, cancel):
             model_identity(connection, model, cancel, config['digest'])
             response = connection.embed(model, config['query_prefix'] + query,
                                     dimensions=config['requested_dimensions'], cancellable=cancel)

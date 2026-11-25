@@ -128,7 +128,7 @@ class Transport:
                 status = message.get_status()
                 if explain is not None:
                     detail = explain(status, detail)
-                raise ProviderError(str(detail or f'HTTP Error {status}: {message.get_reason_phrase()}'), status)
+                raise ProviderError(str(detail or f'HTTP Error {int(status)}: {message.get_reason_phrase()}'), status)
             yield stream, cancellable
         except RequestCancelled:
             raise

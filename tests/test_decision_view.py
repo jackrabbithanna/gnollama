@@ -1007,6 +1007,36 @@ class DecisionTests(unittest.TestCase):
         other.show_message('nothing')
         pump_until(lambda: self.context.services.idle)
         self.assertEqual(len(other.runs), 50)
+        # Later runs are offered, and loaded up to the session's last.
+        self.assertTrue(other.later.get_visible())
+        other.later.emit('clicked')
+        pump_until(lambda: len(other.runs) == 70)
+        self.assertFalse(other.later.get_visible())
+        self.assertEqual([view.run['id'] for view in self.find(other.results, RunView)],
+                         [f'run-{index}' for index in range(70)])
+        self.assertFalse(tab.later.get_visible())
+
+    def test_a_session_opened_at_a_search_hit_edits_its_last_run_and_new_runs_follow_it(self):
+        library = self.storage.library
+        settings = DecisionSettings.from_stored(dict(questions=QUESTIONS, target=dict(host_id=self.host['id'], model='blind')))
+        for index in range(70):
+            library.create_decision_run(dict(settings.to_stored(), id=f'run-{index}', session_id='long',
+                                             new_session=index == 0, state=f'State {index}', images=[]))
+            library.finish_decision_run(f'run-{index}', 'done', ANSWER)
+        tab = self.make_tab(saved=self.storage.conversation_page('long', 'run-3'))
+        self.assertEqual(list(tab.runs), [f'run-{index}' for index in range(50)])
+        self.assertTrue(tab.later.get_visible())
+        # The editor holds the session's last run, not the last one on the page.
+        self.assertEqual(tab.state_text(), 'State 69')
+        tab.chat_input.entry.restore_draft('State 70')
+        pump_until(lambda: tab.run_button.get_sensitive())
+        tab.run_button.emit('clicked')
+        pump_until(lambda: tab.request is None and self.storage.writer.idle and not self.storage.pending_callbacks
+                   and len(tab.runs) == 50 and 'run-0' not in tab.runs)
+        new = library.decision_runs('long')[-1]['id']
+        # The new run follows the session's last, on the last page.
+        self.assertEqual(list(tab.runs), [f'run-{index}' for index in range(21, 70)] + [new])
+        self.assertFalse(tab.later.get_visible())
 
     # Drafts.
 
@@ -1171,12 +1201,12 @@ class DecisionWindowTests(unittest.TestCase):
         window = GnollamaWindow(context=self.context)
         self.windows.append(window)
         self.tabs.append(window.tab_view.get_nth_page(0).get_child())
-        pump_until(lambda: self.storage.writer.idle and not window.history.pending)
+        pump_until(lambda: self.storage.writer.idle and not window.sections['decisions'].history.pending)
         return window
 
     def decision(self, window):
         window.lookup_action('new_decision').activate(None)
-        tab = window.tab_view.get_selected_page().get_child()
+        tab = window.sections['decisions'].tab_view.get_selected_page().get_child()
         self.tabs.append(tab)
         pump_until(lambda: settled(tab))
         return tab
@@ -1185,7 +1215,7 @@ class DecisionWindowTests(unittest.TestCase):
         window = self.make_window()
         tab = self.decision(window)
         self.assertIsInstance(tab, DecisionTab)
-        page = window.tab_view.get_page(tab)
+        page = window.sections['decisions'].tab_view.get_page(tab)
         self.assertEqual((page.get_title(), page.get_icon().get_names()[0]), ('New Decision', 'gnollama-decision-symbolic'))
         self.assertEqual(window.recent_decisions_section.get_title(), 'Recent decisions')
         tab.form.load(QUESTIONS)
@@ -1200,7 +1230,7 @@ class DecisionWindowTests(unittest.TestCase):
         self.assertFalse(page.get_loading())
         self.assertFalse(window.is_model_busy(self.host, 'blind'))
         session = tab.strategy.chat_id
-        pump_until(lambda: session in window.chat_rows and not window.history.pending)
+        pump_until(lambda: session in window.chat_rows and not window.sections['decisions'].history.pending)
         item = window.chat_rows[session]
         self.assertEqual((item.get_title(), item.get_icon_name(), item.get_section()),
                          ('The invoice was charged twice.', 'gnollama-decision-symbolic', window.recent_decisions_section))
@@ -1211,7 +1241,7 @@ class DecisionWindowTests(unittest.TestCase):
                          'resource:///io/github/jackrabbithanna/Gnollama/icons/scalable/actions/gnollama-decision-symbolic.svg')
         # The row selects the open tab, and opens the session again once that is closed.
         window._open_history_item(item)
-        self.assertIs(window.tab_view.get_selected_page().get_child(), tab)
+        self.assertIs(window.sections['decisions'].tab_view.get_selected_page().get_child(), tab)
         window.close_tab(tab)
         pump_until(lambda: tab not in window.tabs())
         self.assertIsNotNone(self.storage.get_chat(session))
@@ -1230,16 +1260,16 @@ class DecisionWindowTests(unittest.TestCase):
         runs = self.run_tab(tab)
         window.close_tab(tab)
         pump_until(lambda: tab not in window.tabs())
-        window.history_search.set_text('aardvark')
+        window.sections['decisions'].history.search.set_text('aardvark')
         session = tab.strategy.chat_id
-        pump_until(lambda: not window.history.pending and getattr(window.chat_rows.get(session), 'match_uid', None))
+        pump_until(lambda: not window.sections['decisions'].history.pending and getattr(window.chat_rows.get(session), 'match_uid', None))
         item = window.chat_rows[session]
         self.assertEqual((item.match_uid, item.get_section()), (runs[0]['id'], window.recent_decisions_section))
         with patch.object(DecisionTab, 'show_message') as show:
             window._open_history_item(item)
             pump_until(lambda: show.called)
         show.assert_called_once_with(runs[0]['id'])
-        self.tabs.append(window.tab_view.get_selected_page().get_child())
+        self.tabs.append(window.sections['decisions'].tab_view.get_selected_page().get_child())
 
     def test_a_closed_draft_is_listed_reopened_and_discarded_from_the_sidebar(self):
         window = self.make_window()
@@ -1248,9 +1278,9 @@ class DecisionWindowTests(unittest.TestCase):
         tab.form.rows[0].instructions.set_text('Edited')
         draft_id = tab.draft.id
         window.close_tab(tab)
-        pump_until(lambda: tab not in window.tabs() and draft_id in window.draft_rows and not window.history.pending)
+        pump_until(lambda: tab not in window.tabs() and draft_id in window.draft_rows and not window.sections['decisions'].history.pending)
         item = window.draft_rows[draft_id]
-        self.assertEqual((item.get_title(), item.get_section()), ('billing, tone, urgency', window.drafts_section))
+        self.assertEqual((item.get_title(), item.get_section()), ('billing, tone, urgency', window.sections['decisions'].history.sections['drafts']))
         window.open_draft(draft_id)
         pump_until(lambda: any(t.draft.id == draft_id for t in window.tabs()))
         again = next(t for t in window.tabs() if t.draft.id == draft_id)

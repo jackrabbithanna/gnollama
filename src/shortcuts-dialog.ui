@@ -35,6 +35,12 @@
         </child>
         <child>
           <object class="AdwShortcutsItem">
+            <property name="title" translatable="yes">New Image</property>
+            <property name="action-name">win.new_image</property>
+          </object>
+        </child>
+        <child>
+          <object class="AdwShortcutsItem">
             <property name="title" translatable="yes" context="shortcut window">Close Tab</property>
             <property name="action-name">win.close_tab</property>
           </object>

@@ -24,7 +24,7 @@ EVERYTHING = ['include_reasoning', 'logprobs', 'max_tokens', 'min_p', 'reasoning
               'stop', 'temperature', 'tools', 'top_k', 'top_p']
 FLAGS = [f.name for f in fields(Capabilities) if f.type is bool]
 # Offered by the host type whatever the model, so narrowing leaves it alone.
-HOST = {'embeddings', 'decisions', 'decision_images', 'decision_boxes'}
+HOST = {'embeddings', 'decisions', 'decision_images', 'decision_boxes', 'image_generation', 'image_references'}
 
 
 def catalog(name):

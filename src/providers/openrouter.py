@@ -2,7 +2,7 @@
 from dataclasses import dataclass
 from gettext import gettext as _
 
-from . import systemone
+from . import imaging, systemone
 from .base import Capabilities, named
 from .openai import OpenAICompatibleProvider, effort, find, fingerprint, narrowed, table
 from .transport import ProviderError
@@ -83,6 +83,18 @@ def describe_decision(model):
     return dict(describe_embedding(model), capabilities=systemone.capabilities(sees(model)))
 
 
+def image_settings(model):
+    """The settings an image model takes, in the shape `image_generation.parameters_from_schema` reads."""
+    return {name: spec for name, spec in table(model.get('supported_parameters')).items() if isinstance(spec, dict)}
+
+
+def describe_image(model):
+    settings = image_settings(model)
+    most = table(settings.get('input_references')).get('max')
+    result = {'capabilities': imaging.capabilities(type(most) is int and most > 0), 'image_parameters': settings}
+    return dict(result, image_streaming=True) if model.get('supports_streaming') is True else result
+
+
 @dataclass(frozen=True)
 class OpenRouterProvider(OpenAICompatibleProvider):
     kind = 'openrouter'
@@ -97,7 +109,8 @@ class OpenRouterProvider(OpenAICompatibleProvider):
                                 logprobs=True, sampling_extras=True, thinking_text=True,
                                 # Few models answer a box question; the service says so for one that does not.
                                 decisions=True, decision_images=True, decision_boxes=True,
-                                decision_image_formats=systemone.ASSET_FORMATS)
+                                decision_image_formats=systemone.ASSET_FORMATS,
+                                image_generation=True, image_references=True)
 
     @classmethod
     def check_url(cls, url):
@@ -148,6 +161,21 @@ class OpenRouterProvider(OpenAICompatibleProvider):
         data = systemone.assets_body(systemone.request(model, state, questions), images)
         return systemone.post(self, lambda: self._address('/systemone'), data, timeout, cancellable)
 
+    def _imagers(self, timeout, cancellable):
+        # Image models have one too, the models among them that also write text included.
+        return self._listed(lambda: self._address('/images/models'), 'data', 'id', timeout, cancellable)
+
+    def list_image_models(self, timeout=10, cancellable=None):
+        # The list gives no slug; when the model was added stands in for it.
+        return [dict({'digest': fingerprint(model['id'], model.get('created'))}, **tag(model), **describe_image(model))
+                for model in self._imagers(timeout, cancellable)]
+
+    def generate_image(self, model, prompt, options, references=None, timeout=300, cancellable=None):
+        """Ask an image model for images of `prompt`; returns the server's answer as it came."""
+        fields = {'response_format': 'b64_json', 'provider': {'require_parameters': True}}
+        body = imaging.images_body(model, prompt, options, references, **fields)
+        return imaging.post(self, lambda: self._address('/images'), body, timeout, cancellable)
+
     def list_models(self, timeout=10, cancellable=None):
         return [tag(model) for model in self._models(timeout, cancellable)]
 
@@ -171,4 +199,7 @@ class OpenRouterProvider(OpenAICompatibleProvider):
         for model in self._embedders(timeout, cancellable):
             if model['id'] == name:
                 return describe_embedding(model)
-        return describe_decision(find(self._deciders(timeout, cancellable), 'id', name))
+        for model in self._deciders(timeout, cancellable):
+            if model['id'] == name:
+                return describe_decision(model)
+        return describe_image(find(self._imagers(timeout, cancellable), 'id', name))

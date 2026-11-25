@@ -138,6 +138,16 @@ class OllamaProvider(Provider):
         common_params(data, None, None, False, None, keep_alive=keep_alive)
         return systemone.post(self, lambda: self._address('/v1/systemone'), self._body(data), timeout, cancellable)
 
+    # Image generation: not offered, so `capabilities.image_generation` stays off and both operations are
+    # the base's `_unavailable`. Ollama 0.14 to 0.32.5 generated images on macOS (and Linux with CUDA);
+    # 0.32.6 removed it, and `/api/generate` on such a model now answers 400. Should it return in that shape:
+    # - list_image_models: the `list_models` entries whose `capabilities` hold `image`, with
+    #   `image_parameters` of `n` (1 to 1) and `seed` (`{"type": "boolean"}`); no `input_references`.
+    # - generate_image: POST /api/generate {model, prompt, width, height, steps, options: {seed}, stream}.
+    #   Streamed chunks carry `completed` and `total` steps; the last has `done` and `image`, a PNG in base64,
+    #   to be handed on as `{"data": [{"b64_json": image, "media_type": "image/png"}]}`.
+    # `generates` already keeps models listed with `image` and without `completion` out of every chat picker.
+
     def delete(self, model, timeout=10, cancellable=None):
         self._request('/api/delete', {'model': model}, 'DELETE', timeout, cancellable)
         return True

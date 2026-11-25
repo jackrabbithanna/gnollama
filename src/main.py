@@ -24,6 +24,7 @@ class GnollamaApplication(Adw.Application):
         self.set_accels_for_action('win.new_chat_tab', ['<control>n'])
         self.set_accels_for_action('win.new_comparison', ['<control><shift>n'])
         self.set_accels_for_action('win.new_decision', ['<control><shift>e'])
+        self.set_accels_for_action('win.new_image', ['<control><shift>g'])
         self.set_accels_for_action('win.close_tab', ['<control>w'])
         self.set_accels_for_action('win.next_tab', ['<control>Page_Down'])
         self.set_accels_for_action('win.previous_tab', ['<control>Page_Up'])

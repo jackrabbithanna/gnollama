@@ -84,6 +84,21 @@ class SidebarStorageTests(unittest.TestCase):
         titles = {row['id']: row['title'] for row in self.storage.sidebar_snapshot(expanded={'drafts'})['groups']['drafts']}
         self.assertEqual((titles['asked'], titles['stated'], titles['draft-0']), ('billing, tone', 'A state', 'Solar 0'))
 
+    def test_a_section_lists_only_its_own_kinds_pins_drafts_and_suggestions(self):
+        save = self.storage.db.workspace.save_draft
+        save(dict(id='decision-draft', mode='decision', text='Solar decision draft', settings={}, targets=[], revision=1))
+        self.storage.db.chats.update_chat_pinned('decision-0', True)
+        result = self.storage.sidebar_snapshot('solar', (), ('decision',), ('decision',))
+        self.assertEqual(set(result['groups']), {'drafts', 'pinned', 'decision'})
+        self.assertEqual([r['id'] for r in result['groups']['pinned']], ['decision-0'])
+        self.assertEqual([r['id'] for r in result['groups']['drafts']], ['decision-draft'])
+        self.assertTrue(all(r['id'].startswith('decision') for r in result['groups']['decision']))
+        self.assertTrue(result['suggestions'])
+        self.assertTrue(all(s['kind'] in ('decision', 'drafts') for s in result['suggestions']))
+        chats = self.storage.sidebar_snapshot('', (), ('chat', 'comparison', 'model_conversation'), ('chat',))
+        self.assertNotIn('decision-0', [r['id'] for r in chats['groups']['pinned']])
+        self.assertNotIn('decision-draft', [r['id'] for r in chats['groups']['drafts']])
+
     def test_draft_search_is_case_and_accent_insensitive(self):
         self.storage.db.workspace.save_draft(dict(id='accent', mode='chat', text='Café Überprüfung', settings={}, targets=[], revision=1))
         self.assertEqual([r['id'] for r in self.storage.sidebar_snapshot('CAFE uber')['groups']['drafts']], ['accent'])
@@ -97,15 +112,23 @@ class SidebarUITests(unittest.TestCase):
 
     def sidebar(self, count=9):
         window, first = self.make_window()
-        pump_until(lambda: self.storage.writer.idle and not window.history.pending)
+        def settled():
+            return not any(section.history.pending for section in window.sections.values())
+        pump_until(lambda: self.storage.writer.idle and settled())
         seed(self.storage, count)
         window.load_history_sidebar()
-        pump_until(lambda: not window.history.pending)
+        pump_until(settled)
         return window, first
 
+    @staticmethod
+    def history(window, key):
+        """The sidebar that lists a group: decisions and images have their own sections."""
+        return window.sections[{'decision': 'decisions', 'image': 'images'}.get(key, 'chats')].history
+
     def rows(self, window, key):
-        source = window.draft_rows if key == 'drafts' else window.chat_rows
-        return sorted((r for r in source.values() if r.get_section() == window.history.sections[key]),
+        history = self.history(window, key)
+        source = history.draft_rows if key == 'drafts' else history.chat_rows
+        return sorted((r for r in source.values() if r.get_section() == history.sections[key]),
                       key=lambda r: r.get_section_index())
 
     def query(self, window, text):
@@ -114,9 +137,9 @@ class SidebarUITests(unittest.TestCase):
 
     def test_decisions_have_their_own_section_title_and_icon(self):
         window, _ = self.sidebar()
-        self.assertEqual(CATEGORIES[-1], 'decision')
+        self.assertEqual(CATEGORIES[-2], 'decision')
         section = window.recent_decisions_section
-        self.assertIs(section, window.history.sections['decision'])
+        self.assertIs(section, window.sections['decisions'].history.sections['decision'])
         self.assertEqual(section.get_title(), 'Recent decisions')
         rows = self.rows(window, 'decision')
         self.assertEqual([row.chat_id for row in rows], [f'decision-{index}' for index in range(8, 3, -1)])
@@ -124,17 +147,84 @@ class SidebarUITests(unittest.TestCase):
         self.assertEqual(ICONS['decision'], 'gnollama-decision-symbolic')
         theme = Gtk.IconTheme.get_for_display(Gdk.Display.get_default())
         self.assertTrue(theme.has_icon(ICONS['decision']))
-        self.assertEqual(window.history.footers['decision'].get_tooltip(), 'Recent decisions · Show more')
+        self.assertEqual(window.sections['decisions'].history.footers['decision'].get_tooltip(),
+                         'Recent decisions · Show more')
+
+    def test_images_have_their_own_section_title_and_icon(self):
+        window, _ = self.sidebar()
+        self.assertEqual(CATEGORIES[-1], 'image')
+        section = window.recent_images_section
+        self.assertIs(section, window.sections['images'].history.sections['image'])
+        self.assertEqual(section.get_title(), 'Recent images')
+        rows = self.rows(window, 'image')
+        self.assertEqual([row.chat_id for row in rows], [f'image-{index}' for index in range(8, 3, -1)])
+        self.assertEqual({row.get_icon_name() for row in rows}, {ICONS['image']})
+        self.assertEqual(ICONS['image'], 'gnollama-image-symbolic')
+        theme = Gtk.IconTheme.get_for_display(Gdk.Display.get_default())
+        self.assertTrue(theme.has_icon(ICONS['image']))
+        self.assertEqual(window.sections['images'].history.footers['image'].get_tooltip(), 'Recent images · Show more')
+
+    def test_decisions_and_images_have_their_own_sections_sidebars_and_tabs(self):
+        window, first = self.sidebar()
+        names = [page.get_name() for page in window.section_stack.get_pages()]
+        self.assertEqual(names, ['chats', 'decisions', 'images', 'knowledge'])
+        self.assertEqual([window.section_stack.get_page(window.sections[n].split_view).get_title() for n in names[:3]],
+                         ['Chats', 'Decisions', 'Images'])
+        self.assertEqual(window.history.categories, ('drafts', 'pinned', 'chat', 'comparison', 'model_conversation'))
+        self.assertEqual(window.sections['decisions'].history.categories, ('drafts', 'pinned', 'decision'))
+        self.assertEqual(window.sections['images'].history.categories, ('drafts', 'pinned', 'image'))
+        # A pinned decision moves to the decisions sidebar's own Pinned group.
+        item = self.rows(window, 'decision')[0]
+        window.pin_chat(item.chat_id)
+        decisions = window.sections['decisions'].history
+        pump_until(lambda: self.storage.writer.idle and item.get_section() == decisions.sections['pinned']
+                   and not decisions.pending and not window.history.pending)
+        self.assertNotIn(item.chat_id, window.history.chat_rows)
+        # New tabs open in their own section, which is then shown.
+        decision = window.new_decision_tab()
+        self.assertEqual(window.section_stack.get_visible_child_name(), 'decisions')
+        self.assertEqual(window.sections['decisions'].tabs(), [decision])
+        image = window.new_image_tab()
+        self.assertEqual(window.section_stack.get_visible_child_name(), 'images')
+        self.assertEqual(window.sections['images'].tabs(), [image])
+        self.assertEqual(window.sections['chats'].tabs(), [first])
+        self.assertEqual(window.tabs(), [first, decision, image])
+        # Close Tab acts on the section shown; a section with no tab says so and offers a new one.
+        window.close_selected_tab()
+        pump_until(lambda: not window.sections['images'].tabs())
+        self.assertEqual(window.sections['images'].content.get_visible_child_name(), 'empty')
+        self.assertEqual(window.tabs(), [first, decision])
+        window.select_tab(decision)
+        self.assertEqual(window.section_stack.get_visible_child_name(), 'decisions')
+        window.close_tab(decision)
+        pump_until(lambda: not window.sections['decisions'].tabs())
+
+    def test_a_session_opened_from_a_sidebar_shows_in_its_own_section(self):
+        window, first = self.sidebar()
+        window.section_stack.set_visible_child_name('images')
+        item = self.rows(window, 'image')[0]
+        window._open_history_item(item)
+        pump_until(lambda: window.sections['images'].tabs())
+        tab = window.sections['images'].tabs()[0]
+        self.assertEqual((tab.mode, tab.strategy.chat_id), ('image', item.chat_id))
+        self.assertEqual(window.section_stack.get_visible_child_name(), 'images')
+        window.section_stack.set_visible_child_name('chats')
+        window._open_history_item(item)
+        pump_until(lambda: window.section_stack.get_visible_child_name() == 'images')
+        self.assertEqual(window.sections['images'].tabs(), [tab])
+        window.close_tab(tab)
+        pump_until(lambda: not window.sections['images'].tabs())
 
     def test_five_rows_and_footer_in_each_section(self):
         window, _ = self.sidebar()
         for key in CATEGORIES:
+            history = self.history(window, key)
             self.assertEqual(len(self.rows(window, key)), 5)
-            footer = window.history.footers[key]
+            footer = history.footers[key]
             self.assertEqual(footer.get_title(), 'Show more')
             self.assertEqual(footer.get_section_index(), 5)
-            window.history_sidebar.emit('setup-menu', footer)
-            self.assertEqual(window.history_sidebar.get_menu_model().get_n_items(), 0)
+            history.sidebar.emit('setup-menu', footer)
+            self.assertEqual(history.sidebar.get_menu_model().get_n_items(), 0)
 
     def test_show_more_reveals_full_list_beyond_old_global_page_and_show_less_returns_five(self):
         window, _ = self.sidebar(count=121)
@@ -155,14 +245,14 @@ class SidebarUITests(unittest.TestCase):
         window.history.toggle('comparison')
         pump_until(lambda: not window.history.pending)
         self.query(window, 'solar')
-        for key in CATEGORIES:
+        for key in window.history.categories:
             self.assertEqual(len(self.rows(window, key)), 5)
             self.assertTrue(all('Solar' in r.get_title() for r in self.rows(window, key)))
         window.history.toggle('drafts')
         pump_until(lambda: not window.history.pending)
         self.assertEqual(len(self.rows(window, 'drafts')), 7)
         self.query(window, 'lunar')
-        self.assertTrue(all(len(self.rows(window, key)) == 2 for key in CATEGORIES))
+        self.assertTrue(all(len(self.rows(window, key)) == 2 for key in window.history.categories))
         self.assertTrue(all(footer.get_section() is None for footer in window.history.footers.values()))
         self.query(window, '')
         self.assertEqual(len(self.rows(window, 'comparison')), 9)
@@ -172,8 +262,8 @@ class SidebarUITests(unittest.TestCase):
         window, _ = self.sidebar()
         original = self.storage.sidebar_snapshot
         entered, release = threading.Event(), threading.Event()
-        def delayed(query='', expanded=()):
-            result = original(query, expanded)
+        def delayed(query='', expanded=(), *args):
+            result = original(query, expanded, *args)
             if query == 'solar':
                 entered.set()
                 release.wait(3)
@@ -184,10 +274,10 @@ class SidebarUITests(unittest.TestCase):
             self.query(window, 'lunar')
             release.set()
             pump_until(lambda: self.context.services.idle)
-            self.assertTrue(all('Lunar' in r.get_title() for r in window.chat_rows.values()))
+            self.assertTrue(all('Lunar' in r.get_title() for r in window.history.chat_rows.values()))
         self.query(window, 'nonexistent keyword')
-        self.assertEqual(window.chat_rows, {})
-        self.assertEqual(window.draft_rows, {})
+        self.assertEqual(window.history.chat_rows, {})
+        self.assertEqual(window.history.draft_rows, {})
         self.assertEqual(window.history.placeholder.get_title(), 'No matching conversations')
 
     def test_keyboard_completion_fills_filter_without_opening_conversations(self):
@@ -223,8 +313,9 @@ class SidebarUITests(unittest.TestCase):
             pump_until(lambda: not window.history.pending)
         self.assertEqual(len(jobs), 3)
         self.assertEqual(window.history._inflight, 0)
-        self.assertEqual(len(window.chat_rows), 5)
-        self.assertTrue(all(row.get_section() == window.recent_comparisons_section for row in window.chat_rows.values()))
+        self.assertEqual(len(window.history.chat_rows), 5)
+        self.assertTrue(all(row.get_section() == window.recent_comparisons_section
+                            for row in window.history.chat_rows.values()))
 
     def test_pin_moves_rows_and_preserves_category_limits_and_menus(self):
         window, _ = self.sidebar()
@@ -242,7 +333,7 @@ class SidebarUITests(unittest.TestCase):
 
     def test_each_category_has_a_unique_bundled_icon(self):
         window, _ = self.sidebar()
-        self.assertEqual(len(set(ICONS.values())), 6)
+        self.assertEqual(len(set(ICONS.values())), 7)
         theme = Gtk.IconTheme.get_for_display(Gdk.Display.get_default())
         for key, name in ICONS.items():
             self.assertEqual(self.rows(window, key)[0].get_icon_name(), name)

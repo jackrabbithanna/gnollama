@@ -21,6 +21,7 @@ Whether you are developing, experimenting, or chatting with local models, Gnolla
   * **New Response (`/api/generate`)**: Single-turn completions ideal for prompt engineering and testing.
   * **Model to Model Conversation**: Alternating A/B conversations with separate system prompts, bounded rounds, pause/resume, and saved transcripts.
   * **Decision**: Ask a decision model named yes/no, choice, score, and box questions about text, JSON, or images, and read each answer with its probabilities.
+  * **Image**: Generate images from a prompt, with reference images and model settings, on OpenRouter and the Vercel AI Gateway.
   * Model lists appear before capability checks. Only the selected model is checked; models known to be embedding-only are excluded from all generation modes. Opening an empty selector retries discovery. Embedding models remain available in Knowledge and Manage Models; unknown capabilities remain supported for older servers.
 * **Conversation History & Sidebar**:
   * Automatically saves chat logs and model configurations between runs.
@@ -49,7 +50,7 @@ Whether you are developing, experimenting, or chatting with local models, Gnolla
   * Separate display of Ollama's native thinking stream, with model-dependent thinking controls.
   * Display generation stats (including cached prompt tokens, finish reason, and tokens/second) and logprobs.
 * **Stop Responses**: Stop generation while keeping partial answers in chat history. Pending history writes finish before the application quits.
-* **Adaptive GNOME Navigation**: Native tabs support reordering and loading indicators. The sidebar groups Drafts, Pinned, Recent chats, Recent comparisons, Recent model conversations, and Recent decisions, and collapses on narrow windows. Use Ctrl+W to close a tab, Ctrl+Page Up/Down to switch tabs, and F9 to toggle the sidebar.
+* **Adaptive GNOME Navigation**: The header switches between four sections: **Chats**, **Decisions**, **Images**, and **Knowledge**. Chats, Decisions, and Images each have their own tabs and their own sidebar, with its own search and its own Drafts and Pinned groups. The Chats sidebar groups Recent chats, Recent comparisons, and Recent model conversations; the Decisions sidebar lists Recent decisions, and the Images sidebar Recent images. Starting or reopening a decision or an image shows its section. Native tabs support reordering and loading indicators, and sidebars collapse on narrow windows. Ctrl+W, Ctrl+Page Up/Down, and F9 close a tab, switch tabs, and toggle the sidebar in the section shown.
 
 ### Ollama Cloud
 
@@ -164,6 +165,29 @@ I wanted a GNOME application for Ollama that I could use to test and experiment 
 3. Enter `https://github.com/jackrabbithanna/gnollama.git` in the field **Repository URL**
 4. Click the **Clone Project** button
 5. Click the **Run** button to start building application
+
+### Flatpak
+
+To build *gnollama* from a checkout and install it as a Flatpak, add Flathub, then install flatpak-builder and the GNOME 51 SDK and runtime:
+
+```bash
+flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+flatpak install --user flathub org.flatpak.Builder org.gnome.Sdk//51 org.gnome.Platform//51
+```
+
+From the root of the checkout, build and install it for your user, then run it:
+
+```bash
+flatpak run org.flatpak.Builder --user --install --force-clean --disable-rofiles-fuse \
+  ~/.cache/gnollama-flatpak-build io.github.jackrabbithanna.Gnollama.json
+flatpak run io.github.jackrabbithanna.Gnollama
+```
+
+- `~/.cache/gnollama-flatpak-build` is a scratch directory where the application is assembled; any path outside the checkout will do. Downloads and built modules are cached in `.flatpak-builder/` in the checkout, so later builds are faster.
+- `--disable-rofiles-fuse` avoids the error "Failure spawning rofiles-fuse", which flatpak-builder often gives when it runs as a Flatpak itself. A `flatpak-builder` installed from your distribution can be used in its place.
+- The installed application is also in your application menu. Remove it with `flatpak uninstall --user io.github.jackrabbithanna.Gnollama`.
+- GNOME Builder runs the application under the same ID and with the same data. Only one instance runs at a time: while Builder's is open, starting the installed one brings Builder's window forward instead. Run `flatpak ps` to see which is running. The installed one uses `org.gnome.Platform`, and Builder's uses `org.gnome.Sdk`.
+- Runs from GNOME Builder cannot show images in formats GTK does not read itself, such as the WebP that some image models return: the sandboxed image loader cannot start there. Such an image can still be saved. The installed application shows it.
 
 ### Meson
 
@@ -282,7 +306,15 @@ Enter the state as **Text** or **JSON**, attach images if the model takes them, 
 
 Some models take only images of certain sizes; a note appears when an image for a box question is under 256 or over 1568 pixels on a side, and a model's own refusal is shown as the run's error. OpenRouter and Vercel take PNG and JPEG, so other formats are converted to PNG before they are sent.
 
-Every run is saved in its session with its state, images, questions, and answers. Sessions appear under **Recent decisions**, with drafts, search over the state of each run, pinning, rename, deletion, and Markdown/JSON export. Reopening a session sends nothing.
+Every run is saved in its session with its state, images, questions, and answers. Sessions appear in the **Decisions** section under **Recent decisions**, with drafts, search over the state of each run, pinning, rename, deletion, and Markdown/JSON export. Reopening a session sends nothing.
+
+### Image
+
+Choose **New Image** (Ctrl+Shift+G) to generate images. Image models are offered by OpenRouter and the Vercel AI Gateway; they are listed in this tab only. Ollama, LM Studio, and OpenAI-compatible servers are listed with the reason they cannot be used.
+
+Enter a prompt, attach reference images if the model takes them, and choose any of the settings the model offers: aspect ratio, resolution, quality, output format, background, number of images, and seed. A setting left at **Model default** is not sent; the output format is PNG unless another is chosen. Whatever the model cannot take holds **Generate** back with the reason. References other than PNG and JPEG are converted to PNG before they are sent.
+
+Each run shows its prompt, references, settings, any text the model wrote, and the cost where the server reports it. Every image can be saved as it came, copied, or used as a reference for the next run. **Stop** cancels a run. Sessions appear in the **Images** section under **Recent images**, with drafts, search, pinning, rename, deletion, and Markdown/JSON export. Reopening a session sends nothing.
 
 ### Architecture and evaluation
 

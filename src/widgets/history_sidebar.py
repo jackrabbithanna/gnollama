@@ -9,14 +9,21 @@ from ..session import display_chat_title
 
 ICONS = dict(drafts='gnollama-draft-symbolic', pinned='pin-active-symbolic',
              chat='gnollama-chats-symbolic', comparison='gnollama-comparison-symbolic',
-             model_conversation='gnollama-model-conversation-symbolic', decision='gnollama-decision-symbolic')
+             model_conversation='gnollama-model-conversation-symbolic', decision='gnollama-decision-symbolic',
+             image='gnollama-image-symbolic')
 
 
 class HistorySidebar:
-    def __init__(self, window):
-        self.window, self.storage, self.sidebar = window, window.storage, window.history_sidebar
+    """The sidebar of one window section, listing that section's drafts and sessions."""
+
+    def __init__(self, window, section):
+        self.window, self.storage, self.sidebar = window, window.storage, section.sidebar
+        self.section_widgets = section
+        self.kinds, self.modes = section.kind.kinds, section.kind.modes
+        self.categories = ('drafts', 'pinned', *self.kinds)
+        self.empty_title = section.empty_title
         self.context = window.context
-        self.chat_rows = window.chat_rows
+        self.chat_rows = {}
         self.draft_rows = {}
         self.sections, self.footers = {}, {}
         self.browse_expanded, self.search_expanded = set(), set()
@@ -31,7 +38,7 @@ class HistorySidebar:
         self._dismissed_query = None
         self._preedit = False
         self.placeholder = self.sidebar.get_placeholder()
-        self.search = Gtk.SearchEntry(placeholder_text=_('Search conversations'), margin_start=6, margin_end=6)
+        self.search = Gtk.SearchEntry(placeholder_text=section.search_placeholder, margin_start=6, margin_end=6)
         self.search.connect('changed', self._query_changed)
         self.search.connect('stop-search', lambda *a: self.search.set_text(''))
         self.search.connect('unrealize', self._unrealize)
@@ -53,15 +60,19 @@ class HistorySidebar:
         self.popover = Gtk.Popover(autohide=False, has_arrow=False, position=Gtk.PositionType.BOTTOM,
             child=Gtk.ScrolledWindow(child=self.suggestion_list, hscrollbar_policy=Gtk.PolicyType.NEVER,
                 max_content_height=280, propagate_natural_height=True))
-        titles = (_('Drafts'), _('Pinned'), _('Recent chats'), _('Recent comparisons'), _('Recent model conversations'),
-                  _('Recent decisions'))
-        attrs = ('drafts_section', 'pinned_section', 'recent_chats_section', 'recent_comparisons_section',
-                 'recent_model_conversations_section', 'recent_decisions_section')
-        for key, title, attr in zip(CATEGORIES, titles, attrs):
-            section = Adw.SidebarSection(title=title)
+        titles = dict(zip(CATEGORIES, (_('Drafts'), _('Pinned'), _('Recent chats'), _('Recent comparisons'),
+                  _('Recent model conversations'), _('Recent decisions'), _('Recent images'))))
+        attrs = dict(zip(CATEGORIES[2:], ('recent_chats_section', 'recent_comparisons_section',
+                 'recent_model_conversations_section', 'recent_decisions_section', 'recent_images_section')))
+        if section.name == 'chats':
+            # Each section has its own drafts and pinned groups; the window names the chats one.
+            attrs.update(drafts='drafts_section', pinned='pinned_section')
+        for key in self.categories:
+            section = Adw.SidebarSection(title=titles[key])
             self.sidebar.append(section)
             self.sections[key] = section
-            setattr(window, attr, section)
+            if key in attrs:
+                setattr(window, attrs[key], section)
             footer = Adw.SidebarItem(title=_('Show more'), icon_name='pan-down-symbolic')
             footer.category_toggle = key
             self.footers[key] = footer
@@ -123,7 +134,7 @@ class HistorySidebar:
         self._inflight += 1
         def read():
             try:
-                result, error = self.storage.sidebar_snapshot(query, expanded), None
+                result, error = self.storage.sidebar_snapshot(query, expanded, self.kinds, self.modes), None
             except Exception as exc:
                 result, error = None, str(exc)
             GLib.idle_add(deliver, result, error)
@@ -144,7 +155,7 @@ class HistorySidebar:
         return False
 
     def _apply(self, result, query, expanded, generation):
-        self.placeholder.set_title(_('No matching conversations') if query.strip() else _('No Saved Chats'))
+        self.placeholder.set_title(_('No matching conversations') if query.strip() else self.empty_title)
         self._set_suggestions(result['suggestions'], query)
         groups = {key: rows if key in expanded else rows[:5] for key, rows in result['groups'].items()}
         wanted_chats = {row['id'] for key, rows in groups.items() if key != 'drafts' for row in rows}
@@ -156,7 +167,7 @@ class HistorySidebar:
         for id in list(self.draft_rows):
             if id not in wanted_drafts:
                 jobs.append(lambda id=id: self._remove(self.draft_rows, id))
-        for key in CATEGORIES:
+        for key in self.categories:
             for position, row in enumerate(groups[key]):
                 jobs.append(lambda key=key, row=row, position=position: self._upsert(key, row, position, query))
             jobs.append(lambda key=key: self._place_footer(key, bool(groups[key]) and
@@ -169,7 +180,7 @@ class HistorySidebar:
             started = time.monotonic()
             while jobs and time.monotonic() - started < .006:
                 jobs.popleft()()
-            self.window.on_tab_switched()
+            self.window.on_tab_switched(self.section_widgets)
             if jobs:
                 return True
             self.render_source = None

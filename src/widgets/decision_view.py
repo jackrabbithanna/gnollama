@@ -29,7 +29,8 @@ class DecisionTab(Gtk.Box):
         self._close_callback = None
         self._discard_on_close = False
         self._page_loading = False
-        self._offset = 0
+        # The runs shown are one unbroken stretch of the session's `_total`: from `_offset` up to `_end`.
+        self._offset = self._end = self._total = 0
         self.runs = {}
         # The host and model the draft knows of. A list that arrives selects a model, which is no edit.
         self._target = None
@@ -42,14 +43,14 @@ class DecisionTab(Gtk.Box):
                                      chat_id=saved['id'] if saved else None)
         self.draft.restoring = True
         # What the editor holds when it has no draft: a session's last run, or nothing.
-        last = saved['runs'][-1] if saved and saved['runs'] else {}
+        last = (saved.get('last_run') or (saved['runs'][-1] if saved['runs'] else {})) if saved else {}
         self._saved = (DecisionSettings.from_stored(saved['options']) if saved else DecisionSettings(),
                        last.get('state', ''), last.get('images') or [])
         content = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12,
                           margin_start=12, margin_end=12, margin_top=12, margin_bottom=12)
         self.scroll = Gtk.ScrolledWindow(child=content, vexpand=True, hscrollbar_policy=Gtk.PolicyType.NEVER)
         self.append(self.scroll)
-        self.picker = TargetPicker(context, self._target_changed, decisions=True)
+        self.picker = TargetPicker(context, self._target_changed, kind='decision')
         content.append(self.picker)
 
         state_head = Gtk.Box(spacing=6)
@@ -114,6 +115,9 @@ class DecisionTab(Gtk.Box):
         content.append(self.older)
         self.results = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=18)
         content.append(self.results)
+        self.later = Gtk.Button(label=_('Load later runs'), halign=Gtk.Align.START, visible=False)
+        self.later.connect('clicked', self.load_later)
+        content.append(self.later)
 
         self.chat_input.entry.connect('changed', self._edited)
         # An image being read holds a run back until it is attached.
@@ -124,6 +128,8 @@ class DecisionTab(Gtk.Box):
         self._load(*self._saved)
         if saved:
             self._offset = saved.get('message_offset', 0)
+            self._end = self._offset + len(saved['runs'])
+            self._total = saved.get('message_count', self._end)
             for run in saved['runs']:
                 self._show_run(run)
             # Edits made since the last run are a draft kept under the session's own id.
@@ -329,7 +335,13 @@ class DecisionTab(Gtk.Box):
         self.draft.consumed()
         if self._disposed:
             return
-        self._show_run(run, reveal=True)
+        self._total += 1
+        if self._end == self._total - 1:
+            self._end = self._total
+            self._show_run(run, reveal=True)
+        else:
+            # Later runs are not shown, so it would follow the wrong one: show the session's last page.
+            self._show_page(lambda: self.storage.conversation_page(session), run['id'])
         self.emit('chat-updated', session, self.title)
 
     def _finished(self, run):
@@ -350,7 +362,7 @@ class DecisionTab(Gtk.Box):
         else:
             self.results.append(view)
         self.results_title.set_visible(True)
-        self.older.set_visible(self._offset > 0)
+        self._show_pages()
         if reveal:
             self._reveal(view)
 
@@ -395,28 +407,53 @@ class DecisionTab(Gtk.Box):
             for run in reversed(runs):
                 if run['id'] not in self.runs:
                     self._show_run(run, first=True)
-            self.older.set_visible(offset > 0)
+            self._show_pages()
         self._read(lambda: self.storage.library.decision_runs(session, limit, offset), done)
 
-    def show_message(self, uid):
-        """Bring the run a search found into view, reading the page it is on if that is not the one shown."""
-        view = self.runs.get(uid)
-        if view:
-            self._reveal(view)
+    def load_later(self, *args):
+        if self._end >= self._total:
             return
-        if self.request or not self.controller.session_id:
-            return
+        session, start = self.controller.session_id, self._end
+        def done(runs):
+            for run in runs:
+                if run['id'] not in self.runs:
+                    self._show_run(run)
+            self._end = start + len(runs)
+            self._show_pages()
+        self._read(lambda: self.storage.library.decision_runs(session, 50, start), done)
+
+    def _show_pages(self):
+        self.older.set_visible(self._offset > 0)
+        self.later.set_visible(self._end < self._total)
+
+    def _show_page(self, read, uid):
+        """Show in place of the runs shown the page `read` returns, if it holds the run of `uid`."""
         def done(page):
             if not any(run['id'] == uid for run in page['runs']):
                 return
-            for shown in self.runs.values():
-                self.results.remove(shown)
+            for view in self.runs.values():
+                self.results.remove(view)
             self.runs = {}
-            self._offset = page['message_offset']
+            self._offset, self._total = page['message_offset'], page['message_count']
+            self._end = self._offset + len(page['runs'])
             for run in page['runs']:
                 self._show_run(run)
-            self._reveal(self.runs[uid])
-        self._read(lambda: self.storage.conversation_page(self.controller.session_id, uid), done)
+            self._reveal_run(uid)
+        self._read(read, done)
+
+    def show_message(self, uid):
+        """Bring the run a search found into view, reading the page it is on if that is not the one shown."""
+        if self._reveal_run(uid) or self.request or not self.controller.session_id:
+            return
+        session = self.controller.session_id
+        self._show_page(lambda: self.storage.conversation_page(session, uid), uid)
+
+    def _reveal_run(self, uid):
+        """Scroll to the run of `uid` if it is shown; whether it is."""
+        view = self.runs.get(uid)
+        if view:
+            self._reveal(view)
+        return view is not None
 
     # Hosts, shutdown, and closing.
 

@@ -60,6 +60,9 @@ def capability_parts(details):
     parts = []
     names = (('vision', _('Images'), _('No images')), ('tools', _('Tools'), _('No tools')),
              ('thinking', _('Thinking'), _('No thinking')))
+    if not generates(details) and supports(details, 'image'):
+        # An image model takes no tools or thinking, and whether it takes reference images shows where they are attached.
+        return parts
     if not generates(details) and supports(details, 'decision'):
         names = names[:1]  # A decision model answers questions; tools and thinking are not asked of it.
     for name, has, lacks in names:

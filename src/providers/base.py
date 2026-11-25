@@ -5,6 +5,7 @@ from gettext import gettext as _
 from typing import Any, ClassVar
 from urllib.parse import urlsplit
 
+from ..image_generation import ImageParameters, parameters_from_schema
 from .transport import ProviderError, RequestCancelled, Transport
 
 
@@ -32,6 +33,8 @@ class Capabilities:
     decision_question_limit: int = 0  # the most questions one decision takes; 0 where the server sets none
     # The image formats a decision takes, by name; empty where the server reads whatever it is sent.
     decision_image_formats: tuple = ()
+    image_generation: bool = False  # image models, asked through `generate_image`
+    image_references: bool = False  # images sent beside the prompt, where a model takes them
     # Sampling options one model does not take, by the names in a WireOptions. No provider lacks them.
     left_out: tuple = ()
     # Untranslated; shown beside the options this provider lacks.
@@ -93,10 +96,10 @@ def supports(details, name):
 
 def generates(details):
     """Whether a model can be chatted with. False only where its capabilities are listed, and say it
-    embeds or decides and does not complete; a model that says nothing may chat."""
+    embeds, decides, or makes images and does not complete; a model that says nothing may chat."""
     listed = details.get('capabilities') if isinstance(details, dict) else None
     return not (isinstance(listed, list) and 'completion' not in listed
-                and ('embedding' in listed or 'decision' in listed))
+                and any(name in listed for name in ('embedding', 'decision', 'image')))
 
 
 def advisory(details, name):
@@ -249,6 +252,17 @@ class Provider:
             return replace(self.capabilities, decision_images=False, decision_boxes=False)
         return self.capabilities
 
+    def image_parameters(self, entry):
+        """What one image model takes, from its entry in `list_image_models`.
+
+        Never more than the provider's own record: nothing without image generation, and no
+        reference images where the provider sends none.
+        """
+        if not self.capabilities.image_generation or not isinstance(entry, dict):
+            return ImageParameters()
+        return parameters_from_schema(entry.get('image_parameters'), self.capabilities.image_references,
+                                      entry.get('image_streaming') is True)
+
     def check(self, wire, host, model, details):
         """Raise naming what `wire` asks that the host record `host`, or `model` on it, cannot do.
 
@@ -291,4 +305,10 @@ class Provider:
     # the server's answer as it came; list_decision_models(timeout=10, cancellable=None) returns entries as
     # list_models does, each with `capabilities` holding `decision`, and `vision` where it sees images.
     decide = list_decision_models = _unavailable
+    # list_image_models(timeout=10, cancellable=None) returns entries as list_models does, each with
+    # `capabilities` holding `image`, and `image_parameters`: a map of setting names to specs as
+    # `image_generation.parameters_from_schema` reads them, `input_references` among them where the model
+    # takes images. generate_image(model, prompt, options, references=None, timeout=300, cancellable=None)
+    # returns the server's answer as it came, for `image_generation.parse_result`.
+    list_image_models = generate_image = _unavailable
     pull = delete = running = unload = probe = _unavailable

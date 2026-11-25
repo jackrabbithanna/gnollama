@@ -1,0 +1,486 @@
+{
+ "_source": "models recorded 2026-11-24 from GET /v1/models (descriptions shortened); 400 and 404 recorded from invalid requests. The answers follow the gateway's image generation documentation, with a 1x1 PNG: no request that makes a billable image was sent. 402 as the gateway words it elsewhere; 502 as an upstream failure.",
+ "models": {
+  "data": [
+   {
+    "id": "bfl/flux-3-image-klein",
+    "object": "model",
+    "created": 1755815280,
+    "released": 1792022400,
+    "owned_by": "bfl",
+    "name": "FLUX 3 Image Klein",
+    "description": "FLUX 3 Image Klein is Black Forest Labs\u2019 smaller, faster image generation and ed",
+    "context_window": 0,
+    "max_tokens": 0,
+    "type": "image",
+    "zdr": "none",
+    "no_training": "none",
+    "tags": [
+     "image-generation",
+     "open-weights"
+    ],
+    "supported_specifications": [
+     "v3",
+     "v4"
+    ],
+    "modalities": {
+     "input": [
+      "text"
+     ],
+     "output": [
+      "image"
+     ]
+    },
+    "pricing": {
+     "image": "0.009",
+     "image_dimension_quality_pricing": [
+      {
+       "size": "768x768",
+       "cost": "0.008"
+      },
+      {
+       "size": "1024x1024",
+       "cost": "0.009"
+      },
+      {
+       "size": "1536x1536",
+       "cost": "0.011"
+      },
+      {
+       "size": "2048x2048",
+       "cost": "0.014"
+      },
+      {
+       "size": "4096x4096",
+       "cost": "0.036"
+      }
+     ]
+    }
+   },
+   {
+    "id": "meta/muse-image-1.0",
+    "object": "model",
+    "created": 1755815280,
+    "released": 1787702400,
+    "owned_by": "meta",
+    "name": "Muse Image 1.0",
+    "description": "Muse Image is the first image generation model from Meta Superintelligence Labs,",
+    "context_window": 0,
+    "max_tokens": 0,
+    "type": "image",
+    "zdr": "all",
+    "no_training": "all",
+    "tags": [
+     "image-generation",
+     "vision"
+    ],
+    "supported_specifications": [
+     "v2",
+     "v3",
+     "v4"
+    ],
+    "modalities": {
+     "input": [
+      "text",
+      "image"
+     ],
+     "output": [
+      "image"
+     ]
+    },
+    "reasoning_options": [
+     {
+      "type": "effort",
+      "values": [
+       "minimal",
+       "low",
+       "medium",
+       "high",
+       "xhigh"
+      ]
+     }
+    ],
+    "pricing": {
+     "image": "0.01"
+    }
+   },
+   {
+    "id": "bytedance/seedream-5.5",
+    "object": "model",
+    "created": 1755815280,
+    "released": 1794873600,
+    "owned_by": "bytedance",
+    "name": "Seedream 5.5",
+    "description": "Seedream 5.5 is ByteDance\u2019s image generation and editing model for creating visu",
+    "context_window": 0,
+    "max_tokens": 0,
+    "type": "image",
+    "zdr": "none",
+    "no_training": "all",
+    "tags": [
+     "image-generation",
+     "file-input"
+    ],
+    "supported_specifications": [
+     "v2",
+     "v3",
+     "v4"
+    ],
+    "modalities": {
+     "input": [
+      "text",
+      "pdf"
+     ],
+     "output": [
+      "image"
+     ]
+    },
+    "pricing": {
+     "image": "0.035",
+     "image_dimension_quality_pricing": [
+      {
+       "max_pixels": 2601123,
+       "cost": "0.02"
+      },
+      {
+       "min_pixels": 2601124,
+       "max_pixels": 4624220,
+       "cost": "0.035"
+      }
+     ]
+    }
+   },
+   {
+    "id": "microsoft/mai-image-2.7-flash",
+    "object": "model",
+    "created": 1755815280,
+    "released": 1794873600,
+    "owned_by": "microsoft",
+    "name": "MAI-Image-2.7-Flash",
+    "description": "A faster, lower-cost variant of MAI-Image-2.7 with the same generation and editi",
+    "context_window": 0,
+    "max_tokens": 0,
+    "type": "image",
+    "zdr": "all",
+    "no_training": "all",
+    "supported_specifications": [
+     "v3",
+     "v4"
+    ],
+    "modalities": {
+     "input": [
+      "text"
+     ],
+     "output": [
+      "image"
+     ]
+    },
+    "pricing": {
+     "input": "0.00000175",
+     "output": "0.00001"
+    }
+   },
+   {
+    "id": "google/gemini-3.1-flash-image",
+    "object": "model",
+    "created": 1755815280,
+    "released": 1779926400,
+    "owned_by": "google",
+    "name": "Gemini 3.1 Flash Image (Nano Banana 2)",
+    "description": "Gemini 3.1 Flash Image is optimized for image understanding and generation and o",
+    "context_window": 131072,
+    "max_tokens": 32768,
+    "type": "language",
+    "zdr": "some",
+    "no_training": "all",
+    "tags": [
+     "image-generation",
+     "implicit-caching",
+     "reasoning",
+     "vision",
+     "web-search",
+     "structured-output"
+    ],
+    "regions": [
+     "eu",
+     "us"
+    ],
+    "supported_specifications": [
+     "v2",
+     "v3",
+     "v4"
+    ],
+    "modalities": {
+     "input": [
+      "text",
+      "image"
+     ],
+     "output": [
+      "text",
+      "image"
+     ]
+    },
+    "supported_parameters": [
+     "max_tokens",
+     "temperature",
+     "stop",
+     "reasoning",
+     "include_reasoning",
+     "response_format",
+     "structured_outputs"
+    ],
+    "temperature": true,
+    "reasoning_options": [
+     {
+      "type": "toggle"
+     },
+     {
+      "type": "effort",
+      "values": [
+       "minimal",
+       "high"
+      ]
+     }
+    ],
+    "knowledge": "2025-01",
+    "pricing": {
+     "input": "0.0000005",
+     "output": "0.000003",
+     "input_cache_read": "0.00000005",
+     "image_dimension_quality_pricing": [
+      {
+       "size": "512",
+       "cost": "0.045"
+      },
+      {
+       "size": "1K",
+       "cost": "0.067"
+      },
+      {
+       "size": "2K",
+       "cost": "0.101"
+      },
+      {
+       "size": "4K",
+       "cost": "0.151"
+      },
+      {
+       "size": "default",
+       "cost": "0.067"
+      }
+     ],
+     "web_search": "14",
+     "maps_search": "14",
+     "regional": {
+      "eu": {
+       "input": "0.00000055",
+       "output": "0.0000033",
+       "input_cache_read": "0.000000055"
+      },
+      "us": {
+       "input": "0.00000055",
+       "output": "0.0000033",
+       "input_cache_read": "0.000000055"
+      }
+     }
+    }
+   },
+   {
+    "id": "alibaba/qwen-3-14b",
+    "object": "model",
+    "created": 1755815280,
+    "released": 1745798400,
+    "owned_by": "alibaba",
+    "name": "Qwen3-14B",
+    "description": "Qwen3 is the latest generation of large language models in Qwen series, offering",
+    "context_window": 40960,
+    "max_tokens": 16384,
+    "type": "language",
+    "zdr": "none",
+    "no_training": "all",
+    "tags": [
+     "reasoning",
+     "tool-use",
+     "structured-output",
+     "open-weights"
+    ],
+    "supported_specifications": [
+     "v2",
+     "v3",
+     "v4"
+    ],
+    "modalities": {
+     "input": [
+      "text"
+     ],
+     "output": [
+      "text"
+     ]
+    },
+    "supported_parameters": [
+     "max_tokens",
+     "temperature",
+     "stop",
+     "tools",
+     "tool_choice",
+     "reasoning",
+     "include_reasoning",
+     "response_format",
+     "structured_outputs"
+    ],
+    "temperature": true,
+    "reasoning_options": [
+     {
+      "type": "toggle"
+     }
+    ],
+    "knowledge": "2025-04",
+    "pricing": {
+     "input": "0.00000012",
+     "output": "0.00000024"
+    }
+   },
+   {
+    "id": "alibaba/qwen3-embedding-0.6b",
+    "object": "model",
+    "created": 1755815280,
+    "released": 1763078400,
+    "owned_by": "alibaba",
+    "name": "Qwen3 Embedding 0.6B",
+    "description": "The Qwen3 Embedding model series is the latest proprietary model of the Qwen fam",
+    "context_window": 32768,
+    "max_tokens": 32768,
+    "type": "embedding",
+    "zdr": "none",
+    "no_training": "all",
+    "tags": [
+     "open-weights"
+    ],
+    "supported_specifications": [
+     "v2",
+     "v3",
+     "v4"
+    ],
+    "modalities": {
+     "input": [
+      "text"
+     ],
+     "output": [
+      "text"
+     ]
+    },
+    "pricing": {
+     "input": "0.00000001"
+    }
+   }
+  ]
+ },
+ "images": {
+  "created": 1795571442,
+  "data": [
+   {
+    "b64_json": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGP4z8AAAAMBAQDJ/pLvAAAAAElFTkSuQmCC"
+   },
+   {
+    "b64_json": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGP4z8AAAAMBAQDJ/pLvAAAAAElFTkSuQmCC"
+   }
+  ]
+ },
+ "chat": {
+  "id": "chatcmpl-123",
+  "object": "chat.completion",
+  "created": 1795571442,
+  "model": "google/gemini-3.1-flash-image",
+  "choices": [
+   {
+    "index": 0,
+    "message": {
+     "role": "assistant",
+     "content": "Here is a small red apple on a white table.",
+     "images": [
+      {
+       "type": "image_url",
+       "image_url": {
+        "url": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGP4z8AAAAMBAQDJ/pLvAAAAAElFTkSuQmCC"
+       }
+      }
+     ]
+    },
+    "finish_reason": "stop"
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 15,
+   "completion_tokens": 1318,
+   "total_tokens": 1333
+  }
+ },
+ "chat_text": {
+  "id": "chatcmpl-124",
+  "object": "chat.completion",
+  "created": 1795571442,
+  "model": "google/gemini-3.1-flash-image",
+  "choices": [
+   {
+    "index": 0,
+    "message": {
+     "role": "assistant",
+     "content": "I can't create that image, but I can describe it."
+    },
+    "finish_reason": "stop"
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 15,
+   "completion_tokens": 12,
+   "total_tokens": 27
+  }
+ },
+ "errors": {
+  "invalid": {
+   "status": 400,
+   "body": {
+    "error": {
+     "message": "Invalid input: expected string, received undefined",
+     "type": "invalid_request_error",
+     "param": "prompt",
+     "code": "invalid_request_error"
+    }
+   },
+   "says": "prompt: Invalid input: expected string, received undefined"
+  },
+  "missing": {
+   "status": 404,
+   "body": {
+    "error": {
+     "message": "Model 'nobody/none' not found",
+     "type": "model_not_found",
+     "param": {
+      "modelId": "nobody/none"
+     }
+    }
+   },
+   "says": "Model 'nobody/none' not found"
+  },
+  "credits": {
+   "status": 402,
+   "body": {
+    "error": {
+     "message": "Insufficient funds. Add credits to continue.",
+     "type": "insufficient_funds"
+    }
+   },
+   "says": "Insufficient funds. Add credits to continue."
+  },
+  "upstream": {
+   "status": 502,
+   "body": {
+    "error": {
+     "message": "{\"error_type\":\"api_usage_error\",\"message\":\"Image generation failed.\"}",
+     "type": "AI_APICallError"
+    }
+   },
+   "says": "Image generation failed."
+  }
+ }
+}

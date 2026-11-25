@@ -531,6 +531,71 @@ msgstr "Die Antwort des Servers enthält keine Antworten."
 msgid "The answer is not valid for this question."
 msgstr "Die Antwort ist für diese Frage nicht gültig."
 
+#: src/image_generation.py
+msgid "Aspect ratio"
+msgstr "Seitenverhältnis"
+
+#: src/image_generation.py
+msgid "Resolution"
+msgstr "Auflösung"
+
+#: src/image_generation.py
+msgid "Quality"
+msgstr "Qualität"
+
+#: src/image_generation.py
+msgid "Output format"
+msgstr "Ausgabeformat"
+
+#: src/image_generation.py
+msgid "Background"
+msgstr "Hintergrund"
+
+#: src/image_generation.py
+msgid "Number of images"
+msgstr "Anzahl der Bilder"
+
+#: src/image_generation.py
+msgid "This server does not offer image generation."
+msgstr "Dieser Server bietet keine Bilderzeugung an."
+
+#: src/image_generation.py
+msgid "Enter a prompt."
+msgstr "Geben Sie einen Prompt ein."
+
+#: src/image_generation.py
+msgid "This model does not take reference images."
+msgstr "Dieses Modell nimmt keine Referenzbilder an."
+
+#: src/image_generation.py
+#, python-brace-format
+msgid "This model takes at most {0} reference image."
+msgid_plural "This model takes at most {0} reference images."
+msgstr[0] "Dieses Modell nimmt höchstens {0} Referenzbild an."
+msgstr[1] "Dieses Modell nimmt höchstens {0} Referenzbilder an."
+
+#: src/image_generation.py
+#, python-brace-format
+msgid "This model does not take the setting {0}."
+msgstr "Dieses Modell unterstützt die Einstellung {0} nicht."
+
+#: src/image_generation.py
+#, python-brace-format
+msgid "This model does not take that value for {0}."
+msgstr "Dieses Modell unterstützt diesen Wert für {0} nicht."
+
+#: src/image_generation.py
+msgid "The server did not return an image."
+msgstr "Der Server hat kein Bild zurückgegeben."
+
+#: src/image_run.py
+msgid "The model answered without an image."
+msgstr "Das Modell hat ohne Bild geantwortet."
+
+#: src/image_run.py
+msgid "The server returned an image that cannot be read."
+msgstr "Der Server hat ein Bild zurückgegeben, das nicht gelesen werden kann."
+
 #: src/providers/systemone.py:51
 msgid "Images sent to this server must be PNG or JPEG."
 msgstr "An diesen Server gesendete Bilder müssen PNG oder JPEG sein."
@@ -1878,6 +1943,18 @@ msgstr "Bild entfernen"
 msgid "Could not restore an image. Remove it before sending."
 msgstr "Ein Bild konnte nicht wiederhergestellt werden. Entfernen Sie es vor dem Senden."
 
+#: src/widgets/chat_input.py
+msgid "Select an image model"
+msgstr "Bildmodell auswählen"
+
+#: src/widgets/chat_input.py
+msgid "No image models found on this server."
+msgstr "Auf diesem Server wurden keine Bildmodelle gefunden."
+
+#: src/widgets/chat_input.py
+msgid "Checking image models…"
+msgstr "Bildmodelle werden geprüft…"
+
 #: src/widgets/chat_input.ui:35
 msgid "Select Model"
 msgstr "Modell wählen"
@@ -1968,9 +2045,57 @@ msgstr "Erneut ausführen"
 msgid "Stop All"
 msgstr "Alle stoppen"
 
+#: src/widgets/decision_view.py
+msgid "Load later runs"
+msgstr "Spätere Durchläufe laden"
+
 #: src/widgets/feedback.py:15
 msgid "Copied"
 msgstr "Kopiert"
+
+#: src/widgets/history_sidebar.py
+msgid "Recent images"
+msgstr "Letzte Bilder"
+
+#: src/widgets/image_results.py
+msgid "This image cannot be shown here. Use Save Image… to open it in another app."
+msgstr "Dieses Bild kann hier nicht angezeigt werden. Verwenden Sie „Bild speichern…“, um es in einer anderen Anwendung zu öffnen."
+
+#: src/widgets/image_results.py
+msgid "Save Image…"
+msgstr "Bild speichern…"
+
+#: src/widgets/image_results.py
+msgid "Copy Image"
+msgstr "Bild kopieren"
+
+#: src/widgets/image_results.py
+msgid "Use as Reference"
+msgstr "Als Referenz verwenden"
+
+#: src/widgets/image_results.py
+msgid "Save Image"
+msgstr "Bild speichern"
+
+#: src/widgets/image_settings.py
+msgid "Leave empty for a random seed."
+msgstr "Leer lassen für einen zufälligen Startwert."
+
+#: src/widgets/image_view.py
+msgid "New Image"
+msgstr "Neues Bild"
+
+#: src/widgets/image_view.py
+msgid "Prompt"
+msgstr "Prompt"
+
+#: src/widgets/image_view.py
+msgid "Describe the image to generate."
+msgstr "Beschreiben Sie das zu erzeugende Bild."
+
+#: src/widgets/image_view.py
+msgid "Generate"
+msgstr "Erzeugen"
 
 #: src/widgets/json_view.py:50
 msgid "JSON files"
@@ -3419,6 +3544,38 @@ msgstr "Keine"
 #: src/widgets/url_import.py:336
 msgid "Replace and Rebuild"
 msgstr "Ersetzen und neu erstellen"
+
+#: src/widgets/workspace_section.py
+msgid "Decisions"
+msgstr "Entscheidungen"
+
+#: src/widgets/workspace_section.py
+msgid "Saved Decisions"
+msgstr "Gespeicherte Entscheidungen"
+
+#: src/widgets/workspace_section.py
+msgid "No Saved Decisions"
+msgstr "Keine gespeicherten Entscheidungen"
+
+#: src/widgets/workspace_section.py
+msgid "Search decisions"
+msgstr "Entscheidungen durchsuchen"
+
+#: src/widgets/workspace_section.py
+msgid "Saved Images"
+msgstr "Gespeicherte Bilder"
+
+#: src/widgets/workspace_section.py
+msgid "No Saved Images"
+msgstr "Keine gespeicherten Bilder"
+
+#: src/widgets/workspace_section.py
+msgid "Search images"
+msgstr "Bilder durchsuchen"
+
+#: src/widgets/workspace_section.py
+msgid "Nothing Open"
+msgstr "Nichts geöffnet"
 
 #: src/window.py:52
 msgid "Knowledge"

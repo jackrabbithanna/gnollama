@@ -8,9 +8,8 @@
     <property name="width-request">360</property>
     <property name="height-request">500</property>
     <child>
-      <object class="AdwBreakpoint">
+      <object class="AdwBreakpoint" id="narrow">
         <condition>max-width: 800sp</condition>
-        <setter object="split_view" property="collapsed">True</setter>
       </object>
     </child>
     <property name="content">
@@ -34,82 +33,7 @@
           </object>
         </child>
         <property name="content">
-          <object class="AdwViewStack" id="section_stack">
-            <child>
-              <object class="AdwViewStackPage">
-                <property name="name">chats</property>
-                <property name="title" translatable="yes">Chats</property>
-                <property name="icon-name">gnollama-chats-symbolic</property>
-                <property name="child">
-                  <object class="AdwOverlaySplitView" id="split_view">
-                    <property name="min-sidebar-width">220</property>
-                    <property name="max-sidebar-width">300</property>
-                    <property name="sidebar">
-                      <object class="AdwToolbarView">
-                        <child type="top">
-                          <object class="AdwHeaderBar">
-                            <property name="show-start-title-buttons">False</property>
-                            <property name="show-end-title-buttons">False</property>
-                            <property name="title-widget">
-                              <object class="AdwWindowTitle">
-                                <property name="title" translatable="yes">Saved Chats</property>
-                              </object>
-                            </property>
-                            <child type="start">
-                              <object class="GtkButton">
-                                <property name="icon-name">list-add-symbolic</property>
-                                <property name="tooltip-text" translatable="yes">New Chat</property>
-                                <property name="action-name">win.new_chat_tab</property>
-                              </object>
-                            </child>
-                          </object>
-                        </child>
-                        <property name="content">
-                          <object class="AdwSidebar" id="history_sidebar">
-                            <property name="placeholder">
-                              <object class="AdwStatusPage">
-                                <property name="title" translatable="yes">No Saved Chats</property>
-                                <property name="icon-name">gnollama-chats-symbolic</property>
-                              </object>
-                            </property>
-                          </object>
-                        </property>
-                      </object>
-                    </property>
-                    <property name="content">
-                      <object class="AdwToolbarView">
-                        <child type="top">
-                          <object class="AdwTabBar">
-                            <property name="view">tab_view</property>
-                            <property name="autohide">False</property>
-                            <property name="end-action-widget">
-                              <object class="GtkButton">
-                                <property name="icon-name">list-add-symbolic</property>
-                                <property name="tooltip-text" translatable="yes">New Chat</property>
-                                <property name="action-name">win.new_chat_tab</property>
-                                <style>
-                                  <class name="flat" />
-                                </style>
-                              </object>
-                            </property>
-                            <property name="start-action-widget">
-                              <object class="GtkToggleButton" id="sidebar_toggle">
-                                <property name="icon-name">gnollama-sidebar-symbolic</property>
-                                <property name="tooltip-text" translatable="yes">Toggle Sidebar</property>
-                              </object>
-                            </property>
-                          </object>
-                        </child>
-                        <property name="content">
-                          <object class="AdwTabView" id="tab_view" />
-                        </property>
-                      </object>
-                    </property>
-                  </object>
-                </property>
-              </object>
-            </child>
-          </object>
+          <object class="AdwViewStack" id="section_stack" />
         </property>
       </object>
     </property>
@@ -135,6 +59,10 @@
       <item>
         <attribute name="label" translatable="yes">New Decision</attribute>
         <attribute name="action">win.new_decision</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">New Image</attribute>
+        <attribute name="action">win.new_image</attribute>
       </item>
     </section>
     <section>

@@ -194,8 +194,8 @@ class ChatDatabase(Repository):
                 options = json.loads(row['options'] or '{}')
                 draft_row = conn.execute('SELECT id FROM drafts WHERE chat_id=?', (row['id'],)).fetchone()
                 draft = read_draft(conn, draft_row['id']) if draft_row else None
-                # A decision session is named after its first run, so its title alone is not work.
-                title = '' if row['kind'] == 'decision' else row['title']
+                # Decision and image sessions are named after their first run, so the title alone is not work.
+                title = '' if row['kind'] in ('decision', 'image') else row['title']
                 if not has_saved_work(draft=draft, options=options, title=title, pinned=row['is_pinned'], system=row['system_prompt']):
                     conn.execute('DELETE FROM chats WHERE id = ?', (row['id'],))
             conn.commit()

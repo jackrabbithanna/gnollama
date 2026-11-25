@@ -187,6 +187,30 @@ class DecisionSettings:
                    'json' if data.get('state_mode') == 'json' else 'text')
 
 
+@dataclass(frozen=True)
+class ImageSettings:
+    """What an image is asked for, and of which model: a session's options, a draft's settings, and each run."""
+    target: ModelTarget | None = None
+    # The settings chosen, by the names of `image_generation.OPTIONS`; one left at the model's default is absent.
+    options: dict = field(default_factory=dict)
+
+    def to_stored(self):
+        data: dict = dict(options=copy.deepcopy(self.options))
+        if self.target is not None:
+            data['target'] = dict(host=self.target.url, host_id=self.target.host_id,
+                                  host_name=self.target.host_name, model=self.target.model)
+        return data
+
+    @classmethod
+    def from_stored(cls, data):
+        data = data or {}
+        target = data.get('target')
+        options = data.get('options')
+        return cls(ModelTarget(target.get('host_id'), target.get('host'), target.get('model'), target.get('host_name'))
+                   if isinstance(target, dict) else None,
+                   copy.deepcopy(options) if isinstance(options, dict) else {})
+
+
 class ComparisonTarget(TypedDict):
     id: str
     settings: dict  # RequestSettings.to_stored()
@@ -219,6 +243,29 @@ class DecisionRun(TypedDict):
     target: dict  # DecisionSettings.to_stored()['target']
     status: str  # running, done, failed, cancelled, or interrupted
     result: dict | None
+    error: str | None
+    created_at: float
+    finished_at: float | None
+
+
+class OutputImage(TypedDict):
+    data: str  # base64, without a data URL's prefix
+    media_type: str
+
+
+class ImageRun(TypedDict):
+    id: str
+    session_id: str
+    position: int
+    prompt: str
+    references: list[str]  # base64
+    options: dict  # ImageSettings.options
+    target: dict  # ImageSettings.to_stored()['target'], or {}
+    status: str  # running, done, failed, cancelled, or interrupted
+    output_id: str | None  # the message holding its images and text, once it has one
+    images: list[OutputImage]
+    text: str  # what the model wrote beside its images
+    result: dict | None  # media_types, cost, and extra; see image_store
     error: str | None
     created_at: float
     finished_at: float | None

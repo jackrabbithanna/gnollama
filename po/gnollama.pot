@@ -481,6 +481,71 @@ msgstr ""
 msgid "The answer is not valid for this question."
 msgstr ""
 
+#: src/image_generation.py
+msgid "Aspect ratio"
+msgstr ""
+
+#: src/image_generation.py
+msgid "Resolution"
+msgstr ""
+
+#: src/image_generation.py
+msgid "Quality"
+msgstr ""
+
+#: src/image_generation.py
+msgid "Output format"
+msgstr ""
+
+#: src/image_generation.py
+msgid "Background"
+msgstr ""
+
+#: src/image_generation.py
+msgid "Number of images"
+msgstr ""
+
+#: src/image_generation.py
+msgid "This server does not offer image generation."
+msgstr ""
+
+#: src/image_generation.py
+msgid "Enter a prompt."
+msgstr ""
+
+#: src/image_generation.py
+msgid "This model does not take reference images."
+msgstr ""
+
+#: src/image_generation.py
+#, python-brace-format
+msgid "This model takes at most {0} reference image."
+msgid_plural "This model takes at most {0} reference images."
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/image_generation.py
+#, python-brace-format
+msgid "This model does not take the setting {0}."
+msgstr ""
+
+#: src/image_generation.py
+#, python-brace-format
+msgid "This model does not take that value for {0}."
+msgstr ""
+
+#: src/image_generation.py
+msgid "The server did not return an image."
+msgstr ""
+
+#: src/image_run.py
+msgid "The model answered without an image."
+msgstr ""
+
+#: src/image_run.py
+msgid "The server returned an image that cannot be read."
+msgstr ""
+
 #: src/providers/systemone.py:51
 msgid "Images sent to this server must be PNG or JPEG."
 msgstr ""
@@ -1739,6 +1804,18 @@ msgstr ""
 msgid "Could not restore an image. Remove it before sending."
 msgstr "Picha haikuweza kurejeshwa. Iondoe kabla ya kutuma."
 
+#: src/widgets/chat_input.py
+msgid "Select an image model"
+msgstr ""
+
+#: src/widgets/chat_input.py
+msgid "No image models found on this server."
+msgstr ""
+
+#: src/widgets/chat_input.py
+msgid "Checking image models…"
+msgstr ""
+
 #: src/widgets/chat_input.ui:35
 msgid "Select Model"
 msgstr ""
@@ -1827,9 +1904,57 @@ msgstr "Endesha Tena"
 msgid "Stop All"
 msgstr "Simamisha Yote"
 
+#: src/widgets/decision_view.py
+msgid "Load later runs"
+msgstr ""
+
 #: src/widgets/feedback.py:15
 msgid "Copied"
 msgstr "Imenakiliwa"
+
+#: src/widgets/history_sidebar.py
+msgid "Recent images"
+msgstr ""
+
+#: src/widgets/image_results.py
+msgid "This image cannot be shown here. Use Save Image… to open it in another app."
+msgstr ""
+
+#: src/widgets/image_results.py
+msgid "Save Image…"
+msgstr ""
+
+#: src/widgets/image_results.py
+msgid "Copy Image"
+msgstr ""
+
+#: src/widgets/image_results.py
+msgid "Use as Reference"
+msgstr ""
+
+#: src/widgets/image_results.py
+msgid "Save Image"
+msgstr ""
+
+#: src/widgets/image_settings.py
+msgid "Leave empty for a random seed."
+msgstr ""
+
+#: src/widgets/image_view.py
+msgid "New Image"
+msgstr ""
+
+#: src/widgets/image_view.py
+msgid "Prompt"
+msgstr ""
+
+#: src/widgets/image_view.py
+msgid "Describe the image to generate."
+msgstr ""
+
+#: src/widgets/image_view.py
+msgid "Generate"
+msgstr ""
 
 #: src/widgets/json_view.py:50
 msgid "JSON files"
@@ -3211,6 +3336,38 @@ msgstr ""
 
 #: src/widgets/url_import.py:336
 msgid "Replace and Rebuild"
+msgstr ""
+
+#: src/widgets/workspace_section.py
+msgid "Decisions"
+msgstr ""
+
+#: src/widgets/workspace_section.py
+msgid "Saved Decisions"
+msgstr ""
+
+#: src/widgets/workspace_section.py
+msgid "No Saved Decisions"
+msgstr ""
+
+#: src/widgets/workspace_section.py
+msgid "Search decisions"
+msgstr ""
+
+#: src/widgets/workspace_section.py
+msgid "Saved Images"
+msgstr ""
+
+#: src/widgets/workspace_section.py
+msgid "No Saved Images"
+msgstr ""
+
+#: src/widgets/workspace_section.py
+msgid "Search images"
+msgstr ""
+
+#: src/widgets/workspace_section.py
+msgid "Nothing Open"
 msgstr ""
 
 #: src/window.py:52

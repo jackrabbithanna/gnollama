@@ -532,6 +532,71 @@ msgstr "Jibu la seva halina majibu yoyote."
 msgid "The answer is not valid for this question."
 msgstr "Jibu si sahihi kwa swali hili."
 
+#: src/image_generation.py
+msgid "Aspect ratio"
+msgstr "Uwiano wa vipimo"
+
+#: src/image_generation.py
+msgid "Resolution"
+msgstr "Ukubwa wa picha"
+
+#: src/image_generation.py
+msgid "Quality"
+msgstr "Ubora"
+
+#: src/image_generation.py
+msgid "Output format"
+msgstr "Muundo wa matokeo"
+
+#: src/image_generation.py
+msgid "Background"
+msgstr "Mandharinyuma"
+
+#: src/image_generation.py
+msgid "Number of images"
+msgstr "Idadi ya picha"
+
+#: src/image_generation.py
+msgid "This server does not offer image generation."
+msgstr "Seva hii haitoi uundaji wa picha."
+
+#: src/image_generation.py
+msgid "Enter a prompt."
+msgstr "Weka ingizo."
+
+#: src/image_generation.py
+msgid "This model does not take reference images."
+msgstr "Modeli hii haipokei picha za marejeleo."
+
+#: src/image_generation.py
+#, python-brace-format
+msgid "This model takes at most {0} reference image."
+msgid_plural "This model takes at most {0} reference images."
+msgstr[0] "Modeli hii inapokea hadi picha {0} ya marejeleo."
+msgstr[1] "Modeli hii inapokea hadi picha {0} za marejeleo."
+
+#: src/image_generation.py
+#, python-brace-format
+msgid "This model does not take the setting {0}."
+msgstr "Modeli hii haipokei mpangilio {0}."
+
+#: src/image_generation.py
+#, python-brace-format
+msgid "This model does not take that value for {0}."
+msgstr "Modeli hii haipokei thamani hiyo kwa {0}."
+
+#: src/image_generation.py
+msgid "The server did not return an image."
+msgstr "Seva haikurudisha picha."
+
+#: src/image_run.py
+msgid "The model answered without an image."
+msgstr "Modeli ilijibu bila picha."
+
+#: src/image_run.py
+msgid "The server returned an image that cannot be read."
+msgstr "Seva ilirudisha picha isiyoweza kusomwa."
+
 #: src/providers/systemone.py:51
 msgid "Images sent to this server must be PNG or JPEG."
 msgstr "Picha zinazotumwa kwa seva hii lazima ziwe PNG au JPEG."
@@ -1847,6 +1912,18 @@ msgstr "Ondoa picha"
 msgid "Could not restore an image. Remove it before sending."
 msgstr "Picha haikuweza kurejeshwa. Iondoe kabla ya kutuma."
 
+#: src/widgets/chat_input.py
+msgid "Select an image model"
+msgstr "Chagua modeli ya picha"
+
+#: src/widgets/chat_input.py
+msgid "No image models found on this server."
+msgstr "Hakuna modeli za picha zilizopatikana kwenye seva hii."
+
+#: src/widgets/chat_input.py
+msgid "Checking image models…"
+msgstr "Inakagua modeli za picha…"
+
 #: src/widgets/chat_input.ui:35
 msgid "Select Model"
 msgstr "Chagua modeli"
@@ -1937,9 +2014,57 @@ msgstr "Endesha Tena"
 msgid "Stop All"
 msgstr "Simamisha Yote"
 
+#: src/widgets/decision_view.py
+msgid "Load later runs"
+msgstr "Pakia uendeshaji wa baadaye"
+
 #: src/widgets/feedback.py:15
 msgid "Copied"
 msgstr "Imenakiliwa"
+
+#: src/widgets/history_sidebar.py
+msgid "Recent images"
+msgstr "Picha za hivi karibuni"
+
+#: src/widgets/image_results.py
+msgid "This image cannot be shown here. Use Save Image… to open it in another app."
+msgstr "Picha hii haiwezi kuonyeshwa hapa. Tumia \"Hifadhi picha…\" ili kuifungua kwenye programu nyingine."
+
+#: src/widgets/image_results.py
+msgid "Save Image…"
+msgstr "Hifadhi picha…"
+
+#: src/widgets/image_results.py
+msgid "Copy Image"
+msgstr "Nakili picha"
+
+#: src/widgets/image_results.py
+msgid "Use as Reference"
+msgstr "Tumia kama marejeleo"
+
+#: src/widgets/image_results.py
+msgid "Save Image"
+msgstr "Hifadhi picha"
+
+#: src/widgets/image_settings.py
+msgid "Leave empty for a random seed."
+msgstr "Acha tupu kwa thamani ya kuanzia ya nasibu."
+
+#: src/widgets/image_view.py
+msgid "New Image"
+msgstr "Picha Mpya"
+
+#: src/widgets/image_view.py
+msgid "Prompt"
+msgstr "Ingizo"
+
+#: src/widgets/image_view.py
+msgid "Describe the image to generate."
+msgstr "Eleza picha ya kuunda."
+
+#: src/widgets/image_view.py
+msgid "Generate"
+msgstr "Unda"
 
 #: src/widgets/json_view.py:50
 msgid "JSON files"
@@ -3381,6 +3506,38 @@ msgstr "Hakuna"
 #: src/widgets/url_import.py:336
 msgid "Replace and Rebuild"
 msgstr "Badilisha na ujenge upya"
+
+#: src/widgets/workspace_section.py
+msgid "Decisions"
+msgstr "Maamuzi"
+
+#: src/widgets/workspace_section.py
+msgid "Saved Decisions"
+msgstr "Maamuzi yaliyohifadhiwa"
+
+#: src/widgets/workspace_section.py
+msgid "No Saved Decisions"
+msgstr "Hakuna maamuzi yaliyohifadhiwa"
+
+#: src/widgets/workspace_section.py
+msgid "Search decisions"
+msgstr "Tafuta maamuzi"
+
+#: src/widgets/workspace_section.py
+msgid "Saved Images"
+msgstr "Picha zilizohifadhiwa"
+
+#: src/widgets/workspace_section.py
+msgid "No Saved Images"
+msgstr "Hakuna picha zilizohifadhiwa"
+
+#: src/widgets/workspace_section.py
+msgid "Search images"
+msgstr "Tafuta picha"
+
+#: src/widgets/workspace_section.py
+msgid "Nothing Open"
+msgstr "Hakuna kilichofunguliwa"
 
 #: src/window.py:52
 msgid "Knowledge"

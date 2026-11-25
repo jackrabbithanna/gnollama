@@ -475,6 +475,70 @@ msgstr "服务器的响应中没有答案。"
 msgid "The answer is not valid for this question."
 msgstr "该答案对此问题无效。"
 
+#: src/image_generation.py
+msgid "Aspect ratio"
+msgstr "宽高比"
+
+#: src/image_generation.py
+msgid "Resolution"
+msgstr "分辨率"
+
+#: src/image_generation.py
+msgid "Quality"
+msgstr "质量"
+
+#: src/image_generation.py
+msgid "Output format"
+msgstr "输出格式"
+
+#: src/image_generation.py
+msgid "Background"
+msgstr "背景"
+
+#: src/image_generation.py
+msgid "Number of images"
+msgstr "图像数量"
+
+#: src/image_generation.py
+msgid "This server does not offer image generation."
+msgstr "此服务器不提供图像生成。"
+
+#: src/image_generation.py
+msgid "Enter a prompt."
+msgstr "请输入提示词。"
+
+#: src/image_generation.py
+msgid "This model does not take reference images."
+msgstr "此模型不接受参考图像。"
+
+#: src/image_generation.py
+#, python-brace-format
+msgid "This model takes at most {0} reference image."
+msgid_plural "This model takes at most {0} reference images."
+msgstr[0] "此模型最多接受 {0} 张参考图像。"
+
+#: src/image_generation.py
+#, python-brace-format
+msgid "This model does not take the setting {0}."
+msgstr "此模型不接受设置 {0}。"
+
+#: src/image_generation.py
+#, python-brace-format
+msgid "This model does not take that value for {0}."
+msgstr "此模型不接受 {0} 的该值。"
+
+#: src/image_generation.py
+msgid "The server did not return an image."
+msgstr "服务器未返回图像。"
+
+#: src/image_run.py
+msgid "The model answered without an image."
+msgstr "模型的回答中没有图像。"
+
+#: src/image_run.py
+msgid "The server returned an image that cannot be read."
+msgstr "服务器返回了无法读取的图像。"
+
 #: src/providers/systemone.py:51
 msgid "Images sent to this server must be PNG or JPEG."
 msgstr "发送到此服务器的图像必须是 PNG 或 JPEG。"
@@ -1742,6 +1806,18 @@ msgstr "移除图片"
 msgid "Could not restore an image. Remove it before sending."
 msgstr "无法恢复一张图片。请在发送前移除它。"
 
+#: src/widgets/chat_input.py
+msgid "Select an image model"
+msgstr "选择图像模型"
+
+#: src/widgets/chat_input.py
+msgid "No image models found on this server."
+msgstr "在此服务器上未找到图像模型。"
+
+#: src/widgets/chat_input.py
+msgid "Checking image models…"
+msgstr "正在检查图像模型…"
+
 #: src/widgets/chat_input.ui:35
 msgid "Select Model"
 msgstr "选择模型"
@@ -1830,9 +1906,57 @@ msgstr "再次运行"
 msgid "Stop All"
 msgstr "全部停止"
 
+#: src/widgets/decision_view.py
+msgid "Load later runs"
+msgstr "加载较新的运行"
+
 #: src/widgets/feedback.py:15
 msgid "Copied"
 msgstr "已复制"
+
+#: src/widgets/history_sidebar.py
+msgid "Recent images"
+msgstr "最近的图像"
+
+#: src/widgets/image_results.py
+msgid "This image cannot be shown here. Use Save Image… to open it in another app."
+msgstr "此处无法显示此图像。请使用“保存图像…”在其他应用中打开。"
+
+#: src/widgets/image_results.py
+msgid "Save Image…"
+msgstr "保存图像…"
+
+#: src/widgets/image_results.py
+msgid "Copy Image"
+msgstr "复制图像"
+
+#: src/widgets/image_results.py
+msgid "Use as Reference"
+msgstr "用作参考"
+
+#: src/widgets/image_results.py
+msgid "Save Image"
+msgstr "保存图像"
+
+#: src/widgets/image_settings.py
+msgid "Leave empty for a random seed."
+msgstr "留空则使用随机种子。"
+
+#: src/widgets/image_view.py
+msgid "New Image"
+msgstr "新建图像"
+
+#: src/widgets/image_view.py
+msgid "Prompt"
+msgstr "提示词"
+
+#: src/widgets/image_view.py
+msgid "Describe the image to generate."
+msgstr "描述要生成的图像。"
+
+#: src/widgets/image_view.py
+msgid "Generate"
+msgstr "生成"
 
 #: src/widgets/json_view.py:50
 msgid "JSON files"
@@ -3216,6 +3340,38 @@ msgstr "无"
 #: src/widgets/url_import.py:336
 msgid "Replace and Rebuild"
 msgstr "替换并重建"
+
+#: src/widgets/workspace_section.py
+msgid "Decisions"
+msgstr "决策"
+
+#: src/widgets/workspace_section.py
+msgid "Saved Decisions"
+msgstr "已保存的决策"
+
+#: src/widgets/workspace_section.py
+msgid "No Saved Decisions"
+msgstr "没有已保存的决策"
+
+#: src/widgets/workspace_section.py
+msgid "Search decisions"
+msgstr "搜索决策"
+
+#: src/widgets/workspace_section.py
+msgid "Saved Images"
+msgstr "已保存的图像"
+
+#: src/widgets/workspace_section.py
+msgid "No Saved Images"
+msgstr "没有已保存的图像"
+
+#: src/widgets/workspace_section.py
+msgid "Search images"
+msgstr "搜索图像"
+
+#: src/widgets/workspace_section.py
+msgid "Nothing Open"
+msgstr "没有打开的内容"
 
 #: src/window.py:52
 msgid "Knowledge"

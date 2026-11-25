@@ -3,7 +3,7 @@ import re
 import unicodedata
 
 
-CATEGORIES = ('drafts', 'pinned', 'chat', 'comparison', 'model_conversation', 'decision')
+CATEGORIES = ('drafts', 'pinned', 'chat', 'comparison', 'model_conversation', 'decision', 'image')
 
 
 def category(record):
@@ -19,8 +19,16 @@ def _words(text):
     return re.findall(r'\w+', ''.join(c for c in normalized if not unicodedata.combining(c)))
 
 
-def sidebar_snapshot(connections, query='', expanded=()):
-    """One read snapshot; limits apply after searching, separately per section."""
+def sidebar_snapshot(connections, query='', expanded=(), kinds=None, modes=None):
+    """One read snapshot; limits apply after searching, separately per section.
+
+    `kinds` limits the sessions to those kinds and `modes` the drafts to those modes;
+    each window section lists only its own. Without them every one is listed.
+    """
+    kinds = tuple(kinds) if kinds is not None else CATEGORIES[2:]
+    kind_list = '(' + ','.join('?' * len(kinds)) + ')'
+    mode_filter = (' AND d.mode IN (' + ','.join('?' * len(modes)) + ')') if modes is not None else ''
+    modes = tuple(modes or ())
     terms = re.findall(r'\w+', query, re.UNICODE)
     expression = ' AND '.join('"' + term.replace('"', '""') + '"*' for term in terms)
     searching = bool(query.strip())
@@ -39,9 +47,9 @@ def sidebar_snapshot(connections, query='', expanded=()):
         fields = 'm.match_uid,m.snippet' if expression else "NULL AS match_uid,'' AS snippet"
         sql = prefix + 'SELECT c.id,c.title,c.kind,c.is_pinned,c.updated_at,' + fields + ' FROM chats c' + join
         groups = {}
-        for key in CATEGORIES[1:]:
-            condition = 'c.is_pinned=1' if key == 'pinned' else 'c.is_pinned=0 AND c.kind=?'
-            values = [] if key == 'pinned' else [key]
+        for key in ('pinned', *kinds):
+            condition = 'c.is_pinned=1 AND c.kind IN ' + kind_list if key == 'pinned' else 'c.is_pinned=0 AND c.kind=?'
+            values = list(kinds) if key == 'pinned' else [key]
             if searching and not expression:
                 condition += ' AND 0'
             rows = conn.execute(sql + ' WHERE ' + condition + ' ORDER BY c.updated_at DESC,c.id LIMIT ?',
@@ -62,17 +70,18 @@ def sidebar_snapshot(connections, query='', expanded=()):
             OR EXISTS (SELECT 1 FROM draft_images i WHERE i.draft_id=d.id)
             OR json_extract(d.settings,'$._configured')=1
             OR coalesce(json_extract(d.settings,'$.questions'),'{}') NOT IN ('{}','[]'))
-            AND (d.chat_id IS NULL OR NOT EXISTS (SELECT 1 FROM messages m WHERE m.chat_id=d.chat_id))'''
+            AND (d.chat_id IS NULL OR NOT EXISTS (SELECT 1 FROM messages m WHERE m.chat_id=d.chat_id))''' + mode_filter
         groups['drafts'] = [dict(row) for row in conn.execute(draft_sql +
             (' AND draft_matches(d.text)' if searching else '') +
-            ' ORDER BY d.updated_at DESC,d.id LIMIT ?', (-1 if 'drafts' in expanded else 6,))]
+            ' ORDER BY d.updated_at DESC,d.id LIMIT ?', (*modes, -1 if 'drafts' in expanded else 6))]
 
         suggestions = []
         if expression:
             suggestions = [dict(row) for row in conn.execute('''SELECT c.title,c.kind,c.is_pinned,c.updated_at
-                FROM title_search t JOIN chats c ON c.id=t.chat_id WHERE title_search MATCH ?
-                GROUP BY c.title ORDER BY max(c.updated_at) DESC,c.title LIMIT 8''', (expression,))]
-            for row in conn.execute(draft_sql + ' AND draft_matches(substr(d.text,1,80)) ORDER BY d.updated_at DESC,d.id LIMIT 8'):
+                FROM title_search t JOIN chats c ON c.id=t.chat_id WHERE title_search MATCH ? AND c.kind IN ''' + kind_list + '''
+                GROUP BY c.title ORDER BY max(c.updated_at) DESC,c.title LIMIT 8''', (expression, *kinds))]
+            for row in conn.execute(draft_sql + ' AND draft_matches(substr(d.text,1,80)) ORDER BY d.updated_at DESC,d.id LIMIT 8',
+                                    modes):
                 suggestions.append(dict(title=row['title'], kind='drafts', is_pinned=False, updated_at=row['updated_at']))
         unique: dict = {}
         for item in sorted(suggestions, key=lambda r: (-r['updated_at'], r['title'])):

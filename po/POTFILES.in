@@ -16,6 +16,8 @@ src/export.py
 src/host_edit_dialog.ui
 src/host_manager.py
 src/host_manager.ui
+src/image_generation.py
+src/image_run.py
 src/knowledge.py
 src/knowledge_store.py
 src/main.py
@@ -28,6 +30,7 @@ src/providers/registry.py
 src/providers/ollama.py
 src/providers/openai.py
 src/providers/lmstudio.py
+src/providers/imaging.py
 src/providers/openrouter.py
 src/providers/vercel.py
 src/providers/systemone.py
@@ -53,6 +56,9 @@ src/widgets/comparison_view.py
 src/widgets/decision_answers.py
 src/widgets/decision_form.py
 src/widgets/decision_view.py
+src/widgets/image_results.py
+src/widgets/image_settings.py
+src/widgets/image_view.py
 src/widgets/feedback.py
 src/widgets/json_view.py
 src/widgets/knowledge_common.py
@@ -70,4 +76,5 @@ src/model_conversation.py
 src/widgets/model_target.py
 src/widgets/model_conversation_view.py
 src/widgets/history_sidebar.py
+src/widgets/workspace_section.py
 src/model_summary.py

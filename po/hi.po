@@ -519,6 +519,71 @@ msgstr "सर्वर के जवाब में कोई उत्तर 
 msgid "The answer is not valid for this question."
 msgstr "यह उत्तर इस प्रश्न के लिए मान्य नहीं है।"
 
+#: src/image_generation.py
+msgid "Aspect ratio"
+msgstr "पक्षानुपात"
+
+#: src/image_generation.py
+msgid "Resolution"
+msgstr "रिज़ॉल्यूशन"
+
+#: src/image_generation.py
+msgid "Quality"
+msgstr "गुणवत्ता"
+
+#: src/image_generation.py
+msgid "Output format"
+msgstr "आउटपुट प्रारूप"
+
+#: src/image_generation.py
+msgid "Background"
+msgstr "पृष्ठभूमि"
+
+#: src/image_generation.py
+msgid "Number of images"
+msgstr "छवियों की संख्या"
+
+#: src/image_generation.py
+msgid "This server does not offer image generation."
+msgstr "यह सर्वर छवि निर्माण उपलब्ध नहीं कराता।"
+
+#: src/image_generation.py
+msgid "Enter a prompt."
+msgstr "एक प्रॉम्प्ट दर्ज करें।"
+
+#: src/image_generation.py
+msgid "This model does not take reference images."
+msgstr "यह मॉडल संदर्भ छवियाँ स्वीकार नहीं करता।"
+
+#: src/image_generation.py
+#, python-brace-format
+msgid "This model takes at most {0} reference image."
+msgid_plural "This model takes at most {0} reference images."
+msgstr[0] "यह मॉडल अधिकतम {0} संदर्भ छवि स्वीकार करता है।"
+msgstr[1] "यह मॉडल अधिकतम {0} संदर्भ छवियाँ स्वीकार करता है।"
+
+#: src/image_generation.py
+#, python-brace-format
+msgid "This model does not take the setting {0}."
+msgstr "यह मॉडल {0} सेटिंग स्वीकार नहीं करता।"
+
+#: src/image_generation.py
+#, python-brace-format
+msgid "This model does not take that value for {0}."
+msgstr "यह मॉडल {0} के लिए वह मान स्वीकार नहीं करता।"
+
+#: src/image_generation.py
+msgid "The server did not return an image."
+msgstr "सर्वर ने कोई छवि नहीं लौटाई।"
+
+#: src/image_run.py
+msgid "The model answered without an image."
+msgstr "मॉडल ने बिना छवि के उत्तर दिया।"
+
+#: src/image_run.py
+msgid "The server returned an image that cannot be read."
+msgstr "सर्वर ने ऐसी छवि लौटाई जिसे पढ़ा नहीं जा सकता।"
+
 #: src/providers/systemone.py:51
 msgid "Images sent to this server must be PNG or JPEG."
 msgstr "इस सर्वर को भेजी जाने वाली छवियाँ PNG या JPEG होनी चाहिए।"
@@ -1805,6 +1870,18 @@ msgstr "चित्र हटाएँ"
 msgid "Could not restore an image. Remove it before sending."
 msgstr "एक छवि बहाल नहीं हो सकी। भेजने से पहले उसे हटाएँ।"
 
+#: src/widgets/chat_input.py
+msgid "Select an image model"
+msgstr "छवि मॉडल चुनें"
+
+#: src/widgets/chat_input.py
+msgid "No image models found on this server."
+msgstr "इस सर्वर पर कोई छवि मॉडल नहीं मिला।"
+
+#: src/widgets/chat_input.py
+msgid "Checking image models…"
+msgstr "छवि मॉडल जाँचे जा रहे हैं…"
+
 #: src/widgets/chat_input.ui:35
 msgid "Select Model"
 msgstr "मॉडल चुनें"
@@ -1895,9 +1972,57 @@ msgstr "फिर चलाएँ"
 msgid "Stop All"
 msgstr "सभी रोकें"
 
+#: src/widgets/decision_view.py
+msgid "Load later runs"
+msgstr "बाद के रन लोड करें"
+
 #: src/widgets/feedback.py:15
 msgid "Copied"
 msgstr "कॉपी किया गया"
+
+#: src/widgets/history_sidebar.py
+msgid "Recent images"
+msgstr "हाल की छवियाँ"
+
+#: src/widgets/image_results.py
+msgid "This image cannot be shown here. Use Save Image… to open it in another app."
+msgstr "यह छवि यहाँ दिखाई नहीं जा सकती। इसे किसी अन्य ऐप में खोलने के लिए \"छवि सहेजें…\" का उपयोग करें।"
+
+#: src/widgets/image_results.py
+msgid "Save Image…"
+msgstr "छवि सहेजें…"
+
+#: src/widgets/image_results.py
+msgid "Copy Image"
+msgstr "छवि कॉपी करें"
+
+#: src/widgets/image_results.py
+msgid "Use as Reference"
+msgstr "संदर्भ के रूप में उपयोग करें"
+
+#: src/widgets/image_results.py
+msgid "Save Image"
+msgstr "छवि सहेजें"
+
+#: src/widgets/image_settings.py
+msgid "Leave empty for a random seed."
+msgstr "यादृच्छिक सीड के लिए खाली छोड़ें।"
+
+#: src/widgets/image_view.py
+msgid "New Image"
+msgstr "नई छवि"
+
+#: src/widgets/image_view.py
+msgid "Prompt"
+msgstr "प्रॉम्प्ट"
+
+#: src/widgets/image_view.py
+msgid "Describe the image to generate."
+msgstr "बनाई जाने वाली छवि का वर्णन करें।"
+
+#: src/widgets/image_view.py
+msgid "Generate"
+msgstr "बनाएँ"
 
 #: src/widgets/json_view.py:50
 msgid "JSON files"
@@ -3329,6 +3454,38 @@ msgstr "कोई नहीं"
 #: src/widgets/url_import.py:336
 msgid "Replace and Rebuild"
 msgstr "बदलें और फिर बनाएँ"
+
+#: src/widgets/workspace_section.py
+msgid "Decisions"
+msgstr "निर्णय"
+
+#: src/widgets/workspace_section.py
+msgid "Saved Decisions"
+msgstr "सहेजे गए निर्णय"
+
+#: src/widgets/workspace_section.py
+msgid "No Saved Decisions"
+msgstr "कोई सहेजा गया निर्णय नहीं"
+
+#: src/widgets/workspace_section.py
+msgid "Search decisions"
+msgstr "निर्णय खोजें"
+
+#: src/widgets/workspace_section.py
+msgid "Saved Images"
+msgstr "सहेजी गई छवियाँ"
+
+#: src/widgets/workspace_section.py
+msgid "No Saved Images"
+msgstr "कोई सहेजी गई छवि नहीं"
+
+#: src/widgets/workspace_section.py
+msgid "Search images"
+msgstr "छवियाँ खोजें"
+
+#: src/widgets/workspace_section.py
+msgid "Nothing Open"
+msgstr "कुछ भी खुला नहीं है"
 
 #: src/window.py:52
 msgid "Knowledge"

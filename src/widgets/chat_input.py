@@ -38,8 +38,9 @@ class ChatInput(Gtk.Box):
         self._host = None
         self._host_identity = None
         self.discovery_enabled = True
-        # Lists the host's decision models where set, each described by its entry in that list.
-        self.decisions = False
+        # Which list of the host's models is offered: 'chat', or 'decision' or 'image', whose
+        # models are each described by their entry in that list.
+        self.kind = 'chat'
         self._models_loading = False
         self._setting_models = False
         self._selection_explicit = False
@@ -200,7 +201,8 @@ class ChatInput(Gtk.Box):
         pending = getattr(self, 'pending_model_selection', None)
         self._selection_explicit = bool(pending)
         self._model_placeholder = bool(models and pending and pending not in models)
-        placeholder = _('Select a decision model') if self.decisions else _('Select a chat model')
+        placeholder = {'decision': _('Select a decision model'),
+                       'image': _('Select an image model')}.get(self.kind) or _('Select a chat model')
         labels = [placeholder] + models if self._model_placeholder else models
         self._setting_models = True
         try:
@@ -227,7 +229,8 @@ class ChatInput(Gtk.Box):
         return item.get_string() if item else None
 
     def selected_details(self):
-        """What is known of the selected model: its details, or its list entry for a decision model; None if neither."""
+        """What is known of the selected model: its details, or its list entry for a decision or image model;
+        None if neither."""
         return self._model_details.get(self.get_selected_model())
 
     def cancel_fetches(self):
@@ -253,8 +256,10 @@ class ChatInput(Gtk.Box):
         return not generates(details)
 
     def _empty_model_notice(self):
-        if self.decisions:
+        if self.kind == 'decision':
             return _('No decision models found on this server.')
+        if self.kind == 'image':
+            return _('No image models found on this server.')
         if self._host is None or self._host.capabilities.model_management:
             return _('No chat models found. Pull one in Manage Models, then refresh.')
         # A hosted service, whose models the user cannot add to.
@@ -273,7 +278,9 @@ class ChatInput(Gtk.Box):
         self._host_identity = identity
         request_id = self._fetch_id
         self._model_details = {}
-        self._model_list_notice = (_('Checking decision models…') if self.decisions else _('Checking chat models…')) if host else ''
+        checking = {'decision': _('Checking decision models…'),
+                    'image': _('Checking image models…')}.get(self.kind) or _('Checking chat models…')
+        self._model_list_notice = checking if host else ''
         self._model_placeholder = False
         self._models_loading = bool(host)
         self._setting_models = True
@@ -298,7 +305,7 @@ class ChatInput(Gtk.Box):
             try:
                 for tag in future.result():
                     model = tag['name'] if isinstance(tag, dict) else tag
-                    if self.decisions:
+                    if self.kind != 'chat':
                         models.append(model)
                         details[model] = tag
                         continue
@@ -316,7 +323,9 @@ class ChatInput(Gtk.Box):
             # By name, whatever order the server lists them in.
             GLib.idle_add(deliver, sorted(models, key=str.casefold), details, error)
         catalog = self.services.catalog
-        future = (catalog.request_decision_models if self.decisions else catalog.request_models)(host, cancel, refresh)
+        request = {'decision': catalog.request_decision_models,
+                   'image': catalog.request_image_models}.get(self.kind, catalog.request_models)
+        future = request(host, cancel, refresh)
         future.add_done_callback(finished)
 
     def _model_changed(self, *args, preserve_selection=False):
@@ -330,8 +339,8 @@ class ChatInput(Gtk.Box):
         if model and not preserve_selection:
             self._selection_explicit = True
             self.pending_model_selection = None
-        if self.decisions:
-            # The list entry is all that is known of a decision model.
+        if self.kind != 'chat':
+            # The list entry is all that is known of a decision or image model.
             self.set_model_details(self._model_details.get(model))
             return
         cached = self.services.catalog.cached_details(host, model) if host and model else None
@@ -497,6 +506,11 @@ class ChatInput(Gtk.Box):
 
     def has_draft_images(self):
         return bool(self.selected_image_paths or self.restored_images)
+
+    def add_images(self, images):
+        """Attach more images, keeping those attached and those still being read."""
+        self.restored_images.extend(images)
+        self.update_image_preview()
 
     def restore_images(self, images):
         self._image_generation += 1

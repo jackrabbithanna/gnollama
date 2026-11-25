@@ -3347,6 +3347,38 @@ msgstr "なし"
 msgid "Replace and Rebuild"
 msgstr "置換して再構築"
 
+#: src/widgets/workspace_section.py
+msgid "Decisions"
+msgstr "判定"
+
+#: src/widgets/workspace_section.py
+msgid "Saved Decisions"
+msgstr "保存済みの判定"
+
+#: src/widgets/workspace_section.py
+msgid "No Saved Decisions"
+msgstr "保存済みの判定はありません"
+
+#: src/widgets/workspace_section.py
+msgid "Search decisions"
+msgstr "判定を検索"
+
+#: src/widgets/workspace_section.py
+msgid "Saved Images"
+msgstr "保存済みの画像"
+
+#: src/widgets/workspace_section.py
+msgid "No Saved Images"
+msgstr "保存済みの画像はありません"
+
+#: src/widgets/workspace_section.py
+msgid "Search images"
+msgstr "画像を検索"
+
+#: src/widgets/workspace_section.py
+msgid "Nothing Open"
+msgstr "何も開いていません"
+
 #: src/window.py:52
 msgid "Knowledge"
 msgstr "ナレッジ"

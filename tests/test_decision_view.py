@@ -1201,12 +1201,12 @@ class DecisionWindowTests(unittest.TestCase):
         window = GnollamaWindow(context=self.context)
         self.windows.append(window)
         self.tabs.append(window.tab_view.get_nth_page(0).get_child())
-        pump_until(lambda: self.storage.writer.idle and not window.history.pending)
+        pump_until(lambda: self.storage.writer.idle and not window.sections['decisions'].history.pending)
         return window
 
     def decision(self, window):
         window.lookup_action('new_decision').activate(None)
-        tab = window.tab_view.get_selected_page().get_child()
+        tab = window.sections['decisions'].tab_view.get_selected_page().get_child()
         self.tabs.append(tab)
         pump_until(lambda: settled(tab))
         return tab
@@ -1215,7 +1215,7 @@ class DecisionWindowTests(unittest.TestCase):
         window = self.make_window()
         tab = self.decision(window)
         self.assertIsInstance(tab, DecisionTab)
-        page = window.tab_view.get_page(tab)
+        page = window.sections['decisions'].tab_view.get_page(tab)
         self.assertEqual((page.get_title(), page.get_icon().get_names()[0]), ('New Decision', 'gnollama-decision-symbolic'))
         self.assertEqual(window.recent_decisions_section.get_title(), 'Recent decisions')
         tab.form.load(QUESTIONS)
@@ -1230,7 +1230,7 @@ class DecisionWindowTests(unittest.TestCase):
         self.assertFalse(page.get_loading())
         self.assertFalse(window.is_model_busy(self.host, 'blind'))
         session = tab.strategy.chat_id
-        pump_until(lambda: session in window.chat_rows and not window.history.pending)
+        pump_until(lambda: session in window.chat_rows and not window.sections['decisions'].history.pending)
         item = window.chat_rows[session]
         self.assertEqual((item.get_title(), item.get_icon_name(), item.get_section()),
                          ('The invoice was charged twice.', 'gnollama-decision-symbolic', window.recent_decisions_section))
@@ -1241,7 +1241,7 @@ class DecisionWindowTests(unittest.TestCase):
                          'resource:///io/github/jackrabbithanna/Gnollama/icons/scalable/actions/gnollama-decision-symbolic.svg')
         # The row selects the open tab, and opens the session again once that is closed.
         window._open_history_item(item)
-        self.assertIs(window.tab_view.get_selected_page().get_child(), tab)
+        self.assertIs(window.sections['decisions'].tab_view.get_selected_page().get_child(), tab)
         window.close_tab(tab)
         pump_until(lambda: tab not in window.tabs())
         self.assertIsNotNone(self.storage.get_chat(session))
@@ -1260,16 +1260,16 @@ class DecisionWindowTests(unittest.TestCase):
         runs = self.run_tab(tab)
         window.close_tab(tab)
         pump_until(lambda: tab not in window.tabs())
-        window.history_search.set_text('aardvark')
+        window.sections['decisions'].history.search.set_text('aardvark')
         session = tab.strategy.chat_id
-        pump_until(lambda: not window.history.pending and getattr(window.chat_rows.get(session), 'match_uid', None))
+        pump_until(lambda: not window.sections['decisions'].history.pending and getattr(window.chat_rows.get(session), 'match_uid', None))
         item = window.chat_rows[session]
         self.assertEqual((item.match_uid, item.get_section()), (runs[0]['id'], window.recent_decisions_section))
         with patch.object(DecisionTab, 'show_message') as show:
             window._open_history_item(item)
             pump_until(lambda: show.called)
         show.assert_called_once_with(runs[0]['id'])
-        self.tabs.append(window.tab_view.get_selected_page().get_child())
+        self.tabs.append(window.sections['decisions'].tab_view.get_selected_page().get_child())
 
     def test_a_closed_draft_is_listed_reopened_and_discarded_from_the_sidebar(self):
         window = self.make_window()
@@ -1278,9 +1278,9 @@ class DecisionWindowTests(unittest.TestCase):
         tab.form.rows[0].instructions.set_text('Edited')
         draft_id = tab.draft.id
         window.close_tab(tab)
-        pump_until(lambda: tab not in window.tabs() and draft_id in window.draft_rows and not window.history.pending)
+        pump_until(lambda: tab not in window.tabs() and draft_id in window.draft_rows and not window.sections['decisions'].history.pending)
         item = window.draft_rows[draft_id]
-        self.assertEqual((item.get_title(), item.get_section()), ('billing, tone, urgency', window.drafts_section))
+        self.assertEqual((item.get_title(), item.get_section()), ('billing, tone, urgency', window.sections['decisions'].history.sections['drafts']))
         window.open_draft(draft_id)
         pump_until(lambda: any(t.draft.id == draft_id for t in window.tabs()))
         again = next(t for t in window.tabs() if t.draft.id == draft_id)

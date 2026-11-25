@@ -3338,6 +3338,38 @@ msgstr ""
 msgid "Replace and Rebuild"
 msgstr ""
 
+#: src/widgets/workspace_section.py
+msgid "Decisions"
+msgstr ""
+
+#: src/widgets/workspace_section.py
+msgid "Saved Decisions"
+msgstr ""
+
+#: src/widgets/workspace_section.py
+msgid "No Saved Decisions"
+msgstr ""
+
+#: src/widgets/workspace_section.py
+msgid "Search decisions"
+msgstr ""
+
+#: src/widgets/workspace_section.py
+msgid "Saved Images"
+msgstr ""
+
+#: src/widgets/workspace_section.py
+msgid "No Saved Images"
+msgstr ""
+
+#: src/widgets/workspace_section.py
+msgid "Search images"
+msgstr ""
+
+#: src/widgets/workspace_section.py
+msgid "Nothing Open"
+msgstr ""
+
 #: src/window.py:52
 msgid "Knowledge"
 msgstr ""

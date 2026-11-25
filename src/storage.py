@@ -179,9 +179,9 @@ class ChatStorage:
     def list_history(self, query='', limit=100, offset=0):
         return self.db.workspace.list_history(query, limit, offset)
 
-    def sidebar_snapshot(self, query='', expanded=()):
+    def sidebar_snapshot(self, query='', expanded=(), kinds=None, modes=None):
         from .history import sidebar_snapshot
-        return sidebar_snapshot(self.db.connections, query, expanded)
+        return sidebar_snapshot(self.db.connections, query, expanded, kinds, modes)
 
     def list_drafts(self, limit=100, offset=0):
         return self.db.workspace.list_drafts(limit, offset)

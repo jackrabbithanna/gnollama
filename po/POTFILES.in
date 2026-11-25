@@ -76,4 +76,5 @@ src/model_conversation.py
 src/widgets/model_target.py
 src/widgets/model_conversation_view.py
 src/widgets/history_sidebar.py
+src/widgets/workspace_section.py
 src/model_summary.py

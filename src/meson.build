@@ -121,6 +121,7 @@ gnollama_widget_sources = [
   'widgets/image_settings.py',
   'widgets/image_view.py',
   'widgets/history_sidebar.py',
+  'widgets/workspace_section.py',
   'widgets/model_target.py',
   'widgets/model_conversation_view.py',
   'widgets/chat_input.py',

@@ -3341,6 +3341,38 @@ msgstr "无"
 msgid "Replace and Rebuild"
 msgstr "替换并重建"
 
+#: src/widgets/workspace_section.py
+msgid "Decisions"
+msgstr "决策"
+
+#: src/widgets/workspace_section.py
+msgid "Saved Decisions"
+msgstr "已保存的决策"
+
+#: src/widgets/workspace_section.py
+msgid "No Saved Decisions"
+msgstr "没有已保存的决策"
+
+#: src/widgets/workspace_section.py
+msgid "Search decisions"
+msgstr "搜索决策"
+
+#: src/widgets/workspace_section.py
+msgid "Saved Images"
+msgstr "已保存的图像"
+
+#: src/widgets/workspace_section.py
+msgid "No Saved Images"
+msgstr "没有已保存的图像"
+
+#: src/widgets/workspace_section.py
+msgid "Search images"
+msgstr "搜索图像"
+
+#: src/widgets/workspace_section.py
+msgid "Nothing Open"
+msgstr "没有打开的内容"
+
 #: src/window.py:52
 msgid "Knowledge"
 msgstr "知识库"

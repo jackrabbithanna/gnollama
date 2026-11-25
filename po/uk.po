@@ -3510,6 +3510,38 @@ msgstr "Немає"
 msgid "Replace and Rebuild"
 msgstr "Замінити й перебудувати"
 
+#: src/widgets/workspace_section.py
+msgid "Decisions"
+msgstr "Рішення"
+
+#: src/widgets/workspace_section.py
+msgid "Saved Decisions"
+msgstr "Збережені рішення"
+
+#: src/widgets/workspace_section.py
+msgid "No Saved Decisions"
+msgstr "Немає збережених рішень"
+
+#: src/widgets/workspace_section.py
+msgid "Search decisions"
+msgstr "Пошук рішень"
+
+#: src/widgets/workspace_section.py
+msgid "Saved Images"
+msgstr "Збережені зображення"
+
+#: src/widgets/workspace_section.py
+msgid "No Saved Images"
+msgstr "Немає збережених зображень"
+
+#: src/widgets/workspace_section.py
+msgid "Search images"
+msgstr "Пошук зображень"
+
+#: src/widgets/workspace_section.py
+msgid "Nothing Open"
+msgstr "Нічого не відкрито"
+
 #: src/window.py:52
 msgid "Knowledge"
 msgstr "Знання"

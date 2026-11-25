@@ -3472,6 +3472,38 @@ msgstr "Yok"
 msgid "Replace and Rebuild"
 msgstr "Değiştir ve yeniden oluştur"
 
+#: src/widgets/workspace_section.py
+msgid "Decisions"
+msgstr "Kararlar"
+
+#: src/widgets/workspace_section.py
+msgid "Saved Decisions"
+msgstr "Kayıtlı kararlar"
+
+#: src/widgets/workspace_section.py
+msgid "No Saved Decisions"
+msgstr "Kayıtlı karar yok"
+
+#: src/widgets/workspace_section.py
+msgid "Search decisions"
+msgstr "Kararlarda ara"
+
+#: src/widgets/workspace_section.py
+msgid "Saved Images"
+msgstr "Kayıtlı görseller"
+
+#: src/widgets/workspace_section.py
+msgid "No Saved Images"
+msgstr "Kayıtlı görsel yok"
+
+#: src/widgets/workspace_section.py
+msgid "Search images"
+msgstr "Görsellerde ara"
+
+#: src/widgets/workspace_section.py
+msgid "Nothing Open"
+msgstr "Açık bir şey yok"
+
 #: src/window.py:52
 msgid "Knowledge"
 msgstr "Bilgi"

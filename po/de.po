@@ -3545,6 +3545,38 @@ msgstr "Keine"
 msgid "Replace and Rebuild"
 msgstr "Ersetzen und neu erstellen"
 
+#: src/widgets/workspace_section.py
+msgid "Decisions"
+msgstr "Entscheidungen"
+
+#: src/widgets/workspace_section.py
+msgid "Saved Decisions"
+msgstr "Gespeicherte Entscheidungen"
+
+#: src/widgets/workspace_section.py
+msgid "No Saved Decisions"
+msgstr "Keine gespeicherten Entscheidungen"
+
+#: src/widgets/workspace_section.py
+msgid "Search decisions"
+msgstr "Entscheidungen durchsuchen"
+
+#: src/widgets/workspace_section.py
+msgid "Saved Images"
+msgstr "Gespeicherte Bilder"
+
+#: src/widgets/workspace_section.py
+msgid "No Saved Images"
+msgstr "Keine gespeicherten Bilder"
+
+#: src/widgets/workspace_section.py
+msgid "Search images"
+msgstr "Bilder durchsuchen"
+
+#: src/widgets/workspace_section.py
+msgid "Nothing Open"
+msgstr "Nichts geöffnet"
+
 #: src/window.py:52
 msgid "Knowledge"
 msgstr "Wissen"

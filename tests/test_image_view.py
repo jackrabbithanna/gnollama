@@ -530,12 +530,12 @@ class ImageWindowTests(unittest.TestCase):
         window = GnollamaWindow(context=self.context)
         self.windows.append(window)
         self.tabs.append(window.tab_view.get_nth_page(0).get_child())
-        pump_until(lambda: self.storage.writer.idle and not window.history.pending)
+        pump_until(lambda: self.storage.writer.idle and not window.sections['images'].history.pending)
         return window
 
     def image(self, window):
         window.lookup_action('new_image').activate(None)
-        tab = window.tab_view.get_selected_page().get_child()
+        tab = window.sections['images'].tab_view.get_selected_page().get_child()
         self.tabs.append(tab)
         pump_until(lambda: settled(tab))
         return tab
@@ -544,7 +544,7 @@ class ImageWindowTests(unittest.TestCase):
         window = self.make_window()
         tab = self.image(window)
         self.assertIsInstance(tab, ImageTab)
-        page = window.tab_view.get_page(tab)
+        page = window.sections['images'].tab_view.get_page(tab)
         self.assertEqual((page.get_title(), page.get_icon().get_names()[0]), ('New Image', 'gnollama-image-symbolic'))
         self.assertEqual(window.recent_images_section.get_title(), 'Recent images')
         tab.chat_input.entry.restore_draft('A lighthouse at dusk')
@@ -557,7 +557,7 @@ class ImageWindowTests(unittest.TestCase):
         self.run_tab(tab)
         self.assertFalse(page.get_loading())
         session = tab.strategy.chat_id
-        pump_until(lambda: session in window.chat_rows and not window.history.pending)
+        pump_until(lambda: session in window.chat_rows and not window.sections['images'].history.pending)
         item = window.chat_rows[session]
         self.assertEqual((item.get_title(), item.get_icon_name(), item.get_section()),
                          ('A lighthouse at dusk', 'gnollama-image-symbolic', window.recent_images_section))
@@ -596,16 +596,16 @@ class ImageWindowTests(unittest.TestCase):
         runs = self.run_tab(tab)
         window.close_tab(tab)
         pump_until(lambda: tab not in window.tabs())
-        window.history_search.set_text('aardvark')
+        window.sections['images'].history.search.set_text('aardvark')
         session = tab.strategy.chat_id
-        pump_until(lambda: not window.history.pending and getattr(window.chat_rows.get(session), 'match_uid', None))
+        pump_until(lambda: not window.sections['images'].history.pending and getattr(window.chat_rows.get(session), 'match_uid', None))
         item = window.chat_rows[session]
         self.assertEqual((item.match_uid, item.get_section()), (runs[0]['id'], window.recent_images_section))
         with patch.object(ImageTab, 'show_message') as show:
             window._open_history_item(item)
             pump_until(lambda: show.called)
         show.assert_called_once_with(runs[0]['id'])
-        self.tabs.append(window.tab_view.get_selected_page().get_child())
+        self.tabs.append(window.sections['images'].tab_view.get_selected_page().get_child())
 
     def test_a_closed_draft_is_listed_reopened_and_discarded_from_the_sidebar(self):
         window = self.make_window()
@@ -613,9 +613,9 @@ class ImageWindowTests(unittest.TestCase):
         tab.chat_input.entry.restore_draft('An unsent lighthouse')
         draft_id = tab.draft.id
         window.close_tab(tab)
-        pump_until(lambda: tab not in window.tabs() and draft_id in window.draft_rows and not window.history.pending)
+        pump_until(lambda: tab not in window.tabs() and draft_id in window.draft_rows and not window.sections['images'].history.pending)
         item = window.draft_rows[draft_id]
-        self.assertEqual((item.get_title(), item.get_section()), ('An unsent lighthouse', window.drafts_section))
+        self.assertEqual((item.get_title(), item.get_section()), ('An unsent lighthouse', window.sections['images'].history.sections['drafts']))
         window.open_draft(draft_id)
         pump_until(lambda: any(t.draft.id == draft_id for t in window.tabs()))
         again = next(t for t in window.tabs() if t.draft.id == draft_id)

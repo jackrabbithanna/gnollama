@@ -20,6 +20,7 @@
 from gettext import gettext as _
 from gi.repository import Adw, Gtk, Gio, GLib, Gdk, GObject
 from .tab import GenerationTab
+from collections import ChainMap
 from .session import ChatStrategy, display_chat_title
 from .host_manager import HostManagerDialog
 from .model_manager import ModelManagerDialog
@@ -29,11 +30,8 @@ from .model_manager import ModelManagerDialog
 class GnollamaWindow(Adw.ApplicationWindow):
     __gtype_name__ = 'GnollamaWindow'
 
-    tab_view = Gtk.Template.Child()
-    history_sidebar = Gtk.Template.Child()
-    split_view = Gtk.Template.Child()
-    sidebar_toggle = Gtk.Template.Child()
     section_stack = Gtk.Template.Child()
+    narrow = Gtk.Template.Child()
 
     def __init__(self, context, **kwargs):
         super().__init__(**kwargs)
@@ -46,6 +44,17 @@ class GnollamaWindow(Adw.ApplicationWindow):
         self.context = context
         self.storage = context.storage
         self.storage.on_error = self._on_save_error
+        # Chats, decisions, and images each have a section: its own sidebar and tabs.
+        from .widgets.workspace_section import KINDS, WorkspaceSection
+        self.sections = {}
+        for kind in KINDS:
+            section = WorkspaceSection(kind)
+            self.sections[kind.name] = section
+            self.section_stack.add_titled_with_icon(section.split_view, kind.name, section.title, kind.icon)
+            self.narrow.add_setter(section.split_view, 'collapsed', True)
+        chats = self.sections['chats']
+        # The chats section, by the names the window had before there were several.
+        self.tab_view, self.history_sidebar, self.split_view = chats.tab_view, chats.sidebar, chats.split_view
         from .widgets.knowledge_view import KnowledgeView
         self.knowledge_view = KnowledgeView(self.context)
         self.section_stack.add_titled_with_icon(self.knowledge_view, 'knowledge', _('Knowledge'), 'folder-documents-symbolic')
@@ -54,28 +63,42 @@ class GnollamaWindow(Adw.ApplicationWindow):
         self._allow_close = False
         self._cleanup_future = None
         self._save_error_dialog = None
-        self.chat_rows = {}
         self.model_managers = []
         from .widgets.history_sidebar import HistorySidebar
-        self.history = HistorySidebar(self)
-        self.history_search = self.history.search
-        self.draft_rows = self.history.draft_rows
-        self._setup_actions()
         self._sidebar_menu = Gio.Menu()
-        self.history_sidebar.set_menu_model(self._sidebar_menu)
-        self.history_sidebar.connect('setup-menu', self._setup_sidebar_menu)
-        self.history_sidebar.connect('activated', self.on_history_activated)
-        self.tab_view.connect('notify::selected-page', self.on_tab_switched)
-        self.tab_view.connect('close-page', self._on_close_page)
+        for section in self.sections.values():
+            section.history = HistorySidebar(self, section)
+            section.sidebar.set_menu_model(self._sidebar_menu)
+            section.sidebar.connect('setup-menu', self._setup_sidebar_menu)
+            section.sidebar.connect('activated', self.on_history_activated)
+            section.tab_view.connect('notify::selected-page', lambda *args, s=section: self.on_tab_switched(s))
+            section.tab_view.connect('close-page', self._on_close_page)
+        # Every section's rows, for the actions on a session wherever it is listed.
+        self.chat_rows = ChainMap(*(section.history.chat_rows for section in self.sections.values()))
+        self.draft_rows = ChainMap(*(section.history.draft_rows for section in self.sections.values()))
+        self.history = chats.history
+        self.history_search = self.history.search
+        self._setup_actions()
         self.connect('close-request', self.on_close_request)
-        self.split_view.bind_property('show-sidebar', self.sidebar_toggle, 'active',
-                                      GObject.BindingFlags.BIDIRECTIONAL | GObject.BindingFlags.SYNC_CREATE)
         self.load_css()
         self.load_history_sidebar()
         self.new_chat_tab()
 
     def tabs(self):
-        return [self.tab_view.get_nth_page(i).get_child() for i in range(self.tab_view.get_n_pages())]
+        """The tabs of every section."""
+        return [tab for section in self.sections.values() for tab in section.tabs()]
+
+    def section_of(self, tab):
+        return next((section for section in self.sections.values() if section.holds(tab)), None)
+
+    def visible_section(self):
+        """The section shown, or None while Knowledge is."""
+        return self.sections.get(self.section_stack.get_visible_child_name())
+
+    def select_tab(self, tab):
+        section = self.section_of(tab)
+        self.section_stack.set_visible_child_name(section.name)
+        section.tab_view.set_selected_page(section.tab_view.get_page(tab))
 
     def on_close_request(self, *args):
         if self._allow_close:
@@ -87,10 +110,10 @@ class GnollamaWindow(Adw.ApplicationWindow):
         if self._shutting_down:
             return
         self._shutting_down = True
-        self.history.invalidate()
-        self.history.popover.popdown()
-        self.tab_view.set_sensitive(False)
-        self.history_sidebar.set_sensitive(False)
+        for section in self.sections.values():
+            section.history.invalidate()
+            section.history.popover.popdown()
+            section.set_sensitive(False)
         self.knowledge_view.set_sensitive(False)
         self.knowledge_view.close_dialogs()
         self.context.cancel_requests()
@@ -145,8 +168,8 @@ class GnollamaWindow(Adw.ApplicationWindow):
             elif self._shutting_down:
                 self._shutting_down = False
                 self._cleanup_future = None
-                self.tab_view.set_sensitive(True)
-                self.history_sidebar.set_sensitive(True)
+                for section in self.sections.values():
+                    section.set_sensitive(True)
                 self.knowledge_view.set_sensitive(True)
                 self.context.resume_requests()
                 for tab in self.tabs():
@@ -166,9 +189,10 @@ class GnollamaWindow(Adw.ApplicationWindow):
                    ('manage_hosts', self.on_manage_hosts),
                    ('manage_models', self.on_manage_models),
                    ('close_tab', self.close_selected_tab),
-                   ('next_tab', lambda *args: self.tab_view.select_next_page()),
-                   ('previous_tab', lambda *args: self.tab_view.select_previous_page()),
-                   ('toggle_sidebar', lambda *args: self.split_view.set_show_sidebar(not self.split_view.get_show_sidebar()))]
+                   ('next_tab', lambda *args: self._in_section(lambda s: s.tab_view.select_next_page())),
+                   ('previous_tab', lambda *args: self._in_section(lambda s: s.tab_view.select_previous_page())),
+                   ('toggle_sidebar', lambda *args: self._in_section(
+                       lambda s: s.split_view.set_show_sidebar(not s.split_view.get_show_sidebar())))]
         for name, callback in actions:
             action = Gio.SimpleAction.new(name, None)
             action.connect('activate', lambda action, param, cb=callback: cb(action, param) if not self._shutting_down else None)
@@ -178,6 +202,11 @@ class GnollamaWindow(Adw.ApplicationWindow):
             action = Gio.SimpleAction.new(name, GLib.VariantType.new('s'))
             action.connect('activate', lambda a, p, cb=callback: cb(p.get_string()) if not self._shutting_down else None)
             self.add_action(action)
+
+    def _in_section(self, act):
+        section = self.visible_section()
+        if section is not None:
+            act(section)
 
     def load_css(self):
         # Adw.Application loads style.css from its resource base path at startup.
@@ -209,7 +238,10 @@ class GnollamaWindow(Adw.ApplicationWindow):
             if isinstance(tab.strategy, ChatStrategy) or tab.strategy.chat_id is not None:
                 self.close_tab(tab, delete=True)
         self.storage.clear_all_chats()
+        shown = self.section_stack.get_visible_child_name()
         self.new_chat_tab()
+        # The new chat waits in Chats; the section the user was in stays shown.
+        self.section_stack.set_visible_child_name(shown)
         self.storage.after_pending_writes(self.load_history_sidebar)
 
     def on_manage_hosts(self, *args):
@@ -253,8 +285,10 @@ class GnollamaWindow(Adw.ApplicationWindow):
         self.knowledge_view.refresh()
 
     def _add_tab(self, tab):
-        self.section_stack.set_visible_child_name('chats')
-        page = self.tab_view.append(tab)
+        from .widgets.workspace_section import section_name
+        section = self.sections[section_name(getattr(tab, 'mode', 'chat'))]
+        self.section_stack.set_visible_child_name(section.name)
+        page = section.tab_view.append(tab)
         tab.bind_property('title', page, 'title', GObject.BindingFlags.SYNC_CREATE)
         icons = dict(chat='network-server-symbolic', decision='gnollama-decision-symbolic',
                      image='gnollama-image-symbolic')
@@ -265,7 +299,7 @@ class GnollamaWindow(Adw.ApplicationWindow):
                 manager.update_unload_buttons()
         tab.connect('request-changed', request_changed)
         tab.connect('chat-updated', self.on_chat_updated)
-        self.tab_view.set_selected_page(page)
+        section.tab_view.set_selected_page(page)
         return tab
 
     def new_comparison_tab(self):
@@ -293,10 +327,9 @@ class GnollamaWindow(Adw.ApplicationWindow):
         return self._add_tab(GenerationTab(mode='chat', chat_id=chat['id'], context=self.context))
 
     def open_chat_tab(self, chat_data):
-        self.section_stack.set_visible_child_name('chats')
         for tab in self.tabs():
             if getattr(tab.strategy, 'chat_id', None) == chat_data['id']:
-                self.tab_view.set_selected_page(self.tab_view.get_page(tab))
+                self.select_tab(tab)
                 return tab
         if chat_data.get('kind') == 'comparison':
             from .widgets.comparison_view import ComparisonTab
@@ -314,7 +347,10 @@ class GnollamaWindow(Adw.ApplicationWindow):
                                            initial_history=chat_data.get('messages', []), context=self.context, chat_data=chat_data))
 
     def load_history_sidebar(self):
-        return self.history.reload()
+        """Reload every section's sidebar."""
+        for section in self.sections.values():
+            section.history.reload()
+        return False
 
     def _fill_history_menu(self, menu, item):
         menu.remove_all()
@@ -353,7 +389,14 @@ class GnollamaWindow(Adw.ApplicationWindow):
         self.history.add_chat(chat)
 
     def _remove_history_item(self, chat_id):
-        self.history.remove_chat(chat_id)
+        for section in self.sections.values():
+            section.history.remove_chat(chat_id)
+
+    def _listing(self, item):
+        """The section whose sidebar lists this row."""
+        return next((section for section in self.sections.values()
+                     if item in section.history.chat_rows.values() or item in section.history.draft_rows.values()
+                     or item in section.history.footers.values()), self.sections['chats'])
 
     def on_history_activated(self, sidebar, index):
         self._open_history_item(sidebar.get_item(index))
@@ -361,16 +404,17 @@ class GnollamaWindow(Adw.ApplicationWindow):
     def _open_history_item(self, item):
         if item is None:
             return
+        section = self._listing(item)
         if hasattr(item, 'category_toggle'):
-            self.history.toggle(item.category_toggle)
+            section.history.toggle(item.category_toggle)
             return
-        self.history.popover.popdown()
-        if self.split_view.get_collapsed():
-            self.split_view.set_show_sidebar(False)
+        section.history.popover.popdown()
+        if section.split_view.get_collapsed():
+            section.split_view.set_show_sidebar(False)
         if hasattr(item, 'draft_id'):
             for tab in self.tabs():
                 if tab.draft.id == item.draft_id and not tab.closing:
-                    self.tab_view.set_selected_page(self.tab_view.get_page(tab))
+                    self.select_tab(tab)
                     return
         def read():
             draft = self.storage.get_draft(item.draft_id) if hasattr(item, 'draft_id') else None
@@ -390,7 +434,7 @@ class GnollamaWindow(Adw.ApplicationWindow):
             elif draft:
                 for tab in self.tabs():
                     if tab.draft.id == draft['id']:
-                        self.tab_view.set_selected_page(self.tab_view.get_page(tab))
+                        self.select_tab(tab)
                         return False
                 if draft['mode'] == 'comparison':
                     from .widgets.comparison_view import ComparisonTab
@@ -409,15 +453,21 @@ class GnollamaWindow(Adw.ApplicationWindow):
             return False
         self.context.services.control.submit(read)
 
-    def on_tab_switched(self, *args):
-        page = self.tab_view.get_selected_page()
-        chat_id = getattr(page.get_child().strategy, 'chat_id', None) if page else None
-        item = self.chat_rows.get(chat_id)
-        self.history_sidebar.set_selected(item.get_index() if item else Gtk.INVALID_LIST_POSITION)
+    def on_tab_switched(self, section=None):
+        """Select, in a section's sidebar, the session its selected tab shows."""
+        for section in [section] if section is not None else self.sections.values():
+            page = section.tab_view.get_selected_page()
+            chat_id = getattr(page.get_child().strategy, 'chat_id', None) if page else None
+            item = section.history.chat_rows.get(chat_id)
+            section.sidebar.set_selected(item.get_index() if item else Gtk.INVALID_LIST_POSITION)
 
     def on_chat_updated(self, tab, chat_id, title):
         self.update_tab_title(chat_id, title)
-        self.load_history_sidebar()
+        section = self.section_of(tab)
+        if section is None:
+            self.load_history_sidebar()
+        else:
+            section.history.reload()
 
     def update_tab_title(self, chat_id, title):
         for tab in self.tabs():
@@ -469,7 +519,8 @@ class GnollamaWindow(Adw.ApplicationWindow):
         return dialog
 
     def _delete_chat_confirmed(self, chat_id):
-        self.history.invalidate()
+        for section in self.sections.values():
+            section.history.invalidate()
         for tab in self.tabs():
             if getattr(tab.strategy, 'chat_id', None) == chat_id:
                 self.close_tab(tab, delete=True)
@@ -477,17 +528,17 @@ class GnollamaWindow(Adw.ApplicationWindow):
         self._remove_history_item(chat_id)
 
     def close_selected_tab(self, *args):
-        if self.section_stack.get_visible_child_name() != 'chats':
-            return
-        page = self.tab_view.get_selected_page()
+        section = self.visible_section()
+        page = section.tab_view.get_selected_page() if section else None
         if page:
-            self.tab_view.close_page(page)
+            section.tab_view.close_page(page)
 
     def close_tab(self, tab, delete=False):
         if delete:
             tab.strategy.deleted = True
-        if not tab.closing:
-            self.tab_view.close_page(self.tab_view.get_page(tab))
+        section = self.section_of(tab)
+        if not tab.closing and section is not None:
+            section.tab_view.close_page(section.tab_view.get_page(tab))
 
     def _on_close_page(self, view, page):
         tab = page.get_child()

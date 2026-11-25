@@ -3507,6 +3507,38 @@ msgstr "Hakuna"
 msgid "Replace and Rebuild"
 msgstr "Badilisha na ujenge upya"
 
+#: src/widgets/workspace_section.py
+msgid "Decisions"
+msgstr "Maamuzi"
+
+#: src/widgets/workspace_section.py
+msgid "Saved Decisions"
+msgstr "Maamuzi yaliyohifadhiwa"
+
+#: src/widgets/workspace_section.py
+msgid "No Saved Decisions"
+msgstr "Hakuna maamuzi yaliyohifadhiwa"
+
+#: src/widgets/workspace_section.py
+msgid "Search decisions"
+msgstr "Tafuta maamuzi"
+
+#: src/widgets/workspace_section.py
+msgid "Saved Images"
+msgstr "Picha zilizohifadhiwa"
+
+#: src/widgets/workspace_section.py
+msgid "No Saved Images"
+msgstr "Hakuna picha zilizohifadhiwa"
+
+#: src/widgets/workspace_section.py
+msgid "Search images"
+msgstr "Tafuta picha"
+
+#: src/widgets/workspace_section.py
+msgid "Nothing Open"
+msgstr "Hakuna kilichofunguliwa"
+
 #: src/window.py:52
 msgid "Knowledge"
 msgstr "Maarifa"

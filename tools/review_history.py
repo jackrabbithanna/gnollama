@@ -60,7 +60,6 @@ with tempfile.TemporaryDirectory(prefix='gnollama-history-review-') as temporary
     Gio.Resource.load(args.resource)._register()
     from src.app_context import AppContext
     from src.window import GnollamaWindow
-    from src.history import CATEGORIES
     from tests.provider_fixture import provider_patch
     context = AppContext(temporary)
     storage = context.storage
@@ -72,7 +71,8 @@ with tempfile.TemporaryDirectory(prefix='gnollama-history-review-') as temporary
         pump(lambda: context.services.idle and storage.writer.idle and not window.history.pending)
         titles = dict(chat='Chat', comparison='Comparison', model_conversation='Model conversation', pinned='Pinned')
         with storage.db._get_conn() as conn:
-            for key in CATEGORIES[1:]:
+            # The Chats sidebar is reviewed; decisions and images have sidebars of their own.
+            for key in window.history.categories[1:]:
                 for index in range(2 if key == 'pinned' else 9):
                     title = ('Solar ' if index % 2 == 0 else 'Lunar ') + titles[key] + ' ' + str(index + 1)
                     conn.execute('''INSERT INTO chats(id,title,created_at,updated_at,kind,options,is_pinned)
@@ -85,8 +85,8 @@ with tempfile.TemporaryDirectory(prefix='gnollama-history-review-') as temporary
         window.load_history_sidebar()
         pump(lambda: not window.history.pending)
         counts = {}
-        for key in CATEGORIES:
-            rows = window.draft_rows if key == 'drafts' else window.chat_rows
+        for key in window.history.categories:
+            rows = window.history.draft_rows if key == 'drafts' else window.history.chat_rows
             counts[key] = sum(row.get_section() == window.history.sections[key] for row in rows.values())
         assert counts == dict(drafts=2, pinned=2, chat=5, comparison=5, model_conversation=5), counts
         captures = []
@@ -129,11 +129,11 @@ with tempfile.TemporaryDirectory(prefix='gnollama-history-review-') as temporary
         pump(lambda: not window.history.pending)
         window.history.toggle('comparison')
         pump(lambda: not window.history.pending)
-        assert len(window.chat_rows) == 9
+        assert len(window.history.chat_rows) == 9
         capture('history-expanded-category')
         window.history.toggle('comparison')
         pump(lambda: not window.history.pending)
-        assert len(window.chat_rows) == 5
+        assert len(window.history.chat_rows) == 5
         window.history_search.set_text('solar')
         pump(lambda: not window.history.pending)
         capture('history-filtered-categories')

@@ -50,7 +50,7 @@ Whether you are developing, experimenting, or chatting with local models, Gnolla
   * Separate display of Ollama's native thinking stream, with model-dependent thinking controls.
   * Display generation stats (including cached prompt tokens, finish reason, and tokens/second) and logprobs.
 * **Stop Responses**: Stop generation while keeping partial answers in chat history. Pending history writes finish before the application quits.
-* **Adaptive GNOME Navigation**: Native tabs support reordering and loading indicators. The sidebar groups Drafts, Pinned, Recent chats, Recent comparisons, Recent model conversations, Recent decisions, and Recent images, and collapses on narrow windows. Use Ctrl+W to close a tab, Ctrl+Page Up/Down to switch tabs, and F9 to toggle the sidebar.
+* **Adaptive GNOME Navigation**: The header switches between four sections: **Chats**, **Decisions**, **Images**, and **Knowledge**. Chats, Decisions, and Images each have their own tabs and their own sidebar, with its own search and its own Drafts and Pinned groups. The Chats sidebar groups Recent chats, Recent comparisons, and Recent model conversations; the Decisions sidebar lists Recent decisions, and the Images sidebar Recent images. Starting or reopening a decision or an image shows its section. Native tabs support reordering and loading indicators, and sidebars collapse on narrow windows. Ctrl+W, Ctrl+Page Up/Down, and F9 close a tab, switch tabs, and toggle the sidebar in the section shown.
 
 ### Ollama Cloud
 
@@ -306,7 +306,7 @@ Enter the state as **Text** or **JSON**, attach images if the model takes them, 
 
 Some models take only images of certain sizes; a note appears when an image for a box question is under 256 or over 1568 pixels on a side, and a model's own refusal is shown as the run's error. OpenRouter and Vercel take PNG and JPEG, so other formats are converted to PNG before they are sent.
 
-Every run is saved in its session with its state, images, questions, and answers. Sessions appear under **Recent decisions**, with drafts, search over the state of each run, pinning, rename, deletion, and Markdown/JSON export. Reopening a session sends nothing.
+Every run is saved in its session with its state, images, questions, and answers. Sessions appear in the **Decisions** section under **Recent decisions**, with drafts, search over the state of each run, pinning, rename, deletion, and Markdown/JSON export. Reopening a session sends nothing.
 
 ### Image
 
@@ -314,7 +314,7 @@ Choose **New Image** (Ctrl+Shift+G) to generate images. Image models are offered
 
 Enter a prompt, attach reference images if the model takes them, and choose any of the settings the model offers: aspect ratio, resolution, quality, output format, background, number of images, and seed. A setting left at **Model default** is not sent; the output format is PNG unless another is chosen. Whatever the model cannot take holds **Generate** back with the reason. References other than PNG and JPEG are converted to PNG before they are sent.
 
-Each run shows its prompt, references, settings, any text the model wrote, and the cost where the server reports it. Every image can be saved as it came, copied, or used as a reference for the next run. **Stop** cancels a run. Sessions appear under **Recent images**, with drafts, search, pinning, rename, deletion, and Markdown/JSON export. Reopening a session sends nothing.
+Each run shows its prompt, references, settings, any text the model wrote, and the cost where the server reports it. Every image can be saved as it came, copied, or used as a reference for the next run. **Stop** cancels a run. Sessions appear in the **Images** section under **Recent images**, with drafts, search, pinning, rename, deletion, and Markdown/JSON export. Reopening a session sends nothing.
 
 ### Architecture and evaluation
 

@@ -3455,6 +3455,38 @@ msgstr "कोई नहीं"
 msgid "Replace and Rebuild"
 msgstr "बदलें और फिर बनाएँ"
 
+#: src/widgets/workspace_section.py
+msgid "Decisions"
+msgstr "निर्णय"
+
+#: src/widgets/workspace_section.py
+msgid "Saved Decisions"
+msgstr "सहेजे गए निर्णय"
+
+#: src/widgets/workspace_section.py
+msgid "No Saved Decisions"
+msgstr "कोई सहेजा गया निर्णय नहीं"
+
+#: src/widgets/workspace_section.py
+msgid "Search decisions"
+msgstr "निर्णय खोजें"
+
+#: src/widgets/workspace_section.py
+msgid "Saved Images"
+msgstr "सहेजी गई छवियाँ"
+
+#: src/widgets/workspace_section.py
+msgid "No Saved Images"
+msgstr "कोई सहेजी गई छवि नहीं"
+
+#: src/widgets/workspace_section.py
+msgid "Search images"
+msgstr "छवियाँ खोजें"
+
+#: src/widgets/workspace_section.py
+msgid "Nothing Open"
+msgstr "कुछ भी खुला नहीं है"
+
 #: src/window.py:52
 msgid "Knowledge"
 msgstr "ज्ञान"

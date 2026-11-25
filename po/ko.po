@@ -4,7 +4,7 @@
 # Translated and reviewed with AI assistance, 2026.
 msgid ""
 msgstr ""
-"Project-Id-Version: gnollama 0.18.0\n"
+"Project-Id-Version: gnollama 0.19.0\n"
 "Report-Msgid-Bugs-To: https://github.com/jackrabbithanna/gnollama/issues\n"
 "POT-Creation-Date: 2026-09-11 12:07-0600\n"
 "PO-Revision-Date: 2026-09-11 00:00+0000\n"
@@ -28,20 +28,41 @@ msgid "Gnollama"
 msgstr "Gnollama"
 
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:8
-msgid "Chat with Ollama models"
-msgstr "Ollama 모델과 채팅"
+msgid "Chat with local and cloud models"
+msgstr "로컬 및 클라우드 모델과 채팅"
 
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:10
 msgid ""
-"Chat with Ollama models running on your computer or a remote server using a native "
-"GNOME interface."
-msgstr "GNOME 네이티브 인터페이스로 컴퓨터나 원격 서버에서 실행되는 Ollama 모델과 채팅하세요."
+"Chat with models running on your computer, on another computer, or in the cloud, "
+"using a native GNOME interface."
+msgstr "네이티브 GNOME 인터페이스로 내 컴퓨터, 다른 컴퓨터 또는 클라우드에서 실행되는 모델과 채팅합니다."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:11
+msgid ""
+"Connect to Ollama, LM Studio, and other OpenAI-compatible servers, or to Ollama "
+"Cloud, OpenAI, OpenRouter, and the Vercel AI Gateway."
+msgstr ""
+"Ollama, LM Studio 및 기타 OpenAI 호환 서버나 Ollama Cloud, OpenAI, OpenRouter, Vercel AI "
+"Gateway에 연결합니다."
 
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:11
 msgid ""
 "Keep conversations in separate tabs, attach images to vision models, and read "
 "responses with Markdown and highlighted code."
 msgstr "대화를 별도 탭으로 관리하고, 이미지 지원 모델에 이미지를 첨부하고, Markdown과 코드 강조 표시로 답변을 읽으세요."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:13
+msgid ""
+"Compare answers from several models side by side, let two models talk to each "
+"other, ask decision models structured questions, and generate images from a prompt."
+msgstr ""
+"여러 모델의 답변을 나란히 비교하고, 두 모델이 서로 대화하게 하고, 판단 모델에 구조화된 질문을 하고, 프롬프트로 이미지를 생성합니다."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:14
+msgid ""
+"Build knowledge collections from documents, web pages, and images, and use them as "
+"sources for chat answers."
+msgstr "문서, 웹 페이지, 이미지로 지식 컬렉션을 만들고 채팅 답변의 출처로 사용합니다."
 
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:12
 msgid ""

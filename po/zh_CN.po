@@ -4,7 +4,7 @@
 # AI-assisted translation; native-speaker review is welcome.
 msgid ""
 msgstr ""
-"Project-Id-Version: gnollama 0.18.0\n"
+"Project-Id-Version: gnollama 0.19.0\n"
 "Report-Msgid-Bugs-To: https://github.com/jackrabbithanna/gnollama/issues\n"
 "POT-Creation-Date: 2026-09-11 12:07-0600\n"
 "PO-Revision-Date: 2026-09-11 00:00+0000\n"
@@ -28,20 +28,40 @@ msgid "Gnollama"
 msgstr "Gnollama"
 
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:8
-msgid "Chat with Ollama models"
-msgstr "与 Ollama 模型聊天"
+msgid "Chat with local and cloud models"
+msgstr "与本地和云端模型聊天"
 
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:10
 msgid ""
-"Chat with Ollama models running on your computer or a remote server using a native "
-"GNOME interface."
-msgstr "通过原生 GNOME 界面，与在本机或远程服务器上运行的 Ollama 模型聊天。"
+"Chat with models running on your computer, on another computer, or in the cloud, "
+"using a native GNOME interface."
+msgstr "通过原生 GNOME 界面，与在您的计算机、其他计算机或云端运行的模型聊天。"
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:11
+msgid ""
+"Connect to Ollama, LM Studio, and other OpenAI-compatible servers, or to Ollama "
+"Cloud, OpenAI, OpenRouter, and the Vercel AI Gateway."
+msgstr ""
+"连接到 Ollama、LM Studio 及其他兼容 OpenAI 的服务器，或连接到 Ollama Cloud、OpenAI、OpenRouter 和 Vercel "
+"AI Gateway。"
 
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:11
 msgid ""
 "Keep conversations in separate tabs, attach images to vision models, and read "
 "responses with Markdown and highlighted code."
 msgstr "在不同标签页中进行对话，为视觉模型附加图片，并以 Markdown 和代码高亮格式阅读回复。"
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:13
+msgid ""
+"Compare answers from several models side by side, let two models talk to each "
+"other, ask decision models structured questions, and generate images from a prompt."
+msgstr "并排比较多个模型的回答，让两个模型相互对话，向决策模型提出结构化问题，并根据提示词生成图片。"
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:14
+msgid ""
+"Build knowledge collections from documents, web pages, and images, and use them as "
+"sources for chat answers."
+msgstr "用文档、网页和图片构建知识库集合，并将其作为聊天回答的来源。"
 
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:12
 msgid ""

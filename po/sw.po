@@ -4,7 +4,7 @@
 # Translated and reviewed with AI assistance, 2026.
 msgid ""
 msgstr ""
-"Project-Id-Version: gnollama 0.18.0\n"
+"Project-Id-Version: gnollama 0.19.0\n"
 "Report-Msgid-Bugs-To: https://github.com/jackrabbithanna/gnollama/issues\n"
 "POT-Creation-Date: 2026-09-11 12:07-0600\n"
 "PO-Revision-Date: 2026-09-11 00:00+0000\n"
@@ -28,16 +28,24 @@ msgid "Gnollama"
 msgstr "Gnollama"
 
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:8
-msgid "Chat with Ollama models"
-msgstr "Zungumza na modeli za Ollama"
+msgid "Chat with local and cloud models"
+msgstr "Piga gumzo na miundo ya ndani na ya wingu"
 
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:10
 msgid ""
-"Chat with Ollama models running on your computer or a remote server using a native "
-"GNOME interface."
+"Chat with models running on your computer, on another computer, or in the cloud, "
+"using a native GNOME interface."
 msgstr ""
-"Zungumza na modeli za Ollama zinazoendeshwa kwenye kompyuta yako au seva ya mbali "
-"kupitia kiolesura asilia cha GNOME."
+"Piga gumzo na miundo inayoendeshwa kwenye kompyuta yako, kwenye kompyuta nyingine, "
+"au kwenye wingu, kupitia kiolesura asilia cha GNOME."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:11
+msgid ""
+"Connect to Ollama, LM Studio, and other OpenAI-compatible servers, or to Ollama "
+"Cloud, OpenAI, OpenRouter, and the Vercel AI Gateway."
+msgstr ""
+"Unganisha na Ollama, LM Studio, na seva nyingine zinazooana na OpenAI, au na Ollama "
+"Cloud, OpenAI, OpenRouter, na Vercel AI Gateway."
 
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:11
 msgid ""
@@ -46,6 +54,22 @@ msgid ""
 msgstr ""
 "Weka mazungumzo kwenye vichupo tofauti, ambatisha picha kwa modeli zinazochakata "
 "picha, na usome majibu yenye Markdown na msimbo ulioangaziwa."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:13
+msgid ""
+"Compare answers from several models side by side, let two models talk to each "
+"other, ask decision models structured questions, and generate images from a prompt."
+msgstr ""
+"Linganisha majibu ya miundo kadhaa bega kwa bega, acha miundo miwili izungumze, "
+"uliza miundo ya maamuzi maswali yaliyopangwa, na uunde picha kutoka kwa kidokezo."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:14
+msgid ""
+"Build knowledge collections from documents, web pages, and images, and use them as "
+"sources for chat answers."
+msgstr ""
+"Unda mikusanyiko ya maarifa kutoka kwa hati, kurasa za wavuti, na picha, na uitumie "
+"kama vyanzo vya majibu ya gumzo."
 
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:12
 msgid ""

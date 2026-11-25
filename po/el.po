@@ -4,7 +4,7 @@
 # Translated and reviewed with AI assistance, 2026.
 msgid ""
 msgstr ""
-"Project-Id-Version: gnollama 0.18.0\n"
+"Project-Id-Version: gnollama 0.19.0\n"
 "Report-Msgid-Bugs-To: https://github.com/jackrabbithanna/gnollama/issues\n"
 "POT-Creation-Date: 2026-09-11 12:07-0600\n"
 "PO-Revision-Date: 2026-09-11 00:00+0000\n"
@@ -28,16 +28,24 @@ msgid "Gnollama"
 msgstr "Gnollama"
 
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:8
-msgid "Chat with Ollama models"
-msgstr "Συνομιλήστε με μοντέλα Ollama"
+msgid "Chat with local and cloud models"
+msgstr "Συνομιλία με τοπικά μοντέλα και μοντέλα στο cloud"
 
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:10
 msgid ""
-"Chat with Ollama models running on your computer or a remote server using a native "
-"GNOME interface."
+"Chat with models running on your computer, on another computer, or in the cloud, "
+"using a native GNOME interface."
 msgstr ""
-"Συνομιλήστε με μοντέλα Ollama που εκτελούνται στον υπολογιστή σας ή σε απομακρυσμένο "
-"διακομιστή, μέσα από μια εγγενή διεπαφή GNOME."
+"Συνομιλήστε με μοντέλα που εκτελούνται στον υπολογιστή σας, σε άλλον υπολογιστή ή "
+"στο cloud, μέσα από μια εγγενή διεπαφή GNOME."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:11
+msgid ""
+"Connect to Ollama, LM Studio, and other OpenAI-compatible servers, or to Ollama "
+"Cloud, OpenAI, OpenRouter, and the Vercel AI Gateway."
+msgstr ""
+"Συνδεθείτε στο Ollama, στο LM Studio και σε άλλους διακομιστές συμβατούς με το "
+"OpenAI, ή στο Ollama Cloud, στο OpenAI, στο OpenRouter και στο Vercel AI Gateway."
 
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:11
 msgid ""
@@ -46,6 +54,23 @@ msgid ""
 msgstr ""
 "Διατηρήστε τις συνομιλίες σε ξεχωριστές καρτέλες, επισυνάψτε εικόνες σε μοντέλα "
 "όρασης και διαβάστε απαντήσεις με Markdown και επισήμανση κώδικα."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:13
+msgid ""
+"Compare answers from several models side by side, let two models talk to each "
+"other, ask decision models structured questions, and generate images from a prompt."
+msgstr ""
+"Συγκρίνετε δίπλα δίπλα απαντήσεις από πολλά μοντέλα, αφήστε δύο μοντέλα να "
+"συνομιλήσουν μεταξύ τους, κάντε δομημένες ερωτήσεις σε μοντέλα αποφάσεων και "
+"δημιουργήστε εικόνες από ένα prompt."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:14
+msgid ""
+"Build knowledge collections from documents, web pages, and images, and use them as "
+"sources for chat answers."
+msgstr ""
+"Δημιουργήστε συλλογές γνώσεων από έγγραφα, ιστοσελίδες και εικόνες και "
+"χρησιμοποιήστε τες ως πηγές για τις απαντήσεις της συνομιλίας."
 
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:12
 msgid ""

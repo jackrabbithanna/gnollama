@@ -4,7 +4,7 @@
 # AI-assisted translation; native-speaker review is welcome.
 msgid ""
 msgstr ""
-"Project-Id-Version: gnollama 0.18.0\n"
+"Project-Id-Version: gnollama 0.19.0\n"
 "Report-Msgid-Bugs-To: https://github.com/jackrabbithanna/gnollama/issues\n"
 "POT-Creation-Date: 2026-09-11 12:07-0600\n"
 "PO-Revision-Date: 2026-09-11 00:00+0000\n"
@@ -29,14 +29,23 @@ msgid "Gnollama"
 msgstr "Gnollama"
 
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:8
-msgid "Chat with Ollama models"
-msgstr "دردش مع نماذج Ollama"
+msgid "Chat with local and cloud models"
+msgstr "الدردشة مع النماذج المحلية والسحابية"
 
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:10
 msgid ""
-"Chat with Ollama models running on your computer or a remote server using a native "
-"GNOME interface."
-msgstr "دردش مع نماذج Ollama التي تعمل على حاسوبك أو خادم بعيد باستخدام واجهة GNOME أصلية."
+"Chat with models running on your computer, on another computer, or in the cloud, "
+"using a native GNOME interface."
+msgstr ""
+"تحدث مع نماذج تعمل على حاسوبك أو على حاسوب آخر أو في السحابة، عبر واجهة GNOME أصلية."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:11
+msgid ""
+"Connect to Ollama, LM Studio, and other OpenAI-compatible servers, or to Ollama "
+"Cloud, OpenAI, OpenRouter, and the Vercel AI Gateway."
+msgstr ""
+"اتصل بـ Ollama وLM Studio وغيرهما من الخوادم المتوافقة مع OpenAI، أو بـ Ollama "
+"Cloud وOpenAI وOpenRouter وVercel AI Gateway."
 
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:11
 msgid ""
@@ -45,6 +54,22 @@ msgid ""
 msgstr ""
 "احتفظ بالمحادثات في ألسنة منفصلة، وأرفق صورًا بالنماذج التي تدعم الرؤية، واقرأ الردود"
 " بتنسيق Markdown مع تمييز الشيفرة."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:13
+msgid ""
+"Compare answers from several models side by side, let two models talk to each "
+"other, ask decision models structured questions, and generate images from a prompt."
+msgstr ""
+"قارن إجابات عدة نماذج جنبًا إلى جنب، ودع نموذجين يتحاوران، واطرح أسئلة منظمة على "
+"نماذج القرار، وأنشئ صورًا من موجّه."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:14
+msgid ""
+"Build knowledge collections from documents, web pages, and images, and use them as "
+"sources for chat answers."
+msgstr ""
+"أنشئ مجموعات معرفة من المستندات وصفحات الويب والصور، واستخدمها مصادرَ لإجابات "
+"الدردشة."
 
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:12
 msgid ""

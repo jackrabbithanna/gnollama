@@ -5,10 +5,13 @@
   <project_license>GPL-3.0-or-later</project_license>
 
   <name>Gnollama</name>
-  <summary>Chat with Ollama models</summary>
+  <summary>Chat with local and cloud models</summary>
   <description>
-    <p>Chat with Ollama models running on your computer or a remote server using a native GNOME interface.</p>
+    <p>Chat with models running on your computer, on another computer, or in the cloud, using a native GNOME interface.</p>
+    <p>Connect to Ollama, LM Studio, and other OpenAI-compatible servers, or to Ollama Cloud, OpenAI, OpenRouter, and the Vercel AI Gateway.</p>
     <p>Keep conversations in separate tabs, attach images to vision models, and read responses with Markdown and highlighted code.</p>
+    <p>Compare answers from several models side by side, let two models talk to each other, ask decision models structured questions, and generate images from a prompt.</p>
+    <p>Build knowledge collections from documents, web pages, and images, and use them as sources for chat answers.</p>
     <p>Manage hosts and models, customize generation and thinking settings, and inspect response statistics including cached prompt tokens.</p>
     <p>Generate and validate structured JSON, import JSON schemas, and export responses. Inspect loaded models and release their memory when finished.</p>
     <p>Save and organize conversations with pinning and editable titles. Stop a response at any time and keep its partial answer in your history.</p>
@@ -49,6 +52,16 @@
   </screenshots>
 
   <releases>
+    <release version="0.19.0" date="2026-11-25">
+      <url type="details">https://github.com/jackrabbithanna/gnollama/releases/tag/0.19.0</url>
+      <description translate="no">
+        <p>Connect to OpenAI, OpenRouter, the Vercel AI Gateway, LM Studio, and other OpenAI-compatible servers, as well as Ollama.</p>
+        <p>Each model shows its capabilities and pricing, and the model list is sorted alphabetically and can be searched.</p>
+        <p>Ask decision models yes/no, choice, score, and box questions in the new Decisions section.</p>
+        <p>Generate images from a prompt in the new Images section, on OpenRouter and the Vercel AI Gateway.</p>
+        <p>Knowledge collections can use embedding models from other providers, include images, and be searched from the collection page.</p>
+      </description>
+    </release>
     <release version="0.18.0" date="2026-11-24">
       <url type="details">https://github.com/jackrabbithanna/gnollama/releases/tag/0.18.0</url>
       <description translate="no">

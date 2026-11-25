@@ -4,7 +4,7 @@
 # AI-assisted translation; native-speaker review is welcome.
 msgid ""
 msgstr ""
-"Project-Id-Version: gnollama 0.18.0\n"
+"Project-Id-Version: gnollama 0.19.0\n"
 "Report-Msgid-Bugs-To: https://github.com/jackrabbithanna/gnollama/issues\n"
 "POT-Creation-Date: 2026-09-11 12:07-0600\n"
 "PO-Revision-Date: 2026-09-11 00:00+0000\n"
@@ -28,14 +28,24 @@ msgid "Gnollama"
 msgstr "Gnollama"
 
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:8
-msgid "Chat with Ollama models"
-msgstr "Ollama मॉडल से चैट करें"
+msgid "Chat with local and cloud models"
+msgstr "स्थानीय और क्लाउड मॉडल से चैट करें"
 
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:10
 msgid ""
-"Chat with Ollama models running on your computer or a remote server using a native "
-"GNOME interface."
-msgstr "मूल GNOME इंटरफ़ेस से अपने कंप्यूटर या दूरस्थ सर्वर पर चल रहे Ollama मॉडल से चैट करें।"
+"Chat with models running on your computer, on another computer, or in the cloud, "
+"using a native GNOME interface."
+msgstr ""
+"अपने कंप्यूटर, किसी दूसरे कंप्यूटर या क्लाउड में चल रहे मॉडलों से एक नेटिव GNOME "
+"इंटरफ़ेस के ज़रिए चैट करें।"
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:11
+msgid ""
+"Connect to Ollama, LM Studio, and other OpenAI-compatible servers, or to Ollama "
+"Cloud, OpenAI, OpenRouter, and the Vercel AI Gateway."
+msgstr ""
+"Ollama, LM Studio और अन्य OpenAI-संगत सर्वरों से, या Ollama Cloud, OpenAI, "
+"OpenRouter और Vercel AI Gateway से कनेक्ट करें।"
 
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:11
 msgid ""
@@ -44,6 +54,22 @@ msgid ""
 msgstr ""
 "बातचीत अलग-अलग टैब में रखें, दृष्टि मॉडल के लिए चित्र जोड़ें और Markdown तथा हाइलाइट "
 "किए गए कोड के साथ उत्तर पढ़ें।"
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:13
+msgid ""
+"Compare answers from several models side by side, let two models talk to each "
+"other, ask decision models structured questions, and generate images from a prompt."
+msgstr ""
+"कई मॉडलों के उत्तरों की आमने-सामने तुलना करें, दो मॉडलों को आपस में बात करने दें, "
+"निर्णय मॉडलों से संरचित प्रश्न पूछें और प्रॉम्प्ट से चित्र बनाएँ।"
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:14
+msgid ""
+"Build knowledge collections from documents, web pages, and images, and use them as "
+"sources for chat answers."
+msgstr ""
+"दस्तावेज़ों, वेब पेजों और चित्रों से ज्ञान संग्रह बनाएँ और उन्हें चैट उत्तरों के "
+"स्रोतों के रूप में उपयोग करें।"
 
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:12
 msgid ""

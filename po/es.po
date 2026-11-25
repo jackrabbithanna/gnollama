@@ -6,7 +6,7 @@
 # Reviewed and updated with AI assistance, 2026.
 msgid ""
 msgstr ""
-"Project-Id-Version: gnollama 0.18.0\n"
+"Project-Id-Version: gnollama 0.19.0\n"
 "Report-Msgid-Bugs-To: https://github.com/jackrabbithanna/gnollama/issues\n"
 "POT-Creation-Date: 2026-09-11 12:07-0600\n"
 "PO-Revision-Date: 2026-09-11 00:00+0000\n"
@@ -30,16 +30,24 @@ msgid "Gnollama"
 msgstr "Gnollama"
 
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:8
-msgid "Chat with Ollama models"
-msgstr "Chatea con modelos de Ollama"
+msgid "Chat with local and cloud models"
+msgstr "Chatea con modelos locales y en la nube"
 
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:10
 msgid ""
-"Chat with Ollama models running on your computer or a remote server using a native "
-"GNOME interface."
+"Chat with models running on your computer, on another computer, or in the cloud, "
+"using a native GNOME interface."
 msgstr ""
-"Chatee con modelos de Ollama que se ejecutan en su equipo o en un servidor remoto "
+"Chatea con modelos que se ejecutan en tu equipo, en otro equipo o en la nube, "
 "mediante una interfaz nativa de GNOME."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:11
+msgid ""
+"Connect to Ollama, LM Studio, and other OpenAI-compatible servers, or to Ollama "
+"Cloud, OpenAI, OpenRouter, and the Vercel AI Gateway."
+msgstr ""
+"Conéctate a Ollama, LM Studio y otros servidores compatibles con OpenAI, o a Ollama "
+"Cloud, OpenAI, OpenRouter y Vercel AI Gateway."
 
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:11
 msgid ""
@@ -48,6 +56,23 @@ msgid ""
 msgstr ""
 "Mantenga las conversaciones en pestañas separadas, adjunte imágenes a modelos con "
 "capacidad visual y lea las respuestas con Markdown y resaltado de código."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:13
+msgid ""
+"Compare answers from several models side by side, let two models talk to each "
+"other, ask decision models structured questions, and generate images from a prompt."
+msgstr ""
+"Compara lado a lado las respuestas de varios modelos, deja que dos modelos "
+"conversen entre sí, haz preguntas estructuradas a modelos de decisión y genera "
+"imágenes a partir de un prompt."
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:14
+msgid ""
+"Build knowledge collections from documents, web pages, and images, and use them as "
+"sources for chat answers."
+msgstr ""
+"Crea colecciones de conocimiento a partir de documentos, páginas web e imágenes, y "
+"úsalas como fuentes para las respuestas del chat."
 
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:12
 msgid ""

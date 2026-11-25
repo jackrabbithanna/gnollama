@@ -4,7 +4,7 @@
 # Translated and reviewed with AI assistance, 2026.
 msgid ""
 msgstr ""
-"Project-Id-Version: gnollama 0.18.0\n"
+"Project-Id-Version: gnollama 0.19.0\n"
 "Report-Msgid-Bugs-To: https://github.com/jackrabbithanna/gnollama/issues\n"
 "POT-Creation-Date: 2026-09-11 12:07-0600\n"
 "PO-Revision-Date: 2026-09-11 00:00+0000\n"
@@ -28,20 +28,41 @@ msgid "Gnollama"
 msgstr "Gnollama"
 
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:8
-msgid "Chat with Ollama models"
-msgstr "Ollama モデルとチャット"
+msgid "Chat with local and cloud models"
+msgstr "ローカルとクラウドのモデルとチャット"
 
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:10
 msgid ""
-"Chat with Ollama models running on your computer or a remote server using a native "
-"GNOME interface."
-msgstr "GNOME ネイティブのインターフェースで、コンピューター上またはリモートサーバー上の Ollama モデルとチャットできます。"
+"Chat with models running on your computer, on another computer, or in the cloud, "
+"using a native GNOME interface."
+msgstr "ネイティブな GNOME インターフェイスで、お使いのコンピューター、別のコンピューター、またはクラウドで動作するモデルとチャットできます。"
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:11
+msgid ""
+"Connect to Ollama, LM Studio, and other OpenAI-compatible servers, or to Ollama "
+"Cloud, OpenAI, OpenRouter, and the Vercel AI Gateway."
+msgstr ""
+"Ollama、LM Studio、その他の OpenAI 互換サーバー、または Ollama Cloud、OpenAI、OpenRouter、Vercel AI "
+"Gateway に接続できます。"
 
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:11
 msgid ""
 "Keep conversations in separate tabs, attach images to vision models, and read "
 "responses with Markdown and highlighted code."
 msgstr "会話を別々のタブで管理し、画像対応モデルに画像を添付できます。返信は Markdown とコードの構文強調表示で読みやすく表示されます。"
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:13
+msgid ""
+"Compare answers from several models side by side, let two models talk to each "
+"other, ask decision models structured questions, and generate images from a prompt."
+msgstr ""
+"複数のモデルの回答を並べて比較したり、2 つのモデル同士で会話させたり、判定モデルに構造化された質問をしたり、プロンプトから画像を生成したりできます。"
+
+#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:14
+msgid ""
+"Build knowledge collections from documents, web pages, and images, and use them as "
+"sources for chat answers."
+msgstr "ドキュメント、Web ページ、画像からナレッジコレクションを作成し、チャットの回答の情報源として使用できます。"
 
 #: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:12
 msgid ""

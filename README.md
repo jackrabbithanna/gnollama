@@ -15,7 +15,7 @@ Whether you are developing, experimenting, or chatting with local models, Gnolla
 
 ## Features
 
-* **Multi-Host Management**: Connect to local Ollama servers, remote servers, or Ollama Cloud. Add, edit, or delete configurations, verify host status, and define a default host.
+* **Multi-Host Management**: Connect to local or remote Ollama servers, Ollama Cloud, OpenAI, OpenRouter, the Vercel AI Gateway, LM Studio, or other OpenAI-compatible servers. Add, edit, or delete configurations, verify host status, and define a default host.
 * **Generation Workflows**:
   * **New Chat (`/api/chat`)**: Multi-turn sessions that preserve conversation context.
   * **New Response (`/api/generate`)**: Single-turn completions ideal for prompt engineering and testing.

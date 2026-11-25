@@ -9,7 +9,7 @@ A Gnome user interface to [Ollama](https://ollama.com)
 
 ## Description
 
-**Gnollama** is a modern, feature-rich GNOME user interface for [Ollama](https://ollama.com) built using Python, GTK4, and Libadwaita. It provides a native, responsive Linux desktop experience for interacting with LLMs.
+**Gnollama** is a modern, feature-rich GNOME user interface for numerous model providers,  built using Python, GTK4, and Libadwaita. It provides a native, responsive Linux desktop experience for interacting with LLMs.
 
 Whether you are developing, experimenting, or chatting with local models, Gnollama makes it easy to run prompts across multiple local or remote hosts simultaneously.
 

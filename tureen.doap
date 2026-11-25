@@ -5,7 +5,7 @@
          xmlns:gnome="http://api.gnome.org/doap-extensions#"
          xmlns="http://usefulinc.com/ns/doap#">
 
-  <name>tureen</name>
+  <name>Tureen</name>
   <shortdesc xml:lang="en">Native GNOME client for local and cloud AI: chat, compare models, generate images, and create local RAG collections</shortdesc>
   <description xml:lang="en">
 A GNOME user interface for local and cloud AI models. Connects to Ollama, LM Studio, and other OpenAI-compatible servers, and to Ollama Cloud, OpenAI, OpenRouter, and the Vercel AI Gateway.

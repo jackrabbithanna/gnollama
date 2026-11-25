@@ -190,7 +190,9 @@ class ChatUseTests(unittest.TestCase):
         self.assertEqual(messages[0]['images'], ['mine'])
 
     def test_retrieved_images_go_only_to_a_model_that_sees_them(self):
-        load = lambda snapshot: ['found']
+        def load(snapshot):
+            return ['found']
+
         for support, expected in ((True, ['found']), (False, None), (None, None)):
             state = SimpleNamespace(retrieval=copy.deepcopy(self.SNAPSHOT), image_support=support,
                                     reference_images=load)

@@ -28,28 +28,40 @@
   <provides>
     <id>io.github.jackrabbithanna.Gnollama</id>
   </provides>
+  <keywords>
+    <keyword translate="no">Gnollama</keyword>
+    <keyword translate="no">Ollama</keyword>
+    <keyword translate="no">LM Studio</keyword>
+    <keyword translate="no">OpenAI</keyword>
+    <keyword translate="no">OpenRouter</keyword>
+    <keyword translate="no">Vercel</keyword>
+    <keyword translate="no">LLM</keyword>
+    <keyword translate="no">AI</keyword>
+    <keyword translate="no">RAG</keyword>
+    <keyword translate="no">GNOME</keyword>
+  </keywords>
   <launchable type="desktop-id">io.github.jackrabbithanna.Tureen.desktop</launchable>
   <content_rating type="oars-1.1" />
   <branding>
-    <color type="primary" scheme_preference="light">#b7daca</color>
-    <color type="primary" scheme_preference="dark">#28483f</color>
+    <color type="primary" scheme_preference="light">#f6e0d4</color>
+    <color type="primary" scheme_preference="dark">#5c1f3a</color>
   </branding>
 
   <screenshots>
     <screenshot type="default">
-      <image>https://raw.githubusercontent.com/jackrabbithanna/tureen/0.16.0/screenshots/tureen-screenshot.png</image>
-      <caption>Ollama chat with code highlighting</caption>
+      <image>https://raw.githubusercontent.com/jackrabbithanna/tureen/0.20.0/screenshots/tureen-screenshot.png</image>
+      <caption>Chat with math and code rendering</caption>
     </screenshot>
     <screenshot>
-      <image>https://raw.githubusercontent.com/jackrabbithanna/tureen/0.16.0/screenshots/tureen-comparison.png</image>
+      <image>https://raw.githubusercontent.com/jackrabbithanna/tureen/0.20.0/screenshots/tureen-comparison.png</image>
       <caption>Compare answers from two models</caption>
     </screenshot>
     <screenshot>
-      <image>https://raw.githubusercontent.com/jackrabbithanna/tureen/0.16.0/screenshots/tureen-model-conversation.png</image>
+      <image>https://raw.githubusercontent.com/jackrabbithanna/tureen/0.20.0/screenshots/tureen-model-conversation.png</image>
       <caption>Let two models talk to each other</caption>
     </screenshot>
     <screenshot>
-      <image>https://raw.githubusercontent.com/jackrabbithanna/tureen/0.16.0/screenshots/tureen-rag-collections.png</image>
+      <image>https://raw.githubusercontent.com/jackrabbithanna/tureen/0.20.0/screenshots/tureen-rag-collections.png</image>
       <caption>Organize documents into knowledge collections</caption>
     </screenshot>
   </screenshots>
@@ -59,6 +71,7 @@
       <url type="details">https://github.com/jackrabbithanna/tureen/releases/tag/0.20.0</url>
       <description translate="no">
         <p>Gnollama is now Tureen. Settings, chats, and saved API keys from Gnollama are not carried over.</p>
+        <p>New user documentation covers every feature, with a guide to setting up each supported host.</p>
       </description>
     </release>
     <release version="0.19.0" date="2026-11-25">

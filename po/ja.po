@@ -87,8 +87,8 @@ msgid "jackrabbithanna"
 msgstr "jackrabbithanna"
 
 #: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:46
-msgid "Ollama chat with code highlighting"
-msgstr "コードの構文強調表示に対応した Ollama チャット"
+msgid "Chat with math and code rendering"
+msgstr "数式とコードの表示に対応したチャット"
 
 #: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:54 src/shortcuts-dialog.ui:26
 #: src/widgets/comparison_view.py:54 src/window.ui:128

@@ -84,7 +84,7 @@ msgid "jackrabbithanna"
 msgstr ""
 
 #: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:46
-msgid "Ollama chat with code highlighting"
+msgid "Chat with math and code rendering"
 msgstr ""
 
 #: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:54 src/shortcuts-dialog.ui:26

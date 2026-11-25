@@ -298,7 +298,7 @@ class WorkflowTests(unittest.TestCase):
         for direction in (Gtk.TextDirection.LTR, Gtk.TextDirection.RTL):
             icon = theme.lookup_icon(item.get_icon_name(), None, 16, 1, direction, Gtk.IconLookupFlags.FORCE_SYMBOLIC)
             self.assertEqual(icon.get_file().get_uri(),
-                'resource:///io/github/jackrabbithanna/Gnollama/icons/scalable/actions/gnollama-draft-symbolic.svg')
+                'resource:///io/github/jackrabbithanna/Tureen/icons/scalable/actions/tureen-draft-symbolic.svg')
 
     def test_draft_menu_preserves_live_edits_and_discards_only_selected_draft(self):
         window, original = self.make_window()

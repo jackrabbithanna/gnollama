@@ -285,7 +285,7 @@ class HostKindMigrationTests(unittest.TestCase):
 
     def test_upgrade_gives_existing_rows_the_ollama_type_and_old_chats_find_their_host(self):
         with tempfile.TemporaryDirectory() as temp, patch.dict(PROVIDERS, TYPES):
-            path = Path(temp) / 'gnollama.db'
+            path = Path(temp) / 'tureen.db'
             document, chosen = self.old_database(path)
             context = AppContext(temp)
             try:
@@ -322,7 +322,7 @@ class HostKindMigrationTests(unittest.TestCase):
 
     def test_failed_upgrade_leaves_the_old_schema_and_a_backup_then_retries(self):
         with tempfile.TemporaryDirectory() as temp:
-            path = Path(temp) / 'gnollama.db'
+            path = Path(temp) / 'tureen.db'
             self.old_database(path)
             def fail(conn, progress=None):
                 conn.execute("ALTER TABLE knowledge_collections ADD COLUMN host_kind TEXT NOT NULL DEFAULT 'ollama'")

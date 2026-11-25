@@ -76,7 +76,7 @@ def fetch_url(url, directory, cancel, progress=lambda text: None):
     handler = cancel.connect(lambda *args: request_cancel.cancel())
     timer = threading.Timer(REQUEST_TIMEOUT, request_cancel.cancel)
     timer.daemon = True
-    session = Soup.Session(timeout=max(1, math.ceil(REQUEST_TIMEOUT)), user_agent='Gnollama URL Import')
+    session = Soup.Session(timeout=max(1, math.ceil(REQUEST_TIMEOUT)), user_agent='Tureen URL Import')
     stream = None
     path = None
     timer.start()

@@ -12,7 +12,7 @@ import tempfile
 import time
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-gettext.install('gnollama')
+gettext.install('tureen')
 from src.database import DatabaseManager
 from src.knowledge import make_document, new_config
 from src.vectors import vector_blob
@@ -25,7 +25,7 @@ def run(output, scale=1):
         result = fn()
         results['timings_ms'][name] = round((time.perf_counter() - start) * 1000, 3)
         return result
-    with tempfile.TemporaryDirectory(prefix='gnollama-benchmark-') as directory:
+    with tempfile.TemporaryDirectory(prefix='tureen-benchmark-') as directory:
         db = DatabaseManager(str(Path(directory) / 'fixture.db'))
         count = 10000 * scale
         with db._get_conn() as conn:

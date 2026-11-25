@@ -6,7 +6,7 @@ import re
 root = Path(__file__).resolve().parents[1]
 pins = dict(re.findall(r'^([\w-]+)==([^\s]+)$', (root / 'requirements.lock').read_text(), re.M))
 pins = {name.replace('_', '-').lower(): value for name, value in pins.items()}
-manifest = json.loads((root / 'io.github.jackrabbithanna.Gnollama.json').read_text())
+manifest = json.loads((root / 'io.github.jackrabbithanna.Tureen.json').read_text())
 seen = set()
 for module in manifest['modules']:
     for source in module.get('sources', []):

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop-application">
-  <id>io.github.jackrabbithanna.Gnollama</id>
+  <id>io.github.jackrabbithanna.Tureen</id>
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>GPL-3.0-or-later</project_license>
 
-  <name>Gnollama</name>
+  <name>Tureen</name>
   <summary>Chat with local and cloud models</summary>
   <description>
     <p>Chat with models running on your computer, on another computer, or in the cloud, using a native GNOME interface.</p>
@@ -20,12 +20,15 @@
   <developer id="io.github.jackrabbithanna">
     <name>jackrabbithanna</name>
   </developer>
-  <url type="homepage">https://github.com/jackrabbithanna/gnollama/</url>
-  <url type="vcs-browser">https://github.com/jackrabbithanna/gnollama</url>
-  <url type="bugtracker">https://github.com/jackrabbithanna/gnollama/issues</url>
+  <url type="homepage">https://github.com/jackrabbithanna/tureen/</url>
+  <url type="vcs-browser">https://github.com/jackrabbithanna/tureen</url>
+  <url type="bugtracker">https://github.com/jackrabbithanna/tureen/issues</url>
 
-  <translation type="gettext">gnollama</translation>
-  <launchable type="desktop-id">io.github.jackrabbithanna.Gnollama.desktop</launchable>
+  <translation type="gettext">tureen</translation>
+  <provides>
+    <id>io.github.jackrabbithanna.Gnollama</id>
+  </provides>
+  <launchable type="desktop-id">io.github.jackrabbithanna.Tureen.desktop</launchable>
   <content_rating type="oars-1.1" />
   <branding>
     <color type="primary" scheme_preference="light">#ffbe6f</color>
@@ -34,26 +37,32 @@
 
   <screenshots>
     <screenshot type="default">
-      <image>https://raw.githubusercontent.com/jackrabbithanna/gnollama/0.16.0/screenshots/gnollama-screenshot.png</image>
+      <image>https://raw.githubusercontent.com/jackrabbithanna/tureen/0.16.0/screenshots/tureen-screenshot.png</image>
       <caption>Ollama chat with code highlighting</caption>
     </screenshot>
     <screenshot>
-      <image>https://raw.githubusercontent.com/jackrabbithanna/gnollama/0.16.0/screenshots/gnollama-comparison.png</image>
+      <image>https://raw.githubusercontent.com/jackrabbithanna/tureen/0.16.0/screenshots/tureen-comparison.png</image>
       <caption>Compare answers from two models</caption>
     </screenshot>
     <screenshot>
-      <image>https://raw.githubusercontent.com/jackrabbithanna/gnollama/0.16.0/screenshots/gnollama-model-conversation.png</image>
+      <image>https://raw.githubusercontent.com/jackrabbithanna/tureen/0.16.0/screenshots/tureen-model-conversation.png</image>
       <caption>Let two models talk to each other</caption>
     </screenshot>
     <screenshot>
-      <image>https://raw.githubusercontent.com/jackrabbithanna/gnollama/0.16.0/screenshots/gnollama-rag-collections.png</image>
+      <image>https://raw.githubusercontent.com/jackrabbithanna/tureen/0.16.0/screenshots/tureen-rag-collections.png</image>
       <caption>Organize documents into knowledge collections</caption>
     </screenshot>
   </screenshots>
 
   <releases>
+    <release version="0.20.0" date="2026-11-25">
+      <url type="details">https://github.com/jackrabbithanna/tureen/releases/tag/0.20.0</url>
+      <description translate="no">
+        <p>Gnollama is now Tureen. Settings, chats, and saved API keys from Gnollama are not carried over.</p>
+      </description>
+    </release>
     <release version="0.19.0" date="2026-11-25">
-      <url type="details">https://github.com/jackrabbithanna/gnollama/releases/tag/0.19.0</url>
+      <url type="details">https://github.com/jackrabbithanna/tureen/releases/tag/0.19.0</url>
       <description translate="no">
         <p>Connect to OpenAI, OpenRouter, the Vercel AI Gateway, LM Studio, and other OpenAI-compatible servers, as well as Ollama.</p>
         <p>Each model shows its capabilities and pricing, and the model list is sorted alphabetically and can be searched.</p>
@@ -63,7 +72,7 @@
       </description>
     </release>
     <release version="0.18.0" date="2026-11-24">
-      <url type="details">https://github.com/jackrabbithanna/gnollama/releases/tag/0.18.0</url>
+      <url type="details">https://github.com/jackrabbithanna/tureen/releases/tag/0.18.0</url>
       <description translate="no">
         <p>Numbered lists in answers keep their numbers, and nested lists are indented.</p>
         <p>Tables in answers are shown as real tables with aligned columns, and can be copied.</p>
@@ -73,14 +82,14 @@
       </description>
     </release>
     <release version="0.17.0" date="2026-11-23">
-      <url type="details">https://github.com/jackrabbithanna/gnollama/releases/tag/0.17.0</url>
+      <url type="details">https://github.com/jackrabbithanna/tureen/releases/tag/0.17.0</url>
       <description translate="no">
         <p>Use the GNOME 51 runtime.</p>
         <p>Find Gnollama more easily in app stores and launchers with search keywords, a chat category, and more screenshots.</p>
       </description>
     </release>
     <release version="0.16.0" date="2026-09-11">
-      <url type="details">https://github.com/jackrabbithanna/gnollama/releases/tag/0.16.0</url>
+      <url type="details">https://github.com/jackrabbithanna/tureen/releases/tag/0.16.0</url>
       <description translate="no">
         <p>Start a conversation between two models and watch them reply to each other.</p>
         <p>Pause, resume, or retry a turn, and reopen recent model conversations from the sidebar.</p>
@@ -88,7 +97,7 @@
       </description>
     </release>
     <release version="0.15.0" date="2026-09-11">
-      <url type="details">https://github.com/jackrabbithanna/gnollama/releases/tag/0.15.0</url>
+      <url type="details">https://github.com/jackrabbithanna/tureen/releases/tag/0.15.0</url>
       <description translate="no">
         <p>Compare answers to the same prompt from different models side by side.</p>
         <p>Unsent messages are kept as drafts, and saved conversations can be searched.</p>
@@ -143,26 +152,26 @@
       </description>
     </release>
     <release version="0.9.2" date="2026-06-12">
-      <url type="details">https://github.com/jackrabbithanna/gnollama/releases/tag/0.9.2</url>
+      <url type="details">https://github.com/jackrabbithanna/tureen/releases/tag/0.9.2</url>
       <description translate="no">
         <p>Add pin chat feature to saved chats</p>
         <p>Use action menu for saved chat actions</p>
       </description>
     </release>
     <release version="0.9.1" date="2026-05-16">
-      <url type="details">https://github.com/jackrabbithanna/gnollama/releases/tag/0.9.1</url>
+      <url type="details">https://github.com/jackrabbithanna/tureen/releases/tag/0.9.1</url>
       <description translate="no">
         <p>Update translations</p>
       </description>
     </release>
     <release version="0.9.0" date="2026-05-16">
-      <url type="details">https://github.com/jackrabbithanna/gnollama/releases/tag/0.9.0</url>
+      <url type="details">https://github.com/jackrabbithanna/tureen/releases/tag/0.9.0</url>
       <description translate="no">
         <p>Change storage to use SQLite for hosts and chat history</p>
       </description>
     </release>
     <release version="0.8.0" date="2026-05-16">
-      <url type="details">https://github.com/jackrabbithanna/gnollama/releases/tag/0.8.0</url>
+      <url type="details">https://github.com/jackrabbithanna/tureen/releases/tag/0.8.0</url>
       <description translate="no">
         <p>Re-architecture of chat tab code, separating components into widgets</p>
         <p>Replace Adw.MessageDialog with Adw.AlertDialog</p>
@@ -172,7 +181,7 @@
       </description>
     </release>
     <release version="0.7.0" date="2026-04-26">
-      <url type="details">https://github.com/jackrabbithanna/gnollama/releases/tag/0.7.0</url>
+      <url type="details">https://github.com/jackrabbithanna/tureen/releases/tag/0.7.0</url>
       <description translate="no">
         <p>Add Manage Hosts dialog to create/edit/delete multiple hosts</p>
         <p>Add Manage Models dialog to add/remove models from a host</p>
@@ -180,7 +189,7 @@
       </description>
     </release>
     <release version="0.6.0" date="2026-04-25">
-      <url type="details">https://github.com/jackrabbithanna/gnollama/releases/tag/0.6.0</url>
+      <url type="details">https://github.com/jackrabbithanna/tureen/releases/tag/0.6.0</url>
       <description translate="no">
         <p>Add API Details fieldset in response</p>
         <p>Add Clear chat history dialog</p>
@@ -190,7 +199,7 @@
       </description>
     </release>
     <release version="0.5.6" date="2025-12-28">
-      <url type="details">https://github.com/jackrabbithanna/gnollama/releases/tag/0.5.6</url>
+      <url type="details">https://github.com/jackrabbithanna/tureen/releases/tag/0.5.6</url>
       <description translate="no">
         <p>First production release</p>
       </description>

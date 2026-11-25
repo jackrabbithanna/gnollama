@@ -20,7 +20,7 @@ ROOT = Path(__file__).resolve().parents[1]
 class TranslationTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.temp = tempfile.TemporaryDirectory(prefix='gnollama-i18n-tests-')
+        cls.temp = tempfile.TemporaryDirectory(prefix='tureen-i18n-tests-')
         cls.addClassCleanup(cls.temp.cleanup)
         cls.directory = Path(cls.temp.name)
         # GLib intentionally disables translations for C and C.UTF-8 locales.
@@ -35,7 +35,7 @@ class TranslationTests(unittest.TestCase):
         ]
         cls.catalogs = {}
         for language in cls.languages:
-            output = cls.directory / language / 'LC_MESSAGES/gnollama.mo'
+            output = cls.directory / language / 'LC_MESSAGES/tureen.mo'
             output.parent.mkdir(parents=True)
             subprocess.run(['msgfmt', '--check', '--check-accelerators=_',
                             '-o', str(output), str(ROOT / f'po/{language}.po')],
@@ -58,8 +58,8 @@ class TranslationTests(unittest.TestCase):
 
     def test_catalogs_and_template_match_current_sources(self):
         self.assertEqual(self.languages, sorted(set(self.languages)))
-        self.compare(ROOT / 'po/gnollama.pot', self.template)
-        self.compare(self.template, ROOT / 'po/gnollama.pot')
+        self.compare(ROOT / 'po/tureen.pot', self.template)
+        self.compare(self.template, ROOT / 'po/tureen.pot')
         for language in self.languages:
             with self.subTest(language=language):
                 catalog = ROOT / f'po/{language}.po'
@@ -77,7 +77,7 @@ class TranslationTests(unittest.TestCase):
                 self.assertIn(str(path.relative_to(ROOT)), listed)
         for path in (ROOT / 'src').rglob('*.ui'):
             tree = ET.parse(path)
-            self.assertEqual(tree.getroot().get('domain'), 'gnollama', str(path))
+            self.assertEqual(tree.getroot().get('domain'), 'tureen', str(path))
             if tree.findall('.//*[@translatable="yes"]'):
                 self.assertIn(str(path.relative_to(ROOT)), listed)
 
@@ -118,7 +118,7 @@ class TranslationTests(unittest.TestCase):
             with self.subTest(language='uk', count=count):
                 self.assertEqual(self.catalogs['uk'].plural(count), category)
         menu = ('_New Chat', '_New Response', '_Manage hosts', '_Manage models',
-                '_Keyboard Shortcuts', '_About Gnollama')
+                '_Keyboard Shortcuts', '_About Tureen')
         for language, catalog in self.catalogs.items():
             with self.subTest(language=language):
                 mnemonics = []

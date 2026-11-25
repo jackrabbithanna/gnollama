@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <title>Bisque — a swirl of cream in a red soup bowl</title>
+  <defs>
+    <linearGradient id="soup" x2="0" y2="1">
+      <stop stop-color="#c01c28"/>
+      <stop offset=".38" stop-color="#ed333b"/>
+      <stop offset="1" stop-color="#f66151"/>
+    </linearGradient>
+  </defs>
+  <g id="handles" fill="#1a5fb4">
+    <rect x="6" y="50" width="28" height="24" rx="9"/>
+    <rect x="94" y="50" width="28" height="24" rx="9"/>
+  </g>
+  <g fill="#62a0ea">
+    <rect x="6" y="48" width="28" height="22" rx="9"/>
+    <rect x="94" y="48" width="28" height="22" rx="9"/>
+  </g>
+  <circle id="base" cx="64" cy="64" r="48" fill="#1a5fb4"/>
+  <circle id="rim" cx="64" cy="60" r="48" fill="#99c1f1"/>
+  <circle cx="64" cy="60" r="42" fill="#f6f5f4"/>
+  <circle id="bisque" cx="64" cy="60" r="38" fill="url(#soup)"/>
+  <path id="cream" fill="#f6f5f4" d="M87 53c-2 18-24 35-40 25-12-8-5-23 8-26 10-3 21 3 17 12-2 5-9 7-14 4 8 0 11-7 5-9-9-4-21 6-14 13 11 11 32-3 38-19Z"/>
+  <path id="basil" fill="#26a269" d="M56 46c0-12 8-19 22-18-1 13-10 21-22 18Z"/>
+  <path fill="#8ff0a4" d="M56 46c0-12 8-19 22-18Z"/>
+</svg>

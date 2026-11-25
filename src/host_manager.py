@@ -5,7 +5,7 @@ from .providers import PROVIDERS, ProviderError, validate_url
 from .session import ViewRequests
 from .credentials import CredentialError
 
-@Gtk.Template(resource_path='/io/github/jackrabbithanna/Gnollama/host_edit_dialog.ui')
+@Gtk.Template(resource_path='/io/github/jackrabbithanna/Tureen/host_edit_dialog.ui')
 class HostEditDialog(Adw.Dialog):
     """Dialog for adding or editing a host of any provider type."""
     __gtype_name__ = 'HostEditDialog'
@@ -167,7 +167,7 @@ class HostEditDialog(Adw.Dialog):
         self.validation_error.set_text(error)
         self.validation_error.set_visible(bool(error) and bool(args))
 
-@Gtk.Template(resource_path='/io/github/jackrabbithanna/Gnollama/host_manager.ui')
+@Gtk.Template(resource_path='/io/github/jackrabbithanna/Tureen/host_manager.ui')
 class HostManagerDialog(Adw.Dialog):
     """Dialog for managing host configurations."""
     __gtype_name__ = 'HostManagerDialog'

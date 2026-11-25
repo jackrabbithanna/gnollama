@@ -144,7 +144,7 @@ class SidebarUITests(unittest.TestCase):
         rows = self.rows(window, 'decision')
         self.assertEqual([row.chat_id for row in rows], [f'decision-{index}' for index in range(8, 3, -1)])
         self.assertEqual({row.get_icon_name() for row in rows}, {ICONS['decision']})
-        self.assertEqual(ICONS['decision'], 'gnollama-decision-symbolic')
+        self.assertEqual(ICONS['decision'], 'tureen-decision-symbolic')
         theme = Gtk.IconTheme.get_for_display(Gdk.Display.get_default())
         self.assertTrue(theme.has_icon(ICONS['decision']))
         self.assertEqual(window.sections['decisions'].history.footers['decision'].get_tooltip(),
@@ -159,7 +159,7 @@ class SidebarUITests(unittest.TestCase):
         rows = self.rows(window, 'image')
         self.assertEqual([row.chat_id for row in rows], [f'image-{index}' for index in range(8, 3, -1)])
         self.assertEqual({row.get_icon_name() for row in rows}, {ICONS['image']})
-        self.assertEqual(ICONS['image'], 'gnollama-image-symbolic')
+        self.assertEqual(ICONS['image'], 'tureen-image-symbolic')
         theme = Gtk.IconTheme.get_for_display(Gdk.Display.get_default())
         self.assertTrue(theme.has_icon(ICONS['image']))
         self.assertEqual(window.sections['images'].history.footers['image'].get_tooltip(), 'Recent images · Show more')
@@ -339,4 +339,4 @@ class SidebarUITests(unittest.TestCase):
             self.assertEqual(self.rows(window, key)[0].get_icon_name(), name)
             for direction in (Gtk.TextDirection.LTR, Gtk.TextDirection.RTL):
                 icon = theme.lookup_icon(name, None, 16, 1, direction, Gtk.IconLookupFlags.FORCE_SYMBOLIC)
-                self.assertIn('/io/github/jackrabbithanna/Gnollama/icons/', icon.get_file().get_uri())
+                self.assertIn('/io/github/jackrabbithanna/Tureen/icons/', icon.get_file().get_uri())

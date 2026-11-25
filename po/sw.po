@@ -1,11 +1,11 @@
-# Swahili translations for gnollama.
+# Swahili translations for tureen.
 # Copyright (C) 2026 Jackrabbithanna
-# Distributed under the same license as gnollama.
+# Distributed under the same license as tureen.
 # Translated and reviewed with AI assistance, 2026.
 msgid ""
 msgstr ""
-"Project-Id-Version: gnollama 0.19.0\n"
-"Report-Msgid-Bugs-To: https://github.com/jackrabbithanna/gnollama/issues\n"
+"Project-Id-Version: tureen 0.19.0\n"
+"Report-Msgid-Bugs-To: https://github.com/jackrabbithanna/tureen/issues\n"
 "POT-Creation-Date: 2026-09-11 12:07-0600\n"
 "PO-Revision-Date: 2026-09-11 00:00+0000\n"
 "Last-Translator: AI-assisted translation\n"
@@ -17,21 +17,21 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.18.0\n"
 
-#: data/io.github.jackrabbithanna.Gnollama.desktop.in:8
+#: data/io.github.jackrabbithanna.Tureen.desktop.in:8
 msgid "Ollama;LLM;AI;Chat;Assistant;"
 msgstr "Ollama;LLM;AI;Chat;Assistant;"
 
-#: data/io.github.jackrabbithanna.Gnollama.desktop.in:2
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:7 src/startup.py:10
+#: data/io.github.jackrabbithanna.Tureen.desktop.in:2
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:7 src/startup.py:10
 #: src/window.ui:5
-msgid "Gnollama"
-msgstr "Gnollama"
+msgid "Tureen"
+msgstr "Tureen"
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:8
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:8
 msgid "Chat with local and cloud models"
 msgstr "Piga gumzo na miundo ya ndani na ya wingu"
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:10
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:10
 msgid ""
 "Chat with models running on your computer, on another computer, or in the cloud, "
 "using a native GNOME interface."
@@ -39,7 +39,7 @@ msgstr ""
 "Piga gumzo na miundo inayoendeshwa kwenye kompyuta yako, kwenye kompyuta nyingine, "
 "au kwenye wingu, kupitia kiolesura asilia cha GNOME."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:11
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:11
 msgid ""
 "Connect to Ollama, LM Studio, and other OpenAI-compatible servers, or to Ollama "
 "Cloud, OpenAI, OpenRouter, and the Vercel AI Gateway."
@@ -47,7 +47,7 @@ msgstr ""
 "Unganisha na Ollama, LM Studio, na seva nyingine zinazooana na OpenAI, au na Ollama "
 "Cloud, OpenAI, OpenRouter, na Vercel AI Gateway."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:11
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:11
 msgid ""
 "Keep conversations in separate tabs, attach images to vision models, and read "
 "responses with Markdown and highlighted code."
@@ -55,7 +55,7 @@ msgstr ""
 "Weka mazungumzo kwenye vichupo tofauti, ambatisha picha kwa modeli zinazochakata "
 "picha, na usome majibu yenye Markdown na msimbo ulioangaziwa."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:13
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:13
 msgid ""
 "Compare answers from several models side by side, let two models talk to each "
 "other, ask decision models structured questions, and generate images from a prompt."
@@ -63,7 +63,7 @@ msgstr ""
 "Linganisha majibu ya miundo kadhaa bega kwa bega, acha miundo miwili izungumze, "
 "uliza miundo ya maamuzi maswali yaliyopangwa, na uunde picha kutoka kwa kidokezo."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:14
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:14
 msgid ""
 "Build knowledge collections from documents, web pages, and images, and use them as "
 "sources for chat answers."
@@ -71,7 +71,7 @@ msgstr ""
 "Unda mikusanyiko ya maarifa kutoka kwa hati, kurasa za wavuti, na picha, na uitumie "
 "kama vyanzo vya majibu ya gumzo."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:12
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:12
 msgid ""
 "Manage hosts and models, customize generation and thinking settings, and inspect "
 "response statistics including cached prompt tokens."
@@ -79,7 +79,7 @@ msgstr ""
 "Dhibiti seva na modeli, rekebisha mipangilio ya uzalishaji na ufikiri, na ukague "
 "takwimu za majibu, zikiwemo tokeni za ingizo zilizohifadhiwa kwenye akiba."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:13
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:13
 msgid ""
 "Generate and validate structured JSON, import JSON schemas, and export responses. "
 "Inspect loaded models and release their memory when finished."
@@ -87,7 +87,7 @@ msgstr ""
 "Zalisha na uhakiki JSON yenye muundo, leta skima za JSON, na uhamishe majibu. Kagua "
 "modeli zilizopakiwa na uachilie kumbukumbu yake ukimaliza."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:14
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:14
 msgid ""
 "Save and organize conversations with pinning and editable titles. Stop a response at "
 "any time and keep its partial answer in your history."
@@ -95,45 +95,45 @@ msgstr ""
 "Hifadhi na upange mazungumzo kwa kuyabandika na kubadilisha vichwa. Simamisha jibu "
 "wakati wowote na uhifadhi sehemu iliyozalishwa kwenye historia yako."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:18
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:18
 msgid "jackrabbithanna"
 msgstr "jackrabbithanna"
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:46
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:46
 msgid "Ollama chat with code highlighting"
 msgstr "Mazungumzo ya Ollama yenye uangaziaji wa msimbo"
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:54 src/shortcuts-dialog.ui:26
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:54 src/shortcuts-dialog.ui:26
 #: src/widgets/comparison_view.py:54 src/window.ui:128
 msgid "New Comparison"
 msgstr "Ulinganisho Mpya"
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:55 src/window.py:80
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:55 src/window.py:80
 msgid "Drafts"
 msgstr "Rasimu"
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:56 src/window.py:72
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:56 src/window.py:72
 msgid "Search conversations"
 msgstr "Tafuta mazungumzo"
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:57 src/window.py:408
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:57 src/window.py:408
 msgid "Export Markdown"
 msgstr "Hamisha Markdown"
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:58 src/window.py:409
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:58 src/window.py:409
 msgid "Export JSON"
 msgstr "Hamisha JSON"
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:59 src/tab.py:106
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:59 src/tab.py:106
 #: src/widgets/comparison_view.py:284
 msgid "Context estimate"
 msgstr "Makadirio ya muktadha"
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:65
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:65
 msgid "Connect directly to Ollama Cloud from Chat and Response tabs."
 msgstr "Unganisha moja kwa moja na Ollama Cloud kutoka vichupo vya Gumzo na Jibu."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:66
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:66
 msgid ""
 "Store each host's API key in the desktop keyring, with session-only use when the "
 "keyring is unavailable."
@@ -141,7 +141,7 @@ msgstr ""
 "Hifadhi ufunguo wa API wa kila seva kwenye hifadhi ya funguo ya eneo-kazi, au uutumie"
 " kwa kipindi hiki pekee ikiwa hifadhi haipatikani."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:67
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:67
 msgid ""
 "Browse cloud models with controls adapted to the service, and use local knowledge "
 "sources in cloud chats."
@@ -149,8 +149,8 @@ msgstr ""
 "Vinjari modeli za wingu kwa vidhibiti vinavyolingana na huduma, na utumie vyanzo vya "
 "maarifa vya ndani kwenye gumzo za wingu."
 
-#: data/io.github.jackrabbithanna.Gnollama.desktop.in:2
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:72
+#: data/io.github.jackrabbithanna.Tureen.desktop.in:2
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:72
 msgid ""
 "Add a Knowledge Library for text and PDF imports, local embedding indexes, and "
 "source-grounded chats."
@@ -158,8 +158,8 @@ msgstr ""
 "Imeongeza Maktaba ya Maarifa kwa kuleta maandishi na PDF, faharasa za vekta za ndani,"
 " na mazungumzo yanayotegemea vyanzo."
 
-#: data/io.github.jackrabbithanna.Gnollama.desktop.in:2
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:74
+#: data/io.github.jackrabbithanna.Tureen.desktop.in:2
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:74
 msgid ""
 "Start with knowledge collections and add text, files, or URLs with explicit "
 "destinations and guided previews."
@@ -167,8 +167,8 @@ msgstr ""
 "Anza na mikusanyiko ya maarifa na uongeze maandishi, faili au URL kwa kuchagua wazi "
 "mahali pa kuzihifadhi na kutumia hakiki zenye mwongozo."
 
-#: data/io.github.jackrabbithanna.Gnollama.desktop.in:2
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:75
+#: data/io.github.jackrabbithanna.Tureen.desktop.in:2
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:75
 msgid ""
 "Choose collections before search settings, and use adaptive chat settings with "
 "clearer controls and feedback."
@@ -177,15 +177,15 @@ msgstr ""
 "mazungumzo inayojirekebisha kulingana na nafasi, yenye vidhibiti na mrejesho ulio "
 "wazi zaidi."
 
-#: data/io.github.jackrabbithanna.Gnollama.desktop.in:2
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:76
+#: data/io.github.jackrabbithanna.Tureen.desktop.in:2
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:76
 msgid "Create and compare embeddings, inspect chunks and vectors, and test semantic searches."
 msgstr ""
 "Unda na ulinganishe viwakilishi vya vekta, kagua vipande na vekta, na ujaribu "
 "utafutaji wa kisemantiki."
 
-#: data/io.github.jackrabbithanna.Gnollama.desktop.in:2
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:77
+#: data/io.github.jackrabbithanna.Tureen.desktop.in:2
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:77
 msgid ""
 "Select documents or chunks for chats, with independent embedding hosts and saved "
 "source passages."
@@ -193,8 +193,8 @@ msgstr ""
 "Chagua hati au vipande kwa mazungumzo, ukitumia seva huru za kuunda vekta na vifungu "
 "vya vyanzo vilivyohifadhiwa."
 
-#: data/io.github.jackrabbithanna.Gnollama.desktop.in:2
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:78
+#: data/io.github.jackrabbithanna.Tureen.desktop.in:2
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:78
 msgid ""
 "Warn about stored embeddings when deleting models, with optional vector cleanup that "
 "retains source text."
@@ -202,8 +202,8 @@ msgstr ""
 "Imeongeza onyo kuhusu viwakilishi vya vekta vilivyohifadhiwa unapofuta modeli, pamoja"
 " na chaguo la kufuta vekta huku ukihifadhi maandishi asili."
 
-#: data/io.github.jackrabbithanna.Gnollama.desktop.in:2
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:79
+#: data/io.github.jackrabbithanna.Tureen.desktop.in:2
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:79
 msgid ""
 "Search with sqlite-vec, automatically migrate existing vectors with a database "
 "backup, and use the Qwen3 retrieval preset."
@@ -211,7 +211,7 @@ msgstr ""
 "Tafuta kwa sqlite-vec, hamisha vekta zilizopo kiotomatiki huku ukihifadhi nakala ya "
 "hifadhidata, na utumie wasifu wa utafutaji wa Qwen3."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:80
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:80
 msgid ""
 "Organize documents into collections with shared embedding settings, automatic builds,"
 " and live collection selection in chats."
@@ -220,7 +220,7 @@ msgstr ""
 "faharasa kiotomatiki, na uteuzi wa mikusanyiko unaosasishwa moja kwa moja kwenye "
 "mazungumzo."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:81
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:81
 msgid ""
 "Choose collections as chat sources and compare cosine similarity, Euclidean distance,"
 " or Manhattan distance with appropriate search cutoffs."
@@ -229,7 +229,7 @@ msgstr ""
 "umbali wa Euclid au umbali wa Manhattan kwa kutumia vizingiti vinavyofaa vya "
 "utafutaji."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:82
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:82
 msgid ""
 "Hide embedding-only models from Chat and Response model selection while keeping them "
 "available in Knowledge and Manage Models."
@@ -237,7 +237,7 @@ msgstr ""
 "Modeli za kuunda vekta pekee zimefichwa katika uteuzi wa modeli za Mazungumzo na "
 "Jibu, lakini bado zinapatikana katika Maarifa na Dhibiti Modeli."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:83
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:83
 msgid ""
 "Import batches of URLs into collections with main-content extraction, CSS selectors, "
 "editable previews, and source links in chats."
@@ -245,7 +245,7 @@ msgstr ""
 "Leta makundi ya URL katika mikusanyiko kwa uchimbaji wa maudhui makuu, viteuzi vya "
 "CSS, hakiki zinazoharirika, na viungo vya vyanzo kwenye mazungumzo."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:84
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:84
 msgid ""
 "Review changed web documents before replacing their text and rebuilding all affected "
 "embedding indexes."
@@ -481,9 +481,9 @@ msgstr ""
 "ujaribu tena."
 
 #: src/database.py:83
-msgid "This database was created by a newer Gnollama version. Update Gnollama to open it."
+msgid "This database was created by a newer Tureen version. Update Tureen to open it."
 msgstr ""
-"Hifadhidata hii iliundwa na toleo jipya zaidi la Gnollama. Sasisha Gnollama ili "
+"Hifadhidata hii iliundwa na toleo jipya zaidi la Tureen. Sasisha Tureen ili "
 "kuifungua."
 
 #: src/database.py:90
@@ -491,8 +491,8 @@ msgid "Backing up the database…"
 msgstr "Inahifadhi nakala ya hifadhidata…"
 
 #: src/database.py:200
-msgid "This database requires a newer Gnollama version."
-msgstr "Hifadhidata hii inahitaji toleo jipya zaidi la Gnollama."
+msgid "This database requires a newer Tureen version."
+msgstr "Hifadhidata hii inahitaji toleo jipya zaidi la Tureen."
 
 #: src/database.py:219
 #, python-brace-format
@@ -1147,8 +1147,8 @@ msgid "Unloading…"
 msgstr "Inaondoa kwenye kumbukumbu…"
 
 #: src/model_manager.py:209
-msgid "A chat or embedding job is using this model in Gnollama."
-msgstr "Mazungumzo au kazi ya kuunda vekta inatumia modeli hii katika Gnollama."
+msgid "A chat or embedding job is using this model in Tureen."
+msgstr "Mazungumzo au kazi ya kuunda vekta inatumia modeli hii katika Tureen."
 
 #: src/model_manager.py:228
 msgid "Could not unload model"
@@ -1474,8 +1474,8 @@ msgid "Toggle Sidebar"
 msgstr "Onyesha au ficha utepe wa pembeni"
 
 #: src/startup.py:16 src/startup.py:54
-msgid "Opening Gnollama"
-msgstr "Inafungua Gnollama"
+msgid "Opening Tureen"
+msgstr "Inafungua Tureen"
 
 #: src/startup.py:20 src/tab.py:440 src/widgets/knowledge_import.py:88
 #: src/widgets/knowledge_view.py:441 src/widgets/url_import.py:232 src/window.py:174
@@ -1711,9 +1711,9 @@ msgstr ""
 "zenye kikomo."
 
 #: src/vectors.py:66
-msgid "Could not load sqlite-vec. Reinstall Gnollama or install its sqlite-vec dependency."
+msgid "Could not load sqlite-vec. Reinstall Tureen or install its sqlite-vec dependency."
 msgstr ""
-"Imeshindwa kupakia sqlite-vec. Sakinisha tena Gnollama au usakinishe kitegemezi chake"
+"Imeshindwa kupakia sqlite-vec. Sakinisha tena Tureen au usakinishe kitegemezi chake"
 " cha sqlite-vec."
 
 #: src/vectors.py:120
@@ -2460,10 +2460,10 @@ msgstr "Chagua hati ili kuikagua. Kila uletaji mpya huomba uchague mkusanyiko le
 
 #: src/widgets/knowledge_view.py:264
 msgid ""
-"Add text, files, or URLs to this collection. Gnollama prepares the documents "
+"Add text, files, or URLs to this collection. Tureen prepares the documents "
 "automatically so chats can search them."
 msgstr ""
-"Ongeza maandishi, faili au URL kwenye mkusanyiko huu. Gnollama huandaa hati "
+"Ongeza maandishi, faili au URL kwenye mkusanyiko huu. Tureen huandaa hati "
 "kiotomatiki ili mazungumzo yaweze kuzitafuta."
 
 #: src/widgets/knowledge_view.py:266
@@ -3663,8 +3663,8 @@ msgid "_Keyboard Shortcuts"
 msgstr "Mikato ya ki_bodi"
 
 #: src/window.ui:150
-msgid "_About Gnollama"
-msgstr "_Kuhusu Gnollama"
+msgid "_About Tureen"
+msgstr "_Kuhusu Tureen"
 
 #: src/window.py:78
 msgid "Recent chats"
@@ -3833,15 +3833,15 @@ msgstr "Mapendekezo ya utafutaji"
 msgid "No matching conversations"
 msgstr "Hakuna mazungumzo yanayolingana"
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in
 msgid "Compare answers from two models"
 msgstr "Linganisha majibu ya modeli mbili"
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in
 msgid "Let two models talk to each other"
 msgstr "Ruhusu modeli mbili zizungumze"
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in
 msgid "Organize documents into knowledge collections"
 msgstr "Panga hati katika makusanyo ya maarifa"
 
@@ -3934,8 +3934,8 @@ msgid "Tokens/s (measured locally): {0}"
 msgstr "Tokeni/s (imepimwa hapa): {0}"
 
 #: src/bubbles.py
-msgid "Timed by Gnollama, not reported by the server. The total includes network delay and model loading."
-msgstr "Imepimwa na Gnollama, haikuripotiwa na seva. Jumla inajumuisha ucheleweshaji wa mtandao na upakiaji wa modeli."
+msgid "Timed by Tureen, not reported by the server. The total includes network delay and model loading."
+msgstr "Imepimwa na Tureen, haikuripotiwa na seva. Jumla inajumuisha ucheleweshaji wa mtandao na upakiaji wa modeli."
 
 #: src/providers/lmstudio.py
 msgid "LM Studio"

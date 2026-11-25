@@ -16,7 +16,7 @@ from .widgets.message_list import MessageList
 from .widgets.chat_input import ChatInput
 from .widgets.options_panel import OptionsPanel
 
-@Gtk.Template(resource_path='/io/github/jackrabbithanna/Gnollama/tab.ui')
+@Gtk.Template(resource_path='/io/github/jackrabbithanna/Tureen/tab.ui')
 class GenerationTab(Gtk.Box):
     """The view of a chat or generation session; ChatController runs it."""
     __gtype_name__ = 'GenerationTab'

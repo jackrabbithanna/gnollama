@@ -31,12 +31,12 @@ jobs:
           flatpak install --user --noninteractive flathub org.gnome.Sdk//51 org.gnome.Platform//51
       - name: Build and test
         run: |
-          flatpak-builder --user --force-clean --disable-rofiles-fuse _flatpak io.github.jackrabbithanna.Gnollama.json
-          xvfb-run -a flatpak build --readonly --share=network --socket=x11 --filesystem="$PWD" --build-dir="$PWD" --env=GNOLLAMA_REQUIRE_DISPLAY=1 --env=GDK_BACKEND=x11 --env=GSK_RENDERER=cairo _flatpak sh -c 'python3 tools/check_dependencies.py && meson setup _build --prefix=/app && meson compile -C _build && meson test -C _build --print-errorlogs'
+          flatpak-builder --user --force-clean --disable-rofiles-fuse _flatpak io.github.jackrabbithanna.Tureen.json
+          xvfb-run -a flatpak build --readonly --share=network --socket=x11 --filesystem="$PWD" --build-dir="$PWD" --env=TUREEN_REQUIRE_DISPLAY=1 --env=GDK_BACKEND=x11 --env=GSK_RENDERER=cairo _flatpak sh -c 'python3 tools/check_dependencies.py && meson setup _build --prefix=/app && meson compile -C _build && meson test -C _build --print-errorlogs'
       - name: Capture GTK layouts
-        run: xvfb-run -a flatpak build --readonly --share=network --socket=x11 --filesystem="$PWD" --build-dir="$PWD" --env=GDK_BACKEND=x11 --env=GSK_RENDERER=cairo _flatpak python3 tools/review_layout.py --resource _build/src/gnollama.gresource --output validation-screenshots
+        run: xvfb-run -a flatpak build --readonly --share=network --socket=x11 --filesystem="$PWD" --build-dir="$PWD" --env=GDK_BACKEND=x11 --env=GSK_RENDERER=cairo _flatpak python3 tools/review_layout.py --resource _build/src/tureen.gresource --output validation-screenshots
       - name: Record rendering benchmark
-        run: xvfb-run -a flatpak build --readonly --share=network --socket=x11 --filesystem="$PWD" --build-dir="$PWD" --env=GDK_BACKEND=x11 --env=GSK_RENDERER=cairo _flatpak python3 tools/benchmark_rendering.py --resource _build/src/gnollama.gresource --output rendering-benchmark.json
+        run: xvfb-run -a flatpak build --readonly --share=network --socket=x11 --filesystem="$PWD" --build-dir="$PWD" --env=GDK_BACKEND=x11 --env=GSK_RENDERER=cairo _flatpak python3 tools/benchmark_rendering.py --resource _build/src/tureen.gresource --output rendering-benchmark.json
       - name: Record performance and retrieval artifacts
         run: flatpak build --readonly --share=network --socket=x11 --filesystem="$PWD" --build-dir="$PWD" _flatpak sh -c 'python3 tools/benchmark_workspace.py --output workspace-benchmark.json && python3 tools/evaluate_retrieval.py --output retrieval-evaluation.json'
       - uses: actions/upload-artifact@v4
@@ -44,7 +44,7 @@ jobs:
         with:
           name: validation-${{ matrix.runner }}
           path: |
-            .flatpak-builder/build/gnollama-*/_flatpak_build/meson-logs/
+            .flatpak-builder/build/tureen-*/_flatpak_build/meson-logs/
             _build/meson-logs/
             workspace-benchmark.json
             rendering-benchmark.json

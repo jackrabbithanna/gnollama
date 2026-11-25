@@ -21,9 +21,9 @@ class Kind:
 
 KINDS = (
     Kind('chats', ('chat', 'comparison', 'model_conversation'), ('chat', 'generate', 'comparison', 'model_conversation'),
-         ('chat', 'generate', 'comparison', 'model_conversation'), 'gnollama-chats-symbolic', 'win.new_chat_tab'),
-    Kind('decisions', ('decision',), ('decision',), ('decision',), 'gnollama-decision-symbolic', 'win.new_decision'),
-    Kind('images', ('image',), ('image',), ('image',), 'gnollama-image-symbolic', 'win.new_image'),
+         ('chat', 'generate', 'comparison', 'model_conversation'), 'tureen-chats-symbolic', 'win.new_chat_tab'),
+    Kind('decisions', ('decision',), ('decision',), ('decision',), 'tureen-decision-symbolic', 'win.new_decision'),
+    Kind('images', ('image',), ('image',), ('image',), 'tureen-image-symbolic', 'win.new_image'),
 )
 
 
@@ -59,7 +59,7 @@ class WorkspaceSection:
         sidebar_view.add_top_bar(header)
 
         self.tab_view = Adw.TabView()
-        self.toggle = Gtk.ToggleButton(icon_name='gnollama-sidebar-symbolic', tooltip_text=_('Toggle Sidebar'))
+        self.toggle = Gtk.ToggleButton(icon_name='tureen-sidebar-symbolic', tooltip_text=_('Toggle Sidebar'))
         bar = Adw.TabBar(view=self.tab_view, autohide=False, start_action_widget=self.toggle,
                          end_action_widget=Gtk.Button(icon_name='list-add-symbolic', tooltip_text=new,
                                                       action_name=kind.action, css_classes=['flat']))

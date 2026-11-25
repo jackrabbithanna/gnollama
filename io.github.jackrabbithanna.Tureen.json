@@ -1,9 +1,9 @@
 {
-    "id": "io.github.jackrabbithanna.Gnollama",
+    "id": "io.github.jackrabbithanna.Tureen",
     "runtime": "org.gnome.Platform",
     "runtime-version": "51",
     "sdk": "org.gnome.Sdk",
-    "command": "gnollama",
+    "command": "tureen",
     "finish-args": [
         "--share=network",
         "--share=ipc",
@@ -289,7 +289,7 @@
             ]
         },
         {
-            "name": "gnollama",
+            "name": "tureen",
             "builddir": true,
             "buildsystem": "meson",
             "sources": [

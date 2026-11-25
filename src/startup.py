@@ -7,13 +7,13 @@ from .app_context import AppContext
 
 class StartupWindow(Adw.ApplicationWindow):
     def __init__(self, application, on_ready):
-        super().__init__(application=application, title=_('Gnollama'), default_width=480, default_height=360)
+        super().__init__(application=application, title=_('Tureen'), default_width=480, default_height=360)
         self.on_ready = on_ready
         self.busy = False
         self.closing = False
         self.toolbar = Adw.ToolbarView()
         self.toolbar.add_top_bar(Adw.HeaderBar())
-        self.page = Adw.StatusPage(title=_('Opening Gnollama'))
+        self.page = Adw.StatusPage(title=_('Opening Tureen'))
         self.controls = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12,
                                 halign=Gtk.Align.CENTER)
         self.spinner = Adw.Spinner(width_request=32, height_request=32)
@@ -44,7 +44,7 @@ class StartupWindow(Adw.ApplicationWindow):
         self.busy = True
         self.retry.set_visible(False)
         self.spinner.set_visible(True)
-        self.page.set_title(_('Opening Gnollama'))
+        self.page.set_title(_('Opening Tureen'))
         self.page.set_description(_('Checking the database…'))
 
         def progress(message):
@@ -62,7 +62,7 @@ class StartupWindow(Adw.ApplicationWindow):
                 error = exc
             GLib.idle_add(self._completed, context, error)
 
-        threading.Thread(target=open_context, name='GnollamaStartup', daemon=False).start()
+        threading.Thread(target=open_context, name='TureenStartup', daemon=False).start()
 
     def _completed(self, context, error):
         self.busy = False

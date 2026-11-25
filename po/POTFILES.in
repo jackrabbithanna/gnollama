@@ -1,6 +1,6 @@
 # List of source files containing translatable strings. Keep sorted.
-data/io.github.jackrabbithanna.Gnollama.desktop.in
-data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in
+data/io.github.jackrabbithanna.Tureen.desktop.in
+data/io.github.jackrabbithanna.Tureen.metainfo.xml.in
 src/ai_bubble.ui
 src/bubbles.py
 src/bubbles.ui

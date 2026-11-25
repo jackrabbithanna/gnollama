@@ -7,10 +7,10 @@ from ..history import CATEGORIES, category
 from ..session import display_chat_title
 
 
-ICONS = dict(drafts='gnollama-draft-symbolic', pinned='pin-active-symbolic',
-             chat='gnollama-chats-symbolic', comparison='gnollama-comparison-symbolic',
-             model_conversation='gnollama-model-conversation-symbolic', decision='gnollama-decision-symbolic',
-             image='gnollama-image-symbolic')
+ICONS = dict(drafts='tureen-draft-symbolic', pinned='pin-active-symbolic',
+             chat='tureen-chats-symbolic', comparison='tureen-comparison-symbolic',
+             model_conversation='tureen-model-conversation-symbolic', decision='tureen-decision-symbolic',
+             image='tureen-image-symbolic')
 
 
 class HistorySidebar:

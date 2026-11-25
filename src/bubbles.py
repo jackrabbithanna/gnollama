@@ -4,7 +4,7 @@ from typing import List, Optional, Any, Dict
 from gi.repository import Gtk, GLib, Gdk
 from .markdown_view import MarkdownView
 
-@Gtk.Template(resource_path='/io/github/jackrabbithanna/Gnollama/user_bubble.ui')
+@Gtk.Template(resource_path='/io/github/jackrabbithanna/Tureen/user_bubble.ui')
 class UserBubble(Gtk.ListBoxRow):
     """A chat bubble for user messages, supporting text and images."""
     __gtype_name__ = 'UserBubble'
@@ -38,7 +38,7 @@ class UserBubble(Gtk.ListBoxRow):
                 except Exception as e:
                     print(f"Failed to load image in bubble: {e}")
 
-@Gtk.Template(resource_path='/io/github/jackrabbithanna/Gnollama/ai_bubble.ui')
+@Gtk.Template(resource_path='/io/github/jackrabbithanna/Tureen/ai_bubble.ui')
 class AiBubble(Gtk.ListBoxRow):
     """A chat bubble for AI responses, supporting markdown and 'thinking' sections."""
     __gtype_name__ = 'AiBubble'
@@ -117,7 +117,7 @@ class AiBubble(Gtk.ListBoxRow):
             self.bubble_box.append(expander)
         self._stats_label.set_text(format_statistics(stats, elapsed, first_token))
         self._stats_label.set_tooltip_text(None if server_timed(stats) or not _measured(elapsed) else _(
-            'Timed by Gnollama, not reported by the server. The total includes network delay and model loading.'))
+            'Timed by Tureen, not reported by the server. The total includes network delay and model loading.'))
 
     def show_response_metadata(self, metadata, show_stats=True):
         # One complete render, so a finished response looks the same as one loaded from history.

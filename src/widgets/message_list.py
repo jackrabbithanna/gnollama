@@ -3,7 +3,7 @@ from typing import List, Optional, Any
 from gi.repository import Adw, Gtk, GLib
 from ..bubbles import UserBubble, AiBubble
 
-@Gtk.Template(resource_path='/io/github/jackrabbithanna/Gnollama/widgets/message_list.ui')
+@Gtk.Template(resource_path='/io/github/jackrabbithanna/Tureen/widgets/message_list.ui')
 class MessageList(Gtk.Overlay):
     """Encapsulates the chat message list and scrolling behavior."""
     __gtype_name__ = 'MessageList'
@@ -21,7 +21,7 @@ class MessageList(Gtk.Overlay):
         self.stack.add_named(self.list_box, 'messages')
         self.stack.add_named(Adw.StatusPage(title=_('Start a Conversation'),
             description=_('Choose a model and enter a message. Select knowledge collections to ask questions about your documents.'),
-            icon_name='gnollama-chats-symbolic', css_classes=['compact']), 'empty')
+            icon_name='tureen-chats-symbolic', css_classes=['compact']), 'empty')
         self.stack.set_visible_child_name('empty')
         self.scrolled = Gtk.ScrolledWindow(vexpand=True, hexpand=True, child=self.stack)
         self.set_child(self.scrolled)

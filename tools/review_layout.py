@@ -20,7 +20,7 @@ parser.add_argument('--language', default='en')
 args = parser.parse_args()
 output = Path(args.output)
 output.mkdir(parents=True, exist_ok=True)
-gettext.install('gnollama')
+gettext.install('tureen')
 import gi
 gi.require_version('Gtk', '4.0')
 gi.require_version('Adw', '1')
@@ -40,34 +40,34 @@ def pump(predicate, timeout=10):
     raise AssertionError('Layout did not settle')
 
 
-with tempfile.TemporaryDirectory(prefix='gnollama-layout-') as temporary, ExitStack() as mocks:
+with tempfile.TemporaryDirectory(prefix='tureen-layout-') as temporary, ExitStack() as mocks:
     os.environ.update(XDG_DATA_HOME=temporary, XDG_CONFIG_HOME=temporary, GSETTINGS_BACKEND='memory')
     if args.language != 'en':
         import locale
         os.environ['LANGUAGE'] = args.language
         locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
-        catalog = Path(temporary) / args.language / 'LC_MESSAGES' / 'gnollama.mo'
+        catalog = Path(temporary) / args.language / 'LC_MESSAGES' / 'tureen.mo'
         catalog.parent.mkdir(parents=True)
         subprocess.run(['msgfmt', '-o', str(catalog), str(ROOT / 'po' / (args.language + '.po'))], check=True)
-        locale.bindtextdomain('gnollama', temporary)
-        locale.bind_textdomain_codeset('gnollama', 'UTF-8')
-        locale.textdomain('gnollama')
-        gettext.bindtextdomain('gnollama', temporary)
-        gettext.textdomain('gnollama')
-        gettext.install('gnollama', temporary)
+        locale.bindtextdomain('tureen', temporary)
+        locale.bind_textdomain_codeset('tureen', 'UTF-8')
+        locale.textdomain('tureen')
+        gettext.bindtextdomain('tureen', temporary)
+        gettext.textdomain('tureen')
+        gettext.install('tureen', temporary)
     Gtk.init()
     Adw.init()
     Gtk.Settings.get_default().set_property('gtk-enable-animations', False)
     Gio.Resource.load(args.resource)._register()
-    from src.window import GnollamaWindow
+    from src.window import TureenWindow
     mocks.enter_context(provider_patch('list_models', return_value=['cedar:8b', 'juniper:4b']))
     mocks.enter_context(provider_patch('show_model', return_value={'capabilities': ['completion', 'vision', 'thinking']}))
     context = AppContext(temporary)
     storage = context.storage
-    app = Adw.Application(application_id='io.github.jackrabbithanna.Gnollama.LayoutReview', flags=Gio.ApplicationFlags.NON_UNIQUE)
+    app = Adw.Application(application_id='io.github.jackrabbithanna.Tureen.LayoutReview', flags=Gio.ApplicationFlags.NON_UNIQUE)
     app.register(None)
     Gtk.Widget.set_default_direction(Gtk.TextDirection.RTL if args.language == 'ar' else Gtk.TextDirection.LTR)
-    window = GnollamaWindow(application=app, context=context)
+    window = TureenWindow(application=app, context=context)
     window.present()
     pump(lambda: context.services.idle and storage.writer.idle)
     captures, heartbeats = [], []

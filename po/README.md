@@ -1,6 +1,6 @@
 # Translation review and maintenance
 
-Reviewed against Gnollama 0.14.0 on 2026-09-10.
+Reviewed against Gnollama (now Tureen) 0.14.0 on 2026-09-10.
 
 | Language | Locale | Translated current messages |
 | --- | --- | --- |
@@ -44,7 +44,7 @@ Traditional Chinese is not included.
 - **Extraction omitted visible text.** `widgets/message_list.py` was missing
   from `POTFILES.in`, excluding the empty-chat title and guidance. Extraction
   now includes every marked Python and UI source. GTK templates explicitly
-  name the `gnollama` domain, including contextual shortcut labels.
+  name the `tureen` domain, including contextual shortcut labels.
 - **Metadata could retain old translations after an incremental build.** The
   desktop and AppStream merge targets now depend on `LINGUAS` and every listed
   catalog, so edits rebuild the installed metadata as well as the runtime catalogs.
@@ -83,19 +83,19 @@ Traditional Chinese is not included.
 ## Selecting a language
 
 The application follows the desktop language. To test a language explicitly,
-close existing Gnollama windows and launch, for example:
+close existing Tureen windows and launch, for example:
 
 ```sh
-LANGUAGE=zh_CN gnollama
-LANGUAGE=hi gnollama
-LANGUAGE=ar gnollama
-LANGUAGE=it gnollama
-LANGUAGE=el gnollama
-LANGUAGE=tr gnollama
-LANGUAGE=ja gnollama
-LANGUAGE=ko gnollama
-LANGUAGE=uk gnollama
-LANGUAGE=sw gnollama
+LANGUAGE=zh_CN tureen
+LANGUAGE=hi tureen
+LANGUAGE=ar tureen
+LANGUAGE=it tureen
+LANGUAGE=el tureen
+LANGUAGE=tr tureen
+LANGUAGE=ja tureen
+LANGUAGE=ko tureen
+LANGUAGE=uk tureen
+LANGUAGE=sw tureen
 ```
 
 Use an installed UTF-8 desktop locale for `LANG`/`LC_ALL`; GTK suppresses
@@ -107,11 +107,14 @@ locale files to be installed.
 
 ## Updating translations
 
+The app name **Tureen** is a brand: keep it untranslated and in Latin script in
+every catalog.
+
 Install GNU gettext tools, then use the existing Meson build:
 
 ```sh
-meson compile -C build gnollama-pot
-meson compile -C build gnollama-update-po
+meson compile -C build tureen-pot
+meson compile -C build tureen-update-po
 meson compile -C build
 meson test -C build --print-errorlogs
 ```

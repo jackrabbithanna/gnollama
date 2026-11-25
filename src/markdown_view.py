@@ -398,7 +398,7 @@ def snapshot_equation(snapshot: Gtk.Snapshot, texture: Gdk.Texture, bounds: Grap
 class MathLabel(Gtk.Label):
     """A label that draws the inline equations in its markup as images on the text's baseline.
     Equations that cannot be rendered are shown as text."""
-    __gtype_name__ = 'GnollamaMathLabel'
+    __gtype_name__ = 'TureenMathLabel'
     OBJECT = '￼'  # Stands in the text where an equation is drawn.
 
     def __init__(self, **kwargs: Any) -> None:
@@ -471,7 +471,7 @@ class TableRow(GObject.Object):
 
 class TableBlock(Gtk.Box):
     """A Markdown table shown in a column view that is always as tall as its rows."""
-    __gtype_name__ = 'GnollamaTableBlock'
+    __gtype_name__ = 'TureenTableBlock'
 
     def __init__(self, data: Dict[str, Any], raw: str) -> None:
         super().__init__(orientation=Gtk.Orientation.VERTICAL, spacing=6, halign=Gtk.Align.START)
@@ -562,7 +562,7 @@ class TableBlock(Gtk.Box):
 
 class MathPicture(Gtk.Widget):
     """A rendered equation, drawn in the text colour and sized to match the text."""
-    __gtype_name__ = 'GnollamaMathPicture'
+    __gtype_name__ = 'TureenMathPicture'
 
     def __init__(self) -> None:
         super().__init__(halign=Gtk.Align.CENTER, valign=Gtk.Align.CENTER)
@@ -593,7 +593,7 @@ class MathPicture(Gtk.Widget):
 
 class MathBlock(Gtk.Box):
     """A display equation, with its TeX source shown instead when it cannot be rendered."""
-    __gtype_name__ = 'GnollamaMathBlock'
+    __gtype_name__ = 'TureenMathBlock'
 
     def __init__(self, tex: str) -> None:
         super().__init__(spacing=6)

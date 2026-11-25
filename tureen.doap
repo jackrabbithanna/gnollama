@@ -5,8 +5,8 @@
          xmlns:gnome="http://api.gnome.org/doap-extensions#"
          xmlns="http://usefulinc.com/ns/doap#">
 
-  <name>gnollama</name>
-  <shortdesc xml:lang="en">gnollama, a GNOME app for chatting with local and cloud AI models</shortdesc>
+  <name>tureen</name>
+  <shortdesc xml:lang="en">Tureen — an AI desktop app for GNOME, for chatting with local and cloud AI models</shortdesc>
   <description xml:lang="en">
 A GNOME user interface for local and cloud AI models. Connects to Ollama, LM Studio, and other OpenAI-compatible servers, and to Ollama Cloud, OpenAI, OpenRouter, and the Vercel AI Gateway.
 Supports multi-turn chats and single-turn responses, side-by-side comparisons of several models, and conversations between two models.
@@ -17,8 +17,8 @@ Renders Markdown, tables, math, and highlighted code in responses.
 Saves chats, decisions, and images, with drafts, search, and pinning.
   </description>
 
-  <homepage rdf:resource="https://github.com/jackrabbithanna/gnollama/" />
-  <bug-database rdf:resource="https://github.com/jackrabbithanna/gnollama/issues/" />
+  <homepage rdf:resource="https://github.com/jackrabbithanna/tureen/" />
+  <bug-database rdf:resource="https://github.com/jackrabbithanna/tureen/issues/" />
 
   <programming-language>Python</programming-language>
 

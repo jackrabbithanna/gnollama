@@ -26,9 +26,9 @@ from .host_manager import HostManagerDialog
 from .model_manager import ModelManagerDialog
 
 
-@Gtk.Template(resource_path='/io/github/jackrabbithanna/Gnollama/window.ui')
-class GnollamaWindow(Adw.ApplicationWindow):
-    __gtype_name__ = 'GnollamaWindow'
+@Gtk.Template(resource_path='/io/github/jackrabbithanna/Tureen/window.ui')
+class TureenWindow(Adw.ApplicationWindow):
+    __gtype_name__ = 'TureenWindow'
 
     section_stack = Gtk.Template.Child()
     narrow = Gtk.Template.Child()
@@ -40,7 +40,7 @@ class GnollamaWindow(Adw.ApplicationWindow):
         self.toast_overlay = Adw.ToastOverlay(child=content)
         self.set_content(self.toast_overlay)
         icon_theme = Gtk.IconTheme.get_for_display(Gdk.Display.get_default())
-        icon_theme.add_resource_path('/io/github/jackrabbithanna/Gnollama/icons')
+        icon_theme.add_resource_path('/io/github/jackrabbithanna/Tureen/icons')
         self.context = context
         self.storage = context.storage
         self.storage.on_error = self._on_save_error
@@ -214,7 +214,7 @@ class GnollamaWindow(Adw.ApplicationWindow):
         if isinstance(self.get_application(), Adw.Application):
             return
         provider = Gtk.CssProvider()
-        provider.load_from_resource('/io/github/jackrabbithanna/Gnollama/style.css')
+        provider.load_from_resource('/io/github/jackrabbithanna/Tureen/style.css')
         Gtk.StyleContext.add_provider_for_display(Gdk.Display.get_default(), provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
 
     def on_clear_history(self, *args):
@@ -290,8 +290,8 @@ class GnollamaWindow(Adw.ApplicationWindow):
         self.section_stack.set_visible_child_name(section.name)
         page = section.tab_view.append(tab)
         tab.bind_property('title', page, 'title', GObject.BindingFlags.SYNC_CREATE)
-        icons = dict(chat='network-server-symbolic', decision='gnollama-decision-symbolic',
-                     image='gnollama-image-symbolic')
+        icons = dict(chat='network-server-symbolic', decision='tureen-decision-symbolic',
+                     image='tureen-image-symbolic')
         page.set_icon(Gio.ThemedIcon.new(icons.get(tab.mode, 'edit-find-symbolic')))
         def request_changed(*args):
             page.set_loading(tab.request is not None)

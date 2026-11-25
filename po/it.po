@@ -1,11 +1,11 @@
-# Italian translations for gnollama.
+# Italian translations for tureen.
 # Copyright (C) 2026 Jackrabbithanna
-# Distributed under the same license as gnollama.
+# Distributed under the same license as tureen.
 # Translated and reviewed with AI assistance, 2026.
 msgid ""
 msgstr ""
-"Project-Id-Version: gnollama 0.19.0\n"
-"Report-Msgid-Bugs-To: https://github.com/jackrabbithanna/gnollama/issues\n"
+"Project-Id-Version: tureen 0.19.0\n"
+"Report-Msgid-Bugs-To: https://github.com/jackrabbithanna/tureen/issues\n"
 "POT-Creation-Date: 2026-09-11 12:07-0600\n"
 "PO-Revision-Date: 2026-09-11 00:00+0000\n"
 "Last-Translator: AI-assisted translation\n"
@@ -17,21 +17,21 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.18.0\n"
 
-#: data/io.github.jackrabbithanna.Gnollama.desktop.in:8
+#: data/io.github.jackrabbithanna.Tureen.desktop.in:8
 msgid "Ollama;LLM;AI;Chat;Assistant;"
 msgstr "Ollama;LLM;AI;Chat;Assistant;"
 
-#: data/io.github.jackrabbithanna.Gnollama.desktop.in:2
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:7 src/startup.py:10
+#: data/io.github.jackrabbithanna.Tureen.desktop.in:2
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:7 src/startup.py:10
 #: src/window.ui:5
-msgid "Gnollama"
-msgstr "Gnollama"
+msgid "Tureen"
+msgstr "Tureen"
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:8
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:8
 msgid "Chat with local and cloud models"
 msgstr "Chatta con modelli locali e nel cloud"
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:10
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:10
 msgid ""
 "Chat with models running on your computer, on another computer, or in the cloud, "
 "using a native GNOME interface."
@@ -39,7 +39,7 @@ msgstr ""
 "Chatta con modelli in esecuzione sul tuo computer, su un altro computer o nel "
 "cloud, tramite un’interfaccia GNOME nativa."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:11
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:11
 msgid ""
 "Connect to Ollama, LM Studio, and other OpenAI-compatible servers, or to Ollama "
 "Cloud, OpenAI, OpenRouter, and the Vercel AI Gateway."
@@ -47,7 +47,7 @@ msgstr ""
 "Connettiti a Ollama, LM Studio e altri server compatibili con OpenAI, oppure a "
 "Ollama Cloud, OpenAI, OpenRouter e Vercel AI Gateway."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:11
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:11
 msgid ""
 "Keep conversations in separate tabs, attach images to vision models, and read "
 "responses with Markdown and highlighted code."
@@ -55,7 +55,7 @@ msgstr ""
 "Tieni le conversazioni in schede separate, allega immagini ai modelli con capacità "
 "visive e leggi le risposte con Markdown e codice evidenziato."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:13
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:13
 msgid ""
 "Compare answers from several models side by side, let two models talk to each "
 "other, ask decision models structured questions, and generate images from a prompt."
@@ -64,7 +64,7 @@ msgstr ""
 "parlino tra loro, poni domande strutturate ai modelli di decisione e genera "
 "immagini da un prompt."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:14
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:14
 msgid ""
 "Build knowledge collections from documents, web pages, and images, and use them as "
 "sources for chat answers."
@@ -72,7 +72,7 @@ msgstr ""
 "Crea raccolte di conoscenze da documenti, pagine web e immagini e usale come fonti "
 "per le risposte della chat."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:12
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:12
 msgid ""
 "Manage hosts and models, customize generation and thinking settings, and inspect "
 "response statistics including cached prompt tokens."
@@ -80,7 +80,7 @@ msgstr ""
 "Gestisci server e modelli, personalizza le impostazioni di generazione e ragionamento"
 " e consulta le statistiche delle risposte, inclusi i token del prompt nella cache."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:13
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:13
 msgid ""
 "Generate and validate structured JSON, import JSON schemas, and export responses. "
 "Inspect loaded models and release their memory when finished."
@@ -88,7 +88,7 @@ msgstr ""
 "Genera e convalida JSON strutturato, importa schemi JSON ed esporta le risposte. "
 "Controlla i modelli caricati e liberane la memoria quando hai finito."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:14
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:14
 msgid ""
 "Save and organize conversations with pinning and editable titles. Stop a response at "
 "any time and keep its partial answer in your history."
@@ -96,45 +96,45 @@ msgstr ""
 "Salva e organizza le conversazioni fissandole e modificandone i titoli. Interrompi "
 "una risposta in qualsiasi momento e conserva la parte già generata nella cronologia."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:18
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:18
 msgid "jackrabbithanna"
 msgstr "jackrabbithanna"
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:46
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:46
 msgid "Ollama chat with code highlighting"
 msgstr "Chat Ollama con evidenziazione del codice"
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:54 src/shortcuts-dialog.ui:26
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:54 src/shortcuts-dialog.ui:26
 #: src/widgets/comparison_view.py:54 src/window.ui:128
 msgid "New Comparison"
 msgstr "Nuovo confronto"
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:55 src/window.py:80
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:55 src/window.py:80
 msgid "Drafts"
 msgstr "Bozze"
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:56 src/window.py:72
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:56 src/window.py:72
 msgid "Search conversations"
 msgstr "Cerca conversazioni"
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:57 src/window.py:408
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:57 src/window.py:408
 msgid "Export Markdown"
 msgstr "Esporta Markdown"
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:58 src/window.py:409
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:58 src/window.py:409
 msgid "Export JSON"
 msgstr "Esporta JSON"
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:59 src/tab.py:106
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:59 src/tab.py:106
 #: src/widgets/comparison_view.py:284
 msgid "Context estimate"
 msgstr "Stima del contesto"
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:65
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:65
 msgid "Connect directly to Ollama Cloud from Chat and Response tabs."
 msgstr "Connettiti direttamente a Ollama Cloud dalle schede Chat e Risposta."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:66
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:66
 msgid ""
 "Store each host's API key in the desktop keyring, with session-only use when the "
 "keyring is unavailable."
@@ -142,7 +142,7 @@ msgstr ""
 "Salva la chiave API di ogni server nel portachiavi del desktop, con utilizzo limitato"
 " alla sessione quando il portachiavi non è disponibile."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:67
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:67
 msgid ""
 "Browse cloud models with controls adapted to the service, and use local knowledge "
 "sources in cloud chats."
@@ -150,8 +150,8 @@ msgstr ""
 "Esplora i modelli cloud con controlli adatti al servizio e usa fonti di conoscenza "
 "locali nelle chat cloud."
 
-#: data/io.github.jackrabbithanna.Gnollama.desktop.in:2
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:72
+#: data/io.github.jackrabbithanna.Tureen.desktop.in:2
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:72
 msgid ""
 "Add a Knowledge Library for text and PDF imports, local embedding indexes, and "
 "source-grounded chats."
@@ -159,8 +159,8 @@ msgstr ""
 "Aggiunta di una biblioteca di conoscenze per importare testo e PDF, creare indici "
 "locali di embedding e conversare sulla base di fonti."
 
-#: data/io.github.jackrabbithanna.Gnollama.desktop.in:2
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:74
+#: data/io.github.jackrabbithanna.Tureen.desktop.in:2
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:74
 msgid ""
 "Start with knowledge collections and add text, files, or URLs with explicit "
 "destinations and guided previews."
@@ -168,8 +168,8 @@ msgstr ""
 "Inizia dalle raccolte di conoscenze e aggiungi testo, file o URL con destinazioni "
 "esplicite e anteprime guidate."
 
-#: data/io.github.jackrabbithanna.Gnollama.desktop.in:2
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:75
+#: data/io.github.jackrabbithanna.Tureen.desktop.in:2
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:75
 msgid ""
 "Choose collections before search settings, and use adaptive chat settings with "
 "clearer controls and feedback."
@@ -177,13 +177,13 @@ msgstr ""
 "Scegli le raccolte prima delle impostazioni di ricerca e usa impostazioni di chat "
 "adattabili, con controlli e indicazioni più chiari."
 
-#: data/io.github.jackrabbithanna.Gnollama.desktop.in:2
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:76
+#: data/io.github.jackrabbithanna.Tureen.desktop.in:2
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:76
 msgid "Create and compare embeddings, inspect chunks and vectors, and test semantic searches."
 msgstr "Crea e confronta embedding, esamina segmenti e vettori e prova ricerche semantiche."
 
-#: data/io.github.jackrabbithanna.Gnollama.desktop.in:2
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:77
+#: data/io.github.jackrabbithanna.Tureen.desktop.in:2
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:77
 msgid ""
 "Select documents or chunks for chats, with independent embedding hosts and saved "
 "source passages."
@@ -191,8 +191,8 @@ msgstr ""
 "Seleziona documenti o segmenti per le chat, con server di embedding indipendenti e "
 "passaggi delle fonti salvati."
 
-#: data/io.github.jackrabbithanna.Gnollama.desktop.in:2
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:78
+#: data/io.github.jackrabbithanna.Tureen.desktop.in:2
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:78
 msgid ""
 "Warn about stored embeddings when deleting models, with optional vector cleanup that "
 "retains source text."
@@ -200,8 +200,8 @@ msgstr ""
 "Avvisa degli embedding salvati quando si eliminano modelli, con pulizia facoltativa "
 "dei vettori che conserva il testo originale."
 
-#: data/io.github.jackrabbithanna.Gnollama.desktop.in:2
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:79
+#: data/io.github.jackrabbithanna.Tureen.desktop.in:2
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:79
 msgid ""
 "Search with sqlite-vec, automatically migrate existing vectors with a database "
 "backup, and use the Qwen3 retrieval preset."
@@ -209,7 +209,7 @@ msgstr ""
 "Cerca con sqlite-vec, migra automaticamente i vettori esistenti con un backup del "
 "database e usa il profilo di recupero Qwen3."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:80
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:80
 msgid ""
 "Organize documents into collections with shared embedding settings, automatic builds,"
 " and live collection selection in chats."
@@ -217,7 +217,7 @@ msgstr ""
 "Organizza i documenti in raccolte con impostazioni di embedding condivise, creazione "
 "automatica e selezione delle raccolte aggiornata nelle chat."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:81
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:81
 msgid ""
 "Choose collections as chat sources and compare cosine similarity, Euclidean distance,"
 " or Manhattan distance with appropriate search cutoffs."
@@ -225,7 +225,7 @@ msgstr ""
 "Scegli le raccolte come fonti della chat e confronta similarità coseno, distanza "
 "euclidea o distanza di Manhattan con soglie di ricerca appropriate."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:82
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:82
 msgid ""
 "Hide embedding-only models from Chat and Response model selection while keeping them "
 "available in Knowledge and Manage Models."
@@ -233,7 +233,7 @@ msgstr ""
 "Nascondi i modelli dedicati agli embedding nella selezione dei modelli per Chat e "
 "Risposta, mantenendoli disponibili in Conoscenze e Gestisci modelli."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:83
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:83
 msgid ""
 "Import batches of URLs into collections with main-content extraction, CSS selectors, "
 "editable previews, and source links in chats."
@@ -241,7 +241,7 @@ msgstr ""
 "Importa gruppi di URL nelle raccolte con estrazione del contenuto principale, "
 "selettori CSS, anteprime modificabili e collegamenti alle fonti nelle chat."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:84
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:84
 msgid ""
 "Review changed web documents before replacing their text and rebuilding all affected "
 "embedding indexes."
@@ -477,18 +477,18 @@ msgid "Could not remove the saved API key. Unlock the keyring and retry."
 msgstr "Impossibile rimuovere la chiave API salvata. Sblocca il portachiavi e riprova."
 
 #: src/database.py:83
-msgid "This database was created by a newer Gnollama version. Update Gnollama to open it."
+msgid "This database was created by a newer Tureen version. Update Tureen to open it."
 msgstr ""
-"Questo database è stato creato da una versione più recente di Gnollama. Aggiorna "
-"Gnollama per aprirlo."
+"Questo database è stato creato da una versione più recente di Tureen. Aggiorna "
+"Tureen per aprirlo."
 
 #: src/database.py:90
 msgid "Backing up the database…"
 msgstr "Backup del database in corso…"
 
 #: src/database.py:200
-msgid "This database requires a newer Gnollama version."
-msgstr "Questo database richiede una versione più recente di Gnollama."
+msgid "This database requires a newer Tureen version."
+msgstr "Questo database richiede una versione più recente di Tureen."
 
 #: src/database.py:219
 #, python-brace-format
@@ -1153,8 +1153,8 @@ msgid "Unloading…"
 msgstr "Rilascio della memoria…"
 
 #: src/model_manager.py:209
-msgid "A chat or embedding job is using this model in Gnollama."
-msgstr "Una chat o un’attività di embedding sta usando questo modello in Gnollama."
+msgid "A chat or embedding job is using this model in Tureen."
+msgstr "Una chat o un’attività di embedding sta usando questo modello in Tureen."
 
 #: src/model_manager.py:228
 msgid "Could not unload model"
@@ -1481,8 +1481,8 @@ msgid "Toggle Sidebar"
 msgstr "Mostra/nascondi barra laterale"
 
 #: src/startup.py:16 src/startup.py:54
-msgid "Opening Gnollama"
-msgstr "Apertura di Gnollama"
+msgid "Opening Tureen"
+msgstr "Apertura di Tureen"
 
 #: src/startup.py:20 src/tab.py:440 src/widgets/knowledge_import.py:88
 #: src/widgets/knowledge_view.py:441 src/widgets/url_import.py:232 src/window.py:174
@@ -1720,9 +1720,9 @@ msgstr ""
 "dimensioni."
 
 #: src/vectors.py:66
-msgid "Could not load sqlite-vec. Reinstall Gnollama or install its sqlite-vec dependency."
+msgid "Could not load sqlite-vec. Reinstall Tureen or install its sqlite-vec dependency."
 msgstr ""
-"Impossibile caricare sqlite-vec. Reinstalla Gnollama o installa la dipendenza sqlite-"
+"Impossibile caricare sqlite-vec. Reinstalla Tureen o installa la dipendenza sqlite-"
 "vec."
 
 #: src/vectors.py:120
@@ -2469,10 +2469,10 @@ msgstr ""
 
 #: src/widgets/knowledge_view.py:264
 msgid ""
-"Add text, files, or URLs to this collection. Gnollama prepares the documents "
+"Add text, files, or URLs to this collection. Tureen prepares the documents "
 "automatically so chats can search them."
 msgstr ""
-"Aggiungi testo, file o URL a questa raccolta. Gnollama prepara automaticamente i "
+"Aggiungi testo, file o URL a questa raccolta. Tureen prepara automaticamente i "
 "documenti per renderli ricercabili nelle chat."
 
 #: src/widgets/knowledge_view.py:266
@@ -3671,8 +3671,8 @@ msgid "_Keyboard Shortcuts"
 msgstr "Scorciatoie da _tastiera"
 
 #: src/window.ui:150
-msgid "_About Gnollama"
-msgstr "_Informazioni su Gnollama"
+msgid "_About Tureen"
+msgstr "_Informazioni su Tureen"
 
 #: src/window.py:78
 msgid "Recent chats"
@@ -3841,15 +3841,15 @@ msgstr "Suggerimenti di ricerca"
 msgid "No matching conversations"
 msgstr "Nessuna conversazione corrispondente"
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in
 msgid "Compare answers from two models"
 msgstr "Confronta le risposte di due modelli"
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in
 msgid "Let two models talk to each other"
 msgstr "Fai conversare due modelli tra loro"
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in
 msgid "Organize documents into knowledge collections"
 msgstr "Organizza i documenti in raccolte di conoscenza"
 
@@ -3942,8 +3942,8 @@ msgid "Tokens/s (measured locally): {0}"
 msgstr "Token/s (misurati localmente): {0}"
 
 #: src/bubbles.py
-msgid "Timed by Gnollama, not reported by the server. The total includes network delay and model loading."
-msgstr "Misurato da Gnollama, non comunicato dal server. Il totale comprende il ritardo di rete e il caricamento del modello."
+msgid "Timed by Tureen, not reported by the server. The total includes network delay and model loading."
+msgstr "Misurato da Tureen, non comunicato dal server. Il totale comprende il ritardo di rete e il caricamento del modello."
 
 #: src/providers/lmstudio.py
 msgid "LM Studio"

@@ -17,7 +17,7 @@ class CredentialStore:
         self._session = {}
         self._lock = RLock()
         self.schema = Secret.Schema.new(
-            'io.github.jackrabbithanna.Gnollama.ApiKey', Secret.SchemaFlags.NONE,
+            'io.github.jackrabbithanna.Tureen.ApiKey', Secret.SchemaFlags.NONE,
             {'credential': Secret.SchemaAttributeType.STRING})
 
     @staticmethod
@@ -57,7 +57,7 @@ class CredentialStore:
         key = self.validate(key)
         try:
             saved = Secret.password_store_sync(self.schema, {'credential': reference},
-                                               Secret.COLLECTION_DEFAULT, 'Gnollama API key',
+                                               Secret.COLLECTION_DEFAULT, 'Tureen API key',
                                                key, cancellable)
             if saved:
                 return

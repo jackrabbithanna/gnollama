@@ -1,4 +1,4 @@
-<interface domain="gnollama">
+<interface domain="tureen">
   <requires lib="gtk" version="4.18"/>
   <requires lib="Adw" version="1.9"/>
   <template class="OptionsPanel" parent="GtkBox">

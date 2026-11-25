@@ -1,17 +1,21 @@
 <div align="center">
 
-# Gnollama
+# Tureen
 
-<img src="./data/icons/hicolor/scalable/apps/io.github.jackrabbithanna.Gnollama.svg" width="128" height="128"></img>
+<img src="./data/icons/hicolor/scalable/apps/io.github.jackrabbithanna.Tureen.svg" width="128" height="128"></img>
 
-A Gnome user interface to [Ollama](https://ollama.com) and other model providers
+Tureen — an AI desktop app for GNOME
+
+Chat with local and cloud models from [Ollama](https://ollama.com) and other providers
+
+*Formerly known as Gnollama.*
 </div>
 
 ## Description
 
-**Gnollama** is a modern, feature-rich GNOME user interface for numerous model providers,  built using Python, GTK4, and Libadwaita. It provides a native, responsive Linux desktop experience for interacting with LLMs.
+**Tureen** is a modern, feature-rich GNOME user interface for numerous model providers,  built using Python, GTK4, and Libadwaita. It provides a native, responsive Linux desktop experience for interacting with LLMs.
 
-Whether you are developing, experimenting, or chatting with local models, Gnollama makes it easy to run prompts across multiple local or remote hosts simultaneously.
+Whether you are developing, experimenting, or chatting with local models, Tureen makes it easy to run prompts across multiple local or remote hosts simultaneously.
 
 ## Features
 
@@ -31,7 +35,7 @@ Whether you are developing, experimenting, or chatting with local models, Gnolla
   * Pull or delete models directly from the UI.
   * View comprehensive model info, including size, parameter specifications, Modelfiles, templates, and licenses.
   * Switch between Installed and Running models for the selected host. Inspect memory, VRAM, context length, and expiry, or unload a model while keeping its downloaded files.
-  * Running models refresh every five seconds while that view is visible. Unload is unavailable while Gnollama has an active response using the model.
+  * Running models refresh every five seconds while that view is visible. Unload is unavailable while Tureen has an active response using the model.
 * **Structured Output**: Choose Text, JSON, or JSON Schema below the image controls in either Chat or Response tabs. Paste or import a schema, validate responses locally, and copy or save JSON. The raw response and validation result remain in saved chat history.
 * **Tool Calling Playground**: Define function tools in Chat tabs, inspect model calls and argument validation, supply mock results, and continue with the current model and settings. Import/export definitions as JSON and reopen pending rounds from saved history.
 * **Knowledge Library and RAG**: Import text and PDFs, organize multi-document collections, create local embeddings with Ollama, inspect vectors, and search selected collections using cosine, Euclidean, or Manhattan comparison. Chats retain the passages used for each answer.
@@ -52,13 +56,13 @@ Whether you are developing, experimenting, or chatting with local models, Gnolla
 * **Stop Responses**: Stop generation while keeping partial answers in chat history. Pending history writes finish before the application quits.
 * **Adaptive GNOME Navigation**: The header switches between four sections: **Chats**, **Decisions**, **Images**, and **Knowledge**. Chats, Decisions, and Images each have their own tabs and their own sidebar, with its own search and its own Drafts and Pinned groups. The Chats sidebar groups Recent chats, Recent comparisons, and Recent model conversations; the Decisions sidebar lists Recent decisions, and the Images sidebar Recent images. Starting or reopening a decision or an image shows its section. Native tabs support reordering and loading indicators, and sidebars collapse on narrow windows. Ctrl+W, Ctrl+Page Up/Down, and F9 close a tab, switch tabs, and toggle the sidebar in the section shown.
 
-<img src="./screenshots/gnollama-screenshot.png" alt="gnollama" align="left"/>
+<img src="./screenshots/tureen-screenshot.png" alt="tureen" align="left"/>
 
 ### Ollama Cloud
 
 In **Manage Hosts**, add a host and choose **Ollama Cloud**. Create an API key at [Ollama's API-key settings](https://ollama.com/settings/keys), paste it into the masked field, and save. The service address is filled in automatically. Select this host in either a Chat or Response tab; no local Ollama installation or model download is needed.
 
-Keys are stored through libsecret in the desktop keyring (using its portal backend in Flatpak), separately from the host database and conversation history. Leave the key field blank when editing to retain the existing key. If the keyring is unavailable, **Use for This Session** keeps the entered key in memory until Gnollama exits. After restarting, enter it again unless a previously saved key is available. Removing a host also removes its saved key; a keyring failure leaves the host available for retry.
+Keys are stored through libsecret in the desktop keyring (using its portal backend in Flatpak), separately from the host database and conversation history. Leave the key field blank when editing to retain the existing key. If the keyring is unavailable, **Use for This Session** keeps the entered key in memory until Tureen exits. After restarting, enter it again unless a previously saved key is available. Removing a host also removes its saved key; a keyring failure leaves the host available for retry.
 
 **Test Connection** checks the public model catalog, so it confirms reachability rather than API-key validity. Authentication is checked when generating a response. Cloud model names come directly from the service. Available tools, vision, and thinking controls follow each model's reported capabilities.
 
@@ -99,7 +103,7 @@ Retrieval defaults to six passages and an 8,000-character source budget, with no
 | Euclidean distance (L2) | Lower distance | Maximum distance, zero or greater |
 | Manhattan distance (L1) | Lower distance | Maximum distance, zero or greater |
 
-Switching measures clears the cutoff because its units change. Gnollama stores normalized vectors, so Euclidean and cosine usually produce the same ranking; Manhattan sums absolute component differences and can produce a different ranking. The selected measure and actual scores are saved with each answer and displayed in **Sources used**. Existing snapshots without a measure are interpreted as cosine. No re-embedding or database migration is needed to switch measures.
+Switching measures clears the cutoff because its units change. Tureen stores normalized vectors, so Euclidean and cosine usually produce the same ranking; Manhattan sums absolute component differences and can produce a different ranking. The selected measure and actual scores are saved with each answer and displayed in **Sources used**. Existing snapshots without a measure are interpreted as cosine. No re-embedding or database migration is needed to switch measures.
 
 The original prompt remains visible and saved. Exact retrieved passages, locations, scores, embedding configuration, search query, and resolved collection names/membership are saved with the turn. Collection changes affect future questions; earlier answers retain their original sources. Only that turn's reference passages are added to outgoing context. Tool-call continuations reuse the same snapshot, even after reopening the chat. JSON/JSON Schema output remains supported, with source information in a separate panel rather than additional schema fields.
 
@@ -107,7 +111,7 @@ If retrieval fails or selected sources disappear, the prompt remains in the comp
 
 Older chats may retain individual document/chunk selections. They continue to work until replaced; **Choose sources…** explains that applying collections replaces those older sources. Closing the dialog leaves the saved selection unchanged.
 
-Gnollama stores extracted text and page locations in its local SQLite database, alongside normalized float32 vectors stored only in sqlite-vec virtual tables, one per embedding configuration. It does not copy original files or modify them. For pasted text and local files, import revisions as new documents; duplicate text offers opening the existing document. Web documents can be updated using Fetch Again and Replace and Rebuild. PDF page extraction can lose layout; pages without text are reported, and OCR and password-protected PDFs are not supported. Imports are limited to 50 MiB per file, 2,000 PDF pages, and 5 million extracted characters per document.
+Tureen stores extracted text and page locations in its local SQLite database, alongside normalized float32 vectors stored only in sqlite-vec virtual tables, one per embedding configuration. It does not copy original files or modify them. For pasted text and local files, import revisions as new documents; duplicate text offers opening the existing document. Web documents can be updated using Fetch Again and Replace and Rebuild. PDF page extraction can lose layout; pages without text are reported, and OCR and password-protected PDFs are not supported. Imports are limited to 50 MiB per file, 2,000 PDF pages, and 5 million extracted characters per document.
 
 When deleting a model, the confirmation reports affected documents, indexes, and vectors. Data is kept by default. The optional vector-cleanup checkbox removes matching indexes across creation hosts while retaining source text. Historical chat passages remain saved. Deleting a model externally never automatically deletes library data; refresh the library to check availability, select a compatible host, or build replacement indexes. Active embedding jobs participate in the model manager's busy checks.
 
@@ -117,15 +121,15 @@ For the pinned sqlite-vec 0.1.9 layout, distance searches reuse read-only vector
 
 A GNOME 50 aarch64 benchmark of 50,000 vectors at 1,024 dimensions returned identical top-six results to the preceding batched NumPy ranking. Whole-library retrieval took 0.15–0.19 seconds, selecting one 25,000-vector document took 0.17–0.18 seconds, and selecting 25,000 individual chunks took 0.42–0.44 seconds. These are local retrieval timings, excluding Ollama inference. The one-time migration and backup took about 68 seconds; startup displays migration progress and waits for the database operation to finish if closed.
 
-Database upgrades run automatically on startup, with progress and a recoverable error screen. Schema version 7 migrates existing vectors without contacting Ollama: it copies and verifies their IDs, dimensions, and bytes before removing the old vector column. Version 8 adds collections and membership without copying or rebuilding vectors; existing documents appear under **Ungrouped Documents**, and existing chat selections are preserved. Version 9 adds web-source provenance without reindexing existing documents. Version 10 adds cloud host types and keyring references without storing API keys in the database. Version 11 adds stable message identifiers, managed drafts, full-text search, and comparison runs while preserving message attachments and metadata. Version 14 adds saved decision runs without changing existing conversations. Version 15 adds saved image runs, and version 16 adds image documents to the knowledge library; neither changes existing chats or documents. Before upgrading an existing database, Gnollama saves a consistent, timestamped `gnollama.db.pre-v11-*.bak` beside the database and reports its location. Keep that file until you have verified the upgrade; it can then be archived or removed. Failed migrations roll back, and incompatible or damaged vectors are never silently discarded. Databases from newer app versions are refused. Older app versions must not be used with the upgraded database. SQLite can reuse pages freed by migration; the database file need not immediately shrink.
+Database upgrades run automatically on startup, with progress and a recoverable error screen. Schema version 7 migrates existing vectors without contacting Ollama: it copies and verifies their IDs, dimensions, and bytes before removing the old vector column. Version 8 adds collections and membership without copying or rebuilding vectors; existing documents appear under **Ungrouped Documents**, and existing chat selections are preserved. Version 9 adds web-source provenance without reindexing existing documents. Version 10 adds cloud host types and keyring references without storing API keys in the database. Version 11 adds stable message identifiers, managed drafts, full-text search, and comparison runs while preserving message attachments and metadata. Version 14 adds saved decision runs without changing existing conversations. Version 15 adds saved image runs, and version 16 adds image documents to the knowledge library; neither changes existing chats or documents. Before upgrading an existing database, Tureen saves a consistent, timestamped `tureen.db.pre-v11-*.bak` beside the database and reports its location. Keep that file until you have verified the upgrade; it can then be archived or removed. Failed migrations roll back, and incompatible or damaged vectors are never silently discarded. Databases from newer app versions are refused. Older app versions must not be used with the upgraded database. SQLite can reuse pages freed by migration; the database file need not immediately shrink.
 
-<img src="./screenshots/gnollama-rag-collections.png" alt="gnollama" align="left"/>
+<img src="./screenshots/tureen-rag-collections.png" alt="tureen" align="left"/>
 
 ### Structured output details
 
 Selecting JSON Schema opens the editor when no schema has been applied. Paste or import a schema and click Apply; use Edit Schema to change it later. If a schema is missing or invalid when sending, the editor shows the problem and keeps your prompt intact.
 
-Describe the desired JSON in your prompt; Gnollama does not rewrite prompts or change the temperature automatically. The schema editor accepts self-contained JSON Schema objects, defaults to Draft 2020-12, and honors supported explicit `$schema` versions. References must resolve within the imported document; external schemas are not fetched. Local validation does not guarantee that Ollama's generation engine supports every JSON Schema keyword.
+Describe the desired JSON in your prompt; Tureen does not rewrite prompts or change the temperature automatically. The schema editor accepts self-contained JSON Schema objects, defaults to Draft 2020-12, and honors supported explicit `$schema` versions. References must resolve within the imported document; external schemas are not fetched. Local validation does not guarantee that Ollama's generation engine supports every JSON Schema keyword.
 
 Completed responses show JSON syntax or schema errors with locations. Valid JSON can be exported even when it does not match the schema. Raw text can always be copied; stopped or failed responses remain marked incomplete. JSON formatting rejects duplicate keys and non-finite or unrepresentably large floating-point values to avoid silently changing their meaning. Ollama Cloud currently does not support structured outputs; see [Ollama's documentation](https://docs.ollama.com/capabilities/structured-outputs).
 
@@ -144,13 +148,13 @@ def add(a, b):
     return a - b
 ```
 
-Gnollama does not execute functions or connect to MCP servers. Tool-capability notices are advisory so you can test server behavior. Model and server support vary; a model may answer without calling a tool or reject the tools parameter.
+Tureen does not execute functions or connect to MCP servers. Tool-capability notices are advisory so you can test server behavior. Model and server support vary; a model may answer without calling a tool or reject the tools parameter.
 
 Each continuation uses the currently selected host, model, definitions, thinking, and generation settings. Earlier calls retain their original arguments and validation. Text, JSON, and JSON Schema can all be combined with tools; final-output validation applies to completed responses without tool calls, and server compatibility errors remain visible. Tool results themselves accept arbitrary text and are not constrained by the assistant output schema.
 
 Applied definitions and saved mock results persist per chat, including chats closed before sending a first prompt. Import/export files to reuse definitions across chats. While a round is pending, supply its results or choose **Cancel Tool Round** before sending another prompt. Cancellation retains supplied results and records cancellation text for unanswered calls; it does not contact the server. Reopening a pending round never starts a request automatically. Incomplete and malformed calls remain inspectable but cannot be continued.
 
-<img src="./screenshots/gnollama-manage-models.png" alt="gnollama" align="left"/>
+<img src="./screenshots/tureen-manage-models.png" alt="tureen" align="left"/>
 
 ## Motivation
 
@@ -158,17 +162,17 @@ I wanted a GNOME application for Ollama that I could use to test and experiment 
 
 ## Build
 
-*gnollama* can be built and run with [GNOME Builder](https://wiki.gnome.org/Apps/Builder).
+*tureen* can be built and run with [GNOME Builder](https://wiki.gnome.org/Apps/Builder).
 
 1. Open GNOME Builder
 2. Click the **Clone Repository** button
-3. Enter `https://github.com/jackrabbithanna/gnollama.git` in the field **Repository URL**
+3. Enter `https://github.com/jackrabbithanna/tureen.git` in the field **Repository URL**
 4. Click the **Clone Project** button
 5. Click the **Run** button to start building application
 
 ### Flatpak
 
-To build *gnollama* from a checkout and install it as a Flatpak, add Flathub, then install flatpak-builder and the GNOME 51 SDK and runtime:
+To build *tureen* from a checkout and install it as a Flatpak, add Flathub, then install flatpak-builder and the GNOME 51 SDK and runtime:
 
 ```bash
 flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
@@ -179,13 +183,13 @@ From the root of the checkout, build and install it for your user, then run it:
 
 ```bash
 flatpak run org.flatpak.Builder --user --install --force-clean --disable-rofiles-fuse \
-  ~/.cache/gnollama-flatpak-build io.github.jackrabbithanna.Gnollama.json
-flatpak run io.github.jackrabbithanna.Gnollama
+  ~/.cache/tureen-flatpak-build io.github.jackrabbithanna.Tureen.json
+flatpak run io.github.jackrabbithanna.Tureen
 ```
 
-- `~/.cache/gnollama-flatpak-build` is a scratch directory where the application is assembled; any path outside the checkout will do. Downloads and built modules are cached in `.flatpak-builder/` in the checkout, so later builds are faster.
+- `~/.cache/tureen-flatpak-build` is a scratch directory where the application is assembled; any path outside the checkout will do. Downloads and built modules are cached in `.flatpak-builder/` in the checkout, so later builds are faster.
 - `--disable-rofiles-fuse` avoids the error "Failure spawning rofiles-fuse", which flatpak-builder often gives when it runs as a Flatpak itself. A `flatpak-builder` installed from your distribution can be used in its place.
-- The installed application is also in your application menu. Remove it with `flatpak uninstall --user io.github.jackrabbithanna.Gnollama`.
+- The installed application is also in your application menu. Remove it with `flatpak uninstall --user io.github.jackrabbithanna.Tureen`.
 - GNOME Builder runs the application under the same ID and with the same data. Only one instance runs at a time: while Builder's is open, starting the installed one brings Builder's window forward instead. Run `flatpak ps` to see which is running. The installed one uses `org.gnome.Platform`, and Builder's uses `org.gnome.Sdk`.
 - Runs from GNOME Builder cannot show images in formats GTK does not read itself, such as the WebP that some image models return: the sandboxed image loader cannot start there. Such an image can still be saved. The installed application shows it.
 
@@ -215,18 +219,18 @@ meson setup build
 meson compile -C build
 meson install -C build
 ```
-You can then run `gnollama` to execute the application.
+You can then run `tureen` to execute the application.
 
 ## Validation
 
-Run `meson test -C build --print-errorlogs` after building. Regression tests use temporary databases and a local HTTP fixture server; they do not contact your Ollama servers. GTK tests require a display. Set `GNOLLAMA_REQUIRE_DISPLAY=1` to reject missing GTK coverage, as CI does. `tools/ci-test.sh` runs the complete suite under Xvfb. The CI matrix builds GNOME 51 Flatpaks on x86_64 and aarch64 and runs core compatibility tests on Python 3.11.
+Run `meson test -C build --print-errorlogs` after building. Regression tests use temporary databases and a local HTTP fixture server; they do not contact your Ollama servers. GTK tests require a display. Set `TUREEN_REQUIRE_DISPLAY=1` to reject missing GTK coverage, as CI does. `tools/ci-test.sh` runs the complete suite under Xvfb. The CI matrix builds GNOME 51 Flatpaks on x86_64 and aarch64 and runs core compatibility tests on Python 3.11.
 
 CI also runs `ruff check .` and `mypy`, configured in `pyproject.toml`, and fails on any finding. Install the versions pinned in `.github/workflows/validation.yml` to run them locally.
 
 GNOME Builder builds the repository Flatpak manifest from the current checkout. For a command-line Flatpak build, use:
 
 ```bash
-flatpak-builder --user --force-clean /tmp/gnollama-flatpak-build io.github.jackrabbithanna.Gnollama.json
+flatpak-builder --user --force-clean /tmp/tureen-flatpak-build io.github.jackrabbithanna.Tureen.json
 ```
 
 ## Languages
@@ -244,7 +248,7 @@ The [GNOME Code of Conduct](https://conduct.gnome.org/) is applicable to this pr
 
 ## License
 
-*gnollama* is released under the terms of the [GNU General Public License V3](https://www.gnu.org/licenses/gpl-3.0.html).
+*tureen* is released under the terms of the [GNU General Public License V3](https://www.gnu.org/licenses/gpl-3.0.html).
 
 No warranty provided. No guarantee it does anything at all. Use at your own risk.
 
@@ -252,11 +256,11 @@ No warranty provided. No guarantee it does anything at all. Use at your own risk
 
 Server and model selectors stay visible. Expand **Options** for thinking, tools, output formatting, and **Chat Settings…**; its label summarizes active controls. **Chat Settings…** opens an adaptive dialog for system instructions, generation limits, sampling, model retention, and diagnostics. Empty numeric fields preserve server defaults; invalid fields show an explanation beside the input. Response statistics can be expanded below an answer.
 
-![Chat Settings dialog with system instructions and generation limits](screenshots/gnollama-chat-settings.png)
+![Chat Settings dialog with system instructions and generation limits](screenshots/tureen-chat-settings.png)
 
 **Manage Models** uses **Download Model…**, with a progress bar and expandable download details. Server records have persistent name/address labels, address validation, and a visible **Test Connection** action.
 
-![Manage Hosts listing Ollama, Ollama Cloud, LM Studio, OpenRouter, and Vercel AI Gateway servers](screenshots/gnollama-manage-hosts.png)
+![Manage Hosts listing Ollama, Ollama Cloud, LM Studio, OpenRouter, and Vercel AI Gateway servers](screenshots/tureen-manage-hosts.png)
 
 The current release uses database schema version 16 and preserves existing documents, embeddings, collection memberships, chat settings, and historical citations.
 
@@ -289,9 +293,9 @@ Completed turns are saved before the next request starts. Graceful closure prese
 
 Model conversations support drafts, search, pinning, rename, deletion, and Markdown/JSON export. Earlier attempts at a retried turn stay visible in the transcript, but only the successful attempt advances the conversation. Saved host and model selections are checked again before **Resume** or **Retry turn**; a missing model or changed server address blocks continuation instead of substituting another destination. Long transcripts open on the latest 50 messages and load earlier ones on request.
 
-![Model conversation setup](screenshots/gnollama-model-conversation-setup.png)
+![Model conversation setup](screenshots/tureen-model-conversation-setup.png)
 
-![Paused model conversation](screenshots/gnollama-model-conversation.png)
+![Paused model conversation](screenshots/tureen-model-conversation.png)
 
 **Context estimate** reports text estimates using UTF-8 bytes divided by four, plus a positive configured output allowance. Image and chat-template overhead are unknown. An advisory appears at 80% of an explicitly configured context size. Estimates never truncate the conversation or change settings.
 
@@ -308,7 +312,7 @@ Enter the state as **Text** or **JSON**, attach images if the model takes them, 
 
 **Edit as JSON…** shows the same questions as JSON, to edit, import, or export. **Run** sends the request and adds a result with a card for each question, the model that answered, token counts, and the cost where the server reports one. **Stop** cancels a run. Whatever the selected model cannot be sent, such as an image, a box question, or more questions than it takes, holds **Run** back with the reason; nothing is left out of a request.
 
-![Decision model answering a choice question](screenshots/gnollama-decision-models.png)
+![Decision model answering a choice question](screenshots/tureen-decision-models.png)
 
 Some models take only images of certain sizes; a note appears when an image for a box question is under 256 or over 1568 pixels on a side, and a model's own refusal is shown as the run's error. OpenRouter and Vercel take PNG and JPEG, so other formats are converted to PNG before they are sent.
 
@@ -333,7 +337,7 @@ The performance fixture creates and removes its own database of 10,000 conversat
 ```bash
 python3 tools/benchmark_workspace.py --output workspace-benchmark.json
 python3 tools/evaluate_retrieval.py --output retrieval-evaluation.json
-python3 tools/review_layout.py --resource build/src/gnollama.gresource --output validation-screenshots
+python3 tools/review_layout.py --resource build/src/tureen.gresource --output validation-screenshots
 ```
 
 Live retrieval evaluation is opt-in and contacts only the explicitly supplied host and models. It records model digests, ranked passages, recall@6, reciprocal rank, and optional generated answers for human review of correctness and citation support:

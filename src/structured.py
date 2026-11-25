@@ -44,7 +44,7 @@ def schema_validator(schema):
     try:
         validator_class.check_schema(schema)
         resource = Resource.from_contents(schema, default_specification=DRAFT202012)
-        registry = Registry().with_resource('urn:gnollama:schema', resource).crawl()
+        registry = Registry().with_resource('urn:tureen:schema', resource).crawl()
         # Resolve references before sending, including references in optional fields.
         # Registry has no retrieval callback: imported schemas stay self-contained.
         def check_refs(resource, resolver):
@@ -55,7 +55,7 @@ def schema_validator(schema):
                         resolver.lookup(contents[key])
             for child in resource.subresources():
                 check_refs(child, resolver.in_subresource(child))
-        check_refs(resource, registry.resolver('urn:gnollama:schema').in_subresource(resource))
+        check_refs(resource, registry.resolver('urn:tureen:schema').in_subresource(resource))
         return validator_class(schema, registry=registry)
     except SchemaError as exc:
         raise ValueError(_('Invalid schema: {0}').format(exc.message)) from exc

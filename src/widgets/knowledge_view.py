@@ -265,7 +265,7 @@ class KnowledgeView(Gtk.Box):
             return
         self.detail_page.set_title(collection['name'])
         self.detail.append(label(_('{0}/{1} documents ready').format(collection['ready'], collection['documents'])))
-        self.detail.append(label(_('Add text, files, or URLs to this collection. Gnollama prepares the documents automatically so chats can search them.')))
+        self.detail.append(label(_('Add text, files, or URLs to this collection. Tureen prepares the documents automatically so chats can search them.')))
         self.detail.append(self.import_actions())
         self.detail.append(button(_('Add Existing Documents…'), lambda *args: self.present_dialog(DocumentPicker(self.context, collection['id'], self.refresh))))
         if collection['documents'] and collection['ready'] == collection['documents']:

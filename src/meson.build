@@ -1,9 +1,9 @@
 pkgdatadir = get_option('prefix') / get_option('datadir') / meson.project_name()
-moduledir = pkgdatadir / 'gnollama'
+moduledir = pkgdatadir / 'tureen'
 gnome = import('gnome')
 
-gnollama_resources = gnome.compile_resources('gnollama',
-  'gnollama.gresource.xml',
+tureen_resources = gnome.compile_resources('tureen',
+  'tureen.gresource.xml',
   gresource_bundle: true,
   install: true,
   install_dir: pkgdatadir,
@@ -48,15 +48,15 @@ conf.set('localedir', get_option('prefix') / get_option('localedir'))
 conf.set('pkgdatadir', pkgdatadir)
 
 configure_file(
-  input: 'gnollama.in',
-  output: 'gnollama',
+  input: 'tureen.in',
+  output: 'tureen',
   configuration: conf,
   install: true,
   install_dir: get_option('bindir'),
   install_mode: 'rwxr-xr-x'
 )
 
-gnollama_sources = [
+tureen_sources = [
   '__init__.py',
   'main.py',
   'startup.py',
@@ -107,9 +107,9 @@ gnollama_sources = [
   'model_summary.py',
 ]
 
-install_data(gnollama_sources, install_dir: moduledir)
+install_data(tureen_sources, install_dir: moduledir)
 
-gnollama_widget_sources = [
+tureen_widget_sources = [
   'widgets/__init__.py',
   'widgets/feedback.py',
   'widgets/composer.py',
@@ -139,9 +139,9 @@ gnollama_widget_sources = [
   'widgets/search.py',
 ]
 
-install_data(gnollama_widget_sources, install_dir: moduledir / 'widgets')
+install_data(tureen_widget_sources, install_dir: moduledir / 'widgets')
 
-gnollama_provider_sources = [
+tureen_provider_sources = [
   'providers/__init__.py',
   'providers/base.py',
   'providers/imaging.py',
@@ -156,4 +156,4 @@ gnollama_provider_sources = [
   'providers/vercel.py',
 ]
 
-install_data(gnollama_provider_sources, install_dir: moduledir / 'providers')
+install_data(tureen_provider_sources, install_dir: moduledir / 'providers')

@@ -3973,6 +3973,22 @@ msgstr "Vercel AI Gateway"
 msgid "Vercel AI Gateway requires {0}."
 msgstr "Το Vercel AI Gateway απαιτεί {0}."
 
+#: src/providers/openai_platform.py
+msgid "OpenAI"
+msgstr "OpenAI"
+
+#: src/providers/openai_platform.py
+msgid "OpenAI requires {0}."
+msgstr "Το OpenAI απαιτεί {0}."
+
+#: src/providers/openai_platform.py
+msgid "{host} takes Temperature, Top P, and logprobs only with thinking Off."
+msgstr "Το {host} δέχεται Θερμοκρασία, Top P και logprobs μόνο με τη σκέψη Ανενεργή."
+
+#: src/providers/openai_platform.py
+msgid "The response failed."
+msgstr "Η απάντηση απέτυχε."
+
 #: src/model_manager.py
 msgid "Context Length"
 msgstr "Μήκος συμφραζομένων"

@@ -3956,6 +3956,22 @@ msgstr "Vercel AI Gateway"
 msgid "Vercel AI Gateway requires {0}."
 msgstr "O Vercel AI Gateway requer {0}."
 
+#: src/providers/openai_platform.py
+msgid "OpenAI"
+msgstr "OpenAI"
+
+#: src/providers/openai_platform.py
+msgid "OpenAI requires {0}."
+msgstr "O OpenAI requer {0}."
+
+#: src/providers/openai_platform.py
+msgid "{host} takes Temperature, Top P, and logprobs only with thinking Off."
+msgstr "{host} só aceita Temperatura, Top P e logprobs com o raciocínio Desativado."
+
+#: src/providers/openai_platform.py
+msgid "The response failed."
+msgstr "A resposta falhou."
+
 #: src/model_manager.py
 msgid "Context Length"
 msgstr "Comprimento do contexto"

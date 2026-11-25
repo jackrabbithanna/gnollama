@@ -875,7 +875,7 @@ class HostEditorTests(OptionalKeyFixture, unittest.TestCase):
                         ollama_cloud=('Ollama Cloud', ''),
                         openai=('For example: Local Server', 'http://localhost:8080'),
                         lmstudio=('LM Studio', 'http://localhost:1234'), openrouter=('OpenRouter', ''),
-                        vercel=('Vercel AI Gateway', ''),
+                        vercel=('Vercel AI Gateway', ''), openai_official=('OpenAI', ''),
                         required_key=('For example: Local Ollama', 'http://localhost:11434'),  # Inherited.
                         optional_key=('', ''))
         self.assertEqual(set(expected), set(PROVIDERS))

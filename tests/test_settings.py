@@ -69,6 +69,8 @@ class RecordingTransport:
             yield {'message': {'content': 'ok'}, 'response': 'ok', 'done': True}
         else:
             yield decode(b'data: {"choices": [{"delta": {"content": "ok"}, "finish_reason": "stop"}]}')
+            # The end of a Responses API stream; a Chat Completions stream reads it as an event without choices.
+            yield decode(b'data: {"type": "response.completed", "response": {}}')
 
     stream_json = stream_lines
 
@@ -210,8 +212,17 @@ class StoredSettingsTests(unittest.TestCase):
                       names=openai['names'] - {'reasoning_effort', 'logprobs', 'top_logprobs'} | {'reasoning'},
                       sent=dict(temperature=0.5, max_tokens=64, reasoning={'enabled': True}, tools=TOOLS,
                                 response_format=openai['sent']['response_format']))
+        # OpenAI's own API is the Responses API: input items, nothing stored, and its own names throughout.
+        official = dict(
+            strategies=(ChatStrategy(None),), wire=replace(wire, thinking='high', keep_alive=None),
+            names={'model', 'input', 'stream', 'store', 'temperature', 'max_output_tokens', 'reasoning', 'text',
+                   'tools', 'include', 'top_logprobs'},
+            sent=dict(store=False, temperature=0.5, max_output_tokens=64, reasoning={'summary': 'auto', 'effort': 'high'},
+                      tools=[{'type': 'function', 'strict': False, 'name': 'lookup', 'parameters': {'type': 'object'}}],
+                      include=['message.output_text.logprobs'], top_logprobs=2,
+                      text={'format': {'type': 'json_schema', 'name': 'response', 'schema': SCHEMA, 'strict': False}}))
         cases = dict(ollama=ollama, ollama_cloud=ollama, openai=openai, lmstudio=lmstudio, openrouter=openrouter,
-                     vercel=vercel)
+                     vercel=vercel, openai_official=official)
         self.assertEqual(set(cases), set(PROVIDERS), 'every provider has a case here')
         for kind, cls in PROVIDERS.items():
             case = cases[kind]

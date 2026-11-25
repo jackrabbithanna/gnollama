@@ -13,6 +13,7 @@ from src.providers import (Capabilities, LMStudioProvider, OllamaCloudProvider, 
                            generates)
 from src.providers import systemone
 from src.providers.openai import fingerprint
+from src.providers.openai_platform import OpenAIProvider
 from src.providers.transport import error_detail
 from src.providers.vercel import VercelProvider
 from src.services import Services
@@ -55,7 +56,7 @@ class Decider(Handler):
         self.end_headers()
         if server.status != 200:
             answer = server.body
-        elif self.path.endswith('/systemone'):
+        elif self.path.endswith(('/systemone', '/decisions')):
             answer = server.answer
         elif self.path.endswith('/models?output_modalities=decisions'):
             answer = server.deciders
@@ -461,6 +462,142 @@ class VercelTests(AssetChecks, Deciding, unittest.TestCase):
     def test_the_cost_is_read_from_where_the_gateway_puts_it(self):
         result = decision.parse_result(self.decide(), decision.parse_questions(QUESTIONS))
         self.assertEqual(result.cost, 0.000449)
+
+
+class OpenAITests(Served, unittest.TestCase):
+    """OpenAI's own Decisions API, translated to and from System One's shape."""
+    RECORDED = 'openai_models.json'
+    KIND = OpenAIProvider
+    ANSWER = 'decisions_openai.json'
+    DECIDER = 'gpt-6-luna'
+
+    def setUp(self):
+        super().setUp()
+        self.server.answer = self.recorded['answer']
+
+    def locate(self):
+        self.url = self.fixture.host + '/openai'
+        moved = patch.object(OpenAIProvider, 'fixed_url', self.url)
+        moved.start()
+        self.addCleanup(moved.stop)
+
+    def decide(self, state=STATE, questions=QUESTIONS, provider=None, **kwargs):
+        return (provider or self.provider()).decide(self.DECIDER, state, questions, **kwargs)
+
+    def sent(self):
+        return self.server.received[-1][1]
+
+    def keyed(self):
+        return self.provider(host_id='host', credential_id='reference', credentials=Keys({'reference': 'sk-secret'}))
+
+    def test_questions_are_sent_in_the_shape_the_api_takes(self):
+        self.decide()
+        self.assertEqual(self.server.received[-1][0], '/openai/v1/decisions')
+        self.assertEqual(self.sent(), {'model': self.DECIDER, 'input': STATE, 'questions': [
+            {'type': 'predicate', 'name': 'billing', 'instructions': 'Is this about billing?'},
+            {'type': 'choice', 'name': 'tone', 'instructions': 'tone',  # Without instructions, its name asks.
+             'choices': [{'value': 'angry'}, {'value': 'calm'}, {'value': 'excited'}]},
+            {'type': 'score', 'name': 'urgency', 'instructions': 'urgency', 'levels': [
+                {'label': 'Can wait'}, {'label': 'Needs attention this week'}, {'label': 'Needs attention today'}]}]})
+        # Descriptions go with choices, a predicate's meanings into its instructions, and JSON as JSON.
+        self.decide(questions={
+            'paid': {'type': 'noul', 'instructions': 'Was it paid?', 'criteria': {'true': 'Money moved', 'false': None}},
+            'kind': {'type': 'choice', 'instructions': {'ask': 'Which kind?'},
+                     'criteria': {'refund': 'Money back', 'other': {'any': 'thing'}}},
+            'size': {'type': 'score', 'instructions': 'How big?', 'criteria': ['small', {'label': 'large'}]}})
+        self.assertEqual(self.sent()['questions'], [
+            {'type': 'predicate', 'name': 'paid', 'instructions': 'Was it paid?\n\ntrue: Money moved'},
+            {'type': 'choice', 'name': 'kind',
+             'instructions': [{'type': 'input_json', 'data': {'ask': 'Which kind?'}}],
+             'choices': [{'value': 'refund', 'description': 'Money back'},
+                         {'value': 'other', 'description': '{"any": "thing"}'}]},
+            {'type': 'score', 'name': 'size', 'instructions': 'How big?',
+             'levels': [{'label': 'small'}, {'label': '{"label": "large"}'}]}])
+
+    def test_state_and_images_become_the_input(self):
+        for state, sent in (({'ticket': 7}, [{'type': 'input_json', 'data': {'ticket': 7}}]),
+                            ([STATE, 'second'], [{'type': 'input_text', 'text': '["%s", "second"]' % STATE}]),
+                            ([{'a': 1}], [{'type': 'input_json', 'data': [{'a': 1}]}])):
+            with self.subTest(state=state):
+                self.decide(state=state)
+                self.assertEqual(self.sent()['input'], [{'role': 'user', 'content': sent}])
+        self.decide(state='', images=[PNG, 'data:image/jpeg;base64,' + JPEG])
+        self.assertEqual(self.sent()['input'], [{'role': 'user', 'content': [
+            {'type': 'input_image', 'image_url': 'data:image/png;base64,' + PNG},
+            {'type': 'input_image', 'image_url': 'data:image/jpeg;base64,' + JPEG}]}])
+        self.decide(images=[PNG])
+        self.assertEqual(self.sent()['input'][0]['content'][0], {'type': 'input_text', 'text': STATE})
+
+    def test_the_answer_reads_as_a_system_one_answer(self):
+        answer = self.decide()
+        self.assertEqual(answer['answers'], {
+            'billing': {'type': 'noul', 'noul': 1.0},
+            'tone': {'type': 'choice', 'choice': 'calm', 'confidence': 0.43,
+                     'probabilities': {'angry': 0.38, 'calm': 0.62, 'excited': 0.0}},
+            'urgency': {'type': 'score', 'score': 1.99, 'confidence': 0.99,
+                        'probabilities': {'0': 0.0, '1': 0.01, '2': 0.99},
+                        'legend': {'0': 'Can wait', '1': 'Needs attention this week', '2': 'Needs attention today'}}})
+        self.assertEqual((answer['model'], answer['usage']), (self.DECIDER, self.recorded['answer']['usage']))
+        result = decision.parse_result(answer, decision.parse_questions(QUESTIONS))
+        self.assertEqual([(item.type, item.value) for item in result.answers],
+                         [('noul', 1.0), ('choice', 'calm'), ('score', 1.99)])
+        self.assertEqual((result.input_tokens, result.output_tokens, result.cost), (387, 0, None))
+        # An answer without a name is its question's by place; a refusal stays one, and others are kept as they came.
+        self.server.answer = {'model': self.DECIDER, 'answers': [
+            {'type': 'predicate', 'name': None, 'probability': 0.2}, {'type': 'refusal', 'name': 'tone'},
+            {'type': 'later', 'name': 'urgency', 'value': 3}]}
+        answer = self.decide()
+        self.assertEqual(answer['answers'], {'billing': {'type': 'noul', 'noul': 0.2},
+                                             'tone': {'type': 'refusal', 'name': 'tone'},
+                                             'urgency': {'type': 'later', 'name': 'urgency', 'value': 3}})
+        result = decision.parse_result(answer, decision.parse_questions(QUESTIONS))
+        self.assertEqual([item.type for item in result.answers], ['noul', 'refusal', 'invalid'])
+        for answer in ({}, {'answers': {}}, {'model': self.DECIDER}):
+            with self.subTest(answer=answer):
+                self.server.answer = answer
+                with self.assertRaisesRegex(ProviderError, 'The response has no answers'):
+                    self.decide()
+
+    def test_what_the_api_cannot_take_is_refused_before_sending(self):
+        with self.assertRaisesRegex(ProviderError, 'does not accept: box questions'):
+            self.decide(questions=BOX, images=[PNG])
+        with self.assertRaisesRegex(ProviderError, 'does not accept: keep_alive'):
+            self.decide(keep_alive=60)
+        self.assertEqual(self.server.received, [])
+        capabilities = self.provider().capabilities
+        self.assertTrue(capabilities.decisions and capabilities.decision_images)
+        self.assertFalse(capabilities.decision_boxes)
+        self.assertEqual((capabilities.decision_question_limit, capabilities.decision_image_formats),
+                         (400, systemone.ASSET_FORMATS))
+        self.assertIn('box questions', decision.check_request(decision.parse_questions(BOX), [PNG], capabilities))
+        many = decision.parse_questions({f'q{index}': {'type': 'noul'} for index in range(401)})
+        self.assertIn('at most 400', decision.check_request(many, [], capabilities))
+
+    def test_errors_and_the_key(self):
+        for name, error in self.recorded['errors'].items():
+            with self.subTest(error=name):
+                self.server.status, self.server.body = error['status'], json.dumps(error['body']).encode()
+                with self.assertRaises(ProviderError) as caught:
+                    self.decide(provider=self.keyed())
+                self.assertEqual((str(caught.exception), caught.exception.status), (error['says'], error['status']))
+        self.server.status, self.server.body = 200, b''
+        self.decide(provider=self.keyed())
+        self.assertEqual(self.server.received[-1][2], 'Bearer sk-secret')
+        self.server.status = 401
+        self.server.body = b'{"error": {"message": "Incorrect API key provided: sk-secret."}}'
+        with self.assertRaisesRegex(ProviderError, 'rejected the API key, or requires one'):
+            self.decide(provider=self.keyed())
+
+    def test_the_one_model_that_decides_is_listed_and_also_chats(self):
+        provider = self.provider()
+        self.assertEqual(provider.list_decision_models(), [dict(
+            provider.model_tag(self.DECIDER), capabilities=['decision', 'vision'])])
+        self.assertEqual(self.server.received[-1][0], '/openai/v1/models')
+        # It is a chat model as well, so it stays in the chat list.
+        self.assertIn(self.DECIDER, [entry['name'] for entry in provider.list_models()])
+        self.assertIs(provider.decision_capabilities(provider.list_decision_models()[0]), provider.capabilities)
+        self.server.models = {'data': [{'id': 'gpt-6-luna-2027-01-01', 'created': 1}, {'id': 'gpt-6-sol'}]}
+        self.assertEqual([entry['name'] for entry in provider.list_decision_models()], ['gpt-6-luna-2027-01-01'])
 
 
 class HelperTests(unittest.TestCase):

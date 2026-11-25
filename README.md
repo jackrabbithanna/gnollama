@@ -4,7 +4,7 @@
 
 <img src="./data/icons/hicolor/scalable/apps/io.github.jackrabbithanna.Gnollama.svg" width="128" height="128"></img>
 
-A Gnome user interface to [Ollama](https://ollama.com)
+A Gnome user interface to [Ollama](https://ollama.com) and other model providers
 </div>
 
 ## Description

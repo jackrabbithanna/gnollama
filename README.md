@@ -4,16 +4,17 @@
 
 <img src="./data/icons/hicolor/scalable/apps/io.github.jackrabbithanna.Tureen.svg" width="128" height="128"></img>
 
-Tureen — an AI desktop app for GNOME
+**Native GNOME client for local and cloud AI**
 
-Chat with local and cloud models from [Ollama](https://ollama.com) and other providers
+[Ollama](https://ollama.com), [LM Studio](https://lmstudio.ai), [OpenAI](https://openai.com), [OpenRouter](https://openrouter.ai), the [Vercel AI Gateway](https://vercel.com/ai-gateway), and more.<br>
+Chat, compare models, generate images, and create local RAG collections.
 
 *Formerly known as Gnollama.*
 </div>
 
 ## Description
 
-**Tureen** is a modern, feature-rich GNOME user interface for numerous model providers,  built using Python, GTK4, and Libadwaita. It provides a native, responsive Linux desktop experience for interacting with LLMs.
+**Tureen** is a native GNOME client for local and cloud AI models. It brings many model providers together in one responsive Linux desktop app: chat with any of them, compare their answers side by side, let two models talk to each other, generate images, and ground answers in local RAG collections built from your own documents.
 
 Whether you are developing, experimenting, or chatting with local models, Tureen makes it easy to run prompts across multiple local or remote hosts simultaneously.
 
@@ -25,7 +26,7 @@ Whether you are developing, experimenting, or chatting with local models, Tureen
   * **New Response (`/api/generate`)**: Single-turn completions ideal for prompt engineering and testing.
   * **Model to Model Conversation**: Alternating A/B conversations with separate system prompts, bounded rounds, pause/resume, and saved transcripts.
   * **Decision**: Ask a decision model named yes/no, choice, score, and box questions about text, JSON, or images, and read each answer with its probabilities.
-  * **Image**: Generate images from a prompt, with reference images and model settings, on OpenRouter and the Vercel AI Gateway.
+  * **Image**: Generate images from a prompt, with reference images and model settings, on OpenAI, OpenRouter, and the Vercel AI Gateway.
   * Model lists appear before capability checks. Only the selected model is checked; models known to be embedding-only are excluded from all generation modes. Opening an empty selector retries discovery. Embedding models remain available in Knowledge and Manage Models; unknown capabilities remain supported for older servers.
 * **Conversation History & Sidebar**:
   * Automatically saves chat logs and model configurations between runs.
@@ -38,7 +39,7 @@ Whether you are developing, experimenting, or chatting with local models, Tureen
   * Running models refresh every five seconds while that view is visible. Unload is unavailable while Tureen has an active response using the model.
 * **Structured Output**: Choose Text, JSON, or JSON Schema below the image controls in either Chat or Response tabs. Paste or import a schema, validate responses locally, and copy or save JSON. The raw response and validation result remain in saved chat history.
 * **Tool Calling Playground**: Define function tools in Chat tabs, inspect model calls and argument validation, supply mock results, and continue with the current model and settings. Import/export definitions as JSON and reopen pending rounds from saved history.
-* **Knowledge Library and RAG**: Import text and PDFs, organize multi-document collections, create local embeddings with Ollama, inspect vectors, and search selected collections using cosine, Euclidean, or Manhattan comparison. Chats retain the passages used for each answer.
+* **Knowledge Library and RAG**: Import text, PDFs, web pages, and images, organize multi-document collections, create embeddings with any host that offers embedding models (see [What each host type supports](#what-each-host-type-supports)), keep the vectors in a local database, inspect them, and search selected collections using cosine, Euclidean, or Manhattan comparison. Chats retain the passages used for each answer.
   * **Add URLs**: Review batches of web pages, PDFs, or text URLs before adding them to a collection. Extract main content automatically or use a CSS selector, edit the preview, and retain source URLs in chat citations.
 * **Model Lifetime**: Choose the server default, unload after a reply, five or thirty minutes, indefinitely, or a custom duration in seconds in **Chat Settings…**. This setting applies to requests from that tab.
 * **Rich Markdown & Code Rendering**: Full Markdown support and code syntax highlighting (powered by GTKSourceView 5).
@@ -56,28 +57,54 @@ Whether you are developing, experimenting, or chatting with local models, Tureen
 * **Stop Responses**: Stop generation while keeping partial answers in chat history. Pending history writes finish before the application quits.
 * **Adaptive GNOME Navigation**: The header switches between four sections: **Chats**, **Decisions**, **Images**, and **Knowledge**. Chats, Decisions, and Images each have their own tabs and their own sidebar, with its own search and its own Drafts and Pinned groups. The Chats sidebar groups Recent chats, Recent comparisons, and Recent model conversations; the Decisions sidebar lists Recent decisions, and the Images sidebar Recent images. Starting or reopening a decision or an image shows its section. Native tabs support reordering and loading indicators, and sidebars collapse on narrow windows. Ctrl+W, Ctrl+Page Up/Down, and F9 close a tab, switch tabs, and toggle the sidebar in the section shown.
 
-<img src="./screenshots/tureen-screenshot.png" alt="tureen" align="left"/>
+<img src="./screenshots/tureen-screenshot.png" alt="Tureen chat with code highlighting" align="left"/>
 
-### Ollama Cloud
+### Hosts and providers
 
-In **Manage Hosts**, add a host and choose **Ollama Cloud**. Create an API key at [Ollama's API-key settings](https://ollama.com/settings/keys), paste it into the masked field, and save. The service address is filled in automatically. Select this host in either a Chat or Response tab; no local Ollama installation or model download is needed.
+Open **Manage Hosts**, add a host, and choose its type. A host can be a server on your computer or network, or a cloud service with an API key. Select any host in a Chat, Response, Comparison, Decision, or Image tab.
+
+| Host type | Address | API key | Where to get a key |
+| --- | --- | --- | --- |
+| **Ollama Server** | Your server, e.g. `http://localhost:11434` | Not needed | — |
+| **LM Studio** | `http://localhost:1234` by default; enable the server in LM Studio's Developer tab | Optional | Only if you turned on authentication in LM Studio |
+| **OpenAI-Compatible Server** | Your server, e.g. `http://localhost:8080` (`/v1` is added if needed) | Optional | Whatever your server expects |
+| **Ollama Cloud** | Filled in automatically | Required | [ollama.com/settings/keys](https://ollama.com/settings/keys) |
+| **OpenAI** | Filled in automatically | Required | [platform.openai.com/api-keys](https://platform.openai.com/api-keys) |
+| **OpenRouter** | Filled in automatically | Required | [openrouter.ai/keys](https://openrouter.ai/keys) |
+| **Vercel AI Gateway** | Filled in automatically | Required | Your Vercel dashboard, under **AI Gateway → API Keys** |
+
+**Test Connection** lists the host's models. For OpenAI and the Vercel AI Gateway it also confirms the key is accepted. Ollama Cloud and OpenRouter publish their model lists, so for them a successful test confirms only that the service is reachable, and the key is checked when you first generate a response.
+
+#### What each host type supports
+
+| | Ollama Server | LM Studio | OpenAI-Compatible | Ollama Cloud | OpenAI | OpenRouter | Vercel AI Gateway |
+| --- | :-: | :-: | :-: | :-: | :-: | :-: | :-: |
+| Chat, tools, thinking | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Structured output | ✓ | ✓ | ✓ | | ✓ | ✓ | ✓ |
+| Single responses (`/api/generate`) | ✓ | | | ✓ | | | |
+| Embeddings for Knowledge | ✓ | ✓ | ✓ | | ✓ | ✓ | ✓ |
+| Image embeddings | ✓ | | ✓ | | | ✓ | |
+| Decisions | ✓ | ✓ | | | ✓ | ✓ | ✓ |
+| Image generation | | | | | ✓ | ✓ | ✓ |
+| Pull, delete, and unload models | ✓ | | | | | | |
+| Model retention | ✓ | | | | | | |
+
+Model names come directly from each host. Image input, tool calling, and thinking controls follow each model's reported capabilities. OpenAI-compatible servers don't report these, so Tureen doesn't check them there. If a tab uses a setting the selected host can't take, such as structured output on Ollama Cloud, Tureen names it instead of sending the request. The setting stays saved in the tab for hosts that support it.
+
+#### API keys
 
 Keys are stored through libsecret in the desktop keyring (using its portal backend in Flatpak), separately from the host database and conversation history. Leave the key field blank when editing to retain the existing key. If the keyring is unavailable, **Use for This Session** keeps the entered key in memory until Tureen exits. After restarting, enter it again unless a previously saved key is available. Removing a host also removes its saved key; a keyring failure leaves the host available for retry.
 
-**Test Connection** checks the public model catalog, so it confirms reachability rather than API-key validity. Authentication is checked when generating a response. Cloud model names come directly from the service. Available tools, vision, and thinking controls follow each model's reported capabilities.
-
-Cloud hosts show available models without download, deletion, running-model, or unload controls. Structured output and model retention are unavailable for cloud requests; their settings remain available when switching back to another server. Knowledge embeddings use a separate non-cloud host and can provide source passages to cloud chats.
-
 ### Knowledge Library and RAG
 
-1. Use **Manage Models** to pull an embedding model, such as `qwen3-embedding:0.6b` or `embeddinggemma`, on a configured Ollama host. The model generating chat answers can run on a different host.
+1. Pick a host with an embedding model. On an Ollama server, use **Manage Models** to pull one, such as `qwen3-embedding:0.6b` or `embeddinggemma`. In LM Studio, download one in LM Studio itself. OpenAI, OpenRouter, the Vercel AI Gateway, and OpenAI-compatible servers list the embedding models they offer, such as `text-embedding-3-small`. Ollama Cloud has no embedding models. The model generating chat answers can run on a different host. Wherever the embeddings are made, the vectors and document text are stored locally in Tureen's database. With a cloud host, though, the document text and images are sent to that service to be embedded, so use a local host for anything that must stay on your machine.
 2. Switch to **Knowledge**, which opens on **Collections**. Choose **New Collection…**, enter a name, and select the embedding server and model. Model-specific formatting defaults are selected automatically. Prefixes, dimensions, and chunk settings are available under **Advanced Embedding Settings**.
-3. Open the collection and choose **Add Text…**, **Add Files…**, or **Add URLs…**. Every import shows its destination collection and can create a new collection without leaving the dialog. Review content, then choose **Add to Collection**. Files are reviewed one at a time in a single queue; skip unsupported files and continue with the rest.
+3. Open the collection and choose **Add Text…**, **Add Files…**, or **Add URLs…**. **Add Files…** also takes images (PNG, JPEG, GIF, WebP) when the collection's embedding model accepts them; see the image embeddings row in the host table. Every import shows its destination collection and can create a new collection without leaving the dialog. Review content, then choose **Add to Collection**. Files are reviewed one at a time in a single queue; skip unsupported files and continue with the rest.
 4. Documents prepare automatically, reusing compatible embeddings. Watch document status change to **Ready**; failures show their cause and can be retried with **Prepare Documents**. **Add Existing Documents…** shares library documents across collections without duplicating their text or compatible vectors. **All Documents** and **Ungrouped Documents** remain available in the Library selector.
 5. Choose **Use in New Chat** on a ready collection, or open a Chat tab’s **Choose sources…**. Select collections first; the first selection determines the embedding configuration and default server/model. Compatible collections can be combined. Server overrides, similarity measures, thresholds, and retrieval limits are under **Search Settings**; **Test Search** previews retrieval without sending a chat message.
 6. Enable **Use Knowledge** in a Chat tab. Each new turn resolves the current collection membership before searching. Every selected collection must be nonempty and fully indexed; otherwise the app explains which sources need attention and keeps the draft. The expandable **Search Query Override** can make a follow-up self-contained without changing the chat message.
 
-Collection names and membership can change. Under **Collection Options**, use **Copy with New Settings** to change a collection’s embedding model, prefixes, dimensions, or chunk settings: the original collection and chats are preserved. **Change Embedding Model** selects a model with the original digest, including on another host. Removing a document from a collection or deleting a collection keeps its library documents and embeddings; deleting an individual embedding index leaves its collection membership needing a rebuild. Cancelling a shared build affects every collection using it, and interrupted builds require an explicit retry after restarting.
+Collection names and membership can change. Under **Collection Options**, use **Copy with New Settings** to change a collection’s embedding model, prefixes, dimensions, or chunk settings: the original collection and chats are preserved. **Change Embedding Model** selects a model with the same identity (digest or fingerprint), including on another host that reports the same model. Removing a document from a collection or deleting a collection keeps its library documents and embeddings; deleting an individual embedding index leaves its collection membership needing a rebuild. Cancelling a shared build affects every collection using it, and interrupted builds require an explicit retry after restarting.
 
 For a quick example, create a collection and paste: `The maintenance window is Sunday from 02:00 to 04:00 UTC. Contact the infrastructure team to request an exception.` Wait for its embeddings to complete, select the collection in a chat, and ask: `When is the maintenance window?` Expand **Sources used** to inspect the actual passage supplied to the model.
 
@@ -91,7 +118,7 @@ Only downloaded content is processed: there is no linked-page crawling, JavaScri
 
 Web documents show their source URL, fetch date, and **Fetch Again…** action. Reimporting the same requested URL updates that document; different URLs remain independent even if their text matches. Unchanged text reuses existing vectors. Changed text requires **Replace and Rebuild** confirmation naming the affected collections. Replacement clears obsolete vectors and rebuilds the existing indexes with their original model and chunk settings. Affected collections cannot search until rebuilding succeeds; failed builds can be retried. Saved chat answers keep their original passages and source metadata. A document with queued or running embedding builds must finish those builds before it can be replaced.
 
-An embedding configuration fixes the model digest, vector dimensions, and document/query prefixes. Searches must use that configuration; a matching model name alone is insufficient if its digest changed. Built-in presets cover plain input, EmbeddingGemma retrieval, Nomic retrieval, and Qwen3 retrieval; custom prefixes are also available. The Qwen3 preset leaves documents plain and adds its retrieval instruction to queries. Existing configurations retain their saved prefixes. Dimensions must be between 1 and 8,192. Defaults are native dimensions and paragraph-aware chunks of up to 1,600 characters with 200 characters of overlap. Ollama receives `truncate=false`; oversized document chunks are split further and the actual boundaries are saved.
+An embedding configuration fixes the model's identity, vector dimensions, and document/query prefixes. Searches must use that configuration; a matching model name alone is insufficient if the identity changed. On Ollama hosts the identity is the model's content digest. Other hosts don't publish one, so Tureen uses a fingerprint of what the host reports about the model (its ID, and its variant or creation date where available). A replacement model that reports the same details would go unnoticed, and Tureen says so when you choose such a model. Built-in presets cover plain input, EmbeddingGemma retrieval, Nomic retrieval, and Qwen3 retrieval; custom prefixes are also available. The Qwen3 preset leaves documents plain and adds its retrieval instruction to queries. Existing configurations retain their saved prefixes. Dimensions must be between 1 and 8,192. Defaults are native dimensions and paragraph-aware chunks of up to 1,600 characters with 200 characters of overlap. Text that is too long for the embedding model is never silently cut short. Ollama is sent `truncate=false`, so it refuses oversized chunks, which are then split further, and the actual boundaries are saved. Other hosts would shorten long input without saying so. For them, Tureen estimates each chunk's tokens against the model's input limit, when the host reports one, and keeps a fifth of the limit in reserve. If a chunk or search query is too long, Tureen stops and asks for a smaller chunk size or a shorter query.
 
 Retrieval defaults to six passages and an 8,000-character source budget, with no minimum similarity. These controls are separate from generation settings. Character budgets are not token limits; allow room in the chat model's context for history, tools, and the answer. Similarity is a ranking score, not confidence. The model is instructed to favor supplied sources, cite passages when the response format permits, and acknowledge missing evidence. This does not guarantee factual accuracy or citation compliance.
 
@@ -113,17 +140,17 @@ Older chats may retain individual document/chunk selections. They continue to wo
 
 Tureen stores extracted text and page locations in its local SQLite database, alongside normalized float32 vectors stored only in sqlite-vec virtual tables, one per embedding configuration. It does not copy original files or modify them. For pasted text and local files, import revisions as new documents; duplicate text offers opening the existing document. Web documents can be updated using Fetch Again and Replace and Rebuild. PDF page extraction can lose layout; pages without text are reported, and OCR and password-protected PDFs are not supported. Imports are limited to 50 MiB per file, 2,000 PDF pages, and 5 million extracted characters per document.
 
-When deleting a model, the confirmation reports affected documents, indexes, and vectors. Data is kept by default. The optional vector-cleanup checkbox removes matching indexes across creation hosts while retaining source text. Historical chat passages remain saved. Deleting a model externally never automatically deletes library data; refresh the library to check availability, select a compatible host, or build replacement indexes. Active embedding jobs participate in the model manager's busy checks.
+When deleting a model from an Ollama server in **Manage Models**, the confirmation reports affected documents, indexes, and vectors. Data is kept by default. The optional vector-cleanup checkbox removes matching indexes across creation hosts while retaining source text. Historical chat passages remain saved. Deleting a model outside Tureen, or a cloud service retiring one, never automatically deletes library data; refresh the library to check availability, select a compatible host, or build replacement indexes. Active embedding jobs participate in the model manager's busy checks.
 
 The library uses exact search with sqlite-vec and needs no separate vector database service. Cosine uses the existing vec0 nearest-neighbor search; Euclidean and Manhattan use sqlite-vec’s native distance functions over the selected vectors. Every measure filters sources before ranking, with deterministic ties. The distance options can be slower for large collections. Embedding latency is additional and depends on the model and host.
 
-For the pinned sqlite-vec 0.1.9 layout, distance searches reuse read-only vector block handles, validate slot mappings, and keep only the best candidates in memory. Other extension versions fall back to the public scalar-query interface. A GNOME 50 aarch64 check of 10,000 vectors at 1,024 dimensions matched reference rankings and took about 0.04 seconds for cosine, 0.19 seconds for Euclidean, and 0.21 seconds for Manhattan, excluding Ollama inference.
+For the pinned sqlite-vec 0.1.9 layout, distance searches reuse read-only vector block handles, validate slot mappings, and keep only the best candidates in memory. Other extension versions fall back to the public scalar-query interface. A GNOME 50 aarch64 check of 10,000 vectors at 1,024 dimensions matched reference rankings and took about 0.04 seconds for cosine, 0.19 seconds for Euclidean, and 0.21 seconds for Manhattan, excluding embedding time on the host.
 
-A GNOME 50 aarch64 benchmark of 50,000 vectors at 1,024 dimensions returned identical top-six results to the preceding batched NumPy ranking. Whole-library retrieval took 0.15–0.19 seconds, selecting one 25,000-vector document took 0.17–0.18 seconds, and selecting 25,000 individual chunks took 0.42–0.44 seconds. These are local retrieval timings, excluding Ollama inference. The one-time migration and backup took about 68 seconds; startup displays migration progress and waits for the database operation to finish if closed.
+A GNOME 50 aarch64 benchmark of 50,000 vectors at 1,024 dimensions returned identical top-six results to the preceding batched NumPy ranking. Whole-library retrieval took 0.15–0.19 seconds, selecting one 25,000-vector document took 0.17–0.18 seconds, and selecting 25,000 individual chunks took 0.42–0.44 seconds. These are local retrieval timings, excluding embedding time on the host. The one-time migration and backup took about 68 seconds; startup displays migration progress and waits for the database operation to finish if closed.
 
 Database upgrades run automatically on startup, with progress and a recoverable error screen. Schema version 7 migrates existing vectors without contacting Ollama: it copies and verifies their IDs, dimensions, and bytes before removing the old vector column. Version 8 adds collections and membership without copying or rebuilding vectors; existing documents appear under **Ungrouped Documents**, and existing chat selections are preserved. Version 9 adds web-source provenance without reindexing existing documents. Version 10 adds cloud host types and keyring references without storing API keys in the database. Version 11 adds stable message identifiers, managed drafts, full-text search, and comparison runs while preserving message attachments and metadata. Version 14 adds saved decision runs without changing existing conversations. Version 15 adds saved image runs, and version 16 adds image documents to the knowledge library; neither changes existing chats or documents. Before upgrading an existing database, Tureen saves a consistent, timestamped `tureen.db.pre-v11-*.bak` beside the database and reports its location. Keep that file until you have verified the upgrade; it can then be archived or removed. Failed migrations roll back, and incompatible or damaged vectors are never silently discarded. Databases from newer app versions are refused. Older app versions must not be used with the upgraded database. SQLite can reuse pages freed by migration; the database file need not immediately shrink.
 
-<img src="./screenshots/tureen-rag-collections.png" alt="tureen" align="left"/>
+<img src="./screenshots/tureen-rag-collections.png" alt="Tureen knowledge collections" align="left"/>
 
 ### Structured output details
 
@@ -154,103 +181,7 @@ Each continuation uses the currently selected host, model, definitions, thinking
 
 Applied definitions and saved mock results persist per chat, including chats closed before sending a first prompt. Import/export files to reuse definitions across chats. While a round is pending, supply its results or choose **Cancel Tool Round** before sending another prompt. Cancellation retains supplied results and records cancellation text for unanswered calls; it does not contact the server. Reopening a pending round never starts a request automatically. Incomplete and malformed calls remain inspectable but cannot be continued.
 
-<img src="./screenshots/tureen-manage-models.png" alt="tureen" align="left"/>
-
-## Motivation
-
-I wanted a GNOME application for Ollama that I could use to test and experiment with different models. I have multiple computers with Ollama and wanted a way to easily query and compare the responses from all of them using the same interface. Perhaps others would find this useful as well so here you go.
-
-## Build
-
-*tureen* can be built and run with [GNOME Builder](https://wiki.gnome.org/Apps/Builder).
-
-1. Open GNOME Builder
-2. Click the **Clone Repository** button
-3. Enter `https://github.com/jackrabbithanna/tureen.git` in the field **Repository URL**
-4. Click the **Clone Project** button
-5. Click the **Run** button to start building application
-
-### Flatpak
-
-To build *tureen* from a checkout and install it as a Flatpak, add Flathub, then install flatpak-builder and the GNOME 51 SDK and runtime:
-
-```bash
-flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
-flatpak install --user flathub org.flatpak.Builder org.gnome.Sdk//51 org.gnome.Platform//51
-```
-
-From the root of the checkout, build and install it for your user, then run it:
-
-```bash
-flatpak run org.flatpak.Builder --user --install --force-clean --disable-rofiles-fuse \
-  ~/.cache/tureen-flatpak-build io.github.jackrabbithanna.Tureen.json
-flatpak run io.github.jackrabbithanna.Tureen
-```
-
-- `~/.cache/tureen-flatpak-build` is a scratch directory where the application is assembled; any path outside the checkout will do. Downloads and built modules are cached in `.flatpak-builder/` in the checkout, so later builds are faster.
-- `--disable-rofiles-fuse` avoids the error "Failure spawning rofiles-fuse", which flatpak-builder often gives when it runs as a Flatpak itself. A `flatpak-builder` installed from your distribution can be used in its place.
-- The installed application is also in your application menu. Remove it with `flatpak uninstall --user io.github.jackrabbithanna.Tureen`.
-- GNOME Builder runs the application under the same ID and with the same data. Only one instance runs at a time: while Builder's is open, starting the installed one brings Builder's window forward instead. Run `flatpak ps` to see which is running. The installed one uses `org.gnome.Platform`, and Builder's uses `org.gnome.Sdk`.
-- Runs from GNOME Builder cannot show images in formats GTK does not read itself, such as the WebP that some image models return: the sandboxed image loader cannot start there. Such an image can still be saved. The installed application shows it.
-
-### Meson
-
-Requires Python 3.11+, PyGObject, GTK 4.18+, libadwaita 1.9+, libsoup 3, libsecret 0.20+ with Secret 1 introspection, jsonschema 4.26+, sqlite-vec 0.1.9, SQLite 3.41+ with extension loading, pypdf, and Markdown. The Flatpak manifest uses GNOME 51 and builds the current checkout. It bundles checksum-pinned dependencies for aarch64 and x86_64, including sqlite-vec 0.1.9 and pypdf 6.18.0.
-Code highlighting requires [GTKSourceView](https://wiki.gnome.org/Projects/GtkSourceView) version 5
-
-Math rendering requires [ziamath](https://ziamath.readthedocs.io), which is in `requirements.lock`, together with the librsvg introspection data (Rsvg 2.0) and pycairo. Without ziamath, display equations are shown as TeX source and simple inline equations as plain text. Without librsvg or pycairo, equations are drawn through GTK's image loader, which can fail inside a sandbox.
-
-For a native build on a Debian/Ubuntu installation whose GTK and libadwaita packages meet the minimum versions above, install the development and introspection packages, then use the locked Python dependencies:
-
-```bash
-sudo apt-get install meson ninja-build gettext desktop-file-utils python3-venv python3-gi \
-  libgtk-4-dev libadwaita-1-dev libsoup-3.0-dev libsecret-1-dev \
-  gir1.2-gtk-4.0 gir1.2-adw-1 gir1.2-soup-3.0 gir1.2-secret-1 \
-  libgtksourceview-5-dev gir1.2-gtksource-5 gir1.2-rsvg-2.0 python3-gi-cairo
-python3 -m venv --system-site-packages .venv
-. .venv/bin/activate
-python -m pip install -r requirements.lock
-```
-
-The Flatpak build supplies its own GNOME 51 SDK and pinned Python dependencies. librsvg and pycairo come from the GNOME runtime.
-
-```bash
-meson setup build
-meson compile -C build
-meson install -C build
-```
-You can then run `tureen` to execute the application.
-
-## Validation
-
-Run `meson test -C build --print-errorlogs` after building. Regression tests use temporary databases and a local HTTP fixture server; they do not contact your Ollama servers. GTK tests require a display. Set `TUREEN_REQUIRE_DISPLAY=1` to reject missing GTK coverage, as CI does. `tools/ci-test.sh` runs the complete suite under Xvfb. The CI matrix builds GNOME 51 Flatpaks on x86_64 and aarch64 and runs core compatibility tests on Python 3.11.
-
-CI also runs `ruff check .` and `mypy`, configured in `pyproject.toml`, and fails on any finding. Install the versions pinned in `.github/workflows/validation.yml` to run them locally.
-
-GNOME Builder builds the repository Flatpak manifest from the current checkout. For a command-line Flatpak build, use:
-
-```bash
-flatpak-builder --user --force-clean /tmp/tureen-flatpak-build io.github.jackrabbithanna.Tureen.json
-```
-
-## Languages
-
-The interface follows your desktop language. Arabic, German, Greek, Spanish,
-French, Hindi, Italian, Japanese, Korean, Portuguese, Swahili, Turkish, Ukrainian,
-and Simplified Chinese have complete application catalogs.
-See the [translation review and maintenance guide](po/README.md) for coverage,
-language selection, review findings, and translation checks.
- 
-## Contribute
-
-The [GNOME Code of Conduct](https://conduct.gnome.org/) is applicable to this project
-
-
-## License
-
-*tureen* is released under the terms of the [GNU General Public License V3](https://www.gnu.org/licenses/gpl-3.0.html).
-
-No warranty provided. No guarantee it does anything at all. Use at your own risk.
+<img src="./screenshots/tureen-manage-models.png" alt="Tureen model manager" align="left"/>
 
 ### Interface and settings
 
@@ -346,3 +277,95 @@ Live retrieval evaluation is opt-in and contacts only the explicitly supplied ho
 python3 tools/evaluate_retrieval.py --live-host http://localhost:11434 \
   --embedding-model embeddinggemma --answer-model qwen3:4b --output live-evaluation.json
 ```
+
+## Build
+
+Tureen can be built and run with [GNOME Builder](https://wiki.gnome.org/Apps/Builder).
+
+1. Open GNOME Builder
+2. Click the **Clone Repository** button
+3. Enter `https://github.com/jackrabbithanna/tureen.git` in the field **Repository URL**
+4. Click the **Clone Project** button
+5. Click the **Run** button to start building application
+
+### Flatpak
+
+To build Tureen from a checkout and install it as a Flatpak, add Flathub, then install flatpak-builder and the GNOME 51 SDK and runtime:
+
+```bash
+flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+flatpak install --user flathub org.flatpak.Builder org.gnome.Sdk//51 org.gnome.Platform//51
+```
+
+From the root of the checkout, build and install it for your user, then run it:
+
+```bash
+flatpak run org.flatpak.Builder --user --install --force-clean --disable-rofiles-fuse \
+  ~/.cache/tureen-flatpak-build io.github.jackrabbithanna.Tureen.json
+flatpak run io.github.jackrabbithanna.Tureen
+```
+
+- `~/.cache/tureen-flatpak-build` is a scratch directory where the application is assembled; any path outside the checkout will do. Downloads and built modules are cached in `.flatpak-builder/` in the checkout, so later builds are faster.
+- `--disable-rofiles-fuse` avoids the error "Failure spawning rofiles-fuse", which flatpak-builder often gives when it runs as a Flatpak itself. A `flatpak-builder` installed from your distribution can be used in its place.
+- The installed application is also in your application menu. Remove it with `flatpak uninstall --user io.github.jackrabbithanna.Tureen`.
+- GNOME Builder runs the application under the same ID and with the same data. Only one instance runs at a time: while Builder's is open, starting the installed one brings Builder's window forward instead. Run `flatpak ps` to see which is running. The installed one uses `org.gnome.Platform`, and Builder's uses `org.gnome.Sdk`.
+- Runs from GNOME Builder cannot show images in formats GTK does not read itself, such as the WebP that some image models return: the sandboxed image loader cannot start there. Such an image can still be saved. The installed application shows it.
+
+### Meson
+
+Requires Python 3.11+, PyGObject, GTK 4.18+, libadwaita 1.9+, libsoup 3, libsecret 0.20+ with Secret 1 introspection, jsonschema 4.26+, sqlite-vec 0.1.9, SQLite 3.41+ with extension loading, pypdf, and Markdown. The Flatpak manifest uses GNOME 51 and builds the current checkout. It bundles checksum-pinned dependencies for aarch64 and x86_64, including sqlite-vec 0.1.9 and pypdf 6.18.0.
+Code highlighting requires [GTKSourceView](https://wiki.gnome.org/Projects/GtkSourceView) version 5
+
+Math rendering requires [ziamath](https://ziamath.readthedocs.io), which is in `requirements.lock`, together with the librsvg introspection data (Rsvg 2.0) and pycairo. Without ziamath, display equations are shown as TeX source and simple inline equations as plain text. Without librsvg or pycairo, equations are drawn through GTK's image loader, which can fail inside a sandbox.
+
+For a native build on a Debian/Ubuntu installation whose GTK and libadwaita packages meet the minimum versions above, install the development and introspection packages, then use the locked Python dependencies:
+
+```bash
+sudo apt-get install meson ninja-build gettext desktop-file-utils python3-venv python3-gi \
+  libgtk-4-dev libadwaita-1-dev libsoup-3.0-dev libsecret-1-dev \
+  gir1.2-gtk-4.0 gir1.2-adw-1 gir1.2-soup-3.0 gir1.2-secret-1 \
+  libgtksourceview-5-dev gir1.2-gtksource-5 gir1.2-rsvg-2.0 python3-gi-cairo
+python3 -m venv --system-site-packages .venv
+. .venv/bin/activate
+python -m pip install -r requirements.lock
+```
+
+The Flatpak build supplies its own GNOME 51 SDK and pinned Python dependencies. librsvg and pycairo come from the GNOME runtime.
+
+```bash
+meson setup build
+meson compile -C build
+meson install -C build
+```
+You can then run `tureen` to execute the application.
+
+## Validation
+
+Run `meson test -C build --print-errorlogs` after building. Regression tests use temporary databases and a local HTTP fixture server; they do not contact your Ollama servers. GTK tests require a display. Set `TUREEN_REQUIRE_DISPLAY=1` to reject missing GTK coverage, as CI does. `tools/ci-test.sh` runs the complete suite under Xvfb. The CI matrix builds GNOME 51 Flatpaks on x86_64 and aarch64 and runs core compatibility tests on Python 3.11.
+
+CI also runs `ruff check .` and `mypy`, configured in `pyproject.toml`, and fails on any finding. Install the versions pinned in `.github/workflows/validation.yml` to run them locally.
+
+GNOME Builder builds the repository Flatpak manifest from the current checkout. For a command-line Flatpak build, use:
+
+```bash
+flatpak-builder --user --force-clean /tmp/tureen-flatpak-build io.github.jackrabbithanna.Tureen.json
+```
+
+## Languages
+
+The interface follows your desktop language. Arabic, German, Greek, Spanish,
+French, Hindi, Italian, Japanese, Korean, Portuguese, Swahili, Turkish, Ukrainian,
+and Simplified Chinese have complete application catalogs.
+See the [translation review and maintenance guide](po/README.md) for coverage,
+language selection, review findings, and translation checks.
+ 
+## Contribute
+
+The [GNOME Code of Conduct](https://conduct.gnome.org/) is applicable to this project
+
+
+## License
+
+Tureen is released under the terms of the [GNU General Public License V3](https://www.gnu.org/licenses/gpl-3.0.html).
+
+No warranty provided. No guarantee it does anything at all. Use at your own risk.

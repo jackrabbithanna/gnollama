@@ -31,8 +31,8 @@
   <launchable type="desktop-id">io.github.jackrabbithanna.Tureen.desktop</launchable>
   <content_rating type="oars-1.1" />
   <branding>
-    <color type="primary" scheme_preference="light">#ffbe6f</color>
-    <color type="primary" scheme_preference="dark">#c64600</color>
+    <color type="primary" scheme_preference="light">#b7daca</color>
+    <color type="primary" scheme_preference="dark">#28483f</color>
   </branding>
 
   <screenshots>

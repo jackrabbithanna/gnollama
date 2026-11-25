@@ -13,7 +13,7 @@ Choose **New Comparison** (Ctrl+Shift+N) and pick 2–4 distinct host/model pair
 
 If a setting doesn't suit one of the targets, the draft stays available so you can correct it. Stop individual targets, or use **Stop All**.
 
-![Comparison of three models](../screenshots/tureen-comparison.png)
+![Comparison of four models](../screenshots/tureen-4-way-model-comparison.png)
 
 ## Layout
 

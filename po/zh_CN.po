@@ -330,6 +330,10 @@ msgstr "所选模型已不可用。"
 msgid "Embedding models cannot generate comparisons."
 msgstr "嵌入模型无法生成比较结果。"
 
+#: src/comparison.py:59 src/model_conversation.py:68
+msgid "Decision models cannot generate text."
+msgstr "决策模型无法生成文本。"
+
 #: src/comparison.py:48
 msgid "Every target must support the shared images."
 msgstr "所有目标都必须支持共享图片。"
@@ -413,6 +417,67 @@ msgstr "此数据库需要较新版本的 Gnollama。"
 #, python-brace-format
 msgid "Upgrading the database to version {0}…"
 msgstr "正在将数据库升级到版本 {0}…"
+
+#: src/decision.py:62 src/decision.py:122
+#, python-brace-format
+msgid "Question \"{0}\" has an invalid field: {1}"
+msgstr "问题“{0}”包含无效字段：{1}"
+
+#: src/decision.py:65
+#, python-brace-format
+msgid "Question \"{0}\" needs between 1 and {1} criteria."
+msgstr "问题“{0}”需要 1 到 {1} 条标准。"
+
+#: src/decision.py:95
+msgid "Provide at least one named question as a JSON object."
+msgstr "请以 JSON 对象的形式提供至少一个具名问题。"
+
+#: src/decision.py:114
+#, python-brace-format
+msgid "Question names must be unique and not blank: \"{0}\""
+msgstr "问题名称必须唯一且不能为空：“{0}”"
+
+#: src/decision.py:118
+#, python-brace-format
+msgid "Question \"{0}\" needs a type of noul, choice, score, or box."
+msgstr "问题“{0}”的类型必须是 noul、choice、score 或 box。"
+
+#: src/decision.py:150
+msgid "This server does not offer decision models."
+msgstr "此服务器不提供决策模型。"
+
+#: src/decision.py:152
+#, python-brace-format
+msgid "This model takes at most {0} questions."
+msgstr "此模型最多接受 {0} 个问题。"
+
+#: src/decision.py:154
+msgid "This model does not accept images."
+msgstr "此模型不接受图像。"
+
+#: src/decision.py:156
+msgid "This model cannot answer box questions."
+msgstr "此模型无法回答 box 类型的问题。"
+
+#: src/decision.py:158
+msgid "A box question needs exactly one image."
+msgstr "box 类型的问题需要恰好一张图像。"
+
+#: src/decision.py
+msgid "Some models need images between 256 and 1568 pixels on each side."
+msgstr "部分模型要求图像每条边在 256 到 1568 像素之间。"
+
+#: src/decision.py:248
+msgid "The response has no answers."
+msgstr "服务器的响应中没有答案。"
+
+#: src/decision.py:265
+msgid "The answer is not valid for this question."
+msgstr "该答案对此问题无效。"
+
+#: src/providers/systemone.py:51
+msgid "Images sent to this server must be PNG or JPEG."
+msgstr "发送到此服务器的图像必须是 PNG 或 JPEG。"
 
 #: src/export.py:46
 msgid "Export Conversation"
@@ -3723,3 +3788,231 @@ msgstr "没有可用的嵌入模型。请稍后再刷新。"
 #: src/widgets/knowledge_common.py
 msgid "No embedding models found on this server. Load one there, then refresh."
 msgstr "在此服务器上未找到嵌入模型。请在服务器上加载一个，然后刷新。"
+
+#: src/decision_run.py
+msgid "The state is not valid JSON: {0}"
+msgstr "状态不是有效的 JSON：{0}"
+
+#: src/shortcuts-dialog.ui src/widgets/decision_view.py src/window.ui
+msgid "New Decision"
+msgstr "新建决策"
+
+#: src/widgets/chat_input.py
+msgid "Select a decision model"
+msgstr "选择决策模型"
+
+#: src/widgets/chat_input.py
+msgid "No decision models found on this server."
+msgstr "在此服务器上未找到决策模型。"
+
+#: src/widgets/chat_input.py
+msgid "Checking decision models…"
+msgstr "正在检查决策模型…"
+
+#. Translators: a percentage, such as "87%"; {0} is the number.
+#: src/widgets/decision_answers.py
+msgid "{0}%"
+msgstr "{0}%"
+
+#: src/widgets/decision_answers.py
+msgid "Confidence: {0}"
+msgstr "置信度：{0}"
+
+#: src/widgets/decision_answers.py
+msgid "Yes"
+msgstr "是"
+
+#: src/widgets/decision_answers.py
+msgid "No"
+msgstr "否"
+
+#: src/widgets/decision_answers.py
+msgid "Probability of yes"
+msgstr "“是”的概率"
+
+#. Translators: a score and the highest it could be, such as "1.54 of 2".
+#: src/widgets/decision_answers.py
+msgid "{0} of {1}"
+msgstr "{0} / {1}"
+
+#. Translators: where a box lies in an image; each number is a fraction of the image's height or width.
+#: src/widgets/decision_answers.py
+msgid "Box: top {0}, bottom {1}, left {2}, right {3}"
+msgstr "方框：上 {0}，下 {1}，左 {2}，右 {3}"
+
+#: src/widgets/decision_answers.py
+msgid "Image sent with this run"
+msgstr "随此次运行发送的图像"
+
+#: src/widgets/decision_answers.py
+msgid "The model declined to answer this question."
+msgstr "模型拒绝回答此问题。"
+
+#: src/widgets/decision_answers.py
+msgid "Raw answer"
+msgstr "原始答案"
+
+#: src/widgets/decision_answers.py
+msgid "The model returned no answer to this question."
+msgstr "模型未返回此问题的答案。"
+
+#: src/widgets/decision_answers.py
+msgid "Input: {0} tokens"
+msgstr "输入词元数：{0}"
+
+#: src/widgets/decision_answers.py
+msgid "Output: {0} tokens"
+msgstr "输出词元数：{0}"
+
+#. Translators: what a request cost, in US dollars.
+#: src/widgets/decision_answers.py
+msgid "Cost: ${0}"
+msgstr "费用：${0}"
+
+#: src/widgets/decision_answers.py
+msgid "Cancelled"
+msgstr "已取消"
+
+#: src/widgets/decision_answers.py
+msgid "Running…"
+msgstr "正在运行…"
+
+#: src/widgets/decision_answers.py
+msgid "Run {0}"
+msgstr "第 {0} 次运行"
+
+#: src/widgets/decision_form.py
+msgid "Yes/No"
+msgstr "是/否"
+
+#: src/widgets/decision_form.py
+msgid "Choice"
+msgstr "选择"
+
+#: src/widgets/decision_form.py
+msgid "Score"
+msgstr "评分"
+
+#: src/widgets/decision_form.py
+msgid "Box"
+msgstr "方框"
+
+#: src/widgets/decision_form.py
+msgid "Add Option"
+msgstr "添加选项"
+
+#: src/widgets/decision_form.py
+msgid "Add Level"
+msgstr "添加等级"
+
+#: src/widgets/decision_form.py
+msgid "Levels, from the lowest score to the highest"
+msgstr "等级，按评分从低到高"
+
+#: src/widgets/decision_form.py
+msgid "Option"
+msgstr "选项"
+
+#: src/widgets/decision_form.py
+msgid "Description (optional)"
+msgstr "说明（可选）"
+
+#: src/widgets/decision_form.py
+msgid "Level description"
+msgstr "等级说明"
+
+#: src/widgets/decision_form.py
+msgid "Move Up"
+msgstr "上移"
+
+#: src/widgets/decision_form.py
+msgid "Move Down"
+msgstr "下移"
+
+#: src/widgets/decision_form.py
+msgid "Remove"
+msgstr "移除"
+
+#: src/widgets/decision_form.py
+msgid "Question name"
+msgstr "问题名称"
+
+#: src/widgets/decision_form.py
+msgid "Question type"
+msgstr "问题类型"
+
+#: src/widgets/decision_form.py
+msgid "Remove Question"
+msgstr "移除问题"
+
+#: src/widgets/decision_form.py
+msgid "Duplicate Question"
+msgstr "复制问题"
+
+#: src/widgets/decision_form.py
+msgid "Instructions"
+msgstr "指示"
+
+#: src/widgets/decision_form.py
+msgid "Counts as yes (optional)"
+msgstr "视为“是”的情况（可选）"
+
+#: src/widgets/decision_form.py
+msgid "Counts as no (optional)"
+msgstr "视为“否”的情况（可选）"
+
+#: src/widgets/decision_form.py
+msgid "Questions"
+msgstr "问题"
+
+#: src/widgets/decision_form.py
+msgid "Import Questions"
+msgstr "导入问题"
+
+#: src/widgets/decision_form.py
+msgid "An object of named questions. Each has a type of noul, choice, score, or box, and may have instructions and criteria."
+msgstr "由具名问题组成的对象。每个问题的类型为 noul、choice、score 或 box，并可包含指示和标准。"
+
+#: src/widgets/decision_form.py
+msgid "Export Questions"
+msgstr "导出问题"
+
+#: src/widgets/decision_form.py
+msgid "Edit as JSON…"
+msgstr "以 JSON 编辑…"
+
+#: src/widgets/decision_form.py
+msgid "Add Question"
+msgstr "添加问题"
+
+#: src/widgets/decision_form.py
+msgid "Question \"{0}\" has a blank or repeated criterion."
+msgstr "问题“{0}”有空白或重复的标准。"
+
+#: src/widgets/decision_view.py
+msgid "State"
+msgstr "状态"
+
+#: src/widgets/decision_view.py
+msgid "Send the state as the JSON it holds, not as text."
+msgstr "将状态作为其包含的 JSON 发送，而不是作为文本。"
+
+#: src/widgets/decision_view.py
+msgid "Enter what the questions are asked about."
+msgstr "输入问题所针对的内容。"
+
+#: src/widgets/decision_view.py
+msgid "Results"
+msgstr "结果"
+
+#: src/widgets/decision_view.py
+msgid "Load earlier runs"
+msgstr "加载较早的运行"
+
+#: src/widgets/decision_view.py
+msgid "Run"
+msgstr "运行"
+
+#: src/widgets/history_sidebar.py
+msgid "Recent decisions"
+msgstr "最近的决策"

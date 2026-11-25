@@ -1,7 +1,10 @@
 """Portable, credential-free conversation snapshots."""
 from gettext import gettext as _
+import base64
 import copy
 import json
+
+from .decision import EDGES, parse_questions, parse_result
 
 
 def portable(value):
@@ -14,14 +17,104 @@ def portable(value):
     return value
 
 
+def _portable(snapshot):
+    """A decision's questions and answers are named by the user and hold no credential, so they are kept whole."""
+    whole = ('options', 'runs') if snapshot.get('kind') == 'decision' else ()
+    kept = portable({key: value for key, value in snapshot.items() if key not in whole})
+    kept.update((key, copy.deepcopy(snapshot[key])) for key in whole if key in snapshot)
+    return kept
+
+
 def export_json(snapshot):
     return json.dumps({'format': 'gnollama-conversation', 'version': 1,
-                       'conversation': portable(copy.deepcopy(snapshot))}, ensure_ascii=False, indent=2) + '\n'
+                       'conversation': _portable(copy.deepcopy(snapshot))}, ensure_ascii=False, indent=2) + '\n'
+
+
+def _image(index, encoded):
+    raw = base64.b64decode(encoded.split(',', 1)[-1])
+    mime = 'image/png' if raw.startswith(b'\x89PNG') else 'image/webp' if raw[8:12] == b'WEBP' else 'image/jpeg'
+    return f'![Attachment {index + 1}](data:{mime};base64,{encoded})'
+
+
+def _text(value):
+    return value if isinstance(value, str) else json.dumps(value, ensure_ascii=False)
+
+
+def _cell(value):
+    return _text(value).replace('\\', '\\\\').replace('|', '\\|').replace('\n', '<br>')
+
+
+def _percent(value):
+    return f'{value * 100:.1f}%'
+
+
+def _shares(values):
+    return ', '.join(f'{key} {_percent(value)}' for key, value in sorted(values.items(), key=lambda item: -item[1]))
+
+
+def _answer(answer):
+    """One row of the answers table: the answer, how sure the model is, and what else it said."""
+    confidence = '' if answer.confidence is None else _percent(answer.confidence)
+    details = []
+    if answer.type == 'noul':
+        value = _percent(answer.value) + ' yes'
+    elif answer.type == 'choice':
+        value = answer.value
+        details.append(answer.probabilities and 'Probabilities: ' + _shares(answer.probabilities))
+    elif answer.type == 'score':
+        value = f'{answer.value:.2f}'
+        details.append(answer.legend and 'Legend: ' + '; '.join(
+            f'{key} = {_text(text)}' for key, text in answer.legend.items()))
+        details.append(answer.probabilities and 'Probabilities: ' + _shares(answer.probabilities))
+    elif answer.type == 'box':
+        value = ', '.join(f'{edge} {answer.box[edge]:.3f}' for edge in EDGES)
+    else:
+        value = {'refusal': 'Refused', 'missing': 'No answer'}.get(answer.type, 'Invalid answer')
+    if answer.extra:
+        details.append(json.dumps(answer.extra, ensure_ascii=False))
+    return '| ' + ' | '.join(_cell(item) for item in (
+        answer.name, answer.type, value, confidence, '\n'.join(filter(None, details)))) + ' |'
+
+
+def _decision_run(run):
+    target = run.get('target') or {}
+    heading = filter(None, ('Run {}'.format(run['position'] + 1), target.get('model'),
+                            target.get('host_name') or target.get('host')))
+    parts = ['## ' + ' · '.join(heading), '', 'Status: ' + run['status'], '', '### State', '']
+    parts += ['```json', run['state'], '```', ''] if run['state_mode'] == 'json' else [run['state'], '']
+    for index, encoded in enumerate(run.get('images', [])):
+        parts += [_image(index, encoded), '']
+    parts += ['### Questions', '']
+    for name, question in run['questions'].items():
+        parts += [f'**{name}** ({question.get("type")})', '']
+        if question.get('instructions') is not None:
+            parts += [_text(question['instructions']), '']
+        criteria = question.get('criteria')
+        if criteria:
+            pairs = enumerate(criteria) if isinstance(criteria, list) else criteria.items()
+            parts += [f'- {key}: {_text(value)}' for key, value in pairs] + ['']
+    if run['status'] == 'done':
+        try:
+            result = parse_result(run['result'], parse_questions(run['questions']))
+        except ValueError as exc:
+            return parts + ['Error: ' + str(exc), '']
+        parts += ['### Answers', '', '| Question | Type | Answer | Confidence | Details |', '|---|---|---|---|---|']
+        parts += [_answer(answer) for answer in result.answers] + ['']
+        usage = [f'{label}: {value}' for label, value in (
+            ('Model', result.model), ('Input tokens', result.input_tokens), ('Output tokens', result.output_tokens),
+            ('Cost', None if result.cost is None else f'${result.cost:.6f}')) if value not in (None, '')]
+        if usage:
+            parts += [' · '.join(usage), '']
+    elif run.get('error'):
+        parts += ['Error: ' + run['error'], '']
+    return parts
 
 
 def export_markdown(snapshot):
-    snapshot = portable(snapshot)
+    snapshot = _portable(snapshot)
     parts = ['# ' + snapshot['title'], '']
+    for run in snapshot.get('runs', []):
+        parts += _decision_run(run)
     model_conversation = snapshot.get('kind') == 'model_conversation'
     if model_conversation:
         settings = snapshot['options']
@@ -40,10 +133,7 @@ def export_markdown(snapshot):
                 message['turn'] // 2 + 1, 'A' if message['participant'] == 0 else 'B', message['attempt'], heading)
         parts += ['## ' + heading, '', message.get('content', ''), '']
         for index, encoded in enumerate(message.get('images', [])):
-            import base64
-            raw = base64.b64decode(encoded.split(',', 1)[-1])
-            mime = 'image/png' if raw.startswith(b'\x89PNG') else 'image/webp' if raw[8:12] == b'WEBP' else 'image/jpeg'
-            parts += [f'![Attachment {index + 1}](data:{mime};base64,{encoded})', '']
+            parts += [_image(index, encoded), '']
         metadata = message.get('response_metadata') or {}
         if metadata.get('status'):
             parts += ['Status: ' + metadata['status'], '']

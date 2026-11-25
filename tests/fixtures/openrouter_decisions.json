@@ -1,0 +1,61 @@
+{
+ "data": [
+  {
+   "id": "typesafe/jev-1.14",
+   "canonical_slug": "typesafe/jev-1.14-20261102",
+   "name": "TypeSafe: Jev 1.14",
+   "created": 1793577600,
+   "context_length": 32768,
+   "architecture": {
+    "modality": "text+image->decisions",
+    "input_modalities": [
+     "text",
+     "image"
+    ],
+    "output_modalities": [
+     "decisions"
+    ],
+    "tokenizer": "Other",
+    "instruct_type": null
+   },
+   "pricing": {
+    "prompt": "0.000001",
+    "completion": "0"
+   },
+   "top_provider": {
+    "context_length": 32768,
+    "max_completion_tokens": null,
+    "is_moderated": false
+   },
+   "supported_parameters": []
+  },
+  {
+   "id": "openai/gpt-6-luna-decisions:free",
+   "canonical_slug": "openai/gpt-6-luna-decisions",
+   "name": "OpenAI: GPT-6 Luna Decisions (free)",
+   "created": 1793577600,
+   "context_length": 128000,
+   "architecture": {
+    "modality": "text->decisions",
+    "input_modalities": [
+     "text"
+    ],
+    "output_modalities": [
+     "decisions"
+    ],
+    "tokenizer": "Other",
+    "instruct_type": null
+   },
+   "pricing": {
+    "prompt": "0",
+    "completion": "0"
+   },
+   "top_provider": {
+    "context_length": 128000,
+    "max_completion_tokens": null,
+    "is_moderated": false
+   },
+   "supported_parameters": []
+  }
+ ]
+}

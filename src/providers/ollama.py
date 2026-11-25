@@ -6,6 +6,7 @@ from gettext import gettext as _
 from gi.repository import Soup
 
 from ..credentials import CredentialError
+from . import systemone
 from .base import Capabilities, Provider, check_vectors, embedding_texts
 from .transport import ProviderError, RequestCancelled, validate_url
 
@@ -65,7 +66,8 @@ class OllamaProvider(Provider):
                                 thinking_levels=True, structured_output=True, tools=True,
                                 logprobs=True, keep_alive=True, raw_generate=True,
                                 sampling_extras=True, context_size=True, thinking_text=True,
-                                timing_stats=True, model_verification=True, refuses_long_input=True)
+                                timing_stats=True, model_verification=True, refuses_long_input=True,
+                                decisions=True, decision_images=True, decision_question_limit=64)
 
     @property
     def key(self):
@@ -122,6 +124,19 @@ class OllamaProvider(Provider):
         result = self._request('/api/embed', data, 'POST', timeout, cancellable)
         check_vectors(result.get('embeddings') if isinstance(result, dict) else None, len(texts), dimensions)
         return result
+
+    def list_decision_models(self, timeout=10, cancellable=None):
+        """The listed models that decide; the list says what each one can do."""
+        return [model for model in self.list_models(timeout=timeout, cancellable=cancellable)
+                if isinstance(model, dict) and isinstance(model.get('capabilities'), list)
+                and 'decision' in model['capabilities']]
+
+    def decide(self, model, state, questions, images=None, keep_alive=None, timeout=120, cancellable=None):
+        """Ask a decision model the named `questions` about `state`; returns the server's answer as it came."""
+        # Images go in a list of their own. The server ignores `assets` and answers without the image.
+        data = systemone.flat_body(systemone.request(model, state, questions), images)
+        common_params(data, None, None, False, None, keep_alive=keep_alive)
+        return systemone.post(self, lambda: self._address('/v1/systemone'), self._body(data), timeout, cancellable)
 
     def delete(self, model, timeout=10, cancellable=None):
         self._request('/api/delete', {'model': model}, 'DELETE', timeout, cancellable)
@@ -181,6 +196,7 @@ class OllamaCloudProvider(OllamaProvider):
     fixed_url = CLOUD_URL
     requires_key = True
     endpoints = ('/api/tags', '/api/show', '/api/chat', '/api/generate')
+    decide = list_decision_models = Provider._unavailable
 
     @classmethod
     def check_url(cls, url):

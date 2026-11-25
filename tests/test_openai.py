@@ -69,6 +69,8 @@ class Handler(BaseHTTPRequestHandler):
                 self.wfile.write(server.body)
             elif self.path.endswith('/embeddings/models'):
                 self.wfile.write(json.dumps(server.embedders).encode())
+            elif self.path.endswith('/models?output_modalities=decisions'):
+                self.wfile.write(json.dumps(server.deciders).encode())
             elif self.path.endswith('/models'):
                 self.wfile.write(json.dumps(server.models).encode())
             else:
@@ -90,7 +92,7 @@ class Server:
         self.server = server = ThreadingHTTPServer(('127.0.0.1', 0), Handler)
         server.lines, server.status, server.body, server.stall = list(lines), 200, b'', False
         server.models = {'object': 'list', 'data': [{'id': 'test', 'object': 'model'}, {'id': 'other'}]}
-        server.embeddings, server.embedders = vectors([1.0, 0.0]), {'data': []}
+        server.embeddings, server.embedders, server.deciders = vectors([1.0, 0.0]), {'data': []}, {'data': []}
         server.received = []
         server.started, server.release, server.dropped = threading.Event(), threading.Event(), threading.Event()
         self.thread = threading.Thread(target=server.serve_forever, daemon=True)

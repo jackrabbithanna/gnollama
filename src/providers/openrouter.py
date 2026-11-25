@@ -2,6 +2,7 @@
 from dataclasses import dataclass
 from gettext import gettext as _
 
+from . import systemone
 from .base import Capabilities, named
 from .openai import OpenAICompatibleProvider, effort, find, fingerprint, narrowed, table
 from .transport import ProviderError
@@ -39,7 +40,7 @@ def describe(model):
     parameters = [name for name in model.get('supported_parameters') or [] if isinstance(name, str)]
     reasoning = model.get('reasoning')
     levels = thinking_levels(reasoning, parameters)
-    offered = (('vision', 'image' in (table(model.get('architecture')).get('input_modalities') or [])),
+    offered = (('vision', sees(model)),
                ('tools', 'tools' in parameters), ('thinking', levels is not None))
     # The catalog answers for every model, so a capability not listed here is one it lacks.
     result = {'capabilities': ['completion'] + [name for name, has in offered if has],
@@ -54,6 +55,10 @@ def describe(model):
     if prices:
         result['pricing'] = prices
     return result
+
+
+def sees(model):
+    return 'image' in (table(model.get('architecture')).get('input_modalities') or [])
 
 
 def tag(model):
@@ -74,6 +79,10 @@ def describe_embedding(model):
     return dict(result, pricing=prices) if prices else result
 
 
+def describe_decision(model):
+    return dict(describe_embedding(model), capabilities=systemone.capabilities(sees(model)))
+
+
 @dataclass(frozen=True)
 class OpenRouterProvider(OpenAICompatibleProvider):
     kind = 'openrouter'
@@ -85,7 +94,10 @@ class OpenRouterProvider(OpenAICompatibleProvider):
     key_optional = False
     # Not every model takes every option; the service leaves out what a model's provider lacks.
     capabilities = Capabilities(embeddings=True, thinking_levels=True, structured_output=True, tools=True,
-                                logprobs=True, sampling_extras=True, thinking_text=True)
+                                logprobs=True, sampling_extras=True, thinking_text=True,
+                                # Few models answer a box question; the service says so for one that does not.
+                                decisions=True, decision_images=True, decision_boxes=True,
+                                decision_image_formats=systemone.ASSET_FORMATS)
 
     @classmethod
     def check_url(cls, url):
@@ -119,6 +131,23 @@ class OpenRouterProvider(OpenAICompatibleProvider):
         # Models that embed have a list of their own. It has come whole; a further page would not be read.
         return self._listed(lambda: self._address('/embeddings/models'), 'data', 'id', timeout, cancellable)
 
+    def _deciders(self, timeout, cancellable):
+        # Decision models have a list of their own as well.
+        return self._listed(lambda: self._address('/models') + '?output_modalities=decisions', 'data', 'id',
+                            timeout, cancellable)
+
+    def list_decision_models(self, timeout=10, cancellable=None):
+        return [dict(tag(model), capabilities=systemone.capabilities(sees(model)),
+                     **({'context_length': context(model)} if context(model) else {}))
+                for model in self._deciders(timeout, cancellable)]
+
+    def decide(self, model, state, questions, images=None, keep_alive=None, timeout=120, cancellable=None):
+        """Ask a decision model the named `questions` about `state`; returns the server's answer as it came."""
+        if keep_alive is not None:
+            raise ProviderError(_('This server does not accept: {0}.').format('keep_alive'))
+        data = systemone.assets_body(systemone.request(model, state, questions), images)
+        return systemone.post(self, lambda: self._address('/systemone'), data, timeout, cancellable)
+
     def list_models(self, timeout=10, cancellable=None):
         return [tag(model) for model in self._models(timeout, cancellable)]
 
@@ -139,4 +168,7 @@ class OpenRouterProvider(OpenAICompatibleProvider):
         for model in self._models(timeout, cancellable):
             if model['id'] == name:
                 return describe(model)
-        return describe_embedding(find(self._embedders(timeout, cancellable), 'id', name))
+        for model in self._embedders(timeout, cancellable):
+            if model['id'] == name:
+                return describe_embedding(model)
+        return describe_decision(find(self._deciders(timeout, cancellable), 'id', name))

@@ -2,12 +2,13 @@
 from gettext import gettext as _
 from gi.repository import Gtk
 from ..chat_controller import ComposerInput, ModelLimits
+from ..decision import check_request
 from .chat_input import ChatInput
 from .options_panel import OptionsPanel
 
 
 class TargetPicker(Gtk.Box):
-    def __init__(self, context, changed, target=None, participant=False):
+    def __init__(self, context, changed, target=None, participant=False, decisions=False):
         super().__init__(orientation=Gtk.Orientation.VERTICAL, spacing=6, hexpand=True)
         self.participant = participant
         self.context, self.limits = context, ModelLimits(context)
@@ -16,6 +17,7 @@ class TargetPicker(Gtk.Box):
         self.panel.update_hosts()
         self.input = ChatInput()
         self.input.services = context.services
+        self.input.decisions = decisions
         self.input.connection_box.get_parent().remove(self.input.connection_box)
         self.input.connection_box.prepend(self.panel.host_row)
         self.input.thinking_dropdown.get_parent().set_visible(participant)
@@ -35,9 +37,15 @@ class TargetPicker(Gtk.Box):
             self.input.thinking_dropdown.connect('notify::selected', changed)
         def refresh(*args):
             host = self.panel.get_selected_host()
+            if decisions:
+                # A host that cannot decide stays listed; it says why and lists no models.
+                reason = check_request((), (), context.capabilities(host)) if host else ''
+                self.input.set_unavailable(reason)
+                host = None if reason else host
             self.input.fetch_models(context.connection(host) if host else None,
                                     host_id=host['id'] if host else None)
             changed()
+        self.refresh = refresh
         if target:
             if participant:
                 self.panel.restore_draft(target.get('panel', {}))
@@ -62,6 +70,20 @@ class TargetPicker(Gtk.Box):
         """What the selected model can be sent, or None with no host; validation checks the same record."""
         host = self.panel.get_selected_host()
         return self.limits.of(host, self.input.get_selected_model()) if host else None
+
+    def decision_capabilities(self):
+        """What the selected decision model can be asked, or None with no host."""
+        host = self.panel.get_selected_host()
+        return self.context.connection(host).decision_capabilities(self.input.selected_details()) if host else None
+
+    def select(self, target):
+        """Choose a saved host and model. A host that is gone leaves the one selected."""
+        self.input.pending_model_selection = target.get('model')
+        for index, host in enumerate(self.panel.host_list):
+            if host['id'] == target.get('host_id') and index != self.panel.host_dropdown.get_selected():
+                self.panel.host_dropdown.set_selected(index)
+                return
+        self.refresh()
 
     def value(self):
         host = self.panel.get_selected_host()

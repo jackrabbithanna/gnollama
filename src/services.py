@@ -99,6 +99,10 @@ class ModelIdentity:
     digest: str = ''
 
 
+# The kinds of model list a catalog shares, and the provider operation that reads each.
+LISTS = {'models': 'list_models', 'decision_models': 'list_decision_models'}
+
+
 class ModelCatalog:
     """Share discovery requests without occupying workers for each subscriber."""
     def __init__(self, discovery, control):
@@ -173,8 +177,8 @@ class ModelCatalog:
             try:
                 if job['cancel'].is_cancelled():
                     raise RequestCancelled()
-                if kind == 'models':
-                    tags = connection.list_models(cancellable=job['cancel'])
+                if kind in LISTS:
+                    tags = getattr(connection, LISTS[kind])(cancellable=job['cancel'])
                     result = []
                     for tag in tags:
                         tag = dict(tag) if isinstance(tag, dict) else dict(name=tag)
@@ -190,9 +194,9 @@ class ModelCatalog:
                     self._pending.pop(pending_key)
                 if error is None and not job['cancel'].is_cancelled() and generation == self._generation(key):
                     # An empty list must be retryable immediately after a model is pulled.
-                    if result or kind != 'models':
+                    if result or kind not in LISTS:
                         self._cache[cache_key] = (time.monotonic(), copy.deepcopy(result))
-                    if kind == 'models':
+                    if kind in LISTS:
                         for tag in result:
                             self._digests[(key, tag['name'])] = tag.get('digest', '')
                 members = list(job['members'])
@@ -211,11 +215,15 @@ class ModelCatalog:
                             target.set_result(copy.deepcopy(result))
 
         if leader:
-            (self.discovery if kind == 'models' else self.control).submit(fetch)
+            (self.discovery if kind in LISTS else self.control).submit(fetch)
         return future
 
     def request_models(self, connection, cancel=None, refresh=False):
         return self._request(connection, 'models', cancel, refresh=refresh)
+
+    def request_decision_models(self, connection, cancel=None, refresh=False):
+        """The decision models of a host, each entry saying whether it takes images; shared and cached as the chat list is."""
+        return self._request(connection, 'decision_models', cancel, refresh=refresh)
 
     def cached_details(self, connection, name):
         key = self.connection_key(connection)

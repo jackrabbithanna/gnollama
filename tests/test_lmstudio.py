@@ -261,9 +261,12 @@ class ModelTests(Loopback, KeyChecks, unittest.TestCase):
         embedding = show(EMBEDDING)
         self.assertEqual(embedding['capabilities'], ['embedding'])
         self.assertFalse({'supports', 'thinking_levels', 'context_length'} & set(embedding))
-        for missing in ('elephant-1-decision', 'gone'):
-            with self.subTest(model=missing), self.assertRaisesRegex(ProviderError, 'no longer available'):
-                show(missing)
+        # A decision model has details too, and they keep it out of a chat.
+        decider = show('elephant-1-decision')
+        self.assertEqual((decider['capabilities'], decider['max_context_length']), (['decision', 'vision'], 262144))
+        self.assertFalse({'supports', 'thinking_levels'} & set(decider))
+        with self.assertRaisesRegex(ProviderError, 'no longer available'):
+            show('gone')
 
     def test_silence_is_unknown_and_other_levels_are_ignored(self):
         k2 = self.entry(K2)
@@ -355,7 +358,7 @@ class ModelTests(Loopback, KeyChecks, unittest.TestCase):
         offered = {name for name, value in vars(caps).items() if value is True}
         # It embeds; its fingerprint is not a digest of the model, so `model_verification` stays off.
         self.assertEqual(offered, {'embeddings', 'thinking_levels', 'structured_output', 'tools', 'logprobs',
-                                   'thinking_text', 'sampling_extras'})
+                                   'thinking_text', 'sampling_extras', 'decisions', 'decision_images'})
         # A type that reports its models does not carry the generic type's warning.
         self.assertEqual(caps.options_notice, '')
         self.assertTrue(OpenAICompatibleProvider.capabilities.options_notice)

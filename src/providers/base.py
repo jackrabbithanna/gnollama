@@ -26,6 +26,12 @@ class Capabilities:
     timing_stats: bool = False     # load, prompt, and generation durations
     model_verification: bool = False  # a content digest, not a fingerprint
     refuses_long_input: bool = False  # refuses text to embed that is longer than the model takes; others shorten it unseen
+    decisions: bool = False        # decision models, asked through `decide`
+    decision_images: bool = False  # images beside the state of a decision
+    decision_boxes: bool = False   # box questions
+    decision_question_limit: int = 0  # the most questions one decision takes; 0 where the server sets none
+    # The image formats a decision takes, by name; empty where the server reads whatever it is sent.
+    decision_image_formats: tuple = ()
     # Sampling options one model does not take, by the names in a WireOptions. No provider lacks them.
     left_out: tuple = ()
     # Untranslated; shown beside the options this provider lacks.
@@ -56,8 +62,12 @@ class Capabilities:
     def both(self, other):
         """What this record and `other` both offer, for one request sent to a model of each."""
         flags = {f.name: getattr(self, f.name) and getattr(other, f.name) for f in fields(self) if f.type is bool}
+        limits = [limit for limit in (self.decision_question_limit, other.decision_question_limit) if limit]
+        mine, theirs = self.decision_image_formats, other.decision_image_formats
+        formats = tuple(name for name in mine if name in theirs) if mine and theirs else mine or theirs
         return replace(self, **flags, left_out=tuple(dict.fromkeys(self.left_out + other.left_out)),
-                       options_notice='')
+                       options_notice='', decision_question_limit=min(limits, default=0),
+                       decision_image_formats=formats)
 
 
 # The sampling options without a flag, and the names the options panel gives them.
@@ -79,6 +89,14 @@ def supports(details, name):
         return known[name]
     listed = details.get('capabilities')
     return name in listed if isinstance(listed, list) else None
+
+
+def generates(details):
+    """Whether a model can be chatted with. False only where its capabilities are listed, and say it
+    embeds or decides and does not complete; a model that says nothing may chat."""
+    listed = details.get('capabilities') if isinstance(details, dict) else None
+    return not (isinstance(listed, list) and 'completion' not in listed
+                and ('embedding' in listed or 'decision' in listed))
 
 
 def advisory(details, name):
@@ -221,6 +239,16 @@ class Provider:
         """
         return self.capabilities
 
+    def decision_capabilities(self, details):
+        """What one decision model can be asked, given its entry in `list_decision_models` or what
+        `show_model` returned for it: without images and boxes where they say it does not see images.
+
+        Never more than the provider's own record, which also stands where the details are silent.
+        """
+        if supports(details, 'vision') is False:
+            return replace(self.capabilities, decision_images=False, decision_boxes=False)
+        return self.capabilities
+
     def check(self, wire, host, model, details):
         """Raise naming what `wire` asks that the host record `host`, or `model` on it, cannot do.
 
@@ -259,4 +287,8 @@ class Provider:
         return length if type(length) is int and length > 0 else None
 
     list_models = show_model = chat = generate = embed = _unavailable
+    # decide(model, state, questions, images=None, keep_alive=None, timeout=120, cancellable=None) returns
+    # the server's answer as it came; list_decision_models(timeout=10, cancellable=None) returns entries as
+    # list_models does, each with `capabilities` holding `decision`, and `vision` where it sees images.
+    decide = list_decision_models = _unavailable
     pull = delete = running = unload = probe = _unavailable

@@ -330,6 +330,10 @@ msgstr "선택한 모델을 더 이상 사용할 수 없습니다."
 msgid "Embedding models cannot generate comparisons."
 msgstr "임베딩 모델은 비교용 답변을 생성할 수 없습니다."
 
+#: src/comparison.py:59 src/model_conversation.py:68
+msgid "Decision models cannot generate text."
+msgstr "판단 모델은 텍스트를 생성할 수 없습니다."
+
 #: src/comparison.py:48
 msgid "Every target must support the shared images."
 msgstr "모든 대상이 공유 이미지를 지원해야 합니다."
@@ -413,6 +417,67 @@ msgstr "이 데이터베이스에는 더 최신 버전의 Gnollama가 필요합�
 #, python-brace-format
 msgid "Upgrading the database to version {0}…"
 msgstr "데이터베이스를 버전 {0}(으)로 업그레이드 중…"
+
+#: src/decision.py:62 src/decision.py:122
+#, python-brace-format
+msgid "Question \"{0}\" has an invalid field: {1}"
+msgstr "질문 \"{0}\"에 잘못된 필드가 있습니다: {1}"
+
+#: src/decision.py:65
+#, python-brace-format
+msgid "Question \"{0}\" needs between 1 and {1} criteria."
+msgstr "질문 \"{0}\"에는 1개에서 {1}개 사이의 기준이 필요합니다."
+
+#: src/decision.py:95
+msgid "Provide at least one named question as a JSON object."
+msgstr "이름이 있는 질문을 하나 이상 JSON 객체로 제공하세요."
+
+#: src/decision.py:114
+#, python-brace-format
+msgid "Question names must be unique and not blank: \"{0}\""
+msgstr "질문 이름은 고유해야 하며 비어 있을 수 없습니다: \"{0}\""
+
+#: src/decision.py:118
+#, python-brace-format
+msgid "Question \"{0}\" needs a type of noul, choice, score, or box."
+msgstr "질문 \"{0}\"의 유형은 noul, choice, score, box 중 하나여야 합니다."
+
+#: src/decision.py:150
+msgid "This server does not offer decision models."
+msgstr "이 서버는 판단 모델을 제공하지 않습니다."
+
+#: src/decision.py:152
+#, python-brace-format
+msgid "This model takes at most {0} questions."
+msgstr "이 모델은 질문을 최대 {0}개까지 받습니다."
+
+#: src/decision.py:154
+msgid "This model does not accept images."
+msgstr "이 모델은 이미지를 받지 않습니다."
+
+#: src/decision.py:156
+msgid "This model cannot answer box questions."
+msgstr "이 모델은 box 유형 질문에 답할 수 없습니다."
+
+#: src/decision.py:158
+msgid "A box question needs exactly one image."
+msgstr "box 유형 질문에는 이미지가 정확히 하나 필요합니다."
+
+#: src/decision.py
+msgid "Some models need images between 256 and 1568 pixels on each side."
+msgstr "일부 모델은 각 변이 256~1568픽셀인 이미지가 필요합니다."
+
+#: src/decision.py:248
+msgid "The response has no answers."
+msgstr "서버 응답에 답변이 없습니다."
+
+#: src/decision.py:265
+msgid "The answer is not valid for this question."
+msgstr "이 답변은 이 질문에 유효하지 않습니다."
+
+#: src/providers/systemone.py:51
+msgid "Images sent to this server must be PNG or JPEG."
+msgstr "이 서버로 보내는 이미지는 PNG 또는 JPEG여야 합니다."
 
 #: src/export.py:46
 msgid "Export Conversation"
@@ -3731,3 +3796,231 @@ msgstr "사용할 수 있는 임베딩 모델이 없습니다. 나중에 새로 
 #: src/widgets/knowledge_common.py
 msgid "No embedding models found on this server. Load one there, then refresh."
 msgstr "이 서버에서 임베딩 모델을 찾을 수 없습니다. 서버에서 모델을 불러온 뒤 새로 고치세요."
+
+#: src/decision_run.py
+msgid "The state is not valid JSON: {0}"
+msgstr "상태가 올바른 JSON이 아닙니다: {0}"
+
+#: src/shortcuts-dialog.ui src/widgets/decision_view.py src/window.ui
+msgid "New Decision"
+msgstr "새 판단"
+
+#: src/widgets/chat_input.py
+msgid "Select a decision model"
+msgstr "판단 모델 선택"
+
+#: src/widgets/chat_input.py
+msgid "No decision models found on this server."
+msgstr "이 서버에서 판단 모델을 찾을 수 없습니다."
+
+#: src/widgets/chat_input.py
+msgid "Checking decision models…"
+msgstr "판단 모델 확인 중…"
+
+#. Translators: a percentage, such as "87%"; {0} is the number.
+#: src/widgets/decision_answers.py
+msgid "{0}%"
+msgstr "{0}%"
+
+#: src/widgets/decision_answers.py
+msgid "Confidence: {0}"
+msgstr "신뢰도: {0}"
+
+#: src/widgets/decision_answers.py
+msgid "Yes"
+msgstr "예"
+
+#: src/widgets/decision_answers.py
+msgid "No"
+msgstr "아니요"
+
+#: src/widgets/decision_answers.py
+msgid "Probability of yes"
+msgstr "‘예’일 확률"
+
+#. Translators: a score and the highest it could be, such as "1.54 of 2".
+#: src/widgets/decision_answers.py
+msgid "{0} of {1}"
+msgstr "{0} / {1}"
+
+#. Translators: where a box lies in an image; each number is a fraction of the image's height or width.
+#: src/widgets/decision_answers.py
+msgid "Box: top {0}, bottom {1}, left {2}, right {3}"
+msgstr "상자: 위 {0}, 아래 {1}, 왼쪽 {2}, 오른쪽 {3}"
+
+#: src/widgets/decision_answers.py
+msgid "Image sent with this run"
+msgstr "이 실행과 함께 보낸 이미지"
+
+#: src/widgets/decision_answers.py
+msgid "The model declined to answer this question."
+msgstr "모델이 이 질문에 대한 답변을 거부했습니다."
+
+#: src/widgets/decision_answers.py
+msgid "Raw answer"
+msgstr "원본 답변"
+
+#: src/widgets/decision_answers.py
+msgid "The model returned no answer to this question."
+msgstr "모델이 이 질문에 대한 답변을 반환하지 않았습니다."
+
+#: src/widgets/decision_answers.py
+msgid "Input: {0} tokens"
+msgstr "입력: {0}토큰"
+
+#: src/widgets/decision_answers.py
+msgid "Output: {0} tokens"
+msgstr "출력: {0}토큰"
+
+#. Translators: what a request cost, in US dollars.
+#: src/widgets/decision_answers.py
+msgid "Cost: ${0}"
+msgstr "비용: ${0}"
+
+#: src/widgets/decision_answers.py
+msgid "Cancelled"
+msgstr "취소됨"
+
+#: src/widgets/decision_answers.py
+msgid "Running…"
+msgstr "실행 중…"
+
+#: src/widgets/decision_answers.py
+msgid "Run {0}"
+msgstr "실행 {0}"
+
+#: src/widgets/decision_form.py
+msgid "Yes/No"
+msgstr "예/아니요"
+
+#: src/widgets/decision_form.py
+msgid "Choice"
+msgstr "선택"
+
+#: src/widgets/decision_form.py
+msgid "Score"
+msgstr "점수"
+
+#: src/widgets/decision_form.py
+msgid "Box"
+msgstr "상자"
+
+#: src/widgets/decision_form.py
+msgid "Add Option"
+msgstr "선택지 추가"
+
+#: src/widgets/decision_form.py
+msgid "Add Level"
+msgstr "단계 추가"
+
+#: src/widgets/decision_form.py
+msgid "Levels, from the lowest score to the highest"
+msgstr "단계(낮은 점수부터 높은 점수 순)"
+
+#: src/widgets/decision_form.py
+msgid "Option"
+msgstr "선택지"
+
+#: src/widgets/decision_form.py
+msgid "Description (optional)"
+msgstr "설명(선택 사항)"
+
+#: src/widgets/decision_form.py
+msgid "Level description"
+msgstr "단계 설명"
+
+#: src/widgets/decision_form.py
+msgid "Move Up"
+msgstr "위로 이동"
+
+#: src/widgets/decision_form.py
+msgid "Move Down"
+msgstr "아래로 이동"
+
+#: src/widgets/decision_form.py
+msgid "Remove"
+msgstr "제거"
+
+#: src/widgets/decision_form.py
+msgid "Question name"
+msgstr "질문 이름"
+
+#: src/widgets/decision_form.py
+msgid "Question type"
+msgstr "질문 유형"
+
+#: src/widgets/decision_form.py
+msgid "Remove Question"
+msgstr "질문 제거"
+
+#: src/widgets/decision_form.py
+msgid "Duplicate Question"
+msgstr "질문 복제"
+
+#: src/widgets/decision_form.py
+msgid "Instructions"
+msgstr "지시문"
+
+#: src/widgets/decision_form.py
+msgid "Counts as yes (optional)"
+msgstr "‘예’로 보는 경우(선택 사항)"
+
+#: src/widgets/decision_form.py
+msgid "Counts as no (optional)"
+msgstr "‘아니요’로 보는 경우(선택 사항)"
+
+#: src/widgets/decision_form.py
+msgid "Questions"
+msgstr "질문"
+
+#: src/widgets/decision_form.py
+msgid "Import Questions"
+msgstr "질문 가져오기"
+
+#: src/widgets/decision_form.py
+msgid "An object of named questions. Each has a type of noul, choice, score, or box, and may have instructions and criteria."
+msgstr "이름이 있는 질문들로 이루어진 객체입니다. 각 질문은 noul, choice, score, box 중 하나의 유형을 가지며 지시문과 기준을 포함할 수 있습니다."
+
+#: src/widgets/decision_form.py
+msgid "Export Questions"
+msgstr "질문 내보내기"
+
+#: src/widgets/decision_form.py
+msgid "Edit as JSON…"
+msgstr "JSON으로 편집…"
+
+#: src/widgets/decision_form.py
+msgid "Add Question"
+msgstr "질문 추가"
+
+#: src/widgets/decision_form.py
+msgid "Question \"{0}\" has a blank or repeated criterion."
+msgstr "질문 \"{0}\"에 비어 있거나 중복된 기준이 있습니다."
+
+#: src/widgets/decision_view.py
+msgid "State"
+msgstr "상태"
+
+#: src/widgets/decision_view.py
+msgid "Send the state as the JSON it holds, not as text."
+msgstr "상태를 텍스트가 아니라 그 안에 담긴 JSON으로 보냅니다."
+
+#: src/widgets/decision_view.py
+msgid "Enter what the questions are asked about."
+msgstr "질문의 대상이 되는 내용을 입력하세요."
+
+#: src/widgets/decision_view.py
+msgid "Results"
+msgstr "결과"
+
+#: src/widgets/decision_view.py
+msgid "Load earlier runs"
+msgstr "이전 실행 불러오기"
+
+#: src/widgets/decision_view.py
+msgid "Run"
+msgstr "실행"
+
+#: src/widgets/history_sidebar.py
+msgid "Recent decisions"
+msgstr "최근 판단"

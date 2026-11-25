@@ -20,6 +20,7 @@ LISTED = [QWEN, LIGHTNING, BEAM, GLYPH, LING, NEMO, R1, FABLE, SCALEDOWN]
 EMBEDDER, IMAGE = 'alibaba/qwen3-embedding-0.6b', 'bfl/flux-2-flex'
 CREDITS = {'balance': '20', 'token_pass': None, 'total_used': '0'}
 MODEL_HINT = 'Not available for this model.'
+DECIDERS = ['typesafe-ai/jev-1.14.0', 'openai/gpt-6-luna-decisions']
 
 
 class GatewayHandler(Handler):
@@ -68,6 +69,10 @@ class ModelTests(Gateway, KeyChecks, unittest.TestCase):
                                       'context_length': 32768}])
         self.assertEqual({request[0] for request in self.server.received}, {'/gateway/v1/models'})
         self.assertEqual((provider.model_tag(QWEN), provider.model_tag(EMBEDDER)), (models[0], embedders[0]))
+        # Models that decide are a type of their own, in neither list, and described once asked for.
+        self.assertEqual([model['name'] for model in provider.list_decision_models()], DECIDERS)
+        self.assertEqual(provider.show_model(DECIDERS[0])['capabilities'], ['decision', 'vision'])
+        self.assertIsNone(provider.model_tag(DECIDERS[0]))
         for unknown in ('gone', IMAGE):
             with self.subTest(model=unknown):
                 self.assertIsNone(provider.model_tag(unknown))
@@ -244,7 +249,8 @@ class DeclarationTests(unittest.TestCase):
         for endpoint in ('/chat/completions', '/models', '/credits', '/embeddings'):
             self.assertEqual(cls(URL)._address(endpoint), 'https://ai-gateway.vercel.sh/v1' + endpoint)
         offered = {name for name, value in vars(caps).items() if value is True}
-        self.assertEqual(offered, {'embeddings', 'thinking_levels', 'structured_output', 'tools', 'thinking_text'})
+        self.assertEqual(offered, {'embeddings', 'thinking_levels', 'structured_output', 'tools', 'thinking_text',
+                                   'decisions', 'decision_images', 'decision_boxes'})
         self.assertEqual((caps.options_notice, caps.left_out), ('', ()))
         self.assertIs(PROVIDERS['vercel'], cls)
         self.assertEqual(list(PROVIDERS).index('vercel'), list(PROVIDERS).index('openrouter') + 1)

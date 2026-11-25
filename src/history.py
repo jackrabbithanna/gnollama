@@ -3,7 +3,7 @@ import re
 import unicodedata
 
 
-CATEGORIES = ('drafts', 'pinned', 'chat', 'comparison', 'model_conversation')
+CATEGORIES = ('drafts', 'pinned', 'chat', 'comparison', 'model_conversation', 'decision')
 
 
 def category(record):
@@ -55,10 +55,13 @@ def sidebar_snapshot(connections, query='', expanded=()):
             words = _words(text or '')
             return bool(needles) and all(any(word.startswith(needle) for word in words) for needle in needles)
         conn.create_function('draft_matches', 1, matches, deterministic=True)
-        draft_sql = '''SELECT d.id,d.mode,d.chat_id,substr(d.text,1,80) AS title,d.updated_at
-            FROM drafts d WHERE (length(trim(d.text))>0 OR d.targets!='[]'
+        # A draft with no text yet is named by the questions it holds, if any.
+        draft_sql = '''SELECT d.id,d.mode,d.chat_id,substr(CASE WHEN length(trim(d.text))>0 THEN d.text ELSE coalesce(
+                (SELECT group_concat(q.key,', ') FROM json_each(d.settings,'$.questions') q),'') END,1,80) AS title,
+            d.updated_at FROM drafts d WHERE (length(trim(d.text))>0 OR d.targets!='[]'
             OR EXISTS (SELECT 1 FROM draft_images i WHERE i.draft_id=d.id)
-            OR json_extract(d.settings,'$._configured')=1)
+            OR json_extract(d.settings,'$._configured')=1
+            OR coalesce(json_extract(d.settings,'$.questions'),'{}') NOT IN ('{}','[]'))
             AND (d.chat_id IS NULL OR NOT EXISTS (SELECT 1 FROM messages m WHERE m.chat_id=d.chat_id))'''
         groups['drafts'] = [dict(row) for row in conn.execute(draft_sql +
             (' AND draft_matches(d.text)' if searching else '') +

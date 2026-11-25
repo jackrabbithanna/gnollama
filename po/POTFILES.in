@@ -10,6 +10,8 @@ src/comparison.py
 src/context.py
 src/credentials.py
 src/database.py
+src/decision.py
+src/decision_run.py
 src/export.py
 src/host_edit_dialog.ui
 src/host_manager.py
@@ -28,6 +30,7 @@ src/providers/openai.py
 src/providers/lmstudio.py
 src/providers/openrouter.py
 src/providers/vercel.py
+src/providers/systemone.py
 src/providers/transport.py
 src/pull_model_dialog.ui
 src/request_runner.py
@@ -47,6 +50,9 @@ src/widgets/chat_input.py
 src/widgets/chat_input.ui
 src/widgets/collection_views.py
 src/widgets/comparison_view.py
+src/widgets/decision_answers.py
+src/widgets/decision_form.py
+src/widgets/decision_view.py
 src/widgets/feedback.py
 src/widgets/json_view.py
 src/widgets/knowledge_common.py

@@ -1,0 +1,38 @@
+{
+ "model": "d3",
+ "answers": {
+  "billing": {
+   "type": "noul",
+   "noul": 0.992825156352876
+  },
+  "tone": {
+   "type": "choice",
+   "choice": "calm",
+   "probabilities": {
+    "angry": 0.10758223119290963,
+    "calm": 0.8906763863170917,
+    "excited": 0.00174138248999866
+   },
+   "confidence": 0.6777434814976155
+  },
+  "urgency": {
+   "type": "score",
+   "score": 1.5403990144765733,
+   "legend": {
+    "0": "Can wait",
+    "1": "Needs attention this week",
+    "2": "Needs attention today"
+   },
+   "probabilities": {
+    "0": 0.037782699910019736,
+    "1": 0.3840355857033874,
+    "2": 0.5781817143865929
+   },
+   "confidence": 0.26446391671470093
+  }
+ },
+ "usage": {
+  "input_tokens": 449,
+  "output_tokens": 0
+ }
+}

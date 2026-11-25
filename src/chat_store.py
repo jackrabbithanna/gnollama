@@ -187,14 +187,16 @@ class ChatDatabase(Repository):
     def cleanup_empty_chats(self, chat_id=None) -> None:
         """Discard unused tabs, preserving applied playground definitions."""
         with self._get_conn() as conn:
-            query = 'SELECT id, title, is_pinned, system_prompt, options FROM chats WHERE id NOT IN (SELECT chat_id FROM messages)'
+            query = 'SELECT id, title, kind, is_pinned, system_prompt, options FROM chats WHERE id NOT IN (SELECT chat_id FROM messages)'
             rows = conn.execute(query + (' AND id = ?' if chat_id is not None else ''),
                                 (chat_id,) if chat_id is not None else ()).fetchall()
             for row in rows:
                 options = json.loads(row['options'] or '{}')
                 draft_row = conn.execute('SELECT id FROM drafts WHERE chat_id=?', (row['id'],)).fetchone()
                 draft = read_draft(conn, draft_row['id']) if draft_row else None
-                if not has_saved_work(draft=draft, options=options, title=row['title'], pinned=row['is_pinned'], system=row['system_prompt']):
+                # A decision session is named after its first run, so its title alone is not work.
+                title = '' if row['kind'] == 'decision' else row['title']
+                if not has_saved_work(draft=draft, options=options, title=title, pinned=row['is_pinned'], system=row['system_prompt']):
                     conn.execute('DELETE FROM chats WHERE id = ?', (row['id'],))
             conn.commit()
 

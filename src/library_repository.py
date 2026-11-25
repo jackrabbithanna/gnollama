@@ -25,11 +25,17 @@ class LibraryRepository:
     def create_comparison(self, *args, **kwargs):
         return self._database.workspace.create_comparison(*args, **kwargs)
 
+    def create_decision_run(self, *args, **kwargs):
+        return self._database.decisions.create_decision_run(*args, **kwargs)
+
     def create_knowledge_collection(self, *args, **kwargs):
         return self._database.knowledge.create_knowledge_collection(*args, **kwargs)
 
     def create_model_conversation(self, *args, **kwargs):
         return self._database.model_conversations.create_model_conversation(*args, **kwargs)
+
+    def decision_runs(self, *args, **kwargs):
+        return self._database.decisions.decision_runs(*args, **kwargs)
 
     def delete_knowledge_collection(self, *args, **kwargs):
         return self._database.knowledge.delete_knowledge_collection(*args, **kwargs)
@@ -57,6 +63,9 @@ class LibraryRepository:
 
     def finish_comparison_target(self, *args, **kwargs):
         return self._database.workspace.finish_comparison_target(*args, **kwargs)
+
+    def finish_decision_run(self, *args, **kwargs):
+        return self._database.decisions.finish_decision_run(*args, **kwargs)
 
     def finish_knowledge_index(self, *args, **kwargs):
         return self._database.knowledge.finish_knowledge_index(*args, **kwargs)

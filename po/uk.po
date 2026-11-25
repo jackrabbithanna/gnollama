@@ -372,6 +372,10 @@ msgstr "Вибрана модель більше недоступна."
 msgid "Embedding models cannot generate comparisons."
 msgstr "Моделі вбудовувань не можуть генерувати порівняння."
 
+#: src/comparison.py:59 src/model_conversation.py:68
+msgid "Decision models cannot generate text."
+msgstr "Моделі прийняття рішень не можуть генерувати текст."
+
 #: src/comparison.py:48
 msgid "Every target must support the shared images."
 msgstr "Усі цілі мають підтримувати спільні зображення."
@@ -463,6 +467,67 @@ msgstr "Ця база даних потребує новішої версії Gn
 #, python-brace-format
 msgid "Upgrading the database to version {0}…"
 msgstr "Оновлення бази даних до версії {0}…"
+
+#: src/decision.py:62 src/decision.py:122
+#, python-brace-format
+msgid "Question \"{0}\" has an invalid field: {1}"
+msgstr "Запитання \"{0}\" містить недійсне поле: {1}"
+
+#: src/decision.py:65
+#, python-brace-format
+msgid "Question \"{0}\" needs between 1 and {1} criteria."
+msgstr "Запитання \"{0}\" потребує від 1 до {1} критеріїв."
+
+#: src/decision.py:95
+msgid "Provide at least one named question as a JSON object."
+msgstr "Надайте принаймні одне іменоване запитання як об’єкт JSON."
+
+#: src/decision.py:114
+#, python-brace-format
+msgid "Question names must be unique and not blank: \"{0}\""
+msgstr "Назви запитань мають бути унікальними й не порожніми: \"{0}\""
+
+#: src/decision.py:118
+#, python-brace-format
+msgid "Question \"{0}\" needs a type of noul, choice, score, or box."
+msgstr "Запитання \"{0}\" потребує типу noul, choice, score або box."
+
+#: src/decision.py:150
+msgid "This server does not offer decision models."
+msgstr "Цей сервер не пропонує моделей прийняття рішень."
+
+#: src/decision.py:152
+#, python-brace-format
+msgid "This model takes at most {0} questions."
+msgstr "Ця модель приймає щонайбільше {0} запитань."
+
+#: src/decision.py:154
+msgid "This model does not accept images."
+msgstr "Ця модель не приймає зображень."
+
+#: src/decision.py:156
+msgid "This model cannot answer box questions."
+msgstr "Ця модель не може відповідати на запитання типу box."
+
+#: src/decision.py:158
+msgid "A box question needs exactly one image."
+msgstr "Запитання типу box потребує рівно одного зображення."
+
+#: src/decision.py
+msgid "Some models need images between 256 and 1568 pixels on each side."
+msgstr "Деяким моделям потрібні зображення зі сторонами від 256 до 1568 пікселів."
+
+#: src/decision.py:248
+msgid "The response has no answers."
+msgstr "Відповідь сервера не містить відповідей."
+
+#: src/decision.py:265
+msgid "The answer is not valid for this question."
+msgstr "Відповідь недійсна для цього запитання."
+
+#: src/providers/systemone.py:51
+msgid "Images sent to this server must be PNG or JPEG."
+msgstr "Зображення, що надсилаються на цей сервер, мають бути у форматі PNG або JPEG."
 
 #: src/export.py:46
 msgid "Export Conversation"
@@ -3890,3 +3955,231 @@ msgstr "Немає доступних моделей ембедингів. Сп�
 #: src/widgets/knowledge_common.py
 msgid "No embedding models found on this server. Load one there, then refresh."
 msgstr "На цьому сервері не знайдено моделей ембедингів. Завантажте там одну, а потім оновіть."
+
+#: src/decision_run.py
+msgid "The state is not valid JSON: {0}"
+msgstr "Стан не є коректним JSON: {0}"
+
+#: src/shortcuts-dialog.ui src/widgets/decision_view.py src/window.ui
+msgid "New Decision"
+msgstr "Нове рішення"
+
+#: src/widgets/chat_input.py
+msgid "Select a decision model"
+msgstr "Оберіть модель прийняття рішень"
+
+#: src/widgets/chat_input.py
+msgid "No decision models found on this server."
+msgstr "На цьому сервері не знайдено моделей прийняття рішень."
+
+#: src/widgets/chat_input.py
+msgid "Checking decision models…"
+msgstr "Перевірка моделей прийняття рішень…"
+
+#. Translators: a percentage, such as "87%"; {0} is the number.
+#: src/widgets/decision_answers.py
+msgid "{0}%"
+msgstr "{0}%"
+
+#: src/widgets/decision_answers.py
+msgid "Confidence: {0}"
+msgstr "Впевненість: {0}"
+
+#: src/widgets/decision_answers.py
+msgid "Yes"
+msgstr "Так"
+
+#: src/widgets/decision_answers.py
+msgid "No"
+msgstr "Ні"
+
+#: src/widgets/decision_answers.py
+msgid "Probability of yes"
+msgstr "Імовірність «так»"
+
+#. Translators: a score and the highest it could be, such as "1.54 of 2".
+#: src/widgets/decision_answers.py
+msgid "{0} of {1}"
+msgstr "{0} з {1}"
+
+#. Translators: where a box lies in an image; each number is a fraction of the image's height or width.
+#: src/widgets/decision_answers.py
+msgid "Box: top {0}, bottom {1}, left {2}, right {3}"
+msgstr "Рамка: верх {0}, низ {1}, ліворуч {2}, праворуч {3}"
+
+#: src/widgets/decision_answers.py
+msgid "Image sent with this run"
+msgstr "Зображення, надіслане з цим запуском"
+
+#: src/widgets/decision_answers.py
+msgid "The model declined to answer this question."
+msgstr "Модель відмовилася відповідати на це запитання."
+
+#: src/widgets/decision_answers.py
+msgid "Raw answer"
+msgstr "Необроблена відповідь"
+
+#: src/widgets/decision_answers.py
+msgid "The model returned no answer to this question."
+msgstr "Модель не повернула відповіді на це запитання."
+
+#: src/widgets/decision_answers.py
+msgid "Input: {0} tokens"
+msgstr "Токени на вході: {0}"
+
+#: src/widgets/decision_answers.py
+msgid "Output: {0} tokens"
+msgstr "Токени на виході: {0}"
+
+#. Translators: what a request cost, in US dollars.
+#: src/widgets/decision_answers.py
+msgid "Cost: ${0}"
+msgstr "Вартість: ${0}"
+
+#: src/widgets/decision_answers.py
+msgid "Cancelled"
+msgstr "Скасовано"
+
+#: src/widgets/decision_answers.py
+msgid "Running…"
+msgstr "Виконується…"
+
+#: src/widgets/decision_answers.py
+msgid "Run {0}"
+msgstr "Запуск {0}"
+
+#: src/widgets/decision_form.py
+msgid "Yes/No"
+msgstr "Так/Ні"
+
+#: src/widgets/decision_form.py
+msgid "Choice"
+msgstr "Вибір"
+
+#: src/widgets/decision_form.py
+msgid "Score"
+msgstr "Оцінка"
+
+#: src/widgets/decision_form.py
+msgid "Box"
+msgstr "Рамка"
+
+#: src/widgets/decision_form.py
+msgid "Add Option"
+msgstr "Додати варіант"
+
+#: src/widgets/decision_form.py
+msgid "Add Level"
+msgstr "Додати рівень"
+
+#: src/widgets/decision_form.py
+msgid "Levels, from the lowest score to the highest"
+msgstr "Рівні, від найнижчої оцінки до найвищої"
+
+#: src/widgets/decision_form.py
+msgid "Option"
+msgstr "Варіант"
+
+#: src/widgets/decision_form.py
+msgid "Description (optional)"
+msgstr "Опис (необов’язково)"
+
+#: src/widgets/decision_form.py
+msgid "Level description"
+msgstr "Опис рівня"
+
+#: src/widgets/decision_form.py
+msgid "Move Up"
+msgstr "Перемістити вище"
+
+#: src/widgets/decision_form.py
+msgid "Move Down"
+msgstr "Перемістити нижче"
+
+#: src/widgets/decision_form.py
+msgid "Remove"
+msgstr "Вилучити"
+
+#: src/widgets/decision_form.py
+msgid "Question name"
+msgstr "Назва запитання"
+
+#: src/widgets/decision_form.py
+msgid "Question type"
+msgstr "Тип запитання"
+
+#: src/widgets/decision_form.py
+msgid "Remove Question"
+msgstr "Вилучити запитання"
+
+#: src/widgets/decision_form.py
+msgid "Duplicate Question"
+msgstr "Дублювати запитання"
+
+#: src/widgets/decision_form.py
+msgid "Instructions"
+msgstr "Інструкції"
+
+#: src/widgets/decision_form.py
+msgid "Counts as yes (optional)"
+msgstr "Вважається «так» (необов’язково)"
+
+#: src/widgets/decision_form.py
+msgid "Counts as no (optional)"
+msgstr "Вважається «ні» (необов’язково)"
+
+#: src/widgets/decision_form.py
+msgid "Questions"
+msgstr "Запитання"
+
+#: src/widgets/decision_form.py
+msgid "Import Questions"
+msgstr "Імпортувати запитання"
+
+#: src/widgets/decision_form.py
+msgid "An object of named questions. Each has a type of noul, choice, score, or box, and may have instructions and criteria."
+msgstr "Об’єкт з іменованих запитань. Кожне має тип noul, choice, score або box і може містити інструкції та критерії."
+
+#: src/widgets/decision_form.py
+msgid "Export Questions"
+msgstr "Експортувати запитання"
+
+#: src/widgets/decision_form.py
+msgid "Edit as JSON…"
+msgstr "Редагувати як JSON…"
+
+#: src/widgets/decision_form.py
+msgid "Add Question"
+msgstr "Додати запитання"
+
+#: src/widgets/decision_form.py
+msgid "Question \"{0}\" has a blank or repeated criterion."
+msgstr "Запитання \"{0}\" має порожній або повторюваний критерій."
+
+#: src/widgets/decision_view.py
+msgid "State"
+msgstr "Стан"
+
+#: src/widgets/decision_view.py
+msgid "Send the state as the JSON it holds, not as text."
+msgstr "Надсилати стан як JSON, який він містить, а не як текст."
+
+#: src/widgets/decision_view.py
+msgid "Enter what the questions are asked about."
+msgstr "Введіть те, про що ставляться запитання."
+
+#: src/widgets/decision_view.py
+msgid "Results"
+msgstr "Результати"
+
+#: src/widgets/decision_view.py
+msgid "Load earlier runs"
+msgstr "Завантажити попередні запуски"
+
+#: src/widgets/decision_view.py
+msgid "Run"
+msgstr "Запустити"
+
+#: src/widgets/history_sidebar.py
+msgid "Recent decisions"
+msgstr "Нещодавні рішення"

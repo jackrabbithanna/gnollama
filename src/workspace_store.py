@@ -5,6 +5,7 @@ import re
 import time
 import uuid
 
+from .decision_store import decision_snapshot
 from .model_conversation_store import model_conversation_snapshot
 from .store_common import Repository, append_messages, consume_draft, read_draft, read_messages
 
@@ -61,11 +62,15 @@ class WorkspaceDatabase(Repository):
                 match = conn.execute('SELECT order_index FROM messages WHERE chat_id=? AND uid=?', (id, match_uid)).fetchone()
                 if match:
                     offset = max(0, match[0] - 10)
+            # A decision's messages are its runs, which carry the state and images themselves.
+            decision = row['kind'] == 'decision'
             result = dict(row, options=json.loads(row['options'] or '{}'), system=row['system_prompt'],
-                host=row['host_id'], messages=read_messages(conn, id, 50, offset, True),
+                host=row['host_id'], messages=[] if decision else read_messages(conn, id, 50, offset, True),
                 message_count=count, message_offset=offset, paged=True)
             if row['kind'] == 'model_conversation':
                 model_conversation_snapshot(conn, result)
+            if decision:
+                decision_snapshot(conn, result, 50, offset)
             return result
 
     def export_snapshot(self, id):
@@ -76,11 +81,14 @@ class WorkspaceDatabase(Repository):
             if row is None:
                 return None
             result = dict(row, options=json.loads(row['options'] or '{}'), system=row['system_prompt'])
-            result['messages'] = read_messages(conn, id, include_ids=True)
+            decision = row['kind'] == 'decision'
+            result['messages'] = [] if decision else read_messages(conn, id, include_ids=True)
             result['targets'] = [dict(r, settings=json.loads(r['settings']), request=json.loads(r['request']))
                 for r in conn.execute('SELECT * FROM comparison_targets WHERE run_id=? ORDER BY position', (id,))]
             if row['kind'] == 'model_conversation':
                 model_conversation_snapshot(conn, result)
+            if decision:
+                decision_snapshot(conn, result)
             return result
 
     def save_draft(self, draft):
@@ -112,7 +120,8 @@ class WorkspaceDatabase(Repository):
             return [dict(r) for r in conn.execute('''SELECT d.id,d.mode,d.chat_id,substr(d.text,1,80) AS title,d.updated_at
                 FROM drafts d WHERE (length(trim(d.text))>0 OR d.targets!='[]'
                 OR EXISTS (SELECT 1 FROM draft_images i WHERE i.draft_id=d.id)
-                OR json_extract(d.settings,'$._configured')=1)
+                OR json_extract(d.settings,'$._configured')=1
+                OR coalesce(json_extract(d.settings,'$.questions'),'{}') NOT IN ('{}','[]'))
                 AND (d.chat_id IS NULL OR NOT EXISTS (SELECT 1 FROM messages m WHERE m.chat_id=d.chat_id))
                 ORDER BY d.updated_at DESC,d.id LIMIT ? OFFSET ?''', (limit, offset))]
 

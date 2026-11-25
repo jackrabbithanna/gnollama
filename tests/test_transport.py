@@ -100,6 +100,19 @@ class TransportTests(unittest.TestCase):
             with self.assertRaisesRegex(ProviderError, 'pull this model first'):
                 call()
 
+    def test_errors_are_read_from_wherever_a_server_puts_them(self):
+        server = self.fixture.server
+        server.mode, server.status = 'json', 400
+        bodies = (({'error': 'plain'}, 'plain'), ({'message': 'top level', 'error_type': 'invalid_request'}, 'top level'),
+                  ({'detail': 'detailed'}, 'detailed'), ({'error': 'first', 'message': 'second'}, 'first'),
+                  ({'error': '', 'message': '', 'detail': None}, 'HTTP Error 400'), ({'other': 'x'}, 'HTTP Error 400'))
+        for payload, expected in bodies:
+            with self.subTest(payload=payload):
+                server.payload = payload
+                with self.assertRaisesRegex(ProviderError, f'^{expected}') as caught:
+                    OllamaProvider(self.fixture.host).version()
+                self.assertEqual(caught.exception.status, 400)
+
     def test_show_uses_model_and_chat_does_not_mutate_history(self):
         self.fixture.server.mode = 'details'
         OllamaProvider(self.fixture.host).show_model('test')

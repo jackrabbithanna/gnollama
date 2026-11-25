@@ -1,25 +1,28 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
-  <title>Bisque — a swirl of cream in a red soup bowl</title>
+  <title>Tureen · Cream Reply · Rosette</title>
   <defs>
-    <linearGradient id="soup" x2="0" y2="1">
-      <stop stop-color="#c01c28"/>
-      <stop offset=".38" stop-color="#ed333b"/>
-      <stop offset="1" stop-color="#f66151"/>
+    <linearGradient id="stoneware" x2=".9" y2=".7">
+      <stop stop-color="#fff1dd"/>
+      <stop offset=".55" stop-color="#e9c5ae"/>
+      <stop offset="1" stop-color="#cd998b"/>
+    </linearGradient>
+    <linearGradient id="beet" x2=".3" y2="1">
+      <stop stop-color="#7c254b"/>
+      <stop offset=".55" stop-color="#ad3c62"/>
+      <stop offset="1" stop-color="#d46077"/>
     </linearGradient>
   </defs>
-  <g id="handles" fill="#1a5fb4">
-    <rect x="6" y="50" width="28" height="24" rx="9"/>
-    <rect x="94" y="50" width="28" height="24" rx="9"/>
+  <g id="handles" fill="none" stroke-width="7">
+    <path stroke="#b17d77" d="M26 52h-8a12 12 0 0 0 0 24h8m76-24h8a12 12 0 0 1 0 24h-8"/>
+    <path stroke="#ebc6b0" d="M26 49h-8a12 12 0 0 0 0 24h8m76-24h8a12 12 0 0 1 0 24h-8"/>
   </g>
-  <g fill="#62a0ea">
-    <rect x="6" y="48" width="28" height="22" rx="9"/>
-    <rect x="94" y="48" width="28" height="22" rx="9"/>
+  <circle cx="64" cy="65" r="48" fill="#b5837d"/>
+  <circle cx="64" cy="60" r="48" fill="url(#stoneware)"/>
+  <circle cx="64" cy="60" r="42" fill="#81304f"/>
+  <ellipse cx="64" cy="62" rx="41" ry="39" fill="url(#beet)"/>
+  <g id="cream" fill="#fff0d8">
+    <path fill-rule="evenodd" d="M36 56c3-14 21-23 39-19 15 3 23 15 18 28-4 13-20 19-37 16l-20 8 7-15c-7-4-9-11-7-18Zm7 1c-1 6 2 11 8 15l-4 7 10-5c14 4 26-1 30-11 3-10-3-18-14-20-13-3-27 3-30 14Z"/>
+    <path d="M50 54c7 0 13 3 15 9 3-7 9-11 17-11-3 9-9 14-18 17-7-2-12-7-14-15Z"/>
+    <path d="M62 47c5 0 8 3 8 6l-4 7c-4-4-6-8-4-13Z"/>
   </g>
-  <circle id="base" cx="64" cy="64" r="48" fill="#1a5fb4"/>
-  <circle id="rim" cx="64" cy="60" r="48" fill="#99c1f1"/>
-  <circle cx="64" cy="60" r="42" fill="#f6f5f4"/>
-  <circle id="bisque" cx="64" cy="60" r="38" fill="url(#soup)"/>
-  <path id="cream" fill="#f6f5f4" d="M87 53c-2 18-24 35-40 25-12-8-5-23 8-26 10-3 21 3 17 12-2 5-9 7-14 4 8 0 11-7 5-9-9-4-21 6-14 13 11 11 32-3 38-19Z"/>
-  <path id="basil" fill="#26a269" d="M56 46c0-12 8-19 22-18-1 13-10 21-22 18Z"/>
-  <path fill="#8ff0a4" d="M56 46c0-12 8-19 22-18Z"/>
 </svg>

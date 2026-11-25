@@ -64,7 +64,8 @@ class WebSourceDatabase(Repository):
                              (document['title'], document['filename'], document['text'], json.dumps(document['pages']),
                               document['content_hash'], document['file_hash'], id))
             else:
-                conn.execute('INSERT INTO knowledge_documents VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+                conn.execute('''INSERT INTO knowledge_documents
+                    (id, title, filename, text, pages, content_hash, file_hash, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)''',
                              (id, document['title'], document['filename'], document['text'], json.dumps(document['pages']),
                               document['content_hash'], document['file_hash'], document['created_at']))
             conn.execute('''INSERT INTO knowledge_web_sources VALUES (?, ?, ?, ?, ?, ?, ?, ?)

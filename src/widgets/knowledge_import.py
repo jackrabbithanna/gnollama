@@ -1,8 +1,8 @@
 """Collection-aware text imports and a bounded, sequential file review queue."""
 from gettext import gettext as _
-from gi.repository import Gtk, Gio, GLib
+from gi.repository import Gdk, Gtk, Gio, GLib
 
-from ..knowledge import extract_document, make_document
+from ..knowledge import check_caption, extract_document, make_document
 from .json_view import TextEditor, code_view, editor_frame
 from .collection_views import CollectionDestination
 from .knowledge_common import WorkDialog, actions, button, field, label, plain_editor, preview_text
@@ -67,7 +67,7 @@ class FileImportDialog(WorkDialog):
         self.job = None
         self.destination = CollectionDestination(context, self, collection_id)
         self.box.append(self.destination)
-        self.box.append(label(_('Import PDF or UTF-8 text files, including Markdown and source code. Maximum size: 50 MiB per file. Review one file at a time before adding.')))
+        self.box.append(label(_('Import PDF or UTF-8 text files, including Markdown and source code, or images (PNG, JPEG, GIF, WebP) for a collection whose embedding model accepts images. Maximum size: 50 MiB per file. Review one file at a time before adding.')))
         self.choose = button(_('Choose Files…'), self.choose_files)
         self.choose.add_css_class('suggested-action')
         self.header.pack_end(self.choose)
@@ -80,8 +80,11 @@ class FileImportDialog(WorkDialog):
         self.preview.append(self.filename)
         self.title_entry = Gtk.Entry()
         field(self.preview, _('Document title'), self.title_entry)
+        self.picture = Gtk.Picture(can_shrink=True, height_request=240, visible=False)
+        self.preview.append(self.picture)
         self.editor = code_view(language=None)
-        self.preview.append(label(_('Extracted content (read-only)')))
+        self.content_label = label(_('Extracted content (read-only)'))
+        self.preview.append(self.content_label)
         self.preview.append(editor_frame(self.editor, min_content_height=200))
         self.notice = label()
         self.preview.append(self.notice)
@@ -103,8 +106,9 @@ class FileImportDialog(WorkDialog):
         except ValueError as exc:
             self.show_error(exc)
             return
-        supported = Gtk.FileFilter(name=_('Text and PDF files'))
-        for mime in ('text/*', 'application/pdf', 'application/json', 'application/xml', 'application/javascript'):
+        supported = Gtk.FileFilter(name=_('Text, PDF, and image files'))
+        for mime in ('text/*', 'application/pdf', 'application/json', 'application/xml', 'application/javascript',
+                     'image/png', 'image/jpeg', 'image/gif', 'image/webp'):
             supported.add_mime_type(mime)
         for pattern in ('*.md', '*.markdown', '*.txt', '*.py', '*.rs', '*.js', '*.ts', '*.json', '*.pdf'):
             supported.add_pattern(pattern)
@@ -113,7 +117,7 @@ class FileImportDialog(WorkDialog):
         filters = Gio.ListStore.new(Gtk.FileFilter)
         filters.append(supported)
         filters.append(all_files)
-        dialog = Gtk.FileDialog(title=_('Choose Text or PDF Files'), filters=filters)
+        dialog = Gtk.FileDialog(title=_('Choose Text, PDF, or Image Files'), filters=filters)
         def selected(dialog, result):
             try:
                 files = dialog.open_multiple_finish(result)
@@ -166,6 +170,7 @@ class FileImportDialog(WorkDialog):
         self.filename.set_text(item['file'].get_basename())
         self.title_entry.set_text('')
         self.editor.get_buffer().set_text('')
+        self.show_image(None)
         self.notice.set_text(_('Extracting text…'))
         self.add.set_sensitive(False)
         self.skip_button.set_sensitive(False)
@@ -189,6 +194,7 @@ class FileImportDialog(WorkDialog):
                 item['document'], item['warnings'] = result
                 self.status(item, 'ready')
                 self.title_entry.set_text(item['document']['title'])
+                self.show_image(item['document'].get('media'))
                 self.editor.get_buffer().set_text(preview_text(item['document']))
                 self.notice.set_text('\n'.join(item['warnings']))
                 self.add.set_sensitive(True)
@@ -202,6 +208,15 @@ class FileImportDialog(WorkDialog):
         if not item or item['status'] != 'ready':
             return
         document = dict(item['document'], title=self.title_entry.get_text().strip() or item['document']['title'])
+        if document.get('media'):
+            buffer = self.editor.get_buffer()
+            caption = buffer.get_text(buffer.get_start_iter(), buffer.get_end_iter(), False).strip()
+            try:
+                check_caption(caption)
+            except ValueError as exc:
+                self.notice.set_text(str(exc))
+                return
+            document['text'] = caption
         def complete(result, error):
             if self.closed:
                 return
@@ -225,6 +240,14 @@ class FileImportDialog(WorkDialog):
             self.skip_button.set_sensitive(False)
         except ValueError as exc:
             self.notice.set_text(str(exc))
+
+    def show_image(self, media):
+        """Show an image document's picture with its editable description, or a text document's content."""
+        self.picture.set_paintable(Gdk.Texture.new_from_bytes(GLib.Bytes.new(media['data'])) if media else None)
+        self.picture.set_visible(media is not None)
+        self.editor.set_editable(media is not None)
+        self.content_label.set_text(_('Description (optional). It is shown with the image in answers and is not embedded.')
+                                    if media else _('Extracted content (read-only)'))
 
     def skip(self, *args):
         if self.current and self.current['status'] in ('ready', 'failed'):

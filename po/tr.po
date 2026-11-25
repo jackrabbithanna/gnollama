@@ -2270,14 +2270,6 @@ msgstr "Koleksiyona eklendi — İlgilenilmesi gerekiyor"
 msgid "Add Files"
 msgstr "Dosya ekle"
 
-#: src/widgets/knowledge_import.py:67
-msgid ""
-"Import PDF or UTF-8 text files, including Markdown and source code. Maximum size: 50 "
-"MiB per file. Review one file at a time before adding."
-msgstr ""
-"Markdown ve kaynak kod dahil PDF veya UTF-8 metin dosyalarını içe aktarın. En büyük "
-"boyut: dosya başına 50 MiB. Eklemeden önce dosyaları tek tek inceleyin."
-
 #: src/widgets/knowledge_import.py:68
 msgid "Choose Files…"
 msgstr "Dosyaları seç…"
@@ -2290,17 +2282,9 @@ msgstr "Çıkarılan içerik (salt okunur)"
 msgid "Skip"
 msgstr "Atla"
 
-#: src/widgets/knowledge_import.py:103
-msgid "Text and PDF files"
-msgstr "Metin ve PDF dosyaları"
-
 #: src/widgets/knowledge_import.py:108
 msgid "All files"
 msgstr "Tüm dosyalar"
-
-#: src/widgets/knowledge_import.py:113
-msgid "Choose Text or PDF Files"
-msgstr "Metin veya PDF dosyalarını seç"
 
 #: src/widgets/knowledge_import.py:146
 msgid "Extracting"
@@ -4321,3 +4305,63 @@ msgstr "Çalıştır"
 #: src/widgets/history_sidebar.py
 msgid "Recent decisions"
 msgstr "Son kararlar"
+
+msgid "An image description must be no longer than 20,000 characters."
+msgstr "Bir görsel açıklaması en fazla 20.000 karakter olabilir."
+
+msgid "This image cannot be read. Import a PNG, JPEG, GIF, or WebP image."
+msgstr "Bu görsel okunamıyor. PNG, JPEG, GIF veya WebP görseli içe aktarın."
+
+msgid "The stored image is missing. Import the image again."
+msgstr "Kayıtlı görsel eksik. Görseli yeniden içe aktarın."
+
+msgid "This embedding model does not accept images. Choose a multimodal model such as embeddinggemma2."
+msgstr "Bu gömme modeli görsel kabul etmiyor. embeddinggemma2 gibi çok kipli bir model seçin."
+
+msgid "Embedding the image…"
+msgstr "Görsel gömülüyor…"
+
+msgid "Only an image document has a description to change."
+msgstr "Yalnızca bir görsel belgesinin değiştirilebilir açıklaması vardır."
+
+msgid "An image to embed is invalid."
+msgstr "Gömülecek bir görsel geçersiz."
+
+msgid "This model also embeds images."
+msgstr "Bu model görselleri de gömer."
+
+msgid "Import PDF or UTF-8 text files, including Markdown and source code, or images (PNG, JPEG, GIF, WebP) for a collection whose embedding model accepts images. Maximum size: 50 MiB per file. Review one file at a time before adding."
+msgstr "PDF veya UTF-8 metin dosyalarını (Markdown ve kaynak kod dahil) ya da gömme modeli görsel kabul eden bir koleksiyon için görselleri (PNG, JPEG, GIF, WebP) içe aktarın. En büyük boyut: dosya başına 50 MiB. Eklemeden önce dosyaları tek tek inceleyin."
+
+msgid "Text, PDF, and image files"
+msgstr "Metin, PDF ve görsel dosyaları"
+
+msgid "Choose Text, PDF, or Image Files"
+msgstr "Metin, PDF veya Görsel Dosyaları Seçin"
+
+msgid "Description (optional). It is shown with the image in answers and is not embedded."
+msgstr "Açıklama (isteğe bağlı). Yanıtlarda görselle birlikte gösterilir ve gömülmez."
+
+msgid "Edit Description"
+msgstr "Açıklamayı Düzenle"
+
+msgid "No description. Answers name this image by its title only."
+msgstr "Açıklama yok. Yanıtlar bu görseli yalnızca başlığıyla anar."
+
+msgid "Shown with the image in answers. It is not embedded, so the image’s embeddings stay valid."
+msgstr "Yanıtlarda görselle birlikte gösterilir. Gömülmediği için görselin gömmeleri geçerli kalır."
+
+msgid "This image is no longer in the library."
+msgstr "Bu görsel artık kütüphanede değil."
+
+msgid "Image without a description."
+msgstr "Açıklamasız görsel."
+
+msgid "Search this collection the way a chat would, with its embedding model and default settings."
+msgstr "Bu koleksiyonda bir sohbetin yapacağı gibi, gömme modeli ve varsayılan ayarlarla arayın."
+
+msgid "Search"
+msgstr "Ara"
+
+msgid "More Options…"
+msgstr "Diğer Seçenekler…"

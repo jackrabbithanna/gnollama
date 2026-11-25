@@ -27,6 +27,7 @@ class Capabilities:
     timing_stats: bool = False     # load, prompt, and generation durations
     model_verification: bool = False  # a content digest, not a fingerprint
     refuses_long_input: bool = False  # refuses text to embed that is longer than the model takes; others shorten it unseen
+    image_embeddings: bool = False  # `embed` takes {'image': base64} inputs, where the model sees images
     decisions: bool = False        # decision models, asked through `decide`
     decision_images: bool = False  # images beside the state of a decision
     decision_boxes: bool = False   # box questions
@@ -158,6 +159,22 @@ def embedding_texts(input, dimensions=None):
     return texts
 
 
+def embedding_inputs(input, dimensions=None):
+    """The inputs of an embedding request as a list: nonempty texts, or {'image': base64} for an image."""
+    items = [input] if isinstance(input, (str, dict)) else list(input)
+    for item in items:
+        if isinstance(item, dict):
+            if set(item) != {'image'} or not isinstance(item['image'], str) or not item['image']:
+                raise ProviderError(_('An image to embed is invalid.'))
+        elif not isinstance(item, str) or not item.strip():
+            raise ProviderError(_('Enter nonempty text to embed.'))
+    if not items:
+        raise ProviderError(_('Enter nonempty text to embed.'))
+    if dimensions is not None and (type(dimensions) is not int or dimensions <= 0):
+        raise ProviderError(_('Embedding dimensions must be a positive integer.'))
+    return items
+
+
 def check_vectors(vectors, count, dimensions=None):
     """Raise unless `vectors` holds one usable vector for each of `count` texts, all of one size."""
     if not isinstance(vectors, list) or len(vectors) != count:
@@ -287,8 +304,17 @@ class Provider:
             capabilities = details.get('capabilities') if isinstance(details, dict) else None
             if capabilities is None or 'embedding' in capabilities:
                 length = details.get('context_length') if isinstance(details, dict) else None
-                models.append(dict(model, context_length=length) if type(length) is int else model)
+                entry = dict(model, context_length=length) if type(length) is int else dict(model)
+                if isinstance(capabilities, list):
+                    entry['capabilities'] = list(capabilities)
+                models.append(entry)
         return models
+
+    def embeds_images(self, name, timeout=10, cancellable=None):
+        """Whether an embedding model takes images: True, False, or None where the server does not say."""
+        if not self.capabilities.image_embeddings:
+            return False
+        return supports(named(self.list_embedding_models(timeout=timeout, cancellable=cancellable), name), 'vision')
 
     def model_tag(self, name, timeout=10, cancellable=None):
         """The list entry, with its `digest`, of a chat or embedding model, or None."""

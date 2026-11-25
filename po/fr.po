@@ -2320,15 +2320,6 @@ msgstr "Ajouté à la collection — Intervention requise"
 msgid "Add Files"
 msgstr "Ajouter des fichiers"
 
-#: src/widgets/knowledge_import.py:67
-msgid ""
-"Import PDF or UTF-8 text files, including Markdown and source code. Maximum size: 50 "
-"MiB per file. Review one file at a time before adding."
-msgstr ""
-"Importez des PDF ou des fichiers texte UTF-8, y compris du Markdown et du code "
-"source. Taille maximale : 50 Mio par fichier. Vérifiez les fichiers un par un avant "
-"de les ajouter."
-
 #: src/widgets/knowledge_import.py:68
 msgid "Choose Files…"
 msgstr "Choisir des fichiers…"
@@ -2341,17 +2332,9 @@ msgstr "Contenu extrait (lecture seule)"
 msgid "Skip"
 msgstr "Ignorer"
 
-#: src/widgets/knowledge_import.py:103
-msgid "Text and PDF files"
-msgstr "Fichiers texte et PDF"
-
 #: src/widgets/knowledge_import.py:108
 msgid "All files"
 msgstr "Tous les fichiers"
-
-#: src/widgets/knowledge_import.py:113
-msgid "Choose Text or PDF Files"
-msgstr "Choisir des fichiers texte ou PDF"
 
 #: src/widgets/knowledge_import.py:146
 msgid "Extracting"
@@ -4400,3 +4383,63 @@ msgstr "Lancer"
 #: src/widgets/history_sidebar.py
 msgid "Recent decisions"
 msgstr "Décisions récentes"
+
+msgid "An image description must be no longer than 20,000 characters."
+msgstr "La description d’une image ne doit pas dépasser 20 000 caractères."
+
+msgid "This image cannot be read. Import a PNG, JPEG, GIF, or WebP image."
+msgstr "Impossible de lire cette image. Importez une image PNG, JPEG, GIF ou WebP."
+
+msgid "The stored image is missing. Import the image again."
+msgstr "L’image enregistrée est introuvable. Importez à nouveau l’image."
+
+msgid "This embedding model does not accept images. Choose a multimodal model such as embeddinggemma2."
+msgstr "Ce modèle d’embeddings n’accepte pas les images. Choisissez un modèle multimodal comme embeddinggemma2."
+
+msgid "Embedding the image…"
+msgstr "Calcul de l’embedding de l’image…"
+
+msgid "Only an image document has a description to change."
+msgstr "Seul un document image a une description modifiable."
+
+msgid "An image to embed is invalid."
+msgstr "Une image à convertir en embedding n’est pas valide."
+
+msgid "This model also embeds images."
+msgstr "Ce modèle calcule aussi des embeddings d’images."
+
+msgid "Import PDF or UTF-8 text files, including Markdown and source code, or images (PNG, JPEG, GIF, WebP) for a collection whose embedding model accepts images. Maximum size: 50 MiB per file. Review one file at a time before adding."
+msgstr "Importez des fichiers PDF ou texte UTF-8, y compris Markdown et code source, ou des images (PNG, JPEG, GIF, WebP) pour une collection dont le modèle d’embeddings accepte les images. Taille maximale : 50 Mio par fichier. Vérifiez chaque fichier avant de l’ajouter."
+
+msgid "Text, PDF, and image files"
+msgstr "Fichiers texte, PDF et image"
+
+msgid "Choose Text, PDF, or Image Files"
+msgstr "Choisir des fichiers texte, PDF ou image"
+
+msgid "Description (optional). It is shown with the image in answers and is not embedded."
+msgstr "Description (facultative). Elle est affichée avec l’image dans les réponses et n’est pas convertie en embedding."
+
+msgid "Edit Description"
+msgstr "Modifier la description"
+
+msgid "No description. Answers name this image by its title only."
+msgstr "Aucune description. Les réponses ne désignent cette image que par son titre."
+
+msgid "Shown with the image in answers. It is not embedded, so the image’s embeddings stay valid."
+msgstr "Affichée avec l’image dans les réponses. Elle n’est pas convertie en embedding, donc les embeddings de l’image restent valides."
+
+msgid "This image is no longer in the library."
+msgstr "Cette image n’est plus dans la bibliothèque."
+
+msgid "Image without a description."
+msgstr "Image sans description."
+
+msgid "Search this collection the way a chat would, with its embedding model and default settings."
+msgstr "Recherchez dans cette collection comme le ferait une discussion, avec son modèle d’embeddings et les réglages par défaut."
+
+msgid "Search"
+msgstr "Rechercher"
+
+msgid "More Options…"
+msgstr "Plus d’options…"

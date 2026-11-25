@@ -223,7 +223,8 @@ class ChatController:
             validate_rag(knowledge)
 
         state = RequestState(settings, '' if continuation else input.prompt, images, continuation=continuation,
-                             connection=self.context.connection(input.host))
+                             connection=self.context.connection(input.host), image_support=input.image_support,
+                             reference_images=self.context.knowledge.hit_images)
         if continuation:
             self.strategy.commit_results()
         else:

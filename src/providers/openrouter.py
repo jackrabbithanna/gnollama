@@ -72,7 +72,7 @@ def context(model):
 
 
 def describe_embedding(model):
-    result: dict = {'capabilities': ['embedding']}
+    result: dict = {'capabilities': ['embedding', 'vision'] if sees(model) else ['embedding']}
     if context(model):
         result['context_length'] = context(model)
     prices = {key: value for key, value in table(model.get('pricing')).items() if isinstance(value, str)}
@@ -106,7 +106,7 @@ class OpenRouterProvider(OpenAICompatibleProvider):
     key_optional = False
     # Not every model takes every option; the service leaves out what a model's provider lacks.
     capabilities = Capabilities(embeddings=True, thinking_levels=True, structured_output=True, tools=True,
-                                logprobs=True, sampling_extras=True, thinking_text=True,
+                                logprobs=True, sampling_extras=True, thinking_text=True, image_embeddings=True,
                                 # Few models answer a box question; the service says so for one that does not.
                                 decisions=True, decision_images=True, decision_boxes=True,
                                 decision_image_formats=systemone.ASSET_FORMATS,
@@ -180,7 +180,8 @@ class OpenRouterProvider(OpenAICompatibleProvider):
         return [tag(model) for model in self._models(timeout, cancellable)]
 
     def list_embedding_models(self, timeout=10, cancellable=None):
-        return [dict(tag(model), **({'context_length': context(model)} if context(model) else {}))
+        return [dict(tag(model), capabilities=describe_embedding(model)['capabilities'],
+                     **({'context_length': context(model)} if context(model) else {}))
                 for model in self._embedders(timeout, cancellable)]
 
     def model_tag(self, name, timeout=10, cancellable=None):

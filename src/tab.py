@@ -396,7 +396,7 @@ class GenerationTab(Gtk.Box):
 
     def _add_sources(self, metadata, bubble):
         if metadata.get('retrieval'):
-            bubble.bubble_box.append(SourcesView(metadata['retrieval']))
+            bubble.bubble_box.append(SourcesView(metadata['retrieval'], self.context))
 
     def chunk(self, state, content, thinking, logprobs):
         bubble = state.presentation

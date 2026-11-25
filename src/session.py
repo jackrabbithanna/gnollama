@@ -60,6 +60,9 @@ class RequestState:
     continuation: bool = False
     saved_message: Optional[dict] = None
     retrieval: Optional[dict] = None
+    # Whether the model sees images, and what reads a retrieval's images; retrieved images go only to one that does.
+    image_support: Optional[bool] = None
+    reference_images: object = field(default=None, repr=False)
     connection: object = field(default=None, repr=False)
     draft_id: str | None = None
     draft_revision: int | None = None
@@ -106,6 +109,13 @@ class RequestState:
 
     def api_details(self):
         return self.settings.api_details()
+
+
+def retrieved_images(state):
+    """The images of the request's retrieval that are sent with it: none unless the model sees images."""
+    if not state.retrieval or state.image_support is not True or state.reference_images is None:
+        return None
+    return state.reference_images(state.retrieval) or None
 
 
 def api_messages(history, include_images=True):
@@ -185,7 +195,7 @@ class ChatStrategy(GenerationStrategy):
         if state.continuation:
             latest: dict = next((m for m in reversed(self.history) if m['role'] == 'user'), {})
             state.retrieval = copy.deepcopy((latest.get('response_metadata') or {}).get('retrieval'))
-        state.messages = augmented_messages(state.messages, state.retrieval)
+        state.messages = augmented_messages(state.messages, state.retrieval, retrieved_images(state))
         if state.retrieval:
             state.metadata['retrieval'] = copy.deepcopy(state.retrieval)
         return self.save(state, on_done=on_done)

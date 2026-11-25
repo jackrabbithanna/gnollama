@@ -4,6 +4,7 @@ from gi.repository import Adw, Gtk, Gio, GLib, Pango
 
 from .search import searchable
 from ..knowledge import (PRESETS, embedding_host_key, new_config)
+from ..providers import supports
 
 
 def label(text='', **kwargs):
@@ -148,16 +149,25 @@ class HostModels(Gtk.Box):
         self.notice = label()
         self.verification = label(visible=False)
         self.verification.add_css_class('dim-label')
+        self.media = label(_('This model also embeds images.'), visible=False)
+        self.media.add_css_class('dim-label')
         field(self, _('Embedding server'), self.host_dropdown)
         field(self, _('Embedding model'), self.model_dropdown)
         self.append(self.notice)
+        self.append(self.media)
         self.append(self.verification)
         self.append(actions(button(_('Manage Models…'), self.manage_models),
                             button(_('Refresh'), self.refresh)))
         self.select_host(host, kind)
         self.host_dropdown.connect('notify::selected', self.refresh)
-        self.model_dropdown.connect('notify::selected', lambda *args: self.on_change())
+        self.model_dropdown.connect('notify::selected', lambda *args: self.model_changed())
         self.refresh()
+
+    def model_changed(self):
+        connection, model = self.connection(), self.model()
+        self.media.set_visible(bool(connection and connection.capabilities.image_embeddings and model
+                                    and supports(model, 'vision')))
+        self.on_change()
 
     def select_host(self, host, kind=None):
         """Select the host of type `kind` at the address `host`, as a collection, index, or chat stores it."""
@@ -227,7 +237,7 @@ class HostModels(Gtk.Box):
         notice = verification_notice(self.context, self.kind()) if host else ''
         self.verification.set_text(notice)
         self.verification.set_visible(bool(notice))
-        self.on_change()
+        self.model_changed()
         def fetch():
             models, error = [], None
             try:
@@ -245,7 +255,7 @@ class HostModels(Gtk.Box):
                         self.model_dropdown.set_selected(i)
                         break
                 self.notice.set_text(error or ('' if models else self._empty_notice(host)))
-                self.on_change()
+                self.model_changed()
                 return False
             GLib.idle_add(deliver)
         self.context.services.control.submit(fetch)

@@ -2256,14 +2256,6 @@ msgstr "संग्रह में जोड़ा गया — ध्या�
 msgid "Add Files"
 msgstr "फ़ाइलें जोड़ें"
 
-#: src/widgets/knowledge_import.py:67
-msgid ""
-"Import PDF or UTF-8 text files, including Markdown and source code. Maximum size: 50 "
-"MiB per file. Review one file at a time before adding."
-msgstr ""
-"PDF या UTF-8 टेक्स्ट फ़ाइलें आयात करें, जिनमें Markdown और स्रोत कोड भी शामिल हैं। "
-"अधिकतम आकार: हर फ़ाइल 50 MiB। जोड़ने से पहले एक-एक फ़ाइल की समीक्षा करें।"
-
 #: src/widgets/knowledge_import.py:68
 msgid "Choose Files…"
 msgstr "फ़ाइलें चुनें…"
@@ -2276,17 +2268,9 @@ msgstr "निकाली गई सामग्री (केवल पढ़�
 msgid "Skip"
 msgstr "छोड़ें"
 
-#: src/widgets/knowledge_import.py:103
-msgid "Text and PDF files"
-msgstr "टेक्स्ट और PDF फ़ाइलें"
-
 #: src/widgets/knowledge_import.py:108
 msgid "All files"
 msgstr "सभी फ़ाइलें"
-
-#: src/widgets/knowledge_import.py:113
-msgid "Choose Text or PDF Files"
-msgstr "टेक्स्ट या PDF फ़ाइलें चुनें"
 
 #: src/widgets/knowledge_import.py:146
 msgid "Extracting"
@@ -4302,3 +4286,63 @@ msgstr "चलाएँ"
 #: src/widgets/history_sidebar.py
 msgid "Recent decisions"
 msgstr "हाल के निर्णय"
+
+msgid "An image description must be no longer than 20,000 characters."
+msgstr "छवि का विवरण 20,000 वर्णों से अधिक नहीं होना चाहिए।"
+
+msgid "This image cannot be read. Import a PNG, JPEG, GIF, or WebP image."
+msgstr "यह छवि पढ़ी नहीं जा सकती। PNG, JPEG, GIF या WebP छवि आयात करें।"
+
+msgid "The stored image is missing. Import the image again."
+msgstr "सहेजी गई छवि मौजूद नहीं है। छवि फिर से आयात करें।"
+
+msgid "This embedding model does not accept images. Choose a multimodal model such as embeddinggemma2."
+msgstr "यह एम्बेडिंग मॉडल छवियाँ स्वीकार नहीं करता। embeddinggemma2 जैसा मल्टीमोडल मॉडल चुनें।"
+
+msgid "Embedding the image…"
+msgstr "छवि की एम्बेडिंग बनाई जा रही है…"
+
+msgid "Only an image document has a description to change."
+msgstr "केवल छवि दस्तावेज़ का विवरण बदला जा सकता है।"
+
+msgid "An image to embed is invalid."
+msgstr "एम्बेड करने के लिए दी गई छवि अमान्य है।"
+
+msgid "This model also embeds images."
+msgstr "यह मॉडल छवियों की एम्बेडिंग भी बनाता है।"
+
+msgid "Import PDF or UTF-8 text files, including Markdown and source code, or images (PNG, JPEG, GIF, WebP) for a collection whose embedding model accepts images. Maximum size: 50 MiB per file. Review one file at a time before adding."
+msgstr "PDF या UTF-8 टेक्स्ट फ़ाइलें, जिनमें Markdown और सोर्स कोड शामिल हैं, या ऐसे संग्रह के लिए छवियाँ (PNG, JPEG, GIF, WebP) आयात करें जिसका एम्बेडिंग मॉडल छवियाँ स्वीकार करता है। अधिकतम आकार: प्रति फ़ाइल 50 MiB। जोड़ने से पहले एक बार में एक फ़ाइल की समीक्षा करें।"
+
+msgid "Text, PDF, and image files"
+msgstr "टेक्स्ट, PDF और छवि फ़ाइलें"
+
+msgid "Choose Text, PDF, or Image Files"
+msgstr "टेक्स्ट, PDF या छवि फ़ाइलें चुनें"
+
+msgid "Description (optional). It is shown with the image in answers and is not embedded."
+msgstr "विवरण (वैकल्पिक)। यह उत्तरों में छवि के साथ दिखाया जाता है और एम्बेड नहीं किया जाता।"
+
+msgid "Edit Description"
+msgstr "विवरण संपादित करें"
+
+msgid "No description. Answers name this image by its title only."
+msgstr "कोई विवरण नहीं। उत्तर इस छवि को केवल उसके शीर्षक से बताते हैं।"
+
+msgid "Shown with the image in answers. It is not embedded, so the image’s embeddings stay valid."
+msgstr "उत्तरों में छवि के साथ दिखाया जाता है। यह एम्बेड नहीं होता, इसलिए छवि की एम्बेडिंग मान्य रहती हैं।"
+
+msgid "This image is no longer in the library."
+msgstr "यह छवि अब लाइब्रेरी में नहीं है।"
+
+msgid "Image without a description."
+msgstr "बिना विवरण की छवि।"
+
+msgid "Search this collection the way a chat would, with its embedding model and default settings."
+msgstr "इस संग्रह में वैसे ही खोजें जैसे चैट खोजती है, इसके एम्बेडिंग मॉडल और डिफ़ॉल्ट सेटिंग्स के साथ।"
+
+msgid "Search"
+msgstr "खोजें"
+
+msgid "More Options…"
+msgstr "अधिक विकल्प…"

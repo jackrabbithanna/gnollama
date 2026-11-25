@@ -2243,14 +2243,6 @@ msgstr "أُضيف إلى المجموعة — بحاجة إلى معالجة"
 msgid "Add Files"
 msgstr "إضافة ملفات"
 
-#: src/widgets/knowledge_import.py:67
-msgid ""
-"Import PDF or UTF-8 text files, including Markdown and source code. Maximum size: 50 "
-"MiB per file. Review one file at a time before adding."
-msgstr ""
-"استورد ملفات PDF أو ملفات نصية بترميز UTF-8، بما فيها Markdown والشيفرة المصدرية. "
-"الحد الأقصى للحجم: 50 MiB لكل ملف. راجع ملفًا واحدًا في كل مرة قبل الإضافة."
-
 #: src/widgets/knowledge_import.py:68
 msgid "Choose Files…"
 msgstr "اختيار ملفات…"
@@ -2263,17 +2255,9 @@ msgstr "المحتوى المستخرج (للقراءة فقط)"
 msgid "Skip"
 msgstr "تخطي"
 
-#: src/widgets/knowledge_import.py:103
-msgid "Text and PDF files"
-msgstr "ملفات النص وPDF"
-
 #: src/widgets/knowledge_import.py:108
 msgid "All files"
 msgstr "جميع الملفات"
-
-#: src/widgets/knowledge_import.py:113
-msgid "Choose Text or PDF Files"
-msgstr "اختيار ملفات نص أو PDF"
 
 #: src/widgets/knowledge_import.py:146
 msgid "Extracting"
@@ -4281,3 +4265,63 @@ msgstr "تشغيل"
 #: src/widgets/history_sidebar.py
 msgid "Recent decisions"
 msgstr "القرارات الأخيرة"
+
+msgid "An image description must be no longer than 20,000 characters."
+msgstr "يجب ألا يتجاوز وصف الصورة 20,000 حرف."
+
+msgid "This image cannot be read. Import a PNG, JPEG, GIF, or WebP image."
+msgstr "تتعذر قراءة هذه الصورة. استورد صورة PNG أو JPEG أو GIF أو WebP."
+
+msgid "The stored image is missing. Import the image again."
+msgstr "الصورة المحفوظة مفقودة. استورد الصورة مرة أخرى."
+
+msgid "This embedding model does not accept images. Choose a multimodal model such as embeddinggemma2."
+msgstr "نموذج التضمين هذا لا يقبل الصور. اختر نموذجًا متعدد الوسائط مثل embeddinggemma2."
+
+msgid "Embedding the image…"
+msgstr "جارٍ تضمين الصورة…"
+
+msgid "Only an image document has a description to change."
+msgstr "مستند الصورة وحده له وصف يمكن تغييره."
+
+msgid "An image to embed is invalid."
+msgstr "صورة التضمين غير صالحة."
+
+msgid "This model also embeds images."
+msgstr "هذا النموذج يضمّن الصور أيضًا."
+
+msgid "Import PDF or UTF-8 text files, including Markdown and source code, or images (PNG, JPEG, GIF, WebP) for a collection whose embedding model accepts images. Maximum size: 50 MiB per file. Review one file at a time before adding."
+msgstr "استورد ملفات PDF أو ملفات نصية بترميز UTF-8، بما فيها Markdown والشيفرة المصدرية، أو صورًا (PNG، JPEG، GIF، WebP) لمجموعة يقبل نموذج التضمين فيها الصور. الحجم الأقصى: 50 MiB لكل ملف. راجع ملفًا واحدًا في كل مرة قبل إضافته."
+
+msgid "Text, PDF, and image files"
+msgstr "ملفات النصوص وPDF والصور"
+
+msgid "Choose Text, PDF, or Image Files"
+msgstr "اختر ملفات نصوص أو PDF أو صور"
+
+msgid "Description (optional). It is shown with the image in answers and is not embedded."
+msgstr "الوصف (اختياري). يظهر مع الصورة في الإجابات ولا يُضمَّن."
+
+msgid "Edit Description"
+msgstr "تحرير الوصف"
+
+msgid "No description. Answers name this image by its title only."
+msgstr "لا يوجد وصف. تشير الإجابات إلى هذه الصورة بعنوانها فقط."
+
+msgid "Shown with the image in answers. It is not embedded, so the image’s embeddings stay valid."
+msgstr "يظهر مع الصورة في الإجابات. لا يُضمَّن، لذا تبقى تضمينات الصورة صالحة."
+
+msgid "This image is no longer in the library."
+msgstr "لم تعد هذه الصورة في المكتبة."
+
+msgid "Image without a description."
+msgstr "صورة بلا وصف."
+
+msgid "Search this collection the way a chat would, with its embedding model and default settings."
+msgstr "ابحث في هذه المجموعة كما تفعل المحادثة، بنموذج التضمين الخاص بها وإعداداتها الافتراضية."
+
+msgid "Search"
+msgstr "بحث"
+
+msgid "More Options…"
+msgstr "خيارات إضافية…"

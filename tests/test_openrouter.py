@@ -124,13 +124,14 @@ class ModelTests(Catalog, KeyChecks, unittest.TestCase):
         models = provider.list_embedding_models()
         self.assertEqual(self.server.received, [('/api/v1/embeddings/models', None, None)])
         self.assertEqual([model['name'] for model in models], EMBEDDERS)
+        # It takes images as well as text, so it sees them.
         self.assertEqual(models[1], {'name': NEMOTRON, 'digest': fingerprint('nvidia/nemotron-3.5-embed-1b-20261021'),
-                                     'context_length': 32768})
+                                     'context_length': 32768, 'capabilities': ['embedding', 'vision']})
         # The model list is as it was: neither list holds a model of the other.
         self.assertEqual([model['name'] for model in provider.list_models()], LISTED)
         self.assertEqual(self.server.received[-1][0], '/api/v1/models')
         self.embedder(BGE).update(context_length=None, canonical_slug='')
-        self.assertEqual(provider.list_embedding_models()[3], {'name': BGE})
+        self.assertEqual(provider.list_embedding_models()[3], {'name': BGE, 'capabilities': ['embedding']})
         self.server.embedders = {'error': {'message': 'Catalog unavailable'}}
         with self.assertRaisesRegex(ProviderError, '^Catalog unavailable$'):
             provider.list_embedding_models()
@@ -166,11 +167,11 @@ class ModelTests(Catalog, KeyChecks, unittest.TestCase):
             with self.subTest(model=unknown), self.assertRaisesRegex(ProviderError, 'no longer available'):
                 provider.embedding_context(unknown)
         free = provider.show_model(NEMOTRON)
-        self.assertEqual(free, {'capabilities': ['embedding'], 'context_length': 32768,
+        self.assertEqual(free, {'capabilities': ['embedding', 'vision'], 'context_length': 32768,
                                 'pricing': {'prompt': '0', 'completion': '0'}})
         self.assertEqual([supports(free, name) for name in ('embedding', 'completion', 'tools')], [True, False, False])
         self.assertEqual(provider.show_model(COHERE), {
-            'capabilities': ['embedding'], 'context_length': 128000,
+            'capabilities': ['embedding', 'vision'], 'context_length': 128000,
             'pricing': {'prompt': '0.00000008', 'completion': '0', 'image_token': '0.0000004'}})
         # It lists no parameters, so nothing about the host's options is narrowed by it.
         self.assertIs(provider.model_capabilities(free), provider.capabilities)
@@ -256,7 +257,7 @@ class DeclarationTests(unittest.TestCase):
         offered = {name for name, value in vars(caps).items() if value is True}
         self.assertEqual(offered, {'embeddings', 'thinking_levels', 'structured_output', 'tools', 'logprobs',
                                    'thinking_text', 'sampling_extras', 'decisions', 'decision_images',
-                                   'decision_boxes', 'image_generation', 'image_references'})
+                                   'decision_boxes', 'image_generation', 'image_references', 'image_embeddings'})
         self.assertEqual(cls(cls.fixed_url)._address('/embeddings/models'),
                          'https://openrouter.ai/api/v1/embeddings/models')
         self.assertEqual(caps.options_notice, '')

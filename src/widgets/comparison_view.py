@@ -276,7 +276,7 @@ class ComparisonTab(Gtk.Box):
 
     def _sources(self, box, metadata):
         if metadata.get('retrieval'):
-            box.append(SourcesView(metadata['retrieval']))
+            box.append(SourcesView(metadata['retrieval'], self.context))
         if metadata.get('context_estimate'):
             box.append(Gtk.Expander(label=_('Context estimate'), child=Gtk.Label(
                 label=describe_context(metadata['context_estimate']), wrap=True, xalign=0)))

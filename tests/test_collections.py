@@ -381,6 +381,66 @@ class CollectionTests(unittest.TestCase):
         self.assertEqual(source.collection_ids, {'Manuals'})
 
     @unittest.skipUnless(Gdk.Display.get_default(), 'GTK requires a display')
+    def test_collection_page_searches_below_its_options_and_keeps_results_across_refreshes(self):
+        doc, config, index, opts = indexed(self.storage)
+        collection(self.storage.db, 'Manuals', config)
+        self.storage.db.knowledge.prepare_collection_indexes('Manuals', [doc['id']])
+        view = KnowledgeView(self.context)
+        self.widgets.append(view)
+        view.open_collection('Manuals')
+        pump_until(lambda: view.detail_page.get_title() == 'Manuals' and view.collection_search is not None)
+        children = []
+        child = view.detail.get_first_child()
+        while child:
+            children.append(child)
+            child = child.get_next_sibling()
+        search = view.collection_search
+        place = children.index(search)
+        # Right after Collection Options, and before the list of documents.
+        self.assertIsInstance(children[place - 1], Gtk.MenuButton)
+        self.assertIsInstance(children[place + 1], Gtk.ListBox)
+        self.assertEqual(search.options()['collection_ids'], ['Manuals'])
+        search.query.set_text('Alpha')
+        search.search()
+        pump_until(lambda: search.results.get_first_child() is not None, timeout=8)
+        self.assertFalse(search.error.get_visible(), search.error.get_text())
+        self.assertTrue(search.search_button.get_sensitive())
+        view.refresh()
+        pump_until(lambda: not view._refresh_pending)
+        self.drain()
+        # A rebuild of the page keeps the same search, with its query and results.
+        self.assertIs(view.collection_search, search)
+        self.assertIs(search.get_parent(), view.detail)
+        self.assertEqual(search.query.get_text(), 'Alpha')
+        self.assertIsNotNone(search.results.get_first_child())
+        # More Options is a settings dialog for this search: Apply keeps its settings and searches again.
+        dialog = search.more_options()
+        self.widgets.append(dialog)
+        self.assertFalse(dialog.collection_box.get_sensitive())
+        self.assertEqual(dialog.query.get_text(), 'Alpha')
+        pump_until(lambda: dialog.host_models.model() is not None)
+        dialog.metric_dropdown.set_selected(1)
+        dialog.count.set_value(3)
+        with patch.object(dialog, 'close') as closed:
+            dialog._apply()
+        closed.assert_called_once()
+        self.assertEqual((search.settings['metric'], search.settings['count']), ('euclidean', 3))
+        self.assertIn('Euclidean', search.summary.get_text())
+        pump_until(lambda: search.search_button.get_sensitive() and search.results.get_first_child() is not None, timeout=8)
+        self.assertFalse(search.error.get_visible(), search.error.get_text())
+        self.assertEqual(search.options()['collection_ids'], ['Manuals'])
+        # A new search of the collection, as after showing another one, keeps the applied settings.
+        view.collection_search, view._render_key = None, None
+        view.refresh()
+        pump_until(lambda: view.collection_search is not None)
+        self.assertIsNot(view.collection_search, search)
+        self.assertEqual(view.collection_search.options()['metric'], 'euclidean')
+        search = view.collection_search
+        search.query.set_text('')
+        search.search()
+        self.assertTrue(search.error.get_visible())
+
+    @unittest.skipUnless(Gdk.Display.get_default(), 'GTK requires a display')
     def test_collection_copy_dialog_prefills_settings_and_duplicate_add_keeps_text(self):
         doc, config, index, opts = indexed(self.storage)
         original = collection(self.storage.db, 'Original', config)
@@ -471,7 +531,7 @@ class CollectionMigrationTests(unittest.TestCase):
             self.assertEqual(upgraded.knowledge.ungrouped_document_ids(), {doc['id']})
             with sqlite3.connect(upgraded.backup_path) as conn:
                 self.assertEqual(conn.execute('PRAGMA user_version').fetchone()[0], 7)
-            self.assertIn('.pre-v15-', upgraded.backup_path)
+            self.assertIn('.pre-v16-', upgraded.backup_path)
             self.assertIsNone(DatabaseManager(str(path)).backup_path)
 
     def test_collection_migration_failure_rolls_back_and_retries(self):

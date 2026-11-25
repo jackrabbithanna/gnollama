@@ -2296,14 +2296,6 @@ msgstr "Додано до колекції — потребує уваги"
 msgid "Add Files"
 msgstr "Додати файли"
 
-#: src/widgets/knowledge_import.py:67
-msgid ""
-"Import PDF or UTF-8 text files, including Markdown and source code. Maximum size: 50 "
-"MiB per file. Review one file at a time before adding."
-msgstr ""
-"Імпортуйте PDF або текстові файли UTF-8, зокрема Markdown і вихідний код. "
-"Максимальний розмір: 50 МіБ на файл. Переглядайте файли по одному перед додаванням."
-
 #: src/widgets/knowledge_import.py:68
 msgid "Choose Files…"
 msgstr "Обрати файли…"
@@ -2316,17 +2308,9 @@ msgstr "Видобутий вміст (лише для читання)"
 msgid "Skip"
 msgstr "Пропустити"
 
-#: src/widgets/knowledge_import.py:103
-msgid "Text and PDF files"
-msgstr "Текстові файли та PDF"
-
 #: src/widgets/knowledge_import.py:108
 msgid "All files"
 msgstr "Усі файли"
-
-#: src/widgets/knowledge_import.py:113
-msgid "Choose Text or PDF Files"
-msgstr "Обрати текстові файли або PDF"
 
 #: src/widgets/knowledge_import.py:146
 msgid "Extracting"
@@ -4357,3 +4341,63 @@ msgstr "Запустити"
 #: src/widgets/history_sidebar.py
 msgid "Recent decisions"
 msgstr "Нещодавні рішення"
+
+msgid "An image description must be no longer than 20,000 characters."
+msgstr "Опис зображення має містити не більше 20 000 символів."
+
+msgid "This image cannot be read. Import a PNG, JPEG, GIF, or WebP image."
+msgstr "Не вдалося прочитати це зображення. Імпортуйте зображення PNG, JPEG, GIF або WebP."
+
+msgid "The stored image is missing. Import the image again."
+msgstr "Збережене зображення відсутнє. Імпортуйте зображення ще раз."
+
+msgid "This embedding model does not accept images. Choose a multimodal model such as embeddinggemma2."
+msgstr "Ця модель ембедингів не приймає зображень. Виберіть мультимодальну модель, наприклад embeddinggemma2."
+
+msgid "Embedding the image…"
+msgstr "Створення ембедингу зображення…"
+
+msgid "Only an image document has a description to change."
+msgstr "Лише документ-зображення має опис, який можна змінити."
+
+msgid "An image to embed is invalid."
+msgstr "Зображення для ембедингу недійсне."
+
+msgid "This model also embeds images."
+msgstr "Ця модель також створює ембединги зображень."
+
+msgid "Import PDF or UTF-8 text files, including Markdown and source code, or images (PNG, JPEG, GIF, WebP) for a collection whose embedding model accepts images. Maximum size: 50 MiB per file. Review one file at a time before adding."
+msgstr "Імпортуйте файли PDF або текстові файли UTF-8, зокрема Markdown і вихідний код, або зображення (PNG, JPEG, GIF, WebP) для колекції, модель ембедингів якої приймає зображення. Максимальний розмір: 50 МіБ на файл. Перегляньте кожен файл перед додаванням."
+
+msgid "Text, PDF, and image files"
+msgstr "Текстові, PDF та графічні файли"
+
+msgid "Choose Text, PDF, or Image Files"
+msgstr "Вибрати текстові, PDF або графічні файли"
+
+msgid "Description (optional). It is shown with the image in answers and is not embedded."
+msgstr "Опис (необов’язково). Він показується разом із зображенням у відповідях і не перетворюється на ембединг."
+
+msgid "Edit Description"
+msgstr "Редагувати опис"
+
+msgid "No description. Answers name this image by its title only."
+msgstr "Опису немає. Відповіді називають це зображення лише за назвою."
+
+msgid "Shown with the image in answers. It is not embedded, so the image’s embeddings stay valid."
+msgstr "Показується разом із зображенням у відповідях. Він не перетворюється на ембединг, тож ембединги зображення лишаються дійсними."
+
+msgid "This image is no longer in the library."
+msgstr "Цього зображення більше немає в бібліотеці."
+
+msgid "Image without a description."
+msgstr "Зображення без опису."
+
+msgid "Search this collection the way a chat would, with its embedding model and default settings."
+msgstr "Шукайте в цій колекції так, як це робить чат, з її моделлю ембедингів і типовими налаштуваннями."
+
+msgid "Search"
+msgstr "Шукати"
+
+msgid "More Options…"
+msgstr "Інші параметри…"

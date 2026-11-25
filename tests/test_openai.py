@@ -448,7 +448,7 @@ class LoopbackTests(unittest.TestCase):
         offered = {name for name, value in vars(caps).items() if value is True}
         # A fingerprint of the name is not a digest of the model, so `model_verification` stays off.
         self.assertEqual(offered, {'embeddings', 'thinking_levels', 'structured_output', 'tools', 'logprobs',
-                                   'thinking_text'})
+                                   'thinking_text', 'image_embeddings'})
         self.assertIn('not checked', caps.options_notice)
         for name in ('generate', 'pull', 'delete', 'running', 'unload'):
             with self.subTest(operation=name), self.assertRaises(NotImplementedError):
@@ -487,7 +487,9 @@ class DefaultTests(unittest.TestCase):
     def test_embedding_models_are_those_that_embed_or_may(self):
         models = self.provider.list_embedding_models()
         # A model that cannot be asked about, or whose answer names no capabilities, may embed.
-        self.assertEqual(models, [dict(self.TAGS[0], context_length=2048), self.TAGS[2], self.TAGS[3], self.TAGS[4]])
+        # Each keeps the capabilities it reports, which say whether it sees images.
+        self.assertEqual(models, [dict(self.TAGS[0], context_length=2048, capabilities=['embedding']), self.TAGS[2],
+                                  self.TAGS[3], dict(self.TAGS[4], capabilities=['embedding', 'completion'])])
         self.assertEqual(self.asked, [('/api/tags', None)] + [('/api/show', tag['name']) for tag in self.TAGS])
         self.assertEqual(self.provider.list_models(), self.TAGS)
         self.stop = 'broken:latest'

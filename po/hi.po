@@ -366,6 +366,10 @@ msgstr "चुना गया मॉडल अब उपलब्ध नही�
 msgid "Embedding models cannot generate comparisons."
 msgstr "एम्बेडिंग मॉडल तुलना के उत्तर नहीं बना सकते।"
 
+#: src/comparison.py:59 src/model_conversation.py:68
+msgid "Decision models cannot generate text."
+msgstr "निर्णय मॉडल पाठ उत्पन्न नहीं कर सकते।"
+
 #: src/comparison.py:48
 msgid "Every target must support the shared images."
 msgstr "सभी लक्ष्यों को साझा छवियों का समर्थन करना चाहिए।"
@@ -457,6 +461,67 @@ msgstr "इस डेटाबेस के लिए Gnollama का नया 
 #, python-brace-format
 msgid "Upgrading the database to version {0}…"
 msgstr "डेटाबेस को संस्करण {0} में अपग्रेड किया जा रहा है…"
+
+#: src/decision.py:62 src/decision.py:122
+#, python-brace-format
+msgid "Question \"{0}\" has an invalid field: {1}"
+msgstr "प्रश्न \"{0}\" में एक अमान्य फ़ील्ड है: {1}"
+
+#: src/decision.py:65
+#, python-brace-format
+msgid "Question \"{0}\" needs between 1 and {1} criteria."
+msgstr "प्रश्न \"{0}\" के लिए 1 से {1} तक मानदंड चाहिए।"
+
+#: src/decision.py:95
+msgid "Provide at least one named question as a JSON object."
+msgstr "JSON ऑब्जेक्ट के रूप में कम से कम एक नाम वाला प्रश्न दें।"
+
+#: src/decision.py:114
+#, python-brace-format
+msgid "Question names must be unique and not blank: \"{0}\""
+msgstr "प्रश्नों के नाम अद्वितीय होने चाहिए और खाली नहीं होने चाहिए: \"{0}\""
+
+#: src/decision.py:118
+#, python-brace-format
+msgid "Question \"{0}\" needs a type of noul, choice, score, or box."
+msgstr "प्रश्न \"{0}\" का प्रकार noul, choice, score या box होना चाहिए।"
+
+#: src/decision.py:150
+msgid "This server does not offer decision models."
+msgstr "यह सर्वर निर्णय मॉडल उपलब्ध नहीं कराता।"
+
+#: src/decision.py:152
+#, python-brace-format
+msgid "This model takes at most {0} questions."
+msgstr "यह मॉडल अधिकतम {0} प्रश्न स्वीकार करता है।"
+
+#: src/decision.py:154
+msgid "This model does not accept images."
+msgstr "यह मॉडल चित्र स्वीकार नहीं करता।"
+
+#: src/decision.py:156
+msgid "This model cannot answer box questions."
+msgstr "यह मॉडल box प्रकार के प्रश्नों का उत्तर नहीं दे सकता।"
+
+#: src/decision.py:158
+msgid "A box question needs exactly one image."
+msgstr "box प्रकार के प्रश्न के लिए ठीक एक चित्र चाहिए।"
+
+#: src/decision.py
+msgid "Some models need images between 256 and 1568 pixels on each side."
+msgstr "कुछ मॉडलों को ऐसे चित्र चाहिए जिनकी हर भुजा 256 से 1568 पिक्सेल के बीच हो।"
+
+#: src/decision.py:248
+msgid "The response has no answers."
+msgstr "सर्वर के जवाब में कोई उत्तर नहीं है।"
+
+#: src/decision.py:265
+msgid "The answer is not valid for this question."
+msgstr "यह उत्तर इस प्रश्न के लिए मान्य नहीं है।"
+
+#: src/providers/systemone.py:51
+msgid "Images sent to this server must be PNG or JPEG."
+msgstr "इस सर्वर को भेजी जाने वाली छवियाँ PNG या JPEG होनी चाहिए।"
 
 #: src/export.py:46
 msgid "Export Conversation"
@@ -3836,3 +3901,231 @@ msgstr "कोई एम्बेडिंग मॉडल उपलब्ध �
 #: src/widgets/knowledge_common.py
 msgid "No embedding models found on this server. Load one there, then refresh."
 msgstr "इस सर्वर पर कोई एम्बेडिंग मॉडल नहीं मिला। वहाँ एक लोड करें, फिर रीफ़्रेश करें।"
+
+#: src/decision_run.py
+msgid "The state is not valid JSON: {0}"
+msgstr "स्थिति मान्य JSON नहीं है: {0}"
+
+#: src/shortcuts-dialog.ui src/widgets/decision_view.py src/window.ui
+msgid "New Decision"
+msgstr "नया निर्णय"
+
+#: src/widgets/chat_input.py
+msgid "Select a decision model"
+msgstr "निर्णय मॉडल चुनें"
+
+#: src/widgets/chat_input.py
+msgid "No decision models found on this server."
+msgstr "इस सर्वर पर कोई निर्णय मॉडल नहीं मिला।"
+
+#: src/widgets/chat_input.py
+msgid "Checking decision models…"
+msgstr "निर्णय मॉडल जाँचे जा रहे हैं…"
+
+#. Translators: a percentage, such as "87%"; {0} is the number.
+#: src/widgets/decision_answers.py
+msgid "{0}%"
+msgstr "{0}%"
+
+#: src/widgets/decision_answers.py
+msgid "Confidence: {0}"
+msgstr "विश्वास: {0}"
+
+#: src/widgets/decision_answers.py
+msgid "Yes"
+msgstr "हाँ"
+
+#: src/widgets/decision_answers.py
+msgid "No"
+msgstr "नहीं"
+
+#: src/widgets/decision_answers.py
+msgid "Probability of yes"
+msgstr "हाँ की संभावना"
+
+#. Translators: a score and the highest it could be, such as "1.54 of 2".
+#: src/widgets/decision_answers.py
+msgid "{0} of {1}"
+msgstr "{1} में से {0}"
+
+#. Translators: where a box lies in an image; each number is a fraction of the image's height or width.
+#: src/widgets/decision_answers.py
+msgid "Box: top {0}, bottom {1}, left {2}, right {3}"
+msgstr "बॉक्स: ऊपर {0}, नीचे {1}, बाएँ {2}, दाएँ {3}"
+
+#: src/widgets/decision_answers.py
+msgid "Image sent with this run"
+msgstr "इस रन के साथ भेजा गया चित्र"
+
+#: src/widgets/decision_answers.py
+msgid "The model declined to answer this question."
+msgstr "मॉडल ने इस प्रश्न का उत्तर देने से मना कर दिया।"
+
+#: src/widgets/decision_answers.py
+msgid "Raw answer"
+msgstr "मूल उत्तर"
+
+#: src/widgets/decision_answers.py
+msgid "The model returned no answer to this question."
+msgstr "मॉडल ने इस प्रश्न का कोई उत्तर नहीं लौटाया।"
+
+#: src/widgets/decision_answers.py
+msgid "Input: {0} tokens"
+msgstr "इनपुट टोकन: {0}"
+
+#: src/widgets/decision_answers.py
+msgid "Output: {0} tokens"
+msgstr "आउटपुट टोकन: {0}"
+
+#. Translators: what a request cost, in US dollars.
+#: src/widgets/decision_answers.py
+msgid "Cost: ${0}"
+msgstr "लागत: ${0}"
+
+#: src/widgets/decision_answers.py
+msgid "Cancelled"
+msgstr "रद्द"
+
+#: src/widgets/decision_answers.py
+msgid "Running…"
+msgstr "चल रहा है…"
+
+#: src/widgets/decision_answers.py
+msgid "Run {0}"
+msgstr "रन {0}"
+
+#: src/widgets/decision_form.py
+msgid "Yes/No"
+msgstr "हाँ/नहीं"
+
+#: src/widgets/decision_form.py
+msgid "Choice"
+msgstr "चयन"
+
+#: src/widgets/decision_form.py
+msgid "Score"
+msgstr "स्कोर"
+
+#: src/widgets/decision_form.py
+msgid "Box"
+msgstr "बॉक्स"
+
+#: src/widgets/decision_form.py
+msgid "Add Option"
+msgstr "विकल्प जोड़ें"
+
+#: src/widgets/decision_form.py
+msgid "Add Level"
+msgstr "स्तर जोड़ें"
+
+#: src/widgets/decision_form.py
+msgid "Levels, from the lowest score to the highest"
+msgstr "स्तर, सबसे कम स्कोर से सबसे अधिक तक"
+
+#: src/widgets/decision_form.py
+msgid "Option"
+msgstr "विकल्प"
+
+#: src/widgets/decision_form.py
+msgid "Description (optional)"
+msgstr "विवरण (वैकल्पिक)"
+
+#: src/widgets/decision_form.py
+msgid "Level description"
+msgstr "स्तर का विवरण"
+
+#: src/widgets/decision_form.py
+msgid "Move Up"
+msgstr "ऊपर ले जाएँ"
+
+#: src/widgets/decision_form.py
+msgid "Move Down"
+msgstr "नीचे ले जाएँ"
+
+#: src/widgets/decision_form.py
+msgid "Remove"
+msgstr "हटाएँ"
+
+#: src/widgets/decision_form.py
+msgid "Question name"
+msgstr "प्रश्न का नाम"
+
+#: src/widgets/decision_form.py
+msgid "Question type"
+msgstr "प्रश्न का प्रकार"
+
+#: src/widgets/decision_form.py
+msgid "Remove Question"
+msgstr "प्रश्न हटाएँ"
+
+#: src/widgets/decision_form.py
+msgid "Duplicate Question"
+msgstr "प्रश्न की प्रति बनाएँ"
+
+#: src/widgets/decision_form.py
+msgid "Instructions"
+msgstr "निर्देश"
+
+#: src/widgets/decision_form.py
+msgid "Counts as yes (optional)"
+msgstr "हाँ माना जाएगा (वैकल्पिक)"
+
+#: src/widgets/decision_form.py
+msgid "Counts as no (optional)"
+msgstr "नहीं माना जाएगा (वैकल्पिक)"
+
+#: src/widgets/decision_form.py
+msgid "Questions"
+msgstr "प्रश्न"
+
+#: src/widgets/decision_form.py
+msgid "Import Questions"
+msgstr "प्रश्न आयात करें"
+
+#: src/widgets/decision_form.py
+msgid "An object of named questions. Each has a type of noul, choice, score, or box, and may have instructions and criteria."
+msgstr "नाम वाले प्रश्नों का एक ऑब्जेक्ट। हर प्रश्न का प्रकार noul, choice, score या box होता है, और उसमें निर्देश और मानदंड हो सकते हैं।"
+
+#: src/widgets/decision_form.py
+msgid "Export Questions"
+msgstr "प्रश्न निर्यात करें"
+
+#: src/widgets/decision_form.py
+msgid "Edit as JSON…"
+msgstr "JSON के रूप में संपादित करें…"
+
+#: src/widgets/decision_form.py
+msgid "Add Question"
+msgstr "प्रश्न जोड़ें"
+
+#: src/widgets/decision_form.py
+msgid "Question \"{0}\" has a blank or repeated criterion."
+msgstr "प्रश्न \"{0}\" में कोई मानदंड खाली है या दोहराया गया है।"
+
+#: src/widgets/decision_view.py
+msgid "State"
+msgstr "स्थिति"
+
+#: src/widgets/decision_view.py
+msgid "Send the state as the JSON it holds, not as text."
+msgstr "स्थिति को टेक्स्ट के बजाय उसमें मौजूद JSON के रूप में भेजें।"
+
+#: src/widgets/decision_view.py
+msgid "Enter what the questions are asked about."
+msgstr "वह दर्ज करें जिसके बारे में प्रश्न पूछे जाते हैं।"
+
+#: src/widgets/decision_view.py
+msgid "Results"
+msgstr "परिणाम"
+
+#: src/widgets/decision_view.py
+msgid "Load earlier runs"
+msgstr "पिछले रन लोड करें"
+
+#: src/widgets/decision_view.py
+msgid "Run"
+msgstr "चलाएँ"
+
+#: src/widgets/history_sidebar.py
+msgid "Recent decisions"
+msgstr "हाल के निर्णय"

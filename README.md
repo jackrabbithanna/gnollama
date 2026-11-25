@@ -20,6 +20,7 @@ Whether you are developing, experimenting, or chatting with local models, Gnolla
   * **New Chat (`/api/chat`)**: Multi-turn sessions that preserve conversation context.
   * **New Response (`/api/generate`)**: Single-turn completions ideal for prompt engineering and testing.
   * **Model to Model Conversation**: Alternating A/B conversations with separate system prompts, bounded rounds, pause/resume, and saved transcripts.
+  * **Decision**: Ask a decision model named yes/no, choice, score, and box questions about text, JSON, or images, and read each answer with its probabilities.
   * Model lists appear before capability checks. Only the selected model is checked; models known to be embedding-only are excluded from all generation modes. Opening an empty selector retries discovery. Embedding models remain available in Knowledge and Manage Models; unknown capabilities remain supported for older servers.
 * **Conversation History & Sidebar**:
   * Automatically saves chat logs and model configurations between runs.
@@ -48,7 +49,7 @@ Whether you are developing, experimenting, or chatting with local models, Gnolla
   * Separate display of Ollama's native thinking stream, with model-dependent thinking controls.
   * Display generation stats (including cached prompt tokens, finish reason, and tokens/second) and logprobs.
 * **Stop Responses**: Stop generation while keeping partial answers in chat history. Pending history writes finish before the application quits.
-* **Adaptive GNOME Navigation**: Native tabs support reordering and loading indicators. The sidebar groups Drafts, Pinned, Recent chats, Recent comparisons, and Recent model conversations, and collapses on narrow windows. Use Ctrl+W to close a tab, Ctrl+Page Up/Down to switch tabs, and F9 to toggle the sidebar.
+* **Adaptive GNOME Navigation**: Native tabs support reordering and loading indicators. The sidebar groups Drafts, Pinned, Recent chats, Recent comparisons, Recent model conversations, and Recent decisions, and collapses on narrow windows. Use Ctrl+W to close a tab, Ctrl+Page Up/Down to switch tabs, and F9 to toggle the sidebar.
 
 ### Ollama Cloud
 
@@ -113,7 +114,7 @@ For the pinned sqlite-vec 0.1.9 layout, distance searches reuse read-only vector
 
 A GNOME 50 aarch64 benchmark of 50,000 vectors at 1,024 dimensions returned identical top-six results to the preceding batched NumPy ranking. Whole-library retrieval took 0.15–0.19 seconds, selecting one 25,000-vector document took 0.17–0.18 seconds, and selecting 25,000 individual chunks took 0.42–0.44 seconds. These are local retrieval timings, excluding Ollama inference. The one-time migration and backup took about 68 seconds; startup displays migration progress and waits for the database operation to finish if closed.
 
-Database upgrades run automatically on startup, with progress and a recoverable error screen. Schema version 7 migrates existing vectors without contacting Ollama: it copies and verifies their IDs, dimensions, and bytes before removing the old vector column. Version 8 adds collections and membership without copying or rebuilding vectors; existing documents appear under **Ungrouped Documents**, and existing chat selections are preserved. Version 9 adds web-source provenance without reindexing existing documents. Version 10 adds cloud host types and keyring references without storing API keys in the database. Version 11 adds stable message identifiers, managed drafts, full-text search, and comparison runs while preserving message attachments and metadata. Before upgrading an existing database, Gnollama saves a consistent, timestamped `gnollama.db.pre-v11-*.bak` beside the database and reports its location. Keep that file until you have verified the upgrade; it can then be archived or removed. Failed migrations roll back, and incompatible or damaged vectors are never silently discarded. Databases from newer app versions are refused. Older app versions must not be used with the upgraded database. SQLite can reuse pages freed by migration; the database file need not immediately shrink.
+Database upgrades run automatically on startup, with progress and a recoverable error screen. Schema version 7 migrates existing vectors without contacting Ollama: it copies and verifies their IDs, dimensions, and bytes before removing the old vector column. Version 8 adds collections and membership without copying or rebuilding vectors; existing documents appear under **Ungrouped Documents**, and existing chat selections are preserved. Version 9 adds web-source provenance without reindexing existing documents. Version 10 adds cloud host types and keyring references without storing API keys in the database. Version 11 adds stable message identifiers, managed drafts, full-text search, and comparison runs while preserving message attachments and metadata. Version 14 adds saved decision runs without changing existing conversations. Before upgrading an existing database, Gnollama saves a consistent, timestamped `gnollama.db.pre-v11-*.bak` beside the database and reports its location. Keep that file until you have verified the upgrade; it can then be archived or removed. Failed migrations roll back, and incompatible or damaged vectors are never silently discarded. Databases from newer app versions are refused. Older app versions must not be used with the upgraded database. SQLite can reuse pages freed by migration; the database file need not immediately shrink.
 
 ### Structured output details
 
@@ -229,7 +230,7 @@ Server and model selectors stay visible. Expand **Options** for thinking, tools,
 
 **Manage Models** uses **Download Model…**, with a progress bar and expandable download details. Server records have persistent name/address labels, address validation, and a visible **Test Connection** action.
 
-The current release uses database schema version 12 and preserves existing documents, embeddings, collection memberships, chat settings, and historical citations.
+The current release uses database schema version 14 and preserves existing documents, embeddings, collection memberships, chat settings, and historical citations.
 
 
 ### Drafts, search, and comparisons
@@ -265,6 +266,23 @@ Model conversations support drafts, search, pinning, rename, deletion, and Markd
 ![Paused model conversation](screenshots/gnollama-model-conversation.png)
 
 **Context estimate** reports text estimates using UTF-8 bytes divided by four, plus a positive configured output allowance. Image and chat-template overhead are unknown. An advisory appears at 80% of an explicitly configured context size. Estimates never truncate the conversation or change settings.
+
+### Decision
+
+Choose **New Decision** (Ctrl+Shift+E) to put questions to a decision model. Such a model writes no text: it is sent a state and a set of named questions, and returns a named answer with probabilities for each. Decision models are offered by Ollama, LM Studio, OpenRouter, and the Vercel AI Gateway; they are listed in this tab only, and never in a chat, comparison, or model conversation.
+
+Enter the state as **Text** or **JSON**, attach images if the model takes them, and build the questions in the form. Each has a name, a type, optional instructions, and criteria for its type:
+
+* **Yes/No**: optional descriptions of what counts as yes and as no. The answer is a probability of yes.
+* **Choice**: 1–255 named options, each with an optional description. The answer is one option, with every option's probability.
+* **Score**: 1–10 levels, from the lowest to the highest. The answer is a score with its distribution.
+* **Box**: where something is in an image. It is offered for models that answer it, and needs exactly one image. The answer is drawn over the image.
+
+**Edit as JSON…** shows the same questions as JSON, to edit, import, or export. **Run** sends the request and adds a result with a card for each question, the model that answered, token counts, and the cost where the server reports one. **Stop** cancels a run. Whatever the selected model cannot be sent, such as an image, a box question, or more questions than it takes, holds **Run** back with the reason; nothing is left out of a request.
+
+Some models take only images of certain sizes; a note appears when an image for a box question is under 256 or over 1568 pixels on a side, and a model's own refusal is shown as the run's error. OpenRouter and Vercel take PNG and JPEG, so other formats are converted to PNG before they are sent.
+
+Every run is saved in its session with its state, images, questions, and answers. Sessions appear under **Recent decisions**, with drafts, search over the state of each run, pinning, rename, deletion, and Markdown/JSON export. Reopening a session sends nothing.
 
 ### Architecture and evaluation
 

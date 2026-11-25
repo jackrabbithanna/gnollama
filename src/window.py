@@ -159,6 +159,7 @@ class GnollamaWindow(Adw.ApplicationWindow):
         actions = [('new_tab', lambda *args: self.new_tab()),
                    ('new_comparison', lambda *args: self.new_comparison_tab()),
                    ('new_model_conversation', lambda *args: self.new_model_conversation_tab()),
+                   ('new_decision', lambda *args: self.new_decision_tab()),
                    ('new_chat_tab', lambda *args: self.new_chat_tab()),
                    ('clear_history', self.on_clear_history),
                    ('manage_hosts', self.on_manage_hosts),
@@ -248,7 +249,8 @@ class GnollamaWindow(Adw.ApplicationWindow):
         self.section_stack.set_visible_child_name('chats')
         page = self.tab_view.append(tab)
         tab.bind_property('title', page, 'title', GObject.BindingFlags.SYNC_CREATE)
-        page.set_icon(Gio.ThemedIcon.new('network-server-symbolic' if tab.mode == 'chat' else 'edit-find-symbolic'))
+        icons = dict(chat='network-server-symbolic', decision='gnollama-decision-symbolic')
+        page.set_icon(Gio.ThemedIcon.new(icons.get(tab.mode, 'edit-find-symbolic')))
         def request_changed(*args):
             page.set_loading(tab.request is not None)
             for manager in self.model_managers:
@@ -265,6 +267,10 @@ class GnollamaWindow(Adw.ApplicationWindow):
     def new_model_conversation_tab(self):
         from .widgets.model_conversation_view import ModelConversationTab
         return self._add_tab(ModelConversationTab(self.context))
+
+    def new_decision_tab(self):
+        from .widgets.decision_view import DecisionTab
+        return self._add_tab(DecisionTab(self.context))
 
     def new_tab(self):
         return self._add_tab(GenerationTab(mode='generate', context=self.context))
@@ -286,6 +292,9 @@ class GnollamaWindow(Adw.ApplicationWindow):
         if chat_data.get('kind') == 'model_conversation':
             from .widgets.model_conversation_view import ModelConversationTab
             return self._add_tab(ModelConversationTab(self.context, saved=chat_data))
+        if chat_data.get('kind') == 'decision':
+            from .widgets.decision_view import DecisionTab
+            return self._add_tab(DecisionTab(self.context, saved=chat_data))
         return self._add_tab(GenerationTab(mode='chat', chat_id=chat_data['id'],
                                            initial_history=chat_data.get('messages', []), context=self.context, chat_data=chat_data))
 
@@ -374,6 +383,9 @@ class GnollamaWindow(Adw.ApplicationWindow):
                 elif draft['mode'] == 'model_conversation':
                     from .widgets.model_conversation_view import ModelConversationTab
                     self._add_tab(ModelConversationTab(self.context, draft=draft))
+                elif draft['mode'] == 'decision':
+                    from .widgets.decision_view import DecisionTab
+                    self._add_tab(DecisionTab(self.context, draft=draft))
                 else:
                     self._add_tab(GenerationTab(mode=draft['mode'], context=self.context, draft=draft))
             return False

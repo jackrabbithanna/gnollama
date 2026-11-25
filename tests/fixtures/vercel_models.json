@@ -655,6 +655,67 @@
     ]
    },
    "pricing": {}
+  },
+  {
+   "id": "typesafe-ai/jev-1.14.0",
+   "object": "model",
+   "created": 1793577600,
+   "released": 1793577600,
+   "owned_by": "typesafe-ai",
+   "name": "Jev 1.14",
+   "description": "A decision model that answers named questions about text and images.",
+   "context_window": 32768,
+   "max_tokens": 0,
+   "type": "evaluation",
+   "zdr": "none",
+   "no_training": "none",
+   "tags": [
+    "vision"
+   ],
+   "supported_specifications": [
+    "v4"
+   ],
+   "modalities": {
+    "input": [
+     "text",
+     "image"
+    ],
+    "output": [
+     "text"
+    ]
+   },
+   "pricing": {
+    "input": "0.000001"
+   }
+  },
+  {
+   "id": "openai/gpt-6-luna-decisions",
+   "object": "model",
+   "created": 1793577600,
+   "released": 1793577600,
+   "owned_by": "openai",
+   "name": "GPT-6 Luna Decisions",
+   "description": "A decision model that answers named questions about text.",
+   "context_window": 128000,
+   "max_tokens": 0,
+   "type": "evaluation",
+   "zdr": "none",
+   "no_training": "none",
+   "tags": [],
+   "supported_specifications": [
+    "v4"
+   ],
+   "modalities": {
+    "input": [
+     "text"
+    ],
+    "output": [
+     "text"
+    ]
+   },
+   "pricing": {
+    "input": "0.0000002"
+   }
   }
  ]
 }

@@ -160,6 +160,33 @@ class RequestSettings:
         return cls(None, WireOptions(options=options, thinking=thinking, **wire), ViewState(**view, extra=data))
 
 
+@dataclass(frozen=True)
+class DecisionSettings:
+    """What a decision asks, and of which model: a session's options, a draft's settings, and each run."""
+    target: ModelTarget | None = None
+    # The object `decision.questions_object` returns; a draft may hold one still being written.
+    questions: dict = field(default_factory=dict)
+    # Whether the state is sent as written or parsed as JSON first.
+    state_mode: str = 'text'
+
+    def to_stored(self):
+        data: dict = dict(questions=copy.deepcopy(self.questions), state_mode=self.state_mode)
+        if self.target is not None:
+            data['target'] = dict(host=self.target.url, host_id=self.target.host_id,
+                                  host_name=self.target.host_name, model=self.target.model)
+        return data
+
+    @classmethod
+    def from_stored(cls, data):
+        data = data or {}
+        target = data.get('target')
+        questions = data.get('questions')
+        return cls(ModelTarget(target.get('host_id'), target.get('host'), target.get('model'), target.get('host_name'))
+                   if isinstance(target, dict) else None,
+                   copy.deepcopy(questions) if isinstance(questions, dict) else {},
+                   'json' if data.get('state_mode') == 'json' else 'text')
+
+
 class ComparisonTarget(TypedDict):
     id: str
     settings: dict  # RequestSettings.to_stored()
@@ -181,6 +208,22 @@ class ConversationAttempt(TypedDict):
     status: str
 
 
+class DecisionRun(TypedDict):
+    id: str
+    session_id: str
+    position: int
+    state: str
+    state_mode: str
+    images: list[str]
+    questions: dict
+    target: dict  # DecisionSettings.to_stored()['target']
+    status: str  # running, done, failed, cancelled, or interrupted
+    result: dict | None
+    error: str | None
+    created_at: float
+    finished_at: float | None
+
+
 @dataclass
 class Draft:
     id: str
@@ -200,6 +243,7 @@ def has_saved_work(messages=(), options=None, draft=None, system='', title='New 
     draft = draft or {}
     return bool(messages or draft.get('text', '').strip() or draft.get('images')
                 or draft.get('settings', {}).get('_configured') or draft.get('targets')
+                or draft.get('settings', {}).get('questions')
                 or knowledge.get('selection') or knowledge.get('collection_ids')
                 or options.get('tools_text', '').strip() or options.get('schema_text', '').strip()
                 or options.get('_configured') or system or pinned or title not in ('', 'New Chat'))

@@ -65,6 +65,8 @@ def validate_participants(context, participants, cancel):
         if caps is not None:
             if 'embedding' in caps and 'completion' not in caps:
                 raise ValueError(_('Embedding models cannot join a conversation.'))
+            if 'decision' in caps and 'completion' not in caps:
+                raise ValueError(_('Decision models cannot generate text.'))
             if wire.thinking not in (None, False) and 'thinking' not in caps:
                 raise ValueError(_('A participant does not support the selected thinking option.'))
         family = (details or {}).get('details', {}).get('family', '').replace('-', '').lower()

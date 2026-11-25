@@ -2,7 +2,7 @@
 from decimal import Context, Decimal, InvalidOperation
 from gettext import gettext as _
 
-from .providers.base import advisory, supports
+from .providers.base import advisory, generates, supports
 
 MILLION = 1_000_000
 
@@ -58,8 +58,11 @@ def _size(value):
 def capability_parts(details):
     """What a model can and cannot do. A capability the server did not report is left out, not shown as missing."""
     parts = []
-    for name, has, lacks in (('vision', _('Images'), _('No images')), ('tools', _('Tools'), _('No tools')),
-                             ('thinking', _('Thinking'), _('No thinking'))):
+    names = (('vision', _('Images'), _('No images')), ('tools', _('Tools'), _('No tools')),
+             ('thinking', _('Thinking'), _('No thinking')))
+    if not generates(details) and supports(details, 'decision'):
+        names = names[:1]  # A decision model answers questions; tools and thinking are not asked of it.
+    for name, has, lacks in names:
         known = supports(details, name)
         if known is False and name == 'tools' and advisory(details, name):
             parts.append(_('Not trained for tools'))

@@ -373,6 +373,10 @@ msgstr "Modeli iliyochaguliwa haipatikani tena."
 msgid "Embedding models cannot generate comparisons."
 msgstr "Modeli za upachikaji haziwezi kutoa majibu ya kulinganisha."
 
+#: src/comparison.py:59 src/model_conversation.py:68
+msgid "Decision models cannot generate text."
+msgstr "Modeli za maamuzi haziwezi kutoa maandishi."
+
 #: src/comparison.py:48
 msgid "Every target must support the shared images."
 msgstr "Malengo yote lazima yaunge mkono picha zinazoshirikiwa."
@@ -470,6 +474,67 @@ msgstr "Hifadhidata hii inahitaji toleo jipya zaidi la Gnollama."
 #, python-brace-format
 msgid "Upgrading the database to version {0}…"
 msgstr "Inasasisha hifadhidata hadi toleo {0}…"
+
+#: src/decision.py:62 src/decision.py:122
+#, python-brace-format
+msgid "Question \"{0}\" has an invalid field: {1}"
+msgstr "Swali \"{0}\" lina sehemu isiyo sahihi: {1}"
+
+#: src/decision.py:65
+#, python-brace-format
+msgid "Question \"{0}\" needs between 1 and {1} criteria."
+msgstr "Swali \"{0}\" linahitaji vigezo kati ya 1 na {1}."
+
+#: src/decision.py:95
+msgid "Provide at least one named question as a JSON object."
+msgstr "Toa angalau swali moja lenye jina kama kitu cha JSON."
+
+#: src/decision.py:114
+#, python-brace-format
+msgid "Question names must be unique and not blank: \"{0}\""
+msgstr "Majina ya maswali lazima yawe ya kipekee na yasiwe tupu: \"{0}\""
+
+#: src/decision.py:118
+#, python-brace-format
+msgid "Question \"{0}\" needs a type of noul, choice, score, or box."
+msgstr "Swali \"{0}\" linahitaji aina ya noul, choice, score au box."
+
+#: src/decision.py:150
+msgid "This server does not offer decision models."
+msgstr "Seva hii haitoi modeli za maamuzi."
+
+#: src/decision.py:152
+#, python-brace-format
+msgid "This model takes at most {0} questions."
+msgstr "Modeli hii inakubali maswali yasiyozidi {0}."
+
+#: src/decision.py:154
+msgid "This model does not accept images."
+msgstr "Modeli hii haikubali picha."
+
+#: src/decision.py:156
+msgid "This model cannot answer box questions."
+msgstr "Modeli hii haiwezi kujibu maswali ya aina ya box."
+
+#: src/decision.py:158
+msgid "A box question needs exactly one image."
+msgstr "Swali la aina ya box linahitaji picha moja tu."
+
+#: src/decision.py
+msgid "Some models need images between 256 and 1568 pixels on each side."
+msgstr "Baadhi ya modeli zinahitaji picha zenye pikseli kati ya 256 na 1568 kila upande."
+
+#: src/decision.py:248
+msgid "The response has no answers."
+msgstr "Jibu la seva halina majibu yoyote."
+
+#: src/decision.py:265
+msgid "The answer is not valid for this question."
+msgstr "Jibu si sahihi kwa swali hili."
+
+#: src/providers/systemone.py:51
+msgid "Images sent to this server must be PNG or JPEG."
+msgstr "Picha zinazotumwa kwa seva hii lazima ziwe PNG au JPEG."
 
 #: src/export.py:46
 msgid "Export Conversation"
@@ -3890,3 +3955,231 @@ msgstr "Hakuna modeli za embedding zinazopatikana. Jaribu kuonyesha upya baadaye
 #: src/widgets/knowledge_common.py
 msgid "No embedding models found on this server. Load one there, then refresh."
 msgstr "Hakuna modeli za embedding zilizopatikana kwenye seva hii. Pakia moja huko, kisha onyesha upya."
+
+#: src/decision_run.py
+msgid "The state is not valid JSON: {0}"
+msgstr "Hali si JSON halali: {0}"
+
+#: src/shortcuts-dialog.ui src/widgets/decision_view.py src/window.ui
+msgid "New Decision"
+msgstr "Uamuzi Mpya"
+
+#: src/widgets/chat_input.py
+msgid "Select a decision model"
+msgstr "Chagua modeli ya maamuzi"
+
+#: src/widgets/chat_input.py
+msgid "No decision models found on this server."
+msgstr "Hakuna modeli za maamuzi zilizopatikana kwenye seva hii."
+
+#: src/widgets/chat_input.py
+msgid "Checking decision models…"
+msgstr "Inakagua modeli za maamuzi…"
+
+#. Translators: a percentage, such as "87%"; {0} is the number.
+#: src/widgets/decision_answers.py
+msgid "{0}%"
+msgstr "{0}%"
+
+#: src/widgets/decision_answers.py
+msgid "Confidence: {0}"
+msgstr "Uhakika: {0}"
+
+#: src/widgets/decision_answers.py
+msgid "Yes"
+msgstr "Ndiyo"
+
+#: src/widgets/decision_answers.py
+msgid "No"
+msgstr "Hapana"
+
+#: src/widgets/decision_answers.py
+msgid "Probability of yes"
+msgstr "Uwezekano wa ndiyo"
+
+#. Translators: a score and the highest it could be, such as "1.54 of 2".
+#: src/widgets/decision_answers.py
+msgid "{0} of {1}"
+msgstr "{0} kati ya {1}"
+
+#. Translators: where a box lies in an image; each number is a fraction of the image's height or width.
+#: src/widgets/decision_answers.py
+msgid "Box: top {0}, bottom {1}, left {2}, right {3}"
+msgstr "Kisanduku: juu {0}, chini {1}, kushoto {2}, kulia {3}"
+
+#: src/widgets/decision_answers.py
+msgid "Image sent with this run"
+msgstr "Picha iliyotumwa na uendeshaji huu"
+
+#: src/widgets/decision_answers.py
+msgid "The model declined to answer this question."
+msgstr "Modeli imekataa kujibu swali hili."
+
+#: src/widgets/decision_answers.py
+msgid "Raw answer"
+msgstr "Jibu ghafi"
+
+#: src/widgets/decision_answers.py
+msgid "The model returned no answer to this question."
+msgstr "Modeli haikurudisha jibu la swali hili."
+
+#: src/widgets/decision_answers.py
+msgid "Input: {0} tokens"
+msgstr "Tokeni za ingizo: {0}"
+
+#: src/widgets/decision_answers.py
+msgid "Output: {0} tokens"
+msgstr "Tokeni za tokeo: {0}"
+
+#. Translators: what a request cost, in US dollars.
+#: src/widgets/decision_answers.py
+msgid "Cost: ${0}"
+msgstr "Gharama: ${0}"
+
+#: src/widgets/decision_answers.py
+msgid "Cancelled"
+msgstr "Imeghairiwa"
+
+#: src/widgets/decision_answers.py
+msgid "Running…"
+msgstr "Inaendeshwa…"
+
+#: src/widgets/decision_answers.py
+msgid "Run {0}"
+msgstr "Uendeshaji {0}"
+
+#: src/widgets/decision_form.py
+msgid "Yes/No"
+msgstr "Ndiyo/Hapana"
+
+#: src/widgets/decision_form.py
+msgid "Choice"
+msgstr "Chaguo"
+
+#: src/widgets/decision_form.py
+msgid "Score"
+msgstr "Alama"
+
+#: src/widgets/decision_form.py
+msgid "Box"
+msgstr "Kisanduku"
+
+#: src/widgets/decision_form.py
+msgid "Add Option"
+msgstr "Ongeza Chaguo"
+
+#: src/widgets/decision_form.py
+msgid "Add Level"
+msgstr "Ongeza Kiwango"
+
+#: src/widgets/decision_form.py
+msgid "Levels, from the lowest score to the highest"
+msgstr "Viwango, kuanzia alama ya chini hadi ya juu"
+
+#: src/widgets/decision_form.py
+msgid "Option"
+msgstr "Chaguo"
+
+#: src/widgets/decision_form.py
+msgid "Description (optional)"
+msgstr "Maelezo (si lazima)"
+
+#: src/widgets/decision_form.py
+msgid "Level description"
+msgstr "Maelezo ya kiwango"
+
+#: src/widgets/decision_form.py
+msgid "Move Up"
+msgstr "Sogeza Juu"
+
+#: src/widgets/decision_form.py
+msgid "Move Down"
+msgstr "Sogeza Chini"
+
+#: src/widgets/decision_form.py
+msgid "Remove"
+msgstr "Ondoa"
+
+#: src/widgets/decision_form.py
+msgid "Question name"
+msgstr "Jina la swali"
+
+#: src/widgets/decision_form.py
+msgid "Question type"
+msgstr "Aina ya swali"
+
+#: src/widgets/decision_form.py
+msgid "Remove Question"
+msgstr "Ondoa Swali"
+
+#: src/widgets/decision_form.py
+msgid "Duplicate Question"
+msgstr "Nakili Swali"
+
+#: src/widgets/decision_form.py
+msgid "Instructions"
+msgstr "Maelekezo"
+
+#: src/widgets/decision_form.py
+msgid "Counts as yes (optional)"
+msgstr "Huhesabiwa kuwa ndiyo (si lazima)"
+
+#: src/widgets/decision_form.py
+msgid "Counts as no (optional)"
+msgstr "Huhesabiwa kuwa hapana (si lazima)"
+
+#: src/widgets/decision_form.py
+msgid "Questions"
+msgstr "Maswali"
+
+#: src/widgets/decision_form.py
+msgid "Import Questions"
+msgstr "Leta maswali"
+
+#: src/widgets/decision_form.py
+msgid "An object of named questions. Each has a type of noul, choice, score, or box, and may have instructions and criteria."
+msgstr "Kitu chenye maswali yenye majina. Kila moja lina aina ya noul, choice, score au box, na linaweza kuwa na maelekezo na vigezo."
+
+#: src/widgets/decision_form.py
+msgid "Export Questions"
+msgstr "Hamisha maswali"
+
+#: src/widgets/decision_form.py
+msgid "Edit as JSON…"
+msgstr "Hariri kama JSON…"
+
+#: src/widgets/decision_form.py
+msgid "Add Question"
+msgstr "Ongeza Swali"
+
+#: src/widgets/decision_form.py
+msgid "Question \"{0}\" has a blank or repeated criterion."
+msgstr "Swali \"{0}\" lina kigezo kilicho tupu au kinachojirudia."
+
+#: src/widgets/decision_view.py
+msgid "State"
+msgstr "Hali"
+
+#: src/widgets/decision_view.py
+msgid "Send the state as the JSON it holds, not as text."
+msgstr "Tuma hali kama JSON iliyomo, si kama maandishi."
+
+#: src/widgets/decision_view.py
+msgid "Enter what the questions are asked about."
+msgstr "Weka kile ambacho maswali yanaulizwa kukihusu."
+
+#: src/widgets/decision_view.py
+msgid "Results"
+msgstr "Matokeo"
+
+#: src/widgets/decision_view.py
+msgid "Load earlier runs"
+msgstr "Pakia uendeshaji wa awali"
+
+#: src/widgets/decision_view.py
+msgid "Run"
+msgstr "Endesha"
+
+#: src/widgets/history_sidebar.py
+msgid "Recent decisions"
+msgstr "Maamuzi ya hivi karibuni"

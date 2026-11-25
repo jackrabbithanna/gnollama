@@ -68,6 +68,19 @@ class CatalogTests(unittest.TestCase):
             self.assertEqual(catalog.models(OllamaProvider('http://models'), refresh=True)[0][0], 'second')
             self.assertEqual(tags.call_count, 3)
 
+    def test_decision_lists_are_shared_and_kept_apart_from_chat_lists(self):
+        catalog, host = self.context.services.catalog, OllamaProvider('http://models')
+        deciders = [{'name': 'd3', 'digest': 'one', 'capabilities': ['decision', 'vision']}]
+        with provider_patch('list_decision_models', side_effect=[[], deciders, deciders]) as listed, \
+                provider_patch('list_models', return_value=['chat']) as tags:
+            self.assertEqual(catalog.request_decision_models(host).result(1), [])
+            self.assertEqual(catalog.request_decision_models(host).result(1), deciders)
+            self.assertEqual(catalog.request_decision_models(host).result(1), deciders)
+            self.assertEqual(catalog.models(host), [('chat', None)])
+            self.assertEqual((listed.call_count, tags.call_count), (2, 1))
+            self.assertEqual(catalog.request_decision_models(host, refresh=True).result(1), deciders)
+            self.assertEqual(listed.call_count, 3)
+
     def test_capabilities_are_shared_and_expire_by_time_or_digest(self):
         catalog = self.context.services.catalog
         clock = [0]

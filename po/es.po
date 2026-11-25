@@ -374,6 +374,10 @@ msgstr "El modelo seleccionado ya no está disponible."
 msgid "Embedding models cannot generate comparisons."
 msgstr "Los modelos de embeddings no pueden generar comparaciones."
 
+#: src/comparison.py:59 src/model_conversation.py:68
+msgid "Decision models cannot generate text."
+msgstr "Los modelos de decisión no pueden generar texto."
+
 #: src/comparison.py:48
 msgid "Every target must support the shared images."
 msgstr "Todos los destinos deben admitir las imágenes compartidas."
@@ -473,6 +477,67 @@ msgstr "Esta base de datos requiere una versión más reciente de Gnollama."
 #, python-brace-format
 msgid "Upgrading the database to version {0}…"
 msgstr "Actualizando la base de datos a la versión {0}…"
+
+#: src/decision.py:62 src/decision.py:122
+#, python-brace-format
+msgid "Question \"{0}\" has an invalid field: {1}"
+msgstr "La pregunta \"{0}\" tiene un campo no válido: {1}"
+
+#: src/decision.py:65
+#, python-brace-format
+msgid "Question \"{0}\" needs between 1 and {1} criteria."
+msgstr "La pregunta \"{0}\" necesita entre 1 y {1} criterios."
+
+#: src/decision.py:95
+msgid "Provide at least one named question as a JSON object."
+msgstr "Proporcione al menos una pregunta con nombre como objeto JSON."
+
+#: src/decision.py:114
+#, python-brace-format
+msgid "Question names must be unique and not blank: \"{0}\""
+msgstr "Los nombres de las preguntas deben ser únicos y no estar vacíos: \"{0}\""
+
+#: src/decision.py:118
+#, python-brace-format
+msgid "Question \"{0}\" needs a type of noul, choice, score, or box."
+msgstr "La pregunta \"{0}\" necesita un tipo noul, choice, score o box."
+
+#: src/decision.py:150
+msgid "This server does not offer decision models."
+msgstr "Este servidor no ofrece modelos de decisión."
+
+#: src/decision.py:152
+#, python-brace-format
+msgid "This model takes at most {0} questions."
+msgstr "Este modelo admite como máximo {0} preguntas."
+
+#: src/decision.py:154
+msgid "This model does not accept images."
+msgstr "Este modelo no acepta imágenes."
+
+#: src/decision.py:156
+msgid "This model cannot answer box questions."
+msgstr "Este modelo no puede responder preguntas de tipo box."
+
+#: src/decision.py:158
+msgid "A box question needs exactly one image."
+msgstr "Una pregunta de tipo box necesita exactamente una imagen."
+
+#: src/decision.py
+msgid "Some models need images between 256 and 1568 pixels on each side."
+msgstr "Algunos modelos necesitan imágenes de entre 256 y 1568 píxeles por lado."
+
+#: src/decision.py:248
+msgid "The response has no answers."
+msgstr "La respuesta del servidor no contiene respuestas."
+
+#: src/decision.py:265
+msgid "The answer is not valid for this question."
+msgstr "La respuesta no es válida para esta pregunta."
+
+#: src/providers/systemone.py:51
+msgid "Images sent to this server must be PNG or JPEG."
+msgstr "Las imágenes enviadas a este servidor deben ser PNG o JPEG."
 
 #: src/export.py:46
 msgid "Export Conversation"
@@ -3906,3 +3971,231 @@ msgstr "No hay modelos de embeddings disponibles. Pruebe a actualizar más tarde
 #: src/widgets/knowledge_common.py
 msgid "No embedding models found on this server. Load one there, then refresh."
 msgstr "No se encontraron modelos de embeddings en este servidor. Cargue uno allí y luego actualice."
+
+#: src/decision_run.py
+msgid "The state is not valid JSON: {0}"
+msgstr "El estado no es JSON válido: {0}"
+
+#: src/shortcuts-dialog.ui src/widgets/decision_view.py src/window.ui
+msgid "New Decision"
+msgstr "Nueva decisión"
+
+#: src/widgets/chat_input.py
+msgid "Select a decision model"
+msgstr "Seleccione un modelo de decisión"
+
+#: src/widgets/chat_input.py
+msgid "No decision models found on this server."
+msgstr "No se encontraron modelos de decisión en este servidor."
+
+#: src/widgets/chat_input.py
+msgid "Checking decision models…"
+msgstr "Comprobando modelos de decisión…"
+
+#. Translators: a percentage, such as "87%"; {0} is the number.
+#: src/widgets/decision_answers.py
+msgid "{0}%"
+msgstr "{0} %"
+
+#: src/widgets/decision_answers.py
+msgid "Confidence: {0}"
+msgstr "Confianza: {0}"
+
+#: src/widgets/decision_answers.py
+msgid "Yes"
+msgstr "Sí"
+
+#: src/widgets/decision_answers.py
+msgid "No"
+msgstr "No"
+
+#: src/widgets/decision_answers.py
+msgid "Probability of yes"
+msgstr "Probabilidad de sí"
+
+#. Translators: a score and the highest it could be, such as "1.54 of 2".
+#: src/widgets/decision_answers.py
+msgid "{0} of {1}"
+msgstr "{0} de {1}"
+
+#. Translators: where a box lies in an image; each number is a fraction of the image's height or width.
+#: src/widgets/decision_answers.py
+msgid "Box: top {0}, bottom {1}, left {2}, right {3}"
+msgstr "Recuadro: arriba {0}, abajo {1}, izquierda {2}, derecha {3}"
+
+#: src/widgets/decision_answers.py
+msgid "Image sent with this run"
+msgstr "Imagen enviada con esta ejecución"
+
+#: src/widgets/decision_answers.py
+msgid "The model declined to answer this question."
+msgstr "El modelo se negó a responder a esta pregunta."
+
+#: src/widgets/decision_answers.py
+msgid "Raw answer"
+msgstr "Respuesta sin procesar"
+
+#: src/widgets/decision_answers.py
+msgid "The model returned no answer to this question."
+msgstr "El modelo no devolvió ninguna respuesta a esta pregunta."
+
+#: src/widgets/decision_answers.py
+msgid "Input: {0} tokens"
+msgstr "Tokens de entrada: {0}"
+
+#: src/widgets/decision_answers.py
+msgid "Output: {0} tokens"
+msgstr "Tokens de salida: {0}"
+
+#. Translators: what a request cost, in US dollars.
+#: src/widgets/decision_answers.py
+msgid "Cost: ${0}"
+msgstr "Coste: ${0}"
+
+#: src/widgets/decision_answers.py
+msgid "Cancelled"
+msgstr "Cancelada"
+
+#: src/widgets/decision_answers.py
+msgid "Running…"
+msgstr "En ejecución…"
+
+#: src/widgets/decision_answers.py
+msgid "Run {0}"
+msgstr "Ejecución {0}"
+
+#: src/widgets/decision_form.py
+msgid "Yes/No"
+msgstr "Sí/No"
+
+#: src/widgets/decision_form.py
+msgid "Choice"
+msgstr "Elección"
+
+#: src/widgets/decision_form.py
+msgid "Score"
+msgstr "Puntuación"
+
+#: src/widgets/decision_form.py
+msgid "Box"
+msgstr "Recuadro"
+
+#: src/widgets/decision_form.py
+msgid "Add Option"
+msgstr "Añadir opción"
+
+#: src/widgets/decision_form.py
+msgid "Add Level"
+msgstr "Añadir nivel"
+
+#: src/widgets/decision_form.py
+msgid "Levels, from the lowest score to the highest"
+msgstr "Niveles, de la puntuación más baja a la más alta"
+
+#: src/widgets/decision_form.py
+msgid "Option"
+msgstr "Opción"
+
+#: src/widgets/decision_form.py
+msgid "Description (optional)"
+msgstr "Descripción (opcional)"
+
+#: src/widgets/decision_form.py
+msgid "Level description"
+msgstr "Descripción del nivel"
+
+#: src/widgets/decision_form.py
+msgid "Move Up"
+msgstr "Subir"
+
+#: src/widgets/decision_form.py
+msgid "Move Down"
+msgstr "Bajar"
+
+#: src/widgets/decision_form.py
+msgid "Remove"
+msgstr "Quitar"
+
+#: src/widgets/decision_form.py
+msgid "Question name"
+msgstr "Nombre de la pregunta"
+
+#: src/widgets/decision_form.py
+msgid "Question type"
+msgstr "Tipo de pregunta"
+
+#: src/widgets/decision_form.py
+msgid "Remove Question"
+msgstr "Quitar pregunta"
+
+#: src/widgets/decision_form.py
+msgid "Duplicate Question"
+msgstr "Duplicar pregunta"
+
+#: src/widgets/decision_form.py
+msgid "Instructions"
+msgstr "Instrucciones"
+
+#: src/widgets/decision_form.py
+msgid "Counts as yes (optional)"
+msgstr "Cuenta como sí (opcional)"
+
+#: src/widgets/decision_form.py
+msgid "Counts as no (optional)"
+msgstr "Cuenta como no (opcional)"
+
+#: src/widgets/decision_form.py
+msgid "Questions"
+msgstr "Preguntas"
+
+#: src/widgets/decision_form.py
+msgid "Import Questions"
+msgstr "Importar preguntas"
+
+#: src/widgets/decision_form.py
+msgid "An object of named questions. Each has a type of noul, choice, score, or box, and may have instructions and criteria."
+msgstr "Un objeto de preguntas con nombre. Cada una tiene un tipo (noul, choice, score o box) y puede tener instrucciones y criterios."
+
+#: src/widgets/decision_form.py
+msgid "Export Questions"
+msgstr "Exportar preguntas"
+
+#: src/widgets/decision_form.py
+msgid "Edit as JSON…"
+msgstr "Editar como JSON…"
+
+#: src/widgets/decision_form.py
+msgid "Add Question"
+msgstr "Añadir pregunta"
+
+#: src/widgets/decision_form.py
+msgid "Question \"{0}\" has a blank or repeated criterion."
+msgstr "La pregunta \"{0}\" tiene un criterio vacío o repetido."
+
+#: src/widgets/decision_view.py
+msgid "State"
+msgstr "Estado"
+
+#: src/widgets/decision_view.py
+msgid "Send the state as the JSON it holds, not as text."
+msgstr "Enviar el estado como el JSON que contiene, no como texto."
+
+#: src/widgets/decision_view.py
+msgid "Enter what the questions are asked about."
+msgstr "Introduzca aquello sobre lo que se hacen las preguntas."
+
+#: src/widgets/decision_view.py
+msgid "Results"
+msgstr "Resultados"
+
+#: src/widgets/decision_view.py
+msgid "Load earlier runs"
+msgstr "Cargar ejecuciones anteriores"
+
+#: src/widgets/decision_view.py
+msgid "Run"
+msgstr "Ejecutar"
+
+#: src/widgets/history_sidebar.py
+msgid "Recent decisions"
+msgstr "Decisiones recientes"

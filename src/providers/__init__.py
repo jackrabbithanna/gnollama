@@ -1,5 +1,5 @@
 """Model providers and the transport they share."""
-from .base import Capabilities, Provider, supports
+from .base import Capabilities, Provider, generates, supports
 from .lmstudio import LMStudioProvider
 from .ollama import CLOUD_URL, OllamaCloudProvider, OllamaProvider
 from .openai import OpenAICompatibleProvider
@@ -11,6 +11,6 @@ from .vercel import VercelProvider
 __all__ = [
     'CLOUD_URL', 'Capabilities', 'LMStudioProvider', 'OllamaCloudProvider', 'OllamaProvider',
     'OpenAICompatibleProvider', 'OpenRouterProvider', 'PROVIDERS', 'Provider', 'ProviderError',
-    'ProviderRegistry', 'RequestCancelled', 'Transport', 'VercelProvider', 'capabilities', 'provider_class',
-    'supports', 'validate_url',
+    'ProviderRegistry', 'RequestCancelled', 'Transport', 'VercelProvider', 'capabilities', 'generates',
+    'provider_class', 'supports', 'validate_url',
 ]

@@ -372,6 +372,10 @@ msgstr "Το επιλεγμένο μοντέλο δεν είναι πλέον δ
 msgid "Embedding models cannot generate comparisons."
 msgstr "Τα μοντέλα ενσωμάτωσης δεν μπορούν να δημιουργήσουν συγκρίσεις."
 
+#: src/comparison.py:59 src/model_conversation.py:68
+msgid "Decision models cannot generate text."
+msgstr "Τα μοντέλα αποφάσεων δεν μπορούν να παράγουν κείμενο."
+
 #: src/comparison.py:48
 msgid "Every target must support the shared images."
 msgstr "Όλοι οι στόχοι πρέπει να υποστηρίζουν τις κοινές εικόνες."
@@ -471,6 +475,67 @@ msgstr "Αυτή η βάση δεδομένων απαιτεί νεότερη έ
 #, python-brace-format
 msgid "Upgrading the database to version {0}…"
 msgstr "Αναβάθμιση της βάσης δεδομένων στην έκδοση {0}…"
+
+#: src/decision.py:62 src/decision.py:122
+#, python-brace-format
+msgid "Question \"{0}\" has an invalid field: {1}"
+msgstr "Η ερώτηση \"{0}\" έχει μη έγκυρο πεδίο: {1}"
+
+#: src/decision.py:65
+#, python-brace-format
+msgid "Question \"{0}\" needs between 1 and {1} criteria."
+msgstr "Η ερώτηση \"{0}\" χρειάζεται από 1 έως {1} κριτήρια."
+
+#: src/decision.py:95
+msgid "Provide at least one named question as a JSON object."
+msgstr "Δώστε τουλάχιστον μία ερώτηση με όνομα ως αντικείμενο JSON."
+
+#: src/decision.py:114
+#, python-brace-format
+msgid "Question names must be unique and not blank: \"{0}\""
+msgstr "Τα ονόματα των ερωτήσεων πρέπει να είναι μοναδικά και όχι κενά: \"{0}\""
+
+#: src/decision.py:118
+#, python-brace-format
+msgid "Question \"{0}\" needs a type of noul, choice, score, or box."
+msgstr "Η ερώτηση \"{0}\" χρειάζεται τύπο noul, choice, score ή box."
+
+#: src/decision.py:150
+msgid "This server does not offer decision models."
+msgstr "Αυτός ο διακομιστής δεν προσφέρει μοντέλα αποφάσεων."
+
+#: src/decision.py:152
+#, python-brace-format
+msgid "This model takes at most {0} questions."
+msgstr "Αυτό το μοντέλο δέχεται το πολύ {0} ερωτήσεις."
+
+#: src/decision.py:154
+msgid "This model does not accept images."
+msgstr "Αυτό το μοντέλο δεν δέχεται εικόνες."
+
+#: src/decision.py:156
+msgid "This model cannot answer box questions."
+msgstr "Αυτό το μοντέλο δεν μπορεί να απαντήσει σε ερωτήσεις τύπου box."
+
+#: src/decision.py:158
+msgid "A box question needs exactly one image."
+msgstr "Μια ερώτηση τύπου box χρειάζεται ακριβώς μία εικόνα."
+
+#: src/decision.py
+msgid "Some models need images between 256 and 1568 pixels on each side."
+msgstr "Ορισμένα μοντέλα χρειάζονται εικόνες με 256 έως 1568 εικονοστοιχεία σε κάθε πλευρά."
+
+#: src/decision.py:248
+msgid "The response has no answers."
+msgstr "Η απόκριση του διακομιστή δεν περιέχει απαντήσεις."
+
+#: src/decision.py:265
+msgid "The answer is not valid for this question."
+msgstr "Η απάντηση δεν είναι έγκυρη για αυτήν την ερώτηση."
+
+#: src/providers/systemone.py:51
+msgid "Images sent to this server must be PNG or JPEG."
+msgstr "Οι εικόνες που αποστέλλονται σε αυτόν τον διακομιστή πρέπει να είναι PNG ή JPEG."
 
 #: src/export.py:46
 msgid "Export Conversation"
@@ -3914,3 +3979,231 @@ msgstr "Δεν υπάρχουν διαθέσιμα μοντέλα embedding. Δ�
 #: src/widgets/knowledge_common.py
 msgid "No embedding models found on this server. Load one there, then refresh."
 msgstr "Δεν βρέθηκαν μοντέλα embedding σε αυτόν τον διακομιστή. Φορτώστε ένα εκεί και μετά ανανεώστε."
+
+#: src/decision_run.py
+msgid "The state is not valid JSON: {0}"
+msgstr "Η κατάσταση δεν είναι έγκυρο JSON: {0}"
+
+#: src/shortcuts-dialog.ui src/widgets/decision_view.py src/window.ui
+msgid "New Decision"
+msgstr "Νέα απόφαση"
+
+#: src/widgets/chat_input.py
+msgid "Select a decision model"
+msgstr "Επιλέξτε μοντέλο αποφάσεων"
+
+#: src/widgets/chat_input.py
+msgid "No decision models found on this server."
+msgstr "Δεν βρέθηκαν μοντέλα αποφάσεων σε αυτόν τον διακομιστή."
+
+#: src/widgets/chat_input.py
+msgid "Checking decision models…"
+msgstr "Έλεγχος μοντέλων αποφάσεων…"
+
+#. Translators: a percentage, such as "87%"; {0} is the number.
+#: src/widgets/decision_answers.py
+msgid "{0}%"
+msgstr "{0}%"
+
+#: src/widgets/decision_answers.py
+msgid "Confidence: {0}"
+msgstr "Βεβαιότητα: {0}"
+
+#: src/widgets/decision_answers.py
+msgid "Yes"
+msgstr "Ναι"
+
+#: src/widgets/decision_answers.py
+msgid "No"
+msgstr "Όχι"
+
+#: src/widgets/decision_answers.py
+msgid "Probability of yes"
+msgstr "Πιθανότητα για «Ναι»"
+
+#. Translators: a score and the highest it could be, such as "1.54 of 2".
+#: src/widgets/decision_answers.py
+msgid "{0} of {1}"
+msgstr "{0} από {1}"
+
+#. Translators: where a box lies in an image; each number is a fraction of the image's height or width.
+#: src/widgets/decision_answers.py
+msgid "Box: top {0}, bottom {1}, left {2}, right {3}"
+msgstr "Πλαίσιο: πάνω {0}, κάτω {1}, αριστερά {2}, δεξιά {3}"
+
+#: src/widgets/decision_answers.py
+msgid "Image sent with this run"
+msgstr "Εικόνα που στάλθηκε με αυτή την εκτέλεση"
+
+#: src/widgets/decision_answers.py
+msgid "The model declined to answer this question."
+msgstr "Το μοντέλο αρνήθηκε να απαντήσει σε αυτή την ερώτηση."
+
+#: src/widgets/decision_answers.py
+msgid "Raw answer"
+msgstr "Ακατέργαστη απάντηση"
+
+#: src/widgets/decision_answers.py
+msgid "The model returned no answer to this question."
+msgstr "Το μοντέλο δεν επέστρεψε απάντηση σε αυτή την ερώτηση."
+
+#: src/widgets/decision_answers.py
+msgid "Input: {0} tokens"
+msgstr "Token εισόδου: {0}"
+
+#: src/widgets/decision_answers.py
+msgid "Output: {0} tokens"
+msgstr "Token εξόδου: {0}"
+
+#. Translators: what a request cost, in US dollars.
+#: src/widgets/decision_answers.py
+msgid "Cost: ${0}"
+msgstr "Κόστος: ${0}"
+
+#: src/widgets/decision_answers.py
+msgid "Cancelled"
+msgstr "Ακυρώθηκε"
+
+#: src/widgets/decision_answers.py
+msgid "Running…"
+msgstr "Εκτελείται…"
+
+#: src/widgets/decision_answers.py
+msgid "Run {0}"
+msgstr "Εκτέλεση {0}"
+
+#: src/widgets/decision_form.py
+msgid "Yes/No"
+msgstr "Ναι/Όχι"
+
+#: src/widgets/decision_form.py
+msgid "Choice"
+msgstr "Επιλογή"
+
+#: src/widgets/decision_form.py
+msgid "Score"
+msgstr "Βαθμολογία"
+
+#: src/widgets/decision_form.py
+msgid "Box"
+msgstr "Πλαίσιο"
+
+#: src/widgets/decision_form.py
+msgid "Add Option"
+msgstr "Προσθήκη επιλογής"
+
+#: src/widgets/decision_form.py
+msgid "Add Level"
+msgstr "Προσθήκη επιπέδου"
+
+#: src/widgets/decision_form.py
+msgid "Levels, from the lowest score to the highest"
+msgstr "Επίπεδα, από τη χαμηλότερη βαθμολογία προς την υψηλότερη"
+
+#: src/widgets/decision_form.py
+msgid "Option"
+msgstr "Επιλογή"
+
+#: src/widgets/decision_form.py
+msgid "Description (optional)"
+msgstr "Περιγραφή (προαιρετικά)"
+
+#: src/widgets/decision_form.py
+msgid "Level description"
+msgstr "Περιγραφή επιπέδου"
+
+#: src/widgets/decision_form.py
+msgid "Move Up"
+msgstr "Μετακίνηση πάνω"
+
+#: src/widgets/decision_form.py
+msgid "Move Down"
+msgstr "Μετακίνηση κάτω"
+
+#: src/widgets/decision_form.py
+msgid "Remove"
+msgstr "Αφαίρεση"
+
+#: src/widgets/decision_form.py
+msgid "Question name"
+msgstr "Όνομα ερώτησης"
+
+#: src/widgets/decision_form.py
+msgid "Question type"
+msgstr "Τύπος ερώτησης"
+
+#: src/widgets/decision_form.py
+msgid "Remove Question"
+msgstr "Αφαίρεση ερώτησης"
+
+#: src/widgets/decision_form.py
+msgid "Duplicate Question"
+msgstr "Διπλασιασμός ερώτησης"
+
+#: src/widgets/decision_form.py
+msgid "Instructions"
+msgstr "Οδηγίες"
+
+#: src/widgets/decision_form.py
+msgid "Counts as yes (optional)"
+msgstr "Μετρά ως «Ναι» (προαιρετικά)"
+
+#: src/widgets/decision_form.py
+msgid "Counts as no (optional)"
+msgstr "Μετρά ως «Όχι» (προαιρετικά)"
+
+#: src/widgets/decision_form.py
+msgid "Questions"
+msgstr "Ερωτήσεις"
+
+#: src/widgets/decision_form.py
+msgid "Import Questions"
+msgstr "Εισαγωγή ερωτήσεων"
+
+#: src/widgets/decision_form.py
+msgid "An object of named questions. Each has a type of noul, choice, score, or box, and may have instructions and criteria."
+msgstr "Ένα αντικείμενο με ερωτήσεις με όνομα. Καθεμία έχει τύπο noul, choice, score ή box και μπορεί να έχει οδηγίες και κριτήρια."
+
+#: src/widgets/decision_form.py
+msgid "Export Questions"
+msgstr "Εξαγωγή ερωτήσεων"
+
+#: src/widgets/decision_form.py
+msgid "Edit as JSON…"
+msgstr "Επεξεργασία ως JSON…"
+
+#: src/widgets/decision_form.py
+msgid "Add Question"
+msgstr "Προσθήκη ερώτησης"
+
+#: src/widgets/decision_form.py
+msgid "Question \"{0}\" has a blank or repeated criterion."
+msgstr "Η ερώτηση \"{0}\" έχει κενό ή επαναλαμβανόμενο κριτήριο."
+
+#: src/widgets/decision_view.py
+msgid "State"
+msgstr "Κατάσταση"
+
+#: src/widgets/decision_view.py
+msgid "Send the state as the JSON it holds, not as text."
+msgstr "Αποστολή της κατάστασης ως το JSON που περιέχει, όχι ως κείμενο."
+
+#: src/widgets/decision_view.py
+msgid "Enter what the questions are asked about."
+msgstr "Εισαγάγετε αυτό για το οποίο τίθενται οι ερωτήσεις."
+
+#: src/widgets/decision_view.py
+msgid "Results"
+msgstr "Αποτελέσματα"
+
+#: src/widgets/decision_view.py
+msgid "Load earlier runs"
+msgstr "Φόρτωση προηγούμενων εκτελέσεων"
+
+#: src/widgets/decision_view.py
+msgid "Run"
+msgstr "Εκτέλεση"
+
+#: src/widgets/history_sidebar.py
+msgid "Recent decisions"
+msgstr "Πρόσφατες αποφάσεις"

@@ -330,6 +330,10 @@ msgstr "選択したモデルは利用できなくなりました。"
 msgid "Embedding models cannot generate comparisons."
 msgstr "埋め込みモデルでは比較用の回答を生成できません。"
 
+#: src/comparison.py:59 src/model_conversation.py:68
+msgid "Decision models cannot generate text."
+msgstr "判定モデルはテキストを生成できません。"
+
 #: src/comparison.py:48
 msgid "Every target must support the shared images."
 msgstr "すべての比較対象が共有画像に対応している必要があります。"
@@ -413,6 +417,67 @@ msgstr "このデータベースには新しいバージョンの Gnollama が�
 #, python-brace-format
 msgid "Upgrading the database to version {0}…"
 msgstr "データベースをバージョン {0} に更新中…"
+
+#: src/decision.py:62 src/decision.py:122
+#, python-brace-format
+msgid "Question \"{0}\" has an invalid field: {1}"
+msgstr "質問 \"{0}\" に無効なフィールドがあります: {1}"
+
+#: src/decision.py:65
+#, python-brace-format
+msgid "Question \"{0}\" needs between 1 and {1} criteria."
+msgstr "質問 \"{0}\" には 1 ～ {1} 個の基準が必要です。"
+
+#: src/decision.py:95
+msgid "Provide at least one named question as a JSON object."
+msgstr "名前付きの質問を 1 つ以上、JSON オブジェクトとして指定してください。"
+
+#: src/decision.py:114
+#, python-brace-format
+msgid "Question names must be unique and not blank: \"{0}\""
+msgstr "質問名は重複せず、空でない必要があります: \"{0}\""
+
+#: src/decision.py:118
+#, python-brace-format
+msgid "Question \"{0}\" needs a type of noul, choice, score, or box."
+msgstr "質問 \"{0}\" のタイプは noul、choice、score、box のいずれかにしてください。"
+
+#: src/decision.py:150
+msgid "This server does not offer decision models."
+msgstr "このサーバーは判定モデルを提供していません。"
+
+#: src/decision.py:152
+#, python-brace-format
+msgid "This model takes at most {0} questions."
+msgstr "このモデルが受け付ける質問は最大 {0} 個です。"
+
+#: src/decision.py:154
+msgid "This model does not accept images."
+msgstr "このモデルは画像を受け付けません。"
+
+#: src/decision.py:156
+msgid "This model cannot answer box questions."
+msgstr "このモデルは box タイプの質問に回答できません。"
+
+#: src/decision.py:158
+msgid "A box question needs exactly one image."
+msgstr "box タイプの質問には画像がちょうど 1 枚必要です。"
+
+#: src/decision.py
+msgid "Some models need images between 256 and 1568 pixels on each side."
+msgstr "モデルによっては、各辺が 256～1568 ピクセルの画像が必要です。"
+
+#: src/decision.py:248
+msgid "The response has no answers."
+msgstr "サーバーの応答に回答が含まれていません。"
+
+#: src/decision.py:265
+msgid "The answer is not valid for this question."
+msgstr "この回答はこの質問に対して有効ではありません。"
+
+#: src/providers/systemone.py:51
+msgid "Images sent to this server must be PNG or JPEG."
+msgstr "このサーバーに送信する画像は PNG または JPEG である必要があります。"
 
 #: src/export.py:46
 msgid "Export Conversation"
@@ -3729,3 +3794,231 @@ msgstr "利用できる埋め込みモデルがありません。後でもう一
 #: src/widgets/knowledge_common.py
 msgid "No embedding models found on this server. Load one there, then refresh."
 msgstr "このサーバーに埋め込みモデルが見つかりません。サーバー側で読み込んでから更新してください。"
+
+#: src/decision_run.py
+msgid "The state is not valid JSON: {0}"
+msgstr "状態が有効な JSON ではありません: {0}"
+
+#: src/shortcuts-dialog.ui src/widgets/decision_view.py src/window.ui
+msgid "New Decision"
+msgstr "新しい判定"
+
+#: src/widgets/chat_input.py
+msgid "Select a decision model"
+msgstr "判定モデルを選択"
+
+#: src/widgets/chat_input.py
+msgid "No decision models found on this server."
+msgstr "このサーバーに判定モデルが見つかりません。"
+
+#: src/widgets/chat_input.py
+msgid "Checking decision models…"
+msgstr "判定モデルを確認中…"
+
+#. Translators: a percentage, such as "87%"; {0} is the number.
+#: src/widgets/decision_answers.py
+msgid "{0}%"
+msgstr "{0}%"
+
+#: src/widgets/decision_answers.py
+msgid "Confidence: {0}"
+msgstr "確信度: {0}"
+
+#: src/widgets/decision_answers.py
+msgid "Yes"
+msgstr "はい"
+
+#: src/widgets/decision_answers.py
+msgid "No"
+msgstr "いいえ"
+
+#: src/widgets/decision_answers.py
+msgid "Probability of yes"
+msgstr "「はい」の確率"
+
+#. Translators: a score and the highest it could be, such as "1.54 of 2".
+#: src/widgets/decision_answers.py
+msgid "{0} of {1}"
+msgstr "{0} / {1}"
+
+#. Translators: where a box lies in an image; each number is a fraction of the image's height or width.
+#: src/widgets/decision_answers.py
+msgid "Box: top {0}, bottom {1}, left {2}, right {3}"
+msgstr "ボックス: 上 {0}、下 {1}、左 {2}、右 {3}"
+
+#: src/widgets/decision_answers.py
+msgid "Image sent with this run"
+msgstr "この実行で送信した画像"
+
+#: src/widgets/decision_answers.py
+msgid "The model declined to answer this question."
+msgstr "モデルはこの質問への回答を拒否しました。"
+
+#: src/widgets/decision_answers.py
+msgid "Raw answer"
+msgstr "生の回答"
+
+#: src/widgets/decision_answers.py
+msgid "The model returned no answer to this question."
+msgstr "モデルはこの質問への回答を返しませんでした。"
+
+#: src/widgets/decision_answers.py
+msgid "Input: {0} tokens"
+msgstr "入力: {0} トークン"
+
+#: src/widgets/decision_answers.py
+msgid "Output: {0} tokens"
+msgstr "出力: {0} トークン"
+
+#. Translators: what a request cost, in US dollars.
+#: src/widgets/decision_answers.py
+msgid "Cost: ${0}"
+msgstr "コスト: ${0}"
+
+#: src/widgets/decision_answers.py
+msgid "Cancelled"
+msgstr "キャンセル済み"
+
+#: src/widgets/decision_answers.py
+msgid "Running…"
+msgstr "実行中…"
+
+#: src/widgets/decision_answers.py
+msgid "Run {0}"
+msgstr "実行 {0}"
+
+#: src/widgets/decision_form.py
+msgid "Yes/No"
+msgstr "はい/いいえ"
+
+#: src/widgets/decision_form.py
+msgid "Choice"
+msgstr "選択"
+
+#: src/widgets/decision_form.py
+msgid "Score"
+msgstr "スコア"
+
+#: src/widgets/decision_form.py
+msgid "Box"
+msgstr "ボックス"
+
+#: src/widgets/decision_form.py
+msgid "Add Option"
+msgstr "選択肢を追加"
+
+#: src/widgets/decision_form.py
+msgid "Add Level"
+msgstr "レベルを追加"
+
+#: src/widgets/decision_form.py
+msgid "Levels, from the lowest score to the highest"
+msgstr "レベル（スコアの低い順）"
+
+#: src/widgets/decision_form.py
+msgid "Option"
+msgstr "選択肢"
+
+#: src/widgets/decision_form.py
+msgid "Description (optional)"
+msgstr "説明（任意）"
+
+#: src/widgets/decision_form.py
+msgid "Level description"
+msgstr "レベルの説明"
+
+#: src/widgets/decision_form.py
+msgid "Move Up"
+msgstr "上へ移動"
+
+#: src/widgets/decision_form.py
+msgid "Move Down"
+msgstr "下へ移動"
+
+#: src/widgets/decision_form.py
+msgid "Remove"
+msgstr "削除"
+
+#: src/widgets/decision_form.py
+msgid "Question name"
+msgstr "質問の名前"
+
+#: src/widgets/decision_form.py
+msgid "Question type"
+msgstr "質問の種類"
+
+#: src/widgets/decision_form.py
+msgid "Remove Question"
+msgstr "質問を削除"
+
+#: src/widgets/decision_form.py
+msgid "Duplicate Question"
+msgstr "質問を複製"
+
+#: src/widgets/decision_form.py
+msgid "Instructions"
+msgstr "指示"
+
+#: src/widgets/decision_form.py
+msgid "Counts as yes (optional)"
+msgstr "「はい」とみなす条件（任意）"
+
+#: src/widgets/decision_form.py
+msgid "Counts as no (optional)"
+msgstr "「いいえ」とみなす条件（任意）"
+
+#: src/widgets/decision_form.py
+msgid "Questions"
+msgstr "質問"
+
+#: src/widgets/decision_form.py
+msgid "Import Questions"
+msgstr "質問をインポート"
+
+#: src/widgets/decision_form.py
+msgid "An object of named questions. Each has a type of noul, choice, score, or box, and may have instructions and criteria."
+msgstr "名前付きの質問からなるオブジェクトです。各質問には noul、choice、score、box のいずれかのタイプがあり、指示と基準を指定できます。"
+
+#: src/widgets/decision_form.py
+msgid "Export Questions"
+msgstr "質問をエクスポート"
+
+#: src/widgets/decision_form.py
+msgid "Edit as JSON…"
+msgstr "JSON として編集…"
+
+#: src/widgets/decision_form.py
+msgid "Add Question"
+msgstr "質問を追加"
+
+#: src/widgets/decision_form.py
+msgid "Question \"{0}\" has a blank or repeated criterion."
+msgstr "質問 \"{0}\" に空の基準または重複した基準があります。"
+
+#: src/widgets/decision_view.py
+msgid "State"
+msgstr "状態"
+
+#: src/widgets/decision_view.py
+msgid "Send the state as the JSON it holds, not as text."
+msgstr "状態をテキストではなく、その内容の JSON として送信します。"
+
+#: src/widgets/decision_view.py
+msgid "Enter what the questions are asked about."
+msgstr "質問の対象となる内容を入力してください。"
+
+#: src/widgets/decision_view.py
+msgid "Results"
+msgstr "結果"
+
+#: src/widgets/decision_view.py
+msgid "Load earlier runs"
+msgstr "以前の実行を読み込む"
+
+#: src/widgets/decision_view.py
+msgid "Run"
+msgstr "実行"
+
+#: src/widgets/history_sidebar.py
+msgid "Recent decisions"
+msgstr "最近の判定"

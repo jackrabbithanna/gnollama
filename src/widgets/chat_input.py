@@ -2,7 +2,7 @@ from typing import Any, Dict, List, Optional
 from gettext import gettext as _, ngettext
 from gi.repository import Gtk, GObject, Gio, GLib, Gdk, Pango
 from ..model_summary import prices, summary_parts
-from ..providers import RequestCancelled, supports
+from ..providers import RequestCancelled, generates, supports
 from .search import searchable
 from .composer import Composer  # noqa: F401 - registers the type chat_input.ui names
 
@@ -38,9 +38,12 @@ class ChatInput(Gtk.Box):
         self._host = None
         self._host_identity = None
         self.discovery_enabled = True
+        # Lists the host's decision models where set, each described by its entry in that list.
+        self.decisions = False
         self._models_loading = False
         self._setting_models = False
         self._selection_explicit = False
+        self.pending_model_selection = None  # The model to select once the list that holds it arrives.
         self.services = None
         self._fetch_id = 0
         self._capability_id = 0
@@ -53,6 +56,8 @@ class ChatInput(Gtk.Box):
         self._desired_thinking = None
         self._thinking_values: List[Any] = []
         self.image_support = None
+        # Set where another widget chooses the model: why images cannot be attached, or '' where they can.
+        self.image_refusal = None
         self.tool_support = None
         self.awaiting_tools = False
         self.capabilities_loading = False
@@ -179,15 +184,24 @@ class ChatInput(Gtk.Box):
             notice = ''
         refused = self.image_support is False and not self.capabilities_loading and self.get_selected_model()
         self.attach_button.set_tooltip_text(_('This model does not support images.') if refused else _('Attach Image'))
+        if self.image_refusal is not None:
+            self.attach_button.set_sensitive(self.image_support is True)
+            self.attach_button.set_tooltip_text(self.image_refusal or _('Attach Image'))
         self.capability_notice.set_text(notice)
         self.capability_notice.set_visible(bool(notice))
         self.set_running(self._running)
+
+    def set_image_support(self, supported, refusal=''):
+        """Allow or refuse attachments for a model chosen in another widget; `refusal` says why not."""
+        self.image_support, self.image_refusal = bool(supported), refusal
+        self.update_capability_controls()
 
     def set_models(self, models):
         pending = getattr(self, 'pending_model_selection', None)
         self._selection_explicit = bool(pending)
         self._model_placeholder = bool(models and pending and pending not in models)
-        labels = [_('Select a chat model')] + models if self._model_placeholder else models
+        placeholder = _('Select a decision model') if self.decisions else _('Select a chat model')
+        labels = [placeholder] + models if self._model_placeholder else models
         self._setting_models = True
         try:
             self.model_dropdown.set_model(Gtk.StringList.new(labels))
@@ -212,6 +226,10 @@ class ChatInput(Gtk.Box):
         item = self.model_dropdown.get_selected_item()
         return item.get_string() if item else None
 
+    def selected_details(self):
+        """What is known of the selected model: its details, or its list entry for a decision model; None if neither."""
+        return self._model_details.get(self.get_selected_model())
+
     def cancel_fetches(self):
         self._fetch_id += 1
         self._capability_id += 1
@@ -230,11 +248,13 @@ class ChatInput(Gtk.Box):
         return False
 
     @staticmethod
-    def _embedding_only(details):
-        caps = details.get('capabilities') if isinstance(details, dict) else None
-        return isinstance(caps, list) and 'embedding' in caps and 'completion' not in caps
+    def _not_chat(details):
+        """Whether details or a list entry say a model embeds or decides and does not chat."""
+        return not generates(details)
 
     def _empty_model_notice(self):
+        if self.decisions:
+            return _('No decision models found on this server.')
         if self._host is None or self._host.capabilities.model_management:
             return _('No chat models found. Pull one in Manage Models, then refresh.')
         # A hosted service, whose models the user cannot add to.
@@ -253,7 +273,7 @@ class ChatInput(Gtk.Box):
         self._host_identity = identity
         request_id = self._fetch_id
         self._model_details = {}
-        self._model_list_notice = _('Checking chat models…') if host else ''
+        self._model_list_notice = (_('Checking decision models…') if self.decisions else _('Checking chat models…')) if host else ''
         self._model_placeholder = False
         self._models_loading = bool(host)
         self._setting_models = True
@@ -278,9 +298,13 @@ class ChatInput(Gtk.Box):
             try:
                 for tag in future.result():
                     model = tag['name'] if isinstance(tag, dict) else tag
+                    if self.decisions:
+                        models.append(model)
+                        details[model] = tag
+                        continue
                     info = self.services.catalog.cached_details(host, model)
                     # Some servers say so in the list itself.
-                    if self._embedding_only(info) or self._embedding_only(tag):
+                    if self._not_chat(info) or self._not_chat(tag):
                         continue
                     models.append(model)
                     if info is not None:
@@ -291,7 +315,8 @@ class ChatInput(Gtk.Box):
                 error = str(exc)
             # By name, whatever order the server lists them in.
             GLib.idle_add(deliver, sorted(models, key=str.casefold), details, error)
-        future = self.services.catalog.request_models(host, cancel, refresh)
+        catalog = self.services.catalog
+        future = (catalog.request_decision_models if self.decisions else catalog.request_models)(host, cancel, refresh)
         future.add_done_callback(finished)
 
     def _model_changed(self, *args, preserve_selection=False):
@@ -305,6 +330,10 @@ class ChatInput(Gtk.Box):
         if model and not preserve_selection:
             self._selection_explicit = True
             self.pending_model_selection = None
+        if self.decisions:
+            # The list entry is all that is known of a decision model.
+            self.set_model_details(self._model_details.get(model))
+            return
         cached = self.services.catalog.cached_details(host, model) if host and model else None
         if cached is not None:
             self.set_model_details(cached)
@@ -318,7 +347,7 @@ class ChatInput(Gtk.Box):
             if request_id != self._capability_id or cancel.is_cancelled():
                 return False
             self._model_details[model] = details
-            if self._embedding_only(details):
+            if self._not_chat(details):
                 values = self.model_dropdown.get_model()
                 remaining = [values.get_string(i) for i in range(values.get_n_items())
                              if values.get_string(i) != model and not (self._model_placeholder and i == 0)]

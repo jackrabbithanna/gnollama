@@ -56,6 +56,8 @@ def prepare_run(context, active, prompt, images, settings, targets, draft_id, re
         if caps is not None:
             if 'embedding' in caps and 'completion' not in caps:
                 raise ValueError(_('Embedding models cannot generate comparisons.'))
+            if 'decision' in caps and 'completion' not in caps:
+                raise ValueError(_('Decision models cannot generate text.'))
             if wire.thinking not in (None, False) and 'thinking' not in caps:
                 raise ValueError(_('Every target must support the selected thinking option.'))
         # Asked apart from the list: some servers report capabilities one by one.

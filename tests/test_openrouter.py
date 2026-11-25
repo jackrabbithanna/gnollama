@@ -255,7 +255,8 @@ class DeclarationTests(unittest.TestCase):
         self.assertEqual(cls(cls.fixed_url)._address('/models'), 'https://openrouter.ai/api/v1/models')
         offered = {name for name, value in vars(caps).items() if value is True}
         self.assertEqual(offered, {'embeddings', 'thinking_levels', 'structured_output', 'tools', 'logprobs',
-                                   'thinking_text', 'sampling_extras'})
+                                   'thinking_text', 'sampling_extras', 'decisions', 'decision_images',
+                                   'decision_boxes'})
         self.assertEqual(cls(cls.fixed_url)._address('/embeddings/models'),
                          'https://openrouter.ai/api/v1/embeddings/models')
         self.assertEqual(caps.options_notice, '')

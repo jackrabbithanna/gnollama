@@ -9,7 +9,7 @@ from ..session import display_chat_title
 
 ICONS = dict(drafts='gnollama-draft-symbolic', pinned='pin-active-symbolic',
              chat='gnollama-chats-symbolic', comparison='gnollama-comparison-symbolic',
-             model_conversation='gnollama-model-conversation-symbolic')
+             model_conversation='gnollama-model-conversation-symbolic', decision='gnollama-decision-symbolic')
 
 
 class HistorySidebar:
@@ -53,9 +53,10 @@ class HistorySidebar:
         self.popover = Gtk.Popover(autohide=False, has_arrow=False, position=Gtk.PositionType.BOTTOM,
             child=Gtk.ScrolledWindow(child=self.suggestion_list, hscrollbar_policy=Gtk.PolicyType.NEVER,
                 max_content_height=280, propagate_natural_height=True))
-        titles = (_('Drafts'), _('Pinned'), _('Recent chats'), _('Recent comparisons'), _('Recent model conversations'))
+        titles = (_('Drafts'), _('Pinned'), _('Recent chats'), _('Recent comparisons'), _('Recent model conversations'),
+                  _('Recent decisions'))
         attrs = ('drafts_section', 'pinned_section', 'recent_chats_section', 'recent_comparisons_section',
-                 'recent_model_conversations_section')
+                 'recent_model_conversations_section', 'recent_decisions_section')
         for key, title, attr in zip(CATEGORIES, titles, attrs):
             section = Adw.SidebarSection(title=title)
             self.sidebar.append(section)

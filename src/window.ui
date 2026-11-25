@@ -132,6 +132,10 @@
         <attribute name="label" translatable="yes">New Model to Model Conversation</attribute>
         <attribute name="action">win.new_model_conversation</attribute>
       </item>
+      <item>
+        <attribute name="label" translatable="yes">New Decision</attribute>
+        <attribute name="action">win.new_decision</attribute>
+      </item>
     </section>
     <section>
       <item>

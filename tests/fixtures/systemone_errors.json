@@ -1,0 +1,77 @@
+{
+ "ollama": {
+  "status": 400,
+  "body": {
+   "error": "model \"x\" is not a llama.cpp decision model"
+  },
+  "says": "model \"x\" is not a llama.cpp decision model"
+ },
+ "lmstudio": {
+  "status": 400,
+  "body": {
+   "error": {
+    "message": "- request.questions.q.instructions: Invalid input\n- request.questions.q.criteria: Required",
+    "type": "invalid_request_error",
+    "param": "questions.q.instructions",
+    "code": "invalid_value"
+   }
+  },
+  "says": "- request.questions.q.instructions: Invalid input\n- request.questions.q.criteria: Required"
+ },
+ "openrouter": {
+  "status": 400,
+  "body": {
+   "error": {
+    "message": "Model x does not exist",
+    "code": 400
+   }
+  },
+  "says": "Model x does not exist"
+ },
+ "openrouter_upstream": {
+  "status": 400,
+  "body": {
+   "error": {
+    "message": "HTTP 400: {\"detail\":{\"error_type\":\"api_usage_error\",\"message\":\"Invalid image dimensions.\"}}",
+    "code": 400
+   }
+  },
+  "says": "Invalid image dimensions."
+ },
+ "vercel": {
+  "status": 400,
+  "body": {
+   "message": "questions.q.criteria: Invalid input: expected array, received undefined",
+   "error_type": "invalid_request"
+  },
+  "says": "questions.q.criteria: Invalid input: expected array, received undefined"
+ },
+ "vercel_upstream": {
+  "status": 400,
+  "body": {
+   "error": {
+    "message": "{\"error_type\":\"api_usage_error\",\"message\":\"Invalid image dimensions.\"}",
+    "type": "AI_APICallError"
+   }
+  },
+  "says": "Invalid image dimensions."
+ },
+ "vercel_key": {
+  "status": 401,
+  "body": {
+   "message": "Authentication failed",
+   "error_type": "authentication_error"
+  },
+  "says": "The server rejected the API key, or requires one. Edit this host to check its API key."
+ },
+ "typesafe": {
+  "status": 422,
+  "body": {
+   "detail": {
+    "error_type": "api_usage_error",
+    "message": "Invalid image dimensions."
+   }
+  },
+  "says": "Invalid image dimensions."
+ }
+}

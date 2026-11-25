@@ -371,6 +371,10 @@ msgstr "Seçilen model artık kullanılamıyor."
 msgid "Embedding models cannot generate comparisons."
 msgstr "Gömme modelleri karşılaştırma yanıtları üretemez."
 
+#: src/comparison.py:59 src/model_conversation.py:68
+msgid "Decision models cannot generate text."
+msgstr "Karar modelleri metin üretemez."
+
 #: src/comparison.py:48
 msgid "Every target must support the shared images."
 msgstr "Tüm hedefler paylaşılan görüntüleri desteklemelidir."
@@ -462,6 +466,67 @@ msgstr "Bu veritabanı daha yeni bir Gnollama sürümü gerektiriyor."
 #, python-brace-format
 msgid "Upgrading the database to version {0}…"
 msgstr "Veritabanı {0} sürümüne yükseltiliyor…"
+
+#: src/decision.py:62 src/decision.py:122
+#, python-brace-format
+msgid "Question \"{0}\" has an invalid field: {1}"
+msgstr "\"{0}\" sorusunda geçersiz bir alan var: {1}"
+
+#: src/decision.py:65
+#, python-brace-format
+msgid "Question \"{0}\" needs between 1 and {1} criteria."
+msgstr "\"{0}\" sorusu için 1 ile {1} arasında ölçüt gerekir."
+
+#: src/decision.py:95
+msgid "Provide at least one named question as a JSON object."
+msgstr "JSON nesnesi olarak en az bir adlandırılmış soru sağlayın."
+
+#: src/decision.py:114
+#, python-brace-format
+msgid "Question names must be unique and not blank: \"{0}\""
+msgstr "Soru adları benzersiz olmalı ve boş olmamalıdır: \"{0}\""
+
+#: src/decision.py:118
+#, python-brace-format
+msgid "Question \"{0}\" needs a type of noul, choice, score, or box."
+msgstr "\"{0}\" sorusunun türü noul, choice, score veya box olmalıdır."
+
+#: src/decision.py:150
+msgid "This server does not offer decision models."
+msgstr "Bu sunucu karar modelleri sunmuyor."
+
+#: src/decision.py:152
+#, python-brace-format
+msgid "This model takes at most {0} questions."
+msgstr "Bu model en fazla {0} soru kabul eder."
+
+#: src/decision.py:154
+msgid "This model does not accept images."
+msgstr "Bu model görsel kabul etmiyor."
+
+#: src/decision.py:156
+msgid "This model cannot answer box questions."
+msgstr "Bu model box türündeki soruları yanıtlayamaz."
+
+#: src/decision.py:158
+msgid "A box question needs exactly one image."
+msgstr "Box türündeki bir soru için tam olarak bir görsel gerekir."
+
+#: src/decision.py
+msgid "Some models need images between 256 and 1568 pixels on each side."
+msgstr "Bazı modeller, her kenarı 256 ile 1568 piksel arasında olan görseller gerektirir."
+
+#: src/decision.py:248
+msgid "The response has no answers."
+msgstr "Sunucunun yanıtında hiç cevap yok."
+
+#: src/decision.py:265
+msgid "The answer is not valid for this question."
+msgstr "Yanıt bu soru için geçerli değil."
+
+#: src/providers/systemone.py:51
+msgid "Images sent to this server must be PNG or JPEG."
+msgstr "Bu sunucuya gönderilen görseller PNG veya JPEG olmalıdır."
 
 #: src/export.py:46
 msgid "Export Conversation"
@@ -3855,3 +3920,231 @@ msgstr "Kullanılabilir gömme modeli yok. Daha sonra yenilemeyi deneyin."
 #: src/widgets/knowledge_common.py
 msgid "No embedding models found on this server. Load one there, then refresh."
 msgstr "Bu sunucuda gömme modeli bulunamadı. Orada bir tane yükleyin, sonra yenileyin."
+
+#: src/decision_run.py
+msgid "The state is not valid JSON: {0}"
+msgstr "Durum geçerli bir JSON değil: {0}"
+
+#: src/shortcuts-dialog.ui src/widgets/decision_view.py src/window.ui
+msgid "New Decision"
+msgstr "Yeni Karar"
+
+#: src/widgets/chat_input.py
+msgid "Select a decision model"
+msgstr "Bir karar modeli seçin"
+
+#: src/widgets/chat_input.py
+msgid "No decision models found on this server."
+msgstr "Bu sunucuda karar modeli bulunamadı."
+
+#: src/widgets/chat_input.py
+msgid "Checking decision models…"
+msgstr "Karar modelleri denetleniyor…"
+
+#. Translators: a percentage, such as "87%"; {0} is the number.
+#: src/widgets/decision_answers.py
+msgid "{0}%"
+msgstr "%{0}"
+
+#: src/widgets/decision_answers.py
+msgid "Confidence: {0}"
+msgstr "Güven: {0}"
+
+#: src/widgets/decision_answers.py
+msgid "Yes"
+msgstr "Evet"
+
+#: src/widgets/decision_answers.py
+msgid "No"
+msgstr "Hayır"
+
+#: src/widgets/decision_answers.py
+msgid "Probability of yes"
+msgstr "Evet olasılığı"
+
+#. Translators: a score and the highest it could be, such as "1.54 of 2".
+#: src/widgets/decision_answers.py
+msgid "{0} of {1}"
+msgstr "{0} / {1}"
+
+#. Translators: where a box lies in an image; each number is a fraction of the image's height or width.
+#: src/widgets/decision_answers.py
+msgid "Box: top {0}, bottom {1}, left {2}, right {3}"
+msgstr "Kutu: üst {0}, alt {1}, sol {2}, sağ {3}"
+
+#: src/widgets/decision_answers.py
+msgid "Image sent with this run"
+msgstr "Bu çalıştırmayla gönderilen görsel"
+
+#: src/widgets/decision_answers.py
+msgid "The model declined to answer this question."
+msgstr "Model bu soruyu yanıtlamayı reddetti."
+
+#: src/widgets/decision_answers.py
+msgid "Raw answer"
+msgstr "Ham yanıt"
+
+#: src/widgets/decision_answers.py
+msgid "The model returned no answer to this question."
+msgstr "Model bu soruya yanıt döndürmedi."
+
+#: src/widgets/decision_answers.py
+msgid "Input: {0} tokens"
+msgstr "Girdi tokenları: {0}"
+
+#: src/widgets/decision_answers.py
+msgid "Output: {0} tokens"
+msgstr "Çıktı tokenları: {0}"
+
+#. Translators: what a request cost, in US dollars.
+#: src/widgets/decision_answers.py
+msgid "Cost: ${0}"
+msgstr "Maliyet: ${0}"
+
+#: src/widgets/decision_answers.py
+msgid "Cancelled"
+msgstr "İptal edildi"
+
+#: src/widgets/decision_answers.py
+msgid "Running…"
+msgstr "Çalışıyor…"
+
+#: src/widgets/decision_answers.py
+msgid "Run {0}"
+msgstr "Çalıştırma {0}"
+
+#: src/widgets/decision_form.py
+msgid "Yes/No"
+msgstr "Evet/Hayır"
+
+#: src/widgets/decision_form.py
+msgid "Choice"
+msgstr "Seçim"
+
+#: src/widgets/decision_form.py
+msgid "Score"
+msgstr "Puan"
+
+#: src/widgets/decision_form.py
+msgid "Box"
+msgstr "Kutu"
+
+#: src/widgets/decision_form.py
+msgid "Add Option"
+msgstr "Seçenek Ekle"
+
+#: src/widgets/decision_form.py
+msgid "Add Level"
+msgstr "Düzey Ekle"
+
+#: src/widgets/decision_form.py
+msgid "Levels, from the lowest score to the highest"
+msgstr "Düzeyler, en düşük puandan en yükseğe"
+
+#: src/widgets/decision_form.py
+msgid "Option"
+msgstr "Seçenek"
+
+#: src/widgets/decision_form.py
+msgid "Description (optional)"
+msgstr "Açıklama (isteğe bağlı)"
+
+#: src/widgets/decision_form.py
+msgid "Level description"
+msgstr "Düzey açıklaması"
+
+#: src/widgets/decision_form.py
+msgid "Move Up"
+msgstr "Yukarı Taşı"
+
+#: src/widgets/decision_form.py
+msgid "Move Down"
+msgstr "Aşağı Taşı"
+
+#: src/widgets/decision_form.py
+msgid "Remove"
+msgstr "Kaldır"
+
+#: src/widgets/decision_form.py
+msgid "Question name"
+msgstr "Soru adı"
+
+#: src/widgets/decision_form.py
+msgid "Question type"
+msgstr "Soru türü"
+
+#: src/widgets/decision_form.py
+msgid "Remove Question"
+msgstr "Soruyu Kaldır"
+
+#: src/widgets/decision_form.py
+msgid "Duplicate Question"
+msgstr "Soruyu Çoğalt"
+
+#: src/widgets/decision_form.py
+msgid "Instructions"
+msgstr "Yönergeler"
+
+#: src/widgets/decision_form.py
+msgid "Counts as yes (optional)"
+msgstr "Evet sayılır (isteğe bağlı)"
+
+#: src/widgets/decision_form.py
+msgid "Counts as no (optional)"
+msgstr "Hayır sayılır (isteğe bağlı)"
+
+#: src/widgets/decision_form.py
+msgid "Questions"
+msgstr "Sorular"
+
+#: src/widgets/decision_form.py
+msgid "Import Questions"
+msgstr "Soruları içe aktar"
+
+#: src/widgets/decision_form.py
+msgid "An object of named questions. Each has a type of noul, choice, score, or box, and may have instructions and criteria."
+msgstr "Adlandırılmış sorulardan oluşan bir nesne. Her birinin türü noul, choice, score veya box olur; yönergeleri ve ölçütleri olabilir."
+
+#: src/widgets/decision_form.py
+msgid "Export Questions"
+msgstr "Soruları dışa aktar"
+
+#: src/widgets/decision_form.py
+msgid "Edit as JSON…"
+msgstr "JSON Olarak Düzenle…"
+
+#: src/widgets/decision_form.py
+msgid "Add Question"
+msgstr "Soru Ekle"
+
+#: src/widgets/decision_form.py
+msgid "Question \"{0}\" has a blank or repeated criterion."
+msgstr "\"{0}\" sorusunda boş veya yinelenen bir ölçüt var."
+
+#: src/widgets/decision_view.py
+msgid "State"
+msgstr "Durum"
+
+#: src/widgets/decision_view.py
+msgid "Send the state as the JSON it holds, not as text."
+msgstr "Durumu metin olarak değil, içerdiği JSON olarak gönder."
+
+#: src/widgets/decision_view.py
+msgid "Enter what the questions are asked about."
+msgstr "Soruların hakkında sorulduğu içeriği girin."
+
+#: src/widgets/decision_view.py
+msgid "Results"
+msgstr "Sonuçlar"
+
+#: src/widgets/decision_view.py
+msgid "Load earlier runs"
+msgstr "Önceki çalıştırmaları yükle"
+
+#: src/widgets/decision_view.py
+msgid "Run"
+msgstr "Çalıştır"
+
+#: src/widgets/history_sidebar.py
+msgid "Recent decisions"
+msgstr "Son kararlar"

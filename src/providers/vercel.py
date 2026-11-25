@@ -2,6 +2,7 @@
 from dataclasses import dataclass
 from gettext import gettext as _
 
+from . import systemone
 from .base import Capabilities, named
 from .openai import OpenAICompatibleProvider, effort, find, fingerprint, narrowed, table
 from .openrouter import EFFORTS
@@ -83,6 +84,15 @@ def describe_embedding(model):
     return dict(result, pricing=prices(model)) if prices(model) else result
 
 
+def sees(model):
+    tags = model.get('tags')
+    return isinstance(tags, list) and 'vision' in tags
+
+
+def describe_decision(model):
+    return dict(describe_embedding(model), capabilities=systemone.capabilities(sees(model)))
+
+
 @dataclass(frozen=True)
 class VercelProvider(OpenAICompatibleProvider):
     kind = 'vercel'
@@ -95,7 +105,10 @@ class VercelProvider(OpenAICompatibleProvider):
     key_optional = False
     # No model lists the sampling extras or logprobs; the gateway takes them and returns nothing.
     capabilities = Capabilities(embeddings=True, thinking_levels=True, structured_output=True, tools=True,
-                                thinking_text=True)
+                                thinking_text=True,
+                                # Few models answer a box question; the gateway says so for one that does not.
+                                decisions=True, decision_images=True, decision_boxes=True,
+                                decision_image_formats=systemone.ASSET_FORMATS)
 
     @classmethod
     def check_url(cls, url):
@@ -130,6 +143,32 @@ class VercelProvider(OpenAICompatibleProvider):
     def _embedders(self, timeout, cancellable):
         return self._catalog('embedding', timeout, cancellable)
 
+    def _deciders(self, timeout, cancellable):
+        return self._catalog('evaluation', timeout, cancellable)
+
+    def list_decision_models(self, timeout=10, cancellable=None):
+        return [dict(tag(model), capabilities=systemone.capabilities(sees(model)),
+                     **({'context_length': context(model)} if context(model) else {}))
+                for model in self._deciders(timeout, cancellable)]
+
+    def decide(self, model, state, questions, images=None, keep_alive=None, timeout=120, cancellable=None):
+        """Ask a decision model the named `questions` about `state`; returns the server's answer as it came."""
+        if keep_alive is not None:
+            raise ProviderError(_('This server does not accept: {0}.').format('keep_alive'))
+        data = systemone.assets_body(systemone.request(model, state, questions), images)
+        # The gateway refuses an image or a box question without this header, which is sent with nothing else.
+        marked = bool(images) or systemone.asks_boxes(questions)
+
+        def prepare(message, cancellable):
+            if marked:
+                message.get_request_headers().replace(systemone.IMAGES_HEADER, 'true')
+            return self._prepare(message, cancellable)
+
+        def address():
+            # Beside the API the other requests use, not under it.
+            return self._address('').removesuffix('/v1') + '/typesafe/v1/systemone'
+        return systemone.post(self, address, data, timeout, cancellable, prepare)
+
     def list_models(self, timeout=10, cancellable=None):
         return [tag(model) for model in self._models(timeout, cancellable)]
 
@@ -149,7 +188,10 @@ class VercelProvider(OpenAICompatibleProvider):
         for model in self._models(timeout, cancellable):
             if model['id'] == name:
                 return describe(model)
-        return describe_embedding(find(self._embedders(timeout, cancellable), 'id', name))
+        for model in self._embedders(timeout, cancellable):
+            if model['id'] == name:
+                return describe_embedding(model)
+        return describe_decision(find(self._deciders(timeout, cancellable), 'id', name))
 
     def probe(self, cancellable=None):
         # The model list is public, so only this shows the key was accepted.

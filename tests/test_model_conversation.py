@@ -311,6 +311,7 @@ class ConversationTests(unittest.TestCase):
         pump_until(lambda: self.storage.writer.idle)
         self.storage.db.chats.append_messages(chat['id'], [dict(uid='existing', role='user', content='retained')], 0)
         with self.storage.db._get_conn() as conn:
+            conn.execute('DROP TABLE decision_runs')
             conn.execute('DROP TABLE model_conversation_attempts')
             conn.execute('DROP TABLE model_conversation_runs')
             from legacy_schema import remove_host_kind
@@ -320,7 +321,7 @@ class ConversationTests(unittest.TestCase):
         upgraded = DatabaseManager(self.storage.db_path)
         self.assertEqual(upgraded.chats.get_messages(chat['id'])[0]['content'], 'retained')
         with upgraded._get_conn() as conn:
-            self.assertEqual(conn.execute('PRAGMA user_version').fetchone()[0], 13)
+            self.assertEqual(conn.execute('PRAGMA user_version').fetchone()[0], 14)
 
 
 @unittest.skipUnless(Gdk.Display.get_default(), 'GTK tests require a display')

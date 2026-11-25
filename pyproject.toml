@@ -41,9 +41,9 @@ ignore_missing_imports = true
 # Modules that import without GTK. Add a module here when it is tightened.
 module = [
     "src.app_context", "src.chat_controller", "src.chat_store", "src.collections_store",
-    "src.comparison", "src.connections", "src.context", "src.credentials", "src.database",
-    "src.drafts", "src.export", "src.history", "src.knowledge", "src.knowledge_store",
-    "src.library_repository", "src.model_conversation", "src.model_conversation_store",
+    "src.comparison", "src.connections", "src.context", "src.credentials", "src.database", "src.decision",
+    "src.decision_run", "src.decision_store", "src.drafts", "src.export", "src.history", "src.knowledge",
+    "src.knowledge_store", "src.library_repository", "src.model_conversation", "src.model_conversation_store",
     "src.providers.*", "src.records", "src.request_runner", "src.services", "src.session",
     "src.storage", "src.store_common", "src.structured", "src.tool_calling", "src.vectors",
     "src.web_import", "src.web_store", "src.workspace_store", "src.writer",

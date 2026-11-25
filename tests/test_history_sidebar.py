@@ -75,6 +75,15 @@ class SidebarStorageTests(unittest.TestCase):
         self.assertLessEqual(len(self.storage.sidebar_snapshot('solar')['suggestions']), 8)
         self.assertEqual(self.storage.sidebar_snapshot('')['suggestions'], [])
 
+    def test_a_draft_without_text_is_named_by_its_questions(self):
+        save = self.storage.db.workspace.save_draft
+        save(dict(id='asked', mode='decision', text=' ', revision=1, targets=[],
+                  settings=dict(questions={'billing': {'type': 'noul'}, 'tone': {'type': 'choice'}})))
+        save(dict(id='stated', mode='decision', text='A state', revision=1, targets=[],
+                  settings=dict(questions={'billing': {'type': 'noul'}})))
+        titles = {row['id']: row['title'] for row in self.storage.sidebar_snapshot(expanded={'drafts'})['groups']['drafts']}
+        self.assertEqual((titles['asked'], titles['stated'], titles['draft-0']), ('billing, tone', 'A state', 'Solar 0'))
+
     def test_draft_search_is_case_and_accent_insensitive(self):
         self.storage.db.workspace.save_draft(dict(id='accent', mode='chat', text='Café Überprüfung', settings={}, targets=[], revision=1))
         self.assertEqual([r['id'] for r in self.storage.sidebar_snapshot('CAFE uber')['groups']['drafts']], ['accent'])
@@ -102,6 +111,20 @@ class SidebarUITests(unittest.TestCase):
     def query(self, window, text):
         window.history_search.set_text(text)
         pump_until(lambda: not window.history.pending and window.history._suggestion_query == text)
+
+    def test_decisions_have_their_own_section_title_and_icon(self):
+        window, _ = self.sidebar()
+        self.assertEqual(CATEGORIES[-1], 'decision')
+        section = window.recent_decisions_section
+        self.assertIs(section, window.history.sections['decision'])
+        self.assertEqual(section.get_title(), 'Recent decisions')
+        rows = self.rows(window, 'decision')
+        self.assertEqual([row.chat_id for row in rows], [f'decision-{index}' for index in range(8, 3, -1)])
+        self.assertEqual({row.get_icon_name() for row in rows}, {ICONS['decision']})
+        self.assertEqual(ICONS['decision'], 'gnollama-decision-symbolic')
+        theme = Gtk.IconTheme.get_for_display(Gdk.Display.get_default())
+        self.assertTrue(theme.has_icon(ICONS['decision']))
+        self.assertEqual(window.history.footers['decision'].get_tooltip(), 'Recent decisions · Show more')
 
     def test_five_rows_and_footer_in_each_section(self):
         window, _ = self.sidebar()
@@ -219,7 +242,7 @@ class SidebarUITests(unittest.TestCase):
 
     def test_each_category_has_a_unique_bundled_icon(self):
         window, _ = self.sidebar()
-        self.assertEqual(len(set(ICONS.values())), 5)
+        self.assertEqual(len(set(ICONS.values())), 6)
         theme = Gtk.IconTheme.get_for_display(Gdk.Display.get_default())
         for key, name in ICONS.items():
             self.assertEqual(self.rows(window, key)[0].get_icon_name(), name)

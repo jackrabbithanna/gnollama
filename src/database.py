@@ -9,6 +9,7 @@ from typing import Callable, List, Optional, Union
 from .chat_store import ChatDatabase
 from .collections_store import MIGRATION as COLLECTIONS_MIGRATION
 from .connections import ConnectionProvider
+from .decision_store import DecisionDatabase, MIGRATION as DECISION_MIGRATION
 from .knowledge_store import KnowledgeDatabase, MIGRATION as KNOWLEDGE_MIGRATION
 from .model_conversation_store import ModelConversationDatabase, migrate_model_conversations
 from .vectors import load_extension, migrate_vectors, preflight_legacy_vectors
@@ -52,6 +53,7 @@ MIGRATIONS: List[Union[str, Callable[..., None]]] = [
     ALTER TABLE knowledge_collections ADD COLUMN host_kind TEXT NOT NULL DEFAULT 'ollama';
     ALTER TABLE knowledge_indexes ADD COLUMN host_kind TEXT NOT NULL DEFAULT 'ollama';
     """,
+    DECISION_MIGRATION,
 ]
 
 
@@ -73,6 +75,7 @@ class DatabaseManager:
         self.knowledge = KnowledgeDatabase(self.connections)
         self.workspace = WorkspaceDatabase(self.connections)
         self.model_conversations = ModelConversationDatabase(self.connections)
+        self.decisions = DecisionDatabase(self.connections)
         try:
             self._prepare_upgrade()
             self._init_db()

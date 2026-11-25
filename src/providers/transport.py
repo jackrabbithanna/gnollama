@@ -51,6 +51,16 @@ def error_text(detail):
     return str(detail) if detail else None
 
 
+def error_detail(decoded):
+    """What an error body says went wrong, wherever the server put it, or None.
+
+    Servers answer `{"error": "text"}`, `{"error": {"message": …}}`, `{"message": …}`, or `{"detail": …}`.
+    """
+    if not isinstance(decoded, dict):
+        return None
+    return next((decoded[key] for key in ('error', 'message', 'detail') if decoded.get(key)), None)
+
+
 def json_object(raw):
     try:
         result = json.loads(raw)
@@ -112,15 +122,13 @@ class Transport:
                 body = read_all(stream, cancellable)
                 detail = None
                 try:
-                    decoded = json.loads(body)
-                    if isinstance(decoded, dict):
-                        detail = decoded.get('error')
+                    detail = error_detail(json.loads(body))
                 except (ValueError, UnicodeError):
                     pass
                 status = message.get_status()
                 if explain is not None:
                     detail = explain(status, detail)
-                raise ProviderError(str(detail or f'HTTP Error {status}: {message.get_reason_phrase()}'), status)
+                raise ProviderError(str(detail or f'HTTP Error {int(status)}: {message.get_reason_phrase()}'), status)
             yield stream, cancellable
         except RequestCancelled:
             raise

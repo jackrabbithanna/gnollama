@@ -22,5 +22,6 @@
     <file>icons/scalable/actions/gnollama-comparison-symbolic.svg</file>
     <file>icons/scalable/actions/gnollama-model-conversation-symbolic.svg</file>
     <file>icons/scalable/actions/gnollama-decision-symbolic.svg</file>
+    <file>icons/scalable/actions/gnollama-image-symbolic.svg</file>
   </gresource>
 </gresources>

@@ -475,6 +475,70 @@ msgstr "서버 응답에 답변이 없습니다."
 msgid "The answer is not valid for this question."
 msgstr "이 답변은 이 질문에 유효하지 않습니다."
 
+#: src/image_generation.py
+msgid "Aspect ratio"
+msgstr "화면 비율"
+
+#: src/image_generation.py
+msgid "Resolution"
+msgstr "해상도"
+
+#: src/image_generation.py
+msgid "Quality"
+msgstr "품질"
+
+#: src/image_generation.py
+msgid "Output format"
+msgstr "출력 형식"
+
+#: src/image_generation.py
+msgid "Background"
+msgstr "배경"
+
+#: src/image_generation.py
+msgid "Number of images"
+msgstr "이미지 수"
+
+#: src/image_generation.py
+msgid "This server does not offer image generation."
+msgstr "이 서버는 이미지 생성을 제공하지 않습니다."
+
+#: src/image_generation.py
+msgid "Enter a prompt."
+msgstr "프롬프트를 입력하세요."
+
+#: src/image_generation.py
+msgid "This model does not take reference images."
+msgstr "이 모델은 참조 이미지를 받지 않습니다."
+
+#: src/image_generation.py
+#, python-brace-format
+msgid "This model takes at most {0} reference image."
+msgid_plural "This model takes at most {0} reference images."
+msgstr[0] "이 모델은 참조 이미지를 최대 {0}개까지 받습니다."
+
+#: src/image_generation.py
+#, python-brace-format
+msgid "This model does not take the setting {0}."
+msgstr "이 모델은 {0} 설정을 받지 않습니다."
+
+#: src/image_generation.py
+#, python-brace-format
+msgid "This model does not take that value for {0}."
+msgstr "이 모델은 {0}에 대해 해당 값을 받지 않습니다."
+
+#: src/image_generation.py
+msgid "The server did not return an image."
+msgstr "서버가 이미지를 반환하지 않았습니다."
+
+#: src/image_run.py
+msgid "The model answered without an image."
+msgstr "모델이 이미지 없이 응답했습니다."
+
+#: src/image_run.py
+msgid "The server returned an image that cannot be read."
+msgstr "서버가 읽을 수 없는 이미지를 반환했습니다."
+
 #: src/providers/systemone.py:51
 msgid "Images sent to this server must be PNG or JPEG."
 msgstr "이 서버로 보내는 이미지는 PNG 또는 JPEG여야 합니다."
@@ -1744,6 +1808,18 @@ msgstr "이미지 제거"
 msgid "Could not restore an image. Remove it before sending."
 msgstr "이미지를 복원할 수 없습니다. 보내기 전에 제거하세요."
 
+#: src/widgets/chat_input.py
+msgid "Select an image model"
+msgstr "이미지 모델 선택"
+
+#: src/widgets/chat_input.py
+msgid "No image models found on this server."
+msgstr "이 서버에서 이미지 모델을 찾을 수 없습니다."
+
+#: src/widgets/chat_input.py
+msgid "Checking image models…"
+msgstr "이미지 모델 확인 중…"
+
 #: src/widgets/chat_input.ui:35
 msgid "Select Model"
 msgstr "모델 선택"
@@ -1832,9 +1908,57 @@ msgstr "다시 실행"
 msgid "Stop All"
 msgstr "모두 중지"
 
+#: src/widgets/decision_view.py
+msgid "Load later runs"
+msgstr "이후 실행 불러오기"
+
 #: src/widgets/feedback.py:15
 msgid "Copied"
 msgstr "복사됨"
+
+#: src/widgets/history_sidebar.py
+msgid "Recent images"
+msgstr "최근 이미지"
+
+#: src/widgets/image_results.py
+msgid "This image cannot be shown here. Use Save Image… to open it in another app."
+msgstr "이 이미지는 여기에서 표시할 수 없습니다. \"이미지 저장…\"을 사용해 다른 앱에서 여세요."
+
+#: src/widgets/image_results.py
+msgid "Save Image…"
+msgstr "이미지 저장…"
+
+#: src/widgets/image_results.py
+msgid "Copy Image"
+msgstr "이미지 복사"
+
+#: src/widgets/image_results.py
+msgid "Use as Reference"
+msgstr "참조로 사용"
+
+#: src/widgets/image_results.py
+msgid "Save Image"
+msgstr "이미지 저장"
+
+#: src/widgets/image_settings.py
+msgid "Leave empty for a random seed."
+msgstr "무작위 시드를 사용하려면 비워 두세요."
+
+#: src/widgets/image_view.py
+msgid "New Image"
+msgstr "새 이미지"
+
+#: src/widgets/image_view.py
+msgid "Prompt"
+msgstr "프롬프트"
+
+#: src/widgets/image_view.py
+msgid "Describe the image to generate."
+msgstr "생성할 이미지를 설명하세요."
+
+#: src/widgets/image_view.py
+msgid "Generate"
+msgstr "생성"
 
 #: src/widgets/json_view.py:50
 msgid "JSON files"

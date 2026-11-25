@@ -114,7 +114,7 @@ class SidebarUITests(unittest.TestCase):
 
     def test_decisions_have_their_own_section_title_and_icon(self):
         window, _ = self.sidebar()
-        self.assertEqual(CATEGORIES[-1], 'decision')
+        self.assertEqual(CATEGORIES[-2], 'decision')
         section = window.recent_decisions_section
         self.assertIs(section, window.history.sections['decision'])
         self.assertEqual(section.get_title(), 'Recent decisions')
@@ -125,6 +125,20 @@ class SidebarUITests(unittest.TestCase):
         theme = Gtk.IconTheme.get_for_display(Gdk.Display.get_default())
         self.assertTrue(theme.has_icon(ICONS['decision']))
         self.assertEqual(window.history.footers['decision'].get_tooltip(), 'Recent decisions · Show more')
+
+    def test_images_have_their_own_section_title_and_icon(self):
+        window, _ = self.sidebar()
+        self.assertEqual(CATEGORIES[-1], 'image')
+        section = window.recent_images_section
+        self.assertIs(section, window.history.sections['image'])
+        self.assertEqual(section.get_title(), 'Recent images')
+        rows = self.rows(window, 'image')
+        self.assertEqual([row.chat_id for row in rows], [f'image-{index}' for index in range(8, 3, -1)])
+        self.assertEqual({row.get_icon_name() for row in rows}, {ICONS['image']})
+        self.assertEqual(ICONS['image'], 'gnollama-image-symbolic')
+        theme = Gtk.IconTheme.get_for_display(Gdk.Display.get_default())
+        self.assertTrue(theme.has_icon(ICONS['image']))
+        self.assertEqual(window.history.footers['image'].get_tooltip(), 'Recent images · Show more')
 
     def test_five_rows_and_footer_in_each_section(self):
         window, _ = self.sidebar()
@@ -242,7 +256,7 @@ class SidebarUITests(unittest.TestCase):
 
     def test_each_category_has_a_unique_bundled_icon(self):
         window, _ = self.sidebar()
-        self.assertEqual(len(set(ICONS.values())), 6)
+        self.assertEqual(len(set(ICONS.values())), 7)
         theme = Gtk.IconTheme.get_for_display(Gdk.Display.get_default())
         for key, name in ICONS.items():
             self.assertEqual(self.rows(window, key)[0].get_icon_name(), name)

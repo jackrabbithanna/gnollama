@@ -524,6 +524,71 @@ msgstr "Sunucunun yanıtında hiç cevap yok."
 msgid "The answer is not valid for this question."
 msgstr "Yanıt bu soru için geçerli değil."
 
+#: src/image_generation.py
+msgid "Aspect ratio"
+msgstr "En boy oranı"
+
+#: src/image_generation.py
+msgid "Resolution"
+msgstr "Çözünürlük"
+
+#: src/image_generation.py
+msgid "Quality"
+msgstr "Kalite"
+
+#: src/image_generation.py
+msgid "Output format"
+msgstr "Çıktı biçimi"
+
+#: src/image_generation.py
+msgid "Background"
+msgstr "Arka plan"
+
+#: src/image_generation.py
+msgid "Number of images"
+msgstr "Görsel sayısı"
+
+#: src/image_generation.py
+msgid "This server does not offer image generation."
+msgstr "Bu sunucu görsel oluşturma sunmuyor."
+
+#: src/image_generation.py
+msgid "Enter a prompt."
+msgstr "Bir istem girin."
+
+#: src/image_generation.py
+msgid "This model does not take reference images."
+msgstr "Bu model referans görselleri kabul etmiyor."
+
+#: src/image_generation.py
+#, python-brace-format
+msgid "This model takes at most {0} reference image."
+msgid_plural "This model takes at most {0} reference images."
+msgstr[0] "Bu model en fazla {0} referans görseli kabul eder."
+msgstr[1] "Bu model en fazla {0} referans görseli kabul eder."
+
+#: src/image_generation.py
+#, python-brace-format
+msgid "This model does not take the setting {0}."
+msgstr "Bu model {0} ayarını kabul etmiyor."
+
+#: src/image_generation.py
+#, python-brace-format
+msgid "This model does not take that value for {0}."
+msgstr "Bu model {0} için bu değeri kabul etmiyor."
+
+#: src/image_generation.py
+msgid "The server did not return an image."
+msgstr "Sunucu bir görsel döndürmedi."
+
+#: src/image_run.py
+msgid "The model answered without an image."
+msgstr "Model görsel olmadan yanıt verdi."
+
+#: src/image_run.py
+msgid "The server returned an image that cannot be read."
+msgstr "Sunucu okunamayan bir görsel döndürdü."
+
 #: src/providers/systemone.py:51
 msgid "Images sent to this server must be PNG or JPEG."
 msgstr "Bu sunucuya gönderilen görseller PNG veya JPEG olmalıdır."
@@ -1821,6 +1886,18 @@ msgstr "Görüntüyü kaldır"
 msgid "Could not restore an image. Remove it before sending."
 msgstr "Bir görüntü geri yüklenemedi. Göndermeden önce kaldırın."
 
+#: src/widgets/chat_input.py
+msgid "Select an image model"
+msgstr "Bir görsel modeli seçin"
+
+#: src/widgets/chat_input.py
+msgid "No image models found on this server."
+msgstr "Bu sunucuda görsel modeli bulunamadı."
+
+#: src/widgets/chat_input.py
+msgid "Checking image models…"
+msgstr "Görsel modelleri denetleniyor…"
+
 #: src/widgets/chat_input.ui:35
 msgid "Select Model"
 msgstr "Model seç"
@@ -1911,9 +1988,57 @@ msgstr "Yeniden Çalıştır"
 msgid "Stop All"
 msgstr "Tümünü Durdur"
 
+#: src/widgets/decision_view.py
+msgid "Load later runs"
+msgstr "Sonraki çalıştırmaları yükle"
+
 #: src/widgets/feedback.py:15
 msgid "Copied"
 msgstr "Kopyalandı"
+
+#: src/widgets/history_sidebar.py
+msgid "Recent images"
+msgstr "Son görseller"
+
+#: src/widgets/image_results.py
+msgid "This image cannot be shown here. Use Save Image… to open it in another app."
+msgstr "Bu görsel burada gösterilemiyor. Başka bir uygulamada açmak için \"Görseli Kaydet…\" seçeneğini kullanın."
+
+#: src/widgets/image_results.py
+msgid "Save Image…"
+msgstr "Görseli Kaydet…"
+
+#: src/widgets/image_results.py
+msgid "Copy Image"
+msgstr "Görseli Kopyala"
+
+#: src/widgets/image_results.py
+msgid "Use as Reference"
+msgstr "Referans Olarak Kullan"
+
+#: src/widgets/image_results.py
+msgid "Save Image"
+msgstr "Görseli Kaydet"
+
+#: src/widgets/image_settings.py
+msgid "Leave empty for a random seed."
+msgstr "Rastgele bir tohum için boş bırakın."
+
+#: src/widgets/image_view.py
+msgid "New Image"
+msgstr "Yeni Görsel"
+
+#: src/widgets/image_view.py
+msgid "Prompt"
+msgstr "İstem"
+
+#: src/widgets/image_view.py
+msgid "Describe the image to generate."
+msgstr "Oluşturulacak görseli açıklayın."
+
+#: src/widgets/image_view.py
+msgid "Generate"
+msgstr "Oluştur"
 
 #: src/widgets/json_view.py:50
 msgid "JSON files"

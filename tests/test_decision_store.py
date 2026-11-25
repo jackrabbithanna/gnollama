@@ -53,9 +53,9 @@ class DecisionStoreTests(unittest.TestCase):
         with self.db._get_conn() as conn:
             return conn.execute(f'SELECT count(*) FROM {table}').fetchone()[0]
 
-    def test_a_new_database_is_at_version_14_with_the_runs_table(self):
+    def test_a_new_database_has_the_runs_table(self):
         with self.db._get_conn() as conn:
-            self.assertEqual(conn.execute('PRAGMA user_version').fetchone()[0], 14)
+            self.assertEqual(conn.execute('PRAGMA user_version').fetchone()[0], 15)
             self.assertEqual([row[1] for row in conn.execute('PRAGMA table_info(decision_runs)')],
                              ['id', 'session_id', 'position', 'state_mode', 'questions', 'target', 'status',
                               'result', 'error', 'created_at', 'finished_at'])
@@ -76,12 +76,12 @@ class DecisionStoreTests(unittest.TestCase):
         old.close()
         upgraded = DatabaseManager(path)
         self.addCleanup(upgraded.close)
-        self.assertIn('.pre-v14-', upgraded.backup_path)
+        self.assertIn('.pre-v15-', upgraded.backup_path)
         with sqlite3.connect(upgraded.backup_path) as backup:
             self.assertEqual(backup.execute('PRAGMA user_version').fetchone()[0], 13)
             self.assertEqual(backup.execute("SELECT content FROM messages WHERE uid='question'").fetchone()[0], 'kept words')
         with upgraded._get_conn() as conn:
-            self.assertEqual(conn.execute('PRAGMA user_version').fetchone()[0], 14)
+            self.assertEqual(conn.execute('PRAGMA user_version').fetchone()[0], 15)
         chat = upgraded.chats.get_chat('chat')
         self.assertEqual((chat['title'], chat['kind'], chat['options']), ('Saved chat', 'chat', {'temperature': 0.5}))
         self.assertEqual(upgraded.chats.get_messages('chat', include_ids=True), messages)

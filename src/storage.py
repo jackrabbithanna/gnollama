@@ -40,6 +40,7 @@ class ChatStorage:
         self.db.workspace.interrupt_comparisons()
         self.db.model_conversations.interrupt_model_conversations()
         self.db.decisions.interrupt_decisions()
+        self.db.images.interrupt_image_runs()
 
         # Detect legacy JSON files and rename them
         self._handle_legacy_json()

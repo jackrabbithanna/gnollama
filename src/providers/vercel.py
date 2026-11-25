@@ -2,7 +2,7 @@
 from dataclasses import dataclass
 from gettext import gettext as _
 
-from . import systemone
+from . import imaging, systemone
 from .base import Capabilities, named
 from .openai import OpenAICompatibleProvider, effort, find, fingerprint, narrowed, table
 from .openrouter import EFFORTS
@@ -16,6 +16,13 @@ LEVELS = ('low', 'medium', 'high', 'max')
 # The prices kept, by the name the application uses. The units of the others are not known.
 PRICES = {'input': 'prompt', 'output': 'completion', 'input_cache_read': 'input_cache_read',
           'input_cache_write': 'input_cache_write'}
+
+# The most images one request to the images API asks for. The gateway takes ten; few models make that many.
+IMAGE_COUNT = 4
+# The most reference images sent, by route: the documented limit of the edits API, and Gemini's.
+REFERENCES = {'images': 16, 'chat': 14}
+# The aspect ratios offered; every image model the gateway lists takes these.
+ASPECT_RATIOS = ('1:1', '16:9', '9:16', '4:3', '3:4')
 
 
 def _extracted():
@@ -93,6 +100,47 @@ def describe_decision(model):
     return dict(describe_embedding(model), capabilities=systemone.capabilities(sees(model)))
 
 
+def tagged(model, name):
+    tags = model.get('tags')
+    return isinstance(tags, list) and name in tags
+
+
+def makes_images(model):
+    """Image-only models, and chat models that make images too."""
+    return model.get('type') == 'image' or (model.get('type') == 'language' and tagged(model, 'image-generation'))
+
+
+def route(model):
+    """Where an image model is asked: the images API, or chat for a model that also writes text."""
+    return 'images' if model.get('type') == 'image' else 'chat'
+
+
+def image_settings(model):
+    """The settings an image model takes. The list describes none, so these are the ones every model of a route
+    takes: aspect ratio, as `aspect_ratio` on the images API and `image_config` in chat (both seen honoured on
+    2026-11-24), and a count on the images API."""
+    way = route(model)
+    settings: dict = {'aspect_ratio': {'type': 'enum', 'values': list(ASPECT_RATIOS)}}
+    if way == 'images':
+        settings['n'] = {'type': 'range', 'min': 1, 'max': IMAGE_COUNT}
+    inputs = table(model.get('modalities')).get('input')
+    # Only images listed as input: `file-input` may mean PDF alone, as it does for Seedream 5.5.
+    sees_images = isinstance(inputs, list) and 'image' in inputs
+    if tagged(model, 'vision') if way == 'chat' else sees_images:
+        settings['input_references'] = {'type': 'range', 'min': 0, 'max': REFERENCES[way]}
+    return settings
+
+
+def describe_image(model):
+    settings = image_settings(model)
+    result = {'capabilities': imaging.capabilities('input_references' in settings), 'image_parameters': settings,
+              'route': route(model)}
+    # Image-only models are priced per image, in US dollars.
+    image = table(model.get('pricing')).get('image')
+    costs = dict(prices(model), **({'image': image} if isinstance(image, str) else {}))
+    return dict(result, pricing=costs) if costs else result
+
+
 @dataclass(frozen=True)
 class VercelProvider(OpenAICompatibleProvider):
     kind = 'vercel'
@@ -108,7 +156,8 @@ class VercelProvider(OpenAICompatibleProvider):
                                 thinking_text=True,
                                 # Few models answer a box question; the gateway says so for one that does not.
                                 decisions=True, decision_images=True, decision_boxes=True,
-                                decision_image_formats=systemone.ASSET_FORMATS)
+                                decision_image_formats=systemone.ASSET_FORMATS,
+                                image_generation=True, image_references=True)
 
     @classmethod
     def check_url(cls, url):
@@ -169,6 +218,32 @@ class VercelProvider(OpenAICompatibleProvider):
             return self._address('').removesuffix('/v1') + '/typesafe/v1/systemone'
         return systemone.post(self, address, data, timeout, cancellable, prepare)
 
+    def _imagers(self, timeout, cancellable):
+        return [model for model in self._listed(lambda: self._address('/models'), 'data', 'id', timeout, cancellable)
+                if makes_images(model)]
+
+    def list_image_models(self, timeout=10, cancellable=None):
+        return [dict(tag(model), **describe_image(model)) for model in self._imagers(timeout, cancellable)]
+
+    def generate_image(self, model, prompt, options, references=None, timeout=300, cancellable=None):
+        """Ask an image model for images of `prompt`; returns the server's answer as it came."""
+        # Which API a model is asked through is known only from the list.
+        if route(find(self._imagers(timeout, cancellable), 'id', model)) == 'chat':
+            config = imaging.chosen(options, ('aspect_ratio',))
+            body, endpoint = imaging.chat_body(model, prompt, references), '/chat/completions'
+            if config:
+                body['image_config'] = config
+        elif references:
+            # Edits take the images as JSON where each is a data URL, and always answer in base64.
+            body = {'model': model, 'prompt': prompt, **imaging.chosen(options, ('n', 'aspect_ratio')),
+                    'images': [{'image_url': url} for url in imaging.urls(references)]}
+            endpoint = '/images/edits'
+        else:
+            body = {'model': model, 'prompt': prompt, 'response_format': 'b64_json',
+                    **imaging.chosen(options, ('n', 'aspect_ratio'))}
+            endpoint = '/images/generations'
+        return imaging.post(self, lambda: self._address(endpoint), body, timeout, cancellable)
+
     def list_models(self, timeout=10, cancellable=None):
         return [tag(model) for model in self._models(timeout, cancellable)]
 
@@ -191,7 +266,10 @@ class VercelProvider(OpenAICompatibleProvider):
         for model in self._embedders(timeout, cancellable):
             if model['id'] == name:
                 return describe_embedding(model)
-        return describe_decision(find(self._deciders(timeout, cancellable), 'id', name))
+        for model in self._deciders(timeout, cancellable):
+            if model['id'] == name:
+                return describe_decision(model)
+        return describe_image(find(self._imagers(timeout, cancellable), 'id', name))
 
     def probe(self, cancellable=None):
         # The model list is public, so only this shows the key was accepted.

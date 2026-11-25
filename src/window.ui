@@ -136,6 +136,10 @@
         <attribute name="label" translatable="yes">New Decision</attribute>
         <attribute name="action">win.new_decision</attribute>
       </item>
+      <item>
+        <attribute name="label" translatable="yes">New Image</attribute>
+        <attribute name="action">win.new_image</attribute>
+      </item>
     </section>
     <section>
       <item>

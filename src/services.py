@@ -100,7 +100,7 @@ class ModelIdentity:
 
 
 # The kinds of model list a catalog shares, and the provider operation that reads each.
-LISTS = {'models': 'list_models', 'decision_models': 'list_decision_models'}
+LISTS = {'models': 'list_models', 'decision_models': 'list_decision_models', 'image_models': 'list_image_models'}
 
 
 class ModelCatalog:
@@ -224,6 +224,10 @@ class ModelCatalog:
     def request_decision_models(self, connection, cancel=None, refresh=False):
         """The decision models of a host, each entry saying whether it takes images; shared and cached as the chat list is."""
         return self._request(connection, 'decision_models', cancel, refresh=refresh)
+
+    def request_image_models(self, connection, cancel=None, refresh=False):
+        """The image models of a host, each entry with the settings it takes; shared and cached as the chat list is."""
+        return self._request(connection, 'image_models', cancel, refresh=refresh)
 
     def cached_details(self, connection, name):
         key = self.connection_key(connection)

@@ -77,9 +77,11 @@ class ModelTests(Gateway, KeyChecks, unittest.TestCase):
             with self.subTest(model=unknown):
                 self.assertIsNone(provider.model_tag(unknown))
                 with self.assertRaisesRegex(ProviderError, 'no longer available'):
-                    provider.show_model(unknown)
-                with self.assertRaisesRegex(ProviderError, 'no longer available'):
                     provider.embedding_context(unknown)
+        with self.assertRaisesRegex(ProviderError, 'no longer available'):
+            provider.show_model('gone')
+        # An image model is described as one, after every other kind.
+        self.assertEqual(provider.show_model(IMAGE)['capabilities'], ['image'])
         # The type decides, not the name; and a new size is the same model, a new release another.
         self.entry(NEMO).update(type='embedding', context_window=1)
         self.entry(EMBEDDER)['type'] = 'image'
@@ -250,7 +252,8 @@ class DeclarationTests(unittest.TestCase):
             self.assertEqual(cls(URL)._address(endpoint), 'https://ai-gateway.vercel.sh/v1' + endpoint)
         offered = {name for name, value in vars(caps).items() if value is True}
         self.assertEqual(offered, {'embeddings', 'thinking_levels', 'structured_output', 'tools', 'thinking_text',
-                                   'decisions', 'decision_images', 'decision_boxes'})
+                                   'decisions', 'decision_images', 'decision_boxes', 'image_generation',
+                                   'image_references'})
         self.assertEqual((caps.options_notice, caps.left_out), ('', ()))
         self.assertIs(PROVIDERS['vercel'], cls)
         self.assertEqual(list(PROVIDERS).index('vercel'), list(PROVIDERS).index('openrouter') + 1)

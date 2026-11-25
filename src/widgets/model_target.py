@@ -3,12 +3,14 @@ from gettext import gettext as _
 from gi.repository import Gtk
 from ..chat_controller import ComposerInput, ModelLimits
 from ..decision import check_request
+from ..image_generation import ImageParameters, unavailable
 from .chat_input import ChatInput
 from .options_panel import OptionsPanel
 
 
 class TargetPicker(Gtk.Box):
-    def __init__(self, context, changed, target=None, participant=False, decisions=False):
+    def __init__(self, context, changed, target=None, participant=False, kind='chat'):
+        """`kind` is the list of models offered: 'chat', 'decision', or 'image'."""
         super().__init__(orientation=Gtk.Orientation.VERTICAL, spacing=6, hexpand=True)
         self.participant = participant
         self.context, self.limits = context, ModelLimits(context)
@@ -17,7 +19,7 @@ class TargetPicker(Gtk.Box):
         self.panel.update_hosts()
         self.input = ChatInput()
         self.input.services = context.services
-        self.input.decisions = decisions
+        self.input.kind = kind
         self.input.connection_box.get_parent().remove(self.input.connection_box)
         self.input.connection_box.prepend(self.panel.host_row)
         self.input.thinking_dropdown.get_parent().set_visible(participant)
@@ -37,9 +39,11 @@ class TargetPicker(Gtk.Box):
             self.input.thinking_dropdown.connect('notify::selected', changed)
         def refresh(*args):
             host = self.panel.get_selected_host()
-            if decisions:
-                # A host that cannot decide stays listed; it says why and lists no models.
-                reason = check_request((), (), context.capabilities(host)) if host else ''
+            if kind != 'chat':
+                # A host that cannot decide or make images stays listed; it says why and lists no models.
+                capabilities = context.capabilities(host) if host else None
+                reason = '' if not host else (
+                    check_request((), (), capabilities) if kind == 'decision' else unavailable(capabilities))
                 self.input.set_unavailable(reason)
                 host = None if reason else host
             self.input.fetch_models(context.connection(host) if host else None,
@@ -75,6 +79,13 @@ class TargetPicker(Gtk.Box):
         """What the selected decision model can be asked, or None with no host."""
         host = self.panel.get_selected_host()
         return self.context.connection(host).decision_capabilities(self.input.selected_details()) if host else None
+
+    def image_parameters(self):
+        """What the selected image model takes; nothing with no host or model."""
+        host = self.panel.get_selected_host()
+        if host is None or not self.input.get_selected_model():
+            return ImageParameters()
+        return self.context.connection(host).image_parameters(self.input.selected_details())
 
     def select(self, target):
         """Choose a saved host and model. A host that is gone leaves the one selected."""

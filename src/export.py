@@ -1,10 +1,10 @@
 """Portable, credential-free conversation snapshots."""
 from gettext import gettext as _
-import base64
 import copy
 import json
 
 from .decision import EDGES, parse_questions, parse_result
+from .image_generation import LABELS, media_type
 
 
 def portable(value):
@@ -18,8 +18,9 @@ def portable(value):
 
 
 def _portable(snapshot):
-    """A decision's questions and answers are named by the user and hold no credential, so they are kept whole."""
-    whole = ('options', 'runs') if snapshot.get('kind') == 'decision' else ()
+    """A decision's questions and answers, and an image's settings, are named by the user and hold no
+    credential, so they are kept whole."""
+    whole = ('options', 'runs') if snapshot.get('kind') in ('decision', 'image') else ()
     kept = portable({key: value for key, value in snapshot.items() if key not in whole})
     kept.update((key, copy.deepcopy(snapshot[key])) for key in whole if key in snapshot)
     return kept
@@ -30,10 +31,12 @@ def export_json(snapshot):
                        'conversation': _portable(copy.deepcopy(snapshot))}, ensure_ascii=False, indent=2) + '\n'
 
 
-def _image(index, encoded):
-    raw = base64.b64decode(encoded.split(',', 1)[-1])
-    mime = 'image/png' if raw.startswith(b'\x89PNG') else 'image/webp' if raw[8:12] == b'WEBP' else 'image/jpeg'
-    return f'![Attachment {index + 1}](data:{mime};base64,{encoded})'
+def _image(index, encoded, kind=None, label='Attachment'):
+    """An image as a data URL, of its recorded type or, without one, the type its bytes show."""
+    head, _sep, data = encoded.rpartition(',')
+    if not kind and head.startswith('data:'):
+        kind = head[5:].split(';', 1)[0]
+    return f'![{label} {index + 1}](data:{kind or media_type(data)};base64,{data})'
 
 
 def _text(value):
@@ -110,11 +113,35 @@ def _decision_run(run):
     return parts
 
 
+def _image_run(run):
+    target = run.get('target') or {}
+    heading = filter(None, ('Run {}'.format(run['position'] + 1), target.get('model'),
+                            target.get('host_name') or target.get('host')))
+    parts = ['## ' + ' · '.join(heading), '', 'Status: ' + run['status'], '', '### Prompt', '', run['prompt'], '']
+    for index, encoded in enumerate(run.get('references', [])):
+        parts += [_image(index, encoded, label='Reference'), '']
+    if run.get('options'):
+        parts += ['### Settings', '']
+        parts += [f'- {LABELS.get(name, name)}: {_text(value)}' for name, value in run['options'].items()] + ['']
+    if run.get('images') or run.get('text'):
+        parts += ['### Result', '']
+        if run.get('text'):
+            parts += [run['text'], '']
+        for index, image in enumerate(run.get('images', [])):
+            parts += [_image(index, image['data'], image.get('media_type'), 'Image'), '']
+    cost = (run.get('result') or {}).get('cost')
+    if cost is not None:
+        parts += [f'Cost: ${cost:.6f}', '']
+    if run.get('error'):
+        parts += ['Error: ' + run['error'], '']
+    return parts
+
+
 def export_markdown(snapshot):
     snapshot = _portable(snapshot)
     parts = ['# ' + snapshot['title'], '']
     for run in snapshot.get('runs', []):
-        parts += _decision_run(run)
+        parts += _image_run(run) if snapshot.get('kind') == 'image' else _decision_run(run)
     model_conversation = snapshot.get('kind') == 'model_conversation'
     if model_conversation:
         settings = snapshot['options']

@@ -13,11 +13,12 @@ PERSISTENCE = {'storage.py', 'database.py', 'library_repository.py', 'history.py
 # Modules that run without widgets, and import without the application entry point.
 HEADLESS = ['app_context.py', 'chat_controller.py', 'chat_store.py', 'collections_store.py', 'comparison.py',
             'connections.py', 'context.py', 'credentials.py', 'database.py', 'decision.py', 'decision_run.py', 'decision_store.py',
+            'image_generation.py', 'image_run.py', 'image_store.py',
             'drafts.py', 'export.py', 'history.py', 'knowledge.py', 'knowledge_store.py', 'library_repository.py',
             'model_conversation.py', 'model_conversation_store.py', 'model_summary.py', 'records.py', 'request_runner.py',
             'services.py', 'session.py', 'storage.py', 'store_common.py', 'structured.py', 'tool_calling.py',
             'vectors.py', 'web_import.py', 'web_store.py', 'workspace_store.py', 'writer.py',
-            'providers/__init__.py', 'providers/base.py', 'providers/lmstudio.py', 'providers/ollama.py',
+            'providers/__init__.py', 'providers/base.py', 'providers/imaging.py', 'providers/lmstudio.py', 'providers/ollama.py',
             'providers/openai.py', 'providers/openrouter.py', 'providers/registry.py', 'providers/systemone.py',
             'providers/transport.py', 'providers/vercel.py']
 # These open a dialog on request, importing GTK only inside that function.
@@ -64,7 +65,7 @@ class ArchitectureTests(unittest.TestCase):
         from src.database import DatabaseManager
         self.assertEqual(DatabaseManager.__bases__, (object,))
         for name in ('database.py', 'chat_store.py', 'knowledge_store.py', 'collections_store.py',
-                     'web_store.py', 'workspace_store.py', 'model_conversation_store.py', 'decision_store.py',
+                     'web_store.py', 'workspace_store.py', 'model_conversation_store.py', 'decision_store.py', 'image_store.py',
                      'history.py'):
             with self.subTest(module=name):
                 # Connections come from the shared provider, never from a repository.

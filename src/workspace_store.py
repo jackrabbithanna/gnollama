@@ -5,7 +5,8 @@ import re
 import time
 import uuid
 
-from .decision_store import decision_snapshot
+from .decision_store import decision_snapshot, read_runs as decision_runs
+from .image_store import image_snapshot, read_runs as image_runs, run_offset
 from .model_conversation_store import model_conversation_snapshot
 from .store_common import Repository, append_messages, consume_draft, read_draft, read_messages
 
@@ -56,21 +57,31 @@ class WorkspaceDatabase(Repository):
             row = conn.execute('SELECT * FROM chats WHERE id=?', (id,)).fetchone()
             if row is None:
                 return None
-            count = conn.execute('SELECT count(*) FROM messages WHERE chat_id=?', (id,)).fetchone()[0]
+            # An image run has one or two messages, so its session is paged by run.
+            image = row['kind'] == 'image'
+            count = conn.execute('SELECT count(*) FROM image_runs WHERE session_id=?' if image else
+                                 'SELECT count(*) FROM messages WHERE chat_id=?', (id,)).fetchone()[0]
             offset = max(0, count - 50)
             if match_uid:
-                match = conn.execute('SELECT order_index FROM messages WHERE chat_id=? AND uid=?', (id, match_uid)).fetchone()
-                if match:
+                match = (run_offset(conn, id, match_uid),) if image else conn.execute(
+                    'SELECT order_index FROM messages WHERE chat_id=? AND uid=?', (id, match_uid)).fetchone()
+                if match and match[0] is not None:
                     offset = max(0, match[0] - 10)
-            # A decision's messages are its runs, which carry the state and images themselves.
-            decision = row['kind'] == 'decision'
+            # A decision's or an image session's messages are its runs, which carry the text and images themselves.
+            runs = row['kind'] in ('decision', 'image')
             result = dict(row, options=json.loads(row['options'] or '{}'), system=row['system_prompt'],
-                host=row['host_id'], messages=[] if decision else read_messages(conn, id, 50, offset, True),
+                host=row['host_id'], messages=[] if runs else read_messages(conn, id, 50, offset, True),
                 message_count=count, message_offset=offset, paged=True)
             if row['kind'] == 'model_conversation':
                 model_conversation_snapshot(conn, result)
-            if decision:
+            if row['kind'] == 'decision':
                 decision_snapshot(conn, result, 50, offset)
+            if image:
+                image_snapshot(conn, result, 50, offset)
+            if runs:
+                # The session's last run, which a page around a search hit may not reach: it fills the editor.
+                last = (image_runs if image else decision_runs)(conn, id, 1, count - 1) if count else []
+                result['last_run'] = last[0] if last else None
             return result
 
     def export_snapshot(self, id):
@@ -81,14 +92,16 @@ class WorkspaceDatabase(Repository):
             if row is None:
                 return None
             result = dict(row, options=json.loads(row['options'] or '{}'), system=row['system_prompt'])
-            decision = row['kind'] == 'decision'
-            result['messages'] = [] if decision else read_messages(conn, id, include_ids=True)
+            runs = row['kind'] in ('decision', 'image')
+            result['messages'] = [] if runs else read_messages(conn, id, include_ids=True)
             result['targets'] = [dict(r, settings=json.loads(r['settings']), request=json.loads(r['request']))
                 for r in conn.execute('SELECT * FROM comparison_targets WHERE run_id=? ORDER BY position', (id,))]
             if row['kind'] == 'model_conversation':
                 model_conversation_snapshot(conn, result)
-            if decision:
+            if row['kind'] == 'decision':
                 decision_snapshot(conn, result)
+            if row['kind'] == 'image':
+                image_snapshot(conn, result)
             return result
 
     def save_draft(self, draft):

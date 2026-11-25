@@ -3,7 +3,7 @@ import re
 import unicodedata
 
 
-CATEGORIES = ('drafts', 'pinned', 'chat', 'comparison', 'model_conversation', 'decision')
+CATEGORIES = ('drafts', 'pinned', 'chat', 'comparison', 'model_conversation', 'decision', 'image')
 
 
 def category(record):

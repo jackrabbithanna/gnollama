@@ -475,6 +475,70 @@ msgstr "サーバーの応答に回答が含まれていません。"
 msgid "The answer is not valid for this question."
 msgstr "この回答はこの質問に対して有効ではありません。"
 
+#: src/image_generation.py
+msgid "Aspect ratio"
+msgstr "アスペクト比"
+
+#: src/image_generation.py
+msgid "Resolution"
+msgstr "解像度"
+
+#: src/image_generation.py
+msgid "Quality"
+msgstr "品質"
+
+#: src/image_generation.py
+msgid "Output format"
+msgstr "出力形式"
+
+#: src/image_generation.py
+msgid "Background"
+msgstr "背景"
+
+#: src/image_generation.py
+msgid "Number of images"
+msgstr "画像の枚数"
+
+#: src/image_generation.py
+msgid "This server does not offer image generation."
+msgstr "このサーバーは画像生成を提供していません。"
+
+#: src/image_generation.py
+msgid "Enter a prompt."
+msgstr "プロンプトを入力してください。"
+
+#: src/image_generation.py
+msgid "This model does not take reference images."
+msgstr "このモデルは参照画像を受け付けません。"
+
+#: src/image_generation.py
+#, python-brace-format
+msgid "This model takes at most {0} reference image."
+msgid_plural "This model takes at most {0} reference images."
+msgstr[0] "このモデルが受け付ける参照画像は最大 {0} 枚です。"
+
+#: src/image_generation.py
+#, python-brace-format
+msgid "This model does not take the setting {0}."
+msgstr "このモデルは設定「{0}」を受け付けません。"
+
+#: src/image_generation.py
+#, python-brace-format
+msgid "This model does not take that value for {0}."
+msgstr "このモデルは {0} にその値を受け付けません。"
+
+#: src/image_generation.py
+msgid "The server did not return an image."
+msgstr "サーバーは画像を返しませんでした。"
+
+#: src/image_run.py
+msgid "The model answered without an image."
+msgstr "モデルは画像なしで応答しました。"
+
+#: src/image_run.py
+msgid "The server returned an image that cannot be read."
+msgstr "サーバーが読み取れない画像を返しました。"
+
 #: src/providers/systemone.py:51
 msgid "Images sent to this server must be PNG or JPEG."
 msgstr "このサーバーに送信する画像は PNG または JPEG である必要があります。"
@@ -1744,6 +1808,18 @@ msgstr "画像をクリア"
 msgid "Could not restore an image. Remove it before sending."
 msgstr "画像を復元できませんでした。送信前に削除してください。"
 
+#: src/widgets/chat_input.py
+msgid "Select an image model"
+msgstr "画像モデルを選択"
+
+#: src/widgets/chat_input.py
+msgid "No image models found on this server."
+msgstr "このサーバーに画像モデルが見つかりません。"
+
+#: src/widgets/chat_input.py
+msgid "Checking image models…"
+msgstr "画像モデルを確認中…"
+
 #: src/widgets/chat_input.ui:35
 msgid "Select Model"
 msgstr "モデルを選択"
@@ -1832,9 +1908,57 @@ msgstr "もう一度実行"
 msgid "Stop All"
 msgstr "すべて停止"
 
+#: src/widgets/decision_view.py
+msgid "Load later runs"
+msgstr "以降の実行を読み込む"
+
 #: src/widgets/feedback.py:15
 msgid "Copied"
 msgstr "コピーしました"
+
+#: src/widgets/history_sidebar.py
+msgid "Recent images"
+msgstr "最近の画像"
+
+#: src/widgets/image_results.py
+msgid "This image cannot be shown here. Use Save Image… to open it in another app."
+msgstr "この画像はここでは表示できません。「画像を保存…」で保存して、別のアプリで開いてください。"
+
+#: src/widgets/image_results.py
+msgid "Save Image…"
+msgstr "画像を保存…"
+
+#: src/widgets/image_results.py
+msgid "Copy Image"
+msgstr "画像をコピー"
+
+#: src/widgets/image_results.py
+msgid "Use as Reference"
+msgstr "参照として使用"
+
+#: src/widgets/image_results.py
+msgid "Save Image"
+msgstr "画像を保存"
+
+#: src/widgets/image_settings.py
+msgid "Leave empty for a random seed."
+msgstr "空欄にするとランダムなシードになります。"
+
+#: src/widgets/image_view.py
+msgid "New Image"
+msgstr "新しい画像"
+
+#: src/widgets/image_view.py
+msgid "Prompt"
+msgstr "プロンプト"
+
+#: src/widgets/image_view.py
+msgid "Describe the image to generate."
+msgstr "生成する画像を説明してください。"
+
+#: src/widgets/image_view.py
+msgid "Generate"
+msgstr "生成"
 
 #: src/widgets/json_view.py:50
 msgid "JSON files"

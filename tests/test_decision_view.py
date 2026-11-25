@@ -1007,6 +1007,36 @@ class DecisionTests(unittest.TestCase):
         other.show_message('nothing')
         pump_until(lambda: self.context.services.idle)
         self.assertEqual(len(other.runs), 50)
+        # Later runs are offered, and loaded up to the session's last.
+        self.assertTrue(other.later.get_visible())
+        other.later.emit('clicked')
+        pump_until(lambda: len(other.runs) == 70)
+        self.assertFalse(other.later.get_visible())
+        self.assertEqual([view.run['id'] for view in self.find(other.results, RunView)],
+                         [f'run-{index}' for index in range(70)])
+        self.assertFalse(tab.later.get_visible())
+
+    def test_a_session_opened_at_a_search_hit_edits_its_last_run_and_new_runs_follow_it(self):
+        library = self.storage.library
+        settings = DecisionSettings.from_stored(dict(questions=QUESTIONS, target=dict(host_id=self.host['id'], model='blind')))
+        for index in range(70):
+            library.create_decision_run(dict(settings.to_stored(), id=f'run-{index}', session_id='long',
+                                             new_session=index == 0, state=f'State {index}', images=[]))
+            library.finish_decision_run(f'run-{index}', 'done', ANSWER)
+        tab = self.make_tab(saved=self.storage.conversation_page('long', 'run-3'))
+        self.assertEqual(list(tab.runs), [f'run-{index}' for index in range(50)])
+        self.assertTrue(tab.later.get_visible())
+        # The editor holds the session's last run, not the last one on the page.
+        self.assertEqual(tab.state_text(), 'State 69')
+        tab.chat_input.entry.restore_draft('State 70')
+        pump_until(lambda: tab.run_button.get_sensitive())
+        tab.run_button.emit('clicked')
+        pump_until(lambda: tab.request is None and self.storage.writer.idle and not self.storage.pending_callbacks
+                   and len(tab.runs) == 50 and 'run-0' not in tab.runs)
+        new = library.decision_runs('long')[-1]['id']
+        # The new run follows the session's last, on the last page.
+        self.assertEqual(list(tab.runs), [f'run-{index}' for index in range(21, 70)] + [new])
+        self.assertFalse(tab.later.get_visible())
 
     # Drafts.
 

@@ -529,6 +529,71 @@ msgstr "A resposta do servidor não contém respostas."
 msgid "The answer is not valid for this question."
 msgstr "A resposta não é válida para esta pergunta."
 
+#: src/image_generation.py
+msgid "Aspect ratio"
+msgstr "Proporção"
+
+#: src/image_generation.py
+msgid "Resolution"
+msgstr "Resolução"
+
+#: src/image_generation.py
+msgid "Quality"
+msgstr "Qualidade"
+
+#: src/image_generation.py
+msgid "Output format"
+msgstr "Formato de saída"
+
+#: src/image_generation.py
+msgid "Background"
+msgstr "Fundo"
+
+#: src/image_generation.py
+msgid "Number of images"
+msgstr "Número de imagens"
+
+#: src/image_generation.py
+msgid "This server does not offer image generation."
+msgstr "Este servidor não oferece geração de imagens."
+
+#: src/image_generation.py
+msgid "Enter a prompt."
+msgstr "Introduza um prompt."
+
+#: src/image_generation.py
+msgid "This model does not take reference images."
+msgstr "Este modelo não aceita imagens de referência."
+
+#: src/image_generation.py
+#, python-brace-format
+msgid "This model takes at most {0} reference image."
+msgid_plural "This model takes at most {0} reference images."
+msgstr[0] "Este modelo aceita no máximo {0} imagem de referência."
+msgstr[1] "Este modelo aceita no máximo {0} imagens de referência."
+
+#: src/image_generation.py
+#, python-brace-format
+msgid "This model does not take the setting {0}."
+msgstr "Este modelo não aceita a definição {0}."
+
+#: src/image_generation.py
+#, python-brace-format
+msgid "This model does not take that value for {0}."
+msgstr "Este modelo não aceita esse valor para {0}."
+
+#: src/image_generation.py
+msgid "The server did not return an image."
+msgstr "O servidor não devolveu nenhuma imagem."
+
+#: src/image_run.py
+msgid "The model answered without an image."
+msgstr "O modelo respondeu sem uma imagem."
+
+#: src/image_run.py
+msgid "The server returned an image that cannot be read."
+msgstr "O servidor devolveu uma imagem que não pode ser lida."
+
 #: src/providers/systemone.py:51
 msgid "Images sent to this server must be PNG or JPEG."
 msgstr "As imagens enviadas para este servidor devem ser PNG ou JPEG."
@@ -1854,6 +1919,18 @@ msgstr "Remover imagem"
 msgid "Could not restore an image. Remove it before sending."
 msgstr "Não foi possível restaurar uma imagem. Remova-a antes de enviar."
 
+#: src/widgets/chat_input.py
+msgid "Select an image model"
+msgstr "Selecione um modelo de imagem"
+
+#: src/widgets/chat_input.py
+msgid "No image models found on this server."
+msgstr "Não foram encontrados modelos de imagem neste servidor."
+
+#: src/widgets/chat_input.py
+msgid "Checking image models…"
+msgstr "A verificar modelos de imagem…"
+
 #: src/widgets/chat_input.ui:35
 msgid "Select Model"
 msgstr "Selecionar modelo"
@@ -1944,9 +2021,57 @@ msgstr "Executar novamente"
 msgid "Stop All"
 msgstr "Parar tudo"
 
+#: src/widgets/decision_view.py
+msgid "Load later runs"
+msgstr "Carregar execuções posteriores"
+
 #: src/widgets/feedback.py:15
 msgid "Copied"
 msgstr "Copiado"
+
+#: src/widgets/history_sidebar.py
+msgid "Recent images"
+msgstr "Imagens recentes"
+
+#: src/widgets/image_results.py
+msgid "This image cannot be shown here. Use Save Image… to open it in another app."
+msgstr "Não é possível mostrar esta imagem aqui. Use «Guardar imagem…» para a abrir noutra aplicação."
+
+#: src/widgets/image_results.py
+msgid "Save Image…"
+msgstr "Guardar imagem…"
+
+#: src/widgets/image_results.py
+msgid "Copy Image"
+msgstr "Copiar imagem"
+
+#: src/widgets/image_results.py
+msgid "Use as Reference"
+msgstr "Usar como referência"
+
+#: src/widgets/image_results.py
+msgid "Save Image"
+msgstr "Guardar imagem"
+
+#: src/widgets/image_settings.py
+msgid "Leave empty for a random seed."
+msgstr "Deixe vazio para uma semente aleatória."
+
+#: src/widgets/image_view.py
+msgid "New Image"
+msgstr "Nova imagem"
+
+#: src/widgets/image_view.py
+msgid "Prompt"
+msgstr "Prompt"
+
+#: src/widgets/image_view.py
+msgid "Describe the image to generate."
+msgstr "Descreva a imagem a gerar."
+
+#: src/widgets/image_view.py
+msgid "Generate"
+msgstr "Gerar"
 
 #: src/widgets/json_view.py:50
 msgid "JSON files"

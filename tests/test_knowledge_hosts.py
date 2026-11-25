@@ -290,13 +290,13 @@ class HostKindMigrationTests(unittest.TestCase):
             context = AppContext(temp)
             try:
                 db = context.storage.db
-                self.assertIn('.pre-v14-', db.backup_path)
+                self.assertIn('.pre-v15-', db.backup_path)
                 with sqlite3.connect(db.backup_path) as backup:
                     self.assertEqual(backup.execute('PRAGMA user_version').fetchone()[0], 12)
                     self.assertNotIn('host_kind', self.columns(backup, 'knowledge_collections'))
                     self.assertEqual(backup.execute('SELECT host FROM knowledge_indexes').fetchone()[0], URL)
                 with db._get_conn() as conn:
-                    self.assertEqual(conn.execute('PRAGMA user_version').fetchone()[0], 14)
+                    self.assertEqual(conn.execute('PRAGMA user_version').fetchone()[0], 15)
                 collection, index = db.knowledge.knowledge_collections()[0], db.knowledge.knowledge_indexes()[0]
                 self.assertEqual((collection['host'], collection['host_kind'], collection['ready']), (URL, 'ollama', 1))
                 self.assertEqual((index['host'], index['host_kind'], index['status']), (URL, 'ollama', 'complete'))

@@ -160,6 +160,7 @@ class GnollamaWindow(Adw.ApplicationWindow):
                    ('new_comparison', lambda *args: self.new_comparison_tab()),
                    ('new_model_conversation', lambda *args: self.new_model_conversation_tab()),
                    ('new_decision', lambda *args: self.new_decision_tab()),
+                   ('new_image', lambda *args: self.new_image_tab()),
                    ('new_chat_tab', lambda *args: self.new_chat_tab()),
                    ('clear_history', self.on_clear_history),
                    ('manage_hosts', self.on_manage_hosts),
@@ -196,14 +197,20 @@ class GnollamaWindow(Adw.ApplicationWindow):
         dialog.set_close_response('cancel')
         def response(dialog, choice):
             if choice == 'delete' and not self._shutting_down:
-                for tab in self.tabs():
-                    if isinstance(tab.strategy, ChatStrategy):
-                        self.close_tab(tab, delete=True)
-                self.storage.clear_all_chats()
-                self.new_chat_tab()
-                self.storage.after_pending_writes(self.load_history_sidebar)
+                self.clear_history()
         dialog.connect('response', response)
         dialog.present(self)
+
+    def clear_history(self):
+        """Delete every saved conversation and close the tabs that show one."""
+        for tab in self.tabs():
+            # Every chat tab, and any other kind once it has a session: comparisons, model
+            # conversations, decisions, and images keep theirs in the chats that are deleted.
+            if isinstance(tab.strategy, ChatStrategy) or tab.strategy.chat_id is not None:
+                self.close_tab(tab, delete=True)
+        self.storage.clear_all_chats()
+        self.new_chat_tab()
+        self.storage.after_pending_writes(self.load_history_sidebar)
 
     def on_manage_hosts(self, *args):
         dialog = HostManagerDialog(self.context, on_hosts_changed_cb=self.on_hosts_changed)
@@ -249,7 +256,8 @@ class GnollamaWindow(Adw.ApplicationWindow):
         self.section_stack.set_visible_child_name('chats')
         page = self.tab_view.append(tab)
         tab.bind_property('title', page, 'title', GObject.BindingFlags.SYNC_CREATE)
-        icons = dict(chat='network-server-symbolic', decision='gnollama-decision-symbolic')
+        icons = dict(chat='network-server-symbolic', decision='gnollama-decision-symbolic',
+                     image='gnollama-image-symbolic')
         page.set_icon(Gio.ThemedIcon.new(icons.get(tab.mode, 'edit-find-symbolic')))
         def request_changed(*args):
             page.set_loading(tab.request is not None)
@@ -271,6 +279,10 @@ class GnollamaWindow(Adw.ApplicationWindow):
     def new_decision_tab(self):
         from .widgets.decision_view import DecisionTab
         return self._add_tab(DecisionTab(self.context))
+
+    def new_image_tab(self):
+        from .widgets.image_view import ImageTab
+        return self._add_tab(ImageTab(self.context))
 
     def new_tab(self):
         return self._add_tab(GenerationTab(mode='generate', context=self.context))
@@ -295,6 +307,9 @@ class GnollamaWindow(Adw.ApplicationWindow):
         if chat_data.get('kind') == 'decision':
             from .widgets.decision_view import DecisionTab
             return self._add_tab(DecisionTab(self.context, saved=chat_data))
+        if chat_data.get('kind') == 'image':
+            from .widgets.image_view import ImageTab
+            return self._add_tab(ImageTab(self.context, saved=chat_data))
         return self._add_tab(GenerationTab(mode='chat', chat_id=chat_data['id'],
                                            initial_history=chat_data.get('messages', []), context=self.context, chat_data=chat_data))
 
@@ -386,6 +401,9 @@ class GnollamaWindow(Adw.ApplicationWindow):
                 elif draft['mode'] == 'decision':
                     from .widgets.decision_view import DecisionTab
                     self._add_tab(DecisionTab(self.context, draft=draft))
+                elif draft['mode'] == 'image':
+                    from .widgets.image_view import ImageTab
+                    self._add_tab(ImageTab(self.context, draft=draft))
                 else:
                     self._add_tab(GenerationTab(mode=draft['mode'], context=self.context, draft=draft))
             return False

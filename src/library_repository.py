@@ -28,6 +28,9 @@ class LibraryRepository:
     def create_decision_run(self, *args, **kwargs):
         return self._database.decisions.create_decision_run(*args, **kwargs)
 
+    def create_image_run(self, *args, **kwargs):
+        return self._database.images.create_image_run(*args, **kwargs)
+
     def create_knowledge_collection(self, *args, **kwargs):
         return self._database.knowledge.create_knowledge_collection(*args, **kwargs)
 
@@ -67,11 +70,17 @@ class LibraryRepository:
     def finish_decision_run(self, *args, **kwargs):
         return self._database.decisions.finish_decision_run(*args, **kwargs)
 
+    def finish_image_run(self, *args, **kwargs):
+        return self._database.images.finish_image_run(*args, **kwargs)
+
     def finish_knowledge_index(self, *args, **kwargs):
         return self._database.knowledge.finish_knowledge_index(*args, **kwargs)
 
     def finish_model_conversation_attempt(self, *args, **kwargs):
         return self._database.model_conversations.finish_model_conversation_attempt(*args, **kwargs)
+
+    def image_runs(self, *args, **kwargs):
+        return self._database.images.image_runs(*args, **kwargs)
 
     def import_collection_document(self, *args, **kwargs):
         return self._database.knowledge.import_collection_document(*args, **kwargs)

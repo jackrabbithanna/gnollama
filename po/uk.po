@@ -525,6 +525,72 @@ msgstr "Відповідь сервера не містить відповіде
 msgid "The answer is not valid for this question."
 msgstr "Відповідь недійсна для цього запитання."
 
+#: src/image_generation.py
+msgid "Aspect ratio"
+msgstr "Співвідношення сторін"
+
+#: src/image_generation.py
+msgid "Resolution"
+msgstr "Роздільна здатність"
+
+#: src/image_generation.py
+msgid "Quality"
+msgstr "Якість"
+
+#: src/image_generation.py
+msgid "Output format"
+msgstr "Формат виводу"
+
+#: src/image_generation.py
+msgid "Background"
+msgstr "Тло"
+
+#: src/image_generation.py
+msgid "Number of images"
+msgstr "Кількість зображень"
+
+#: src/image_generation.py
+msgid "This server does not offer image generation."
+msgstr "Цей сервер не пропонує створення зображень."
+
+#: src/image_generation.py
+msgid "Enter a prompt."
+msgstr "Введіть запит."
+
+#: src/image_generation.py
+msgid "This model does not take reference images."
+msgstr "Ця модель не приймає опорні зображення."
+
+#: src/image_generation.py
+#, python-brace-format
+msgid "This model takes at most {0} reference image."
+msgid_plural "This model takes at most {0} reference images."
+msgstr[0] "Ця модель приймає не більше {0} опорного зображення."
+msgstr[1] "Ця модель приймає не більше {0} опорних зображень."
+msgstr[2] "Ця модель приймає не більше {0} опорних зображень."
+
+#: src/image_generation.py
+#, python-brace-format
+msgid "This model does not take the setting {0}."
+msgstr "Ця модель не приймає параметр {0}."
+
+#: src/image_generation.py
+#, python-brace-format
+msgid "This model does not take that value for {0}."
+msgstr "Ця модель не приймає це значення для {0}."
+
+#: src/image_generation.py
+msgid "The server did not return an image."
+msgstr "Сервер не повернув зображення."
+
+#: src/image_run.py
+msgid "The model answered without an image."
+msgstr "Модель відповіла без зображення."
+
+#: src/image_run.py
+msgid "The server returned an image that cannot be read."
+msgstr "Сервер повернув зображення, яке неможливо прочитати."
+
 #: src/providers/systemone.py:51
 msgid "Images sent to this server must be PNG or JPEG."
 msgstr "Зображення, що надсилаються на цей сервер, мають бути у форматі PNG або JPEG."
@@ -1844,6 +1910,18 @@ msgstr "Прибрати зображення"
 msgid "Could not restore an image. Remove it before sending."
 msgstr "Не вдалося відновити зображення. Видаліть його перед надсиланням."
 
+#: src/widgets/chat_input.py
+msgid "Select an image model"
+msgstr "Оберіть модель зображень"
+
+#: src/widgets/chat_input.py
+msgid "No image models found on this server."
+msgstr "На цьому сервері не знайдено моделей зображень."
+
+#: src/widgets/chat_input.py
+msgid "Checking image models…"
+msgstr "Перевірка моделей зображень…"
+
 #: src/widgets/chat_input.ui:35
 msgid "Select Model"
 msgstr "Обрати модель"
@@ -1934,9 +2012,57 @@ msgstr "Запустити знову"
 msgid "Stop All"
 msgstr "Зупинити всі"
 
+#: src/widgets/decision_view.py
+msgid "Load later runs"
+msgstr "Завантажити наступні запуски"
+
 #: src/widgets/feedback.py:15
 msgid "Copied"
 msgstr "Скопійовано"
+
+#: src/widgets/history_sidebar.py
+msgid "Recent images"
+msgstr "Нещодавні зображення"
+
+#: src/widgets/image_results.py
+msgid "This image cannot be shown here. Use Save Image… to open it in another app."
+msgstr "Це зображення неможливо показати тут. Скористайтеся «Зберегти зображення…», щоб відкрити його в іншій програмі."
+
+#: src/widgets/image_results.py
+msgid "Save Image…"
+msgstr "Зберегти зображення…"
+
+#: src/widgets/image_results.py
+msgid "Copy Image"
+msgstr "Копіювати зображення"
+
+#: src/widgets/image_results.py
+msgid "Use as Reference"
+msgstr "Використати як опорне"
+
+#: src/widgets/image_results.py
+msgid "Save Image"
+msgstr "Зберегти зображення"
+
+#: src/widgets/image_settings.py
+msgid "Leave empty for a random seed."
+msgstr "Залиште порожнім для випадкового початкового числа."
+
+#: src/widgets/image_view.py
+msgid "New Image"
+msgstr "Нове зображення"
+
+#: src/widgets/image_view.py
+msgid "Prompt"
+msgstr "Запит"
+
+#: src/widgets/image_view.py
+msgid "Describe the image to generate."
+msgstr "Опишіть зображення, яке потрібно створити."
+
+#: src/widgets/image_view.py
+msgid "Generate"
+msgstr "Створити"
 
 #: src/widgets/json_view.py:50
 msgid "JSON files"

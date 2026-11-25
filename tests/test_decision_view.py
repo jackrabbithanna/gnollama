@@ -780,6 +780,24 @@ class DecisionTests(unittest.TestCase):
         self.assertIn('"score": 99', self.text(raw[1].get_child().get_child()))
         self.assertEqual(self.find(view, Gtk.LevelBar), [])
 
+    def test_what_a_host_adds_to_an_answer_is_shown_on_its_card(self):
+        answer = copy.deepcopy(ANSWER)
+        answer['answers']['billing'].update(confidence=0.91, unknown_probability=0.0312345, abstained=False)
+        answer['answers']['tone'].update(abstained=True, note=None, alternatives=['calm', 'angry'])
+        self.decide.return_value = answer
+        tab = self.make_tab()
+        view = tab.runs[self.run_tab(tab)[0]['id']]
+        billing, tone, urgency = (self.labels(card) for card in self.find(view.cards, Gtk.Frame)[:3])
+        self.assertIn('Confidence: 91%', billing)
+        self.assertIn('Unknown probability: 0.03123', billing)
+        self.assertIn('Abstained: No', billing)
+        self.assertIn('Abstained: Yes', tone)
+        self.assertIn('Note: –', tone)
+        self.assertFalse(any(label.startswith(('Abstained', 'Unknown')) for label in urgency))
+        folded = self.find(view.cards, Gtk.Expander)
+        self.assertEqual([expander.get_label() for expander in folded], ['Alternatives'])
+        self.assertIn('"angry"', self.text(folded[0].get_child().get_child()))
+
     def test_a_failed_run_is_saved_with_its_error_and_says_so(self):
         self.decide.side_effect = ProviderError('The model is not loaded.')
         tab = self.make_tab()

@@ -3,7 +3,7 @@ from gettext import gettext as _
 from decimal import Decimal
 import json
 from gi.repository import Adw, Gtk, Pango
-from ..decision import EDGES, box_rect, parse_questions, parse_result
+from ..decision import EDGES, TYPES as ANSWERED, box_rect, parse_questions, parse_result
 from ..model_summary import amount
 from .decision_form import compact, type_label
 from .decision_images import load, thumbnail
@@ -44,6 +44,28 @@ def confidence(answer):
 def raw_block(label, value):
     """JSON as the host sent it, folded away."""
     return Gtk.Expander(label=label, child=text_block(json.dumps(value, ensure_ascii=False, indent=2)))
+
+
+def extras(answer):
+    """What a host said of an answer beyond its type's own fields, such as `abstained`, a line for each.
+
+    The names are the host's, so they are shown as sent and not translated; a value that is not a
+    single one is folded away as JSON.
+    """
+    widgets = []
+    for key, value in answer.extra.items():
+        name = str(key).replace('_', ' ').strip().capitalize() or str(key)
+        if isinstance(value, (dict, list)):
+            widgets.append(raw_block(name, value))
+            continue
+        if isinstance(value, bool):
+            shown = _('Yes') if value else _('No')
+        elif isinstance(value, float):
+            shown = f'{value:.4g}'
+        else:
+            shown = '–' if value is None else str(value)
+        widgets.append(line(f'{name}: {shown}', 'dim-label'))
+    return widgets
 
 
 def noul_card(question, answer, run, read):
@@ -189,7 +211,9 @@ def answer_card(question, answer, run, read=load):
     box.append(head)
     if isinstance(question.instructions, str) and question.instructions:
         box.append(line(question.instructions, 'dim-label'))
-    for widget in CARDS[answer.type](question, answer, run, read):
+    widgets = CARDS[answer.type](question, answer, run, read)
+    # A refused or invalid answer already shows everything it came with.
+    for widget in widgets + (extras(answer) if answer.type in ANSWERED else []):
         box.append(widget)
     card = Gtk.Frame(child=box)
     card.answer = answer

@@ -304,6 +304,8 @@ Enter the state as **Text** or **JSON**, attach images if the model takes them, 
 
 **Edit as JSON…** shows the same questions as JSON, to edit, import, or export. **Run** sends the request and adds a result with a card for each question, the model that answered, token counts, and the cost where the server reports one. **Stop** cancels a run. Whatever the selected model cannot be sent, such as an image, a box question, or more questions than it takes, holds **Run** back with the reason; nothing is left out of a request.
 
+![Decision model answering a choice question](screenshots/gnollama-decision-models.png)
+
 Some models take only images of certain sizes; a note appears when an image for a box question is under 256 or over 1568 pixels on a side, and a model's own refusal is shown as the run's error. OpenRouter and Vercel take PNG and JPEG, so other formats are converted to PNG before they are sent.
 
 Every run is saved in its session with its state, images, questions, and answers. Sessions appear in the **Decisions** section under **Recent decisions**, with drafts, search over the state of each run, pinning, rename, deletion, and Markdown/JSON export. Reopening a session sends nothing.

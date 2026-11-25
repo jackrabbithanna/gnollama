@@ -6,13 +6,15 @@
          xmlns="http://usefulinc.com/ns/doap#">
 
   <name>gnollama</name>
-  <shortdesc xml:lang="en">gnollama, a Gnome based Ollama UI</shortdesc>
+  <shortdesc xml:lang="en">gnollama, a GNOME app for chatting with local and cloud AI models</shortdesc>
   <description xml:lang="en">
-A GNOME based user interface to Ollama. Supports connecting to models from any host. Both Ollama "generate response" and "chat" APIs.
-Supports choosing multiple images to send in the prompt.
-Supports rendering Markdown and code highlighting in responses.
-Saves chat history and allows management of saved chats.
-Supports images, system prompts, thinking controls, log probabilities, and generation settings such as temperature.
+A GNOME user interface for local and cloud AI models. Connects to Ollama, LM Studio, and other OpenAI-compatible servers, and to Ollama Cloud, OpenAI, OpenRouter, and the Vercel AI Gateway.
+Supports multi-turn chats and single-turn responses, side-by-side comparisons of several models, and conversations between two models.
+Supports decision models, which answer yes/no, choice, score, and box questions with probabilities, and generating images from a prompt.
+Builds knowledge collections from documents, web pages, and images, and uses them as sources for chat answers.
+Supports images, system prompts, thinking controls, structured JSON output, tool calling, and generation settings such as temperature.
+Renders Markdown, tables, math, and highlighted code in responses.
+Saves chats, decisions, and images, with drafts, search, and pinning.
   </description>
 
   <homepage rdf:resource="https://github.com/jackrabbithanna/gnollama/" />

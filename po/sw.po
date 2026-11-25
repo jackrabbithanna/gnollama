@@ -3949,6 +3949,22 @@ msgstr "Vercel AI Gateway"
 msgid "Vercel AI Gateway requires {0}."
 msgstr "Vercel AI Gateway inahitaji {0}."
 
+#: src/providers/openai_platform.py
+msgid "OpenAI"
+msgstr "OpenAI"
+
+#: src/providers/openai_platform.py
+msgid "OpenAI requires {0}."
+msgstr "OpenAI inahitaji {0}."
+
+#: src/providers/openai_platform.py
+msgid "{host} takes Temperature, Top P, and logprobs only with thinking Off."
+msgstr "{host} inakubali Halijoto, Top P na logprobs tu wakati kufikiri kumezimwa."
+
+#: src/providers/openai_platform.py
+msgid "The response failed."
+msgstr "Jibu limeshindwa."
+
 #: src/model_manager.py
 msgid "Context Length"
 msgstr "Urefu wa muktadha"

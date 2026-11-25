@@ -1,0 +1,68 @@
+{
+ "_note": "Recorded from api.openai.com on 2026-11-24; the image is replaced by a 64x64 PNG, and the quota error is not recorded.",
+ "answer": {
+  "created": 1795582094,
+  "background": "opaque",
+  "data": [
+   {
+    "b64_json": "iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAIAAAAlC+aJAAAAWUlEQVR4nO3PAQkAIBAAsUfsX1ljHA9bg903u51ZTqAmUBOoCdQEagI1gZpATaAmUBOoCdQEagI1gZpATaAmUBOoCdQEagI1gZpATaAmUBOoCdQEagI1gdoH40UBggJ60zAAAAAASUVORK5CYII=",
+    "generation_id": "30c41bd2-3a98-4c78-b99d-e9a97ce5d5f1"
+   }
+  ],
+  "output_format": "png",
+  "quality": "low",
+  "safety_identifier": null,
+  "size": "1024x1024",
+  "usage": {
+   "input_tokens": 17,
+   "input_tokens_details": {
+    "image_tokens": 0,
+    "text_tokens": 17
+   },
+   "output_tokens": 272,
+   "output_tokens_details": {
+    "image_tokens": 272,
+    "text_tokens": 0
+   },
+   "total_tokens": 289
+  }
+ },
+ "errors": {
+  "transparent": {
+   "status": 400,
+   "body": {
+    "error": {
+     "message": "Transparent background is not supported for this model.",
+     "type": "image_generation_user_error",
+     "param": "background",
+     "code": "invalid_value"
+    }
+   },
+   "says": "background: Transparent background is not supported for this model."
+  },
+  "quality": {
+   "status": 400,
+   "body": {
+    "error": {
+     "message": "Invalid value: 'ultra'. Supported values are: 'low', 'medium', 'high', and 'auto'.",
+     "type": "invalid_request_error",
+     "param": "quality",
+     "code": "invalid_value"
+    }
+   },
+   "says": "quality: Invalid value: 'ultra'. Supported values are: 'low', 'medium', 'high', and 'auto'."
+  },
+  "quota": {
+   "status": 429,
+   "body": {
+    "error": {
+     "message": "You exceeded your current quota, please check your plan and billing details.",
+     "type": "insufficient_quota",
+     "param": null,
+     "code": "insufficient_quota"
+    }
+   },
+   "says": "You exceeded your current quota, please check your plan and billing details."
+  }
+ }
+}

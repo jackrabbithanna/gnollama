@@ -15,12 +15,15 @@ from src.providers import (LMStudioProvider, OllamaCloudProvider, OllamaProvider
                            OpenRouterProvider, ProviderError, RequestCancelled, generates)
 from src.providers import imaging
 from src.providers.openai import fingerprint
+from src.providers.openai_platform import OpenAIProvider
 from src.providers.vercel import VercelProvider
 from src.services import Services
 
 FIXTURES = Path(__file__).parent / 'fixtures'
 ROUTER = json.loads((FIXTURES / 'images_openrouter.json').read_text())
 GATEWAY = json.loads((FIXTURES / 'images_vercel.json').read_text())
+OFFICIAL = json.loads((FIXTURES / 'images_openai.json').read_text())
+OPENAI_MODELS = json.loads((FIXTURES / 'openai_models.json').read_text())
 PNG = ROUTER['answer']['data'][0]['b64_json']
 JPEG = base64.b64encode(b'\xff\xd8\xff\xe0' + b'\0' * 16).decode()
 PROMPT = 'A small red apple on a white table'
@@ -435,3 +438,58 @@ class CatalogTests(Served, unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class OpenAITests(Generating, unittest.TestCase):
+    KIND = OpenAIProvider
+    PREFIX = '/openai'
+    RECORDED = OFFICIAL
+    MODEL = 'gpt-image-1-mini'
+
+    def lists(self):
+        return {'/models': OPENAI_MODELS}
+
+    def answer(self):
+        return OFFICIAL['answer']
+
+    def test_image_models_come_from_the_one_list_with_the_settings_every_one_takes(self):
+        provider = self.provider()
+        entries = {entry['name']: entry for entry in provider.list_image_models()}
+        self.assertEqual(self.paths(), ['/openai/v1/models'])
+        self.assertEqual(sorted(entries), sorted(model['id'] for model in OPENAI_MODELS['data']
+                                                 if model['id'].startswith(('gpt-image-', 'chatgpt-image'))))
+        created = next(model['created'] for model in OPENAI_MODELS['data'] if model['id'] == self.MODEL)
+        settings = {'aspect_ratio': {'type': 'enum', 'values': ['1:1', '3:2', '2:3']},
+                    'quality': {'type': 'enum', 'values': ['low', 'medium', 'high']},
+                    'output_format': {'type': 'enum', 'values': ['png', 'jpeg', 'webp']},
+                    'background': {'type': 'enum', 'values': ['transparent', 'opaque']},
+                    'n': {'type': 'range', 'min': 1, 'max': 10},
+                    'input_references': {'type': 'range', 'min': 0, 'max': 16}}
+        self.assertEqual(entries[self.MODEL], {'name': self.MODEL, 'digest': fingerprint(self.MODEL, created),
+                                               'capabilities': ['image', 'vision'], 'image_parameters': settings})
+        # gpt-image-2 refuses a transparent background, and its dated snapshot with it.
+        for name in ('gpt-image-2', 'gpt-image-2-2026-04-21'):
+            self.assertEqual(entries[name]['image_parameters']['background'], {'type': 'enum', 'values': ['opaque']})
+        parameters = provider.image_parameters(entries[self.MODEL])
+        self.assertEqual(([option.name for option in parameters.options], parameters.count(), parameters.references),
+                         (['aspect_ratio', 'quality', 'output_format', 'background', 'n'], (1, 10), 16))
+        self.assertEqual(provider.show_model(self.MODEL), {key: value for key, value in entries[self.MODEL].items()
+                                                            if key not in ('name', 'digest')})
+
+    def test_aspect_ratio_is_sent_as_a_size_and_references_go_to_edits(self):
+        answer = self.generate(options={'aspect_ratio': '3:2', 'quality': 'low', 'n': 2})
+        self.assertEqual(self.paths(), ['/openai/v1/images/generations'])
+        self.assertEqual(self.sent(), {'model': self.MODEL, 'prompt': PROMPT, 'size': '1536x1024', 'quality': 'low',
+                                       'n': 2})
+        result = image_generation.parse_result(answer)
+        self.assertEqual(result.images, (image_generation.GeneratedImage(OFFICIAL['answer']['data'][0]['b64_json'],
+                                                                         'image/png'),))
+        self.assertIsNone(result.cost)  # OpenAI gives tokens, not a price.
+        self.generate()
+        self.assertEqual(self.sent(), {'model': self.MODEL, 'prompt': PROMPT})
+        self.generate(options={'aspect_ratio': '2:3'}, references=[PNG, 'data:image/jpeg;base64,' + JPEG])
+        self.assertEqual(self.paths()[-1], '/openai/v1/images/edits')
+        self.assertEqual(self.sent(), {'model': self.MODEL, 'prompt': PROMPT, 'size': '1024x1536', 'images': [
+            {'image_url': 'data:image/png;base64,' + PNG}, {'image_url': 'data:image/jpeg;base64,' + JPEG}]})
+        with self.assertRaisesRegex(ProviderError, 'does not accept: seed'):
+            self.generate(options={'seed': 1})

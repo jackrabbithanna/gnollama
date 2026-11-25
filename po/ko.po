@@ -3789,6 +3789,22 @@ msgstr "Vercel AI Gateway"
 msgid "Vercel AI Gateway requires {0}."
 msgstr "Vercel AI Gateway에는 {0}이(가) 필요합니다."
 
+#: src/providers/openai_platform.py
+msgid "OpenAI"
+msgstr "OpenAI"
+
+#: src/providers/openai_platform.py
+msgid "OpenAI requires {0}."
+msgstr "OpenAI에는 {0}이(가) 필요합니다."
+
+#: src/providers/openai_platform.py
+msgid "{host} takes Temperature, Top P, and logprobs only with thinking Off."
+msgstr "{host}은(는) 생각이 끄기일 때만 온도, Top P, logprobs를 받습니다."
+
+#: src/providers/openai_platform.py
+msgid "The response failed."
+msgstr "응답에 실패했습니다."
+
 #: src/model_manager.py
 msgid "Context Length"
 msgstr "컨텍스트 길이"

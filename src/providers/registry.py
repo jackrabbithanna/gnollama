@@ -4,11 +4,12 @@ from gettext import gettext as _
 from .ollama import OllamaCloudProvider, OllamaProvider
 from .lmstudio import LMStudioProvider
 from .openai import OpenAICompatibleProvider
+from .openai_platform import OpenAIProvider
 from .openrouter import OpenRouterProvider
 from .vercel import VercelProvider
 
 PROVIDERS = {cls.kind: cls for cls in (OllamaProvider, OllamaCloudProvider, OpenAICompatibleProvider,
-                                       LMStudioProvider, OpenRouterProvider, VercelProvider)}
+                                       LMStudioProvider, OpenRouterProvider, VercelProvider, OpenAIProvider)}
 
 
 def provider_class(kind):

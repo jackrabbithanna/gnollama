@@ -29,6 +29,7 @@ src/providers/base.py
 src/providers/registry.py
 src/providers/ollama.py
 src/providers/openai.py
+src/providers/openai_platform.py
 src/providers/lmstudio.py
 src/providers/imaging.py
 src/providers/openrouter.py

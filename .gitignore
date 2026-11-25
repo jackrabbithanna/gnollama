@@ -2,7 +2,7 @@
 /src/__pycache__/
 src/widgets/__pycache__/
 tests/__pycache__/
-/src/gnollama.gresource
+/src/tureen.gresource
 
 __pycache__/
 _build/

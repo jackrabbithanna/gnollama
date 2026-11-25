@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gresources>
-  <gresource prefix="/io/github/jackrabbithanna/Gnollama">
+  <gresource prefix="/io/github/jackrabbithanna/Tureen">
     <file preprocess="xml-stripblanks">window.ui</file>
     <file preprocess="xml-stripblanks">tab.ui</file>
     <file preprocess="xml-stripblanks">shortcuts-dialog.ui</file>
@@ -16,12 +16,12 @@
     <file preprocess="xml-stripblanks">widgets/message_list.ui</file>
     <file>style.css</file>
     <file>icons/scalable/actions/pin-active-symbolic.svg</file>
-    <file>icons/scalable/actions/gnollama-sidebar-symbolic.svg</file>
-    <file>icons/scalable/actions/gnollama-chats-symbolic.svg</file>
-    <file>icons/scalable/actions/gnollama-draft-symbolic.svg</file>
-    <file>icons/scalable/actions/gnollama-comparison-symbolic.svg</file>
-    <file>icons/scalable/actions/gnollama-model-conversation-symbolic.svg</file>
-    <file>icons/scalable/actions/gnollama-decision-symbolic.svg</file>
-    <file>icons/scalable/actions/gnollama-image-symbolic.svg</file>
+    <file>icons/scalable/actions/tureen-sidebar-symbolic.svg</file>
+    <file>icons/scalable/actions/tureen-chats-symbolic.svg</file>
+    <file>icons/scalable/actions/tureen-draft-symbolic.svg</file>
+    <file>icons/scalable/actions/tureen-comparison-symbolic.svg</file>
+    <file>icons/scalable/actions/tureen-model-conversation-symbolic.svg</file>
+    <file>icons/scalable/actions/tureen-decision-symbolic.svg</file>
+    <file>icons/scalable/actions/tureen-image-symbolic.svg</file>
   </gresource>
 </gresources>

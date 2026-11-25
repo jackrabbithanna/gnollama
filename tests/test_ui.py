@@ -14,7 +14,7 @@ from src.bubbles import format_statistics
 from src.app_context import AppContext
 from src.tab import GenerationTab
 from src.widgets.chat_input import ChatInput
-from src.window import GnollamaWindow
+from src.window import TureenWindow
 from test_transport import Server
 
 
@@ -367,7 +367,7 @@ class UITests(unittest.TestCase):
         self.assertEqual(self.storage.get_chat(tab.strategy.chat_id)['messages'][-1]['response_metadata']['status'], 'stopped')
 
     def make_window(self):
-        window = GnollamaWindow(context=self.context)
+        window = TureenWindow(context=self.context)
         self.windows.append(window)
         tab = window.tab_view.get_nth_page(0).get_child()
         self.tabs.append(tab)
@@ -414,9 +414,9 @@ class UITests(unittest.TestCase):
             pump_until(lambda: window._allow_close)
 
     def test_quit_action_uses_window_shutdown_coordinator(self):
-        from src.main import GnollamaApplication
+        from src.main import TureenApplication
         window, tab = self.make_window()
-        app = GnollamaApplication('0.10.0')
+        app = TureenApplication('0.10.0')
         with patch.object(app, 'get_windows', return_value=[window]), patch.object(window, 'request_shutdown') as shutdown:
             app.lookup_action('quit').activate(None)
             shutdown.assert_called_once()

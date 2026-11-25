@@ -106,7 +106,7 @@ class DatabaseManager:
             version = self._get_version(source)
             target = len(MIGRATIONS) + 1
             if version > target:
-                raise ValueError(_('This database was created by a newer Gnollama version. Update Gnollama to open it.'))
+                raise ValueError(_('This database was created by a newer Tureen version. Update Tureen to open it.'))
             if version == target:
                 return
             # Check the native dependency and limits before changing an old schema.
@@ -205,7 +205,7 @@ class DatabaseManager:
             current_version = self._get_version(conn)
 
             if current_version > target_version:
-                raise ValueError(_('This database requires a newer Gnollama version.'))
+                raise ValueError(_('This database requires a newer Tureen version.'))
             if current_version == target_version:
                 return  # Database is up-to-date
 

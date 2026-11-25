@@ -7,16 +7,16 @@ gi.require_version('Gtk', '4.0')
 gi.require_version('Adw', '1')
 
 from gi.repository import Gtk, Gio, Adw
-from .window import GnollamaWindow
+from .window import TureenWindow
 from .startup import StartupWindow
 
-class GnollamaApplication(Adw.Application):
+class TureenApplication(Adw.Application):
     """The main application singleton class."""
 
-    def __init__(self, version="0.19.0") -> None:
-        super().__init__(application_id='io.github.jackrabbithanna.Gnollama',
+    def __init__(self, version="0.20.0") -> None:
+        super().__init__(application_id='io.github.jackrabbithanna.Tureen',
                          flags=Gio.ApplicationFlags.DEFAULT_FLAGS,
-                         resource_base_path='/io/github/jackrabbithanna/Gnollama')
+                         resource_base_path='/io/github/jackrabbithanna/Tureen')
         self.version = version
         self.connect('startup', self._set_text_direction)
         self.create_action('quit', self.request_quit, ['<control>q'])
@@ -38,7 +38,7 @@ class GnollamaApplication(Adw.Application):
 
     def request_quit(self, *args):
         for window in self.get_windows():
-            if isinstance(window, GnollamaWindow):
+            if isinstance(window, TureenWindow):
                 window.request_shutdown()
                 return
             if isinstance(window, StartupWindow):
@@ -58,7 +58,7 @@ class GnollamaApplication(Adw.Application):
         win.present()
 
     def _context_ready(self, context):
-        win = GnollamaWindow(application=self, context=context)
+        win = TureenWindow(application=self, context=context)
         win.present()
         storage = context.storage
         if storage.backup_path:
@@ -69,8 +69,8 @@ class GnollamaApplication(Adw.Application):
 
     def on_about_action(self, *args: Any) -> None:
         """Callback for the app.about action."""
-        about = Adw.AboutDialog(application_name='Gnollama',
-                                application_icon='io.github.jackrabbithanna.Gnollama',
+        about = Adw.AboutDialog(application_name='Tureen',
+                                application_icon='io.github.jackrabbithanna.Tureen',
                                 developer_name='Jackrabbithanna',
                                 version=self.version,
                                 developers=['Jackrabbithanna'],
@@ -96,5 +96,5 @@ class GnollamaApplication(Adw.Application):
 
 def main(version: str) -> int:
     """The application's entry point."""
-    app = GnollamaApplication(version)
+    app = TureenApplication(version)
     return app.run(sys.argv)

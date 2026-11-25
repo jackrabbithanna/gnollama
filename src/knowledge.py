@@ -268,9 +268,9 @@ def augmented_messages(messages, snapshot, images=None):
 class KnowledgeService:
     def __init__(self, library, services, providers):
         self.library, self.services, self.providers = library, services, providers
-        self.executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix='GnollamaKnowledge')
-        self.preparations = ThreadPoolExecutor(max_workers=1, thread_name_prefix='GnollamaCollections')
-        self.imports = ThreadPoolExecutor(max_workers=2, thread_name_prefix='GnollamaURLs')
+        self.executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix='TureenKnowledge')
+        self.preparations = ThreadPoolExecutor(max_workers=1, thread_name_prefix='TureenCollections')
+        self.imports = ThreadPoolExecutor(max_workers=2, thread_name_prefix='TureenURLs')
         self._document_updates = set()
         self._document_committed = set()
         self.jobs = {}

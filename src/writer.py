@@ -6,7 +6,7 @@ from threading import Lock
 
 class OrderedWriter:
     def __init__(self, on_error=None):
-        self._executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix='GnollamaStorage')
+        self._executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix='TureenStorage')
         self._lock = Lock()
         self._jobs: deque = deque()
         self._running = False

@@ -95,17 +95,17 @@ class HostIdentityTests(unittest.TestCase):
                 self.assertFalse(models.busy(limited, 'model'))
 
     def test_window_counts_a_request_as_busy_only_for_its_own_type(self):
-        from src.window import GnollamaWindow
+        from src.window import TureenWindow
         with patch.dict(PROVIDERS, LIMITED):
             local, again, limited = self.hosts()
             request = SimpleNamespace(connection=self.context.connection(limited),
                                       settings=SimpleNamespace(target=ModelTarget(limited['id'], URL, 'model')))
             window = SimpleNamespace(context=self.context, tabs=lambda: [SimpleNamespace(request=request)])
-            self.assertTrue(GnollamaWindow.is_model_busy(window, limited, 'model'))
-            self.assertFalse(GnollamaWindow.is_model_busy(window, local, 'model'))
+            self.assertTrue(TureenWindow.is_model_busy(window, limited, 'model'))
+            self.assertFalse(TureenWindow.is_model_busy(window, local, 'model'))
             request.connection = self.context.connection(again)
-            self.assertTrue(GnollamaWindow.is_model_busy(window, local, 'model:latest'))
-            self.assertFalse(GnollamaWindow.is_model_busy(window, limited, 'model'))
+            self.assertTrue(TureenWindow.is_model_busy(window, local, 'model:latest'))
+            self.assertFalse(TureenWindow.is_model_busy(window, limited, 'model'))
 
     def test_validators_check_each_target_against_its_own_type(self):
         with patch.dict(PROVIDERS, LIMITED), provider_patch('list_models', side_effect=by_kind), \

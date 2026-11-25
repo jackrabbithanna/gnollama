@@ -21,7 +21,7 @@ class URLImportDialog(WorkDialog):
         self.items = []
         self.current = None
         self.active = 0
-        self.cache = tempfile.TemporaryDirectory(prefix='gnollama-urls-')
+        self.cache = tempfile.TemporaryDirectory(prefix='tureen-urls-')
         self.connect('closed', self._stop)
         self.setup = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
         self.box.append(self.setup)

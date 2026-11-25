@@ -11,14 +11,14 @@ import uuid
 root = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(root))
 directory = Path(sys.argv[1])
-launcher = (root / 'src/gnollama.in').read_text().replace('@localedir@', str(directory))
-exec(compile(launcher, str(root / 'src/gnollama.in'), 'exec'), {'__name__': 'locale_probe'})
+launcher = (root / 'src/tureen.in').read_text().replace('@localedir@', str(directory))
+exec(compile(launcher, str(root / 'src/tureen.in'), 'exec'), {'__name__': 'locale_probe'})
 
 import gi
 gi.require_version('GLib', '2.0')
 from gi.repository import GLib
 if sys.argv[2] == 'gettext':
-    print(json.dumps([builtins._('Cancel'), gettext.gettext('Cancel'), GLib.dgettext('gnollama', 'Cancel')]))
+    print(json.dumps([builtins._('Cancel'), gettext.gettext('Cancel'), GLib.dgettext('tureen', 'Cancel')]))
     sys.exit()
 
 gi.require_version('Gtk', '4.0')
@@ -29,20 +29,20 @@ if Gdk.Display.get_default() is None:
     sys.exit(77)
 Adw.init()
 os.environ['GSETTINGS_BACKEND'] = 'memory'
-resource = directory / 'gnollama.gresource'
-subprocess.run(['glib-compile-resources', str(root / 'src/gnollama.gresource.xml'),
+resource = directory / 'tureen.gresource'
+subprocess.run(['glib-compile-resources', str(root / 'src/tureen.gresource.xml'),
                 '--sourcedir=' + str(root / 'src'), '--target=' + str(resource)], check=True)
 Gio.Resource.load(str(resource))._register()
 
-from src.main import GnollamaApplication
+from src.main import TureenApplication
 from src.host_manager import HostEditDialog
 from src.widgets.chat_input import ChatInput
 from src.widgets.options_panel import OptionsPanel
 from src.widgets.json_view import code_view
 from src.session import display_chat_title
 
-app = GnollamaApplication()
-app.set_application_id('io.github.jackrabbithanna.Gnollama.Test' + uuid.uuid4().hex)
+app = TureenApplication()
+app.set_application_id('io.github.jackrabbithanna.Tureen.Test' + uuid.uuid4().hex)
 app.set_flags(Gio.ApplicationFlags.NON_UNIQUE)
 app.register()
 widget = ChatInput()

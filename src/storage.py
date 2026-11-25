@@ -20,13 +20,13 @@ class ChatStorage:
         # Called after any host record changes, so discovery caches can be dropped.
         self.hosts_changed = lambda: None
         self._host_lock = RLock()
-        self.storage_dir: str = storage_dir or os.path.join(GLib.get_user_data_dir(), "gnollama")
+        self.storage_dir: str = storage_dir or os.path.join(GLib.get_user_data_dir(), "tureen")
         if not os.path.exists(self.storage_dir):
             os.makedirs(self.storage_dir)
             
         self.history_file: str = os.path.join(self.storage_dir, "history.json")
         self.hosts_file: str = os.path.join(self.storage_dir, "hosts.json")
-        self.db_path: str = os.path.join(self.storage_dir, "gnollama.db")
+        self.db_path: str = os.path.join(self.storage_dir, "tureen.db")
 
         # Initialize SQLite Database Manager
         self.db = DatabaseManager(self.db_path, progress=progress)

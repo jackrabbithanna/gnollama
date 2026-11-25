@@ -1,4 +1,4 @@
-<interface domain="gnollama">
+<interface domain="tureen">
   <object class="AdwShortcutsDialog" id="shortcuts_dialog">
     <child>
       <object class="AdwShortcutsSection">

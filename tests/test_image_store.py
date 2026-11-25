@@ -33,7 +33,7 @@ class ImageStoreTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
-        self.path = str(Path(self.temp.name) / 'gnollama.db')
+        self.path = str(Path(self.temp.name) / 'tureen.db')
         self.db = DatabaseManager(self.path)
         self.addCleanup(lambda: self.db.close())
         self.store = self.db.images
@@ -365,7 +365,7 @@ class ImageExportTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
-        self.db = DatabaseManager(str(Path(self.temp.name) / 'gnollama.db'))
+        self.db = DatabaseManager(str(Path(self.temp.name) / 'tureen.db'))
         self.addCleanup(self.db.close)
         store = self.db.images
         store.create_image_run(new_run(references=[PNG, JPEG]))

@@ -17,7 +17,7 @@ OPTION_FIELDS = {'seed': 'seed_entry', 'temperature': 'temperature_entry', 'top_
 FIELD_FLAGS = {'top_k_entry': 'sampling_extras', 'min_p_entry': 'sampling_extras', 'num_ctx_entry': 'context_size',
                'top_logprobs_entry': 'logprobs'}
 
-@Gtk.Template(resource_path='/io/github/jackrabbithanna/Gnollama/widgets/options_panel.ui')
+@Gtk.Template(resource_path='/io/github/jackrabbithanna/Tureen/widgets/options_panel.ui')
 class OptionsPanel(Gtk.Box):
     """Common controls and reusable, adaptive chat settings."""
     __gtype_name__ = 'OptionsPanel'

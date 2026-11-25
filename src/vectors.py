@@ -64,7 +64,7 @@ def load_extension(conn):
         finally:
             conn.enable_load_extension(False)
     except Exception as exc:
-        raise RuntimeError(_('Could not load sqlite-vec. Reinstall Gnollama or install its sqlite-vec dependency.')) from exc
+        raise RuntimeError(_('Could not load sqlite-vec. Reinstall Tureen or install its sqlite-vec dependency.')) from exc
 
 
 def vector_table(config_id):

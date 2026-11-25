@@ -14,7 +14,7 @@ from test_ui import pump_until
 class StartupTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
-        self.app = Adw.Application(application_id='io.github.jackrabbithanna.Gnollama.Test' + uuid.uuid4().hex,
+        self.app = Adw.Application(application_id='io.github.jackrabbithanna.Tureen.Test' + uuid.uuid4().hex,
                                    flags=Gio.ApplicationFlags.NON_UNIQUE)
         self.app.register(None)
         self.window = None

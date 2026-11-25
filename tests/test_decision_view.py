@@ -21,7 +21,7 @@ from src.widgets import decision_images
 from src.widgets.decision_answers import BoxPicture, RunView
 from src.widgets.decision_form import DEFAULT, QuestionForm
 from src.widgets.decision_view import DecisionTab
-from src.window import GnollamaWindow
+from src.window import TureenWindow
 from provider_fixture import LIMITED, limited_host, provider_patch
 from test_openai import GIF, JPEG, WEBP
 from test_ui import pump_until
@@ -831,7 +831,7 @@ class DecisionTests(unittest.TestCase):
                          (self.context.connection(self.host).url, 'blind'))
         self.assertTrue(self.context.services.models.busy(self.host, 'blind'))
         window = type('Window', (), dict(context=self.context, tabs=lambda self: [tab]))()
-        self.assertTrue(GnollamaWindow.is_model_busy(window, self.host, 'blind'))
+        self.assertTrue(TureenWindow.is_model_busy(window, self.host, 'blind'))
         self.assertEqual(tab.run_button.get_label(), 'Stop')
         self.assertTrue(tab.run_button.get_sensitive())
         self.assertFalse(tab.form.get_sensitive() or tab.picker.get_sensitive() or tab.chat_input.get_sensitive())
@@ -848,7 +848,7 @@ class DecisionTests(unittest.TestCase):
         self.assertIn('Cancelled', view.title.get_text())
         self.assertFalse(view.error.get_visible())
         self.assertFalse(self.context.services.models.busy(self.host, 'blind'))
-        self.assertFalse(GnollamaWindow.is_model_busy(window, self.host, 'blind'))
+        self.assertFalse(TureenWindow.is_model_busy(window, self.host, 'blind'))
         self.assertEqual((changes[0], changes[-1]), (True, False))
         self.assertTrue(tab.form.get_sensitive())
         self.assertEqual(tab.run_button.get_label(), 'Run')
@@ -1198,7 +1198,7 @@ class DecisionWindowTests(unittest.TestCase):
     run_tab = DecisionTests.run_tab
 
     def make_window(self):
-        window = GnollamaWindow(context=self.context)
+        window = TureenWindow(context=self.context)
         self.windows.append(window)
         self.tabs.append(window.tab_view.get_nth_page(0).get_child())
         pump_until(lambda: self.storage.writer.idle and not window.sections['decisions'].history.pending)
@@ -1216,7 +1216,7 @@ class DecisionWindowTests(unittest.TestCase):
         tab = self.decision(window)
         self.assertIsInstance(tab, DecisionTab)
         page = window.sections['decisions'].tab_view.get_page(tab)
-        self.assertEqual((page.get_title(), page.get_icon().get_names()[0]), ('New Decision', 'gnollama-decision-symbolic'))
+        self.assertEqual((page.get_title(), page.get_icon().get_names()[0]), ('New Decision', 'tureen-decision-symbolic'))
         self.assertEqual(window.recent_decisions_section.get_title(), 'Recent decisions')
         tab.form.load(QUESTIONS)
         tab.chat_input.entry.restore_draft('The invoice was charged twice.')
@@ -1233,12 +1233,12 @@ class DecisionWindowTests(unittest.TestCase):
         pump_until(lambda: session in window.chat_rows and not window.sections['decisions'].history.pending)
         item = window.chat_rows[session]
         self.assertEqual((item.get_title(), item.get_icon_name(), item.get_section()),
-                         ('The invoice was charged twice.', 'gnollama-decision-symbolic', window.recent_decisions_section))
+                         ('The invoice was charged twice.', 'tureen-decision-symbolic', window.recent_decisions_section))
         self.assertEqual(page.get_title(), 'The invoice was charged twice.')
         theme = Gtk.IconTheme.get_for_display(Gdk.Display.get_default())
         icon = theme.lookup_icon(item.get_icon_name(), None, 16, 1, Gtk.TextDirection.LTR, Gtk.IconLookupFlags.FORCE_SYMBOLIC)
         self.assertEqual(icon.get_file().get_uri(),
-                         'resource:///io/github/jackrabbithanna/Gnollama/icons/scalable/actions/gnollama-decision-symbolic.svg')
+                         'resource:///io/github/jackrabbithanna/Tureen/icons/scalable/actions/tureen-decision-symbolic.svg')
         # The row selects the open tab, and opens the session again once that is closed.
         window._open_history_item(item)
         self.assertIs(window.sections['decisions'].tab_view.get_selected_page().get_child(), tab)

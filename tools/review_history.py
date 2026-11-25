@@ -20,7 +20,7 @@ parser.add_argument('--language', default='en')
 args = parser.parse_args()
 output = Path(args.output)
 output.mkdir(parents=True, exist_ok=True)
-gettext.install('gnollama')
+gettext.install('tureen')
 import gi
 gi.require_version('Gtk', '4.0')
 gi.require_version('Adw', '1')
@@ -38,35 +38,35 @@ def pump(predicate, timeout=10):
     raise AssertionError('History view did not settle')
 
 
-with tempfile.TemporaryDirectory(prefix='gnollama-history-review-') as temporary:
+with tempfile.TemporaryDirectory(prefix='tureen-history-review-') as temporary:
     os.environ.update(XDG_DATA_HOME=temporary, XDG_CONFIG_HOME=temporary,
                       GSETTINGS_BACKEND='memory')
     if args.language != 'en':
         os.environ['LANGUAGE'] = args.language
         locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
-        catalog = Path(temporary) / args.language / 'LC_MESSAGES/gnollama.mo'
+        catalog = Path(temporary) / args.language / 'LC_MESSAGES/tureen.mo'
         catalog.parent.mkdir(parents=True)
         subprocess.run(['msgfmt', '-o', str(catalog), str(ROOT / 'po' / (args.language + '.po'))], check=True)
-        locale.bindtextdomain('gnollama', temporary)
-        locale.bind_textdomain_codeset('gnollama', 'UTF-8')
-        locale.textdomain('gnollama')
-        gettext.bindtextdomain('gnollama', temporary)
-        gettext.textdomain('gnollama')
-        gettext.install('gnollama', temporary)
+        locale.bindtextdomain('tureen', temporary)
+        locale.bind_textdomain_codeset('tureen', 'UTF-8')
+        locale.textdomain('tureen')
+        gettext.bindtextdomain('tureen', temporary)
+        gettext.textdomain('tureen')
+        gettext.install('tureen', temporary)
     Gtk.init()
     Adw.init()
     Gtk.Settings.get_default().set_property('gtk-enable-animations', False)
     Gtk.Widget.set_default_direction(Gtk.TextDirection.RTL if args.language == 'ar' else Gtk.TextDirection.LTR)
     Gio.Resource.load(args.resource)._register()
     from src.app_context import AppContext
-    from src.window import GnollamaWindow
+    from src.window import TureenWindow
     from tests.provider_fixture import provider_patch
     context = AppContext(temporary)
     storage = context.storage
-    app = Adw.Application(application_id='io.github.jackrabbithanna.Gnollama.HistoryReview', flags=Gio.ApplicationFlags.NON_UNIQUE)
+    app = Adw.Application(application_id='io.github.jackrabbithanna.Tureen.HistoryReview', flags=Gio.ApplicationFlags.NON_UNIQUE)
     app.register(None)
     with provider_patch('list_models', return_value=['cedar:8b']), provider_patch('show_model', return_value={'capabilities': ['completion']}):
-        window = GnollamaWindow(application=app, context=context)
+        window = TureenWindow(application=app, context=context)
         window.present()
         pump(lambda: context.services.idle and storage.writer.idle and not window.history.pending)
         titles = dict(chat='Chat', comparison='Comparison', model_conversation='Model conversation', pinned='Pinned')

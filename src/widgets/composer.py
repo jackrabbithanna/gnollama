@@ -14,7 +14,7 @@ def clipboard_attachment_kind(formats):
 
 
 class Composer(Gtk.Box):
-    __gtype_name__ = 'GnollamaComposer'
+    __gtype_name__ = 'TureenComposer'
     __gsignals__ = {'activate': (GObject.SignalFlags.RUN_FIRST, None, ()),
                     'changed': (GObject.SignalFlags.RUN_FIRST, None, ()),
                     'paste-attachment': (GObject.SignalFlags.RUN_FIRST, None, (Gdk.Clipboard, str))}

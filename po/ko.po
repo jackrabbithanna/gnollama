@@ -1,11 +1,11 @@
-# Korean translations for gnollama.
+# Korean translations for tureen.
 # Copyright (C) 2026 Jackrabbithanna
-# Distributed under the same license as gnollama.
+# Distributed under the same license as tureen.
 # Translated and reviewed with AI assistance, 2026.
 msgid ""
 msgstr ""
-"Project-Id-Version: gnollama 0.19.0\n"
-"Report-Msgid-Bugs-To: https://github.com/jackrabbithanna/gnollama/issues\n"
+"Project-Id-Version: tureen 0.19.0\n"
+"Report-Msgid-Bugs-To: https://github.com/jackrabbithanna/tureen/issues\n"
 "POT-Creation-Date: 2026-09-11 12:07-0600\n"
 "PO-Revision-Date: 2026-09-11 00:00+0000\n"
 "Last-Translator: AI-assisted translation\n"
@@ -17,27 +17,27 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.18.0\n"
 
-#: data/io.github.jackrabbithanna.Gnollama.desktop.in:8
+#: data/io.github.jackrabbithanna.Tureen.desktop.in:8
 msgid "Ollama;LLM;AI;Chat;Assistant;"
 msgstr "Ollama;LLM;AI;Chat;Assistant;"
 
-#: data/io.github.jackrabbithanna.Gnollama.desktop.in:2
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:7 src/startup.py:10
+#: data/io.github.jackrabbithanna.Tureen.desktop.in:2
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:7 src/startup.py:10
 #: src/window.ui:5
-msgid "Gnollama"
-msgstr "Gnollama"
+msgid "Tureen"
+msgstr "Tureen"
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:8
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:8
 msgid "Chat with local and cloud models"
 msgstr "로컬 및 클라우드 모델과 채팅"
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:10
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:10
 msgid ""
 "Chat with models running on your computer, on another computer, or in the cloud, "
 "using a native GNOME interface."
 msgstr "네이티브 GNOME 인터페이스로 내 컴퓨터, 다른 컴퓨터 또는 클라우드에서 실행되는 모델과 채팅합니다."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:11
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:11
 msgid ""
 "Connect to Ollama, LM Studio, and other OpenAI-compatible servers, or to Ollama "
 "Cloud, OpenAI, OpenRouter, and the Vercel AI Gateway."
@@ -45,165 +45,165 @@ msgstr ""
 "Ollama, LM Studio 및 기타 OpenAI 호환 서버나 Ollama Cloud, OpenAI, OpenRouter, Vercel AI "
 "Gateway에 연결합니다."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:11
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:11
 msgid ""
 "Keep conversations in separate tabs, attach images to vision models, and read "
 "responses with Markdown and highlighted code."
 msgstr "대화를 별도 탭으로 관리하고, 이미지 지원 모델에 이미지를 첨부하고, Markdown과 코드 강조 표시로 답변을 읽으세요."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:13
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:13
 msgid ""
 "Compare answers from several models side by side, let two models talk to each "
 "other, ask decision models structured questions, and generate images from a prompt."
 msgstr ""
 "여러 모델의 답변을 나란히 비교하고, 두 모델이 서로 대화하게 하고, 판단 모델에 구조화된 질문을 하고, 프롬프트로 이미지를 생성합니다."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:14
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:14
 msgid ""
 "Build knowledge collections from documents, web pages, and images, and use them as "
 "sources for chat answers."
 msgstr "문서, 웹 페이지, 이미지로 지식 컬렉션을 만들고 채팅 답변의 출처로 사용합니다."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:12
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:12
 msgid ""
 "Manage hosts and models, customize generation and thinking settings, and inspect "
 "response statistics including cached prompt tokens."
 msgstr "호스트와 모델을 관리하고, 생성 및 추론 설정을 조정하고, 캐시된 프롬프트 토큰을 포함한 응답 통계를 확인하세요."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:13
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:13
 msgid ""
 "Generate and validate structured JSON, import JSON schemas, and export responses. "
 "Inspect loaded models and release their memory when finished."
 msgstr "구조화된 JSON을 생성하고 검증하며, JSON 스키마를 가져오고 답변을 내보내세요. 로드된 모델을 확인하고 사용이 끝나면 메모리를 해제하세요."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:14
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:14
 msgid ""
 "Save and organize conversations with pinning and editable titles. Stop a response at "
 "any time and keep its partial answer in your history."
 msgstr "대화를 저장하고 고정하거나 제목을 편집해 정리하세요. 언제든 답변 생성을 중지하고 이미 생성된 부분을 기록에 보관할 수 있습니다."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:18
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:18
 msgid "jackrabbithanna"
 msgstr "jackrabbithanna"
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:46
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:46
 msgid "Ollama chat with code highlighting"
 msgstr "코드 강조 표시를 지원하는 Ollama 채팅"
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:54 src/shortcuts-dialog.ui:26
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:54 src/shortcuts-dialog.ui:26
 #: src/widgets/comparison_view.py:54 src/window.ui:128
 msgid "New Comparison"
 msgstr "새 비교"
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:55 src/window.py:80
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:55 src/window.py:80
 msgid "Drafts"
 msgstr "초안"
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:56 src/window.py:72
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:56 src/window.py:72
 msgid "Search conversations"
 msgstr "대화 검색"
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:57 src/window.py:408
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:57 src/window.py:408
 msgid "Export Markdown"
 msgstr "Markdown 내보내기"
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:58 src/window.py:409
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:58 src/window.py:409
 msgid "Export JSON"
 msgstr "JSON 내보내기"
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:59 src/tab.py:106
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:59 src/tab.py:106
 #: src/widgets/comparison_view.py:284
 msgid "Context estimate"
 msgstr "컨텍스트 추정"
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:65
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:65
 msgid "Connect directly to Ollama Cloud from Chat and Response tabs."
 msgstr "채팅 및 응답 탭에서 Ollama Cloud에 직접 연결합니다."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:66
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:66
 msgid ""
 "Store each host's API key in the desktop keyring, with session-only use when the "
 "keyring is unavailable."
 msgstr "각 서버의 API 키를 데스크톱 키링에 저장하고, 키링을 사용할 수 없으면 현재 세션에서만 사용합니다."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:67
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:67
 msgid ""
 "Browse cloud models with controls adapted to the service, and use local knowledge "
 "sources in cloud chats."
 msgstr "서비스에 맞춘 컨트롤로 클라우드 모델을 탐색하고 클라우드 채팅에서 로컬 지식 소스를 사용합니다."
 
-#: data/io.github.jackrabbithanna.Gnollama.desktop.in:2
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:72
+#: data/io.github.jackrabbithanna.Tureen.desktop.in:2
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:72
 msgid ""
 "Add a Knowledge Library for text and PDF imports, local embedding indexes, and "
 "source-grounded chats."
 msgstr "텍스트 및 PDF 가져오기, 로컬 임베딩 인덱스, 출처 기반 채팅을 위한 지식 라이브러리를 추가했습니다."
 
-#: data/io.github.jackrabbithanna.Gnollama.desktop.in:2
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:74
+#: data/io.github.jackrabbithanna.Tureen.desktop.in:2
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:74
 msgid ""
 "Start with knowledge collections and add text, files, or URLs with explicit "
 "destinations and guided previews."
 msgstr "지식 컬렉션을 만들고 명확한 저장 대상과 단계별 미리보기를 통해 텍스트, 파일 또는 URL을 추가하세요."
 
-#: data/io.github.jackrabbithanna.Gnollama.desktop.in:2
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:75
+#: data/io.github.jackrabbithanna.Tureen.desktop.in:2
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:75
 msgid ""
 "Choose collections before search settings, and use adaptive chat settings with "
 "clearer controls and feedback."
 msgstr "검색 설정 전에 컬렉션을 선택하고, 더 명확한 조작 요소와 안내를 제공하는 반응형 채팅 설정을 사용하세요."
 
-#: data/io.github.jackrabbithanna.Gnollama.desktop.in:2
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:76
+#: data/io.github.jackrabbithanna.Tureen.desktop.in:2
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:76
 msgid "Create and compare embeddings, inspect chunks and vectors, and test semantic searches."
 msgstr "임베딩을 생성하고 비교하며, 청크와 벡터를 살펴보고 의미 기반 검색을 테스트하세요."
 
-#: data/io.github.jackrabbithanna.Gnollama.desktop.in:2
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:77
+#: data/io.github.jackrabbithanna.Tureen.desktop.in:2
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:77
 msgid ""
 "Select documents or chunks for chats, with independent embedding hosts and saved "
 "source passages."
 msgstr "채팅에 사용할 문서나 청크를 선택하고, 독립적인 임베딩 호스트와 저장된 출처 구절을 활용하세요."
 
-#: data/io.github.jackrabbithanna.Gnollama.desktop.in:2
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:78
+#: data/io.github.jackrabbithanna.Tureen.desktop.in:2
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:78
 msgid ""
 "Warn about stored embeddings when deleting models, with optional vector cleanup that "
 "retains source text."
 msgstr "모델 삭제 시 저장된 임베딩을 알리고, 원본 텍스트를 보존하면서 벡터를 선택적으로 정리할 수 있습니다."
 
-#: data/io.github.jackrabbithanna.Gnollama.desktop.in:2
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:79
+#: data/io.github.jackrabbithanna.Tureen.desktop.in:2
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:79
 msgid ""
 "Search with sqlite-vec, automatically migrate existing vectors with a database "
 "backup, and use the Qwen3 retrieval preset."
 msgstr "sqlite-vec로 검색하고, 데이터베이스를 백업하면서 기존 벡터를 자동으로 마이그레이션하고, Qwen3 검색 사전 설정을 사용하세요."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:80
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:80
 msgid ""
 "Organize documents into collections with shared embedding settings, automatic builds,"
 " and live collection selection in chats."
 msgstr "공유 임베딩 설정과 자동 생성을 갖춘 컬렉션으로 문서를 정리하고, 채팅에서 최신 컬렉션을 선택하세요."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:81
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:81
 msgid ""
 "Choose collections as chat sources and compare cosine similarity, Euclidean distance,"
 " or Manhattan distance with appropriate search cutoffs."
 msgstr "컬렉션을 채팅 출처로 선택하고 적절한 검색 임계값으로 코사인 유사도, 유클리드 거리 또는 맨해튼 거리를 비교하세요."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:82
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:82
 msgid ""
 "Hide embedding-only models from Chat and Response model selection while keeping them "
 "available in Knowledge and Manage Models."
 msgstr "임베딩 전용 모델을 채팅과 응답의 모델 선택에서 숨기되, 지식과 모델 관리에서는 계속 사용할 수 있습니다."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:83
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:83
 msgid ""
 "Import batches of URLs into collections with main-content extraction, CSS selectors, "
 "editable previews, and source links in chats."
 msgstr "URL을 컬렉션으로 일괄 가져올 수 있으며, 본문 추출, CSS 선택자, 편집 가능한 미리보기와 채팅 내 출처 링크를 지원합니다."
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in:84
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:84
 msgid ""
 "Review changed web documents before replacing their text and rebuilding all affected "
 "embedding indexes."
@@ -423,16 +423,16 @@ msgid "Could not remove the saved API key. Unlock the keyring and retry."
 msgstr "저장된 API 키를 제거할 수 없습니다. 키링을 잠금 해제하고 다시 시도하세요."
 
 #: src/database.py:83
-msgid "This database was created by a newer Gnollama version. Update Gnollama to open it."
-msgstr "이 데이터베이스는 더 최신 버전의 Gnollama에서 생성되었습니다. 열려면 Gnollama를 업데이트하세요."
+msgid "This database was created by a newer Tureen version. Update Tureen to open it."
+msgstr "이 데이터베이스는 더 최신 버전의 Tureen에서 생성되었습니다. 열려면 Tureen를 업데이트하세요."
 
 #: src/database.py:90
 msgid "Backing up the database…"
 msgstr "데이터베이스 백업 중…"
 
 #: src/database.py:200
-msgid "This database requires a newer Gnollama version."
-msgstr "이 데이터베이스에는 더 최신 버전의 Gnollama가 필요합니다."
+msgid "This database requires a newer Tureen version."
+msgstr "이 데이터베이스에는 더 최신 버전의 Tureen가 필요합니다."
 
 #: src/database.py:219
 #, python-brace-format
@@ -1070,8 +1070,8 @@ msgid "Unloading…"
 msgstr "메모리에서 해제 중…"
 
 #: src/model_manager.py:209
-msgid "A chat or embedding job is using this model in Gnollama."
-msgstr "Gnollama의 채팅이나 임베딩 작업에서 이 모델을 사용 중입니다."
+msgid "A chat or embedding job is using this model in Tureen."
+msgstr "Tureen의 채팅이나 임베딩 작업에서 이 모델을 사용 중입니다."
 
 #: src/model_manager.py:228
 msgid "Could not unload model"
@@ -1388,8 +1388,8 @@ msgid "Toggle Sidebar"
 msgstr "사이드바 표시 전환"
 
 #: src/startup.py:16 src/startup.py:54
-msgid "Opening Gnollama"
-msgstr "Gnollama 여는 중"
+msgid "Opening Tureen"
+msgstr "Tureen 여는 중"
 
 #: src/startup.py:20 src/tab.py:440 src/widgets/knowledge_import.py:88
 #: src/widgets/knowledge_view.py:441 src/widgets/url_import.py:232 src/window.py:174
@@ -1619,8 +1619,8 @@ msgid "Invalid embedding vector; expected 1–8,192 finite, nonzero dimensions."
 msgstr "올바르지 않은 임베딩 벡터입니다. 1~8,192차원의 유한한 비영벡터가 필요합니다."
 
 #: src/vectors.py:66
-msgid "Could not load sqlite-vec. Reinstall Gnollama or install its sqlite-vec dependency."
-msgstr "sqlite-vec를 로드할 수 없습니다. Gnollama를 다시 설치하거나 sqlite-vec 의존성을 설치하세요."
+msgid "Could not load sqlite-vec. Reinstall Tureen or install its sqlite-vec dependency."
+msgstr "sqlite-vec를 로드할 수 없습니다. Tureen를 다시 설치하거나 sqlite-vec 의존성을 설치하세요."
 
 #: src/vectors.py:120
 msgid "Stored vector blocks are damaged. Rebuild this index."
@@ -2342,9 +2342,9 @@ msgstr "살펴볼 문서를 선택하세요. 새로 가져올 때는 항상 대�
 
 #: src/widgets/knowledge_view.py:264
 msgid ""
-"Add text, files, or URLs to this collection. Gnollama prepares the documents "
+"Add text, files, or URLs to this collection. Tureen prepares the documents "
 "automatically so chats can search them."
-msgstr "이 컬렉션에 텍스트, 파일 또는 URL을 추가하세요. Gnollama가 채팅에서 검색할 수 있도록 문서를 자동으로 준비합니다."
+msgstr "이 컬렉션에 텍스트, 파일 또는 URL을 추가하세요. Tureen가 채팅에서 검색할 수 있도록 문서를 자동으로 준비합니다."
 
 #: src/widgets/knowledge_view.py:266
 msgid "Add Existing Documents…"
@@ -3500,8 +3500,8 @@ msgid "_Keyboard Shortcuts"
 msgstr "키보드 단축키(_K)"
 
 #: src/window.ui:150
-msgid "_About Gnollama"
-msgstr "Gnollama 정보(_A)"
+msgid "_About Tureen"
+msgstr "Tureen 정보(_A)"
 
 #: src/window.py:78
 msgid "Recent chats"
@@ -3670,15 +3670,15 @@ msgstr "검색 제안"
 msgid "No matching conversations"
 msgstr "일치하는 대화 없음"
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in
 msgid "Compare answers from two models"
 msgstr "두 모델의 답변 비교"
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in
 msgid "Let two models talk to each other"
 msgstr "두 모델이 서로 대화하게 하기"
 
-#: data/io.github.jackrabbithanna.Gnollama.metainfo.xml.in
+#: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in
 msgid "Organize documents into knowledge collections"
 msgstr "문서를 지식 컬렉션으로 정리"
 
@@ -3771,8 +3771,8 @@ msgid "Tokens/s (measured locally): {0}"
 msgstr "토큰/초 (로컬 측정): {0}"
 
 #: src/bubbles.py
-msgid "Timed by Gnollama, not reported by the server. The total includes network delay and model loading."
-msgstr "서버가 보고한 값이 아니라 Gnollama가 측정한 값입니다. 전체 시간에는 네트워크 지연과 모델 불러오기 시간이 포함됩니다."
+msgid "Timed by Tureen, not reported by the server. The total includes network delay and model loading."
+msgstr "서버가 보고한 값이 아니라 Tureen가 측정한 값입니다. 전체 시간에는 네트워크 지연과 모델 불러오기 시간이 포함됩니다."
 
 #: src/providers/lmstudio.py
 msgid "LM Studio"

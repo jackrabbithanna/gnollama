@@ -76,7 +76,7 @@ class UsabilityTests(unittest.TestCase):
         collection(self.storage.db, 'Manuals', self.config)
         dialog = self.present(TextImportDialog(self.context))
         dialog.title_entry.set_text('Getting started')
-        dialog.editor.get_buffer().set_text('Install Gnollama using GNOME Builder.')
+        dialog.editor.get_buffer().set_text('Install Tureen using GNOME Builder.')
         dialog.apply_text()
         self.assertIn('destination collection', dialog.error_label.get_text())
         self.assertEqual(self.storage.db.knowledge.knowledge_documents(), [])

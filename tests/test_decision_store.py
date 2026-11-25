@@ -44,7 +44,7 @@ class DecisionStoreTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
-        self.path = str(Path(self.temp.name) / 'gnollama.db')
+        self.path = str(Path(self.temp.name) / 'tureen.db')
         self.db = DatabaseManager(self.path)
         self.addCleanup(lambda: self.db.close())
         self.store = self.db.decisions
@@ -354,7 +354,7 @@ class DecisionExportTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
-        self.db = DatabaseManager(str(Path(self.temp.name) / 'gnollama.db'))
+        self.db = DatabaseManager(str(Path(self.temp.name) / 'tureen.db'))
         self.addCleanup(self.db.close)
         store = self.db.decisions
         store.create_decision_run(new_run(images=[PNG]))

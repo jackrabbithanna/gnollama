@@ -67,7 +67,7 @@ class RecordingView:
 
 class ChatControllerTests(unittest.TestCase):
     def setUp(self):
-        self.temp = tempfile.TemporaryDirectory(prefix='gnollama-controller-')
+        self.temp = tempfile.TemporaryDirectory(prefix='tureen-controller-')
         self.context = AppContext(self.temp.name)
         self.storage = self.context.storage
         self.host = self.storage.get_all_hosts()[0]

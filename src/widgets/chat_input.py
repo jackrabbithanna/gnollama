@@ -6,7 +6,7 @@ from ..providers import RequestCancelled, generates, supports
 from .search import searchable
 from .composer import Composer  # noqa: F401 - registers the type chat_input.ui names
 
-@Gtk.Template(resource_path='/io/github/jackrabbithanna/Gnollama/widgets/chat_input.ui')
+@Gtk.Template(resource_path='/io/github/jackrabbithanna/Tureen/widgets/chat_input.ui')
 class ChatInput(Gtk.Box):
     __gtype_name__ = 'ChatInput'
     __gsignals__ = {'capabilities-changed': (GObject.SignalFlags.RUN_FIRST, None, ()),

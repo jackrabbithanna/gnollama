@@ -28,7 +28,7 @@ def model_key(host, model):
 
 class WorkerPool:
     def __init__(self, count=2, name='Control'):
-        self.executor = ThreadPoolExecutor(max_workers=count, thread_name_prefix='Gnollama' + name)
+        self.executor = ThreadPoolExecutor(max_workers=count, thread_name_prefix='Tureen' + name)
         self._lock = threading.Lock()
         self._futures = set()
         self.closed = False

@@ -23,7 +23,7 @@ def running_model_subtitle(model):
         expiry = _('Unavailable')
     return _('Memory: {0} · VRAM: {1}\nContext: {2} · Expires: {3}').format(size('size'), size('size_vram'), context, expiry)
 
-@Gtk.Template(resource_path='/io/github/jackrabbithanna/Gnollama/model_details_view.ui')
+@Gtk.Template(resource_path='/io/github/jackrabbithanna/Tureen/model_details_view.ui')
 class ModelDetailsView(Adw.Dialog):
     """Dialog for displaying detailed information about a model."""
     __gtype_name__ = 'ModelDetailsView'
@@ -35,7 +35,7 @@ class ModelDetailsView(Adw.Dialog):
         self.requests = ViewRequests(self)
         self.set_title(f"{_('Model Details')}: {model_name}")
 
-@Gtk.Template(resource_path='/io/github/jackrabbithanna/Gnollama/model_manager.ui')
+@Gtk.Template(resource_path='/io/github/jackrabbithanna/Tureen/model_manager.ui')
 class ModelManagerDialog(Adw.Dialog):
     """Dialog for managing Ollama models (listing, info, deletion, pulling)."""
     __gtype_name__ = 'ModelManagerDialog'
@@ -208,7 +208,7 @@ class ModelManagerDialog(Adw.Dialog):
             unloading = model_key(host, model) in self.context.services.models.reserved
             button.set_sensitive(not busy and not unloading)
             button.set_label(_('Unloading…') if unloading else _('Unload'))
-            button.set_tooltip_text(_('A chat or embedding job is using this model in Gnollama.') if busy else
+            button.set_tooltip_text(_('A chat or embedding job is using this model in Tureen.') if busy else
                                     _('Release this model from memory; keep its downloaded files.'))
 
     def on_unload_clicked(self, button, host, model):
@@ -530,7 +530,7 @@ class ModelManagerDialog(Adw.Dialog):
                     label = "Modelfile"
                 add_field(_(label), show_data[k], collapsible=True)
 
-@Gtk.Template(resource_path='/io/github/jackrabbithanna/Gnollama/pull_model_dialog.ui')
+@Gtk.Template(resource_path='/io/github/jackrabbithanna/Tureen/pull_model_dialog.ui')
 class PullModelDialog(Adw.Dialog):
     """Dialog for pulling (downloading) a new model from a host."""
     __gtype_name__ = 'PullModelDialog'

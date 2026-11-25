@@ -18,7 +18,7 @@ from src.providers.registry import PROVIDERS
 from src.records import ImageSettings, has_saved_work
 from src.widgets.image_results import ImageCard, ImageRunView
 from src.widgets.image_view import ImageTab
-from src.window import GnollamaWindow
+from src.window import TureenWindow
 from provider_fixture import LIMITED, limited_host, provider_patch
 from test_ui import pump_until
 
@@ -527,7 +527,7 @@ class ImageWindowTests(unittest.TestCase):
     stalled = ImageTests.stalled
 
     def make_window(self):
-        window = GnollamaWindow(context=self.context)
+        window = TureenWindow(context=self.context)
         self.windows.append(window)
         self.tabs.append(window.tab_view.get_nth_page(0).get_child())
         pump_until(lambda: self.storage.writer.idle and not window.sections['images'].history.pending)
@@ -545,7 +545,7 @@ class ImageWindowTests(unittest.TestCase):
         tab = self.image(window)
         self.assertIsInstance(tab, ImageTab)
         page = window.sections['images'].tab_view.get_page(tab)
-        self.assertEqual((page.get_title(), page.get_icon().get_names()[0]), ('New Image', 'gnollama-image-symbolic'))
+        self.assertEqual((page.get_title(), page.get_icon().get_names()[0]), ('New Image', 'tureen-image-symbolic'))
         self.assertEqual(window.recent_images_section.get_title(), 'Recent images')
         tab.chat_input.entry.restore_draft('A lighthouse at dusk')
         entered, release = self.stalled()
@@ -560,11 +560,11 @@ class ImageWindowTests(unittest.TestCase):
         pump_until(lambda: session in window.chat_rows and not window.sections['images'].history.pending)
         item = window.chat_rows[session]
         self.assertEqual((item.get_title(), item.get_icon_name(), item.get_section()),
-                         ('A lighthouse at dusk', 'gnollama-image-symbolic', window.recent_images_section))
+                         ('A lighthouse at dusk', 'tureen-image-symbolic', window.recent_images_section))
         theme = Gtk.IconTheme.get_for_display(Gdk.Display.get_default())
         icon = theme.lookup_icon(item.get_icon_name(), None, 16, 1, Gtk.TextDirection.LTR, Gtk.IconLookupFlags.FORCE_SYMBOLIC)
         self.assertEqual(icon.get_file().get_uri(),
-                         'resource:///io/github/jackrabbithanna/Gnollama/icons/scalable/actions/gnollama-image-symbolic.svg')
+                         'resource:///io/github/jackrabbithanna/Tureen/icons/scalable/actions/tureen-image-symbolic.svg')
         window.close_tab(tab)
         pump_until(lambda: tab not in window.tabs())
         window._open_history_item(item)

@@ -27,7 +27,7 @@ def _portable(snapshot):
 
 
 def export_json(snapshot):
-    return json.dumps({'format': 'gnollama-conversation', 'version': 1,
+    return json.dumps({'format': 'tureen-conversation', 'version': 1,
                        'conversation': _portable(copy.deepcopy(snapshot))}, ensure_ascii=False, indent=2) + '\n'
 
 

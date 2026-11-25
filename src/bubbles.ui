@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<interface domain="gnollama">
+<interface domain="tureen">
   <requires lib="gtk" version="4.18"/>
   <requires lib="Adw" version="1.9"/>
   <template class="UserBubble" parent="GtkListBoxRow">

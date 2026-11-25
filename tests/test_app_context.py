@@ -25,7 +25,7 @@ def pump_until(predicate, timeout=4):
 
 class AppContextTests(unittest.TestCase):
     def open(self):
-        temp = tempfile.TemporaryDirectory(prefix='gnollama-context-')
+        temp = tempfile.TemporaryDirectory(prefix='tureen-context-')
         self.addCleanup(temp.cleanup)
         context = AppContext(temp.name)
 

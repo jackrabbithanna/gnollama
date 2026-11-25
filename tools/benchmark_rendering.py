@@ -10,7 +10,7 @@ import sys
 import time
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-gettext.install('gnollama')
+gettext.install('tureen')
 import gi
 gi.require_version('Gtk', '4.0')
 gi.require_version('Adw', '1')
@@ -87,7 +87,7 @@ def measure(kind, size, flushes, step):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--resource', required=True, help='Compiled gnollama.gresource')
+    parser.add_argument('--resource', required=True, help='Compiled tureen.gresource')
     parser.add_argument('--output', default='rendering-benchmark.json')
     parser.add_argument('--sizes', default='5,20,50', help='Response sizes in kB')
     parser.add_argument('--flushes', type=int, default=30)

@@ -9,7 +9,7 @@ import tempfile
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-gettext.install('gnollama')
+gettext.install('tureen')
 from src.database import DatabaseManager
 from src.knowledge import make_document, new_config, augmented_messages, model_identity
 from src.vectors import vector_blob
@@ -25,7 +25,7 @@ def evaluate(host=None, model=None, answer_model=None):
     embeddings = vectors([p['text'] for p in passages], [p['vector'] for p in passages])
     queries = vectors([c['query'] for c in fixture['cases']], [c['vector'] for c in fixture['cases']])
     reports = []
-    with tempfile.TemporaryDirectory(prefix='gnollama-evaluation-') as directory:
+    with tempfile.TemporaryDirectory(prefix='tureen-evaluation-') as directory:
         db = DatabaseManager(str(Path(directory) / 'evaluation.db'))
         config = new_config(model or 'recorded', str(identity), dimensions=len(embeddings[0]))
         db.knowledge.add_embedding_config(config)

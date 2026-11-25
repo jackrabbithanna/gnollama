@@ -11,8 +11,8 @@ endforeach
 # i18n.merge_file does not track catalogs as dependencies. Explicit inputs to
 # the merge targets keep installed metadata current after translation edits.
 desktop_file = custom_target('desktop-translations',
-        input: 'io.github.jackrabbithanna.Gnollama.desktop.in',
-       output: 'io.github.jackrabbithanna.Gnollama.desktop',
+        input: 'io.github.jackrabbithanna.Tureen.desktop.in',
+       output: 'io.github.jackrabbithanna.Tureen.desktop',
       command: [msgfmt, '--desktop', '--template', '@INPUT@', '-d', po_dir, '-o', '@OUTPUT@'],
  depend_files: translation_files,
       install: true,
@@ -25,8 +25,8 @@ if desktop_utils.found()
 endif
 
 appstream_file = custom_target('appstream-translations',
-        input: 'io.github.jackrabbithanna.Gnollama.metainfo.xml.in',
-       output: 'io.github.jackrabbithanna.Gnollama.metainfo.xml',
+        input: 'io.github.jackrabbithanna.Tureen.metainfo.xml.in',
+       output: 'io.github.jackrabbithanna.Tureen.metainfo.xml',
       command: [msgfmt, '--xml', '--template', '@INPUT@', '-d', po_dir, '-o', '@OUTPUT@'],
  depend_files: translation_files,
       install: true,
@@ -40,8 +40,8 @@ test('Validate appstream file', appstreamcli,
 service_conf = configuration_data()
 service_conf.set('bindir', get_option('prefix') / get_option('bindir'))
 configure_file(
-  input: 'io.github.jackrabbithanna.Gnollama.service.in',
-  output: 'io.github.jackrabbithanna.Gnollama.service',
+  input: 'io.github.jackrabbithanna.Tureen.service.in',
+  output: 'io.github.jackrabbithanna.Tureen.service',
   configuration: service_conf,
   install_dir: get_option('datadir') / 'dbus-1' / 'services'
 )

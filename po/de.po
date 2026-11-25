@@ -2331,14 +2331,6 @@ msgstr "Zur Sammlung hinzugefügt — Prüfung erforderlich"
 msgid "Add Files"
 msgstr "Dateien hinzufügen"
 
-#: src/widgets/knowledge_import.py:67
-msgid ""
-"Import PDF or UTF-8 text files, including Markdown and source code. Maximum size: 50 "
-"MiB per file. Review one file at a time before adding."
-msgstr ""
-"Importieren Sie PDF- oder UTF-8-Textdateien, einschließlich Markdown und Quellcode. "
-"Maximale Größe: 50 MiB pro Datei. Prüfen Sie jede Datei einzeln vor dem Hinzufügen."
-
 #: src/widgets/knowledge_import.py:68
 msgid "Choose Files…"
 msgstr "Dateien auswählen…"
@@ -2351,17 +2343,9 @@ msgstr "Extrahierter Inhalt (schreibgeschützt)"
 msgid "Skip"
 msgstr "Überspringen"
 
-#: src/widgets/knowledge_import.py:103
-msgid "Text and PDF files"
-msgstr "Text- und PDF-Dateien"
-
 #: src/widgets/knowledge_import.py:108
 msgid "All files"
 msgstr "Alle Dateien"
-
-#: src/widgets/knowledge_import.py:113
-msgid "Choose Text or PDF Files"
-msgstr "Text- oder PDF-Dateien auswählen"
 
 #: src/widgets/knowledge_import.py:146
 msgid "Extracting"
@@ -4394,3 +4378,63 @@ msgstr "Ausführen"
 #: src/widgets/history_sidebar.py
 msgid "Recent decisions"
 msgstr "Letzte Entscheidungen"
+
+msgid "An image description must be no longer than 20,000 characters."
+msgstr "Eine Bildbeschreibung darf höchstens 20.000 Zeichen lang sein."
+
+msgid "This image cannot be read. Import a PNG, JPEG, GIF, or WebP image."
+msgstr "Dieses Bild kann nicht gelesen werden. Importieren Sie ein PNG-, JPEG-, GIF- oder WebP-Bild."
+
+msgid "The stored image is missing. Import the image again."
+msgstr "Das gespeicherte Bild fehlt. Importieren Sie das Bild erneut."
+
+msgid "This embedding model does not accept images. Choose a multimodal model such as embeddinggemma2."
+msgstr "Dieses Embedding-Modell akzeptiert keine Bilder. Wählen Sie ein multimodales Modell wie embeddinggemma2."
+
+msgid "Embedding the image…"
+msgstr "Bild wird eingebettet…"
+
+msgid "Only an image document has a description to change."
+msgstr "Nur ein Bilddokument hat eine Beschreibung, die geändert werden kann."
+
+msgid "An image to embed is invalid."
+msgstr "Ein einzubettendes Bild ist ungültig."
+
+msgid "This model also embeds images."
+msgstr "Dieses Modell bettet auch Bilder ein."
+
+msgid "Import PDF or UTF-8 text files, including Markdown and source code, or images (PNG, JPEG, GIF, WebP) for a collection whose embedding model accepts images. Maximum size: 50 MiB per file. Review one file at a time before adding."
+msgstr "Importieren Sie PDF- oder UTF-8-Textdateien, einschließlich Markdown und Quellcode, oder Bilder (PNG, JPEG, GIF, WebP) für eine Sammlung, deren Embedding-Modell Bilder akzeptiert. Maximale Größe: 50 MiB pro Datei. Prüfen Sie jede Datei einzeln vor dem Hinzufügen."
+
+msgid "Text, PDF, and image files"
+msgstr "Text-, PDF- und Bilddateien"
+
+msgid "Choose Text, PDF, or Image Files"
+msgstr "Text-, PDF- oder Bilddateien auswählen"
+
+msgid "Description (optional). It is shown with the image in answers and is not embedded."
+msgstr "Beschreibung (optional). Sie wird in Antworten mit dem Bild angezeigt und nicht eingebettet."
+
+msgid "Edit Description"
+msgstr "Beschreibung bearbeiten"
+
+msgid "No description. Answers name this image by its title only."
+msgstr "Keine Beschreibung. Antworten nennen dieses Bild nur mit seinem Titel."
+
+msgid "Shown with the image in answers. It is not embedded, so the image’s embeddings stay valid."
+msgstr "Wird in Antworten mit dem Bild angezeigt. Sie wird nicht eingebettet, daher bleiben die Embeddings des Bildes gültig."
+
+msgid "This image is no longer in the library."
+msgstr "Dieses Bild ist nicht mehr in der Bibliothek."
+
+msgid "Image without a description."
+msgstr "Bild ohne Beschreibung."
+
+msgid "Search this collection the way a chat would, with its embedding model and default settings."
+msgstr "Durchsuchen Sie diese Sammlung wie ein Chat, mit ihrem Embedding-Modell und den Standardeinstellungen."
+
+msgid "Search"
+msgstr "Suchen"
+
+msgid "More Options…"
+msgstr "Weitere Optionen…"

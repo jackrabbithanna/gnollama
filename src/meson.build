@@ -84,6 +84,7 @@ gnollama_sources = [
   'decision_store.py',
   'decision_run.py',
   'image_run.py',
+  'image_files.py',
   'image_generation.py',
   'image_store.py',
   'knowledge.py',

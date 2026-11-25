@@ -3,9 +3,9 @@ import copy
 import json
 import time
 from gettext import gettext as _, ngettext
-from gi.repository import Adw, Gtk, Gio, GLib
+from gi.repository import Adw, Gdk, Gtk, Gio, GLib
 
-from ..knowledge import (DEFAULT_RAG, canonical_model, model_identity)
+from ..knowledge import (DEFAULT_RAG, canonical_model, check_caption, model_identity)
 from .json_view import TextEditor
 
 
@@ -14,7 +14,7 @@ from .knowledge_common import (
     plain_editor, preview_text, section, verification_notice, WorkDialog,
 )
 from .collection_views import CollectionDialog, CollectionDestination, DocumentPicker
-from .source_views import SourcePicker, ChunkPicker
+from .source_views import CollectionSearch, ChunkPicker
 
 class KnowledgeView(Gtk.Box):
     def __init__(self, context):
@@ -23,6 +23,8 @@ class KnowledgeView(Gtk.Box):
         self.storage = context.storage
         self.document_id = None
         self.collection_id = None
+        self.collection_search = None  # Kept while one collection is shown, so a rebuild keeps its results.
+        self.search_settings = {}  # Applied search settings by collection, kept while the app runs.
         self.library_scope = 'collections'
         self._library_choices = ['collections', 'all', 'ungrouped']
         self._refreshing_collections = False
@@ -127,6 +129,8 @@ class KnowledgeView(Gtk.Box):
                 members = self.storage.library.collection_documents(scope) if collection else []
                 indexes = self.storage.library.knowledge_indexes(document_id=document_id) if document_id else []
                 document = self.storage.library.knowledge_document(document_id) if document_id else None
+                if document and document.get('media_type'):
+                    document['media'] = self.storage.library.knowledge_media(document_id)
                 memberships = self.storage.library.source_collections(document_id=document_id) if document_id else []
                 error = None
             except Exception as exc:
@@ -292,6 +296,7 @@ class KnowledgeView(Gtk.Box):
         options.insert_action_group('collection', menu_actions)
         options.set_halign(Gtk.Align.START)
         self.detail.append(options)
+        self.detail.append(self._search_for(collection))
         rows = Gtk.ListBox(selection_mode=Gtk.SelectionMode.NONE)
         rows.add_css_class('boxed-list')
         self.detail.append(rows)
@@ -307,6 +312,17 @@ class KnowledgeView(Gtk.Box):
                 self.storage.library.remove_collection_document, collection['id'], id, on_done=self.context.knowledge.changed))
             row.add_suffix(remove)
             rows.append(row)
+
+    def _search_for(self, collection):
+        search = self.collection_search
+        if search is None or search.collection['id'] != collection['id']:
+            if search is not None:
+                search.stop()
+            search = self.collection_search = CollectionSearch(
+                self.context, collection, self.search_settings.setdefault(collection['id'], {}))
+        search.collection = collection
+        search.show_summary()
+        return search
 
     def import_actions(self):
         return actions(button(_('Add Text…'), self.add_text), button(_('Add Files…'), self.import_files),
@@ -428,7 +444,12 @@ class KnowledgeView(Gtk.Box):
             self.detail.append(label(_('Collections: {0}').format(', '.join(c['name'] for c in memberships))))
         if self.collection_id:
             self.detail.append(button(_('Back to Collection'), lambda *args: self.open_collection(self.collection_id)))
-        self.detail.append(actions(button(_('Preview Text'), lambda *args: self._preview(document)),
+        if document.get('media_type'):
+            self._show_image(document)
+            first = button(_('Edit Description'), lambda *args: self._caption(document))
+        else:
+            first = button(_('Preview Text'), lambda *args: self._preview(document))
+        self.detail.append(actions(first,
                                    button(_('Create Embeddings'), lambda *args: self.present_dialog(IndexDialog(self.context, document, self.refresh))),
                                    button(_('Rename'), lambda *args: self._rename(document)),
                                    button(_('Delete Document'), lambda *args: self._delete(document=document))))
@@ -555,14 +576,32 @@ class KnowledgeView(Gtk.Box):
         from .knowledge_import import FileImportDialog
         self.present_dialog(FileImportDialog(self.context, self.collection_id))
 
-    def test_search(self, *args):
-        options = copy.deepcopy(DEFAULT_RAG)
-        collection = self.storage.library.knowledge_collection(self.collection_id) if self.collection_id else None
-        if collection:
-            options.update(config_id=collection['config_id'], host=collection['host'],
-                           host_kind=collection['host_kind'], model=collection['model'],
-                           collection_ids=[collection['id']])
-        self.present_dialog(SourcePicker(self.context, options))
+    def _show_image(self, document):
+        media = document.get('media')
+        if media is None:
+            self.detail.append(label(_('The stored image is missing. Import the image again.')))
+            return
+        picture = Gtk.Picture(can_shrink=True, height_request=280, halign=Gtk.Align.START,
+                              alternative_text=document['title'])
+        try:
+            picture.set_paintable(Gdk.Texture.new_from_bytes(GLib.Bytes.new(media['data'])))
+        except GLib.Error:
+            picture.set_visible(False)
+        self.detail.append(picture)
+        self.detail.append(label('{0} × {1}'.format(media['width'], media['height'])))
+        self.detail.append(label(document['text'] or _('No description. Answers name this image by its title only.')))
+
+    def _caption(self, document):
+        dialog = TextEditor(document['text'], lambda text: self._save_caption(document, text),
+                            title=_('Edit Description'), apply_label=_('Save'), validate=check_caption,
+                            hint=_('Shown with the image in answers. It is not embedded, so the image’s embeddings stay valid.'))
+        plain_editor(dialog)
+        self.present_dialog(dialog)
+
+    def _save_caption(self, document, text):
+        self.storage.submit(self.storage.library.set_document_caption, document['id'], text.strip(),
+                            on_done=self.context.knowledge.changed)
+        return True
 
     def _rename(self, document):
         dialog = Adw.AlertDialog(heading=_('Rename Document'))

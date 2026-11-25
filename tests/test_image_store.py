@@ -44,7 +44,7 @@ class ImageStoreTests(unittest.TestCase):
 
     def test_a_new_database_is_at_version_15_with_the_runs_table(self):
         with self.db._get_conn() as conn:
-            self.assertEqual(conn.execute('PRAGMA user_version').fetchone()[0], 15)
+            self.assertEqual(conn.execute('PRAGMA user_version').fetchone()[0], 16)
             self.assertEqual([row[1] for row in conn.execute('PRAGMA table_info(image_runs)')],
                              ['id', 'session_id', 'position', 'output_id', 'options', 'target', 'status',
                               'result', 'error', 'created_at', 'finished_at'])
@@ -67,12 +67,12 @@ class ImageStoreTests(unittest.TestCase):
         old.close()
         upgraded = DatabaseManager(path)
         self.addCleanup(upgraded.close)
-        self.assertIn('.pre-v15-', upgraded.backup_path)
+        self.assertIn('.pre-v16-', upgraded.backup_path)
         with sqlite3.connect(upgraded.backup_path) as backup:
             self.assertEqual(backup.execute('PRAGMA user_version').fetchone()[0], 14)
             self.assertEqual(backup.execute("SELECT content FROM messages WHERE uid='question'").fetchone()[0], 'kept words')
         with upgraded._get_conn() as conn:
-            self.assertEqual(conn.execute('PRAGMA user_version').fetchone()[0], 15)
+            self.assertEqual(conn.execute('PRAGMA user_version').fetchone()[0], 16)
         self.assertEqual(upgraded.chats.get_messages('chat', include_ids=True), messages)
         self.assertEqual(upgraded.decisions.decision_runs('decided')[0]['state'], 'a state')
         self.assertEqual(upgraded.workspace.get_draft('draft')['text'], 'unsent')

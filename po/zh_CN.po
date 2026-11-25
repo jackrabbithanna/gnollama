@@ -2186,12 +2186,6 @@ msgstr "已添加到集合——需要处理"
 msgid "Add Files"
 msgstr "添加文件"
 
-#: src/widgets/knowledge_import.py:67
-msgid ""
-"Import PDF or UTF-8 text files, including Markdown and source code. Maximum size: 50 "
-"MiB per file. Review one file at a time before adding."
-msgstr "导入 PDF 或 UTF-8 文本文件，包括 Markdown 和源代码。每个文件最大为 50 MiB。添加前请逐个检查文件。"
-
 #: src/widgets/knowledge_import.py:68
 msgid "Choose Files…"
 msgstr "选择文件…"
@@ -2204,17 +2198,9 @@ msgstr "已提取的内容（只读）"
 msgid "Skip"
 msgstr "跳过"
 
-#: src/widgets/knowledge_import.py:103
-msgid "Text and PDF files"
-msgstr "文本和 PDF 文件"
-
 #: src/widgets/knowledge_import.py:108
 msgid "All files"
 msgstr "所有文件"
-
-#: src/widgets/knowledge_import.py:113
-msgid "Choose Text or PDF Files"
-msgstr "选择文本或 PDF 文件"
 
 #: src/widgets/knowledge_import.py:146
 msgid "Extracting"
@@ -4188,3 +4174,63 @@ msgstr "运行"
 #: src/widgets/history_sidebar.py
 msgid "Recent decisions"
 msgstr "最近的决策"
+
+msgid "An image description must be no longer than 20,000 characters."
+msgstr "图像描述不能超过 20,000 个字符。"
+
+msgid "This image cannot be read. Import a PNG, JPEG, GIF, or WebP image."
+msgstr "无法读取此图像。请导入 PNG、JPEG、GIF 或 WebP 图像。"
+
+msgid "The stored image is missing. Import the image again."
+msgstr "已保存的图像缺失。请重新导入该图像。"
+
+msgid "This embedding model does not accept images. Choose a multimodal model such as embeddinggemma2."
+msgstr "此嵌入模型不接受图像。请选择多模态模型，例如 embeddinggemma2。"
+
+msgid "Embedding the image…"
+msgstr "正在嵌入图像…"
+
+msgid "Only an image document has a description to change."
+msgstr "只有图像文档才有可更改的描述。"
+
+msgid "An image to embed is invalid."
+msgstr "要嵌入的图像无效。"
+
+msgid "This model also embeds images."
+msgstr "此模型也能嵌入图像。"
+
+msgid "Import PDF or UTF-8 text files, including Markdown and source code, or images (PNG, JPEG, GIF, WebP) for a collection whose embedding model accepts images. Maximum size: 50 MiB per file. Review one file at a time before adding."
+msgstr "导入 PDF 或 UTF-8 文本文件（包括 Markdown 和源代码），或为嵌入模型接受图像的集合导入图像（PNG、JPEG、GIF、WebP）。最大大小：每个文件 50 MiB。添加前请逐个检查文件。"
+
+msgid "Text, PDF, and image files"
+msgstr "文本、PDF 和图像文件"
+
+msgid "Choose Text, PDF, or Image Files"
+msgstr "选择文本、PDF 或图像文件"
+
+msgid "Description (optional). It is shown with the image in answers and is not embedded."
+msgstr "描述（可选）。它会在回答中与图像一起显示，不会被嵌入。"
+
+msgid "Edit Description"
+msgstr "编辑描述"
+
+msgid "No description. Answers name this image by its title only."
+msgstr "无描述。回答仅以标题指代此图像。"
+
+msgid "Shown with the image in answers. It is not embedded, so the image’s embeddings stay valid."
+msgstr "在回答中与图像一起显示。它不会被嵌入，因此图像的嵌入仍然有效。"
+
+msgid "This image is no longer in the library."
+msgstr "此图像已不在库中。"
+
+msgid "Image without a description."
+msgstr "无描述的图像。"
+
+msgid "Search this collection the way a chat would, with its embedding model and default settings."
+msgstr "像聊天一样搜索此集合，使用其嵌入模型和默认设置。"
+
+msgid "Search"
+msgstr "搜索"
+
+msgid "More Options…"
+msgstr "更多选项…"

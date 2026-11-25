@@ -11,7 +11,7 @@ from .collections_store import MIGRATION as COLLECTIONS_MIGRATION
 from .connections import ConnectionProvider
 from .decision_store import DecisionDatabase, MIGRATION as DECISION_MIGRATION
 from .image_store import ImageDatabase, MIGRATION as IMAGE_MIGRATION
-from .knowledge_store import KnowledgeDatabase, MIGRATION as KNOWLEDGE_MIGRATION
+from .knowledge_store import KnowledgeDatabase, MIGRATION as KNOWLEDGE_MIGRATION, MEDIA_MIGRATION
 from .model_conversation_store import ModelConversationDatabase, migrate_model_conversations
 from .vectors import load_extension, migrate_vectors, preflight_legacy_vectors
 from .web_store import MIGRATION as WEB_MIGRATION
@@ -56,6 +56,7 @@ MIGRATIONS: List[Union[str, Callable[..., None]]] = [
     """,
     DECISION_MIGRATION,
     IMAGE_MIGRATION,
+    MEDIA_MIGRATION,
 ]
 
 

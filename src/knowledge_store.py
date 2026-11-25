@@ -39,6 +39,30 @@ CREATE TABLE knowledge_chunks (
 CREATE INDEX knowledge_chunks_index ON knowledge_chunks(index_id);
 """
 
+# Version 16: Image documents. `text` holds an optional caption, which is never embedded; the image is.
+MEDIA_MIGRATION = """
+ALTER TABLE knowledge_documents ADD COLUMN media_type TEXT;
+CREATE TABLE knowledge_media (
+    document_id TEXT PRIMARY KEY REFERENCES knowledge_documents(id) ON DELETE CASCADE,
+    mime TEXT NOT NULL, data BLOB NOT NULL, width INTEGER NOT NULL, height INTEGER NOT NULL
+);
+"""
+DOCUMENT_COLUMNS = ('id', 'title', 'filename', 'text', 'pages', 'content_hash', 'file_hash', 'created_at', 'media_type')
+
+
+def insert_document(conn, document, verb='INSERT'):
+    """Write a document row and, for an image, its media; returns whether the row was new."""
+    # A text document leaves `media_type` to its default, so it is written the same way before version 16.
+    columns = DOCUMENT_COLUMNS if document.get('media_type') else DOCUMENT_COLUMNS[:-1]
+    values = tuple(json.dumps(document['pages']) if k == 'pages' else document.get(k) for k in columns)
+    cursor = conn.execute(f'{verb} INTO knowledge_documents ({", ".join(columns)}) VALUES '
+                          f'({", ".join("?" * len(columns))})', values)
+    media = document.get('media')
+    if cursor.rowcount and media:
+        conn.execute('INSERT OR REPLACE INTO knowledge_media (document_id, mime, data, width, height) VALUES (?, ?, ?, ?, ?)',
+                     (document['id'], media['mime'], media['data'], media['width'], media['height']))
+    return bool(cursor.rowcount)
+
 
 class KnowledgeDatabase(WebSourceDatabase, CollectionDatabase):
     def import_collection_document(self, document, collection_id):
@@ -51,9 +75,7 @@ class KnowledgeDatabase(WebSourceDatabase, CollectionDatabase):
                                     (document['content_hash'],)).fetchone()
             id = existing['id'] if existing else document['id']
             if existing is None:
-                conn.execute('INSERT INTO knowledge_documents (id, title, filename, text, pages, content_hash, file_hash, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-                             (id, document['title'], document['filename'], document['text'], json.dumps(document['pages']),
-                              document['content_hash'], document['file_hash'], document['created_at']))
+                insert_document(conn, document)
             conn.execute('INSERT OR IGNORE INTO knowledge_collection_documents (collection_id, document_id) VALUES (?, ?)',
                          (collection_id, id))
             conn.commit()
@@ -73,7 +95,7 @@ class KnowledgeDatabase(WebSourceDatabase, CollectionDatabase):
             elif scope not in ('all', 'collections'):
                 where.append('EXISTS (SELECT 1 FROM knowledge_collection_documents c WHERE c.document_id=d.id AND c.collection_id=?)')
                 args.append(scope)
-            sql = 'SELECT d.id,d.title,d.filename,d.content_hash,d.created_at,length(d.text) AS characters FROM knowledge_documents d'
+            sql = 'SELECT d.id,d.title,d.filename,d.content_hash,d.created_at,d.media_type,length(d.text) AS characters FROM knowledge_documents d'
             if where:
                 sql += ' WHERE ' + ' AND '.join(where)
             sql += ' ORDER BY d.created_at DESC,d.id LIMIT ? OFFSET ?'
@@ -82,7 +104,7 @@ class KnowledgeDatabase(WebSourceDatabase, CollectionDatabase):
     def knowledge_documents(self):
         with self._get_conn() as conn:
             return [dict(r) for r in conn.execute('''SELECT id, title, filename, content_hash,
-                created_at, length(text) AS characters FROM knowledge_documents ORDER BY created_at DESC''')]
+                created_at, media_type, length(text) AS characters FROM knowledge_documents ORDER BY created_at DESC''')]
 
     def knowledge_document(self, id):
         with self._get_conn() as conn:
@@ -95,11 +117,24 @@ class KnowledgeDatabase(WebSourceDatabase, CollectionDatabase):
 
     def add_knowledge_document(self, document):
         with self._get_conn() as conn:
-            conn.execute('''INSERT OR IGNORE INTO knowledge_documents
-                (id, title, filename, text, pages, content_hash, file_hash, created_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)''',
-                tuple(document[k] if k != 'pages' else json.dumps(document[k]) for k in
-                      ('id', 'title', 'filename', 'text', 'pages', 'content_hash', 'file_hash', 'created_at')))
+            conn.execute('BEGIN IMMEDIATE')
+            insert_document(conn, document, 'INSERT OR IGNORE')
+            conn.commit()
+
+    def knowledge_media(self, document_id):
+        """The stored image of an image document, as {mime, data, width, height}, or None."""
+        with self._get_conn() as conn:
+            row = conn.execute('SELECT mime, data, width, height FROM knowledge_media WHERE document_id=?',
+                               (document_id,)).fetchone()
+            return dict(row) if row else None
+
+    def set_document_caption(self, id, caption):
+        """Change the caption of an image document. Its vectors embed the image alone, so they stay valid."""
+        with self._get_conn() as conn:
+            cursor = conn.execute('UPDATE knowledge_documents SET text=? WHERE id=? AND media_type IS NOT NULL',
+                                  (caption, id))
+            if not cursor.rowcount:
+                raise ValueError(_('Only an image document has a description to change.'))
             conn.commit()
 
     def rename_knowledge_document(self, id, title):
@@ -230,8 +265,9 @@ class KnowledgeDatabase(WebSourceDatabase, CollectionDatabase):
 
     def knowledge_chunk_page(self, index_id, offset=0, limit=100):
         with self._get_conn() as conn:
-            return [dict(r) for r in conn.execute('''SELECT k.id, k.ordinal, k.start, k.end,
-                substr(d.text, k.start+1, k.end-k.start) AS text FROM knowledge_chunks k
+            return [dict(r) for r in conn.execute('''SELECT k.id, k.ordinal, k.start, k.end, d.media_type, d.id AS document_id,
+                CASE WHEN d.media_type IS NULL THEN substr(d.text, k.start+1, k.end-k.start) ELSE d.text END AS text
+                FROM knowledge_chunks k
                 JOIN knowledge_indexes i ON i.id=k.index_id JOIN knowledge_documents d ON d.id=i.document_id
                 WHERE k.index_id=? ORDER BY k.ordinal LIMIT ? OFFSET ?''', (index_id, limit, offset))]
 
@@ -282,7 +318,7 @@ class KnowledgeDatabase(WebSourceDatabase, CollectionDatabase):
                 partial: list = []
                 for index_id, chosen in selection.items():
                     check_cancel()
-                    index = conn.execute('''SELECT i.*, d.title, d.pages FROM knowledge_indexes i
+                    index = conn.execute('''SELECT i.*, d.title, d.pages, d.media_type FROM knowledge_indexes i
                         JOIN knowledge_documents d ON d.id=i.document_id WHERE i.id=?''', (index_id,)).fetchone()
                     if index is None or index['status'] != 'complete' or index['config_id'] != config_id:
                         raise ValueError(_('A selected index is missing, incomplete, or incompatible. Choose sources again.'))
@@ -342,6 +378,11 @@ class KnowledgeDatabase(WebSourceDatabase, CollectionDatabase):
                     if row is None or row['index_id'] not in indexes:
                         raise ValueError(_('Stored vectors do not match their source. Rebuild this index.'))
                     index = indexes[row['index_id']]
+                    if index['media_type']:
+                        # The caption may change after the image is embedded, so the whole current one is read.
+                        caption = conn.execute('SELECT text FROM knowledge_documents WHERE id=?',
+                                               (index['document_id'],)).fetchone()[0]
+                        row = dict(row, start=0, end=len(caption))
                     length = min(row['end'] - row['start'], budget)
                     text = conn.execute('SELECT substr(text, ?, ?) FROM knowledge_documents WHERE id=?',
                                         (row['start'] + 1, length, index['document_id'])).fetchone()[0]
@@ -351,6 +392,9 @@ class KnowledgeDatabase(WebSourceDatabase, CollectionDatabase):
                                  'title': index['title'], 'ordinal': row['ordinal'], 'start': row['start'],
                                  'end': row['start'] + length, 'pages': pages, 'score': score, 'text': text,
                                  'truncated': length < row['end'] - row['start']})
+                    if index['media_type']:
+                        # Only the document is named; the image is read when a chat sends it.
+                        hits[-1]['media'] = {'type': index['media_type'], 'document_id': index['document_id']}
                     source = self._web_source(conn, index['document_id'])
                     if source:
                         hits[-1]['web_source'] = source

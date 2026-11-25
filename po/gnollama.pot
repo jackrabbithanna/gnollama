@@ -2184,12 +2184,6 @@ msgstr ""
 msgid "Add Files"
 msgstr ""
 
-#: src/widgets/knowledge_import.py:67
-msgid ""
-"Import PDF or UTF-8 text files, including Markdown and source code. Maximum size: 50 "
-"MiB per file. Review one file at a time before adding."
-msgstr ""
-
 #: src/widgets/knowledge_import.py:68
 msgid "Choose Files…"
 msgstr ""
@@ -2202,16 +2196,8 @@ msgstr ""
 msgid "Skip"
 msgstr ""
 
-#: src/widgets/knowledge_import.py:103
-msgid "Text and PDF files"
-msgstr ""
-
 #: src/widgets/knowledge_import.py:108
 msgid "All files"
-msgstr ""
-
-#: src/widgets/knowledge_import.py:113
-msgid "Choose Text or PDF Files"
 msgstr ""
 
 #: src/widgets/knowledge_import.py:146
@@ -4184,4 +4170,64 @@ msgstr ""
 
 #: src/widgets/history_sidebar.py
 msgid "Recent decisions"
+msgstr ""
+
+msgid "An image description must be no longer than 20,000 characters."
+msgstr ""
+
+msgid "This image cannot be read. Import a PNG, JPEG, GIF, or WebP image."
+msgstr ""
+
+msgid "The stored image is missing. Import the image again."
+msgstr ""
+
+msgid "This embedding model does not accept images. Choose a multimodal model such as embeddinggemma2."
+msgstr ""
+
+msgid "Embedding the image…"
+msgstr ""
+
+msgid "Only an image document has a description to change."
+msgstr ""
+
+msgid "An image to embed is invalid."
+msgstr ""
+
+msgid "This model also embeds images."
+msgstr ""
+
+msgid "Import PDF or UTF-8 text files, including Markdown and source code, or images (PNG, JPEG, GIF, WebP) for a collection whose embedding model accepts images. Maximum size: 50 MiB per file. Review one file at a time before adding."
+msgstr ""
+
+msgid "Text, PDF, and image files"
+msgstr ""
+
+msgid "Choose Text, PDF, or Image Files"
+msgstr ""
+
+msgid "Description (optional). It is shown with the image in answers and is not embedded."
+msgstr ""
+
+msgid "Edit Description"
+msgstr ""
+
+msgid "No description. Answers name this image by its title only."
+msgstr ""
+
+msgid "Shown with the image in answers. It is not embedded, so the image’s embeddings stay valid."
+msgstr ""
+
+msgid "This image is no longer in the library."
+msgstr ""
+
+msgid "Image without a description."
+msgstr ""
+
+msgid "Search this collection the way a chat would, with its embedding model and default settings."
+msgstr ""
+
+msgid "Search"
+msgstr ""
+
+msgid "More Options…"
 msgstr ""

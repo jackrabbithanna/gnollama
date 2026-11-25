@@ -63,7 +63,7 @@ class StorageTests(unittest.TestCase):
         db = DatabaseManager(path)
         self.assertEqual(db.chats.get_chat('chat')['messages'], [{'role': 'assistant', 'content': 'saved'}])
         with db._get_conn() as conn:
-            self.assertEqual(conn.execute('PRAGMA user_version').fetchone()[0], 15)
+            self.assertEqual(conn.execute('PRAGMA user_version').fetchone()[0], 16)
 
     def test_a_thread_keeps_one_connection_and_threads_do_not_share(self):
         db = self.storage.db

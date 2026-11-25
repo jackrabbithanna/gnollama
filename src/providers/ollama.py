@@ -7,7 +7,7 @@ from gi.repository import Soup
 
 from ..credentials import CredentialError
 from . import systemone
-from .base import Capabilities, Provider, check_vectors, embedding_texts
+from .base import Capabilities, Provider, check_vectors, embedding_inputs, supports
 from .transport import ProviderError, RequestCancelled, validate_url
 
 CLOUD_URL = 'https://ollama.com'
@@ -67,7 +67,7 @@ class OllamaProvider(Provider):
                                 logprobs=True, keep_alive=True, raw_generate=True,
                                 sampling_extras=True, context_size=True, thinking_text=True,
                                 timing_stats=True, model_verification=True, refuses_long_input=True,
-                                decisions=True, decision_images=True, decision_question_limit=64)
+                                image_embeddings=True, decisions=True, decision_images=True, decision_question_limit=64)
 
     @property
     def key(self):
@@ -114,8 +114,11 @@ class OllamaProvider(Provider):
         return _("Connected\nOllama Version: {0}").format(self.version(cancellable=cancellable))
 
     def embed(self, model, input, dimensions=None, keep_alive=None, timeout=300, cancellable=None):
-        """Return validated native embeddings without allowing silent input truncation."""
-        texts = embedding_texts(input, dimensions)
+        """Return validated native embeddings without allowing silent input truncation.
+
+        An image goes as {'image': base64}, which the server takes as it is.
+        """
+        texts = embedding_inputs(input, dimensions)
         data = {'model': model, 'input': texts, 'truncate': False}
         if dimensions is not None:
             data['dimensions'] = dimensions
@@ -124,6 +127,12 @@ class OllamaProvider(Provider):
         result = self._request('/api/embed', data, 'POST', timeout, cancellable)
         check_vectors(result.get('embeddings') if isinstance(result, dict) else None, len(texts), dimensions)
         return result
+
+    def embeds_images(self, name, timeout=10, cancellable=None):
+        # The model's own details say, without asking about every other model.
+        if not self.capabilities.image_embeddings:
+            return False
+        return supports(self.show_model(name, timeout=timeout, cancellable=cancellable), 'vision')
 
     def list_decision_models(self, timeout=10, cancellable=None):
         """The listed models that decide; the list says what each one can do."""

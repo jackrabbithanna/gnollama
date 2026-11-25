@@ -2313,14 +2313,6 @@ msgstr "Προστέθηκε στη συλλογή — Χρειάζεται πρ
 msgid "Add Files"
 msgstr "Προσθήκη αρχείων"
 
-#: src/widgets/knowledge_import.py:67
-msgid ""
-"Import PDF or UTF-8 text files, including Markdown and source code. Maximum size: 50 "
-"MiB per file. Review one file at a time before adding."
-msgstr ""
-"Εισαγάγετε PDF ή αρχεία κειμένου UTF-8, όπως Markdown και πηγαίο κώδικα. Μέγιστο "
-"μέγεθος: 50 MiB ανά αρχείο. Ελέγξτε κάθε αρχείο ξεχωριστά πριν το προσθέσετε."
-
 #: src/widgets/knowledge_import.py:68
 msgid "Choose Files…"
 msgstr "Επιλογή αρχείων…"
@@ -2333,17 +2325,9 @@ msgstr "Εξαγόμενο περιεχόμενο (μόνο για ανάγνω�
 msgid "Skip"
 msgstr "Παράλειψη"
 
-#: src/widgets/knowledge_import.py:103
-msgid "Text and PDF files"
-msgstr "Αρχεία κειμένου και PDF"
-
 #: src/widgets/knowledge_import.py:108
 msgid "All files"
 msgstr "Όλα τα αρχεία"
-
-#: src/widgets/knowledge_import.py:113
-msgid "Choose Text or PDF Files"
-msgstr "Επιλογή αρχείων κειμένου ή PDF"
 
 #: src/widgets/knowledge_import.py:146
 msgid "Extracting"
@@ -4380,3 +4364,63 @@ msgstr "Εκτέλεση"
 #: src/widgets/history_sidebar.py
 msgid "Recent decisions"
 msgstr "Πρόσφατες αποφάσεις"
+
+msgid "An image description must be no longer than 20,000 characters."
+msgstr "Η περιγραφή μιας εικόνας δεν πρέπει να υπερβαίνει τους 20.000 χαρακτήρες."
+
+msgid "This image cannot be read. Import a PNG, JPEG, GIF, or WebP image."
+msgstr "Δεν είναι δυνατή η ανάγνωση αυτής της εικόνας. Εισαγάγετε εικόνα PNG, JPEG, GIF ή WebP."
+
+msgid "The stored image is missing. Import the image again."
+msgstr "Η αποθηκευμένη εικόνα λείπει. Εισαγάγετε ξανά την εικόνα."
+
+msgid "This embedding model does not accept images. Choose a multimodal model such as embeddinggemma2."
+msgstr "Αυτό το μοντέλο ενσωματώσεων δεν δέχεται εικόνες. Επιλέξτε ένα πολυτροπικό μοντέλο όπως το embeddinggemma2."
+
+msgid "Embedding the image…"
+msgstr "Δημιουργία ενσωμάτωσης της εικόνας…"
+
+msgid "Only an image document has a description to change."
+msgstr "Μόνο ένα έγγραφο εικόνας έχει περιγραφή που μπορεί να αλλάξει."
+
+msgid "An image to embed is invalid."
+msgstr "Μια εικόνα προς ενσωμάτωση δεν είναι έγκυρη."
+
+msgid "This model also embeds images."
+msgstr "Αυτό το μοντέλο ενσωματώνει και εικόνες."
+
+msgid "Import PDF or UTF-8 text files, including Markdown and source code, or images (PNG, JPEG, GIF, WebP) for a collection whose embedding model accepts images. Maximum size: 50 MiB per file. Review one file at a time before adding."
+msgstr "Εισαγάγετε αρχεία PDF ή κειμένου UTF-8, όπως Markdown και πηγαίο κώδικα, ή εικόνες (PNG, JPEG, GIF, WebP) για μια συλλογή της οποίας το μοντέλο ενσωματώσεων δέχεται εικόνες. Μέγιστο μέγεθος: 50 MiB ανά αρχείο. Ελέγξτε ένα αρχείο τη φορά πριν το προσθέσετε."
+
+msgid "Text, PDF, and image files"
+msgstr "Αρχεία κειμένου, PDF και εικόνας"
+
+msgid "Choose Text, PDF, or Image Files"
+msgstr "Επιλογή αρχείων κειμένου, PDF ή εικόνας"
+
+msgid "Description (optional). It is shown with the image in answers and is not embedded."
+msgstr "Περιγραφή (προαιρετική). Εμφανίζεται με την εικόνα στις απαντήσεις και δεν ενσωματώνεται."
+
+msgid "Edit Description"
+msgstr "Επεξεργασία περιγραφής"
+
+msgid "No description. Answers name this image by its title only."
+msgstr "Χωρίς περιγραφή. Οι απαντήσεις αναφέρουν αυτή την εικόνα μόνο με τον τίτλο της."
+
+msgid "Shown with the image in answers. It is not embedded, so the image’s embeddings stay valid."
+msgstr "Εμφανίζεται με την εικόνα στις απαντήσεις. Δεν ενσωματώνεται, οπότε οι ενσωματώσεις της εικόνας παραμένουν έγκυρες."
+
+msgid "This image is no longer in the library."
+msgstr "Αυτή η εικόνα δεν βρίσκεται πλέον στη βιβλιοθήκη."
+
+msgid "Image without a description."
+msgstr "Εικόνα χωρίς περιγραφή."
+
+msgid "Search this collection the way a chat would, with its embedding model and default settings."
+msgstr "Αναζητήστε σε αυτή τη συλλογή όπως θα έκανε μια συνομιλία, με το μοντέλο ενσωματώσεών της και τις προεπιλεγμένες ρυθμίσεις."
+
+msgid "Search"
+msgstr "Αναζήτηση"
+
+msgid "More Options…"
+msgstr "Περισσότερες επιλογές…"

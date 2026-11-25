@@ -106,6 +106,9 @@ class LibraryRepository:
     def knowledge_indexes(self, *args, **kwargs):
         return self._database.knowledge.knowledge_indexes(*args, **kwargs)
 
+    def knowledge_media(self, *args, **kwargs):
+        return self._database.knowledge.knowledge_media(*args, **kwargs)
+
     def knowledge_vector(self, *args, **kwargs):
         return self._database.knowledge.knowledge_vector(*args, **kwargs)
 
@@ -132,6 +135,9 @@ class LibraryRepository:
 
     def search_knowledge(self, *args, **kwargs):
         return self._database.knowledge.search_knowledge(*args, **kwargs)
+
+    def set_document_caption(self, *args, **kwargs):
+        return self._database.knowledge.set_document_caption(*args, **kwargs)
 
     def set_model_conversation_status(self, *args, **kwargs):
         return self._database.model_conversations.set_model_conversation_status(*args, **kwargs)

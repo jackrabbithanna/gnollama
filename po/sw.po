@@ -2298,14 +2298,6 @@ msgstr "Imeongezwa kwenye mkusanyiko — inahitaji kushughulikiwa"
 msgid "Add Files"
 msgstr "Ongeza faili"
 
-#: src/widgets/knowledge_import.py:67
-msgid ""
-"Import PDF or UTF-8 text files, including Markdown and source code. Maximum size: 50 "
-"MiB per file. Review one file at a time before adding."
-msgstr ""
-"Leta faili za PDF au maandishi ya UTF-8, zikiwemo Markdown na msimbo chanzo. Ukubwa "
-"wa juu zaidi: MiB 50 kwa faili. Kagua faili moja baada ya nyingine kabla ya kuongeza."
-
 #: src/widgets/knowledge_import.py:68
 msgid "Choose Files…"
 msgstr "Chagua faili…"
@@ -2318,17 +2310,9 @@ msgstr "Maudhui yaliyochimbwa (kusoma pekee)"
 msgid "Skip"
 msgstr "Ruka"
 
-#: src/widgets/knowledge_import.py:103
-msgid "Text and PDF files"
-msgstr "Faili za maandishi na PDF"
-
 #: src/widgets/knowledge_import.py:108
 msgid "All files"
 msgstr "Faili zote"
-
-#: src/widgets/knowledge_import.py:113
-msgid "Choose Text or PDF Files"
-msgstr "Chagua faili za maandishi au PDF"
 
 #: src/widgets/knowledge_import.py:146
 msgid "Extracting"
@@ -4356,3 +4340,63 @@ msgstr "Endesha"
 #: src/widgets/history_sidebar.py
 msgid "Recent decisions"
 msgstr "Maamuzi ya hivi karibuni"
+
+msgid "An image description must be no longer than 20,000 characters."
+msgstr "Maelezo ya picha hayapaswi kuzidi herufi 20,000."
+
+msgid "This image cannot be read. Import a PNG, JPEG, GIF, or WebP image."
+msgstr "Picha hii haiwezi kusomwa. Leta picha ya PNG, JPEG, GIF au WebP."
+
+msgid "The stored image is missing. Import the image again."
+msgstr "Picha iliyohifadhiwa haipo. Leta picha tena."
+
+msgid "This embedding model does not accept images. Choose a multimodal model such as embeddinggemma2."
+msgstr "Modeli hii ya embedding haikubali picha. Chagua modeli ya aina nyingi kama embeddinggemma2."
+
+msgid "Embedding the image…"
+msgstr "Inatengeneza embedding ya picha…"
+
+msgid "Only an image document has a description to change."
+msgstr "Ni hati ya picha pekee yenye maelezo yanayoweza kubadilishwa."
+
+msgid "An image to embed is invalid."
+msgstr "Picha ya kutengenezea embedding si sahihi."
+
+msgid "This model also embeds images."
+msgstr "Modeli hii pia hutengeneza embedding za picha."
+
+msgid "Import PDF or UTF-8 text files, including Markdown and source code, or images (PNG, JPEG, GIF, WebP) for a collection whose embedding model accepts images. Maximum size: 50 MiB per file. Review one file at a time before adding."
+msgstr "Leta faili za PDF au za maandishi ya UTF-8, zikiwemo Markdown na msimbo chanzo, au picha (PNG, JPEG, GIF, WebP) kwa mkusanyiko ambao modeli yake ya embedding inakubali picha. Ukubwa wa juu: MiB 50 kwa kila faili. Kagua faili moja baada ya nyingine kabla ya kuongeza."
+
+msgid "Text, PDF, and image files"
+msgstr "Faili za maandishi, PDF na picha"
+
+msgid "Choose Text, PDF, or Image Files"
+msgstr "Chagua Faili za Maandishi, PDF au Picha"
+
+msgid "Description (optional). It is shown with the image in answers and is not embedded."
+msgstr "Maelezo (si lazima). Huonyeshwa pamoja na picha katika majibu na hayatengenezewi embedding."
+
+msgid "Edit Description"
+msgstr "Hariri Maelezo"
+
+msgid "No description. Answers name this image by its title only."
+msgstr "Hakuna maelezo. Majibu yanataja picha hii kwa kichwa chake tu."
+
+msgid "Shown with the image in answers. It is not embedded, so the image’s embeddings stay valid."
+msgstr "Huonyeshwa pamoja na picha katika majibu. Hayatengenezewi embedding, hivyo embedding za picha zinabaki halali."
+
+msgid "This image is no longer in the library."
+msgstr "Picha hii haipo tena kwenye maktaba."
+
+msgid "Image without a description."
+msgstr "Picha isiyo na maelezo."
+
+msgid "Search this collection the way a chat would, with its embedding model and default settings."
+msgstr "Tafuta katika mkusanyiko huu kama gumzo lingefanya, kwa modeli yake ya embedding na mipangilio chaguomsingi."
+
+msgid "Search"
+msgstr "Tafuta"
+
+msgid "More Options…"
+msgstr "Chaguo Zaidi…"

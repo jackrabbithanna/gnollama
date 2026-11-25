@@ -2188,14 +2188,6 @@ msgstr "コレクションに追加済み — 要確認"
 msgid "Add Files"
 msgstr "ファイルを追加"
 
-#: src/widgets/knowledge_import.py:67
-msgid ""
-"Import PDF or UTF-8 text files, including Markdown and source code. Maximum size: 50 "
-"MiB per file. Review one file at a time before adding."
-msgstr ""
-"Markdown やソースコードを含む UTF-8 のテキストファイル、または PDF をインポートできます。最大サイズは 1 ファイルあたり 50 MiB "
-"です。追加前にファイルを 1 つずつ確認してください。"
-
 #: src/widgets/knowledge_import.py:68
 msgid "Choose Files…"
 msgstr "ファイルを選択…"
@@ -2208,17 +2200,9 @@ msgstr "抽出した内容（読み取り専用）"
 msgid "Skip"
 msgstr "スキップ"
 
-#: src/widgets/knowledge_import.py:103
-msgid "Text and PDF files"
-msgstr "テキストおよび PDF ファイル"
-
 #: src/widgets/knowledge_import.py:108
 msgid "All files"
 msgstr "すべてのファイル"
-
-#: src/widgets/knowledge_import.py:113
-msgid "Choose Text or PDF Files"
-msgstr "テキストまたは PDF ファイルを選択"
 
 #: src/widgets/knowledge_import.py:146
 msgid "Extracting"
@@ -4194,3 +4178,63 @@ msgstr "実行"
 #: src/widgets/history_sidebar.py
 msgid "Recent decisions"
 msgstr "最近の判定"
+
+msgid "An image description must be no longer than 20,000 characters."
+msgstr "画像の説明は 20,000 文字以内にしてください。"
+
+msgid "This image cannot be read. Import a PNG, JPEG, GIF, or WebP image."
+msgstr "この画像を読み込めません。PNG、JPEG、GIF、または WebP 画像をインポートしてください。"
+
+msgid "The stored image is missing. Import the image again."
+msgstr "保存された画像が見つかりません。画像をもう一度インポートしてください。"
+
+msgid "This embedding model does not accept images. Choose a multimodal model such as embeddinggemma2."
+msgstr "この埋め込みモデルは画像を受け付けません。embeddinggemma2 などのマルチモーダルモデルを選択してください。"
+
+msgid "Embedding the image…"
+msgstr "画像を埋め込み中…"
+
+msgid "Only an image document has a description to change."
+msgstr "説明を変更できるのは画像ドキュメントだけです。"
+
+msgid "An image to embed is invalid."
+msgstr "埋め込む画像が無効です。"
+
+msgid "This model also embeds images."
+msgstr "このモデルは画像も埋め込みます。"
+
+msgid "Import PDF or UTF-8 text files, including Markdown and source code, or images (PNG, JPEG, GIF, WebP) for a collection whose embedding model accepts images. Maximum size: 50 MiB per file. Review one file at a time before adding."
+msgstr "PDF または UTF-8 テキストファイル（Markdown やソースコードを含む）、または埋め込みモデルが画像を受け付けるコレクション用の画像（PNG、JPEG、GIF、WebP）をインポートします。最大サイズ: 1 ファイルあたり 50 MiB。追加する前に 1 ファイルずつ確認してください。"
+
+msgid "Text, PDF, and image files"
+msgstr "テキスト、PDF、画像ファイル"
+
+msgid "Choose Text, PDF, or Image Files"
+msgstr "テキスト、PDF、または画像ファイルを選択"
+
+msgid "Description (optional). It is shown with the image in answers and is not embedded."
+msgstr "説明（任意）。回答で画像と一緒に表示され、埋め込まれません。"
+
+msgid "Edit Description"
+msgstr "説明を編集"
+
+msgid "No description. Answers name this image by its title only."
+msgstr "説明がありません。回答ではこの画像をタイトルだけで示します。"
+
+msgid "Shown with the image in answers. It is not embedded, so the image’s embeddings stay valid."
+msgstr "回答で画像と一緒に表示されます。埋め込まれないため、画像の埋め込みは有効なままです。"
+
+msgid "This image is no longer in the library."
+msgstr "この画像はライブラリにもうありません。"
+
+msgid "Image without a description."
+msgstr "説明のない画像。"
+
+msgid "Search this collection the way a chat would, with its embedding model and default settings."
+msgstr "チャットと同じように、このコレクションの埋め込みモデルと既定の設定で検索します。"
+
+msgid "Search"
+msgstr "検索"
+
+msgid "More Options…"
+msgstr "その他のオプション…"

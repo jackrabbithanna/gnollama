@@ -3,7 +3,7 @@ import copy
 import json
 import time
 from gettext import gettext as _
-from gi.repository import Gtk
+from gi.repository import Gdk, Gio, GLib, Gtk
 
 from ..knowledge import (DEFAULT_RAG, validate_rag)
 from ..vectors import SEARCH_METRICS
@@ -14,8 +14,39 @@ from .knowledge_common import (
     actions, button, clear, config_label, dropdown, field, HostModels, label, section, WorkDialog,
 )
 
+def hit_picture(context, hit):
+    """A thumbnail of an image hit, read on a worker; it says so if the image has left the library."""
+    picture = Gtk.Picture(can_shrink=True, height_request=120, halign=Gtk.Align.START,
+                          alternative_text=hit['title'], visible=False)
+    missing = label(_('This image is no longer in the library.'), visible=False)
+    box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=4)
+    box.append(picture)
+    box.append(missing)
+
+    def read():
+        try:
+            media = context.storage.library.knowledge_media(hit['media']['document_id'])
+        except Exception:
+            media = None
+
+        def show():
+            texture = None
+            if media:
+                try:
+                    texture = Gdk.Texture.new_from_bytes(GLib.Bytes.new(media['data']))
+                except GLib.Error:
+                    texture = None
+            picture.set_paintable(texture)
+            picture.set_visible(texture is not None)
+            missing.set_visible(texture is None)
+            return False
+        GLib.idle_add(show)
+    context.services.control.submit(read)
+    return box
+
+
 class SourcesView(Gtk.Expander):
-    def __init__(self, snapshot):
+    def __init__(self, snapshot, context=None):
         super().__init__(label=_('Sources used ({0})').format(len(snapshot['hits'])))
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
         self.set_child(box)
@@ -42,15 +73,130 @@ class SourcesView(Gtk.Expander):
                 content.append(Gtk.LinkButton(uri=source['final_url'], label=_('Open Source URL'), halign=Gtk.Align.START))
                 content.append(label(source['final_url']))
                 content.append(label(_('Fetched: {0}').format(time.strftime('%Y-%m-%d %H:%M', time.localtime(source['fetched_at'])))))
-            content.append(label(hit['text'] + ('\n' + _('Shortened to fit the source budget.') if hit.get('truncated') else '')))
+            if hit.get('media') and context is not None:
+                content.append(hit_picture(context, hit))
+            text = hit['text'] or (_('Image without a description.') if hit.get('media') else '')
+            content.append(label(text + ('\n' + _('Shortened to fit the source budget.') if hit.get('truncated') else '')))
             item.set_child(content)
             box.append(item)
         box.append(label(_('Scores compare embeddings; they are not confidence estimates.')))
 
 
+class CollectionSearch(Gtk.Box):
+    """A test search of one collection, kept across rebuilds of the collection page so its results stay."""
+    # The options a search of one collection may change; the rest come from the collection.
+    SETTINGS = ('count', 'budget', 'metric', 'minimum', 'maximum', 'host', 'host_kind', 'model')
+
+    def __init__(self, context, collection, settings=None):
+        super().__init__(orientation=Gtk.Orientation.VERTICAL, spacing=8)
+        self.context, self.collection = context, collection
+        # Shared with the page, which keeps them for this collection while the app runs.
+        self.settings = {} if settings is None else settings
+        self.cancel = None
+        self.generation = 0
+        self.append(label(_('Test Search'), selectable=False, css_classes=['heading']))
+        self.append(label(_('Search this collection the way a chat would, with its embedding model and default settings.')))
+        row = Gtk.Box(spacing=6)
+        self.query = Gtk.SearchEntry(placeholder_text=_('Enter a search query'), hexpand=True)
+        self.query.connect('activate', self.search)
+        self.search_button = button(_('Search'), self.search)
+        self.search_button.add_css_class('suggested-action')
+        row.append(self.query)
+        row.append(self.search_button)
+        row.append(button(_('More Options…'), self.more_options))
+        self.append(row)
+        self.summary = label()
+        self.summary.add_css_class('dim-label')
+        self.append(self.summary)
+        self.show_summary()
+        self.error = label(visible=False)
+        self.error.add_css_class('error')
+        self.append(self.error)
+        self.results = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+        self.append(self.results)
+        self.connect('destroy', lambda *args: self.stop())
+
+    def options(self):
+        collection = self.collection
+        options = dict(copy.deepcopy(DEFAULT_RAG), enabled=True, config_id=collection['config_id'],
+                       host=collection['host'], host_kind=collection['host_kind'], model=collection['model'],
+                       collection_ids=[collection['id']])
+        options.update(self.settings)
+        return options
+
+    def show_summary(self):
+        options = self.options()
+        metric = {'cosine': _('Cosine similarity'), 'euclidean': _('Euclidean distance (L2)'),
+                  'manhattan': _('Manhattan distance (L1)')}.get(options['metric'], options['metric'])
+        parts = [metric, _('Maximum passages') + ': {0}'.format(options['count']),
+                 _('Source budget (characters)') + ': {0}'.format(options['budget'])]
+        if options['minimum'] is not None:
+            parts.append(_('Minimum cosine similarity') + ': {0}'.format(options['minimum']))
+        if options['maximum'] is not None:
+            parts.append(_('Maximum distance') + ': {0}'.format(options['maximum']))
+        self.summary.set_text(' · '.join(parts))
+
+    def more_options(self, *args):
+        dialog = SourcePicker(self.context, self.options(), self.apply, title=_('Search Settings'),
+                              fixed_collections=True)
+        dialog.query.set_text(self.query.get_text())
+        dialog.present(self)
+        return dialog
+
+    def apply(self, options):
+        """Keep the search settings a settings dialog applied, then search again if there is a query."""
+        self.settings.clear()
+        self.settings.update({key: options[key] for key in self.SETTINGS if key in options})
+        self.show_summary()
+        if self.query.get_text().strip():
+            self.search()
+
+    def stop(self):
+        self.generation += 1
+        if self.cancel:
+            self.cancel.cancel()
+        self.search_button.set_sensitive(True)
+
+    def search(self, *args):
+        query = self.query.get_text().strip()
+        self.error.set_visible(False)
+        if not query:
+            self.error.set_text(_('Enter a search query.'))
+            self.error.set_visible(True)
+            return
+        self.stop()
+        generation, cancel = self.generation, Gio.Cancellable()
+        self.cancel = cancel
+        options = self.options()
+        self.search_button.set_sensitive(False)
+
+        def task():
+            snapshot = error = None
+            try:
+                snapshot = self.context.knowledge.retrieve(options, query, cancel)
+            except Exception as exc:
+                error = exc
+
+            def deliver():
+                if generation != self.generation:
+                    return False
+                self.search_button.set_sensitive(True)
+                clear(self.results)
+                if error:
+                    self.error.set_text(str(error))
+                    self.error.set_visible(True)
+                else:
+                    view = SourcesView(snapshot, self.context)
+                    view.set_expanded(True)
+                    self.results.append(view)
+                return False
+            GLib.idle_add(deliver)
+        self.context.services.control.submit(task)
+
+
 class SourcePicker(WorkDialog):
-    def __init__(self, context, options, on_apply=None):
-        super().__init__(_('Knowledge Sources') if on_apply else _('Test Search'))
+    def __init__(self, context, options, on_apply=None, title=None, fixed_collections=False):
+        super().__init__(title or (_('Knowledge Sources') if on_apply else _('Test Search')))
         self.context, self.on_apply = context, on_apply
         self.storage = context.storage
         self.options = dict(copy.deepcopy(DEFAULT_RAG), **copy.deepcopy(options))
@@ -115,6 +261,11 @@ class SourcePicker(WorkDialog):
             self.header.pack_end(apply)
         self.config_dropdown.connect('notify::selected', self._config_changed)
         self._render_sources()
+        if fixed_collections:
+            # Settings for a search of the collections given; only how they are searched changes.
+            self.collection_search.set_visible(False)
+            self.collection_box.set_sensitive(False)
+            self.settings_expander.set_expanded(True)
         self.context.knowledge.listeners.append(self._refresh_sources)
         self.connect('closed', self._disconnect_sources)
 
@@ -272,7 +423,7 @@ class SourcePicker(WorkDialog):
             if error:
                 self.show_error(error)
             else:
-                view = SourcesView(snapshot)
+                view = SourcesView(snapshot, self.context)
                 view.set_expanded(True)
                 self.results.append(view)
         self.run(lambda cancel: self.context.knowledge.retrieve(options, query, cancel), completed)

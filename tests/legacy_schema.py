@@ -11,6 +11,14 @@ def remove_workspace(conn):
         if column in {row[1] for row in conn.execute('PRAGMA table_info(' + table + ')')}:
             conn.execute('ALTER TABLE ' + table + ' DROP COLUMN ' + column)
     remove_host_kind(conn)
+    remove_media(conn)
+
+
+def remove_media(conn):
+    """Leave the knowledge tables as every version before 16 stored them, without image documents."""
+    conn.execute('DROP TABLE IF EXISTS knowledge_media')
+    if 'media_type' in {row[1] for row in conn.execute('PRAGMA table_info(knowledge_documents)')}:
+        conn.execute('ALTER TABLE knowledge_documents DROP COLUMN media_type')
 
 
 def remove_host_kind(conn):
@@ -34,7 +42,7 @@ def downgrade_to_version_three(conn):
     """Leave a current database as the version 3 schema stored it."""
     for column in ('response_metadata', 'tool_calls', 'tool_name', 'tool_call_id'):
         conn.execute('ALTER TABLE messages DROP COLUMN ' + column)
-    for table in ('knowledge_web_sources', 'knowledge_collection_documents', 'knowledge_collections', 'knowledge_chunks', 'knowledge_indexes', 'embedding_configs', 'knowledge_documents'):
+    for table in ('knowledge_media', 'knowledge_web_sources', 'knowledge_collection_documents', 'knowledge_collections', 'knowledge_chunks', 'knowledge_indexes', 'embedding_configs', 'knowledge_documents'):
         conn.execute('DROP TABLE ' + table)
     conn.execute('ALTER TABLE hosts DROP COLUMN provider')
     conn.execute('ALTER TABLE hosts DROP COLUMN credential_id')

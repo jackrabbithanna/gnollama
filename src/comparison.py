@@ -70,7 +70,7 @@ def prepare_run(context, active, prompt, images, settings, targets, draft_id, re
         levels = (details or {}).get('thinking_levels')
         if levels is not None and wire.thinking is not None and wire.thinking not in levels:
             raise ValueError(_('The selected thinking level is incompatible with a target.'))
-        resolved.append((target, host, connection))
+        resolved.append((target, host, connection, supports(details, 'vision') is True))
     retrieval = None
     if knowledge.get('enabled'):
         validate_rag(knowledge)
@@ -81,18 +81,22 @@ def prepare_run(context, active, prompt, images, settings, targets, draft_id, re
     if wire.system:
         messages.insert(0, {'role': 'system', 'content': wire.system})
     sent = augmented_messages(messages, retrieval)
+    # Retrieved images go only to the targets that see them.
+    pictures = context.knowledge.hit_images(retrieval) if retrieval else []
+    seeing = augmented_messages(messages, retrieval, pictures) if pictures else sent
     run = dict(id=active.id, prompt=prompt, images=images, settings=settings.to_stored(), retrieval=retrieval,
                message_uid=str(uuid.uuid4()), targets=[], draft_id=draft_id, draft_revision=revision)
-    for target, host, connection in resolved:
+    for target, host, connection, sees in resolved:
         id = str(uuid.uuid4())
+        request = seeing if sees else sent
         effective = replace(settings, endpoint='chat', target=ModelTarget(
             host['id'], validate_url(host['hostname']), target['model'], host.get('name')))
-        state = RequestState(effective, prompt, images, messages=copy.deepcopy(sent), connection=connection, retrieval=copy.deepcopy(retrieval))
+        state = RequestState(effective, prompt, images, messages=copy.deepcopy(request), connection=connection, retrieval=copy.deepcopy(retrieval))
         state.metadata['retrieval'] = copy.deepcopy(retrieval)
         state.metadata['context_estimate'] = estimate_context(messages, wire, retrieval)
         active.states[id] = state
         run['targets'].append(dict(id=id, settings=effective.to_stored(), request=dict(
-            messages=copy.deepcopy(sent), model=target['model'], **copy.deepcopy(wire.provider_args()))))
+            messages=copy.deepcopy(request), model=target['model'], **copy.deepcopy(wire.provider_args()))))
     if active.cancellable.is_cancelled():
         raise RequestCancelled()
     active.pending = set(active.states)

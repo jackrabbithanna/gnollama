@@ -9,7 +9,7 @@ from gettext import gettext as _
 from gi.repository import Soup
 
 from ..credentials import CredentialError
-from .base import Capabilities, Provider, check_vectors, embedding_texts
+from .base import Capabilities, Provider, check_vectors, embedding_inputs, embedding_texts
 from .transport import ProviderError, RequestCancelled, error_text, validate_url
 
 LABEL = 'OpenAI-Compatible Server'
@@ -59,6 +59,13 @@ def image_url(image):
     if head[:4] == b'RIFF' and head[8:12] == b'WEBP':
         mime = 'image/webp'
     return f'data:{mime};base64,{image}'
+
+
+def embedding_input(item):
+    """One input of an embedding request as the server takes it: text as it is, an image as a content part."""
+    if isinstance(item, dict):
+        return {'content': [{'type': 'image_url', 'image_url': {'url': image_url(item['image'])}}]}
+    return item
 
 
 def wire_messages(messages, images=None):
@@ -248,7 +255,7 @@ class OpenAICompatibleProvider(Provider):
     url_example = 'http://localhost:8080'
     key_optional = True
     capabilities = Capabilities(embeddings=True, thinking_levels=True, structured_output=True, tools=True,
-                                logprobs=True, thinking_text=True, options_notice=NOTICE)
+                                logprobs=True, thinking_text=True, image_embeddings=True, options_notice=NOTICE)
     optional_suffix = '/v1'
     json_mode = JSON_OBJECT  # What asks for JSON without a schema.
 
@@ -316,10 +323,13 @@ class OpenAICompatibleProvider(Provider):
         The API cannot be told to refuse an input longer than the model's context, and a
         server may shorten one without saying so; the caller checks the length first.
         """
-        texts = embedding_texts(input, dimensions)
+        if self.capabilities.image_embeddings:
+            texts = embedding_inputs(input, dimensions)
+        else:
+            texts = embedding_texts(input, dimensions)
         if keep_alive is not None:
             raise ProviderError(_('This server does not accept: {0}.').format('keep_alive'))
-        data = {'model': model, 'input': texts}
+        data = {'model': model, 'input': [embedding_input(text) for text in texts]}
         if dimensions is not None:
             data['dimensions'] = dimensions
         result = self.transport.request(lambda: self._address('/embeddings'), lambda: data, 'POST',

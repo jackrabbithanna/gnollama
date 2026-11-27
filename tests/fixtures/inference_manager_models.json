@@ -1,0 +1,17 @@
+{
+ "object": "list",
+ "data": [
+  {
+   "id": "qwen3-5/qwen-3-5-0.8b-q4-k-m",
+   "object": "model",
+   "created": 1795757723,
+   "owned_by": "qwen3-5"
+  },
+  {
+   "id": "smollm2/smollm2-135m",
+   "object": "model",
+   "created": 1795757723,
+   "owned_by": "smollm2"
+  }
+ ]
+}

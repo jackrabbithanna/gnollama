@@ -8,7 +8,7 @@
   <summary>Chat with local and cloud models</summary>
   <description>
     <p>Chat with models running on your computer, on another computer, or in the cloud, using a native GNOME interface.</p>
-    <p>Connect to Ollama, LM Studio, and other OpenAI-compatible servers, or to Ollama Cloud, OpenAI, OpenRouter, and the Vercel AI Gateway.</p>
+    <p>Connect to Ollama, LM Studio, Ubuntu Inference Manager, and other OpenAI-compatible servers, or to Ollama Cloud, OpenAI, OpenRouter, and the Vercel AI Gateway.</p>
     <p>Keep conversations in separate tabs, attach images to vision models, and read responses with Markdown and highlighted code.</p>
     <p>Compare answers from several models side by side, let two models talk to each other, ask decision models structured questions, and generate images from a prompt.</p>
     <p>Build knowledge collections from documents, web pages, and images, and use them as sources for chat answers.</p>

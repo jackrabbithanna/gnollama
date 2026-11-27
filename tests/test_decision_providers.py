@@ -8,7 +8,7 @@ from unittest.mock import patch
 
 from gi.repository import Gio
 from src import decision
-from src.providers import (Capabilities, LMStudioProvider, OllamaCloudProvider, OllamaProvider,
+from src.providers import (Capabilities, InferenceManagerProvider, LMStudioProvider, OllamaCloudProvider, OllamaProvider,
                            OpenAICompatibleProvider, OpenRouterProvider, ProviderError, RequestCancelled,
                            generates)
 from src.providers import systemone
@@ -18,6 +18,7 @@ from src.providers.transport import error_detail
 from src.providers.vercel import VercelProvider
 from src.services import Services
 from src.widgets.chat_input import ChatInput
+from test_inference_manager import CLEF, FIXTURES, NOMIC, QWEN, SMOL, served
 from test_lmstudio import HostFixture, Loopback, recorded
 from test_openai import GIF, JPEG, PNG, WEBP, Handler, Keys
 from test_ui import pump_until
@@ -93,6 +94,8 @@ class Deciding(Served):
     DECIDER = ''
     FAILURES: tuple = ()
     KEYED = True
+    TONE, INPUT_TOKENS = 'calm', 449  # What the recorded answer says.
+    BAD_GATEWAY = 'HTTP Error 502'  # A 502 with no words, as this type reads it.
 
     def decide(self, state=STATE, questions=QUESTIONS, provider=None, **kwargs):
         return (provider or self.provider()).decide(self.DECIDER, state, questions, **kwargs)
@@ -114,7 +117,7 @@ class Deciding(Served):
         # What came back is what the core module reads.
         result = decision.parse_result(answer, decision.parse_questions(QUESTIONS))
         self.assertEqual([item.type for item in result.answers], ['noul', 'choice', 'score'])
-        self.assertEqual((result.answers[1].value, result.input_tokens), ('calm', 449))
+        self.assertEqual((result.answers[1].value, result.input_tokens), (self.TONE, self.INPUT_TOKENS))
         # State may be JSON of any shape.
         for state in ({'ticket': 7, 'text': STATE}, [STATE, 'second'], ''):
             self.decide(state=state)
@@ -144,7 +147,7 @@ class Deciding(Served):
                 self.assertEqual((str(caught.exception), caught.exception.status), (error['says'], error['status']))
         # Without words in the body, the status says what happened.
         self.server.status, self.server.body = 502, b'<html>Bad Gateway</html>'
-        with self.assertRaisesRegex(ProviderError, 'HTTP Error 502') as caught:
+        with self.assertRaisesRegex(ProviderError, self.BAD_GATEWAY) as caught:
             self.decide()
         self.assertEqual(caught.exception.status, 502)
 
@@ -362,6 +365,63 @@ class LMStudioTests(Deciding, unittest.TestCase):
                 self.assertEqual(narrowed, replace(capabilities, decision_images=False))
                 self.assertIn('does not accept images', decision.check_request(
                     decision.parse_questions(QUESTIONS), [PNG], narrowed))
+
+
+class InferenceManagerTests(Deciding, unittest.TestCase):
+    """Against the answers clef-flash gave through the service on another computer."""
+    RECORDED = 'inference_manager_models.json'
+    KIND = InferenceManagerProvider
+    ANSWER = 'systemone_inference_manager.json'
+    DECIDER = CLEF
+    FAILURES = ('inference_manager',)
+    KEYED = False
+    TONE, INPUT_TOKENS = 'angry', 323
+    BAD_GATEWAY = 'provider did not answer'
+
+    def setUp(self):
+        super().setUp()
+        self.server.models = served(SMOL, QWEN, NOMIC, CLEF)
+
+    def provider(self, **kwargs):
+        provider = self.KIND(self.url, **kwargs)
+        object.__setattr__(provider, 'catalogue_path', FIXTURES + '/inference_manager_catalogue.json')
+        object.__setattr__(provider, 'snaps_path', FIXTURES + '/inference_manager_snaps')
+        return provider
+
+    def test_images_go_as_data_urls_and_never_as_assets(self):
+        self.decide(images=[PNG, 'data:image/jpeg;base64,' + JPEG])
+        self.assertEqual(self.sent(), {'model': CLEF, 'state': STATE, 'questions': QUESTIONS,
+                                       'images': ['data:image/png;base64,' + PNG, 'data:image/jpeg;base64,' + JPEG]})
+        self.decide(images=[])
+        self.assertNotIn('images', self.sent())
+        with self.assertRaisesRegex(ProviderError, 'does not accept: keep_alive'):
+            self.decide(keep_alive=60)
+
+    def test_models_are_those_the_catalogue_says_decide(self):
+        provider = self.provider()
+        listed, = provider.list_decision_models()
+        self.assertEqual(listed, {'name': CLEF, 'size': 6782 * 2 ** 20, 'capabilities': ['decision', 'vision'],
+                                  'digest': fingerprint(CLEF, 'Q4_K_M', '6782M'),
+                                  'details': {'family': 'Clef Flash', 'quantization_level': 'Q4_K_M'}})
+        self.assertEqual(provider.show_model(CLEF)['capabilities'], ['decision', 'vision'])
+        capabilities = provider.capabilities
+        self.assertEqual((capabilities.decisions, capabilities.decision_images, capabilities.decision_boxes,
+                          capabilities.decision_question_limit, capabilities.decision_image_formats),
+                         (True, True, False, 0, ()))
+        self.assertIs(provider.decision_capabilities(listed), capabilities)
+        self.assertIn('box questions', decision.check_request(decision.parse_questions(BOX), [PNG], capabilities))
+        # Without the catalogue nothing is known to decide, so nothing is offered.
+        object.__setattr__(provider, 'catalogue_path', FIXTURES + '/missing.json')
+        self.assertEqual(provider.list_decision_models(), [])
+
+    def test_the_errors_it_gave(self):
+        answers = recorded('systemone_inference_manager_errors.json')
+        for name, said in (('no_mmproj', 'start it with `--mmproj`'), ('raw_image', 'must be data URLs'),
+                           ('box', 'must be one of: choice, score, noul')):
+            with self.subTest(error=name):
+                self.server.status, self.server.body = answers[name]['status'], json.dumps(answers[name]['body']).encode()
+                with self.assertRaisesRegex(ProviderError, said):
+                    self.decide()
 
 
 class OpenRouterTests(AssetChecks, Deciding, unittest.TestCase):

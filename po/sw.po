@@ -41,10 +41,11 @@ msgstr ""
 
 #: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:11
 msgid ""
-"Connect to Ollama, LM Studio, and other OpenAI-compatible servers, or to Ollama "
+"Connect to Ollama, LM Studio, Ubuntu Inference Manager, and other OpenAI-"
+"compatible servers, or to Ollama "
 "Cloud, OpenAI, OpenRouter, and the Vercel AI Gateway."
 msgstr ""
-"Unganisha na Ollama, LM Studio, na seva nyingine zinazooana na OpenAI, au na Ollama "
+"Unganisha na Ollama, LM Studio, Ubuntu Inference Manager, na seva nyingine zinazooana na OpenAI, au na Ollama "
 "Cloud, OpenAI, OpenRouter, na Vercel AI Gateway."
 
 #: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:11
@@ -3940,6 +3941,26 @@ msgstr "Imepimwa na Tureen, haikuripotiwa na seva. Jumla inajumuisha uchelewesha
 #: src/providers/lmstudio.py
 msgid "LM Studio"
 msgstr "LM Studio"
+
+#: src/providers/inference_manager.py
+msgid "Ubuntu Inference Manager"
+msgstr "Ubuntu Inference Manager"
+
+#: src/providers/inference_manager.py
+msgid "No models are installed on this server. Install one there with “inference install”, for example “sudo inference install gemma4”."
+msgstr "Hakuna miundo iliyosakinishwa kwenye seva hii. Sakinisha mmoja huko kwa “inference install”, kwa mfano “sudo inference install gemma4”."
+
+#: src/providers/inference_manager.py
+msgid "This model is no longer served. Its provider may be stopped or removed on the server."
+msgstr "Muundo huu hautolewi tena. Huenda mtoa huduma wake amesimamishwa au ameondolewa kwenye seva."
+
+#: src/providers/inference_manager.py
+msgid "The model’s provider did not answer. It may still be loading, or it may be stopped."
+msgstr "Mtoa huduma wa muundo hakujibu. Huenda bado anapakia, au huenda amesimamishwa."
+
+#: src/providers/inference_manager.py
+msgid "This server is not Inference Manager. Use the OpenAI-Compatible Server type for it."
+msgstr "Seva hii si Inference Manager. Tumia aina ya Seva inayooana na OpenAI kwa ajili yake."
 
 #: src/providers/openrouter.py
 msgid "OpenRouter"

@@ -41,10 +41,11 @@ msgstr ""
 
 #: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:11
 msgid ""
-"Connect to Ollama, LM Studio, and other OpenAI-compatible servers, or to Ollama "
+"Connect to Ollama, LM Studio, Ubuntu Inference Manager, and other OpenAI-"
+"compatible servers, or to Ollama "
 "Cloud, OpenAI, OpenRouter, and the Vercel AI Gateway."
 msgstr ""
-"Συνδεθείτε στο Ollama, στο LM Studio και σε άλλους διακομιστές συμβατούς με το "
+"Συνδεθείτε στο Ollama, στο LM Studio, στο Ubuntu Inference Manager και σε άλλους διακομιστές συμβατούς με το "
 "OpenAI, ή στο Ollama Cloud, στο OpenAI, στο OpenRouter και στο Vercel AI Gateway."
 
 #: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:11
@@ -3965,6 +3966,26 @@ msgstr "Μετρήθηκε από το Tureen, δεν αναφέρθηκε απ�
 #: src/providers/lmstudio.py
 msgid "LM Studio"
 msgstr "LM Studio"
+
+#: src/providers/inference_manager.py
+msgid "Ubuntu Inference Manager"
+msgstr "Ubuntu Inference Manager"
+
+#: src/providers/inference_manager.py
+msgid "No models are installed on this server. Install one there with “inference install”, for example “sudo inference install gemma4”."
+msgstr "Δεν υπάρχουν εγκατεστημένα μοντέλα σε αυτόν τον διακομιστή. Εγκαταστήστε ένα εκεί με “inference install”, για παράδειγμα “sudo inference install gemma4”."
+
+#: src/providers/inference_manager.py
+msgid "This model is no longer served. Its provider may be stopped or removed on the server."
+msgstr "Αυτό το μοντέλο δεν εξυπηρετείται πλέον. Ο πάροχός του μπορεί να έχει σταματήσει ή να έχει αφαιρεθεί από τον διακομιστή."
+
+#: src/providers/inference_manager.py
+msgid "The model’s provider did not answer. It may still be loading, or it may be stopped."
+msgstr "Ο πάροχος του μοντέλου δεν απάντησε. Μπορεί να φορτώνει ακόμη ή να έχει σταματήσει."
+
+#: src/providers/inference_manager.py
+msgid "This server is not Inference Manager. Use the OpenAI-Compatible Server type for it."
+msgstr "Αυτός ο διακομιστής δεν είναι Inference Manager. Χρησιμοποιήστε τον τύπο «Διακομιστής συμβατός με OpenAI»."
 
 #: src/providers/openrouter.py
 msgid "OpenRouter"

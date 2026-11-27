@@ -43,10 +43,11 @@ msgstr ""
 
 #: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:11
 msgid ""
-"Connect to Ollama, LM Studio, and other OpenAI-compatible servers, or to Ollama "
+"Connect to Ollama, LM Studio, Ubuntu Inference Manager, and other OpenAI-"
+"compatible servers, or to Ollama "
 "Cloud, OpenAI, OpenRouter, and the Vercel AI Gateway."
 msgstr ""
-"Conéctate a Ollama, LM Studio y otros servidores compatibles con OpenAI, o a Ollama "
+"Conéctate a Ollama, LM Studio, Ubuntu Inference Manager y otros servidores compatibles con OpenAI, o a Ollama "
 "Cloud, OpenAI, OpenRouter y Vercel AI Gateway."
 
 #: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:11
@@ -3957,6 +3958,26 @@ msgstr "Medido por Tureen, no informado por el servidor. El total incluye el ret
 #: src/providers/lmstudio.py
 msgid "LM Studio"
 msgstr "LM Studio"
+
+#: src/providers/inference_manager.py
+msgid "Ubuntu Inference Manager"
+msgstr "Ubuntu Inference Manager"
+
+#: src/providers/inference_manager.py
+msgid "No models are installed on this server. Install one there with “inference install”, for example “sudo inference install gemma4”."
+msgstr "No hay modelos instalados en este servidor. Instale uno allí con “inference install”, por ejemplo “sudo inference install gemma4”."
+
+#: src/providers/inference_manager.py
+msgid "This model is no longer served. Its provider may be stopped or removed on the server."
+msgstr "Este modelo ya no se sirve. Es posible que su proveedor se haya detenido o eliminado en el servidor."
+
+#: src/providers/inference_manager.py
+msgid "The model’s provider did not answer. It may still be loading, or it may be stopped."
+msgstr "El proveedor del modelo no respondió. Puede que aún se esté cargando o que esté detenido."
+
+#: src/providers/inference_manager.py
+msgid "This server is not Inference Manager. Use the OpenAI-Compatible Server type for it."
+msgstr "Este servidor no es Inference Manager. Use el tipo Servidor compatible con OpenAI para él."
 
 #: src/providers/openrouter.py
 msgid "OpenRouter"

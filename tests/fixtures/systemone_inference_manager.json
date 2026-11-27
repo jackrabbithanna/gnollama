@@ -1,0 +1,38 @@
+{
+ "model": "clef-flash-9b",
+ "answers": {
+  "billing": {
+   "type": "noul",
+   "noul": 0.949203655696568
+  },
+  "tone": {
+   "type": "choice",
+   "choice": "angry",
+   "probabilities": {
+    "angry": 0.8936542086451855,
+    "calm": 0.08112907950949272,
+    "excited": 0.025216711845321652
+   },
+   "confidence": 0.8404813129677783
+  },
+  "urgency": {
+   "type": "score",
+   "score": 1.8317950792379876,
+   "legend": {
+    "0": "Can wait",
+    "1": "Needs attention this week",
+    "2": "Needs attention today"
+   },
+   "probabilities": {
+    "0": 0.03713442390721763,
+    "1": 0.09393607294757708,
+    "2": 0.8689295031452052
+   },
+   "confidence": 0.7476926188569815
+  }
+ },
+ "usage": {
+  "input_tokens": 323,
+  "output_tokens": 0
+ }
+}

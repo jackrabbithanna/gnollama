@@ -221,6 +221,7 @@ class Provider:
     name_example = ''  # Placeholder of the name field, a whole sentence; none if empty.
     url_example = ''   # Placeholder of the address field; none if empty.
     optional_suffix = ''  # A path ending this type adds itself, so an address may hold it or not.
+    empty_notice = ''  # Shown, translated, when the server lists no chat models; a default if empty.
 
     @classmethod
     def keeps_key(cls, host, url):

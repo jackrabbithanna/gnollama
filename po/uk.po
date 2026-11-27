@@ -42,10 +42,11 @@ msgstr ""
 
 #: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:11
 msgid ""
-"Connect to Ollama, LM Studio, and other OpenAI-compatible servers, or to Ollama "
+"Connect to Ollama, LM Studio, Ubuntu Inference Manager, and other OpenAI-"
+"compatible servers, or to Ollama "
 "Cloud, OpenAI, OpenRouter, and the Vercel AI Gateway."
 msgstr ""
-"Під’єднуйтеся до Ollama, LM Studio та інших OpenAI-сумісних серверів або до Ollama "
+"Під’єднуйтеся до Ollama, LM Studio, Ubuntu Inference Manager та інших OpenAI-сумісних серверів або до Ollama "
 "Cloud, OpenAI, OpenRouter і Vercel AI Gateway."
 
 #: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:11
@@ -3942,6 +3943,26 @@ msgstr "Виміряно Tureen, а не повідомлено сервером
 #: src/providers/lmstudio.py
 msgid "LM Studio"
 msgstr "LM Studio"
+
+#: src/providers/inference_manager.py
+msgid "Ubuntu Inference Manager"
+msgstr "Ubuntu Inference Manager"
+
+#: src/providers/inference_manager.py
+msgid "No models are installed on this server. Install one there with “inference install”, for example “sudo inference install gemma4”."
+msgstr "На цьому сервері не встановлено жодної моделі. Встановіть її там за допомогою “inference install”, наприклад “sudo inference install gemma4”."
+
+#: src/providers/inference_manager.py
+msgid "This model is no longer served. Its provider may be stopped or removed on the server."
+msgstr "Ця модель більше не обслуговується. Її постачальника, можливо, зупинено або вилучено на сервері."
+
+#: src/providers/inference_manager.py
+msgid "The model’s provider did not answer. It may still be loading, or it may be stopped."
+msgstr "Постачальник моделі не відповів. Можливо, він ще завантажується або зупинений."
+
+#: src/providers/inference_manager.py
+msgid "This server is not Inference Manager. Use the OpenAI-Compatible Server type for it."
+msgstr "Цей сервер не є Inference Manager. Використовуйте для нього тип «Сервер, сумісний з OpenAI»."
 
 #: src/providers/openrouter.py
 msgid "OpenRouter"

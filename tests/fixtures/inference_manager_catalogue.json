@@ -1,0 +1,119 @@
+[
+ {
+  "snap": "clef-flash",
+  "model_name": "Clef Flash",
+  "engines": [
+   {
+    "name": "cpu",
+    "runtime": "llamacpp",
+    "default_model": "clef-flash-9b",
+    "models": [
+     "clef-flash-9b"
+    ]
+   }
+  ],
+  "models": [
+   {
+    "name": "clef-flash-9b",
+    "quantization": "Q4_K_M",
+    "disk_size": "6782M",
+    "capabilities": [
+     "vision",
+     "decision"
+    ],
+    "component": "model-clef-flash-1-of-2"
+   }
+  ]
+ },
+ {
+  "snap": "nomic-embed-text-v1-5",
+  "model_name": "Nomic Embed Text v1.5",
+  "engines": [
+   {
+    "name": "cpu",
+    "runtime": "llamacpp",
+    "default_model": "nomic-embed-text-v1-5",
+    "models": [
+     "nomic-embed-text-v1-5"
+    ]
+   }
+  ],
+  "models": [
+   {
+    "name": "nomic-embed-text-v1-5",
+    "quantization": "Q4_K_M",
+    "disk_size": "81M",
+    "capabilities": [
+     "text-embedding"
+    ],
+    "component": "model-nomic-embed-text-v1-5"
+   }
+  ]
+ },
+ {
+  "snap": "qwen3-5",
+  "model_name": "Qwen 3.5",
+  "engines": [
+   {
+    "name": "cpu",
+    "runtime": "llamacpp",
+    "default_model": "qwen3.5-4b",
+    "models": [
+     "qwen3.5-0.8b",
+     "qwen3.5-4b"
+    ]
+   }
+  ],
+  "models": [
+   {
+    "name": "qwen3.5-0.8b",
+    "quantization": "Q4_K_M",
+    "disk_size": "540M",
+    "capabilities": [
+     "text",
+     "vision",
+     "thinking",
+     "tools"
+    ],
+    "component": "model-0-8b-q4-k-m-gguf"
+   },
+   {
+    "name": "qwen3.5-4b",
+    "quantization": "Q4_K_XL",
+    "disk_size": "2910M",
+    "capabilities": [
+     "text",
+     "vision",
+     "thinking",
+     "tools"
+    ],
+    "component": "model-4b-q4-k-xl-gguf"
+   }
+  ]
+ },
+ {
+  "snap": "smollm2",
+  "model_name": "SmolLM2",
+  "engines": [
+   {
+    "name": "cpu",
+    "runtime": "llamacpp",
+    "default_model": "smollm2-135m",
+    "models": [
+     "smollm2-135m"
+    ]
+   }
+  ],
+  "models": [
+   {
+    "name": "smollm2-135m",
+    "quantization": "Q4_K_M",
+    "disk_size": "101M",
+    "capabilities": [
+     "text"
+    ],
+    "component": "smollm2-135m-q4-k-m-gguf"
+   }
+  ]
+ }
+]

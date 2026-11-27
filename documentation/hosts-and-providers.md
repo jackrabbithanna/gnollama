@@ -10,6 +10,7 @@ Open **Manage Hosts**, add a host, and choose its type. Give it a name you will 
 | --- | --- | --- | --- |
 | **Ollama Server** | Your server, e.g. `http://localhost:11434` | Not needed | — |
 | **LM Studio** | `http://localhost:1234` by default; enable the server in LM Studio's Developer tab | Optional | Only if you turned on authentication in LM Studio |
+| **Ubuntu Inference Manager** | `http://localhost:8400` by default | None | — |
 | **OpenAI-Compatible Server** | Your server, e.g. `http://localhost:8080` (`/v1` is added if needed) | Optional | Whatever your server expects |
 | **Ollama Cloud** | Filled in automatically | Required | [ollama.com/settings/keys](https://ollama.com/settings/keys) |
 | **OpenAI** | Filled in automatically | Required | [platform.openai.com/api-keys](https://platform.openai.com/api-keys) |
@@ -18,25 +19,35 @@ Open **Manage Hosts**, add a host, and choose its type. Give it a name you will 
 
 Host records keep their name and address labels, validate the address as you type, and show a **Test Connection** action.
 
-**Test Connection** lists the host's models. For OpenAI and the Vercel AI Gateway it also confirms the key is accepted. Ollama Cloud and OpenRouter publish their model lists, so for them a successful test confirms only that the service is reachable, and the key is checked when you first generate a response.
+**Test Connection** lists the host's models. For Ubuntu Inference Manager it first checks that the address really is that service, and suggests the OpenAI-Compatible Server type if it isn't. For OpenAI and the Vercel AI Gateway it also confirms the key is accepted. Ollama Cloud and OpenRouter publish their model lists, so for them a successful test confirms only that the service is reachable, and the key is checked when you first generate a response.
 
 ![Manage Hosts listing Ollama, Ollama Cloud, LM Studio, OpenRouter, and Vercel AI Gateway servers](../screenshots/tureen-manage-hosts.png)
 
 ## What each host type supports
 
-| | Ollama Server | LM Studio | OpenAI-Compatible | Ollama Cloud | OpenAI | OpenRouter | Vercel AI Gateway |
-| --- | :-: | :-: | :-: | :-: | :-: | :-: | :-: |
-| Chat, tools, thinking | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| Structured output | ✓ | ✓ | ✓ | | ✓ | ✓ | ✓ |
-| Single responses (`/api/generate`) | ✓ | | | ✓ | | | |
-| Embeddings for Knowledge | ✓ | ✓ | ✓ | | ✓ | ✓ | ✓ |
-| Image embeddings | ✓ | | ✓ | | | ✓ | |
-| Decisions | ✓ | ✓ | | | ✓ | ✓ | ✓ |
-| Image generation | | | | | ✓ | ✓ | ✓ |
-| Pull, delete, and unload models | ✓ | | | | | | |
-| Model retention | ✓ | | | | | | |
+| | Ollama Server | LM Studio | Ubuntu Inference Manager | OpenAI-Compatible | Ollama Cloud | OpenAI | OpenRouter | Vercel AI Gateway |
+| --- | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-: |
+| Chat, tools, thinking | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Structured output | ✓ | ✓ | ✓ | ✓ | | ✓ | ✓ | ✓ |
+| Single responses (`/api/generate`) | ✓ | | | | ✓ | | | |
+| Embeddings for Knowledge | ✓ | ✓ | ✓ | ✓ | | ✓ | ✓ | ✓ |
+| Image embeddings | ✓ | | | ✓ | | | ✓ | |
+| Decisions | ✓ | ✓ | ✓ | | | ✓ | ✓ | ✓ |
+| Image generation | | | | | | ✓ | ✓ | ✓ |
+| Pull, delete, and unload models | ✓ | | | | | | | |
+| Model retention | ✓ | | | | | | | |
 
 Model names come directly from each host. Image input, tool calling, and thinking controls follow each model's reported capabilities. OpenAI-compatible servers don't report these, so Tureen doesn't check them there; hosts without capability metadata keep manual image support, marked as unknown. If a tab uses a setting the selected host can't take, such as structured output on Ollama Cloud, Tureen names it instead of sending the request. The setting stays saved in the tab for hosts that support it.
+
+### Ubuntu Inference Manager
+
+[Inference Manager](https://github.com/canonical/inference) (the `inference` snap) serves every model installed through it at one address, `http://localhost:8400`, with no API key. Models are listed as `provider/model`, for example `smollm2/smollm2-135m`.
+
+The server doesn't say what its models can do, so Tureen reads the catalogue the service keeps on its machine, `/var/snap/inference/common/onboarded-snaps.json`, and the installed providers' model manifests under `/snap`, which tell which catalogue model each served name is. That gives each model's image, tool, and thinking support, its quantization, and its size on disk, and marks embedding models so they are offered only in **Knowledge**. Thinking can be turned on or off. Text for **Knowledge** is split into pieces of at most 512 tokens, the most the service's embedding servers accept in one input. Decision models, such as Clef Flash, are offered in **Decision** tabs. They need instructions on every question, and they don't answer box questions. Models the catalogue doesn't list, and every model when the file can't be read (for example from the Flatpak build), are used with their capabilities unknown, as on any OpenAI-compatible server. Context length isn't reported, so your own setting applies.
+
+If no models are listed, install one on the server, for example `sudo inference install gemma4`. A provider that is stopped (`sudo snap stop <provider>`) drops out of the list until it is started again.
+
+A provider's server sizes the model's context to the memory that is free, so a model can take far more memory than its size on disk: on a 16 GB computer, Qwen 3.5 4B took 12 GB. Installing a provider installs its default model; choose a smaller one with the provider's own command, for example `sudo qwen3-5 use-model qwen3.5-0.8b`, then `qwen3-5 prune-cache`.
 
 ### Model lists
 

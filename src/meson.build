@@ -145,6 +145,7 @@ tureen_provider_sources = [
   'providers/__init__.py',
   'providers/base.py',
   'providers/imaging.py',
+  'providers/inference_manager.py',
   'providers/lmstudio.py',
   'providers/ollama.py',
   'providers/openai.py',

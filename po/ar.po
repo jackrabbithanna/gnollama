@@ -41,10 +41,11 @@ msgstr ""
 
 #: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:11
 msgid ""
-"Connect to Ollama, LM Studio, and other OpenAI-compatible servers, or to Ollama "
+"Connect to Ollama, LM Studio, Ubuntu Inference Manager, and other OpenAI-"
+"compatible servers, or to Ollama "
 "Cloud, OpenAI, OpenRouter, and the Vercel AI Gateway."
 msgstr ""
-"اتصل بـ Ollama وLM Studio وغيرهما من الخوادم المتوافقة مع OpenAI، أو بـ Ollama "
+"اتصل بـ Ollama وLM Studio وUbuntu Inference Manager وغيرهما من الخوادم المتوافقة مع OpenAI، أو بـ Ollama "
 "Cloud وOpenAI وOpenRouter وVercel AI Gateway."
 
 #: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:11
@@ -3866,6 +3867,30 @@ msgstr "قاسه Tureen ولم يُبلغ عنه الخادم. يشمل الإج
 #: src/providers/lmstudio.py
 msgid "LM Studio"
 msgstr "LM Studio"
+
+#: src/providers/inference_manager.py
+msgid "Ubuntu Inference Manager"
+msgstr "Ubuntu Inference Manager"
+
+#: src/providers/inference_manager.py
+msgid "No models are installed on this server. Install one there with “inference install”, for example “sudo inference install gemma4”."
+msgstr "لا توجد نماذج مثبتة على هذا الخادم. ثبّت نموذجًا هناك باستخدام “inference install”، مثلًا “sudo inference install gemma4”."
+
+#: src/providers/inference_manager.py
+msgid "This model is no longer served. Its provider may be stopped or removed on the server."
+msgstr "لم يعد هذا النموذج متاحًا على الخادم. ربما أُوقف مزوّده أو أُزيل من الخادم."
+
+#: src/providers/inference_manager.py
+msgid "The model’s provider did not answer. It may still be loading, or it may be stopped."
+msgstr "لم يستجب مزوّد النموذج. ربما لا يزال قيد التحميل، أو ربما أُوقف."
+
+#: src/providers/inference_manager.py
+msgid "This server is not Inference Manager. Use the OpenAI-Compatible Server type for it."
+msgstr "هذا الخادم ليس Inference Manager. استخدم له نوع خادم متوافق مع OpenAI."
+
+#: src/providers/inference_manager.py
+msgid "The connection to this server is not encrypted, and the server has no password: anyone on its network can use its models."
+msgstr "الاتصال بهذا الخادم غير مشفّر، ولا توجد للخادم كلمة مرور: يمكن لأي شخص على شبكته استخدام نماذجه."
 
 #: src/providers/openrouter.py
 msgid "OpenRouter"

@@ -141,7 +141,8 @@ class OtherHostTests(unittest.TestCase):
     # What each type's panel disabled before models were asked, with the explanation it gave.
     BEFORE = dict(ollama={}, ollama_cloud=dict(output=SERVER, memory=''),
                   openai=dict(memory='', top_k_entry=SERVER, min_p_entry=SERVER, num_ctx_entry=SERVER),
-                  lmstudio=dict(memory='', num_ctx_entry=SERVER))
+                  lmstudio=dict(memory='', num_ctx_entry=SERVER),
+                  inference_manager=dict(memory='', num_ctx_entry=SERVER))
     DETAILS = {'capabilities': ['completion'], 'supported_parameters': ['temperature']}
 
     def test_panels_of_other_types_are_as_they_were(self):

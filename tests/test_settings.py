@@ -221,8 +221,13 @@ class StoredSettingsTests(unittest.TestCase):
                       tools=[{'type': 'function', 'strict': False, 'name': 'lookup', 'parameters': {'type': 'object'}}],
                       include=['message.output_text.logprobs'], top_logprobs=2,
                       text={'format': {'type': 'json_schema', 'name': 'response', 'schema': SCHEMA, 'strict': False}}))
+        inference_manager = dict(lmstudio, names=lmstudio['names'] - {'reasoning_effort'} | {'chat_template_kwargs'},
+                                 sent=dict(lmstudio['sent'], chat_template_kwargs={'enable_thinking': True}))
+        del inference_manager['sent']['reasoning_effort']
         cases = dict(ollama=ollama, ollama_cloud=ollama, openai=openai, lmstudio=lmstudio, openrouter=openrouter,
-                     vercel=vercel, openai_official=official)
+                     vercel=vercel, openai_official=official,
+                     # LM Studio's wire, but llama.cpp behind the proxy switches thinking in the chat template.
+                     inference_manager=inference_manager)
         self.assertEqual(set(cases), set(PROVIDERS), 'every provider has a case here')
         for kind, cls in PROVIDERS.items():
             case = cases[kind]

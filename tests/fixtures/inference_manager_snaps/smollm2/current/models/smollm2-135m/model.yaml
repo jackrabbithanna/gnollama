@@ -1,0 +1,18 @@
+name: smollm2-135m
+quantization: Q4_K_M
+disk-size: 101M
+
+description: |
+  SmolLM2-135M-Instruct is a compact language model optimized for efficient
+  natural language understanding and generation tasks. This variant uses
+  Q4_K_M quantization for a balance of performance and efficiency.
+model-card-url: https://huggingface.co/unsloth/SmolLM2-135M-Instruct-GGUF
+
+capabilities:
+  - text
+
+components:
+  - smollm2-135m-q4-k-m-gguf
+
+environment:
+  - MODEL_FILE=$SNAP_COMPONENTS/smollm2-135m-q4-k-m-gguf/SmolLM2-135M-Instruct-Q4_K_M.gguf

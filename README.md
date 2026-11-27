@@ -6,7 +6,7 @@
 
 **Native GNOME client for local and cloud AI**
 
-[Ollama](https://ollama.com), [LM Studio](https://lmstudio.ai), [OpenAI](https://openai.com), [OpenRouter](https://openrouter.ai), the [Vercel AI Gateway](https://vercel.com/ai-gateway), and more.<br>
+[Ollama](https://ollama.com), [LM Studio](https://lmstudio.ai), [Ubuntu Inference Manager](https://github.com/canonical/inference), [OpenAI](https://openai.com), [OpenRouter](https://openrouter.ai), the [Vercel AI Gateway](https://vercel.com/ai-gateway), and more.<br>
 Chat, compare models, generate images, and create local RAG collections.
 
 *Formerly known as Gnollama.*
@@ -26,7 +26,7 @@ Whether you are developing, experimenting, or chatting with local models, Tureen
 
 Connect to any mix of local and cloud hosts, and pick a different one in every tab.
 
-- Local servers: Ollama, LM Studio, and other OpenAI-compatible servers
+- Local servers: Ollama, LM Studio, Ubuntu Inference Manager, and other OpenAI-compatible servers
 - Cloud services: Ollama Cloud, OpenAI, OpenRouter, and the Vercel AI Gateway
 - API keys kept in the desktop keyring, never in the database or exports
 - Each model's capabilities (vision, tools, thinking) checked before sending

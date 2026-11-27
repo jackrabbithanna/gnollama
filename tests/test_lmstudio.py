@@ -439,7 +439,8 @@ class HostTests(HostFixture, unittest.TestCase):
         dialog = HostEditDialog()
         model = dialog.provider_dropdown.get_model()
         labels = [model.get_string(index) for index in range(model.get_n_items())]
-        self.assertEqual(labels[2:5], ['OpenAI-Compatible Server', 'LM Studio', 'OpenRouter'])
+        self.assertEqual(labels[2:6], ['OpenAI-Compatible Server', 'LM Studio', 'Ubuntu Inference Manager',
+                                       'OpenRouter'])
         dialog.provider_dropdown.set_selected(list(PROVIDERS).index('lmstudio'))
         self.assertEqual((dialog.hostname_entry.get_text(), dialog.name_entry.get_text()),
                          ('http://localhost:1234', 'LM Studio'))

@@ -1,4 +1,5 @@
 """What every model provider offers, and what each one can do."""
+import ipaddress
 import math
 from dataclasses import dataclass, field, fields, replace
 from gettext import gettext as _
@@ -122,6 +123,23 @@ def _address(url, suffix):
     return parts.scheme, parts.username, parts.password, parts.hostname, port, path.removesuffix(suffix)
 
 
+def on_this_machine(url):
+    """Whether a URL certainly names this computer: `localhost` or a loopback address. Any doubt means it does not,
+    but text that is not yet an address names nothing, and so is not called another machine either."""
+    try:
+        name = urlsplit(url.strip()).hostname
+    except ValueError:
+        return True
+    if not name:
+        return True
+    if name == 'localhost' or name.endswith('.localhost'):
+        return True
+    try:
+        return ipaddress.ip_address(name).is_loopback
+    except ValueError:
+        return False
+
+
 def same_address(first, second, suffix=''):
     """Whether two URLs certainly name one server; any doubt means they differ.
 
@@ -221,6 +239,8 @@ class Provider:
     name_example = ''  # Placeholder of the name field, a whole sentence; none if empty.
     url_example = ''   # Placeholder of the address field; none if empty.
     optional_suffix = ''  # A path ending this type adds itself, so an address may hold it or not.
+    empty_notice = ''  # Shown, translated, when the server lists no chat models; a default if empty.
+    open_notice = ''   # Shown, translated, under an address that is not this computer; none if empty.
 
     @classmethod
     def keeps_key(cls, host, url):

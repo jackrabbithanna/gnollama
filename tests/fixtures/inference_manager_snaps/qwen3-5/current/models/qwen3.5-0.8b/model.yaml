@@ -1,0 +1,24 @@
+name: qwen3.5-0.8b
+
+description: |
+  Qwen 3.5 0.8B, Q4_K_M GGUF quantization, with multimodal (vision) projection
+  weights.
+model-card-url: https://huggingface.co/unsloth/Qwen3.5-0.8B-GGUF
+quantization: Q4_K_M
+
+disk-size: 540M
+
+capabilities:
+  - text
+  - vision
+  - thinking
+  - tools
+
+components:
+  - model-0-8b-q4-k-m-gguf
+  - mmproj-0-8b-q4-k-m
+
+environment:
+  - MODEL_FILE=$SNAP_COMPONENTS/model-0-8b-q4-k-m-gguf/Qwen3.5-0.8B-Q4_K_M.gguf
+  - MMPROJ_FILE=$SNAP_COMPONENTS/mmproj-0-8b-q4-k-m/mmproj-BF16.gguf
+  - MODEL_NAME=qwen-3-5-0.8b-q4-k-m

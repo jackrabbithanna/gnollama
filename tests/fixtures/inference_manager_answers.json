@@ -1,0 +1,72 @@
+{
+ "root": {
+  "status": 200,
+  "body": {
+   "documentation-url": "https://github.com/canonical/inference"
+  }
+ },
+ "unknown_model": {
+  "status": 404,
+  "body": {
+   "error": {
+    "message": "The requested model does not exist.",
+    "type": "invalid_request_error"
+   }
+  }
+ },
+ "no_model": {
+  "status": 400,
+  "body": {
+   "error": {
+    "message": "Request body must contain a model.",
+    "type": "invalid_request_error"
+   }
+  }
+ },
+ "too_large": {
+  "status": 413,
+  "body": {
+   "error": {
+    "message": "Request body is too large.",
+    "type": "invalid_request_error"
+   }
+  }
+ },
+ "image": {
+  "status": 500,
+  "body": {
+   "error": {
+    "code": 500,
+    "message": "image input is not supported - hint: if this is unexpected, you may need to provide the mmproj",
+    "type": "server_error"
+   }
+  }
+ },
+ "embeddings": {
+  "status": 501,
+  "body": {
+   "error": {
+    "code": 501,
+    "message": "This server does not support embeddings. Start it with `--embeddings`",
+    "type": "not_supported_error"
+   }
+  }
+ },
+ "stopped_models": {
+  "status": 200,
+  "body": {
+   "object": "list",
+   "data": []
+  }
+ },
+ "props_v1": {
+  "status": 404,
+  "body": {
+   "error": {
+    "message": "File Not Found",
+    "type": "not_found_error",
+    "code": 404
+   }
+  }
+ }
+}

@@ -260,6 +260,8 @@ class ChatInput(Gtk.Box):
             return _('No decision models found on this server.')
         if self.kind == 'image':
             return _('No image models found on this server.')
+        if self.kind == 'chat' and self._host is not None and self._host.empty_notice:
+            return _(self._host.empty_notice)
         if self._host is None or self._host.capabilities.model_management:
             return _('No chat models found. Pull one in Manage Models, then refresh.')
         # A hosted service, whose models the user cannot add to.

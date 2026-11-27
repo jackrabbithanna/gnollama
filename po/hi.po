@@ -41,10 +41,11 @@ msgstr ""
 
 #: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:11
 msgid ""
-"Connect to Ollama, LM Studio, and other OpenAI-compatible servers, or to Ollama "
+"Connect to Ollama, LM Studio, Ubuntu Inference Manager, and other OpenAI-"
+"compatible servers, or to Ollama "
 "Cloud, OpenAI, OpenRouter, and the Vercel AI Gateway."
 msgstr ""
-"Ollama, LM Studio और अन्य OpenAI-संगत सर्वरों से, या Ollama Cloud, OpenAI, "
+"Ollama, LM Studio, Ubuntu Inference Manager और अन्य OpenAI-संगत सर्वरों से, या Ollama Cloud, OpenAI, "
 "OpenRouter और Vercel AI Gateway से कनेक्ट करें।"
 
 #: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:11
@@ -3888,6 +3889,30 @@ msgstr "Tureen द्वारा मापा गया, सर्वर द्
 #: src/providers/lmstudio.py
 msgid "LM Studio"
 msgstr "LM Studio"
+
+#: src/providers/inference_manager.py
+msgid "Ubuntu Inference Manager"
+msgstr "Ubuntu Inference Manager"
+
+#: src/providers/inference_manager.py
+msgid "No models are installed on this server. Install one there with “inference install”, for example “sudo inference install gemma4”."
+msgstr "इस सर्वर पर कोई मॉडल इंस्टॉल नहीं है। वहाँ “inference install” से एक इंस्टॉल करें, उदाहरण के लिए “sudo inference install gemma4”।"
+
+#: src/providers/inference_manager.py
+msgid "This model is no longer served. Its provider may be stopped or removed on the server."
+msgstr "यह मॉडल अब उपलब्ध नहीं कराया जा रहा है। हो सकता है सर्वर पर इसका प्रदाता रोक दिया गया हो या हटा दिया गया हो।"
+
+#: src/providers/inference_manager.py
+msgid "The model’s provider did not answer. It may still be loading, or it may be stopped."
+msgstr "मॉडल के प्रदाता ने उत्तर नहीं दिया। हो सकता है वह अभी लोड हो रहा हो, या रोक दिया गया हो।"
+
+#: src/providers/inference_manager.py
+msgid "This server is not Inference Manager. Use the OpenAI-Compatible Server type for it."
+msgstr "यह सर्वर Inference Manager नहीं है। इसके लिए OpenAI-संगत सर्वर प्रकार का उपयोग करें।"
+
+#: src/providers/inference_manager.py
+msgid "The connection to this server is not encrypted, and the server has no password: anyone on its network can use its models."
+msgstr "इस सर्वर से कनेक्शन एन्क्रिप्टेड नहीं है, और सर्वर का कोई पासवर्ड नहीं है: उसके नेटवर्क पर कोई भी उसके मॉडल का उपयोग कर सकता है।"
 
 #: src/providers/openrouter.py
 msgid "OpenRouter"

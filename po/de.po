@@ -43,10 +43,11 @@ msgstr ""
 
 #: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:11
 msgid ""
-"Connect to Ollama, LM Studio, and other OpenAI-compatible servers, or to Ollama "
+"Connect to Ollama, LM Studio, Ubuntu Inference Manager, and other OpenAI-"
+"compatible servers, or to Ollama "
 "Cloud, OpenAI, OpenRouter, and the Vercel AI Gateway."
 msgstr ""
-"Verbinden Sie sich mit Ollama, LM Studio und anderen OpenAI-kompatiblen Servern "
+"Verbinden Sie sich mit Ollama, LM Studio, Ubuntu Inference Manager und anderen OpenAI-kompatiblen Servern "
 "oder mit Ollama Cloud, OpenAI, OpenRouter und dem Vercel AI Gateway."
 
 #: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:11
@@ -3979,6 +3980,30 @@ msgstr "Von Tureen gemessen, nicht vom Server gemeldet. Die Gesamtzeit enthält 
 #: src/providers/lmstudio.py
 msgid "LM Studio"
 msgstr "LM Studio"
+
+#: src/providers/inference_manager.py
+msgid "Ubuntu Inference Manager"
+msgstr "Ubuntu Inference Manager"
+
+#: src/providers/inference_manager.py
+msgid "No models are installed on this server. Install one there with “inference install”, for example “sudo inference install gemma4”."
+msgstr "Auf diesem Server sind keine Modelle installiert. Installieren Sie dort eines mit “inference install”, zum Beispiel “sudo inference install gemma4”."
+
+#: src/providers/inference_manager.py
+msgid "This model is no longer served. Its provider may be stopped or removed on the server."
+msgstr "Dieses Modell wird nicht mehr bereitgestellt. Sein Anbieter wurde auf dem Server möglicherweise gestoppt oder entfernt."
+
+#: src/providers/inference_manager.py
+msgid "The model’s provider did not answer. It may still be loading, or it may be stopped."
+msgstr "Der Anbieter des Modells hat nicht geantwortet. Er lädt möglicherweise noch oder wurde gestoppt."
+
+#: src/providers/inference_manager.py
+msgid "This server is not Inference Manager. Use the OpenAI-Compatible Server type for it."
+msgstr "Dieser Server ist kein Inference Manager. Verwenden Sie dafür den Typ „OpenAI-kompatibler Server“."
+
+#: src/providers/inference_manager.py
+msgid "The connection to this server is not encrypted, and the server has no password: anyone on its network can use its models."
+msgstr "Die Verbindung zu diesem Server ist nicht verschlüsselt, und der Server hat kein Passwort: Jeder in seinem Netzwerk kann seine Modelle verwenden."
 
 #: src/providers/openrouter.py
 msgid "OpenRouter"

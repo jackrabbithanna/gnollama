@@ -18,7 +18,8 @@ HEADLESS = ['app_context.py', 'chat_controller.py', 'chat_store.py', 'collection
             'model_conversation.py', 'model_conversation_store.py', 'model_summary.py', 'records.py', 'request_runner.py',
             'services.py', 'session.py', 'storage.py', 'store_common.py', 'structured.py', 'tool_calling.py',
             'vectors.py', 'web_import.py', 'web_store.py', 'workspace_store.py', 'writer.py',
-            'providers/__init__.py', 'providers/base.py', 'providers/imaging.py', 'providers/lmstudio.py', 'providers/ollama.py',
+            'providers/__init__.py', 'providers/base.py', 'providers/imaging.py', 'providers/inference_manager.py',
+            'providers/lmstudio.py', 'providers/ollama.py',
             'providers/openai.py', 'providers/openai_platform.py', 'providers/openrouter.py', 'providers/registry.py', 'providers/systemone.py',
             'providers/transport.py', 'providers/vercel.py']
 # These open a dialog on request, importing GTK only inside that function.

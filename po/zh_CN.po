@@ -39,10 +39,11 @@ msgstr "通过原生 GNOME 界面，与在您的计算机、其他计算机或�
 
 #: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:11
 msgid ""
-"Connect to Ollama, LM Studio, and other OpenAI-compatible servers, or to Ollama "
+"Connect to Ollama, LM Studio, Ubuntu Inference Manager, and other OpenAI-"
+"compatible servers, or to Ollama "
 "Cloud, OpenAI, OpenRouter, and the Vercel AI Gateway."
 msgstr ""
-"连接到 Ollama、LM Studio 及其他兼容 OpenAI 的服务器，或连接到 Ollama Cloud、OpenAI、OpenRouter 和 Vercel "
+"连接到 Ollama、LM Studio、Ubuntu Inference Manager 及其他兼容 OpenAI 的服务器，或连接到 Ollama Cloud、OpenAI、OpenRouter 和 Vercel "
 "AI Gateway。"
 
 #: data/io.github.jackrabbithanna.Tureen.metainfo.xml.in:11
@@ -3770,6 +3771,30 @@ msgstr "由 Tureen 计时，并非服务器报告。总计包含网络延迟和�
 #: src/providers/lmstudio.py
 msgid "LM Studio"
 msgstr "LM Studio"
+
+#: src/providers/inference_manager.py
+msgid "Ubuntu Inference Manager"
+msgstr "Ubuntu Inference Manager"
+
+#: src/providers/inference_manager.py
+msgid "No models are installed on this server. Install one there with “inference install”, for example “sudo inference install gemma4”."
+msgstr "此服务器上未安装任何模型。请在服务器上使用 “inference install” 安装一个，例如 “sudo inference install gemma4”。"
+
+#: src/providers/inference_manager.py
+msgid "This model is no longer served. Its provider may be stopped or removed on the server."
+msgstr "此模型已不再提供。其提供程序可能已在服务器上停止或移除。"
+
+#: src/providers/inference_manager.py
+msgid "The model’s provider did not answer. It may still be loading, or it may be stopped."
+msgstr "模型的提供程序没有响应。它可能仍在加载，或者已停止。"
+
+#: src/providers/inference_manager.py
+msgid "This server is not Inference Manager. Use the OpenAI-Compatible Server type for it."
+msgstr "此服务器不是 Inference Manager。请为它使用“OpenAI 兼容服务器”类型。"
+
+#: src/providers/inference_manager.py
+msgid "The connection to this server is not encrypted, and the server has no password: anyone on its network can use its models."
+msgstr "与此服务器的连接未加密，且服务器没有密码：其网络上的任何人都可以使用它的模型。"
 
 #: src/providers/openrouter.py
 msgid "OpenRouter"

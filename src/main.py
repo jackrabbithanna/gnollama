@@ -13,7 +13,7 @@ from .startup import StartupWindow
 class TureenApplication(Adw.Application):
     """The main application singleton class."""
 
-    def __init__(self, version="0.20.0") -> None:
+    def __init__(self, version="0.21.0") -> None:
         super().__init__(application_id='io.github.jackrabbithanna.Tureen',
                          flags=Gio.ApplicationFlags.DEFAULT_FLAGS,
                          resource_base_path='/io/github/jackrabbithanna/Tureen')

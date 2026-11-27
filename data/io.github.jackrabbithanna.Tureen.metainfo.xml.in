@@ -67,6 +67,14 @@
   </screenshots>
 
   <releases>
+    <release version="0.21.0" date="2026-11-27">
+      <url type="details">https://github.com/jackrabbithanna/tureen/releases/tag/0.21.0</url>
+      <description translate="no">
+        <p>Connect to Ubuntu Inference Manager, with chat, tools, thinking, structured output, decisions, and embeddings for knowledge collections.</p>
+        <p>Models on an Inference Manager host show their capabilities, quantization, and size when the service runs on the same computer.</p>
+        <p>The host editor warns when an Inference Manager address is on another computer, where the connection is not encrypted.</p>
+      </description>
+    </release>
     <release version="0.20.0" date="2026-11-25">
       <url type="details">https://github.com/jackrabbithanna/tureen/releases/tag/0.20.0</url>
       <description translate="no">

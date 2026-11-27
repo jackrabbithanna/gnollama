@@ -37,6 +37,8 @@ def _extracted():
     _('Ubuntu Inference Manager')
     _('No models are installed on this server. Install one there with '
       '“inference install”, for example “sudo inference install gemma4”.')
+    _('The connection to this server is not encrypted, and the server has no password: '
+      'anyone on its network can use its models.')
 
 
 def catalogue(path=CATALOGUE):
@@ -156,6 +158,8 @@ class InferenceManagerProvider(OpenAICompatibleProvider):
     json_mode = {'type': 'json_schema', 'json_schema': {'name': 'response', 'schema': {'type': 'object'}}}
     empty_notice = ('No models are installed on this server. Install one there with '
                     '“inference install”, for example “sudo inference install gemma4”.')
+    open_notice = ('The connection to this server is not encrypted, and the server has no password: '
+                   'anyone on its network can use its models.')
     catalogue_path = CATALOGUE
     snaps_path = SNAPS
 

@@ -3787,6 +3787,10 @@ msgstr ""
 msgid "This server is not Inference Manager. Use the OpenAI-Compatible Server type for it."
 msgstr ""
 
+#: src/providers/inference_manager.py
+msgid "The connection to this server is not encrypted, and the server has no password: anyone on its network can use its models."
+msgstr ""
+
 #: src/providers/openrouter.py
 msgid "OpenRouter"
 msgstr ""

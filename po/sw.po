@@ -3962,6 +3962,10 @@ msgstr "Mtoa huduma wa muundo hakujibu. Huenda bado anapakia, au huenda amesimam
 msgid "This server is not Inference Manager. Use the OpenAI-Compatible Server type for it."
 msgstr "Seva hii si Inference Manager. Tumia aina ya Seva inayooana na OpenAI kwa ajili yake."
 
+#: src/providers/inference_manager.py
+msgid "The connection to this server is not encrypted, and the server has no password: anyone on its network can use its models."
+msgstr "Muunganisho kwa seva hii haujasimbwa, na seva haina nenosiri: mtu yeyote kwenye mtandao wake anaweza kutumia miundo yake."
+
 #: src/providers/openrouter.py
 msgid "OpenRouter"
 msgstr "OpenRouter"

@@ -3888,6 +3888,10 @@ msgstr "لم يستجب مزوّد النموذج. ربما لا يزال قيد
 msgid "This server is not Inference Manager. Use the OpenAI-Compatible Server type for it."
 msgstr "هذا الخادم ليس Inference Manager. استخدم له نوع خادم متوافق مع OpenAI."
 
+#: src/providers/inference_manager.py
+msgid "The connection to this server is not encrypted, and the server has no password: anyone on its network can use its models."
+msgstr "الاتصال بهذا الخادم غير مشفّر، ولا توجد للخادم كلمة مرور: يمكن لأي شخص على شبكته استخدام نماذجه."
+
 #: src/providers/openrouter.py
 msgid "OpenRouter"
 msgstr "OpenRouter"

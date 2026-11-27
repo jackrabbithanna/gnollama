@@ -3792,6 +3792,10 @@ msgstr "模型的提供程序没有响应。它可能仍在加载，或者已停
 msgid "This server is not Inference Manager. Use the OpenAI-Compatible Server type for it."
 msgstr "此服务器不是 Inference Manager。请为它使用“OpenAI 兼容服务器”类型。"
 
+#: src/providers/inference_manager.py
+msgid "The connection to this server is not encrypted, and the server has no password: anyone on its network can use its models."
+msgstr "与此服务器的连接未加密，且服务器没有密码：其网络上的任何人都可以使用它的模型。"
+
 #: src/providers/openrouter.py
 msgid "OpenRouter"
 msgstr "OpenRouter"

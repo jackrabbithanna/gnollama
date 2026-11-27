@@ -3987,6 +3987,10 @@ msgstr "Ο πάροχος του μοντέλου δεν απάντησε. Μπ�
 msgid "This server is not Inference Manager. Use the OpenAI-Compatible Server type for it."
 msgstr "Αυτός ο διακομιστής δεν είναι Inference Manager. Χρησιμοποιήστε τον τύπο «Διακομιστής συμβατός με OpenAI»."
 
+#: src/providers/inference_manager.py
+msgid "The connection to this server is not encrypted, and the server has no password: anyone on its network can use its models."
+msgstr "Η σύνδεση με αυτόν τον διακομιστή δεν είναι κρυπτογραφημένη και ο διακομιστής δεν έχει κωδικό πρόσβασης: οποιοσδήποτε στο δίκτυό του μπορεί να χρησιμοποιήσει τα μοντέλα του."
+
 #: src/providers/openrouter.py
 msgid "OpenRouter"
 msgstr "OpenRouter"

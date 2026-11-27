@@ -3799,6 +3799,10 @@ msgstr "모델 제공자가 응답하지 않았습니다. 아직 로드 중이�
 msgid "This server is not Inference Manager. Use the OpenAI-Compatible Server type for it."
 msgstr "이 서버는 Inference Manager가 아닙니다. OpenAI 호환 서버 유형을 사용하세요."
 
+#: src/providers/inference_manager.py
+msgid "The connection to this server is not encrypted, and the server has no password: anyone on its network can use its models."
+msgstr "이 서버와의 연결은 암호화되지 않으며 서버에 비밀번호도 없습니다. 같은 네트워크의 누구나 모델을 사용할 수 있습니다."
+
 #: src/providers/openrouter.py
 msgid "OpenRouter"
 msgstr "OpenRouter"

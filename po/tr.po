@@ -3928,6 +3928,10 @@ msgstr "Modelin sağlayıcısı yanıt vermedi. Hâlâ yükleniyor ya da durduru
 msgid "This server is not Inference Manager. Use the OpenAI-Compatible Server type for it."
 msgstr "Bu sunucu Inference Manager değil. Bunun için OpenAI uyumlu sunucu türünü kullanın."
 
+#: src/providers/inference_manager.py
+msgid "The connection to this server is not encrypted, and the server has no password: anyone on its network can use its models."
+msgstr "Bu sunucuyla bağlantı şifrelenmemiştir ve sunucunun parolası yoktur: ağındaki herkes modellerini kullanabilir."
+
 #: src/providers/openrouter.py
 msgid "OpenRouter"
 msgstr "OpenRouter"

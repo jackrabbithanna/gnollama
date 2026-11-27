@@ -3970,6 +3970,10 @@ msgstr "Il fornitore del modello non ha risposto. Potrebbe essere ancora in cari
 msgid "This server is not Inference Manager. Use the OpenAI-Compatible Server type for it."
 msgstr "Questo server non è Inference Manager. Usa il tipo Server compatibile con OpenAI."
 
+#: src/providers/inference_manager.py
+msgid "The connection to this server is not encrypted, and the server has no password: anyone on its network can use its models."
+msgstr "La connessione a questo server non è cifrata e il server non ha una password: chiunque sulla sua rete può usarne i modelli."
+
 #: src/providers/openrouter.py
 msgid "OpenRouter"
 msgstr "OpenRouter"

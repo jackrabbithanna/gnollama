@@ -3910,6 +3910,10 @@ msgstr "मॉडल के प्रदाता ने उत्तर नह�
 msgid "This server is not Inference Manager. Use the OpenAI-Compatible Server type for it."
 msgstr "यह सर्वर Inference Manager नहीं है। इसके लिए OpenAI-संगत सर्वर प्रकार का उपयोग करें।"
 
+#: src/providers/inference_manager.py
+msgid "The connection to this server is not encrypted, and the server has no password: anyone on its network can use its models."
+msgstr "इस सर्वर से कनेक्शन एन्क्रिप्टेड नहीं है, और सर्वर का कोई पासवर्ड नहीं है: उसके नेटवर्क पर कोई भी उसके मॉडल का उपयोग कर सकता है।"
+
 #: src/providers/openrouter.py
 msgid "OpenRouter"
 msgstr "OpenRouter"

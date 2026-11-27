@@ -1,7 +1,7 @@
 from gettext import gettext as _
 from typing import Any, List, Dict, Optional, Callable
 from gi.repository import Adw, Gtk, GLib, GObject
-from .providers import PROVIDERS, ProviderError, validate_url
+from .providers import PROVIDERS, ProviderError, on_this_machine, validate_url
 from .session import ViewRequests
 from .credentials import CredentialError
 
@@ -42,6 +42,10 @@ class HostEditDialog(Adw.Dialog):
         self.key_link = Gtk.LinkButton(label=_('Create an API key'))
         self.key_box.append(self.key_link)
         self.fields_box.insert_child_after(self.key_box, self.hostname_entry)
+        # What a type warns of an address on another computer.
+        self.address_notice = Gtk.Label(xalign=0, wrap=True, visible=False)
+        self.address_notice.add_css_class('warning')
+        self.fields_box.insert_child_after(self.address_notice, self.hostname_entry)
         self.hostname_entry.set_direction(Gtk.TextDirection.LTR)
         self.validation_error = Gtk.Label(xalign=0, wrap=True, visible=False)
         self.validation_error.add_css_class('error')
@@ -105,6 +109,7 @@ class HostEditDialog(Adw.Dialog):
         self.name_entry.set_placeholder_text(_(kind.name_example) if kind.name_example else None)
         self.hostname_entry.set_placeholder_text(kind.url_example or None)
         self.key_box.set_visible(self.takes_key)
+        self._show_address_notice()
         self.remove_key_check.set_active(False)
         self._show_key_state()
         self.key_link.set_uri(kind.key_url)
@@ -123,9 +128,16 @@ class HostEditDialog(Adw.Dialog):
             self.remove_key_check.set_active(False)
         self.remove_key_check.set_visible(kind.key_optional and keeps)
 
+    def _show_address_notice(self):
+        notice = self.kind.open_notice
+        shown = bool(notice) and not on_this_machine(self.hostname_entry.get_text())
+        self.address_notice.set_text(_(notice) if shown else '')
+        self.address_notice.set_visible(shown)
+
     def _address_changed(self, *args):
         # Whether the key is kept depends on the address as well as the type.
         self._show_key_state()
+        self._show_address_notice()
         self.validate_fields(*args)
 
     def _remove_key_toggled(self, *args):

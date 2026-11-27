@@ -12,7 +12,7 @@ from unittest.mock import patch
 
 from gi.repository import Gdk
 from src.host_manager import HostEditDialog
-from src.providers import PROVIDERS, InferenceManagerProvider, ProviderError, supports
+from src.providers import PROVIDERS, InferenceManagerProvider, ProviderError, on_this_machine, supports
 from src.providers.inference_manager import catalogue, disk_size
 from src.providers.openai import fingerprint
 from test_lmstudio import HostFixture, Loopback, recorded
@@ -90,6 +90,16 @@ class TypeTests(unittest.TestCase):
                                    'sampling_extras', 'thinking_text', 'decisions', 'decision_images'})
         self.assertEqual(cls.capabilities.options_notice, '')
         self.assertEqual(cls('http://localhost:8400/v1')._address('/models'), 'http://localhost:8400/v1/models')
+
+    def test_this_machine_is_localhost_or_loopback(self):
+        for url in ('http://localhost:8400', 'http://LOCALHOST:8400/v1', 'http://127.0.0.5:1', 'http://[::1]:8400',
+                    'http://models.localhost', '', 'http://', 'not an address yet', 'http://[bad'):
+            with self.subTest(url=url):
+                self.assertTrue(on_this_machine(url))
+        for url in ('http://10.0.0.231:8400', 'http://example.com', 'http://localhost.example.com',
+                    'http://[fe80::1]:8400', 'http://0.0.0.0:8400'):
+            with self.subTest(url=url):
+                self.assertFalse(on_this_machine(url))
 
     def test_sizes(self):
         self.assertEqual([disk_size(text) for text in ('540M', '81M', '6.8G', '1T', '12', '', None, 'M', 7)],
@@ -298,6 +308,24 @@ class HostTests(Local, HostFixture, unittest.TestCase):
         self.tabs.append(tab)
         pump_until(lambda: not tab.chat_input._models_loading)
         return tab
+
+    def test_host_editor_warns_of_an_open_server_on_another_computer(self):
+        dialog = HostEditDialog()
+        dialog.provider_dropdown.set_selected(list(PROVIDERS).index('inference_manager'))
+        self.assertFalse(dialog.address_notice.get_visible())
+        dialog.hostname_entry.set_text('http://10.0.0.231:8400')
+        self.assertTrue(dialog.address_notice.get_visible())
+        self.assertEqual(dialog.address_notice.get_text(), InferenceManagerProvider.open_notice)
+        self.assertTrue(dialog.get_response_enabled('save'))
+        dialog.hostname_entry.set_text('http://127.0.0.1:8401')
+        self.assertFalse(dialog.address_notice.get_visible())
+        # Only a type that says so warns; another type at the same address does not.
+        dialog.hostname_entry.set_text('http://10.0.0.231:8400')
+        dialog.provider_dropdown.set_selected(list(PROVIDERS).index('lmstudio'))
+        self.assertFalse(dialog.address_notice.get_visible())
+        edited = HostEditDialog(host={'id': 'h', 'name': 'There', 'hostname': 'http://10.0.0.231:8400',
+                                      'provider': 'inference_manager'})
+        self.assertTrue(edited.address_notice.get_visible())
 
     def test_host_editor_hides_the_key(self):
         dialog = HostEditDialog()

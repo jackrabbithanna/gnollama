@@ -43,9 +43,24 @@ Model names come directly from each host. Image input, tool calling, and thinkin
 
 [Inference Manager](https://github.com/canonical/inference) (the `inference` snap) serves every model installed through it at one address, `http://localhost:8400`, with no API key. Models are listed as `provider/model`, for example `smollm2/smollm2-135m`.
 
-The server doesn't say what its models can do, so Tureen reads the catalogue the service keeps on its machine, `/var/snap/inference/common/onboarded-snaps.json`, and the installed providers' model manifests under `/snap`, which tell which catalogue model each served name is. That gives each model's image, tool, and thinking support, its quantization, and its size on disk, and marks embedding models so they are offered only in **Knowledge**. Thinking can be turned on or off. Text for **Knowledge** is split into pieces of at most 512 tokens, the most the service's embedding servers accept in one input. Decision models, such as Clef Flash, are offered in **Decision** tabs. They need instructions on every question, and they don't answer box questions. Models the catalogue doesn't list, and every model when the file can't be read (for example from the Flatpak build), are used with their capabilities unknown, as on any OpenAI-compatible server. Context length isn't reported, so your own setting applies.
+The server doesn't say what its models can do, so Tureen reads the catalogue the service keeps on its machine, `/var/snap/inference/common/onboarded-snaps.json`, and the installed providers' model manifests under `/snap`, which tell which catalogue model each served name is. That gives each model's image, tool, and thinking support, its quantization, and its size on disk, and marks embedding models so they are offered only in **Knowledge**. Thinking can be turned on or off. Text for **Knowledge** is split into pieces of at most 512 tokens, the most the service's embedding servers accept in one input. Decision models, such as Clef Flash, are offered in **Decision** tabs. They need instructions on every question, and they don't answer box questions. Where the catalogue can't be read, the manifests alone give the same details except the provider's name. A model neither of them describes is used with its capabilities unknown, as on any OpenAI-compatible server; so is every model on another computer, or in the Flatpak build, which can read neither. There, image, tool, and thinking support aren't checked, and embedding models such as Nomic Embed also appear in chat model lists; choose a chat model by name. The native build doesn't have this limit. Context length isn't reported, so your own setting applies.
 
 If no models are listed, install one on the server, for example `sudo inference install gemma4`. A provider that is stopped (`sudo snap stop <provider>`) drops out of the list until it is started again.
+
+#### A server on another computer
+
+The service listens only on its own computer by default. There are two ways to reach it from another one:
+
+- **Over SSH (recommended).** Leave the server as it is and forward a port to it, then add the host as `http://localhost:8401`:
+
+  ```sh
+  ssh -N -L 8401:127.0.0.1:8400 user@other-computer
+  ```
+
+  The connection is encrypted, and nothing is opened to the network. Port 8401 is used here so as not to clash with a service on your own computer; any free port will do.
+- **On the network.** On the server, run `sudo snap set inference http.host=0.0.0.0`, then add the host as `http://other-computer:8400`. The connection is not encrypted and the server has no password, so anyone on the network can use its models; the host editor says so for any address that is not this computer. To close it again, run `sudo snap set inference http.host=127.0.0.1`.
+
+Tureen learns what a model can do from files on the computer the service runs on, so on another computer the models' image, tool, and thinking support is not checked, and embedding models also appear in chat model lists. Through an SSH tunnel the address is `localhost`, but the files are still on the other computer. If this computer has Inference Manager installed too, its own catalogue fills in for models served under their catalogue name, such as SmolLM2 or Clef Flash, and its own providers for the models they serve.
 
 A provider's server sizes the model's context to the memory that is free, so a model can take far more memory than its size on disk: on a 16 GB computer, Qwen 3.5 4B took 12 GB. Installing a provider installs its default model; choose a smaller one with the provider's own command, for example `sudo qwen3-5 use-model qwen3.5-0.8b`, then `qwen3-5 prune-cache`.
 
